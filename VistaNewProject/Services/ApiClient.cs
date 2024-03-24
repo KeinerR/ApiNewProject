@@ -33,11 +33,7 @@ namespace VistaNewProject.Services
         {
             var response = await _httpClient.GetFromJsonAsync<Cliente>($"Clientes/GetClienetById?={id}");
 
-            if (response == null)
-            {
-                // Manejar el caso en el que response sea nulo
-                throw new Exception("No se encontró el cliente con el ID especificado.");
-            }
+        
 
             return response;
         }
