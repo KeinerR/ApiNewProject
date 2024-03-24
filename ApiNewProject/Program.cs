@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEntityFrameworkMySQL()
     .AddDbContext<NewOptimusContext>(options =>
     {
-        options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection"));
+        options.UseMySQL(builder.Configuration.GetConnectionString("conexion"));
     });
 
 
