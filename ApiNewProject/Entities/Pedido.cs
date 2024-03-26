@@ -15,9 +15,9 @@ namespace ApiNewProject.Entities
         public int? ClienteId { get; set; }
         public string? TipoServicio { get; set; }
         public DateTime? FechaPedido { get; set; }
-        public decimal? TotalPedido { get; set; }
         public ulong? EstadoPedido { get; set; }
 
+        
         public virtual Cliente? Cliente { get; set; }
         public virtual ICollection<Detallepedido> Detallepedidos { get; set; }
         public virtual ICollection<Domicilio> Domicilios { get; set; }

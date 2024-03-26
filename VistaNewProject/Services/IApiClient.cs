@@ -13,5 +13,11 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> UpdateClienteAsync(Cliente clienet);
 
         Task<HttpResponseMessage> DeleteClienteAsync(int id);
+
+        // pedido
+
+    
+
+       
     }
 }

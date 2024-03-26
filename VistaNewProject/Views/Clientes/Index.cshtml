@@ -23,8 +23,7 @@
                 <div class="modal-body">
 
                     <div class="form-group">
-                        <label for="clienteId" class="control-label">clienteId</label>
-                        <input type="text" id="clienteId" name="clienteId" class="form-control" />
+                        <input type="hidden" id="clienteId" name="clienteId" class="form-control" />
                     </div>
                     <div class="form-group">
                         <label for="identificacion" class="control-label">identificacion</label>
@@ -65,7 +64,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button id="btnActualizarCliente" type="button" class="btn btn-primary">Actualizar Cliente</button>
+                    <button id="btnActualizarCliente" type="button" onclick="ActualizarCliente()" class="btn btn-primary">Actualizar Cliente</button>
                 </div>
 
             </form>
@@ -143,7 +142,7 @@
 
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
-<button class="btn btn-warning" onclick="obtenerDatosCliente(@item.ClienteId)" data-cliente-id="@item.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal">Editar</button>
+                    <button class="btn btn-warning" onclick="obtenerDatosCliente(@item.ClienteId)" data-cliente-id="@item.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal">Editar</button>
 
                     <button class="btn btn-danger" onclick="eliminarCliente('@item.ClienteId')">Eliminar</button>
 

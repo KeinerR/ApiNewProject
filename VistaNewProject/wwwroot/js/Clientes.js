@@ -99,3 +99,47 @@ function obtenerDatosCliente(clienteId) {
             console.error('Error:', error);
         });
 }
+function ActualizarCliente() {
+    const clienteId = document.getElementById('clienteId').value;
+    const identificacion = document.getElementById('identificacion').value;
+    const NombreEntidad = document.getElementById('NombreEntidad').value;
+    const NombreCompleto = document.getElementById('NombreCompleto').value;
+    const TipoCliente = document.getElementById('TipoCliente').value;
+    const Telefono = document.getElementById('Telefono').value;
+    const Correo = document.getElementById('Correo').value;
+    const Direccion = document.getElementById('Direccion').value;
+    const EstadoCliente = document.getElementById('EstadoCliente').value;
+
+    const cliente = {
+        clienteId: clienteId,
+        identificacion: identificacion,
+        NombreEntidad: NombreEntidad,
+        NombreCompleto: NombreCompleto,
+        TipoCliente: TipoCliente,
+        Telefono: Telefono,
+        Correo: Correo,
+        Direccion: Direccion,
+        EstadoCliente: EstadoCliente
+    };
+
+    fetch(`https://localhost:7013/api/Clientes/UpdateClientes`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(cliente)
+    })
+        .then(response => {
+            if (response.ok) {
+                alert('Cliente actualizado correctamente.');
+                location.reload(true); // Recargar la página después de la actualización
+            } else {
+                alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
+        });
+}
+
