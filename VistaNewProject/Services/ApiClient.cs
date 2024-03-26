@@ -50,25 +50,43 @@ namespace VistaNewProject.Services
         }
 
         /// pedidos
-        /// 
-       
-       
+        public async Task<IEnumerable<Pedido>> GetPedidosAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Pedido>>("Pedidos/GetAllPedido");
 
             if (response == null)
             {
                 // Manejar el caso en el que response sea nulo
-                throw new Exception("No se encontró la unidad con el ID especificado.");
+                throw new Exception("No se encontró el cliente con el ID especificado.");
             }
             return response;
         }
-        public async Task<HttpResponseMessage> CreateUnidadAsync(Unidad unidad)
+        public async Task<HttpResponseMessage> CreatePedidoAsync(Pedido pedido)
         {
-            var response = await _httpClient.PostAsJsonAsync("", unidad);
+            var response = await _httpClient.PostAsJsonAsync("/Pedidos/InsertPedidos", pedido);
             return response;
         }
-        public async Task<Unidad> FindUnidadAsync(int id)
+        public async Task<Pedido> FindPedidoAsync(int id)
         {
-            var response = await _httpClient.GetFromJsonAsync<Unidad>($"?={id}");
+            var response = await _httpClient.GetFromJsonAsync<Pedido>($"/Pedidos/GetPedidos?={id}");
+
+
+
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdatePedidoAsync(Pedido pedido)
+        {
+            var response = await _httpClient.PutAsJsonAsync("Pedidos/UpdatePedido", pedido);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeletePedidoAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"Pedidos/DeletePedido/{id}");
+            return response;
+        }
+
+
 
 
 
