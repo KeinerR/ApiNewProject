@@ -1,0 +1,158 @@
+﻿@model IEnumerable<VistaNewProject.Models.Cliente>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+
+<!-- Botón para abrir el modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clienteModal">
+    Agregar Cliente
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="clienteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Agregar Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-controller="Clientes" asp-action="Create" method="post">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="clienteId" class="control-label">clienteId</label>
+                        <input type="text" id="clienteId" name="clienteId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="identificacion" class="control-label">identificacion</label>
+                        <input type="text" id="identificacion" name="Identificaciones" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NombreEntidad" class="control-label">NombreEntidad</label>
+                        <input type="text" id="NombreEntidad" name="NombreEntidades" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NombreCompleto" class="control-label">Nombre Completo</label>
+                        <input type="text" id="NombreCompleto" name="NombreCompleto" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="TipoCliente" class="control-label">Tipo Cliente</label>
+                        <input type="text" id="TipoCliente" name="TipoCliente" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Telefono" class="control-label">Teléfono</label>
+                        <input type="text" id="Telefono" name="Telefono" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Correo" class="control-label">Correo</label>
+                        <input type="text" id="Correo" name="Correo" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Direccion" class="control-label">Dirección</label>
+                        <input type="text" id="Direccion" name="Direccion" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="EstadoCliente" class="control-label">Estado Cliente</label>
+                        <input type="text" id="EstadoCliente" name="EstadoCliente" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button id="btnActualizarCliente" type="button" class="btn btn-primary">Actualizar Cliente</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ClienteId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Identificacion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NombreEntidad)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NombreCompleto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TipoCliente)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Telefono)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Correo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Direccion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EstadoCliente)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClienteId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Identificacion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NombreEntidad)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NombreCompleto)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TipoCliente)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Telefono)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Correo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Direccion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EstadoCliente)
+                </td>
+
+                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                <td>
+<button class="btn btn-warning" onclick="obtenerDatosCliente(@item.ClienteId)" data-cliente-id="@item.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal">Editar</button>
+
+                    <button class="btn btn-danger" onclick="eliminarCliente('@item.ClienteId')">Eliminar</button>
+
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script src="~/js/clientes.js"></script>
