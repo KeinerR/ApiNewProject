@@ -2,7 +2,7 @@
 
 namespace VistaNewProject.Controllers
 {
-    public class ComprasController : Controller
+    public class PedidosController : Controller
     {
         public IActionResult Index()
         {

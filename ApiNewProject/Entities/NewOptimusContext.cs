@@ -287,7 +287,7 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.TipoServicio).HasMaxLength(50);
 
-                entity.Property(e => e.TotalPedido).HasDefaultValueSql("'0'");
+              
 
                 entity.HasOne(d => d.Cliente)
                     .WithMany(p => p.Pedidos)
