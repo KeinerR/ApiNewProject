@@ -1,24 +1,14 @@
 using VistaNewProject.Services;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
-builder.Services.AddHttpClient( "ApiHttpClient", Client =>
-{
-    Client.BaseAddress = new Uri(builder.Configuration["AppiSetting:ApiBaseUrl"]); 
-}
-);
-builder.Services.AddScoped< IApiClient, ApiClient>();
-
 builder.Services.AddHttpClient("ApiHttpClient", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["AppiSetting:ApiBaseUrl"]);
 });
 builder.Services.AddScoped<IApiClient, ApiClient>();
-
 
 var app = builder.Build();
 

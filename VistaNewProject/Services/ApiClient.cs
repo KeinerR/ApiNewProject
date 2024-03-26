@@ -33,7 +33,7 @@ namespace VistaNewProject.Services
         {
             var response = await _httpClient.GetFromJsonAsync<Cliente>($"Clientes/GetClienetById?={id}");
 
-        
+
 
             return response;
         }
@@ -43,46 +43,46 @@ namespace VistaNewProject.Services
             var response = await _httpClient.PutAsJsonAsync("Clientes/UpdateClientes", cliente);
             return response;
         }
-        public async Task<HttpResponseMessage> DeleteClienteAsync(int  id)
+        public async Task<HttpResponseMessage> DeleteClienteAsync(int id)
         {
             var response = await _httpClient.DeleteAsync($"Clientes/DeleteUser/{id}");
             return response;
         }
 
         /// pedidos
-        /// 
-       
-       
+        public async Task<IEnumerable<Pedido>> GetPedidosAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Pedido>>("Pedidos/GetAllPedido");
 
             if (response == null)
             {
                 // Manejar el caso en el que response sea nulo
-                throw new Exception("No se encontró la unidad con el ID especificado.");
+                throw new Exception("No se encontró el pedido con el ID especificado.");
             }
             return response;
         }
-        public async Task<HttpResponseMessage> CreateUnidadAsync(Unidad unidad)
+        public async Task<HttpResponseMessage> CreatePedidoAsync(Pedido pedido)
         {
-            var response = await _httpClient.PostAsJsonAsync("", unidad);
+            var response = await _httpClient.PostAsJsonAsync("/Pedidos/InsertPedidos", pedido);
             return response;
         }
-        public async Task<Unidad> FindUnidadAsync(int id)
+        public async Task<Pedido> FindPedidoAsync(int id)
         {
-            var response = await _httpClient.GetFromJsonAsync<Unidad>($"?={id}");
+            var response = await _httpClient.GetFromJsonAsync<Pedido>($"/Pedidos/GetPedidos?={id}");
 
 
 
             return response;
         }
 
-        public async Task<HttpResponseMessage> UpdateUnidadAsync(Unidad unidad)
+        public async Task<HttpResponseMessage> UpdatePedidoAsync(Pedido pedido)
         {
-            var response = await _httpClient.PutAsJsonAsync("", unidad);
+            var response = await _httpClient.PutAsJsonAsync("Pedidos/UpdatePedido", pedido);
             return response;
         }
-        public async Task<HttpResponseMessage> DeleteUnidadAsync(int id)
+        public async Task<HttpResponseMessage> DeletePedidoAsync(int id)
         {
-            var response = await _httpClient.DeleteAsync($"/{id}");
+            var response = await _httpClient.DeleteAsync($"Pedidos/DeletePedido/{id}");
             return response;
         }
 
@@ -124,7 +124,358 @@ namespace VistaNewProject.Services
             return response;
         }
 
-    }
-   
-}
 
+        /// COMPRA
+        /// 
+        public async Task<IEnumerable<Compra>> GetCompraAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Compra>>("");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la compra con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<HttpResponseMessage> CreateCompraAsync(Compra compra)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", compra);
+            return response;
+        }
+        public async Task<Compra> FindCompraAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Compra>($"?={id}");
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateCompraAsync(Compra compra)
+        {
+            var response = await _httpClient.PutAsJsonAsync("", compra);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeleteCompraAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
+
+        /// MARCA
+        /// 
+        public async Task<IEnumerable<Marca>> GetMarcaAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Marca>>("");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la marca con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<HttpResponseMessage> CreateMarcaAsync(Marca marca)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", marca);
+            return response;
+        }
+        public async Task<Marca> FindMarcaAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Marca>($"?={id}");
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateMarcaAsync(Marca marca)
+        {
+            var response = await _httpClient.PutAsJsonAsync("", marca);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeleteMarcaAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
+        /// CATEGORIA
+        /// 
+        public async Task<IEnumerable<Categoria>> GetCategoriaAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Categoria>>("");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la categoria con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<HttpResponseMessage> CreateCategoriaAsync(Categoria categoria)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", categoria);
+            return response;
+        }
+        public async Task<Categoria> FindCategoriaAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Categoria>($"?={id}");
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateCategoriaAsync(Categoria categoria)
+        {
+            var response = await _httpClient.PutAsJsonAsync("", categoria);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeleteCategoriaAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
+        /// UNIDAD
+        /// 
+        public async Task<IEnumerable<Unidad>> GetUnidadAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Unidad>>("");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la unidad con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<HttpResponseMessage> CreateUnidadAsync(Unidad unidad)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", unidad);
+            return response;
+        }
+        public async Task<Unidad> FindUnidadAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Unidad>($"?={id}");
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateUnidadAsync(Unidad unidad)
+        {
+            var response = await _httpClient.PutAsJsonAsync("", unidad);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeleteUnidadAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
+        /// PRODUCTO
+        /// 
+        public async Task<IEnumerable<Producto>> GetProductoAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Producto>>("");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró el producto con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<HttpResponseMessage> CreateProductoAsync(Producto producto)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", producto);
+            return response;
+        }
+        public async Task<Producto> FindProductoAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Producto>($"?={id}");
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateProductoAsync(Producto producto)
+        {
+            var response = await _httpClient.PutAsJsonAsync("", producto);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeleteProductoAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
+        /// PROVEEDOR
+        /// 
+        public async Task<IEnumerable<Proveedor>> GetProveedorAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Proveedor>>("");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró el proveedor con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<HttpResponseMessage> CreateProveedorAsync(Proveedor proveedor)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", proveedor);
+            return response;
+        }
+        public async Task<Proveedor> FindProveedorAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Proveedor>($"?={id}");
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateProveedorAsync(Proveedor proveedor)
+        {
+            var response = await _httpClient.PutAsJsonAsync("", proveedor);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeleteProveedorAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
+        /// USUARIO
+        /// 
+        public async Task<IEnumerable<Usuario>> GetUsuarioAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Usuario>>("");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró el usuario con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<HttpResponseMessage> CreateUsuarioAsync(Usuario usuario)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", usuario);
+            return response;
+        }
+        public async Task<Usuario> FindUsuarioAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Usuario>($"?={id}");
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateUsuarioAsync(Usuario usuario)
+        {
+            var response = await _httpClient.PutAsJsonAsync("", usuario);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeleteUsuarioAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
+        /// MOVIMIENTO
+        /// 
+        public async Task<IEnumerable<Movimiento>> GetMovimientoAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Movimiento>>("");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró el movimiento con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<HttpResponseMessage> CreateMovimientoAsync(Movimiento movimiento)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", movimiento);
+            return response;
+        }
+        public async Task<Movimiento> FindMovimientoAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Movimiento>($"?={id}");
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateMovimientoAsync(Movimiento movimiento)
+        {
+            var response = await _httpClient.PutAsJsonAsync("", movimiento);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeleteMovimientoAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
+        /// Lote
+        /// 
+        public async Task<IEnumerable<Lote>> GetLoteAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Lote>>("");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró el lote con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<HttpResponseMessage> CreateLoteAsync(Lote lote)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", lote);
+            return response;
+        }
+        public async Task<Lote> FindLoteAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Lote>($"?={id}");
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateLoteAsync(Lote lote)
+        {
+            var response = await _httpClient.PutAsJsonAsync("", lote);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeleteLoteAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
+        /// Lote
+        /// 
+        public async Task<IEnumerable<Domicilio>> GetDomicilioAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Domicilio>>("");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró el domicilio con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<HttpResponseMessage> CreateDomicilioAsync(Domicilio domicilio)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", domicilio);
+            return response;
+        }
+        public async Task<Domicilio> FindDomicilioAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Domicilio>($"?={id}");
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateDomicilioAsync(Domicilio domicilio)
+        {
+            var response = await _httpClient.PutAsJsonAsync("", domicilio);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeleteDomicilioAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
+    }
+
+}

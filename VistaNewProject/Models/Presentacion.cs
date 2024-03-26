@@ -6,5 +6,7 @@
         public string? NombrePresentacion { get; set; }
         public string? DescripcionPresentacion { get; set; }
 
+        public virtual ICollection<Producto> Productos { get; set; }
+
     }
 }
