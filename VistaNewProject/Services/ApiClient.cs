@@ -50,28 +50,25 @@ namespace VistaNewProject.Services
         }
 
         /// pedidos
-        public async Task<IEnumerable<Pedido>> GetPedidosAsync()
+        public async Task<IEnumerable<Pedido>> GetPedidoAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Pedido>>("Pedidos/GetAllPedido");
 
             if (response == null)
             {
                 // Manejar el caso en el que response sea nulo
-                throw new Exception("No se encontró el pedido con el ID especificado.");
+                throw new Exception("No se encontró la unidad con el ID especificado.");
             }
             return response;
         }
         public async Task<HttpResponseMessage> CreatePedidoAsync(Pedido pedido)
         {
-            var response = await _httpClient.PostAsJsonAsync("/Pedidos/InsertPedidos", pedido);
+            var response = await _httpClient.PostAsJsonAsync("", pedido);
             return response;
         }
         public async Task<Pedido> FindPedidoAsync(int id)
         {
-            var response = await _httpClient.GetFromJsonAsync<Pedido>($"/Pedidos/GetPedidos?={id}");
-
-
-
+            var response = await _httpClient.GetFromJsonAsync<Pedido>($"?={id}");
             return response;
         }
 
@@ -266,6 +263,7 @@ namespace VistaNewProject.Services
             return response;
         }
 
+
         /// PRODUCTO
         /// 
         public async Task<IEnumerable<Producto>> GetProductoAsync()
@@ -441,7 +439,7 @@ namespace VistaNewProject.Services
             return response;
         }
 
-        /// Lote
+        /// Domicilio
         /// 
         public async Task<IEnumerable<Domicilio>> GetDomicilioAsync()
         {

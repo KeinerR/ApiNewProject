@@ -16,7 +16,7 @@ namespace VistaNewProject.Services
 
         // pedido
 
-        Task<IEnumerable<Pedido>> GetPedidosAsync();
+        Task<IEnumerable<Pedido>> GetPedidoAsync();
 
         Task<HttpResponseMessage> CreatePedidoAsync(Pedido pedido);
 
@@ -24,7 +24,6 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> UpdatePedidoAsync(Pedido pedido);
 
         Task<HttpResponseMessage> DeletePedidoAsync(int id);
-
 
         // presentacion
 
@@ -48,7 +47,7 @@ namespace VistaNewProject.Services
 
         Task<HttpResponseMessage> DeleteCompraAsync(int id);
 
-        // marca
+        // compra
 
         Task<IEnumerable<Marca>> GetMarcaAsync();
 
@@ -58,6 +57,7 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> UpdateMarcaAsync(Marca marca);
 
         Task<HttpResponseMessage> DeleteMarcaAsync(int id);
+
 
         // categoria
 
@@ -69,6 +69,7 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> UpdateCategoriaAsync(Categoria categoria);
 
         Task<HttpResponseMessage> DeleteCategoriaAsync(int id);
+
 
         // unidad
 
@@ -96,7 +97,7 @@ namespace VistaNewProject.Services
 
         Task<IEnumerable<Proveedor>> GetProveedorAsync();
 
-        Task<HttpResponseMessage> CreateProveedorAsync(Proveedor proveeedor);
+        Task<HttpResponseMessage> CreateProveedorAsync(Proveedor proveedor);
 
         Task<Proveedor> FindProveedorAsync(int id);
         Task<HttpResponseMessage> UpdateProveedorAsync(Proveedor proveedor);
@@ -146,6 +147,7 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> UpdateDomicilioAsync(Domicilio domicilio);
 
         Task<HttpResponseMessage> DeleteDomicilioAsync(int id);
+
 
     }
 }
