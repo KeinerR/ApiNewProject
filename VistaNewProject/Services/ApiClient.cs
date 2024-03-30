@@ -63,12 +63,12 @@ namespace VistaNewProject.Services
         }
         public async Task<HttpResponseMessage> CreatePedidoAsync(Pedido pedido)
         {
-            var response = await _httpClient.PostAsJsonAsync("", pedido);
+            var response = await _httpClient.PostAsJsonAsync("Pedidos/InsertPedidos", pedido);
             return response;
         }
         public async Task<Pedido> FindPedidoAsync(int id)
         {
-            var response = await _httpClient.GetFromJsonAsync<Pedido>($"?={id}");
+            var response = await _httpClient.GetFromJsonAsync<Pedido>($"Pedidos/GetPedidos?={id}");
             return response;
         }
 
@@ -197,7 +197,7 @@ namespace VistaNewProject.Services
         /// 
         public async Task<IEnumerable<Categoria>> GetCategoriaAsync()
         {
-            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Categoria>>("");
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Categoria>>("Categorias/GetCategorias");
 
             if (response == null)
             {
@@ -208,18 +208,18 @@ namespace VistaNewProject.Services
         }
         public async Task<HttpResponseMessage> CreateCategoriaAsync(Categoria categoria)
         {
-            var response = await _httpClient.PostAsJsonAsync("", categoria);
+            var response = await _httpClient.PostAsJsonAsync("Categorias/InsertarCategoria", categoria);
             return response;
         }
         public async Task<Categoria> FindCategoriaAsync(int id)
         {
-            var response = await _httpClient.GetFromJsonAsync<Categoria>($"?={id}");
+            var response = await _httpClient.GetFromJsonAsync<Categoria>($"Categorias/GetCategoriaById?={id}");
             return response;
         }
 
         public async Task<HttpResponseMessage> UpdateCategoriaAsync(Categoria categoria)
         {
-            var response = await _httpClient.PutAsJsonAsync("", categoria);
+            var response = await _httpClient.PutAsJsonAsync("Categorias/UpdateCategorias", categoria);
             return response;
         }
         public async Task<HttpResponseMessage> DeleteCategoriaAsync(int id)

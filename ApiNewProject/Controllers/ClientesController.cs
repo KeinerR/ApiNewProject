@@ -45,7 +45,7 @@ namespace ApiNewProject.Controllers
         }
 
         [HttpGet("GetClienetById")]
-        public async Task<ActionResult<Cliente>> GetClienetById(int Id)
+        public async Task<ActionResult<Cliente>> GetClienteById(int Id)
         {
           
             Cliente cliente = await _context.Clientes.Select(
@@ -87,7 +87,7 @@ public async Task<ActionResult<Cliente>> InsertarCliente(Cliente cliente)
         _context.Clientes.Add(cliente);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetClienetById), new { id = cliente.ClienteId }, cliente);
+        return CreatedAtAction(nameof(GetClienteById), new { id = cliente.ClienteId }, cliente);
     }
     catch (Exception ex)
     {
