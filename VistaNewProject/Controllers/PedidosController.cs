@@ -15,7 +15,7 @@ namespace VistaNewProject.Controllers
 
         public async Task<ActionResult> Index()
         {
-            var pedidos = await _client.GetPedidosAsync();
+            var pedidos = await _client.GetPedidoAsync();
             var clientes = await _client.GetClientesAsync();
 
             if (pedidos == null || clientes == null)
