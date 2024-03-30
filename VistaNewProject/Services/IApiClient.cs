@@ -148,6 +148,60 @@ namespace VistaNewProject.Services
 
         Task<HttpResponseMessage> DeleteDomicilioAsync(int id);
 
+        // detallepedido
+
+        Task<IEnumerable<Detallepedido>> GetDetallepedidoAsync();
+
+        Task<HttpResponseMessage> CreateDetallepedidoAsync(Detallepedido detallepedido);
+
+        Task<Detallepedido> FindDetallepedidoAsync(int id);
+        Task<HttpResponseMessage> UpdateDetallepedidoAsync(Detallepedido detallepedido);
+
+        Task<HttpResponseMessage> DeleteDetallepedidoAsync(int id);
+
+        // detallecompra
+
+        Task<IEnumerable<Detallecompra>> GetDetallecompraAsync();
+
+        Task<HttpResponseMessage> CreateDetallecompraAsync(Detallecompra detallecompra);
+
+        Task<Detallecompra> FindDetallecompraAsync(int id);
+        Task<HttpResponseMessage> UpdateDetallecompraAsync(Detallecompra detallecompra);
+
+        Task<HttpResponseMessage> DeleteDetallecompraAsync(int id);
+
+        // permiso
+
+        Task<IEnumerable<Permiso>> GetPermisoAsync();
+
+        Task<HttpResponseMessage> CreatePermisoAsync(Permiso Permiso);
+
+        Task<Permiso> FindPermisoAsync(int id);
+        Task<HttpResponseMessage> UpdatePermisoAsync(Permiso permiso);
+
+        Task<HttpResponseMessage> DeletePermisoAsync(int id);
+
+        // rol
+
+        Task<IEnumerable<Rol>> GetRolAsync();
+
+        Task<HttpResponseMessage> CreateRolAsync(Rol Rol);
+
+        Task<Rol> FindRolAsync(int id);
+        Task<HttpResponseMessage> UpdateRolAsync(Rol rol);
+
+        Task<HttpResponseMessage> DeleteRolAsync(int id);
+
+        // rolxpermiso
+
+        Task<IEnumerable<Rolxpermiso>> GetRolxpermisoAsync();
+
+        Task<HttpResponseMessage> CreateRolxpermisoAsync(Rolxpermiso Rolxpermiso);
+
+        Task<Rolxpermiso> FindRolxpermisoAsync(int id);
+        Task<HttpResponseMessage> UpdateRolxpermisoAsync(Rolxpermiso rolxpermiso);
+
+        Task<HttpResponseMessage> DeleteRolxpermisoAsync(int id);
 
     }
 }

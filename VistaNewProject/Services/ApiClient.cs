@@ -474,6 +474,181 @@ namespace VistaNewProject.Services
             return response;
         }
 
+        /// Detallepedido
+        /// 
+        public async Task<IEnumerable<Detallepedido>> GetDetallepedidoAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Detallepedido>>("");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró el detallepedido con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<HttpResponseMessage> CreateDetallepedidoAsync(Detallepedido detallepedido)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", detallepedido);
+            return response;
+        }
+        public async Task<Detallepedido> FindDetallepedidoAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Detallepedido>($"?={id}");
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateDetallepedidoAsync(Detallepedido detallepedido)
+        {
+            var response = await _httpClient.PutAsJsonAsync("", detallepedido);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeleteDetallepedidoAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
+        /// Detallecompra
+        /// 
+        public async Task<IEnumerable<Detallecompra>> GetDetallecompraAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Detallecompra>>("");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró el detallecompra con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<HttpResponseMessage> CreateDetallecompraAsync(Detallecompra detallecompra)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", detallecompra);
+            return response;
+        }
+        public async Task<Detallecompra> FindDetallecompraAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Detallecompra>($"?={id}");
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateDetallecompraAsync(Detallecompra detallecompra)
+        {
+            var response = await _httpClient.PutAsJsonAsync("", detallecompra);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeleteDetallecompraAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
+        /// Permiso
+        /// 
+        public async Task<IEnumerable<Permiso>> GetPermisoAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Permiso>>("");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró el permiso con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<HttpResponseMessage> CreatePermisoAsync(Permiso permiso)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", permiso);
+            return response;
+        }
+        public async Task<Permiso> FindPermisoAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Permiso>($"?={id}");
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdatePermisoAsync(Permiso permiso)
+        {
+            var response = await _httpClient.PutAsJsonAsync("", permiso);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeletePermisoAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
+        /// Rol
+        /// 
+        public async Task<IEnumerable<Rol>> GetRolAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Rol>>("");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró el rol con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<HttpResponseMessage> CreateRolAsync(Rol rol)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", rol);
+            return response;
+        }
+        public async Task<Rol> FindRolAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Rol>($"?={id}");
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateRolAsync(Rol rol)
+        {
+            var response = await _httpClient.PutAsJsonAsync("", rol);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeleteRolAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
+        /// Rolxpermiso
+        /// 
+        public async Task<IEnumerable<Rolxpermiso>> GetRolxpermisoAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Rolxpermiso>>("");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró el rolxpermiso con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<HttpResponseMessage> CreateRolxpermisoAsync(Rolxpermiso rolxpermiso)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", rolxpermiso);
+            return response;
+        }
+        public async Task<Rolxpermiso> FindRolxpermisoAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Rolxpermiso>($"?={id}");
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateRolxpermisoAsync(Rolxpermiso rolxpermiso)
+        {
+            var response = await _httpClient.PutAsJsonAsync("", rolxpermiso);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeleteRolxpermisoAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
     }
 
 }
