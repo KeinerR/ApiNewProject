@@ -234,23 +234,8 @@ namespace VistaNewProject.Services
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Unidad>>("");
 
-            if (response == null)
-            {
-                // Manejar el caso en el que response sea nulo
-                throw new Exception("No se encontró la unidad con el ID especificado.");
-            }
-            return response;
-        }
-        public async Task<HttpResponseMessage> CreateUnidadAsync(Unidad unidad)
-        {
-            var response = await _httpClient.PostAsJsonAsync("", unidad);
-            return response;
-        }
-        public async Task<Unidad> FindUnidadAsync(int id)
-        {
-            var response = await _httpClient.GetFromJsonAsync<Unidad>($"?={id}");
-            return response;
-        }
+          
+        
 
         public async Task<HttpResponseMessage> UpdateUnidadAsync(Unidad unidad)
         {

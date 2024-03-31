@@ -90,6 +90,7 @@ namespace ApiNewProject.Controllers
                     }
                 }
 
+
                 _context.Pedidos.Add(vlPedido);
                 await _context.SaveChangesAsync();
                 return Ok();
@@ -99,6 +100,7 @@ namespace ApiNewProject.Controllers
                 return BadRequest("Error al insertar el pedido: " + ex.Message);
             }
         }
+
         [HttpGet("GetPedidos")]
         public async Task<ActionResult<Pedido>> GetPedidos(int id)
         {
@@ -106,8 +108,8 @@ namespace ApiNewProject.Controllers
             {
                 var pedido = await _context.Pedidos
                     .Include(p => p.Detallepedidos)
-                     .Include(p => p.Domicilios)
-                     .FirstOrDefaultAsync(p => p.PedidoId == id);
+                    .Include(p => p.Domicilios)
+                    .FirstOrDefaultAsync(p => p.PedidoId == id);
                 if (pedido == null)
                 {
                     return NotFound();
