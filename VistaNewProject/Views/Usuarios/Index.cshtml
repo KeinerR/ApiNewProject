@@ -3,21 +3,20 @@
     ViewData["Title"] = "Index";
 }
 
-
 <!-- Botón para abrir el modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clienteModal">
-    Agregar Cliente
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#usuarioModal">
+    Agregar Usuario
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="clienteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="usuarioModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Agregar Cliente</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Agregar Usuario</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form asp-controller="Usuarios" asp-action="Create" method="post">
+            <form asp-controller="Usuarios" asp-action=" method="post">
                 <div class="modal-body">
 
                     <div class="form-group">
@@ -70,31 +69,31 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.UsuarioId)
+                UsuarioId
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.RolId)
+                RolId
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Nombre)
+                Nombre
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Apellido)
+                Apellido
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Usuario1)
+                Usuario
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Contraseña)
+                Contraseña
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Telefono)
+                Telefono
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Correo)
+                Correo
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EstadoUsuario)
+                EstadoUsuario
             </th>
             <th></th>
         </tr>
@@ -104,45 +103,41 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayNameFor(model => model.UsuarioId)
+                    @Html.DisplayFor(modelItem => item.UsuarioId)
                 </td>
                 <td>
-                    @Html.DisplayNameFor(model => model.RolId)
+                    @Html.DisplayFor(modelItem => item.RolId)
                 </td>
                 <td>
-                    @Html.DisplayNameFor(model => model.Nombre)
+                    @Html.DisplayFor(modelItem => item.Nombre)
                 </td>
                 <td>
-                    @Html.DisplayNameFor(model => model.Apellido)
+                    @Html.DisplayFor(modelItem => item.Apellido)
                 </td>
                 <td>
-                    @Html.DisplayNameFor(model => model.Usuario1)
+                    @Html.DisplayFor(modelItem => item.Usuario1)
                 </td>
                 <td>
-                    @Html.DisplayNameFor(model => model.Contraseña)
+                    @Html.DisplayFor(modelItem => item.Contraseña)
                 </td>
                 <td>
-                    @Html.DisplayNameFor(model => model.Telefono)
+                    @Html.DisplayFor(modelItem => item.Telefono)
                 </td>
                 <td>
-                    @Html.DisplayNameFor(model => model.Correo)
+                    @Html.DisplayFor(modelItem => item.Correo)
                 </td>
                 <td>
-                    @Html.DisplayNameFor(model => model.EstadoUsuario)
+                    @Html.DisplayFor(modelItem => item.EstadoUsuario)
                 </td>
 
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
-                    <button class="btn btn-warning" onclick="obtenerDatosCliente(@item.UsuarioId)" data-cliente-id="@item.UsuarioId" data-bs-toggle="modal" data-bs-target="#clienteModal">Editar</button>
-
-                    <button class="btn btn-danger" onclick="eliminarCliente('@item.UsuarioId')">Eliminar</button>
-
-
+                    <button class="btn btn-warning" onclick="obtenerDatosUsuario('@item.UsuarioId')" data-cliente-id="@item.UsuarioId" data-bs-toggle="modal" data-bs-target="#clienteModal">Editar</button>
+                    <button class="btn btn-danger" onclick="eliminarUsuario('@item.UsuarioId')">Eliminar</button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
-<script src="~/js/Usuarios.js"></script>
+<script src="~/js/usuarios.js"></script>

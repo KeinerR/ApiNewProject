@@ -94,24 +94,23 @@ namespace ApiNewProject.Controllers
         }
 
 
-        [HttpPut("UpdateClientes")]
-        public async Task<ActionResult> UpdateClientes(Cliente cliente)
+        [HttpPut("UpdateUsuarios")]
+        public async Task<ActionResult> UpdateUsuarios(Usuario usuario)
         {
-            var clientes = await _context.Clientes.FirstOrDefaultAsync(s => s.ClienteId == cliente.ClienteId);
+            var usuarios = await _context.Usuarios.FirstOrDefaultAsync(s => s.UsuarioId == usuario.UsuarioId);
 
-            if (clientes == null)
+            if (usuarios == null)
             {
                 return NotFound();
             }
-            clientes.ClienteId = cliente.ClienteId;
-            clientes.Identificacion = cliente.Identificacion;
-            clientes.NombreEntidad = cliente.NombreEntidad;
-            clientes.NombreCompleto = cliente.NombreCompleto;
-            clientes.TipoCliente = cliente.TipoCliente;
-            clientes.Telefono = cliente.Telefono;
-            clientes.Correo = cliente.Correo;
-            clientes.Direccion = cliente.Direccion;
-            clientes.EstadoCliente = cliente.EstadoCliente;
+            usuarios.UsuarioId = usuario.UsuarioId;
+            usuarios.Nombre = usuario.Nombre;
+            usuarios.Apellido = usuario.Apellido;
+            usuarios.Usuario1 = usuario.Usuario1;
+            usuarios.Contraseña = usuario.Contraseña;
+            usuarios.Telefono = usuario.Telefono;
+            usuarios.Correo = usuario.Correo;
+            usuarios.EstadoUsuario= usuario.EstadoUsuario;
 
             await _context.SaveChangesAsync();
             return Ok();
@@ -120,12 +119,12 @@ namespace ApiNewProject.Controllers
         [HttpDelete("DeleteUser/{Id}")]
         public async Task<HttpStatusCode> DeleteUser(int Id)
         {
-            var cliente = new Cliente()
+            var usuario = new Usuario()
             {
-                ClienteId = Id
+                UsuarioId = Id
             };
-            _context.Clientes.Attach(cliente);
-            _context.Clientes.Remove(cliente);
+            _context.Usuarios.Attach(usuario);
+            _context.Usuarios.Remove(usuario);
             await _context.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
