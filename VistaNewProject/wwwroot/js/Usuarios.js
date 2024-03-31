@@ -1,11 +1,12 @@
-﻿
-document.addEventListener('DOMContentLoaded', function () {
+﻿document.addEventListener('DOMContentLoaded', function () {
+    
     // Agrega un evento 'submit' al formulario
     document.querySelector('form').addEventListener('submit', function (event) {
         event.preventDefault(); // Evitar que el formulario se envíe de forma tradicional
 
         // Obtener los valores de los campos del formulario
         const nombre = document.getElementById('Nombre').value;
+        const rolId = document.getElementById('RolId').value;
         const apellido = document.getElementById('Apellido').value;
         const usuario = document.getElementById('Usuario').value;
         const contraseña = document.getElementById('Contraseña').value;
@@ -14,16 +15,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const estadoUsuario = document.getElementById('EstadoUsuario').value;
 
         // Crear un objeto con los valores del formulario
-        const usuario = {
+        const usuarioObjeto = {
+            RolId: rolId,
             Nombre: nombre,
             Apellido: apellido,
-            Usuario: usuario,
+            Usuario1: usuario,
             Contraseña: contraseña,
             Telefono: telefono,
             Correo: correo,
             EstadoUsuario: estadoUsuario
         };
-        console.log(usuario)
 
         // Enviar la solicitud POST al servidor utilizando la Fetch API
         fetch('https://localhost:7013/api/Usuarios/InsertUsuario', {
@@ -31,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(usuario)
+            body: JSON.stringify(usuarioObjeto)
         })
             .then(response => {
                 if (!response.ok) {
@@ -42,6 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 console.log('Respuesta del servidor:', data);
                 // Manejar la respuesta del servidor según sea necesario
+                location.reload(); // Esto recarga la página
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -81,14 +83,23 @@ function obtenerDatosUsuario(usuarioId) {
         .then(usuario => {
             // Llenar los campos del formulario modal con los datos del cliente
             console.log(usuario)
-            document.getElementById('UsuarioId').value = usuario.UsuarioId;
-            document.getElementById('Nombre').value = usuario.Identificacion;
-            document.getElementById('Apellido').value = usuario.NombreEntidad;
-            document.getElementById('Usuario').value = usuario.NombreCompleto;
-            document.getElementById('Contraseña').value = usuario.TipoCliente;
-            document.getElementById('Telefono').value = usuario.Telefono;
-            document.getElementById('Correo').value = usuario.Correo;
-            document.getElementById('EstadoUsuario').value = usuario.EstadoUsuario;
+            document.getElementById('UsuarioId').value = usuario.usuarioId;
+            document.getElementById('RolId').value = usuario.rolId;
+            document.getElementById('Nombre').value = usuario.nombre;
+            document.getElementById('Apellido').value = usuario.apellido;
+            document.getElementById('Usuario').value = usuario.usuario1;
+            document.getElementById('Contraseña').value = usuario.contraseña;
+            document.getElementById('Telefono').value = usuario.telefono;
+            document.getElementById('Correo').value = usuario.correo;
+            document.getElementById('EstadoUsuario').value = usuario.estadoUsuario;
+
+            // Cambiar el título de la ventana modal
+            document.getElementById('TituloModal').innerText = 'Editar Usuario';
+            // Ocultar el botón "Agregar" y mostrar el botón "Actualizar Usuario"
+            document.getElementById('btnGuardar').style.display = 'none';
+            document.getElementById('btnEditar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
+
+           
         })
         .catch(error => {
             console.error('Error:', error);
@@ -97,6 +108,7 @@ function obtenerDatosUsuario(usuarioId) {
 
 function ActualizarUsuario() {
     const usuarioid = document.getElementById('UsuarioId').value;
+    const rolId = document.getElementById('RolId').value;
     const nombre = document.getElementById('Nombre').value;
     const apellido = document.getElementById('Apellido').value;
     const usuario = document.getElementById('Usuario').value;
@@ -105,10 +117,12 @@ function ActualizarUsuario() {
     const correo = document.getElementById('Correo').value;
     const estadoUsuario = document.getElementById('EstadoUsuario').value;
 
-    const usuario = {
+    const usuarioObjeto = {
+        UsuarioId: usuarioid,
+        RolId: rolId,
         Nombre: nombre,
         Apellido: apellido,
-        Usuario: usuario,
+        Usuario1: usuario,
         Contraseña: contraseña,
         Telefono: telefono,
         Correo: correo,
@@ -120,7 +134,7 @@ function ActualizarUsuario() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(cliente)
+        body: JSON.stringify(usuarioObjeto)
     })
         .then(response => {
             if (response.ok) {
@@ -134,4 +148,21 @@ function ActualizarUsuario() {
             console.error('Error:', error);
             alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
         });
+}
+
+function limpiarFormulario() {
+    // Limpiar los valores de los campos del formulario
+    document.getElementById('UsuarioId').value = '';
+    document.getElementById('RolId').value = '';
+    document.getElementById('Nombre').value = '';
+    document.getElementById('Apellido').value = '';
+    document.getElementById('Usuario').value = '';
+    document.getElementById('Contraseña').value = '';
+    document.getElementById('Telefono').value = '';
+    document.getElementById('Correo').value = '';
+    document.getElementById('EstadoUsuario').value = '';
+
+    document.getElementById('TituloModal').innerText = 'Agregar Usuario';
+    document.getElementById('btnGuardar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
+    document.getElementById('btnEditar').style.display = 'none';
 }

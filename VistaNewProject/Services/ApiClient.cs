@@ -334,23 +334,23 @@ namespace VistaNewProject.Services
         }
         public async Task<HttpResponseMessage> CreateUsuarioAsync(Usuario usuario)
         {
-            var response = await _httpClient.PostAsJsonAsync("", usuario);
+            var response = await _httpClient.PostAsJsonAsync("Usuarios/InsertUsuario", usuario);
             return response;
         }
         public async Task<Usuario> FindUsuarioAsync(int id)
         {
-            var response = await _httpClient.GetFromJsonAsync<Usuario>($"?={id}");
+            var response = await _httpClient.GetFromJsonAsync<Usuario>($"Usuarios/GetUsuariosById?={id}");
             return response;
         }
 
         public async Task<HttpResponseMessage> UpdateUsuarioAsync(Usuario usuario)
         {
-            var response = await _httpClient.PutAsJsonAsync("", usuario);
+            var response = await _httpClient.PutAsJsonAsync("Usuarios/UpdateUsuarios", usuario);
             return response;
         }
         public async Task<HttpResponseMessage> DeleteUsuarioAsync(int id)
         {
-            var response = await _httpClient.DeleteAsync($"/{id}");
+            var response = await _httpClient.DeleteAsync($"Usuarios/DeleteUser/{id}");
             return response;
         }
 
