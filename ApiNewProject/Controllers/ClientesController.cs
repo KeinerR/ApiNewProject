@@ -74,60 +74,59 @@ namespace ApiNewProject.Controllers
         }
 
 
-    [HttpPost("InsertarCliente")]
-public async Task<ActionResult<Cliente>> InsertarCliente(Cliente cliente)
+    [HttpPost("InsertUsuario")]
+public async Task<ActionResult<Usuario>> InsertUsaurio(Usuario usuario)
 {
     try
     {
-        if (cliente == null)
+        if (usuario == null)
         {
-            return BadRequest("Los datos del cliente no pueden ser nulos.");
+            return BadRequest("Los datos del usuario no pueden ser nulos.");
         }
 
-        _context.Clientes.Add(cliente);
+        _context.Usuarios.Add(usuario);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetClienteById), new { id = cliente.ClienteId }, cliente);
+        return CreatedAtAction(nameof(GetClienteById), new { id = usuario.UsuarioId}, usuario);
     }
     catch (Exception ex)
     {
-        return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar el cliente en la base de datos: " + ex.Message);
+        return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar el usuario en la base de datos: " + ex.Message);
     }
 }
 
 
-        [HttpPut("UpdateClientes")]
-        public async Task<ActionResult> UpdateClientes(Cliente cliente)
+        [HttpPut("UpdateUsuario")]
+        public async Task<ActionResult> UpdateUsuario(Usuario usuario)
         {
-            var clientes = await _context.Clientes.FirstOrDefaultAsync(s => s.ClienteId == cliente.ClienteId);
+            var usuarios = await _context.Usuarios.FirstOrDefaultAsync(s => s.UsuarioId == usuario.UsuarioId);
 
-           if(clientes == null)
+           if(usuarios == null)
             {
                 return NotFound();
             }
-            clientes.ClienteId = cliente.ClienteId;
-            clientes.Identificacion = cliente.Identificacion;
-            clientes.NombreEntidad = cliente.NombreEntidad;
-            clientes.NombreCompleto = cliente.NombreCompleto;
-            clientes.TipoCliente = cliente.TipoCliente;
-            clientes.Telefono = cliente.Telefono;
-            clientes.Correo= cliente.Correo;
-            clientes.Direccion = cliente.Direccion;
-            clientes.EstadoCliente=cliente.EstadoCliente;
+            usuarios.UsuarioId= usuario.UsuarioId;
+            usuarios.Nombre = usuario.Nombre;
+            usuarios.Apellido = usuario.Apellido;
+            usuarios.Usuario1 = usuario.Usuario1;
+            usuarios.Contraseña = usuario.Contraseña;
+            usuarios.Telefono = usuario.Telefono;
+            usuarios.Correo = usuario.Correo;
+            usuarios.EstadoUsuario =usuario.EstadoUsuario;
 
             await _context.SaveChangesAsync();
             return Ok();
         }
 
-        [HttpDelete("DeleteUser/{Id}")]
-        public async Task<HttpStatusCode> DeleteUser(int Id)
+        [HttpDelete("DeleteUsuario/{Id}")]
+        public async Task<HttpStatusCode> DeleteUsuario(int Id)
         {
-            var cliente = new Cliente()
+            var usuario = new Usuario()
             {
-                ClienteId = Id
+                UsuarioId = Id
             };
-            _context.Clientes.Attach(cliente);
-            _context.Clientes.Remove(cliente);
+            _context.Usuarios.Attach(usuario);
+            _context.Usuarios.Remove(usuario);
             await _context.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
