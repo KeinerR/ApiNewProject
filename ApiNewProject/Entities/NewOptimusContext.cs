@@ -27,12 +27,12 @@ namespace ApiNewProject.Entities
         public virtual DbSet<Movimiento> Movimientos { get; set; } = null!;
         public virtual DbSet<Pedido> Pedidos { get; set; } = null!;
         public virtual DbSet<Permiso> Permisos { get; set; } = null!;
-        public virtual DbSet<Presentacion> Presentacions { get; set; } = null!;
+        public virtual DbSet<Presentacion> Presentaciones { get; set; } = null!;
         public virtual DbSet<Producto> Productos { get; set; } = null!;
-        public virtual DbSet<Proveedor> Proveedors { get; set; } = null!;
+        public virtual DbSet<Proveedor> Proveedores { get; set; } = null!;
         public virtual DbSet<Rol> Rols { get; set; } = null!;
         public virtual DbSet<Rolxpermiso> Rolxpermisos { get; set; } = null!;
-        public virtual DbSet<Unidad> Unidads { get; set; } = null!;
+        public virtual DbSet<Unidad> Unidades { get; set; } = null!;
         public virtual DbSet<Usuario> Usuarios { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

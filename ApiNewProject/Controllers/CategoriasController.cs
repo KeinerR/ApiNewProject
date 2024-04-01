@@ -81,7 +81,7 @@ namespace ApiNewProject.Controllers
 
 
         [HttpPut("UpdateCategorias")]
-        public async Task<ActionResult> UpdateClientes(Categoria categoria)
+        public async Task<ActionResult> UpdateCategorias(Categoria categoria)
         {
             var categorias = await _context.Categoria.FirstOrDefaultAsync(s => s.CategoriaId == categoria.CategoriaId);
 
