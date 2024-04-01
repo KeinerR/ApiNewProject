@@ -176,7 +176,7 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.EstadoDomicilio)
                     .HasMaxLength(20)
-                    .HasDefaultValueSql("'Pendiente'");
+                    .HasDefaultValueSql("Pendiente");
 
                 entity.Property(e => e.FechaEntrega)
                     .HasColumnType("datetime")
@@ -278,8 +278,8 @@ namespace ApiNewProject.Entities
                 entity.Property(e => e.ClienteId).HasColumnName("ClienteID");
 
                 entity.Property(e => e.EstadoPedido)
-                    .HasColumnType("bit(1)")
-                    .HasDefaultValueSql("b'1'");
+                       .HasMaxLength(20);
+
 
                 entity.Property(e => e.FechaPedido)
                     .HasColumnType("datetime")

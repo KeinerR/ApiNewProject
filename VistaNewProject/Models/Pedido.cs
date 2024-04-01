@@ -6,7 +6,7 @@
         public int? ClienteId { get; set; }
         public string? TipoServicio { get; set; }
         public DateTime? FechaPedido { get; set; }
-        public ulong? EstadoPedido { get; set; }
+        public string? EstadoPedido { get; set; }
 
 
         public virtual Cliente? Cliente { get; set; }
