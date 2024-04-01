@@ -65,7 +65,7 @@ namespace ApiNewProject.Controllers
             {
                 if (marca == null)
                 {
-                    return BadRequest("Los datos de la categoria no pueden ser nulos.");
+                    return BadRequest("Los datos de la marca no pueden ser nulos.");
                 }
 
                 _context.Marcas.Add(marca);
@@ -80,17 +80,17 @@ namespace ApiNewProject.Controllers
         }
 
 
-        [HttpPut("UpdateMarca")]
+        [HttpPut("UpdateMarcas")]
         public async Task<ActionResult> UpdateMarcas(Marca marca)
         {
             var marcas = await _context.Marcas.FirstOrDefaultAsync(s => s.MarcaId == marca.MarcaId);
 
-            if (marca == null)
+            if (marcas == null)
             {
                 return NotFound();
             }
-            marcas.MarcaId = marcas.MarcaId;
-            marcas.NombreMarca = marcas.NombreMarca;
+            marcas.MarcaId = marca.MarcaId;
+            marcas.NombreMarca = marca.NombreMarca;
 
             await _context.SaveChangesAsync();
             return Ok();
@@ -108,5 +108,6 @@ namespace ApiNewProject.Controllers
             await _context.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
+
     }
 }

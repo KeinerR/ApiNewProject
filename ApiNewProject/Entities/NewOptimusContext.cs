@@ -27,12 +27,12 @@ namespace ApiNewProject.Entities
         public virtual DbSet<Movimiento> Movimientos { get; set; } = null!;
         public virtual DbSet<Pedido> Pedidos { get; set; } = null!;
         public virtual DbSet<Permiso> Permisos { get; set; } = null!;
-        public virtual DbSet<Presentacion> Presentacions { get; set; } = null!;
+        public virtual DbSet<Presentacion> Presentaciones { get; set; } = null!;
         public virtual DbSet<Producto> Productos { get; set; } = null!;
-        public virtual DbSet<Proveedor> Proveedors { get; set; } = null!;
+        public virtual DbSet<Proveedor> Proveedores { get; set; } = null!;
         public virtual DbSet<Rol> Rols { get; set; } = null!;
         public virtual DbSet<Rolxpermiso> Rolxpermisos { get; set; } = null!;
-        public virtual DbSet<Unidad> Unidads { get; set; } = null!;
+        public virtual DbSet<Unidad> Unidades { get; set; } = null!;
         public virtual DbSet<Usuario> Usuarios { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -176,7 +176,7 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.EstadoDomicilio)
                     .HasMaxLength(20)
-                    .HasDefaultValueSql("'Pendiente'");
+                    .HasDefaultValueSql("Pendiente");
 
                 entity.Property(e => e.FechaEntrega)
                     .HasColumnType("datetime")
@@ -278,8 +278,8 @@ namespace ApiNewProject.Entities
                 entity.Property(e => e.ClienteId).HasColumnName("ClienteID");
 
                 entity.Property(e => e.EstadoPedido)
-                    .HasColumnType("bit(1)")
-                    .HasDefaultValueSql("b'1'");
+                       .HasMaxLength(20);
+
 
                 entity.Property(e => e.FechaPedido)
                     .HasColumnType("datetime")
