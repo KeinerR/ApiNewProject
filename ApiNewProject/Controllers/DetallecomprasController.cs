@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ApiNewProject.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace ApiNewProject.Controllers
 {
@@ -7,5 +9,8 @@ namespace ApiNewProject.Controllers
     [ApiController]
     public class DetallecomprasController : ControllerBase
     {
+       
+
+        
     }
 }
