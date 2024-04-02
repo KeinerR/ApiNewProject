@@ -1,0 +1,152 @@
+﻿@model IEnumerable<VistaNewProject.Models.Usuario>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<!-- Botón para abrir el modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#usuarioModal">
+    Agregar Usuario
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="usuarioModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModal">Agregar Usuario</h5>
+                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <form asp-controller="Usuarios" asp-action="" method="post">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <input type="hidden" id="UsuarioId" name="usuarioId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="RolId" class="control-label">Rol ID</label>
+                        <input type="text" id="RolId" name="rolId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="nombre" class="control-label">Nombre</label>
+                        <input type="text" id="Nombre" name="nombre" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido" class="control-label">Apellido</label>
+                        <input type="text" id="Apellido" name="apellido" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="usuario" class="control-label">Usuario</label>
+                        <input type="text" id="Usuario" name="usuario" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="contraseña" class="control-label">Contraseña</label>
+                        <input type="text" id="Contraseña" name="contraseña" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono" class="control-label">Teléfono</label>
+                        <input type="text" id="Telefono" name="telefono" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="correo" class="control-label">Correo</label>
+                        <input type="text" id="Correo" name="correo" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="estadoUsuario" class="control-label">Estado Usuario</label>
+                        <input type="text" id="EstadoUsuario" name="estadoUsuario" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" onclick="ActualizarUsuario()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Usuario</button>
+                </div>
+
+
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                UsuarioId
+            </th>
+            <th>
+                RolId
+            </th>
+            <th>
+                Nombre
+            </th>
+            <th>
+                Apellido
+            </th>
+            <th>
+                Usuario
+            </th>
+            <th>
+                Contraseña
+            </th>
+            <th>
+                Telefono
+            </th>
+            <th>
+                Correo
+            </th>
+            <th>
+                EstadoUsuario
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UsuarioId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RolId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Apellido)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Usuario1)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Contraseña)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Telefono)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Correo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EstadoUsuario)
+                </td>
+
+                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                <td>
+                    <button class="btn btn-warning" onclick="obtenerDatosUsuario('@item.UsuarioId')" data-cliente-id="@item.UsuarioId" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button>
+                    <button class="btn btn-danger" onclick="eliminarUsuario('@item.UsuarioId')">Eliminar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="~/js/usuarios.js"></script>
