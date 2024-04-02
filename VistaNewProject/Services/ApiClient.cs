@@ -227,7 +227,38 @@ namespace VistaNewProject.Services
             var response = await _httpClient.DeleteAsync($"/{id}");
             return response;
         }
+        public async Task<IEnumerable<Usuario>> GetUsuarioAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Usuario>>("Usuarios/GetUsuarios");
 
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró el usuario con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<HttpResponseMessage> CreateUsuarioAsync(Usuario usuario)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Usuarios/InsertUsuario", usuario);
+            return response;
+        }
+        public async Task<Usuario> FindUsuarioAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Usuario>($"Usuarios/GetUsuariosById?={id}");
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateUsuarioAsync(Usuario usuario)
+        {
+            var response = await _httpClient.PutAsJsonAsync("Usuarios/UpdateUsuarios", usuario);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeleteUsuarioAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"Usuarios/DeleteUser/{id}");
+            return response;
+        }
         public Task<IEnumerable<Unidad>> GetUnidadAsync()
         {
             throw new NotImplementedException();
@@ -299,31 +330,6 @@ namespace VistaNewProject.Services
         }
 
         public Task<HttpResponseMessage> DeleteProveedorAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Usuario>> GetUsuarioAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<HttpResponseMessage> CreateUsuarioAsync(Usuario usuario)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Usuario> FindUsuarioAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<HttpResponseMessage> UpdateUsuarioAsync(Usuario usuario)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<HttpResponseMessage> DeleteUsuarioAsync(int id)
         {
             throw new NotImplementedException();
         }
@@ -528,131 +534,7 @@ namespace VistaNewProject.Services
             throw new NotImplementedException();
         }
 
-        /// UNIDAD
-        /// 
-        //public async Task<IEnumerable<Unidad>> GetUnidadAsync()
-        //{
-        //    var response = await _httpClient.GetFromJsonAsync<IEnumerable<Unidad>>("");
-
-
-
-
-        //    public async Task<HttpResponseMessage> UpdateUnidadAsync(Unidad unidad)
-        //    {
-        //        var response = await _httpClient.PutAsJsonAsync("", unidad);
-        //        return response;
-        //    }
-        //    public async Task<HttpResponseMessage> DeleteUnidadAsync(int id)
-        //    {
-        //        var response = await _httpClient.DeleteAsync($"/{id}");
-        //        return response;
-        //    }
-
-
-        //    /// PRODUCTO
-        //    /// 
-        //    public async Task<IEnumerable<Producto>> GetProductoAsync()
-        //    {
-        //        var response = await _httpClient.GetFromJsonAsync<IEnumerable<Producto>>("");
-
-        //        if (response == null)
-        //        {
-        //            // Manejar el caso en el que response sea nulo
-        //            throw new Exception("No se encontró el producto con el ID especificado.");
-        //        }
-        //        return response;
-        //    }
-        //    public async Task<HttpResponseMessage> CreateProductoAsync(Producto producto)
-        //    {
-        //        var response = await _httpClient.PostAsJsonAsync("", producto);
-        //        return response;
-        //    }
-        //    public async Task<Producto> FindProductoAsync(int id)
-        //    {
-        //        var response = await _httpClient.GetFromJsonAsync<Producto>($"?={id}");
-        //        return response;
-        //    }
-
-        //    public async Task<HttpResponseMessage> UpdateProductoAsync(Producto producto)
-        //    {
-        //        var response = await _httpClient.PutAsJsonAsync("", producto);
-        //        return response;
-        //    }
-        //    public async Task<HttpResponseMessage> DeleteProductoAsync(int id)
-        //    {
-        //        var response = await _httpClient.DeleteAsync($"/{id}");
-        //        return response;
-        //    }
-
-        //    /// PROVEEDOR
-        //    /// 
-        //    public async Task<IEnumerable<Proveedor>> GetProveedorAsync()
-        //    {
-        //        var response = await _httpClient.GetFromJsonAsync<IEnumerable<Proveedor>>("");
-
-        //        if (response == null)
-        //        {
-        //            // Manejar el caso en el que response sea nulo
-        //            throw new Exception("No se encontró el proveedor con el ID especificado.");
-        //        }
-        //        return response;
-        //    }
-        //    public async Task<HttpResponseMessage> CreateProveedorAsync(Proveedor proveedor)
-        //    {
-        //        var response = await _httpClient.PostAsJsonAsync("", proveedor);
-        //        return response;
-        //    }
-        //    public async Task<Proveedor> FindProveedorAsync(int id)
-        //    {
-        //        var response = await _httpClient.GetFromJsonAsync<Proveedor>($"?={id}");
-        //        return response;
-        //    }
-
-        //    public async Task<HttpResponseMessage> UpdateProveedorAsync(Proveedor proveedor)
-        //    {
-        //        var response = await _httpClient.PutAsJsonAsync("", proveedor);
-        //        return response;
-        //    }
-        //    public async Task<HttpResponseMessage> DeleteProveedorAsync(int id)
-        //    {
-        //        var response = await _httpClient.DeleteAsync($"/{id}");
-        //        return response;
-        //    }
-
-        //    /// USUARIO
-        //    /// 
-        //    public async Task<IEnumerable<Usuario>> GetUsuarioAsync()
-        //    {
-        //        var response = await _httpClient.GetFromJsonAsync<IEnumerable<Usuario>>("");
-
-        //        if (response == null)
-        //        {
-        //            // Manejar el caso en el que response sea nulo
-        //            throw new Exception("No se encontró el usuario con el ID especificado.");
-        //        }
-        //        return response;
-        //    }
-        //    public async Task<HttpResponseMessage> CreateUsuarioAsync(Usuario usuario)
-        //    {
-        //        var response = await _httpClient.PostAsJsonAsync("", usuario);
-        //        return response;
-        //    }
-        //    public async Task<Usuario> FindUsuarioAsync(int id)
-        //    {
-        //        var response = await _httpClient.GetFromJsonAsync<Usuario>($"?={id}");
-        //        return response;
-        //    }
-
-        //    public async Task<HttpResponseMessage> UpdateUsuarioAsync(Usuario usuario)
-        //    {
-        //        var response = await _httpClient.PutAsJsonAsync("", usuario);
-        //        return response;
-        //    }
-        //    public async Task<HttpResponseMessage> DeleteUsuarioAsync(int id)
-        //    {
-        //        var response = await _httpClient.DeleteAsync($"/{id}");
-        //        return response;
-        //    }
+        
 
         //    /// MOVIMIENTO
         //    /// 
@@ -912,7 +794,6 @@ namespace VistaNewProject.Services
         //        }
         //        return response;
         //    }
-
         //    public async Task<HttpResponseMessage> CreateRolxpermisoAsync(Rolxpermiso rolxpermiso)
         //    {
         //        var response = await _httpClient.PostAsJsonAsync("", rolxpermiso);
@@ -935,6 +816,8 @@ namespace VistaNewProject.Services
         //        return response;
         //    }
 
+        //}
     }
+}
 
-    }
+

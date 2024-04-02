@@ -47,7 +47,7 @@ namespace ApiNewProject.Controllers
         [HttpGet("GetClienetById")]
         public async Task<ActionResult<Cliente>> GetClienteById(int Id)
         {
-          
+
             Cliente cliente = await _context.Clientes.Select(
                     s => new Cliente
                     {
@@ -74,26 +74,26 @@ namespace ApiNewProject.Controllers
         }
 
 
-    [HttpPost("InsertarCliente")]
-public async Task<ActionResult<Cliente>> InsertarCliente(Cliente cliente)
-{
-    try
-    {
-        if (cliente == null)
+        [HttpPost("InsertarCliente")]
+        public async Task<ActionResult<Cliente>> InsertarCliente(Cliente cliente)
         {
-            return BadRequest("Los datos del cliente no pueden ser nulos.");
+            try
+            {
+                if (cliente == null)
+                {
+                    return BadRequest("Los datos del cliente no pueden ser nulos.");
+                }
+
+                _context.Clientes.Add(cliente);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(GetClienteById), new { id = cliente.ClienteId }, cliente);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar el cliente en la base de datos: " + ex.Message);
+            }
         }
-
-        _context.Clientes.Add(cliente);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetClienteById), new { id = cliente.ClienteId }, cliente);
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar el cliente en la base de datos: " + ex.Message);
-    }
-}
 
 
         [HttpPut("UpdateClientes")]
@@ -101,7 +101,7 @@ public async Task<ActionResult<Cliente>> InsertarCliente(Cliente cliente)
         {
             var clientes = await _context.Clientes.FirstOrDefaultAsync(s => s.ClienteId == cliente.ClienteId);
 
-           if(clientes == null)
+            if (clientes == null)
             {
                 return NotFound();
             }
@@ -111,9 +111,9 @@ public async Task<ActionResult<Cliente>> InsertarCliente(Cliente cliente)
             clientes.NombreCompleto = cliente.NombreCompleto;
             clientes.TipoCliente = cliente.TipoCliente;
             clientes.Telefono = cliente.Telefono;
-            clientes.Correo= cliente.Correo;
+            clientes.Correo = cliente.Correo;
             clientes.Direccion = cliente.Direccion;
-            clientes.EstadoCliente=cliente.EstadoCliente;
+            clientes.EstadoCliente = cliente.EstadoCliente;
 
             await _context.SaveChangesAsync();
             return Ok();
