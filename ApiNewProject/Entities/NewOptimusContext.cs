@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+
+using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -287,7 +289,7 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.TipoServicio).HasMaxLength(50);
 
-              
+
 
                 entity.HasOne(d => d.Cliente)
                     .WithMany(p => p.Pedidos)

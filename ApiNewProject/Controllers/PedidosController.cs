@@ -1,4 +1,5 @@
-﻿using ApiNewProject.Entities;
+﻿
+using ApiNewProject.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,7 @@ namespace ApiNewProject.Controllers
         [HttpPost("InsertPedidos")]
         public async Task<IActionResult> InsertPedidos(Pedido pedido)
         {
+            Console.WriteLine(pedido.TipoServicio);
             try
             {
                 var vlPedido = new Pedido
@@ -57,22 +59,6 @@ namespace ApiNewProject.Controllers
                     Detallepedidos = new List<Detallepedido>(),
                     Domicilios = new List<Domicilio>()
                 };
-
-                foreach (var item in pedido.Detallepedidos)
-                {
-                    if (!item.Cantidad.HasValue || !item.PrecioUnitario.HasValue)
-                    {
-                        return BadRequest("Cantidad y PrecioUnitario son requeridos.");
-                    }
-
-                    vlPedido.Detallepedidos.Add(new Detallepedido
-                    {
-                        PedidoId = vlPedido.PedidoId,
-                        ProductoId = item.ProductoId,
-                        Cantidad = item.Cantidad.Value,
-                        PrecioUnitario = item.PrecioUnitario.Value
-                    });
-                }
 
                 if (pedido.TipoServicio == "Domicilio")
                 {
@@ -89,6 +75,23 @@ namespace ApiNewProject.Controllers
                         });
                     }
                 }
+                foreach (var item in pedido.Detallepedidos)
+                {
+                    if (!item.Cantidad.HasValue || !item.PrecioUnitario.HasValue)
+                    {
+                        return BadRequest("Cantidad y PrecioUnitario son requeridos.");
+                    }
+
+                    vlPedido.Detallepedidos.Add(new Detallepedido
+                    {
+                        PedidoId = vlPedido.PedidoId,
+                        ProductoId = item.ProductoId,
+                        Cantidad = item.Cantidad.Value,
+                        PrecioUnitario = item.PrecioUnitario.Value
+                    });
+                }
+
+
 
 
                 _context.Pedidos.Add(vlPedido);

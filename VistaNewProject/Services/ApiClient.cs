@@ -162,7 +162,7 @@ namespace VistaNewProject.Services
         /// 
         public async Task<IEnumerable<Marca>> GetMarcaAsync()
         {
-            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Marca>>("");
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Marca>>("Marcas/GetMarcas");
 
             if (response == null)
             {

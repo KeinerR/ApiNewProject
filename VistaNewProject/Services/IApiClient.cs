@@ -47,7 +47,7 @@ namespace VistaNewProject.Services
 
         Task<HttpResponseMessage> DeleteCompraAsync(int id);
 
-        // compra
+        // marca
 
         Task<IEnumerable<Marca>> GetMarcaAsync();
 
