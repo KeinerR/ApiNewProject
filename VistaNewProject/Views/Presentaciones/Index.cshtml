@@ -1,0 +1,92 @@
+﻿@model IEnumerable<VistaNewProject.Models.Presentacion>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<!-- Botón para abrir el modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#presentacionModal">
+    Agregar Presentacion
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="presentacionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModal">Agregar Presentacion</h5>
+                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <form asp-controller="Presentaciones" asp-action="" method="post">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <input type="hidden" id="PresentacionId" name="presentacionId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NombrePresentacion " class="control-label">Nombre presentacion</label>
+                        <input type="text" id="NombrePresentacion " name="nombrepresentacion" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="descripcionpresentacion" class="control-label">Descripcion de la Presentacion</label>
+                        <input type="text" id="DescripcionPresentacion" name="descripcionpresentacion" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" onclick="ActualizarPresentacion()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Presentacion</button>
+                </div>
+
+
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                PresentacionId
+            </th>
+            <th>
+                NombrePresentacion
+            </th>
+            <th>
+                DescripcionPresentacion
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PresentacionId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NombrePresentacion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DescripcionPresentacion)
+                </td>
+
+
+                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                <td>
+                    <button class="btn btn-warning" onclick="obtenerDatosPresentacion('@item.PresentacionId')" data-cliente-id="@item.PresentacionId" data-bs-toggle="modal" data-bs-target="#presentacionModal">Editar</button>
+                    <button class="btn btn-danger" onclick="eliminarPresentacion('@item.PresentacionId')">Eliminar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="~/js/Presentaciones.js"></script>
