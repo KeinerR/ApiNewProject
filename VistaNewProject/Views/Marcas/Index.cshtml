@@ -1,0 +1,121 @@
+﻿@model IEnumerable<VistaNewProject.Models.Marca>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<style>
+    /* Estilos para el formulario */
+    #formMarca {
+        margin-bottom: 20px;
+    }
+
+        /* Estilos para los botones del formulario */
+        #formMarca button {
+            margin-top: 10px;
+        }
+
+    /* Estilos para la tabla */
+    table {
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    .w-auto {
+        width: auto !important;
+        max-width: 90%; /* Puedes ajustar el máximo ancho según tus necesidades */
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    th, td {
+        text-align: center;
+    }
+
+    /* Estilos para el pie de tabla */
+    .modal-footer {
+        justify-content: space-between;
+    }
+
+    /* Estilos para el botón "Agregar pedido" */
+    .btn-agregar-marca {
+        margin-bottom: 10px;
+    }
+</style>
+
+<!-- Botón para abrir el modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clienteModal">
+    Registrar marca
+</button>
+<div class="modal fade" id="clienteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <!-- Agrega la clase modal-lg para hacer el modal más ancho -->
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Agregar Marca</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div style=" display:flex;">
+                    <div class="col-md-4 mb-4">
+                        <!-- Primer formulario -->
+                        <form id="formMarca" asp-controller="Marcas" asp-action="Create" method="post">
+
+                            <div class="mb-3">
+                                <label for="MarcaId1" class="form-label">Marca</label>
+                            </div>
+                            <div class="mb-3">
+                                <label for="NombreMarca1" class="form-label">Nombre de la marca</label>
+                            </div>
+                            <div class="modal-footer>
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button id="btnGuardarMarca" type="button" class="btn btn-primary">Guardar Marca</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.MarcaId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NombreMarca)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MarcaId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NombreMarca)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.MarcaId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.MarcaId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.MarcaId })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script src="~/js/marcas.js"></script>
