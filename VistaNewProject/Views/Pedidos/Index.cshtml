@@ -59,7 +59,10 @@
                     <div class="col-md-4 mb-4">
                         <!-- Primer formulario -->
                         <form id="formPedido" asp-controller="Pedidos" asp-action="Create" method="post">
-
+                            <div class="mb-3 d-none">
+                                <label for="PedidoId" class="form-label">Fecha Pedido</label>
+                                <input type="hidden" id="PedidoId" name="PedidoId" class="form-control" />
+                            </div>
                             <div class="mb-3">
                                 <label for="ClienteId1" class="form-label">Cliente</label>
                                 <select id="ClienteId1" name="ClienteId" class="form-select">

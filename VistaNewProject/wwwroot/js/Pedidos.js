@@ -123,3 +123,35 @@ document.getElementById("TipoServicio1").addEventListener("change", function () 
         domicilioFormContainer.classList.add("d-none");
     }
 });
+
+function obtenerDatosPedido(PedidoId) {
+    fetch(`https://localhost:7013/api/Pedidos/GetPedidos?id=${PedidoId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al obtener los datos del cliente.');
+            }
+            return response.json();
+        })
+        .then(cliente => {
+            // Llenar los campos del formulario modal con los datos del cliente
+            console.log(pedido)
+             document.getElementById("ClienteId1").value,
+            TipoServicio: tipoServicio,
+            FechaPedido: document.getElementById("FechaPedido1").value,
+                EstadoPedido: EstadoPedido,
+
+                document.getElementById('PedidoId').value = pedido.PedidoId;
+            document.getElementById('ClienteId1').value = PedidoId.ClienteId1;
+            document.getElementById('TipoServicio1').value = pedido.TipoServicio1;
+            document.getElementById('NombreEntidad').value = cliente.nombreEntidad;
+            document.getElementById('NombreCompleto').value = cliente.nombreCompleto;
+            document.getElementById('TipoCliente').value = cliente.tipoCliente;
+            document.getElementById('Telefono').value = cliente.telefono;
+            document.getElementById('Correo').value = cliente.correo;
+            document.getElementById('Direccion').value = cliente.direccion;
+            document.getElementById('EstadoCliente').value = cliente.estadoCliente;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}

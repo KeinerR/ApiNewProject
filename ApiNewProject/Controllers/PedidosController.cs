@@ -110,8 +110,7 @@ namespace ApiNewProject.Controllers
             try
             {
                 var pedido = await _context.Pedidos
-                    .Include(p => p.Detallepedidos)
-                    .Include(p => p.Domicilios)
+                  
                     .FirstOrDefaultAsync(p => p.PedidoId == id);
                 if (pedido == null)
                 {
@@ -176,32 +175,7 @@ namespace ApiNewProject.Controllers
                 pedidoExistente.FechaPedido = pedido.FechaPedido;
                 pedidoExistente.EstadoPedido = pedido.EstadoPedido;
 
-                _context.Detallepedidos.RemoveRange(pedidoExistente.Detallepedidos);
-
-
-                foreach (var detalle in pedido.Detallepedidos)
-                {
-                    pedidoExistente.Detallepedidos.Add(new Detallepedido
-                    {
-                        ProductoId = detalle.ProductoId,
-                        Cantidad = detalle.Cantidad,
-                        PrecioUnitario = detalle.PrecioUnitario
-                    });
-                }
-                _context.Domicilios.RemoveRange(pedidoExistente.Domicilios);
-
-                foreach (var domicilio in pedido.Domicilios)
-                {
-                    pedidoExistente.Domicilios.Add(new Domicilio
-                    {
-
-                        UsuarioId = domicilio.UsuarioId,
-                        Observacion = domicilio.Observacion,
-                        FechaEntrega = domicilio.FechaEntrega,
-                        DireccionDomiciliario = domicilio.DireccionDomiciliario,
-                        EstadoDomicilio = domicilio.EstadoDomicilio
-                    });
-                }
+              
                 // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
 

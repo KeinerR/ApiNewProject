@@ -1,20 +1,23 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
+    const marcaForm = document.getElementById('marcaForm');
+    const actualizarMarcaBtn = document.getElementById('ActualizarMarca');
+    const marcaIdInput = document.getElementById('MarcaId');
+    const nombreMarcaInput = document.getElementById('NombreMarca');
+
     // Agrega un evento 'submit' al formulario
-    document.querySelector('form').addEventListener('submit', function (event) {
+    marcaForm.addEventListener('submit', function (event) {
         event.preventDefault(); // Evitar que el formulario se envíe de forma tradicional
 
         // Obtener los valores de los campos del formulario
-        const nombremarca = document.getElementById('nombremarca').value;
+        const nombreMarca = nombreMarcaInput.value;
 
         // Crear un objeto con los valores del formulario
         const marca = {
-            nombremarca: nombremarca,
-
+            NombreMarca: nombreMarca
         };
-        console.log(marca)
 
         // Enviar la solicitud POST al servidor utilizando la Fetch API
-        fetch('https://localhost:7013/api/Clientes/InsertarCliente', {
+        fetch('https://localhost:7013/api/Marcas/InsertarMarca', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -36,21 +39,51 @@
                 // Manejar errores de la solicitud
             });
     });
+
+    // Agrega un evento 'click' al botón de actualizar marca
+    actualizarMarcaBtn.addEventListener('click', function () {
+        const marcaId = marcaIdInput.value;
+        const nombreMarca = nombreMarcaInput.value;
+
+        // Crear un objeto con los valores actualizados de la marca
+        const marcaActualizada = {
+            MarcaId: marcaId,
+            NombreMarca: nombreMarca
+        };
+
+        // Enviar la solicitud PUT al servidor para actualizar la marca
+        fetch(`https://localhost:7013/api/Marcas/UpdateMarcas`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(marcaActualizada)
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Marca actualizada correctamente.');
+                    location.reload(true); // Recargar la página después de la actualización
+                } else {
+                    alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
+            });
+    });
 });
 
-
 function eliminarMarca(marcaId) {
-    // Hacer la solicitud DELETE al servidor para eliminar el cliente
-    fetch(`https://localhost:7013/api/Clientes/DeleteUser/${clienteId}`, {
+    // Hacer la solicitud DELETE al servidor para eliminar la marca
+    fetch(`https://localhost:7013/api/Marcas/DeleteMarca/${marcaId}`, {
         method: 'DELETE',
     })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Error al eliminar la marca.');
             }
-            // Aquí puedes manejar la respuesta si es necesario
-            console.log('Cliente eliminado correctamente.');
-            // Recargar la página o actualizar la lista de clientes, según sea necesario
+            console.log('Marca eliminada correctamente.');
             location.reload(); // Esto recarga la página
         })
         .catch(error => {
@@ -58,54 +91,21 @@ function eliminarMarca(marcaId) {
         });
 }
 
-// Función para obtener los datos del cliente
 function obtenerDatosMarca(marcaId) {
-    fetch(`https://localhost:7013/api/Clientes/GetClienetById?id=${marcaId}`)
+    // Hacer la solicitud GET al servidor para obtener los datos de la marca
+    fetch(`https://localhost:7013/api/Marcas/GetMarcaById?id=${marcaId}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Error al obtener los datos de la marca.');
             }
             return response.json();
         })
-        .then(cliente => {
-            // Llenar los campos del formulario modal con los datos del cliente
-            console.log(cliente)
-            document.getElementById('marcaId').value = marca.marcaId;
-            document.getElementById('nombremarca').value = marca.nombremarca;
+        .then(marca => {
+            // Llenar los campos del formulario modal con los datos de la marca
+            document.getElementById('MarcaId').value = marca.marcaId;
+            document.getElementById('NombreMarca').value = marca.nombreMarca;
         })
         .catch(error => {
             console.error('Error:', error);
         });
 }
-function ActualizarMarca() {
-    const marcaId = document.getElementById('marcaId').value;
-    const nombremarca = document.getElementById('nombremarca').value;
-  
-
-    const marca = {
-        marcaId: marcaId,
-        nombremarca: nombremarca,
-
-    };
-
-    fetch(`https://localhost:7013/api/Clientes/UpdateClientes`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(marca)
-    })
-        .then(response => {
-            if (response.ok) {
-                alert('Marca actualizado correctamente.');
-                location.reload(true); // Recargar la página después de la actualización
-            } else {
-                alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
-        });
-}
-
