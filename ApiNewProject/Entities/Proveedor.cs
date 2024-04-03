@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ApiNewProject.Entities
 {
@@ -17,7 +18,7 @@ namespace ApiNewProject.Entities
         public string? Telefono { get; set; }
         public string? Correo { get; set; }
         public ulong? EstadoProveedor { get; set; }
-
+        [JsonIgnore]
         public virtual ICollection<Compra> Compras { get; set; }
     }
 }

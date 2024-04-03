@@ -1,0 +1,133 @@
+﻿@model IEnumerable<VistaNewProject.Models.Proveedor>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<!-- Botón para abrir el modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ProveedorModal">
+    Agregar Proveedor
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="ProveedorModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModal">Agregar Proveedor</h5>
+                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <form asp-controller="Proveedores" asp-action="" method="post">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <input type="hidden" id="ProveedorId" name="proveedorId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NombreEmpresa" class="control-label">Nombre empresa</label>
+                        <input type="text" id="NombreEmpresa" name="nombreEmpresa" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NombreContacto" class="control-label">Nombre contacto</label>
+                        <input type="text" id="NombreContacto" name="nombreContacto" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Direccion" class="control-label">Direccion</label>
+                        <input type="text" id="Direccion" name="direccion" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Telefono" class="control-label">Telefono</label>
+                        <input type="text" id="Telefono" name="telefono" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Correo" class="control-label">Correo</label>
+                        <input type="text" id="Correo" name="correo" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="EstadoProveedor" class="control-label">Estado Proveedor</label>
+                        <input type="text" id="EstadoProveedor" name="estadoProveedor" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" onclick="ActualizarProveedor()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Proveedor</button>
+                </div>
+
+
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+              ProveedorId
+            </th>
+            <th>
+                Nombre empresa
+            </th>
+            <th>
+                Nombre contacto
+            </th>
+            <th>
+                Direccion
+            </th>
+            <th>
+                Telefono
+            </th>
+            <th>
+                Correo
+            </th>
+            <th>
+                Estado Proveedor
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProveedorId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NombreEmpresa)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NombreContacto)
+                </td>
+               
+                <td>
+                    @Html.DisplayFor(modelItem => item.Direccion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Telefono)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Correo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EstadoProveedor)
+                </td>
+
+                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                <td>
+                    <button class="btn btn-warning" onclick="obtenerDatosProveedor('@item.ProveedorId')" data-cliente-id="@item.ProveedorId" data-bs-toggle="modal" data-bs-target="#ProveedorModal">Editar</button>
+                    <button class="btn btn-danger" onclick="eliminarProveedor('@item.ProveedorId')">Eliminar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="~/js/proveedor.js"></script>

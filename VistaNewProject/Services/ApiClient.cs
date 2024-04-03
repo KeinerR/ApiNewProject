@@ -309,9 +309,16 @@ namespace VistaNewProject.Services
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Proveedor>> GetProveedorAsync()
+        public async Task<IEnumerable<Proveedor>> GetProveedorAsync()
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Proveedor>>("Proveedores/GetProveedores");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la compra con el ID especificado.");
+            }
+            return response;
         }
 
         public Task<HttpResponseMessage> CreateProveedorAsync(Proveedor proveedor)
