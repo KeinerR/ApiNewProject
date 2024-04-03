@@ -484,10 +484,18 @@ namespace VistaNewProject.Services
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Rol>> GetRolAsync()
+        public async Task<IEnumerable<Rol>> GetRolAsync()
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Rol>>("Roles/GetRoles");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la compra con el ID especificado.");
+            }
+            return response;
         }
+
 
         public Task<HttpResponseMessage> CreateRolAsync(Rol Rol)
         {

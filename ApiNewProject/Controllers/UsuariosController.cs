@@ -19,7 +19,7 @@ namespace ApiNewProject.Controllers
 
 
         [HttpGet("GetUsuarios")]
-        public async Task<ActionResult<List<Usuario>>> GetUsuarioss()
+        public async Task<ActionResult<List<Usuario>>> GetUsuarios()
         {
             var List = await _context.Usuarios.Select(
                 s => new Usuario
