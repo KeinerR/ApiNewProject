@@ -1,0 +1,57 @@
+﻿@model VistaNewProject.Models.Usuario
+@{
+    Layout = null; // Esto elimina el layout actual, incluyendo el navbar.
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Encabezados -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LOGIN</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/Login.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="text-center font-weight-light my-4">
+                    <i class="fas fa-user" style="color: #6c757d; font-size: 2em;"></i>
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="text-center">
+                    <form asp-controller="Login" asp-action="Login" method="post">
+                        <div class="form-group">
+                            <input asp-for="Usuario1" class="form-floating mb-3" placeholder="Usuario" />
+                        </div>
+                        <div class="form-group">
+                            <input asp-for="Contraseña" class="form-floating mb-3" placeholder="Contraseña" type="password" />
+                        </div>
+                        <br />
+                        <button type="submit" class="btn btn-primary enviar">Ingresar</button>
+                    </form>
+                </div>
+                <a asp-controller="Login" asp-action="RecuperarContraseña" class="enlace"><button style="border: none; background: none; padding: 0; margin: 0;">¿Recuperar contraseña?</button></a>
+
+            </div>
+        </div>
+    </div>
+  
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Scripts -->
+    @if (!string.IsNullOrEmpty(ViewData["MostrarAlerta"] as string))
+    {
+        <script>
+            Swal.fire("Error al iniciar sesión. Usuario o contraseña incorrectos");
+        </script>
+    }
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>

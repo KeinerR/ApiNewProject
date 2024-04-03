@@ -238,16 +238,19 @@ namespace VistaNewProject.Services
             }
             return response;
         }
-        public async Task<HttpResponseMessage> CreateUsuarioAsync(Usuario usuario)
-        {
-            var response = await _httpClient.PostAsJsonAsync("Usuarios/InsertUsuario", usuario);
-            return response;
-        }
         public async Task<Usuario> FindUsuarioAsync(int id)
         {
+            // Implementación de FindUsuarioAsync por ID
             var response = await _httpClient.GetFromJsonAsync<Usuario>($"Usuarios/GetUsuariosById?={id}");
             return response;
         }
+
+        //public async Task<Usuario> FindUsuarioAsync(int id)
+        //{
+        //    var response = await _httpClient.GetFromJsonAsync<Usuario>($"Usuarios/GetUsuariosById?={id}");
+        //    return response;
+        //}
+
 
         public async Task<HttpResponseMessage> UpdateUsuarioAsync(Usuario usuario)
         {
@@ -549,7 +552,12 @@ namespace VistaNewProject.Services
             throw new NotImplementedException();
         }
 
-        
+        public Task<HttpResponseMessage> CreateUsuarioAsync(Usuario usuario)
+        {
+            throw new NotImplementedException();
+        }
+
+
 
         //    /// MOVIMIENTO
         //    /// 
