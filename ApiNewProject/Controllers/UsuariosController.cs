@@ -104,6 +104,7 @@ namespace ApiNewProject.Controllers
                 return NotFound();
             }
             usuarios.UsuarioId = usuario.UsuarioId;
+            usuarios.RolId = usuario.RolId;
             usuarios.Nombre = usuario.Nombre;
             usuarios.Apellido = usuario.Apellido;
             usuarios.Usuario1 = usuario.Usuario1;

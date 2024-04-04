@@ -72,6 +72,54 @@ namespace VistaNewProject.Controllers
             }
         }
 
+        public async Task<IActionResult> Logout(Usuario model)
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Items.Remove("User");
+            HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity());
+            foreach (var cookieKey in HttpContext.Request.Cookies.Keys)
+            {
+                HttpContext.Response.Cookies.Delete(cookieKey);
+            }
+            return RedirectToAction("Index", "Login");
+        }
+
+        public IActionResult RecuperarContraseña()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RecuperarContraseña(string correo)
+        {
+            if (string.IsNullOrWhiteSpace(correo))
+            {
+                TempData["Mensaje"] = "Por favor, proporcione una dirección de correo electrónico válida.";
+                return View();
+            }
+
+            var usuarios = await _client.GetUsuarioAsync(); // Obtener todos los usuarios
+
+            var correoValido = usuarios.FirstOrDefault(u=> u.Correo == correo);
+
+
+            if (correoValido == null)
+            {
+                TempData["Mensaje"] = "Correo electrónico no encontrado.";
+                return View();
+            }
+            else
+            {
+                TempData["Mensaje"] = "Correo electrónico encontrado.";
+                return View();
+            }
+
+
+        }
+
+
+
+
 
 
     }

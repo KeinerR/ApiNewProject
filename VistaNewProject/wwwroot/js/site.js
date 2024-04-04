@@ -2,3 +2,11 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+
+    $(document).ready(function () {
+        $('#logoutButton').click(function (e) {
+            e.preventDefault();
+            $('#logoutForm').submit();
+        });
+    });
+

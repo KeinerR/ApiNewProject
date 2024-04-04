@@ -107,7 +107,7 @@ function obtenerDatosUsuario(usuarioId) {
 }
 
 function ActualizarUsuario() {
-    const usuarioid = document.getElementById('UsuarioId').value;
+    const usuarioId = document.getElementById('UsuarioId').value;
     const rolId = document.getElementById('RolId').value;
     const nombre = document.getElementById('Nombre').value;
     const apellido = document.getElementById('Apellido').value;
@@ -118,7 +118,7 @@ function ActualizarUsuario() {
     const estadoUsuario = document.getElementById('EstadoUsuario').value;
 
     const usuarioObjeto = {
-        UsuarioId: usuarioid,
+        UsuarioId: usuarioId,
         RolId: rolId,
         Nombre: nombre,
         Apellido: apellido,
