@@ -1,43 +1,30 @@
-﻿document.addEventListener('DOMContentLoaded', function () {
+﻿function agregarRol() {
+    const nombreRol = document.getElementById('NombreRol').value;
+    const rolObjeto = {
+        NombreRol: nombreRol
+    };
 
-    // Agrega un evento 'submit' al formulario
-    document.querySelector('form').addEventListener('submit', function (event) {
-        event.preventDefault(); // Evitar que el formulario se envíe de forma tradicional
-
-        // Obtener los valores de los campos del formulario
-        const nombreRol = document.getElementById('NombreRol').value;
-
-        // Crear un objeto con los valores del formulario
-        const usuarioObjeto = {
-            NombreRol: nombreRol
-        };
-
-        // Enviar la solicitud POST al servidor utilizando la Fetch API
-        fetch('https://localhost:7013/api/Roles/InsertRol', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(usuarioObjeto)
+    fetch('https://localhost:7013/api/Roles/InsertRol', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(rolObjeto)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ocurrió un error al enviar la solicitud.');
+            }
+            return response.json();
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Ocurrió un error al enviar la solicitud.');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Respuesta del servidor:', data);
-                // Manejar la respuesta del servidor según sea necesario
-                location.reload()
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                // Manejar errores de la solicitud
-            });
-    });
-});
-
+        .then(data => {
+            console.log('Respuesta del servidor:', data);
+            location.reload(); // Recargar la página
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
 function eliminarRol(rolId) {
     // Hacer la solicitud DELETE al servidor para eliminar el cliente
     fetch(`https://localhost:7013/api/Roles/DeleteRol/${rolId}`, {
