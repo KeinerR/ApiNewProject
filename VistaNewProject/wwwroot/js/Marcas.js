@@ -33,6 +33,7 @@
             .then(data => {
                 console.log('Respuesta del servidor:', data);
                 // Manejar la respuesta del servidor según sea necesario
+                location.reload(); // Esto recarga la página
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -71,8 +72,35 @@
                 console.error('Error:', error);
                 alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
             });
+
+
     });
 });
+
+function obtenerDatosMarca(marcaId) {
+    // Hacer la solicitud GET al servidor para obtener los datos de la marca
+    fetch(`https://localhost:7013/api/Marcas/GetMarcaById?id=${marcaId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al obtener los datos del rol.');
+            }
+            return response.json();
+        })
+        .then(marca => {
+            // Llenar los campos del formulario modal con los datos de la marca
+            document.getElementById('MarcaId').value = marca.marcaId;
+            document.getElementById('NombreMarca').value = marca.nombreMarca;
+
+            // Cambiar el título de la ventana modal
+            document.getElementById('TituloModal').innerText = 'Editar Marca';
+            // Ocultar el botón "Agregar" y mostrar el botón "Actualizar Usuario"
+            document.getElementById('btnGuardar').style.display = 'none';
+            document.getElementById('ActualizarMarca').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
 
 function eliminarMarca(marcaId) {
     // Hacer la solicitud DELETE al servidor para eliminar la marca
@@ -91,21 +119,12 @@ function eliminarMarca(marcaId) {
         });
 }
 
-function obtenerDatosMarca(marcaId) {
-    // Hacer la solicitud GET al servidor para obtener los datos de la marca
-    fetch(`https://localhost:7013/api/Marcas/GetMarcaById?id=${marcaId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error al obtener los datos de la marca.');
-            }
-            return response.json();
-        })
-        .then(marca => {
-            // Llenar los campos del formulario modal con los datos de la marca
-            document.getElementById('MarcaId').value = marca.marcaId;
-            document.getElementById('NombreMarca').value = marca.nombreMarca;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+
+
+function limpiarFormulario() {
+    document.getElementById('MarcaId').value = '';
+    document.getElementById('NombreMarca').value = '';
+    document.getElementById('TituloModal').innerText = 'Agregar Marca';
+    document.getElementById('btnGuardar').style.display = 'inline-block';
+    document.getElementById('ActualizarMarca').style.display = 'none';
 }
