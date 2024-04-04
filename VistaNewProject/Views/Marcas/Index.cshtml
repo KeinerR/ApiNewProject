@@ -1,41 +1,47 @@
 ﻿@model IEnumerable<VistaNewProject.Models.Marca>
-
 @{
     ViewData["Title"] = "Index";
 }
 
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clienteModal">
+<!-- Botón para abrir el modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#MarcaModal">
     Agregar Marca
 </button>
 
-<div class="modal fade" id="clienteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Modal -->
+<div class="modal fade" id="MarcaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="TituloModal">Agregar marca</h5>
+                <h5 class="modal-title" id="TituloModal">Agregar Marca</h5>
                 <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
             </div>
-            <form id="marcaForm" asp-controller="Marcas" asp-action="Create" method="post">
+            <form asp-controller="Marcas" asp-action="" method="post">
                 <div class="modal-body">
-                    <input type="hidden" id="MarcaId" name="MarcaId" class="form-control" />
+
                     <div class="form-group">
-                        <label for="NombreMarca" class="control-label">Nombre Marca</label>
-                        <input type="text" id="NombreMarca" name="NombreMarca" class="form-control" />
+                        <input type="hidden" id="MarcaId" name="marcaId" class="form-control" />
                     </div>
+                    <div class="form-group">
+                        <label for="NombreMarca" class="control-label">Nombre marca</label>
+                        <input type="text" id="NombreMarca" name="nombreMarca" class="form-control" />
+                    </div>
+
                 </div>
                 <div class="modal-footer">
-                    <button type="button" onclick="limpiarFormulario" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-
-                    <button type="button" id="btnGuardar"class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clienteModal" onclick="limpiarFormulario()">Guardar</button>
-
-                    <button id="ActualizarMarca" type="button" class="btn btn-primary" style="display: none;">Actualizar Marca</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
+                    <button type="button" onclick="agregarMarca()" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" onclick="ActualizarMarca()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Marca</button>
                 </div>
+
+
+
             </form>
+
         </div>
     </div>
 </div>
-
-<h1>Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -44,10 +50,10 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.MarcaId)
+                Marca Id
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.NombreMarca)
+                Nombre marca
             </th>
             <th></th>
         </tr>
@@ -62,13 +68,14 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.NombreMarca)
                 </td>
+                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
-                    <button class="btn btn-warning" onclick="obtenerDatosMarca(@item.MarcaId)" data-cliente-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#clienteModal">Editar</button>
+                    <button class="btn btn-warning" onclick="obtenerDatosMarca('@item.MarcaId')" data-cliente-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal">Editar</button>
                     <button class="btn btn-danger" onclick="eliminarMarca('@item.MarcaId')">Eliminar</button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="~/js/marcas.js"></script>

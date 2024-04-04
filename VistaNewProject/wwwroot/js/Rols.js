@@ -29,7 +29,7 @@
             .then(data => {
                 console.log('Respuesta del servidor:', data);
                 // Manejar la respuesta del servidor según sea necesario
-                location.reload(); // Esto recarga la página
+                location.reload()
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -45,7 +45,7 @@ function eliminarRol(rolId) {
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Error al eliminar el usuario.');
+                throw new Error('Error al eliminar el rol.');
             }
             // Aquí puedes manejar la respuesta si es necesario
             console.log('Rol eliminado correctamente.');
@@ -106,7 +106,7 @@ function ActualizarRol() {
         .then(response => {
             if (response.ok) {
                 alert('Rol actualizado correctamente.');
-                location.reload(true); // Recargar la página después de la actualización
+                location.reload()
             } else {
                 alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
             }
