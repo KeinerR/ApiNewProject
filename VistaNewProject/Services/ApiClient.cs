@@ -262,9 +262,16 @@ namespace VistaNewProject.Services
             var response = await _httpClient.DeleteAsync($"Usuarios/DeleteUser/{id}");
             return response;
         }
-        public Task<IEnumerable<Unidad>> GetUnidadAsync()
+        public async Task<IEnumerable<Unidad>> GetUnidadAsync()
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Unidad>>("unidades/GetUnidades");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró ninguna tabla nada de nada.");
+            }
+            return response;
         }
 
         public Task<HttpResponseMessage> CreateUnidadAsync(Unidad unidad)
