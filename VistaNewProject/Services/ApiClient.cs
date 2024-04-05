@@ -87,7 +87,7 @@ namespace VistaNewProject.Services
         /// 
         public async Task<IEnumerable<Presentacion>> GetPresentacionAsync()
         {
-            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Presentacion>>("");
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Presentacion>>("Presentaciones/GetPresentaciones");
 
             if (response == null)
             {
