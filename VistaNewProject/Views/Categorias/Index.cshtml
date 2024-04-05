@@ -1,0 +1,81 @@
+﻿@model IEnumerable<VistaNewProject.Models.Categoria>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<!-- Botón para abrir el modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CategoriaModal">
+    Agregar Categoria
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="CategoriaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModal">Agregar Categoria</h5>
+                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <form asp-controller="Categorias" asp-action="" method="post">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <input type="hidden" id="CategoriaId" name="categoriaId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NombreCategoria" class="control-label">Nombre Categoria</label>
+                        <input type="text" id="NombreCategoria" name="nombreCategoria" class="form-control" />
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
+                    <button type="button" onclick="agregarCategoria()" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" onclick="ActualizarCategoria()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Categoria</button>
+                </div>
+
+
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Categoria Id
+            </th>
+            <th>
+                Nombre Categoria
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CategoriaId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NombreCategoria)
+                </td>
+                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                <td>
+                    <button class="btn btn-warning" onclick="obtenerDatosCategoria('@item.CategoriaId')" data-cliente-id="@item.CategoriaId" data-bs-toggle="modal" data-bs-target="#CategoriaModal">Editar</button>
+                    <button class="btn btn-danger" onclick="eliminarCategoria('@item.CategoriaId')">Eliminar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="~/js/categorias.js"></script>
