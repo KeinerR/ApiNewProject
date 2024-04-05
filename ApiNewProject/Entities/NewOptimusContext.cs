@@ -13,9 +13,9 @@ namespace ApiNewProject.Entities
         {
         }
 
-        public NewOptimusContext(DbContextOptions<NewOptimusContext> options)
-            : base(options)
+        public NewOptimusContext(DbContextOptions<NewOptimusContext> options): base(options)
         {
+
         }
 
         public virtual DbSet<Categoria> Categoria { get; set; } = null!;

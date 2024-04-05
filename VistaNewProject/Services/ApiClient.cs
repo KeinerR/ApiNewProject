@@ -244,14 +244,6 @@ namespace VistaNewProject.Services
             var response = await _httpClient.GetFromJsonAsync<Usuario>($"Usuarios/GetUsuariosById?={id}");
             return response;
         }
-
-        //public async Task<Usuario> FindUsuarioAsync(int id)
-        //{
-        //    var response = await _httpClient.GetFromJsonAsync<Usuario>($"Usuarios/GetUsuariosById?={id}");
-        //    return response;
-        //}
-
-
         public async Task<HttpResponseMessage> UpdateUsuarioAsync(Usuario usuario)
         {
             var response = await _httpClient.PutAsJsonAsync("Usuarios/UpdateUsuarios", usuario);
@@ -409,9 +401,16 @@ namespace VistaNewProject.Services
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Domicilio>> GetDomicilioAsync()
+        public async  Task<IEnumerable<Domicilio>> GetDomicilioAsync()
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Domicilio>>("Domicilios/GetDomicilios");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró domicilios con el ID especificado.");
+            }
+            return response;
         }
 
         public Task<HttpResponseMessage> CreateDomicilioAsync(Domicilio domicilio)
