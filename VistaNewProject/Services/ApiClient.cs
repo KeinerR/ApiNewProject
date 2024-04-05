@@ -289,14 +289,16 @@ namespace VistaNewProject.Services
             throw new NotImplementedException();
         }
 
-        public Task<HttpResponseMessage> DeleteUnidadAsync(int id)
+        public async Task<IEnumerable<Producto>> GetProductoAsync()
         {
-            throw new NotImplementedException();
-        }
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Producto>>("Productos/GetProductos");
 
-        public Task<IEnumerable<Producto>> GetProductoAsync()
-        {
-            throw new NotImplementedException();
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la marca con el ID especificado.");
+            }
+            return response;
         }
 
         public Task<HttpResponseMessage> CreateProductoAsync(Producto producto)
@@ -560,6 +562,11 @@ namespace VistaNewProject.Services
         }
 
         public Task<HttpResponseMessage> CreateUsuarioAsync(Usuario usuario)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<HttpResponseMessage> DeleteUnidadAsync(int id)
         {
             throw new NotImplementedException();
         }

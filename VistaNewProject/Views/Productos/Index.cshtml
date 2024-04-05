@@ -1,0 +1,142 @@
+﻿@model IEnumerable<VistaNewProject.Models.Producto>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<!-- Botón para abrir el modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ProductoModal">
+    Agregar Producto
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="ProductoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModal">Agregar Producto</h5>
+                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <form asp-controller="Productoes" asp-action="" method="post">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <input type="hidden" id="ProductoId" name="productoId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="PresentacionId" class="control-label">Presentacion Id</label>
+                        <input type="text" id="PresentacionId" name="presentacionId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="MarcaId" class="control-label">Marca Id</label>
+                        <input type="text" id="MarcaId" name="marcaId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="CategoriaId" class="control-label">Categoria Id</label>
+                        <input type="text" id="CategoriaId" name="categoriaId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="UnidadId" class="control-label">Unidad Id</label>
+                        <input type="text" id="UnidadId" name="unidadId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NombreProducto" class="control-label">Nombre Producto</label>
+                        <input type="text" id="NombreProducto" name="nombreProducto" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="CantidadTotal" class="control-label">Cantidad Total</label>
+                        <input type="text" id="CantidadTotal" name="nombreProducto" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="EstadoProducto" class="control-label">Estado Producto</label>
+                        <input type="text" id="EstadoProducto" name="estadoProducto" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
+                    <button type="button" onclick="agregarProducto()" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" onclick="ActualizarProducto()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Producto</button>
+                </div>
+
+
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                ProductoId
+            </th>
+            <th>
+                Presentacion Id
+            </th>
+            <th>
+                Marca Id
+            </th>
+            <th>
+                Categoria Id
+            </th>
+            <th>
+                Unidad Id
+            </th>
+            <th>
+                Nombre Producto
+            </th>
+            <th>
+                Cantidad Total
+            </th>
+            <th>
+                Estado Producto
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductoId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PresentacionId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MarcaId)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.CategoriaId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnidadId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NombreProducto)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CantidadTotal)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Estado)
+                </td>
+
+                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                <td>
+                    <button class="btn btn-warning" onclick="obtenerDatosProducto('@item.ProductoId')" data-cliente-id="@item.ProductoId" data-bs-toggle="modal" data-bs-target="#ProductoModal">Editar</button>
+                    <button class="btn btn-danger" onclick="eliminarProducto('@item.ProductoId')">Eliminar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="~/js/productos.js"></script>
