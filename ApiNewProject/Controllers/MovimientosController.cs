@@ -19,7 +19,7 @@ namespace ApiNewProject.Controllers
 
 
         [HttpGet("GetMoviemientos")]
-        public async Task<ActionResult<List<Movimiento>>> GetMovimiento()
+        public async Task<ActionResult<List<Movimiento>>> GetMovimientos()
         {
             var List = await _context.Movimientos.Select(
                 s => new Movimiento

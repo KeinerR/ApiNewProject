@@ -289,6 +289,37 @@ namespace VistaNewProject.Services
             throw new NotImplementedException();
         }
 
+        public async Task<IEnumerable<Movimiento>> GetMovimientoAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Movimiento>>("Movimientos/GetMoviemientos");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró el movimiento con el ID especificado.");
+            }
+            return response;
+        }
+
+        public Task<HttpResponseMessage> CreateMovimientoAsync(Movimiento movimiento)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Movimiento> FindMovimientoAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<HttpResponseMessage> UpdateMovimientoAsync(Movimiento movimiento)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<HttpResponseMessage> DeleteMovimientoAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
         public async Task<IEnumerable<Producto>> GetProductoAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Producto>>("Productos/GetProductos");
@@ -349,31 +380,6 @@ namespace VistaNewProject.Services
         }
 
         public Task<HttpResponseMessage> DeleteProveedorAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Movimiento>> GetMovimientoAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<HttpResponseMessage> CreateMovimientoAsync(Movimiento movimiento)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Movimiento> FindMovimientoAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<HttpResponseMessage> UpdateMovimientoAsync(Movimiento movimiento)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<HttpResponseMessage> DeleteMovimientoAsync(int id)
         {
             throw new NotImplementedException();
         }

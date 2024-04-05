@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ApiNewProject.Entities
 {
@@ -12,7 +13,7 @@ namespace ApiNewProject.Entities
         public int? CantidadMovimiento { get; set; }
         public string? Descripcion { get; set; }
         public DateTime? FechaMovimiento { get; set; }
-
+        [JsonIgnore]
         public virtual Producto? Producto { get; set; }
     }
 }
