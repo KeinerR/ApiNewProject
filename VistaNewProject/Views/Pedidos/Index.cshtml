@@ -5,41 +5,56 @@
 }
 <style>
     /* Estilos para el formulario */
-    #formPedido, #formDetallePedido {
-        margin-bottom: 20px;
+
+    .styled-form .form-control {
+        border-radius: 50px; /* Establecer bordes redondeados */
     }
 
-        /* Estilos para los botones del formulario */
-        #formPedido button, #formDetallePedido button {
-            margin-top: 10px;
+    .styled-form .form-row {
+        display: flex; /* Utilizar Flexbox para distribuir elementos */
+    }
+
+        .styled-form .form-row .col {
+            flex: 1; /* Distribuir columnas uniformemente */
+            margin-right: 10px; /* Espacio entre columnas */
         }
 
-    /* Estilos para la tabla */
-    table {
-        width: 100%;
-        margin-bottom: 0;
+
+
+
+  
+    .styled-form .form-control {
+    border-radius: 50px; /* Establecer bordes redondeados */
+}
+
+.styled-form .form-row {
+    display: flex; /* Utilizar Flexbox para distribuir elementos */
+}
+
+.styled-form .form-row .col {
+    flex: 1; /* Distribuir columnas uniformemente */
+    margin-right: 10px; /* Espacio entre columnas */
+}
+
+.styled-form .modal-footer {
+    justify-content: space-between; /* Alinear los botones en la parte inferior */
+}
+
+    .styled-form .form-control {
+        border-radius: 50px; /* Establecer bordes redondeados */
     }
 
-    .w-auto {
-        width: auto !important;
-        max-width: 90%; /* Puedes ajustar el máximo ancho según tus necesidades */
-        margin-left: auto !important;
-        margin-right: auto !important;
+    .styled-form .form-row {
+        display: flex; /* Utilizar Flexbox para distribuir elementos */
+        flex-wrap: wrap; /* Permitir que los elementos se envuelvan en múltiples líneas si es necesario */
     }
 
-    th, td {
-        text-align: center;
-    }
+        .styled-form .form-row .col {
+            flex: 1 1 30%; /* Distribuir columnas uniformemente y permitir que se reduzcan */
+            margin-right: 10px; /* Espacio entre columnas */
+        }
 
-    /* Estilos para el pie de tabla */
-    .modal-footer {
-        justify-content: space-between;
-    }
 
-    /* Estilos para el botón "Agregar pedido" */
-    .btn-agregar-pedido {
-        margin-bottom: 10px;
-    }
 </style>
 
 <!-- Botón para abrir el modal -->
@@ -55,15 +70,50 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div style=" display:flex;">
-                    <div class="col-md-4 mb-4">
-                        <!-- Primer formulario -->
-                        <form id="formPedido" asp-controller="Pedidos" asp-action="Create" method="post">
-                            <div class="mb-3 d-none">
-                                <label for="PedidoId" class="form-label">Fecha Pedido</label>
-                                <input type="hidden" id="PedidoId" name="PedidoId" class="form-control" />
+                <!-- Agregar el elemento "detalleTableBody" aquí -->
+                <table id="detalleTable" class="table">
+                    <thead>
+                        <tr>
+                            <th>Producto ID</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detalleTableBody">
+                        <!-- Aquí se mostrarán los detalles agregados dinámicamente -->
+                    </tbody>
+                </table>
+                <!-- Fin del elemento "detalleTableBody" -->
+
+                <div style="display: flex; justify-content: space-between; margin: 0; width: 100%" class="d-none" id="detallecontainer">
+                    <form id="formDetallePedido" asp-controller="DetallePedidos" asp-action="Create" method="post" class="styled-form">
+                        <div class="form-row">
+                            <div class="mb-3 col">
+                                <label for="ProductoId2" class="form-label">Producto ID</label>
+                                <input type="number" id="ProductoId2" name="ProductoId" class="form-control" />
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 col">
+                                <label for="Cantidad2" class="form-label">Cantidad</label>
+                                <input type="number" id="Cantidad2" name="Cantidad" class="form-control" />
+                            </div>
+                            <div class="mb-3 col">
+                                <label for="PrecioUnitario2" class="form-label">Precio Unitario</label>
+                                <input type="number" id="PrecioUnitario2" name="PrecioUnitario" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Agregar Detalle</button>
+                            <button type="button" class="btn btn-secondary" id="cerrardetalle" class="btn btn-primary"> Cerrar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div style="display:table-row">
+                    <!-- Primer formulario -->
+                    <form id="formPedido" class="styled-form" asp-controller="Pedidos" asp-action="Create" method="post">
+                        <div class="form-row">
+                            <div class="mb-3 col">
                                 <label for="ClienteId1" class="form-label">Cliente</label>
                                 <select id="ClienteId1" name="ClienteId" class="form-select">
                                     @foreach (var cliente in ViewBag.Clientes)
@@ -72,82 +122,77 @@
                                     }
                                 </select>
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 col">
                                 <label for="TipoServicio1" class="form-label">Tipo de Servicio</label>
                                 <select id="TipoServicio1" name="TipoServicio" class="form-select">
-
                                     <option value="Caja">Caja</option>
                                     <option value="Domicilio">Domicilio</option>
                                 </select>
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 col">
                                 <label for="FechaPedido1" class="form-label">Fecha Pedido</label>
                                 <input type="datetime-local" id="FechaPedido1" name="FechaPedido" class="form-control" />
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 col">
                                 <label for="EstadoPedido1" class="form-label">Estado Pedido</label>
                                 <select id="EstadoPedido1" name="EstadoPedido" class="form-select">
                                     <option value="En Proceso">En Proceso</option>
                                     <option value="Realizado">Realizado</option>
                                     <option value="Cancelado">Cancelado</option>
-
                                 </select>
                             </div>
-                            <div class="modal-footer">
-
-                                <button type="submit" class="btn btn-primary">Guardar</button>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="col-md-3 mb-8 m-4">
-                        <!-- Segundo formulario -->
-                        <form id="formDetallePedido" asp-controller="DetallePedidos" asp-action="Create" method="post">
-                            <!-- Campos para el formulario del detalle del pedido -->
-                            <div class="mb-3">
-                                <label for="ProductoId2" class="form-label">Producto ID</label>
-                                <input type="number" id="ProductoId2" name="ProductoId" class="form-control" />
-                            </div>
-                            <div class="mb-3">
-                                <label for="Cantidad2" class="form-label">Cantidad</label>
-                                <input type="number" id="Cantidad2" name="Cantidad" class="form-control" />
-                            </div>
-                            <div class="mb-3">
-                                <label for="PrecioUnitario2" class="form-label">Precio Unitario</label>
-                                <input type="number" id="PrecioUnitario2" name="PrecioUnitario" class="form-control" />
-                            </div>
-                            <button type="submit" class="btn btn-primary">Agregar Detalle</button>
-                        </form>
-                    </div>
-
-                    <div class="col-md-3 mb-3 d-none" id="formDomicilioContainer">
-                        <!-- Tercer formulario (Domicilio) -->
-                        <form id="formDomicilio" asp-controller="Domicilios" asp-action="Create" method="post">
-                            <!-- Campos para el formulario del detalle del pedido -->
-                            <div class="mb-3">
-                                <label for="UsuarioId3" class="form-label">Usuario ID</label>
-                                <input type="number" id="UsuarioId3" name="UsuarioId" class="form-control" />
-                            </div>
-                            <div class="mb-3">
-                                <label for="Observacion3" class="form-label">Observacion</label>
-                                <input type="text" id="Observacion3" name="Observacion" class="form-control" />
-                            </div>
-                            <div class="mb-3">
-                                <label for="FechaEntrega3" class="form-label">Fecha Entrega</label>
-                                <input type="datetime-local" id="FechaEntrega3" name="FechaEntrega" class="form-control" />
-                            </div>
-                            <div class="mb-3">
-                                <label for="DireccionDomiciliario3" class="form-label">Direccion Domiciliario</label>
-                                <input type="text" id="DireccionDomiciliario3" name="DireccionDomiciliario" class="form-control" />
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">Agregar Domicilio</button>
-                        </form>
-                    </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <button type="button" id="asignardetalle" class="btn btn-primary">Asignar Detalle</button>
+                        </div>
+                    </form>
                 </div>
 
-
-
-
+                <div class="col-md-8 mb-8 d-none" id="formDomicilioContainer">
+                    <!-- Tercer formulario (Domicilio) -->
+                    <form id="formDomicilio" asp-controller="Domicilios" asp-action="Create" method="post" class="styled-form">
+                        <!-- Primera fila del formulario -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-6">
+                                    <label for="UsuarioId3" class="form-label">Usuario ID</label>
+                                    <input type="number" id="UsuarioId3" name="UsuarioId" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-6">
+                                    <label for="FechaEntrega3" class="form-label">Fecha Entrega</label>
+                                    <input type="datetime-local" id="FechaEntrega3" name="FechaEntrega" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="md-3">
+                                    <label for="Observacion3" class="form-label">Observacion</label>
+                                    <input type="text" id="Observacion3" name="Observacion" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Segunda fila del formulario -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="DireccionDomiciliario3" class="form-label">Direccion Domiciliario</label>
+                                    <input type="text" id="DireccionDomiciliario3" name="DireccionDomiciliario" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                            
+                              
+                            </div>
+                            <div class="modal-footer mb-8">
+                                <button type="submit" class="btn btn-primary">Agregar Domicilio</button>
+                                <button type="button" class="btn btn-secondary" id="cerradomicilio"> Cerrar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- Fin del contenido del modal -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -215,3 +260,10 @@
 </table>
 
 <script src="~/js/pedidos.js"></script>
+
+<script>
+    // Función para actualizar la tabla de detalles del pedido
+   
+    // Aquí va el resto de tu código JavaScript...
+
+</script>

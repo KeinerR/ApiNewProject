@@ -56,7 +56,7 @@ namespace ApiNewProject.Controllers
                     TipoServicio = pedido.TipoServicio,
                     FechaPedido = pedido.FechaPedido,
                     EstadoPedido = pedido.EstadoPedido,
-                    Detallepedidos = new List<Detallepedido>(),
+                    Detallepedidos = new List<Detallepedido>(), // Aquí está la corrección
                     Domicilios = new List<Domicilio>()
                 };
 
@@ -90,9 +90,6 @@ namespace ApiNewProject.Controllers
                         PrecioUnitario = item.PrecioUnitario.Value
                     });
                 }
-
-
-
 
                 _context.Pedidos.Add(vlPedido);
                 await _context.SaveChangesAsync();
