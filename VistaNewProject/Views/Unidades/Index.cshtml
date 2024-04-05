@@ -1,0 +1,81 @@
+﻿@model IEnumerable<VistaNewProject.Models.Unidad>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<!-- Botón para abrir el modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#UnidadModal">
+    Agregar Unidad
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="UnidadModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModal">Agregar Unidad</h5>
+                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <form asp-controller="Unidads" asp-action="" method="post">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <input type="hidden" id="UnidadId" name="unidadId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="DescripcionUnidad" class="control-label">DescripcionUnidad</label>
+                        <input type="text" id="DescripcionUnidad" name="descripcionUnidad" class="form-control" />
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
+                    <button type="button" onclick="agregarUnidad()" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" onclick="ActualizarUnidad()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Unidad</button>
+                </div>
+
+
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Unidad Id
+            </th>
+            <th>
+                Descripcion Unidad
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnidadId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DescripcionUnidad)
+                </td>
+                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                <td>
+                    <button class="btn btn-warning" onclick="obtenerDatosUnidad('@item.UnidadId')" data-cliente-id="@item.UnidadId" data-bs-toggle="modal" data-bs-target="#UnidadModal">Editar</button>
+                    <button class="btn btn-danger" onclick="eliminarUnidad('@item.UnidadId')">Eliminar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="~/js/unidades.js"></script>
