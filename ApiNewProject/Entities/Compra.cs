@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ApiNewProject.Entities
 {
@@ -16,8 +17,9 @@ namespace ApiNewProject.Entities
         public DateTime? FechaCompra { get; set; }
         public decimal? ValorTotal { get; set; }
         public ulong? EstadoCompra { get; set; }
-
+        [JsonIgnore]
         public virtual Proveedor? Proveedor { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Detallecompra> Detallecompras { get; set; }
     }
 }

@@ -1,0 +1,161 @@
+﻿@model IEnumerable<VistaNewProject.Models.Lote>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<!-- Botón para abrir el modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#LoteModal">
+    Agregar Lote
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="LoteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModal">Agregar Lote</h5>
+                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <form asp-controller="Lotes" asp-action="" method="post">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <input type="hidden" id="LoteId" name="loteId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="DetalleCompraId" class="control-label">Detalle Compra Id</label>
+                        <input type="text" id="DetalleCompraId" name="DetalleCompraId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="ProductoId" class="control-label">Producto Id</label>
+                        <input type="text" id="NombreLote" name="productoId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NumeroLote" class="control-label">Numero Lote</label>
+                        <input type="text" id="NumeroLote" name="numeroLote" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="PrecioCompra" class="control-label">Precio Compra</label>
+                        <input type="text" id="PrecioCompra" name="precioCompra" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="PrecioDetal" class="control-label">Precio Detal</label>
+                        <input type="text" id="PrecioDetal" name="precioDetal" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="PrecioxMayor" class="control-label">PrecioxMayor</label>
+                        <input type="text" id="PrecioxMayor" name="precioxMayor" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="FechaVencimiento" class="control-label">Fecha Vencimiento</label>
+                        <input type="datetime-local" id="FechaVencimiento" name="fechaVencimiento" class="form-control" />
+                    </div>
+                      <div class="form-group">
+                        <label for="Cantidad" class="control-label">Cantidad</label>
+                        <input type="text" id="Cantidad" name="cantidad" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="EstadoLote" class="control-label">Estado Lote</label>
+                        <input type="datetime-local" id="EstadoLote" name="estadoLote" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
+                    <button type="button" onclick="agregarLote()" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" onclick="ActualizarLote()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Lote</button>
+                </div>
+
+
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Lote Id
+            </th>
+            <th>
+                Detalle compra Id
+            </th>
+            <th>
+                Producto Id
+            </th>
+
+            <th>
+                Numero lote
+            </th>
+            <th>
+                Precio Compra
+            </th>
+            <th>
+                Precio Detal
+            </th>
+            <th>
+                Precio x Mayor
+            </th>
+            <th>
+                Fecha vencimiento
+            </th>
+            <th>
+                Cantidad
+            </th>
+            <th>
+                Estado lote
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LoteId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DetalleCompraId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductoId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumeroLote)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PrecioCompra)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PrecioDetal)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PrecioxMayor)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaVencimiento)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cantidad)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EstadoLote)
+                </td>
+                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                <td>
+                    <button class="btn btn-warning" onclick="obtenerDatosLote('@item.LoteId')" data-cliente-id="@item.LoteId" data-bs-toggle="modal" data-bs-target="#LoteModal">Editar</button>
+                    <button class="btn btn-danger" onclick="eliminarLote('@item.LoteId')">Eliminar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="~/js/lotes.js"></script>

@@ -376,9 +376,16 @@ namespace VistaNewProject.Services
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Lote>> GetLoteAsync()
+        public async Task<IEnumerable<Lote>> GetLoteAsync()
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Lote>>("Lotes/GetLotes");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró nada.");
+            }
+            return response;
         }
 
         public Task<HttpResponseMessage> CreateLoteAsync(Lote lote)
