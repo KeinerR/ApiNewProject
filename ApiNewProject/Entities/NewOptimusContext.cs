@@ -106,8 +106,6 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.ProveedorId).HasColumnName("ProveedorID");
 
-                entity.Property(e => e.ValorTotal).HasDefaultValueSql("'0'");
-
                 entity.HasOne(d => d.Proveedor)
                     .WithMany(p => p.Compras)
                     .HasForeignKey(d => d.ProveedorId)

@@ -15,7 +15,6 @@ namespace ApiNewProject.Entities
         public int? CompraId { get; set; }
         public int? ProductoId { get; set; }
         public int? Cantidad { get; set; }
-        public decimal? Subtotal { get; set; }
         [JsonIgnore]
         public virtual Compra? Compra { get; set; }
         [JsonIgnore]

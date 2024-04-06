@@ -56,7 +56,15 @@ function obtenerDatosLote(loteId) {
         .then(lote => {
             // Llenar los campos del formulario modal con los datos del cliente
             document.getElementById('LoteId').value = lote.loteId;
-            document.getElementById('NombreLote').value = lote.nombreLote;
+            document.getElementById('DetalleCompraId').value = lote.detalleCompraId;
+            document.getElementById('ProductoId').value = lote.productoId;
+            document.getElementById('NumeroLote').value = lote.numeroLote;
+            document.getElementById('PrecioCompra').value = lote.precioCompra;
+            document.getElementById('PrecioDetal').value = lote.precioDetal;
+            document.getElementById('PrecioxMayor').value = lote.precioxMayor;
+            document.getElementById('FechaVencimiento').value = lote.fechaVencimiento;
+            document.getElementById('Cantidad').value = lote.cantidad;
+            document.getElementById('EstadoLote').value = lote.estadoLote;
 
             // Cambiar el título de la ventana modal
             document.getElementById('TituloModal').innerText = 'Editar lote';
@@ -71,11 +79,27 @@ function obtenerDatosLote(loteId) {
 
 function ActualizarLote() {
     const loteId = document.getElementById('LoteId').value;
-    const nombreLote = document.getElementById('NombreLote').value;
+    const detalleCompraId = document.getElementById('DetalleCompraId').value;
+    const productoId = document.getElementById('ProductoId').value;
+    const numeroLote = document.getElementById('NumeroLote').value;
+    const precioCompra = document.getElementById('PrecioCompra').value;
+    const precioDetal = document.getElementById('PrecioDetal').value;
+    const precioxMayor = document.getElementById('PrecioxMayor').value;
+    const fechaVencimiento = document.getElementById('FechaVencimiento').value;
+    const cantidad = document.getElementById('Cantidad').value;
+    const estadoLote = document.getElementById('EstadoLote').value;
 
     const loteObjeto = {
         LoteId: loteId,
-        NombreLote: nombreLote
+        DetalleCompraId: detalleCompraId,
+        ProductoId: productoId,
+        NumeroLote: numeroLote,
+        PrecioCompra: precioCompra,
+        PrecioDetal: precioDetal,
+        PrecioxMayor: precioxMayor,
+        FechaVencimiento: fechaVencimiento,
+        Cantidad: cantidad,
+        EstadoLote: estadoLote
     };
 
     fetch(`https://localhost:7013/api/Lotes/UpdateLotes`, {
@@ -87,7 +111,7 @@ function ActualizarLote() {
     })
         .then(response => {
             if (response.ok) {
-                alert('Lote actualizada correctamente.');
+                alert('Lote actualizadO correctamente.');
                 location.reload(true); // Recargar la página después de la actualización
             } else {
                 alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
@@ -121,7 +145,15 @@ function eliminarLote(loteId) {
 function limpiarFormulario() {
     // Limpiar los valores de los campos del formulario
     document.getElementById('LoteId').value = '';
-    document.getElementById('NombreLote').value = '';
+    document.getElementById('DetalleCompraId').value = '';
+    document.getElementById('ProductoId').value = '';
+    document.getElementById('NumeroLote').value = '';
+    document.getElementById('PrecioCompra').value = '';
+    document.getElementById('PrecioDetal').value = '';
+    document.getElementById('PrecioxMayor').value = '';
+    document.getElementById('FechaVencimiento').value = '';
+    document.getElementById('Cantidad').value = '';
+    document.getElementById('EstadoLote').value = '';
 
     document.getElementById('TituloModal').innerText = 'Agregar Lote';
     document.getElementById('btnGuardar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"

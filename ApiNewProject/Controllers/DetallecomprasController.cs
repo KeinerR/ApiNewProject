@@ -27,8 +27,7 @@ namespace ApiNewProject.Controllers
                     DetalleCompraId = s.DetalleCompraId,
                     CompraId = s.CompraId,
                     ProductoId = s.ProductoId,
-                    Cantidad = s.Cantidad,
-                    Subtotal = s.Subtotal,
+                    Cantidad = s.Cantidad
                 }
             ).ToListAsync();
 
@@ -48,8 +47,7 @@ namespace ApiNewProject.Controllers
                         DetalleCompraId = s.DetalleCompraId,
                         CompraId = s.CompraId,
                         ProductoId = s.ProductoId,
-                        Cantidad = s.Cantidad,
-                        Subtotal = s.Subtotal,
+                        Cantidad = s.Cantidad
                     })
                 .FirstOrDefaultAsync(s => s.DetalleCompraId == Id);
 
@@ -99,7 +97,6 @@ namespace ApiNewProject.Controllers
             detallecompras.CompraId = detallecompra.CompraId;
             detallecompras.ProductoId = detallecompra.ProductoId;
             detallecompras.Cantidad = detallecompra.Cantidad;
-            detallecompras.Subtotal = detallecompra.Subtotal;
 
             await _context.SaveChangesAsync();
             return Ok();

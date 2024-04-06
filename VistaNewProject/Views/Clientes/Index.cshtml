@@ -1,10 +1,7 @@
 ﻿@model IEnumerable<VistaNewProject.Models.Cliente>
-
 @{
     ViewData["Title"] = "Index";
 }
-
-
 
 <!-- Botón para abrir el modal -->
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clienteModal">
@@ -16,58 +13,59 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Agregar Cliente</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title" id="TituloModal">Agregar Cliente</h5>
+                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
             </div>
-            <form asp-controller="Clientes" asp-action="Create" method="post">
+            <form asp-controller="Clientes" asp-action="" method="post">
                 <div class="modal-body">
 
                     <div class="form-group">
-                        <input type="hidden" id="clienteId" name="clienteId" class="form-control" />
+                        <input type="hidden" id="ClienteId" name="clienteId" class="form-control" />
                     </div>
                     <div class="form-group">
-                        <label for="identificacion" class="control-label">identificacion</label>
-                        <input type="text" id="identificacion" name="Identificaciones" class="form-control" />
+                        <label for="Identificacion" class="control-label">Identificacion</label>
+                        <input type="text" id="Identificacion" name="identificacion" class="form-control" />
                     </div>
                     <div class="form-group">
-                        <label for="NombreEntidad" class="control-label">NombreEntidad</label>
-                        <input type="text" id="NombreEntidad" name="NombreEntidades" class="form-control" />
+                        <label for="NombreEntidad" class="control-label">Nombre Entidad</label>
+                        <input type="text" id="NombreEntidad" name="nombreEntidad" class="form-control" />
                     </div>
                     <div class="form-group">
                         <label for="NombreCompleto" class="control-label">Nombre Completo</label>
-                        <input type="text" id="NombreCompleto" name="NombreCompleto" class="form-control" />
+                        <input type="text" id="NombreCompleto" name="nombreCompleto" class="form-control" />
                     </div>
                     <div class="form-group">
                         <label for="TipoCliente" class="control-label">Tipo Cliente</label>
-                        <input type="text" id="TipoCliente" name="TipoCliente" class="form-control" />
+                        <input type="text" id="TipoCliente" name="tipoCliente" class="form-control" />
                     </div>
                     <div class="form-group">
                         <label for="Telefono" class="control-label">Teléfono</label>
-                        <input type="text" id="Telefono" name="Telefono" class="form-control" />
+                        <input type="text" id="Telefono" name="telefono" class="form-control" />
                     </div>
                     <div class="form-group">
                         <label for="Correo" class="control-label">Correo</label>
-                        <input type="text" id="Correo" name="Correo" class="form-control" />
+                        <input type="text" id="Correo" name="correo" class="form-control" />
                     </div>
                     <div class="form-group">
-                        <label for="Direccion" class="control-label">Dirección</label>
-                        <input type="text" id="Direccion" name="Direccion" class="form-control" />
+                        <label for="Direccion" class="control-label">Direccion</label>
+                        <input type="text" id="Direccion" name="direccion" class="form-control" />
                     </div>
                     <div class="form-group">
                         <label for="EstadoCliente" class="control-label">Estado Cliente</label>
-                        <input type="text" id="EstadoCliente" name="EstadoCliente" class="form-control" />
+                        <input type="text" id="EstadoCliente" name="estadoCliente" class="form-control" />
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button id="btnActualizarCliente" type="button" onclick="ActualizarCliente()" class="btn btn-primary">Actualizar Cliente</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
+                    <button type="button" onclick="agregarCliente()" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" onclick="ActualizarCliente()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Cliente</button>
                 </div>
 
+
+
             </form>
+
         </div>
     </div>
 </div>
@@ -79,31 +77,31 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ClienteId)
+                ClienteId
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Identificacion)
+                Identificacion
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.NombreEntidad)
+                Nombre empresa
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.NombreCompleto)
+                Nombre completo
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TipoCliente)
+                Tipo cliente
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Telefono)
+                Telefono
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Correo)
+                Correo
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Direccion)
+                Direccion
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EstadoCliente)
+                Estado Ciente
             </th>
             <th></th>
         </tr>
@@ -119,10 +117,10 @@
                     @Html.DisplayFor(modelItem => item.Identificacion)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.NombreEntidad)
+                    @Html.DisplayFor(modelItem => item.NombreCompleto)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.NombreCompleto)
+                    @Html.DisplayFor(modelItem => item.NombreEntidad)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.TipoCliente)
@@ -142,16 +140,12 @@
 
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
-                    <button class="btn btn-warning" onclick="obtenerDatosCliente(@item.ClienteId)" data-cliente-id="@item.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal">Editar</button>
-
+                    <button class="btn btn-warning" onclick="obtenerDatosCliente('@item.ClienteId')" data-cliente-id="@item.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal">Editar</button>
                     <button class="btn btn-danger" onclick="eliminarCliente('@item.ClienteId')">Eliminar</button>
-
-
                 </td>
             </tr>
         }
     </tbody>
 </table>
 <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
 <script src="~/js/clientes.js"></script>

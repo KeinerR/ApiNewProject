@@ -1,18 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using VistaNewProject.Models;
 using VistaNewProject.Services;
-
 
 namespace VistaNewProject.Controllers
 {
-    public class ClientesController : Controller
+    public class DetallePedidosController : Controller
     {
-
- 
         private readonly IApiClient _client;
 
 
-        public ClientesController(IApiClient client)
+        public DetallePedidosController(IApiClient client)
         {
             _client = client;
         }
@@ -20,15 +16,14 @@ namespace VistaNewProject.Controllers
 
         public async Task<ActionResult> Index()
         {
-            var cliente = await _client.GetClientesAsync();
+            var detallepedido = await _client.GetDetallepedidoAsync();
 
-            if (cliente == null)
+            if (detallepedido == null)
             {
                 return View("Error");
             }
 
-            return View(cliente);
+            return View(detallepedido);
         }
-      
     }
 }

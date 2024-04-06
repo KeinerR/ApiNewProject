@@ -1,77 +1,51 @@
-﻿document.addEventListener('DOMContentLoaded', function () {
-    
-    // Agrega un evento 'submit' al formulario
-    document.querySelector('form').addEventListener('submit', function (event) {
-        event.preventDefault(); // Evitar que el formulario se envíe de forma tradicional
+﻿function agregarUsuario() {
+    // Obtener los valores de los campos del formulario
+    const nombre = document.getElementById('Nombre').value;
+    const rolId = document.getElementById('RolId').value;
+    const apellido = document.getElementById('Apellido').value;
+    const usuario = document.getElementById('Usuario').value;
+    const contraseña = document.getElementById('Contraseña').value;
+    const telefono = document.getElementById('Telefono').value;
+    const correo = document.getElementById('Correo').value;
+    const estadoUsuario = document.getElementById('EstadoUsuario').value;
 
-        // Obtener los valores de los campos del formulario
-        const nombre = document.getElementById('Nombre').value;
-        const rolId = document.getElementById('RolId').value;
-        const apellido = document.getElementById('Apellido').value;
-        const usuario = document.getElementById('Usuario').value;
-        const contraseña = document.getElementById('Contraseña').value;
-        const telefono = document.getElementById('Telefono').value;
-        const correo = document.getElementById('Correo').value;
-        const estadoUsuario = document.getElementById('EstadoUsuario').value;
+    // Crear un objeto con los valores del formulario
+    const usuarioObjeto = {
+        RolId: rolId,
+        Nombre: nombre,
+        Apellido: apellido,
+        Usuario1: usuario,
+        Contraseña: contraseña,
+        Telefono: telefono,
+        Correo: correo,
+        EstadoUsuario: estadoUsuario
+    };
 
-        // Crear un objeto con los valores del formulario
-        const usuarioObjeto = {
-            RolId: rolId,
-            Nombre: nombre,
-            Apellido: apellido,
-            Usuario1: usuario,
-            Contraseña: contraseña,
-            Telefono: telefono,
-            Correo: correo,
-            EstadoUsuario: estadoUsuario
-        };
-
-        // Enviar la solicitud POST al servidor utilizando la Fetch API
-        fetch('https://localhost:7013/api/Usuarios/InsertUsuario', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(usuarioObjeto)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Ocurrió un error al enviar la solicitud.');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Respuesta del servidor:', data);
-                // Manejar la respuesta del servidor según sea necesario
-                location.reload(); // Esto recarga la página
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                // Manejar errores de la solicitud
-            });
-    });
-});
-
-function eliminarUsuario(usuarioId) {
-    // Hacer la solicitud DELETE al servidor para eliminar el cliente
-    fetch(`https://localhost:7013/api/Usuarios/DeleteUser/${usuarioId}`, {
-        method: 'DELETE',
+    // Enviar la solicitud POST al servidor utilizando la Fetch API
+    fetch('https://localhost:7013/api/Usuarios/InsertUsuario', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(usuarioObjeto)
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Error al eliminar el usuario.');
+                throw new Error('Ocurrió un error al enviar la solicitud.');
             }
-            // Aquí puedes manejar la respuesta si es necesario
-            console.log('Usuario eliminado correctamente.');
-            // Recargar la página o actualizar la lista de clientes, según sea necesario
+            return response.json();
+        })
+        .then(data => {
+            console.log('Respuesta del servidor:', data);
+            // Manejar la respuesta del servidor según sea necesario
             location.reload(); // Esto recarga la página
         })
         .catch(error => {
             console.error('Error:', error);
+            // Manejar errores de la solicitud
         });
 }
 
-// Función para obtener los datos del cliente
 function obtenerDatosUsuario(usuarioId) {
     fetch(`https://localhost:7013/api/Usuarios/GetUsuarioById?Id=${usuarioId}`)
         .then(response => {
@@ -99,7 +73,7 @@ function obtenerDatosUsuario(usuarioId) {
             document.getElementById('btnGuardar').style.display = 'none';
             document.getElementById('btnEditar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
 
-           
+
         })
         .catch(error => {
             console.error('Error:', error);
@@ -149,6 +123,26 @@ function ActualizarUsuario() {
             alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
         });
 }
+
+function eliminarUsuario(usuarioId) {
+    // Hacer la solicitud DELETE al servidor para eliminar el cliente
+    fetch(`https://localhost:7013/api/Usuarios/DeleteUser/${usuarioId}`, {
+        method: 'DELETE',
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al eliminar el usuario.');
+            }
+            // Aquí puedes manejar la respuesta si es necesario
+            console.log('Usuario eliminado correctamente.');
+            // Recargar la página o actualizar la lista de clientes, según sea necesario
+            location.reload(); // Esto recarga la página
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
 
 function limpiarFormulario() {
     // Limpiar los valores de los campos del formulario

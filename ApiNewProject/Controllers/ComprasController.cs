@@ -28,7 +28,6 @@ namespace ApiNewProject.Controllers
                     ProveedorId = s.ProveedorId,
                     NumeroFactura = s.NumeroFactura,
                     FechaCompra = s.FechaCompra,
-                    ValorTotal = s.ValorTotal,
                     EstadoCompra = s.EstadoCompra
                 }
             ).ToListAsync();
@@ -50,7 +49,6 @@ namespace ApiNewProject.Controllers
                          ProveedorId = s.ProveedorId,
                          NumeroFactura = s.NumeroFactura,
                          FechaCompra = s.FechaCompra,
-                         ValorTotal = s.ValorTotal,
                          EstadoCompra = s.EstadoCompra
                      })
                 .FirstOrDefaultAsync(s => s.CompraId == Id);
@@ -104,7 +102,6 @@ namespace ApiNewProject.Controllers
             compras.ProveedorId = compra.ProveedorId;
             compras.NumeroFactura = compra.NumeroFactura;
             compras.FechaCompra = compra.FechaCompra;
-            compras.ValorTotal = compra.ValorTotal;
             compras.EstadoCompra = compra.EstadoCompra;
 
 
