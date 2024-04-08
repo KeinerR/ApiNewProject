@@ -22,21 +22,13 @@ namespace ApiNewProject.Entities
         public string? NombreProducto { get; set; }
         public int? CantidadTotal { get; set; }
         public ulong? Estado { get; set; }
-        [JsonIgnore]
         public virtual Categoria? Categoria { get; set; }
-        [JsonIgnore]
         public virtual Marca? Marca { get; set; }
-        [JsonIgnore]
         public virtual Presentacion? Presentacion { get; set; }
-        [JsonIgnore]
         public virtual Unidad? Unidad { get; set; }
-        [JsonIgnore]
         public virtual ICollection<Detallecompra> Detallecompras { get; set; }
-        [JsonIgnore]
         public virtual ICollection<Detallepedido> Detallepedidos { get; set; }
-        [JsonIgnore]
         public virtual ICollection<Lote> Lotes { get; set; }
-        [JsonIgnore]
         public virtual ICollection<Movimiento> Movimientos { get; set; }
     }
 }

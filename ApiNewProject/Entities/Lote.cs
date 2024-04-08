@@ -16,9 +16,7 @@ namespace ApiNewProject.Entities
         public DateTime? FechaVencimiento { get; set; }
         public int? Cantidad { get; set; }
         public ulong? EstadoLote { get; set; }
-        [JsonIgnore]
         public virtual Detallecompra? DetalleCompra { get; set; }
-        [JsonIgnore]
         public virtual Producto? Producto { get; set; }
     }
 }

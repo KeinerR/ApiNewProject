@@ -3,95 +3,130 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>@ViewData["Title"] - VistaNewProject</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/VistaNewProject.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
     <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://kit.fontawesome.com/822fe3c749.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">VistaNewProject</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Pedidos" asp-action="Index">Pedidos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="DetallePedidos" asp-action="Index">Detalle Pedidos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Clientes" asp-action="Index">Clientes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Usuarios" asp-action="Index">Usuarios</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Rols" asp-action="Index">Roles</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Proveedores" asp-action="Index">Proveedores</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Categorias" asp-action="Index">Categorias</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Marcas" asp-action="Index">Marcas</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Unidades" asp-action="Index">Unidades</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Presentaciones" asp-action="Index">Presentaciones</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Productos" asp-action="Index">Productos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Movimientos" asp-action="Index">Movimientos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Domicilios" asp-action="Index">Domicilios</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Lotes" asp-action="Index">Lotes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Compras" asp-action="Index">Compras</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="DetalleCompras" asp-action="Index">DetalleCompras</a>
-                        </li>
-                        <li class="nav-item">
-                            <form asp-controller="Login" asp-action="Logout" method="post" id="logoutForm">
-                                <button type="submit" class="nav-link text-dark" id="logoutButton">Cerrar sesión</button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+      <div id="Cabecera">
+        <div>
+            <button id="menu-toggle" class="btn btn-link">
+                <i class="fas fa-bars" style="color: white; font-size: 20px;"></i>
+            </button>
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="color:white;">OPTIMUS</a>
+        </div>
+        <div style="margin-left: auto;">
+            <a id="Perfil" style="text-decoration: none; color: inherit;" class="nav-link dropdown-toggle" onclick="opcionesDePerfil();">
+                <i style="color:white; font-size:20px;" class="fas fa-user fa-fw"></i>
+            </a>
+        </div>
     </div>
-
-    <footer class="border-top footer text-muted">
+    <div id="Cuerpo">
+        <div id="Menu" class="sidebar">
+            <a class="sidebar-label Texto"  asp-area="" asp-controller="Usuarios" asp-action="Index">Usuarios</a>
+            <label for="opcion1" class="sidebar-label Texto">Configuración</label>
+            <input type="checkbox" id="opcion1" >
+            <div class="sub-menu">
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Rols" asp-action="Index">Roles</a>
+            </div>
+            <label for="opcion2" class="sidebar-label Texto">Compras</label>
+            <input type="checkbox" id="opcion2" >
+            <div class="sub-menu">
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Compras" asp-action="Index">Compras</a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="DetalleCompras" asp-action="Index">DetalleCompras</a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Productos" asp-action="Index">Productos</a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Presentaciones" asp-action="Index">Presentaciones</a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Marcas" asp-action="Index">Marcas</a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Categorias" asp-action="Index">Categorias</a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Unidades" asp-action="Index">Unidades</a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Proveedores" asp-action="Index">Proveedores</a>
+            </div>
+            <a class="sidebar-label Texto" asp-area="" asp-controller="Movimientos" asp-action="Index">Movimientos</a>
+            <label for="opcion3" class="sidebar-label Texto">Pedidos</label>
+            <input type="checkbox" id="opcion3">
+            <div class="sub-menu">
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Pedidos" asp-action="Index">Pedidos</a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="DetallePedidos" asp-action="Index">Detalle Pedidos</a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Domicilios" asp-action="Index">Domicilios</a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Clientes" asp-action="Index">Clientes</a>
+                
+            </div>
+            <a class="sidebar-label Texto" asp-area="" asp-controller="Lotes" asp-action="Index">Lotes</a>
+        </div>
         <div class="container">
-            &copy; 2024 - VistaNewProject - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+       <footer class="border-top footer text-muted ">
+        <div>
+            &copy; 2024 - Optimus - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <div id="perfilVentanaEmergente">
+        <a asp-controller="Miperfil" asp-action="Index" class="opcionesVentanaEmergente">Mi perfil</a>
+        <a href="#" id="exit" onclick="confirmLogout();" >Cerrar sesión</a>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $("#menu-toggle").click(function (e) {
+                e.preventDefault();
+                closeSubMenus(); // Cierra todos los submenús al hacer clic en el menú principal
+                $("#Menu").toggleClass("menu-hidden");
+                $(".container").toggleClass("menu-hidden");
+            });
+
+            // Manejar el clic en las opciones del menú
+            $(".sidebar-label").click(function (e) {
+                var optionId = $(this).attr("for");
+                showSubMenu(optionId);
+            });
+
+            // Cierra los submenús al hacer clic en cualquier parte fuera del menú
+            $(document).click(function (event) {
+                var target = event.target;
+                if (!$(target).is("#menu-toggle") && !$(target).closest("#Menu").length) {
+                    closeSubMenus();
+                }
+            });
+
+            // Cierra todos los submenús
+            function closeSubMenus() {
+                var subMenus = document.querySelectorAll('.sub-menu');
+                subMenus.forEach(function (subMenu) {
+                    subMenu.style.maxHeight = '0';
+                });
+            }
+
+            // Función para mostrar y ocultar los submenús
+            function showSubMenu(optionId) {
+                var subMenu = $("#" + optionId).next(".sub-menu");
+
+                // Cierra el submenú si ya está abierto
+                if (subMenu.css("max-height") !== '0px') {
+                    subMenu.css("max-height", "0");
+                } else {
+                    // Oculta todos los submenús
+                    closeSubMenus();
+
+                    // Muestra el submenú correspondiente al clicar en la opción
+                    subMenu.css("max-height", subMenu.prop("scrollHeight") + 'px');
+                }
+            }
+        });
+
+    </script>
 </body>
 </html>

@@ -65,27 +65,58 @@ namespace ApiNewProject.Controllers
 
 
         [HttpPost("InsertarCompra")]
-        public async Task<ActionResult<Compra>> InsertarCompra(Compra compra)
+        public async Task<IActionResult> InsertarCompra(Compra compra)
         {
-            try
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                if (compra == null)
+                try
                 {
-                    return BadRequest("Los datos de la compra no pueden ser nulos.");
+                    // Agregar la compra
+                    _context.Compras.Add(compra);
+                    await _context.SaveChangesAsync();
+
+                    // Iterar sobre los detalles de compra
+                    foreach (var detalleCompra in compra.Detallecompras)
+                    {
+                        // Asignar el ID de la compra al detalle de compra
+                        detalleCompra.CompraId = compra.CompraId;
+
+                        // Agregar el detalle de compra a la base de datos
+                        _context.Detallecompras.Add(detalleCompra);
+                        await _context.SaveChangesAsync();
+
+                        // Crear un nuevo producto
+                        var producto = new Producto
+                        {
+                            PresentacionId = detalleCompra.Producto.PresentacionId,
+                            MarcaId = detalleCompra.Producto.MarcaId,
+                            CategoriaId = detalleCompra.Producto.CategoriaId,
+                            UnidadId = detalleCompra.Producto.UnidadId,
+                            NombreProducto = detalleCompra.Producto.NombreProducto,
+                            CantidadTotal = detalleCompra.Producto.CantidadTotal,
+                            Estado = detalleCompra.Producto.Estado
+                        };
+
+                        // Agregar el producto a la base de datos
+                        _context.Productos.Add(producto);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    // Commit de la transacción
+                    await transaction.CommitAsync();
+
+                    return Ok(compra);
                 }
-
-                _context.Compras.Add(compra);
-                await _context.SaveChangesAsync();
-
-                // Make sure GetCompraById method exists and is accessible
-                return CreatedAtAction(nameof(GetCompraById), new { id = compra.CompraId }, compra);
-            }
-            catch (Exception ex)
-            {
-                // Return a more specific error message
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar compra en la base de datos. Detalles: " + ex.Message);
+                catch (Exception ex)
+                {
+                    // Rollback de la transacción en caso de error
+                    await transaction.RollbackAsync();
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar compra en la base de datos. Detalles: " + ex.Message);
+                }
             }
         }
+
+
 
 
 

@@ -16,9 +16,7 @@ namespace ApiNewProject.Entities
         public int? NumeroFactura { get; set; }
         public DateTime? FechaCompra { get; set; }
         public ulong? EstadoCompra { get; set; }
-        [JsonIgnore]
         public virtual Proveedor? Proveedor { get; set; }
-        [JsonIgnore]
         public virtual ICollection<Detallecompra> Detallecompras { get; set; }
     }
 }
