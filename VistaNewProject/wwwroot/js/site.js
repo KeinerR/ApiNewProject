@@ -1,12 +1,18 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿//Funcion para hacer aparecer y desaparecer el div de opciones de perfil y salir
+function opcionesDePerfil() {
+    var profilePopup = document.getElementById("perfilVentanaEmergente");
+    if (profilePopup.style.display === "none") {
+        profilePopup.style.display = "block";
+    } else {
+        profilePopup.style.display = "none";
+    }
+}
 
-// Write your JavaScript code.
-
-    $(document).ready(function () {
-        $('#logoutButton').click(function (e) {
-            e.preventDefault();
-            $('#logoutForm').submit();
-        });
-    });
-
+function confirmLogout() {
+    var result = confirm("¿Estás seguro de que deseas cerrar sesión?");
+    if (result) {
+        window.location.href = "/Login/Logout"; // Redirige al usuario a la URL definida
+    } else {
+        window.location.reload();
+    }
+}
