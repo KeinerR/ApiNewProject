@@ -71,17 +71,12 @@ namespace ApiNewProject.Controllers
             {
                 try
                 {
-                    // Agregar la compra
                     _context.Compras.Add(compra);
                     await _context.SaveChangesAsync();
 
-                    // Iterar sobre los detalles de compra
                     foreach (var detalleCompra in compra.Detallecompras)
                     {
-                        // Asignar el ID de la compra al detalle de compra
                         detalleCompra.CompraId = compra.CompraId;
-
-                        // Agregar el detalle de compra a la base de datos
                         _context.Detallecompras.Add(detalleCompra);
                         await _context.SaveChangesAsync();
 
@@ -100,16 +95,30 @@ namespace ApiNewProject.Controllers
                         // Agregar el producto a la base de datos
                         _context.Productos.Add(producto);
                         await _context.SaveChangesAsync();
+
+                        foreach (var lote in detalleCompra.Lotes)
+                        {
+                            var nuevoLote = new Lote
+                            {
+                                DetalleCompraId = detalleCompra.DetalleCompraId,
+                                ProductoId = producto.ProductoId,
+                                NumeroLote = lote.NumeroLote,
+                                PrecioCompra = lote.PrecioCompra,
+                                PrecioDetal = lote.PrecioDetal,
+                                PrecioxMayor = lote.PrecioxMayor,
+                                Cantidad = lote.Cantidad,
+                                FechaVencimiento = lote.FechaVencimiento,
+                                EstadoLote = lote.EstadoLote
+                            };
+                            _context.Lotes.Add(nuevoLote);
+                            await _context.SaveChangesAsync();
+                        }
                     }
-
-                    // Commit de la transacción
                     await transaction.CommitAsync();
-
                     return Ok(compra);
                 }
                 catch (Exception ex)
                 {
-                    // Rollback de la transacción en caso de error
                     await transaction.RollbackAsync();
                     return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar compra en la base de datos. Detalles: " + ex.Message);
                 }
@@ -129,7 +138,7 @@ namespace ApiNewProject.Controllers
             {
                 return NotFound();
             }
-            compras.CompraId= compra.CompraId;
+            compras.CompraId = compra.CompraId;
             compras.ProveedorId = compra.ProveedorId;
             compras.NumeroFactura = compra.NumeroFactura;
             compras.FechaCompra = compra.FechaCompra;
@@ -154,3 +163,4 @@ namespace ApiNewProject.Controllers
         }
     }
 }
+
