@@ -62,70 +62,85 @@ namespace ApiNewProject.Controllers
                 return Ok(compra);
             }
         }
-
-
-        [HttpPost("InsertarCompra")]
-        public async Task<IActionResult> InsertarCompra(Compra compra)
+        [HttpPost("InsertCompras")]
+        public async Task<IActionResult> InsertCompras(Compra compra)
         {
-            using (var transaction = _context.Database.BeginTransaction())
+            Console.WriteLine(compra.FechaCompra);
+            try
             {
-                try
+                var newCompra = new Compra
                 {
-                    _context.Compras.Add(compra);
-                    await _context.SaveChangesAsync();
+                    ProveedorId = compra.ProveedorId,
+                    NumeroFactura = compra.NumeroFactura,
+                    FechaCompra = compra.FechaCompra,
+                    EstadoCompra = compra.EstadoCompra,
+                    Detallecompras = new List<Detallecompra>()
+                };
 
-                    foreach (var detalleCompra in compra.Detallecompras)
+                foreach (var detalleCompra in compra.Detallecompras)
+                {
+                    if (!detalleCompra.Cantidad.HasValue)
                     {
-                        detalleCompra.CompraId = compra.CompraId;
-                        _context.Detallecompras.Add(detalleCompra);
-                        await _context.SaveChangesAsync();
+                        return BadRequest("La cantidad es requerida para el detalle de la compra.");
+                    }
 
-                        // Crear un nuevo producto
-                        var producto = new Producto
-                        {
-                            PresentacionId = detalleCompra.Producto.PresentacionId,
-                            MarcaId = detalleCompra.Producto.MarcaId,
-                            CategoriaId = detalleCompra.Producto.CategoriaId,
-                            UnidadId = detalleCompra.Producto.UnidadId,
-                            NombreProducto = detalleCompra.Producto.NombreProducto,
-                            CantidadTotal = detalleCompra.Producto.CantidadTotal,
-                            Estado = detalleCompra.Producto.Estado
-                        };
+                    var newDetalleCompra = new Detallecompra
+                    {
+                        CompraId = newCompra.CompraId,
+                        ProductoId = detalleCompra.ProductoId,
+                        Cantidad = detalleCompra.Cantidad.Value,
+                        Lotes = new List<Lote>()
+                    };
 
-                        // Agregar el producto a la base de datos
-                        _context.Productos.Add(producto);
-                        await _context.SaveChangesAsync();
-
+                    if (detalleCompra.Lotes != null)
+                    {
                         foreach (var lote in detalleCompra.Lotes)
                         {
-                            var nuevoLote = new Lote
+                            if (!lote.Cantidad.HasValue || !lote.PrecioCompra.HasValue || !lote.FechaVencimiento.HasValue)
                             {
-                                DetalleCompraId = detalleCompra.DetalleCompraId,
-                                ProductoId = producto.ProductoId,
+                                return BadRequest("Cantidad, PrecioCompra y FechaVencimiento son requeridos para el lote.");
+                            }
+
+                            newDetalleCompra.Lotes.Add(new Lote
+                            {
+                                DetalleCompraId = newDetalleCompra.DetalleCompraId,
+                                ProductoId = lote.ProductoId,
                                 NumeroLote = lote.NumeroLote,
                                 PrecioCompra = lote.PrecioCompra,
                                 PrecioDetal = lote.PrecioDetal,
                                 PrecioxMayor = lote.PrecioxMayor,
-                                Cantidad = lote.Cantidad,
                                 FechaVencimiento = lote.FechaVencimiento,
+                                Cantidad = lote.Cantidad,
                                 EstadoLote = lote.EstadoLote
-                            };
-                            _context.Lotes.Add(nuevoLote);
-                            await _context.SaveChangesAsync();
+                            });
+
+                            // Actualizar la cantidad total del producto en la compra
+                            var producto = await _context.Productos.FindAsync(lote.ProductoId);
+                            if (producto != null)
+                            {
+                                producto.CantidadTotal += lote.Cantidad.Value;
+                            }
+                            else
+                            {
+                                // Si el producto no existe, puedes crear uno nuevo o manejar el caso según tus requisitos
+                                // Aquí simplemente lanzaremos una excepción, pero puedes cambiar esto según tus necesidades
+                                throw new InvalidOperationException("El producto no existe.");
+                            }
                         }
                     }
-                    await transaction.CommitAsync();
-                    return Ok(compra);
+
+                    newCompra.Detallecompras.Add(newDetalleCompra);
                 }
-                catch (Exception ex)
-                {
-                    await transaction.RollbackAsync();
-                    return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar compra en la base de datos. Detalles: " + ex.Message);
-                }
+
+                _context.Compras.Add(newCompra);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error al insertar la compra: " + ex.Message);
             }
         }
-
-
 
 
 

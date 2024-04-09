@@ -43,7 +43,6 @@ namespace ApiNewProject.Controllers
             return List;
 
         }
-
         [HttpPost("InsertPedidos")]
         public async Task<IActionResult> InsertPedidos(Pedido pedido)
         {
@@ -56,8 +55,7 @@ namespace ApiNewProject.Controllers
                     TipoServicio = pedido.TipoServicio,
                     FechaPedido = pedido.FechaPedido,
                     EstadoPedido = pedido.EstadoPedido,
-                    Detallepedidos = new List<Detallepedido>(), // Aquí está la corrección
-                    Domicilios = new List<Domicilio>()
+                    Domicilios = new List<Domicilio>() // Solo inicializamos los domicilios
                 };
 
                 if (pedido.TipoServicio == "Domicilio")
@@ -75,11 +73,49 @@ namespace ApiNewProject.Controllers
                         });
                     }
                 }
+
                 foreach (var item in pedido.Detallepedidos)
                 {
                     if (!item.Cantidad.HasValue || !item.PrecioUnitario.HasValue)
                     {
                         return BadRequest("Cantidad y PrecioUnitario son requeridos.");
+                    }
+
+                    // Restar la cantidad del producto
+                    var producto = await _context.Productos.FindAsync(item.ProductoId);
+                    if (producto != null)
+                    {
+                        producto.CantidadTotal -= item.Cantidad.Value;
+
+                        // Guardar los cambios en el producto
+                        _context.Productos.Update(producto);
+                        await _context.SaveChangesAsync();
+
+                        // Restar la cantidad del lote más próximo a vencer
+                        var lote = await _context.Lotes
+                            .Where(l => l.ProductoId == item.ProductoId && l.Cantidad > 0)
+                            .OrderBy(l => l.FechaVencimiento)
+                            .FirstOrDefaultAsync();
+
+                        if (lote != null)
+                        {
+                            if (lote.Cantidad >= item.Cantidad)
+                            {
+                                lote.Cantidad -= item.Cantidad.Value;
+                            }
+                            else
+                            {
+                                throw new InvalidOperationException("No hay suficiente cantidad en el lote.");
+                            }
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException("No hay lotes disponibles para el producto.");
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("El producto no existe.");
                     }
 
                     vlPedido.Detallepedidos.Add(new Detallepedido
@@ -100,6 +136,7 @@ namespace ApiNewProject.Controllers
                 return BadRequest("Error al insertar el pedido: " + ex.Message);
             }
         }
+
 
         [HttpGet("GetPedidos")]
         public async Task<ActionResult<Pedido>> GetPedidos(int id)
