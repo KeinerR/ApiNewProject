@@ -42,19 +42,20 @@ namespace VistaNewProject.Controllers
 
             if (usuarioValido == null)
             {
-                ViewData["MostrarAlerta"] = "El usuario o contraseña son incorrectos sigue intentando";
+                ViewData["MostrarAlerta"] = "El usuario o contraseña son incorrectos, intentalo de nuevo";
                 return View("Index", model);
             }
             else
             {
                 // Crear identidad del usuario
                 var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, model.Usuario1),
-            new Claim("RolId", usuarioValido.RolId.ToString())
-            // Otros claims según la lógica de tu aplicación
-            // Agrega más claims según tus necesidades (roles, etc.)
-        };
+                {
+                    new Claim(ClaimTypes.Name, usuarioValido.Usuario1),
+                    new Claim("RolId", usuarioValido.RolId.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, usuarioValido.UsuarioId.ToString()) // Identificador único del usuario
+                    // Otros claims según la lógica de tu aplicación
+                    // Agrega más claims según tus necesidades (roles, etc.)
+                };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -66,6 +67,10 @@ namespace VistaNewProject.Controllers
 
                 // Iniciar sesión con la cookie de autenticación
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                
+                ViewData["UserName"] = usuarioValido.Usuario1;
+                ViewData["Nombre"] = usuarioValido.UsuarioId;
+
 
                 // Redirigir al controlador "Home" después del inicio de sesión
                 return RedirectToAction("Index", "Home");

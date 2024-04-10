@@ -11,24 +11,33 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Agregar servicios al contenedor.
 builder.Services.AddControllersWithViews();
+
+// Agregar cliente HTTP para la API
 builder.Services.AddHttpClient("ApiHttpClient", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["AppiSetting:ApiBaseUrl"]);
 });
 builder.Services.AddScoped<IApiClient, ApiClient>();
 
+// Agregar IHttpContextAccessor
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 // Configurar la autenticación basada en cookies
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(100000); // Cambia según tus necesidades
         options.LoginPath = "/Login/Index"; // Ruta de inicio de sesión
         options.LogoutPath = "/Login/Logout"; // Ruta de cierre de sesión
+        // options.AccessDeniedPath = "/Account/AccessDenied"; // Ruta de acceso denegado
     });
 
 // Configurar las políticas de autorización
 builder.Services.AddAuthorization(options =>
 {
+
     options.AddPolicy("RolAdministrador", policy =>
         policy.RequireClaim("RolId", "1")); // La política requiere que el usuario tenga una reclamación de RolId con el valor "1"
 
@@ -37,7 +46,6 @@ builder.Services.AddAuthorization(options =>
 
     options.AddPolicy("RolDomiciliario", policy =>
         policy.RequireClaim("RolId", "3")); // La política requiere que el usuario tenga una reclamación de RolId con el valor "3"
-
 });
 
 var app = builder.Build();
@@ -66,7 +74,6 @@ app.UseCors(builder =>
 });
 
 // Configurar las rutas predeterminadas y el enrutamiento
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

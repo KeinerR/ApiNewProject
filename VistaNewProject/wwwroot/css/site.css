@@ -40,7 +40,13 @@ body {
 
 #Perfil {
     margin-right: 20px;
+    border-radius:10px;
+    transition: box-shadow 0.3s ease-in-out; /* Agregamos una transición para suavizar el efecto */
 }
+
+    #Perfil:hover {
+        box-shadow: 0 0 3px white; /* Efecto de sombra blanca al hacer hover */
+    }
 
 #Cuerpo {
     display: flex;
@@ -83,7 +89,7 @@ body {
         border: solid black 1px;
         transition: background-color 0.3s ease-in-out;
     }
-    /*Diseño cuando el coursor esta sobre la etiqueta html*/
+    /*Diseño cuando el coursor esta sobre la etiqueta*/
         .sidebar button:hover,
         .sidebar label:hover,
         .sidebar a:hover{

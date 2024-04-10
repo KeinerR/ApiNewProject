@@ -47,8 +47,8 @@
     @if (!string.IsNullOrEmpty(ViewData["MostrarAlerta"] as string))
     {
         <script>
-            Swal.fire("Error al iniciar sesión. Usuario o contraseña incorrectos");
-        </script>
+            Swal.fire('@ViewData["MostrarAlerta"]');
+         </script>
     }
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

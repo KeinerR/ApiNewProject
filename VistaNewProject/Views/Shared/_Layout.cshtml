@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿ @using Microsoft.AspNetCore.Authentication
+ @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -9,8 +11,8 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/VistaNewProject.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
-    <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://kit.fontawesome.com/822fe3c749.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -21,11 +23,27 @@
             </button>
             <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="color:white;">OPTIMUS</a>
         </div>
-        <div style="margin-left: auto;">
-            <a id="Perfil" style="text-decoration: none; color: inherit;" class="nav-link dropdown-toggle" onclick="opcionesDePerfil();">
-                <i style="color:white; font-size:20px;" class="fas fa-user fa-fw"></i>
-            </a>
-        </div>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div style="margin-left: auto;">
+                <a id="Perfil" style="text-decoration: none; color: inherit;" class="nav-link dropdown-toggle" onclick="opcionesDePerfil();">
+                    <i style="color:white; font-size:20px;" class="fas fa-user fa-fw"></i>
+                        <span style="user-select:none;">@User.Identity.Name </span>
+                </a>
+            </div>
+        }
+        else
+        {
+            <div style="margin-left: auto;">
+                <a id="Perfil" style="text-decoration: none; color: inherit;" href="Login" class="nav-link dropdown-toggle">
+                    <i style="color:white; font-size:20px;" class="fas fa-user fa-fw"></i>
+                    <span>Inicia sesión</span>
+                </a>
+            </div>
+
+            
+        }
+
     </div>
     <div id="Cuerpo">
         <div id="Menu" class="sidebar">
@@ -65,68 +83,17 @@
             </main>
         </div>
     </div>
-       <footer class="border-top footer text-muted ">
+    <footer class="border-top footer text-muted ">
         <div>
             &copy; 2024 - Optimus - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-
     <div id="perfilVentanaEmergente">
         <a asp-controller="Miperfil" asp-action="Index" class="opcionesVentanaEmergente">Mi perfil</a>
         <a href="#" id="exit" onclick="confirmLogout();" >Cerrar sesión</a>
     </div>
-    <script>
-        $(document).ready(function () {
-            $("#menu-toggle").click(function (e) {
-                e.preventDefault();
-                closeSubMenus(); // Cierra todos los submenús al hacer clic en el menú principal
-                $("#Menu").toggleClass("menu-hidden");
-                $(".container").toggleClass("menu-hidden");
-            });
-
-            // Manejar el clic en las opciones del menú
-            $(".sidebar-label").click(function (e) {
-                var optionId = $(this).attr("for");
-                showSubMenu(optionId);
-            });
-
-            // Cierra los submenús al hacer clic en cualquier parte fuera del menú
-            $(document).click(function (event) {
-                var target = event.target;
-                if (!$(target).is("#menu-toggle") && !$(target).closest("#Menu").length) {
-                    closeSubMenus();
-                }
-            });
-
-            // Cierra todos los submenús
-            function closeSubMenus() {
-                var subMenus = document.querySelectorAll('.sub-menu');
-                subMenus.forEach(function (subMenu) {
-                    subMenu.style.maxHeight = '0';
-                });
-            }
-
-            // Función para mostrar y ocultar los submenús
-            function showSubMenu(optionId) {
-                var subMenu = $("#" + optionId).next(".sub-menu");
-
-                // Cierra el submenú si ya está abierto
-                if (subMenu.css("max-height") !== '0px') {
-                    subMenu.css("max-height", "0");
-                } else {
-                    // Oculta todos los submenús
-                    closeSubMenus();
-
-                    // Muestra el submenú correspondiente al clicar en la opción
-                    subMenu.css("max-height", subMenu.prop("scrollHeight") + 'px');
-                }
-            }
-        });
-
-    </script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 </body>
 </html>

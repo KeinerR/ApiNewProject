@@ -5,7 +5,7 @@ using VistaNewProject.Services;
 
 namespace VistaNewProject.Controllers
 {
-    [Authorize(Policy = "RolAdministrador")]
+    
     public class UsuariosController : Controller
     {
         private readonly IApiClient _client;
