@@ -11,8 +11,6 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/VistaNewProject.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://kit.fontawesome.com/822fe3c749.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -87,13 +85,16 @@
         <div>
             &copy; 2024 - Optimus - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
-    </footer>
-    @await RenderSectionAsync("Scripts", required: false)
-    <div id="perfilVentanaEmergente">
+    </footer>   
+    <div id="perfilVentanaEmergente" style="display:none;">
         <a asp-controller="Miperfil" asp-action="Index" class="opcionesVentanaEmergente">Mi perfil</a>
         <a href="#" id="exit" onclick="confirmLogout();" >Cerrar sesión</a>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

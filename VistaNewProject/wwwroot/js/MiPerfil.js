@@ -163,7 +163,7 @@ $(function () {
                     })
                     .then(usuario => {
                         usuarioInicial = {
-                            id: usuario.id,
+                            id: usuario.usuarioId,
                             nombre: usuario.nombre,
                             apellido: usuario.apellido,
                             correo: usuario.correo,
@@ -260,6 +260,8 @@ $(function () {
                 });
         }
 
-    });
+});
+
+
 
 

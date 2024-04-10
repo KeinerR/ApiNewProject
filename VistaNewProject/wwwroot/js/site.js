@@ -1,4 +1,21 @@
-﻿$(function () {
+﻿// Definir la función opcionesDePerfil
+function opcionesDePerfil() {
+    var profilePopup = document.getElementById("perfilVentanaEmergente");
+    if (profilePopup.style.display === "none") {
+        profilePopup.style.display = "block";
+    } else {
+        profilePopup.style.display = "none";
+    }
+}
+function confirmLogout() {
+    var result = confirm("¿Estás seguro de que deseas cerrar sesión?");
+    if (result) {
+        window.location.href = "/Login/Logout"; // Redirige al usuario a la URL definida
+    } else {
+        window.location.reload();
+    }
+}
+$(function () {
    $("#menu-toggle").on("click", function (e) {
     e.preventDefault();
     closeSubMenus(); // Cierra todos los submenús al hacer clic en el menú principal
@@ -42,22 +59,5 @@
             subMenu.css("max-height", subMenu.prop("scrollHeight") + 'px');
         }
     }
+    
 });
-//Funcion para hacer aparecer y desaparecer el div de opciones de perfil y salir
-function opcionesDePerfil() {
-    var profilePopup = document.getElementById("perfilVentanaEmergente");
-    if (profilePopup.style.display === "none") {
-        profilePopup.style.display = "block";
-    } else {
-        profilePopup.style.display = "none";
-    }
-}
-
-function confirmLogout() {
-    var result = confirm("¿Estás seguro de que deseas cerrar sesión?");
-    if (result) {
-        window.location.href = "/Login/Logout"; // Redirige al usuario a la URL definida
-    } else {
-        window.location.reload();
-    }
-}

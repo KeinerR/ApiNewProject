@@ -17,7 +17,7 @@ else
     <div class="col-md-6">
         <form asp-action="Edit" id="edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="UsuarioId" disabled />
+            <input type="hidden" asp-for="UsuarioId" />
             <div class="form-group">
                 <label asp-for="Nombre" class="control-label"></label>
                 <input asp-for="Nombre" class="form-control" disabled />
@@ -55,11 +55,11 @@ else
         </form>
     </div>
     <div class="form-group text-center edit">
-        <a asp-action="Edit" asp-route-id="@Model.UsuarioId">
-            <button type="button" class="btn btn-info">Editar Perfil</button>
+        <a asp-action="Edit" asp-route-id="@Model.UsuarioId" class="btn btn-info">
+            Editar datos de perfil
         </a>
-        <a asp-action="EditC" asp-route-id="@Model.UsuarioId">
-            <button type="button" class="btn btn-info">Editar contraseña</button>
+        <a asp-action="EditC" asp-route-id="@Model.UsuarioId" class="btn btn-info">
+           Editar Contraseña
         </a>
     </div>
 </div>

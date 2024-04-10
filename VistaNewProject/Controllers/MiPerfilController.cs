@@ -49,7 +49,21 @@ namespace VistaNewProject.Controllers
             }
             return View(usuario);
         }
-        
+        public async Task<IActionResult> EditC(int? id)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("Error");
+            }
+            var users = await _client.GetUsuarioAsync();
+
+            var usuario = users.FirstOrDefault(u => u.UsuarioId == id);
+            if (usuario == null)
+            {
+                return RedirectToAction("Error");
+            }
+            return View(usuario);
+        }
 
 
     }

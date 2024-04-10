@@ -55,19 +55,6 @@
     </div>
 </form>
 
-@if (TempData["MensajeExito"] != null)
-{
-    <script>
-        Swal.fire({
-            icon: 'success',
-            title: '@TempData["MensajeExito"]',
-            showConfirmButton: false,
-            timer: 2000
-        }).then(() => {
-            window.location.href = '@Url.Action("Index", "Miperfil")';
-        });
-    </script>
-}
 @section Scripts {
     <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="~/js/MiPerfil.js"></script>
