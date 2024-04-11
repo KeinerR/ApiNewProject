@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VistaNewProject.Services;
+using X.PagedList;
 
 namespace VistaNewProject.Controllers
 {
@@ -14,16 +15,27 @@ namespace VistaNewProject.Controllers
         }
 
 
-        public async Task<ActionResult> Index()
+        public async Task<IActionResult> Index(int? page)
         {
-            var domicilio = await _client.GetDomicilioAsync();
+            int pageSize = 5; // Número máximo de elementos por página
+            int pageNumber = page ?? 1;
 
-            if (domicilio == null)
+            var domicilios = await _client.GetDomicilioAsync();
+
+            if (domicilios == null)
             {
-                return View("Error");
+                return NotFound("error");
             }
 
-            return View(domicilio);
+            var pagedDomicilios = await domicilios.ToPagedListAsync(pageNumber, pageSize);
+
+            // Verifica si la página actual está vacía y redirige a la última página que contiene registros
+            if (!pagedDomicilios.Any() && pagedDomicilios.PageNumber > 1)
+            {
+                pagedDomicilios = await domicilios.ToPagedListAsync(pagedDomicilios.PageCount, pageSize);
+            }
+
+            return View(pagedDomicilios);
         }
     }
 }
