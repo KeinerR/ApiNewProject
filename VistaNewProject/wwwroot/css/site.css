@@ -274,4 +274,16 @@ input:checked + .slider:before {
         color: #2574A8;
         background: white;
     }
-    
+
+.table-custom thead th {
+    background-color: #2574A8; /* Color de fondo */
+    color: white; /* Color del texto */
+}
+
+.table-custom tbody tr:hover {
+    background-color: #f2f2f2; /* Color de fondo al pasar el cursor sobre la fila */
+}
+
+    .table-custom tbody tr:hover td {
+        transform: translateY(-3px); /* Levantar 3px al pasar el cursor */
+    }

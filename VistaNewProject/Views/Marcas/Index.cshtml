@@ -1,12 +1,30 @@
-﻿@model IEnumerable<VistaNewProject.Models.Marca>
+﻿@using X.PagedList
+@model X.PagedList.IPagedList<VistaNewProject.Models.Marca>
 @{
     ViewData["Title"] = "Index";
 }
 
-<!-- Botón para abrir el modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#MarcaModal">
-    Agregar Marca
-</button>
+
+<br />
+
+<div class="d-flex justify-content-between">
+    <!-- Formulario de búsqueda a la izquierda -->
+    <div class="mr-auto">
+        <form class="d-none d-md-inline-block form-inline my-2 my-md-0">
+            <div class="input-group">
+                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" id="searchInput" />
+                <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Botón "Agregar Marca" a la derecha -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#MarcaModal">
+        Agregar Marca
+    </button>
+</div>
+
+
 
 <!-- Modal -->
 <div class="modal fade" id="MarcaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -43,22 +61,25 @@
     </div>
 </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<br />
+<hr>
+
+
+<table class="table table-custom text-center">
     <thead>
         <tr>
             <th>
-                Marca Id
+                MARCA ID
             </th>
             <th>
-                Nombre marca
+                NOMBRE MARCA
             </th>
-            <th></th>
+            <th>
+                ACCIONES
+            </th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="text-center">
         @foreach (var item in Model)
         {
             <tr>
@@ -68,14 +89,48 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.NombreMarca)
                 </td>
-                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                <!-- Agrega esta celda para las acciones -->
                 <td>
-                    <button class="btn btn-warning" onclick="obtenerDatosMarca('@item.MarcaId')" data-cliente-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal">Editar</button>
+                    <button class="btn btn-info" onclick="obtenerDatosMarca('@item.MarcaId')" data-cliente-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal">Editar</button>
                     <button class="btn btn-danger" onclick="eliminarMarca('@item.MarcaId')">Eliminar</button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<div class="pagination-container mt-2">
+    @if (Model != null && Model.PageCount > 1)
+    {
+        <div class="d-flex justify-content-center mb-5">
+            <nav aria-label="Page navigation bg-dark">
+                <ul class="pagination">
+                    <!-- Botón para la página anterior (oculto en la página 1) -->
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <!-- Iterar sobre las páginas disponibles -->
+                    @for (var i = 1; i <= Model.PageCount; i++)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                            <a class="page-link" href="?page=@i">@i</a>
+                        </li>
+                    }
+                    <!-- Botón para la página siguiente (oculto en la última página) -->
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
+</div>
+
+
+
 <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="~/js/marcas.js"></script>
