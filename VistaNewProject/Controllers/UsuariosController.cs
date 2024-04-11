@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
-
 
 namespace VistaNewProject.Controllers
 {
@@ -19,10 +19,11 @@ namespace VistaNewProject.Controllers
         }
 
 
-        public async Task<IActionResult> Index(int? page)
+        public async Task<ActionResult> Index(int ? page)
         {
             int pageSize = 5; // Número máximo de elementos por página
             int pageNumber = page ?? 1;
+            var roles = await _client.GetRolAsync();
 
             var usuarios = await _client.GetUsuarioAsync();
 
@@ -30,16 +31,16 @@ namespace VistaNewProject.Controllers
             {
                 return NotFound("error");
             }
-
-            var pagedUsuarios = await usuarios.ToPagedListAsync(pageNumber, pageSize);
+            var pageUsuarios = await usuarios.ToPagedListAsync(pageNumber, pageSize);
 
             // Verifica si la página actual está vacía y redirige a la última página que contiene registros
-            if (!pagedUsuarios.Any() && pagedUsuarios.PageNumber > 1)
+            if (!pageUsuarios.Any() && pageUsuarios.PageNumber > 1)
             {
-                pagedUsuarios = await usuarios.ToPagedListAsync(pagedUsuarios.PageCount, pageSize);
+                pageUsuarios = await usuarios.ToPagedListAsync(pageUsuarios.PageCount, pageSize);
             }
-
-            return View(pagedUsuarios);
+            ViewBag.roles = roles;
+            return View(pageUsuarios);
+           
         }
 
     }
