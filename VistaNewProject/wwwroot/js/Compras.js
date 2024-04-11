@@ -1,133 +1,177 @@
+ï»¿var compra = null;
 
-function agregarCompra() {
-    const proveedorId = document.getElementById('ProveedorId').value;
-    const numeroFactura = document.getElementById('NumeroFactura').value;
-    const fechaCompra = document.getElementById('FechaCompra').value;
-    const estadoCompra = document.getElementById('EstadoCompra').value;
-   
-    const compraObjeto = {
-        ProveedorId: proveedorId,
-        NumeroFactura: numeroFactura,
-        FechaCompra: fechaCompra,
-        EstadoCompra: estadoCompra
+document.getElementById("formCompra").addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    compra = {
+        ProveedorId: document.getElementById("ProveedorId").value,
+        NumeroFactura: document.getElementById("NumeroFactura").value,
+        FechaCompra: document.getElementById("FechaCompra").value,
+        EstadoCompra: document.getElementById("EstadoCompra").value,
+        DetalleCompra: [],
+        Lotes: []
+    };
+    console.log(compra);
+});
+
+// FunciÃ³n para agregar detalles a la tabla
+function agregarDetalleATabla(detalleCompra, lote) {
+    var detalleTableBody = document.getElementById("detalleTableBody");
+    var row = detalleTableBody.insertRow();
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    var cell4 = row.insertCell(3);
+    var cell5 = row.insertCell(4);
+    var cell6 = row.insertCell(5);
+    var cell7 = row.insertCell(6);
+    var cell8 = row.insertCell(7);
+    var cell9 = row.insertCell(8);
+    var cell10 = row.insertCell(9);
+
+    // Mostrar los detalles de compra
+    cell1.textContent = detalleCompra.ProductoId;
+    cell2.textContent = detalleCompra.Cantidad;
+
+    // Mostrar los detalles del lote
+    cell3.textContent = lote.NumeroLote;
+    cell4.textContent = lote.PrecioCompra;
+    cell5.textContent = lote.PrecioDetal;
+    cell6.textContent = lote.PrecioxMayor;
+    cell7.textContent = lote.FechaVencimiento;
+    cell8.textContent = lote.Cantidad;
+    cell9.textContent = lote.EstadoLote;
+
+    var editButton = document.createElement("button");
+    editButton.innerHTML = "âœï¸"; // Emoji de lÃ¡piz para editar
+    editButton.classList.add("btn", "btn-primary", "btn-editar-detalle");
+    editButton.dataset.index = detalleTableBody.rows.length - 1;
+    cell10.appendChild(editButton);
+
+    // Agregar botÃ³n de eliminar con emoji
+    var deleteButton = document.createElement("button");
+    deleteButton.innerHTML = "âŒ"; // Emoji de cruz para eliminar
+    deleteButton.classList.add("btn", "btn-danger", "btn-eliminar-detalle");
+    deleteButton.dataset.index = detalleTableBody.rows.length - 1;
+    cell10.appendChild(deleteButton);
+}
+
+// FunciÃ³n para eliminar un detalle del pedido
+function eliminarDetalle(index) {
+    compra.DetalleCompra.splice(index, 1); // Eliminar el detalle del pedido de la lista de detalles
+    compra.Lotes.splice(index, 1); // Eliminar el lote asociado al detalle
+    actualizarTablaDetalle(); // Actualizar la tabla de detalles del pedido despuÃ©s de eliminar un detalle
+}
+
+// FunciÃ³n para editar un detalle del pedido
+function editarDetalle(index) {
+    var detalleCompra = compra.DetalleCompra[index];
+    var lote = compra.Lotes[index];
+
+    // Rellenar los campos del formulario de ediciÃ³n con los datos del detalle del pedido
+    document.getElementById("ProductoId").value = detalleCompra.ProductoId;
+    document.getElementById("Cantidad").value = detalleCompra.Cantidad;
+    document.getElementById("NumeroLote").value = lote.NumeroLote;
+    document.getElementById("PrecioCompra").value = lote.PrecioCompra;
+    document.getElementById("PrecioDetal").value = lote.PrecioDetal;
+    document.getElementById("PrecioxMayor").value = lote.PrecioxMayor;
+    document.getElementById("FechaVencimiento").value = lote.FechaVencimiento;
+    document.getElementById("EstadoLote").value = lote.EstadoLote;
+
+    // Mostrar el formulario de ediciÃ³n de detalles del pedido
+    document.getElementById("detallecontainer").classList.remove("d-none");
+
+    // Eliminar el detalle del pedido de la lista de detalles
+    compra.DetalleCompra.splice(index, 1);
+    compra.Lotes.splice(index, 1);
+
+    // Actualizar la tabla de detalles del pedido
+    actualizarTablaDetalle();
+}
+
+document.getElementById("formDetallecompra").addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    var productoIdDetalleCompra = document.getElementById("ProductoId").value;
+
+    // Crear el detalle del pedido
+    var detalleCompra = {
+        ProductoId: document.getElementById("ProductoId").value,
+        Cantidad: document.getElementById("Cantidad").value
     };
 
-    fetch('https://localhost:7013/api/Compras/InsertarCompra', {
+    var lote = {
+        ProductoId: productoIdDetalleCompra,
+        NumeroLote: document.getElementById("NumeroLote").value,
+        PrecioCompra: document.getElementById("PrecioCompra").value,
+        PrecioDetal: document.getElementById("PrecioDetal").value,
+        PrecioxMayor: document.getElementById("PrecioxMayor").value,
+        FechaVencimiento: document.getElementById("FechaVencimiento").value,
+        Cantidad: document.getElementById("Cantidad").value,
+        EstadoLote: document.getElementById("EstadoLote").value
+    };
+
+    // Agregar el detalle del pedido y el lote a las respectivas listas
+    compra.DetalleCompra.push(detalleCompra);
+    compra.Lotes.push(lote);
+
+    // Reiniciar el formulario de detalles del pedido
+    document.getElementById("formDetallecompra").reset();
+
+    // Actualizar la tabla de detalles del pedido despuÃ©s de agregar un nuevo detalle
+    actualizarTablaDetalle();
+});
+
+document.getElementById("btnGuardarCompra").onclick = function () {
+    if (compra === null || compra.DetalleCompra.length === 0 || compra.Lotes.length === 0) {
+        console.error('No se puede guardar una compra sin detalles.');
+        return;
+    }
+
+    // Enviar la solicitud POST al servidor utilizando la Fetch API
+    fetch('https://localhost:7013/api/Compras/InsertCompras', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(compraObjeto)
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Ocurrió un error al enviar la solicitud.');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Respuesta del servidor:', data);
-            location.reload(); // Recargar la página
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-}
-
-
-
-function obtenerDatosCompra(compraId) {
-    fetch(`https://localhost:7013/api/Compras/GetCompraById?Id=${compraId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error al obtener los datos de la compra.');
-            }
-            return response.json();
-        })
-        .then(compra => {
-            // Llenar los campos del formulario modal con los datos del cliente
-            document.getElementById('CompraId').value = compra.compraId;
-            document.getElementById('ProveedorId').value = compra.proveedorId;
-            document.getElementById('NumeroFactura').value = compra.numeroFactura;
-            document.getElementById('FechaCompra').value = compra.fechaCompra;
-            document.getElementById('EstadoCompra').value = compra.estadoCompra;
-
-
-            // Cambiar el título de la ventana modal
-            document.getElementById('TituloModal').innerText = 'Editar Compra';
-            // Ocultar el botón "Agregar" y mostrar el botón "Actualizar Usuario"
-            document.getElementById('btnGuardar').style.display = 'none';
-            document.getElementById('btnEditar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-}
-
-function ActualizarCompra() {
-    const compraId = document.getElementById('CompraId').value;
-    const proveedorId = document.getElementById('ProveedorId').value;
-    const numeroFactura = document.getElementById('NumeroFactura').value;
-    const fechaCompra = document.getElementById('FechaCompra').value;
-    const estadoCompra = document.getElementById('EstadoCompra').value;
-
-    const compraObjeto = {
-        CompraId: compraId,
-        ProveedorId: proveedorId,
-        NumeroFactura: numeroFactura,
-        FechaCompra: fechaCompra,
-        EstadoCompra: estadoCompra
-    };
-
-    fetch(`https://localhost:7013/api/Compras/UpdateCompras`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(compraObjeto)
+        body: JSON.stringify(compra)
     })
         .then(response => {
             if (response.ok) {
-                alert('compra actualizada correctamente.');
-                location.reload(true); // Recargar la página después de la actualización
+                alert('compra guardada correctamente.');
+                location.reload(true); // Recargar la pÃ¡gina despuÃ©s de la actualizaciÃ³n
             } else {
-                alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
+                alert("Error en la actualizaciÃ³n. Por favor, intÃ©ntalo de nuevo mÃ¡s tarde.");
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
+            alert("Error en la actualizaciÃ³n. Por favor, intÃ©ntalo de nuevo mÃ¡s tarde.");
         });
+
+    // Limpiar el formulario de pedido y el objeto pedido
+    compra = null;
+    document.getElementById("formCompra").reset();
+};
+
+function actualizarTablaDetalle() {
+    // Implementa esta funciÃ³n segÃºn tus necesidades
+    // Puedes recorrer la lista de detalles de compra y lote
+    // para actualizar la tabla en el front-end
 }
 
-function eliminarCompra(compraId) {
-    // Hacer la solicitud DELETE al servidor para eliminar la compraId
-    fetch(`https://localhost:7013/api/Compras/DeleteCompra/${compraId}`, {
-        method: 'DELETE',
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error al eliminar la Compra.');
-            }
-            // Aquí puedes manejar la respuesta si es necesario
-            console.log('Compra eliminado correctamente.');
-            // Recargar la página o actualizar la lista de clientes, según sea necesario
-            location.reload(); // Esto recarga la página
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-}
+document.getElementById("asignardetalle").onclick = function () {
+    var detalleContainer = document.getElementById("detallecontainer");
+    if (detalleContainer.classList.contains("d-none")) {
+        detalleContainer.classList.remove("d-none");
+    } else {
+        detalleContainer.classList.add("d-none");
+    }
+};
 
-function limpiarFormulario() {
-    // Limpiar los valores de los campos del formulario
-    document.getElementById('CompraId').value = '';
-    document.getElementById('ProveedorId').value = '';
-    document.getElementById('NumeroFactura').value = '';
-    document.getElementById('FechaCompra').value = '';
-    document.getElementById('EstadoCompra').value = '';
-
-    document.getElementById('TituloModal').innerText = 'Agregar Compra';
-    document.getElementById('btnGuardar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
-    document.getElementById('btnEditar').style.display = 'none';
-}
+document.getElementById("cerrardetalle").onclick = function () {
+    var detalleContainer = document.getElementById("detallecontainer");
+    if (!detalleContainer.classList.contains("d-none")) {
+        detalleContainer.classList.add("d-none");
+    }
+};

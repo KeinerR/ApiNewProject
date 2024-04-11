@@ -3,6 +3,27 @@
     ViewData["Title"] = "Index";
 }
 
+<style>
+    /* Estilos para el formulario */
+    .styled-form .form-control {
+        border-radius: 50px; /* Establecer bordes redondeados */
+    }
+
+    .styled-form .form-row {
+        display: flex; /* Utilizar Flexbox para distribuir elementos */
+        flex-wrap: wrap; /* Permitir que los elementos se envuelvan en múltiples líneas si es necesario */
+    }
+
+        .styled-form .form-row .col {
+            flex: 1 1 calc(30% - 10px); /* Distribuir columnas uniformemente y permitir que se reduzcan */
+            margin-right: 10px; /* Espacio entre columnas */
+        }
+
+    .styled-form .modal-footer {
+        justify-content: space-between; /* Alinear los botones en la parte inferior */
+    }
+</style>
+
 <!-- Botón para abrir el modal -->
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CompraModal">
     Agregar Compra
@@ -10,47 +31,167 @@
 
 <!-- Modal -->
 <div class="modal fade" id="CompraModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    <div class="modal-dialog modal-lg">
+        <!-- Agrega la clase modal-lg para hacer el modal más ancho -->
+        <div class="modal-content modal-lg">
             <div class="modal-header">
-                <h5 class="modal-title" id="TituloModal">Agregar Compra</h5>
-                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-
+                <h5 class="modal-title" id="exampleModalLabel">Agregar Pedido</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form asp-controller="Compras" asp-action="" method="post">
-                <div class="modal-body">
+            <div class="modal-body">
+                <!-- Agregar el elemento "detalleTableBody" aquí -->
+                <div class="table-responsive">
+                    <table id="detalleTable" class="table">
+                        <thead>
+                            <tr>
+                                <th>ProductoID</th>
+                                <th>Cantidad</th>
+                                <th># lote</th>
+                                <th>Precio Compra</th>
+                                <th>Precio Detal</th>
+                                <th>Precio x Mayor</th>
+                                <th>Fecha vencimiento</th>
+                                <th>Cantidad</th>
+                                <th>Estado lote</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detalleTableBody">
+                            <!-- Aquí se mostrarán los detalles agregados dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="detallecontainer" class="d-none">
+                    <form id="formDetallecompra" asp-controller="DetalleCompra" asp-action="Create" method="post" class="styled-form">
+                        <div class="form-group">
+                            <input type="hidden" id="DetalleCompraId" name="detalleCompraId" class="form-control" />
+                        </div>
+                        <div class="form-row">
+                            <div class="col">
+                                <div class="mb-3">
+                                    <label for="ProductoId" class="control-label">Producto Id</label>
+                                    <input type="text" id="ProductoId" name="productoId" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="mb-3">
+                                    <label for="Cantidad" class="control-label">Cantidad</label>
+                                    <input type="text" id="Cantidad" name="cantidad" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="mb-3">
+                                    <label for="NumeroLote" class="control-label">Numero Lote</label>
+                                    <input type="text" id="NumeroLote" name="numeroLote" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col ">
+                                <div class="mb-3">
+                                    <label for="FechaVencimiento" class="control-label">Fecha Vencimiento</label>
+                                    <input type="datetime-local" id="FechaVencimiento" name="fechaVencimiento" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col ">
+                                <div class="mb-3">
+                                    <label for="PrecioxMayor" class="control-label">PrecioxMayor</label>
+                                    <input type="text" id="PrecioxMayor" name="precioxMayor" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="mb-3">
+                                    <label for="PrecioCompra" class="control-label">Precio Compra</label>
+                                    <input type="text" id="PrecioCompra" name="precioCompra" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col">
+                                <div class="mb-3">
+                                    <label for="PrecioDetal" class="control-label">Precio Detal</label>
+                                    <input type="text" id="PrecioDetal" name="precioDetal" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col">
+                               
+                               
+                                <div class="mb-3">
+                                    <label for="EstadoLote" class="control-label">Estado Lote</label>
+                                    <input type="text" id="EstadoLote" name="estadoLote" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col d-none">
+                              
+                                <div class="mb-3">
+                                    <label for="ProductoId" class="control-label">Producto Id</label>
+                                    <input type="hidden" id="ProductoIdLote" name="productoId" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col">
+                               
+                                <div class="mb-3 d-none">
+                                    <label for="DetalleCompraId" class="control-label">Detalle Compra Id</label>
+                                    <input type="hidden" id="DetalleCompraIdLote" name="detalleCompraId" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Agregar Detalle</button>
+                            <button type="button" class="btn btn-secondary" id="cerrardetalle">Cerrar</button>
+                        </div>
+                    </form>
+                </div>
 
+               
+            <div style="display:table-row">
+                <form id="formCompra" asp-controller="Compras" asp-action="" method="post">
                     <div class="form-group">
                         <input type="hidden" id="CompraId" name="compraId" class="form-control" />
                     </div>
-                    <div class="form-group">
-                        <label for="ProveedorId" class="control-label">Proveedor Id</label>
-                        <input type="text" id="ProveedorId" name="proveedorId" class="form-control" />
+                    <div class="d-flex border-5">
+                        <div class="mb-3 col" style="margin-right: 20px; border-radius: 50px;">
+                            <label for="ProveedorId" class="control-label">Proveedor Id</label>
+                            <input type="text" id="ProveedorId" name="proveedorId" class="form-control" />
+                        </div>
+                        <div class="mb-3 col" style="margin-right: 10px; border-radius: 30px;">
+                            <label for="NumeroFactura" class="control-label"># Factura</label>
+                            <input type="text" id="NumeroFactura" name="numeroFactura" class="form-control" />
+                        </div>
+                       
                     </div>
-                    <div class="form-group">
-                        <label for="NumeroFactura" class="control-label">Numero Factura</label>
-                        <input type="text" id="NumeroFactura" name="numeroFactura" class="form-control" />
+                    <div class="d-flex border-5">
+                        <div class="mb-3 col" style="margin-right: 30px; border-radius: 50px;">
+                            <label for="EstadoCompra" class="control-label">Estado Compra</label>
+                            <input type="text" id="EstadoCompra" name="estadoCompra" class="form-control" />
+                        </div>
+                        <div class="mb-3 col" style="border-radius: 50px;">
+                            <label for="FechaCompra" class="control-label">Fecha Compra</label>
+                            <input type="datetime-local" id="FechaCompra" name="fechaCompra" class="form-control" />
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="FechaCompra" class="control-label">Fecha Compra</label>
-                        <input type="datetime-local" id="FechaCompra" name="fechaCompra" class="form-control" />
+                 
+                    <div class="modal-footer">
+                            <div class="d-flex border-5">
+                                <div class="mb-3 col" style="margin-right: 100px; border-radius: 50px;">
+                                    <button class=" btn btn-primary"> Guardar</button>
+                                </div>
+                                <div class="mb-3 col" style="border-radius: 50px; margin-left: 100px;">
+                                    <div class="mb-3 col" style="border-radius: 50px; margin-left: 100px;">
+                                        <button type="button" id="asignardetalle" class="btn btn-primary">Asignar Detalle</button>
+                                    </div>
+                                </div>
+                            </div>
                     </div>
-                    <div class="form-group">
-                        <label for="EstadoCompra" class="control-label">Estado Compra</label>
-                        <input type="text" id="EstadoCompra" name="estadoCompra" class="form-control" />
-                    </div>
-                    
-                </div>
+                </form>
+            </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
-                    <button type="button" onclick="agregarCompra()" class="btn btn-primary" id="btnGuardar">Agregar</button>
-                    <button type="button" onclick="ActualizarCompra()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Compra</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button id="btnGuardarCompra" type="button" class="btn btn-primary">Guardar Compra</button>
                 </div>
-
-
-
-            </form>
-
+            </div>
         </div>
     </div>
 </div>
@@ -88,17 +229,15 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.ProveedorId)
                 </td>
-                 <td>
+                <td>
                     @Html.DisplayFor(modelItem => item.NumeroFactura)
                 </td>
-                 <td>
+                <td>
                     @Html.DisplayFor(modelItem => item.FechaCompra)
                 </td>
-                 <td>
+                <td>
                     @Html.DisplayFor(modelItem => item.EstadoCompra)
                 </td>
-              
-                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
                     <button class="btn btn-warning" onclick="obtenerDatosCompra('@item.CompraId')" data-cliente-id="@item.CompraId" data-bs-toggle="modal" data-bs-target="#CompraModal">Editar</button>
                     <button class="btn btn-danger" onclick="eliminarCompra('@item.CompraId')">Eliminar</button>
