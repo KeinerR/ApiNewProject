@@ -1,52 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
 
-    // Agrega un evento 'submit' al formulario
-    document.querySelector('form').addEventListener('submit', function (event) {
-        event.preventDefault(); // Evitar que el formulario se envíe de forma tradicional
-
-        // Obtener los valores de los campos del formulario
-        const nombreEmpresa = document.getElementById('NombreEmpresa').value;
-        const nombreContacto = document.getElementById('NombreContacto').value;
-        const direccion = document.getElementById('Direccion').value;
-        const telefono = document.getElementById('Telefono').value;
-        const correo = document.getElementById('Correo').value;
-        const estadoProveedor = document.getElementById('EstadoProveedor').value;
-
-        // Crear un objeto con los valores del formulario
-        const proveedorObjeto = {
-            NombreEmpresa: nombreEmpresa,
-            nombreContacto: nombreContacto,
-            Direccion: direccion,
-            Telefono: telefono,
-            Correo: correo,
-            EstadoProveedor: estadoProveedor
-        };
-
-        // Enviar la solicitud POST al servidor para insertar un nuevo Proveedor
-        fetch('https://localhost:7013/api/Proveedores/InsertarProveedor', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(proveedorObjeto)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Ocurrió un error al enviar la solicitud.');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Respuesta del servidor (Proveedores):', data);
-                // Manejar la respuesta del servidor según sea necesario
-                location.reload(); // Esto recarga la página
-            })
-            .catch(error => {
-                console.error('Error (Proveedores):', error);
-                // Manejar errores de la solicitud para Proveedores
-            });
-    });
-});
 
 function eliminarProveedor(proveedorId) {
     // Hacer la solicitud DELETE al servidor para eliminar el cliente
@@ -66,6 +18,52 @@ function eliminarProveedor(proveedorId) {
             console.error('Error:', error);
         });
 }
+
+function agregarProveedor() {
+    // Obtener los valores de los campos del formulario
+    const nombreEmpresa = document.getElementById('NombreEmpresa').value;
+    const nombreContacto = document.getElementById('NombreContacto').value;
+    const direccion = document.getElementById('Direccion').value;
+    const telefono = document.getElementById('Telefono').value;
+    const correo = document.getElementById('Correo').value;
+    const estadoProveedor = document.getElementById('EstadoProveedor').value;
+    console.log(nombreEmpresa);
+    // Crear un objeto con los valores del formulario
+    const proveedorObjeto = {
+        NombreEmpresa: nombreEmpresa,
+        NombreContacto: nombreContacto,
+        Direccion: direccion,
+        Telefono: telefono,
+        Correo: correo,
+        EstadoProveedor: estadoProveedor
+    };
+    console.log(proveedorObjeto)
+
+    // Enviar la solicitud POST al servidor utilizando la Fetch API
+    fetch('https://localhost:7013/api/Proveedores/InsertarProveedor', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(proveedorObjeto)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ocurrió un error al enviar la solicitud.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            /*console.log('Respuesta del servidor:', data);*/
+            location.reload()
+            // Manejar la respuesta del servidor según sea necesario
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Manejar errores de la solicitud
+        });
+}
+
 
 // Función para obtener los datos del cliente
 function obtenerDatosProveedor(proveedorId) {

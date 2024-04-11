@@ -40,8 +40,8 @@
             </div>
             <div class="modal-body">
                 <!-- Agregar el elemento "detalleTableBody" aquí -->
-                <div class="table-responsive">
-                    <table id="detalleTable" class="table">
+                <div class="table-responsive" >
+                    <table id="detalleTable" class="table" data-bs-dismiss="modal">
                         <thead>
                             <tr>
                                 <th>ProductoID</th>
@@ -151,17 +151,24 @@
                     <div class="form-group">
                         <input type="hidden" id="CompraId" name="compraId" class="form-control" />
                     </div>
-                    <div class="d-flex border-5">
-                        <div class="mb-3 col" style="margin-right: 20px; border-radius: 50px;">
-                            <label for="ProveedorId" class="control-label">Proveedor Id</label>
-                            <input type="text" id="ProveedorId" name="proveedorId" class="form-control" />
+                    
+                        <div class="d-flex border-5">
+                            <div class="mb-3 col" style="margin-right: 20px; border-radius: 50px;">
+                                <label for="ProveedorId" class="control-label">Proveedor</label>
+                                <select id="ProveedorId" name="ProveedorId" class="form-select">
+                                    <option value="" selected disabled>Seleccione un proveedor</option>
+                                    @foreach (var proveedor in ViewBag.Compras)
+                                    {
+                                        <option value="@proveedor.ProveedorId">@proveedor.NombreEmpresa</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3 col" style="margin-right: 10px; border-radius: 30px;">
+                                <label for="NumeroFactura" class="control-label"># Factura</label>
+                                <input type="text" id="NumeroFactura" name="numeroFactura" class="form-control" />
+                            </div>
                         </div>
-                        <div class="mb-3 col" style="margin-right: 10px; border-radius: 30px;">
-                            <label for="NumeroFactura" class="control-label"># Factura</label>
-                            <input type="text" id="NumeroFactura" name="numeroFactura" class="form-control" />
-                        </div>
-                       
-                    </div>
+
                     <div class="d-flex border-5">
                         <div class="mb-3 col" style="margin-right: 30px; border-radius: 50px;">
                             <label for="EstadoCompra" class="control-label">Estado Compra</label>
@@ -176,11 +183,11 @@
                     <div class="modal-footer">
                             <div class="d-flex border-5">
                                 <div class="mb-3 col" style="margin-right: 100px; border-radius: 50px;">
-                                    <button class=" btn btn-primary"> Guardar</button>
+                                    <button type="button" class=" btn btn-primary" id="guardar" data-bs-dismiss="modal"> Guardar</button>
                                 </div>
                                 <div class="mb-3 col" style="border-radius: 50px; margin-left: 100px;">
                                     <div class="mb-3 col" style="border-radius: 50px; margin-left: 100px;">
-                                        <button type="button" id="asignardetalle" class="btn btn-primary">Asignar Detalle</button>
+                                        <button type="button" id="asignardetalle" data-bs-dismiss="modal" class="btn btn-primary">Asignar Detalle</button>
                                     </div>
                                 </div>
                             </div>
@@ -188,8 +195,15 @@
                 </form>
             </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button id="btnGuardarCompra" type="button" class="btn btn-primary">Guardar Compra</button>
+                    <div class="modal-footer">
+                        <!-- Contenido del cuerpo de tu HTML -->
+                        <button type="button" id="btnCancelar" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
+                        <button id="btnGuardarCompra" type="button" data-bs-dismiss="modal" class="btn btn-primary">Guardar Compra</button>
+                        <button id="btnCerrar" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+
+                        
+                        <button type="button" onclick="ActualizarCompra()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Cliente</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -239,7 +253,7 @@
                     @Html.DisplayFor(modelItem => item.EstadoCompra)
                 </td>
                 <td>
-                    <button class="btn btn-warning" onclick="obtenerDatosCompra('@item.CompraId')" data-cliente-id="@item.CompraId" data-bs-toggle="modal" data-bs-target="#CompraModal">Editar</button>
+                    <button id="detalleeditar" class="btn btn-warning" onclick="obtenerDatosCompras('@item.CompraId')" data-bs-toggle="modal" data-bs-target="#CompraModal">Editar</button>
                     <button class="btn btn-danger" onclick="eliminarCompra('@item.CompraId')">Eliminar</button>
                 </td>
             </tr>
