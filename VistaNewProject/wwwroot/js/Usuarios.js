@@ -51,13 +51,6 @@
             var spanError = input.next('.text-danger'); // Obtén el elemento span correspondiente al campo de entrada
             var valor = input.val().trim(); // Obtén el valor del campo de entrada
             const apellidoValido = /^[a-zA-Z]+(\s[a-zA-Z]+)*$/.test(valor);
-
-
-
-
-
-
-
             if (valor === '') {
                 spanError.text('Este campo es obligatorio.');
             } else if (valor.length < 3) {
@@ -65,17 +58,29 @@
             } else if (!apellidoValido) {
                 spanError.text('El apellido no puede contener números ni caracteres especiales (excepto espacios en nombres compuestos).');
             } else {
-                spanError.text('');
+                var apellidoRepetido = usuarios.some(function (user) {
+                    return user.nombre.toLowerCase() === $('#Nombre').val().trim().toLowerCase() &&
+                        user.apellido.toLowerCase() === $('#Apellido').val().trim().toLowerCase() &&
+                        user.usuarioId != $('#UsuarioId').val().trim();
+                });
+
+                if (apellidoRepetido) {
+                    spanError.text('Este nombre y apellido ya se encuentran registrados.');
+                } else {
+                    spanError.text('');
+                }
             }
         }
-        if (input.is('#Nombre') || input.is('#Apellido')) {
+        if (input.is('#Nombre')) {
             var spanError = input.next('.text-danger'); // Obtén el elemento span correspondiente al campo de entrada
             var valor = input.val().trim(); // Obtén el valor del campo de entrada
+            var nombre = $('#Nombre').val().trim();
+            
 
             if (valor === '') {
                 spanError.text('Este campo es obligatorio.');
-            } else if (valor.length < 3) {
-                spanError.text('Este campo es obligatorio.');
+            } else if (nombre.length < 3) {
+                spanError.text('Este debe tener un minimo de 3 carateres.');
             } else if (/^[a-zA-Z]+\s[a-zA-Z]$/.test(valor)) {
                 spanError.text('El nombre no puede contener números ni caracteres especiales (excepto espacios en nombres compuestos).');
             } else {
@@ -298,6 +303,42 @@
             });
     }
 
+
+    function obtenerDatosUsuario(usuarioId) {
+        fetch(`https://localhost:7013/api/Usuarios/GetUsuarioById?Id=${usuarioId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener los datos del usuario.');
+                }
+                return response.json();
+            })
+            .then(usuario => {
+                // Llenar los campos del formulario modal con los datos del cliente
+                document.getElementById('UsuarioId').value = usuario.usuarioId;
+                document.getElementById('RolId').value = usuario.rolId;
+                document.getElementById('Nombre').value = usuario.nombre;
+                document.getElementById('Apellido').value = usuario.apellido;
+                document.getElementById('Usuario').value = usuario.usuario1;
+                document.getElementById('Contraseña').value = usuario.contraseña;
+                document.getElementById('Telefono').value = usuario.telefono;
+                document.getElementById('Correo').value = usuario.correo;
+                document.getElementById('EstadoUsuario').value = usuario.estadoUsuario;
+                // Cambiar el título de la ventana modal
+                document.getElementById('TituloModal').innerText = 'Editar Usuario';
+                // Ocultar el botón "Agregar" y mostrar el botón "Actualizar Usuario"
+                document.getElementById('btnGuardar').style.display = 'none';
+                document.getElementById('btnEditar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
+
+
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+
+
+
     function ActualizarUsuario() {
         if (!todoValido) {
             Swal.fire({
@@ -413,9 +454,15 @@
     document.getElementById('btnGuardar').addEventListener('click', function () {
         agregarUsuario();
     });
-    document.getElementById('btnEditar').addEventListener('click', function () {
+
+
+    document.getElementById('#btnEditar').addEventListener('click', function () {
         ActualizarUsuario();
     });
+    document.querySelector('.btnClose').addEventListener('click', function () {
+        limpiarFormulario();
+    });
+
     // Llamar a la función obtenerDatosUsuario al hacer clic en el botón de editar
     document.querySelectorAll('#btnDelete').forEach(button => {
         button.addEventListener('click', function () {
@@ -425,39 +472,4 @@
     });
     
 });
-
-
-function obtenerDatosUsuario(usuarioId) {
-    fetch(`https://localhost:7013/api/Usuarios/GetUsuarioById?Id=${usuarioId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error al obtener los datos del usuario.');
-            }
-            return response.json();
-        })
-        .then(usuario => {
-            // Llenar los campos del formulario modal con los datos del cliente
-            document.getElementById('UsuarioId').value = usuario.usuarioId;
-            document.getElementById('RolId').value = usuario.rolId;
-            document.getElementById('Nombre').value = usuario.nombre;
-            document.getElementById('Apellido').value = usuario.apellido;
-            document.getElementById('Usuario').value = usuario.usuario1;
-            document.getElementById('Contraseña').value = usuario.contraseña;
-            document.getElementById('Telefono').value = usuario.telefono;
-            document.getElementById('Correo').value = usuario.correo;
-            document.getElementById('EstadoUsuario').value = usuario.estadoUsuario;   
-            // Cambiar el título de la ventana modal
-            document.getElementById('TituloModal').innerText = 'Editar Usuario';
-            // Ocultar el botón "Agregar" y mostrar el botón "Actualizar Usuario"
-            document.getElementById('btnGuardar').style.display = 'none';
-            document.getElementById('btnEditar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
-
-
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-}
-
-
 

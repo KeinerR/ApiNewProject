@@ -1,4 +1,5 @@
-﻿@model IEnumerable<VistaNewProject.Models.Usuario>
+﻿@using X.PagedList
+@model X.PagedList.IPagedList<VistaNewProject.Models.Usuario>
 @{
     ViewData["Title"] = "Index";
 }
@@ -14,7 +15,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="TituloModal">Agregar Rol</h5>
-                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" onclick="limpiarFormulario()" class="btnClose btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
             </div>
             <form asp-controller="Usuarios" asp-action="" method="post">
@@ -24,10 +25,17 @@
                         <input type="hidden" id="UsuarioId" name="usuarioId" class="form-control" />
                         <span id="usuarioId" class="text-danger"></span>
                     </div>
-                    <div class="form-group">
-                        <label for="RolId" class="control-label">Rol ID</label>
-                        <input type="text" id="RolId" name="rolId" class="form-control" />
-                        <span id="rolId" class="text-danger"></span>
+                    <div class="form-group"> 
+                           <label for="RolId" class="form-label">Rol</label>
+                           <select id="RolId" name="rolId" class="form-select">
+                            <option value="" selected disabled>Selecciona un rol</option>
+                            @foreach (var roles in ViewBag.roles)
+                            {
+                                <option value="@roles.NombreRol">@roles.NombreRol</option>
+                            }
+                                </select>
+                        <span id="RolId" class="text-danger"></span>
+
                     </div>
                     <div class="form-group">
                         <label for="Nombre" class="control-label">Nombre</label>
@@ -66,7 +74,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
+                    <button type="button" class="btn btn-secondary btnClose" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
                     <button type="button" class="btn btn-primary" id="btnGuardar">Agregar</button>
                     <button type="button" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Usuario</button>
                 </div>
@@ -146,11 +154,40 @@
 
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
-                    <button class="btn btn-warning" id="#editar" data-cliente-id="@item.UsuarioId" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button>
+                    <button class="btn btn-warning" id="editar" data-cliente-id="@item.UsuarioId" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button>
                     <button class="btn btn-danger" id="btnDelete" data-cliente-id="@item.UsuarioId" >Eliminar</button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+<div class="pagination-container mt-2">
+    @if (Model != null && Model.PageCount > 1)
+    {
+        <div class="d-flex justify-content-center mb-5">
+            <nav aria-label="Page navigation bg-dark">
+                <ul class="pagination">
+                    <!-- Botón para la página anterior (oculto en la página 1) -->
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <!-- Iterar sobre las páginas disponibles -->
+                    @for (var i = 1; i <= Model.PageCount; i++)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                            <a class="page-link" href="?page=@i">@i</a>
+                        </li>
+                    }
+                    <!-- Botón para la página siguiente (oculto en la última página) -->
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
 <script src="~/js/usuarios.js"></script>
