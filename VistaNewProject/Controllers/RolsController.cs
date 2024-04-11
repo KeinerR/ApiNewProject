@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VistaNewProject.Services;
+using X.PagedList;
 
 namespace VistaNewProject.Controllers
 {
@@ -14,17 +15,28 @@ namespace VistaNewProject.Controllers
         }
 
 
-        public async Task<ActionResult> Index()
+        public async Task<IActionResult> Index(int? page)
         {
-            var rol = await _client.GetRolAsync();
+            int pageSize = 5; // Número máximo de elementos por página
+            int pageNumber = page ?? 1;
 
-            if (rol == null)
+            var rols = await _client.GetRolAsync();
+
+            if (rols == null)
             {
-                return View("Error");
+                return NotFound("error");
             }
 
-            return View(rol);
+            var pagedRols = await rols.ToPagedListAsync(pageNumber, pageSize);
+
+            // Verifica si la página actual está vacía y redirige a la última página que contiene registros
+            if (!pagedRols.Any() && pagedRols.PageNumber > 1)
+            {
+                pagedRols = await rols.ToPagedListAsync(pagedRols.PageCount, pageSize);
+            }
+
+            return View(pagedRols);
         }
-        
+
     }
 }

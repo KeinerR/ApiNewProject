@@ -284,6 +284,6 @@ input:checked + .slider:before {
     background-color: #f2f2f2; /* Color de fondo al pasar el cursor sobre la fila */
 }
 
-    .table-custom tbody tr:hover td {
-        transform: translateY(-3px); /* Levantar 3px al pasar el cursor */
-    }
+.table-custom tbody tr:hover {
+    transform: translateY(-3px); /* Levantar 3px al pasar el cursor */
+}

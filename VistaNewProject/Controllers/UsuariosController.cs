@@ -31,7 +31,6 @@ namespace VistaNewProject.Controllers
             {
                 return NotFound("error");
             }
-
             var pageUsuarios = await usuarios.ToPagedListAsync(pageNumber, pageSize);
 
             // Verifica si la página actual está vacía y redirige a la última página que contiene registros

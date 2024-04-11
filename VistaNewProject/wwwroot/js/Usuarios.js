@@ -1,6 +1,6 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
     usuarios = {}; // Inicializamos la variable usuarios como un objeto vacío
-    var todoValido = false;
+    var todoValido = true;
    
  
 
@@ -47,6 +47,11 @@
             spanError.text('Este campo es obligatorio.');
             todoValido = false;
         }
+        if (input.is('#RolId')) {
+            var spanError = $('#RolIdError');
+            // Resto del código de validación del campo RolId
+        }
+
         if (input.is('#Apellido')) {
             var spanError = input.next('.text-danger'); // Obtén el elemento span correspondiente al campo de entrada
             var valor = input.val().trim(); // Obtén el valor del campo de entrada
@@ -272,71 +277,7 @@
             });
     }
 
-    // Función para obtener datos del usuario al hacer clic en el botón de editar
-    function obtenerDatosUsuario(usuarioId) {
-        fetch(`https://localhost:7013/api/Usuarios/GetUsuarioById?Id=${usuarioId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener los datos del usuario.');
-                }
-                return response.json();
-            })
-            .then(usuario => {
-                // Llenar los campos del formulario modal con los datos del cliente
-                document.getElementById('UsuarioId').value = usuario.usuarioId;
-                document.getElementById('RolId').value = usuario.rolId;
-                document.getElementById('Nombre').value = usuario.nombre;
-                document.getElementById('Apellido').value = usuario.apellido;
-                document.getElementById('Usuario').value = usuario.usuario1;
-                document.getElementById('Contraseña').value = usuario.contraseña;
-                document.getElementById('Telefono').value = usuario.telefono;
-                document.getElementById('Correo').value = usuario.correo;
-                document.getElementById('EstadoUsuario').value = usuario.estadoUsuario;
-                // Cambiar el título de la ventana modal
-                document.getElementById('TituloModal').innerText = 'Editar Usuario';
-                // Ocultar el botón "Agregar" y mostrar el botón "Actualizar Usuario"
-                document.getElementById('btnGuardar').style.display = 'none';
-                document.getElementById('btnEditar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-
-    function obtenerDatosUsuario(usuarioId) {
-        fetch(`https://localhost:7013/api/Usuarios/GetUsuarioById?Id=${usuarioId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener los datos del usuario.');
-                }
-                return response.json();
-            })
-            .then(usuario => {
-                // Llenar los campos del formulario modal con los datos del cliente
-                document.getElementById('UsuarioId').value = usuario.usuarioId;
-                document.getElementById('RolId').value = usuario.rolId;
-                document.getElementById('Nombre').value = usuario.nombre;
-                document.getElementById('Apellido').value = usuario.apellido;
-                document.getElementById('Usuario').value = usuario.usuario1;
-                document.getElementById('Contraseña').value = usuario.contraseña;
-                document.getElementById('Telefono').value = usuario.telefono;
-                document.getElementById('Correo').value = usuario.correo;
-                document.getElementById('EstadoUsuario').value = usuario.estadoUsuario;
-                // Cambiar el título de la ventana modal
-                document.getElementById('TituloModal').innerText = 'Editar Usuario';
-                // Ocultar el botón "Agregar" y mostrar el botón "Actualizar Usuario"
-                document.getElementById('btnGuardar').style.display = 'none';
-                document.getElementById('btnEditar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
-
-
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-
+    
 
 
     function ActualizarUsuario() {
@@ -418,51 +359,16 @@
             });
     }
 
-
-    function limpiarFormulario() {
-        // Limpiar los valores de los campos del formulario
-        document.getElementById('UsuarioId').value = '';
-        document.getElementById('RolId').value = '';
-        document.getElementById('Nombre').value = '';
-        document.getElementById('Apellido').value = '';
-        document.getElementById('Usuario').value = '';
-        document.getElementById('Contraseña').value = '';
-        document.getElementById('Telefono').value = '';
-        document.getElementById('Correo').value = '';
-        document.getElementById('EstadoUsuario').value = '';
-
-        document.getElementById('TituloModal').innerText = 'Agregar Usuario';
-        document.getElementById('btnGuardar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
-        document.getElementById('btnEditar').style.display = 'none';
-        // Eliminar los mensajes de error
-        // Eliminar los mensajes de error
-        const mensajesError = document.querySelectorAll('.text-danger');
-        mensajesError.forEach(span => {
-            span.innerText = ''; // Limpiar el contenido del mensaje
-        });
-    }
-
-    // Llamar a la función obtenerDatosUsuario al hacer clic en el botón de editar
-    document.querySelectorAll('#editar').forEach(button => {
-        button.addEventListener('click', function () {
-            const usuarioId = this.getAttribute('data-cliente-id');
-            obtenerDatosUsuario(usuarioId);
-        });
-    });
-
     // Llamar a la función agregarUsuario al hacer clic en el botón de agregar
     document.getElementById('btnGuardar').addEventListener('click', function () {
         agregarUsuario();
     });
 
 
-    document.getElementById('#btnEditar').addEventListener('click', function () {
+    document.getElementById('btnEditar').addEventListener('click', function () {
         ActualizarUsuario();
     });
-    document.querySelector('.btnClose').addEventListener('click', function () {
-        limpiarFormulario();
-    });
-
+ 
     // Llamar a la función obtenerDatosUsuario al hacer clic en el botón de editar
     document.querySelectorAll('#btnDelete').forEach(button => {
         button.addEventListener('click', function () {
@@ -473,3 +379,66 @@
     
 });
 
+function obtenerDatosUsuario(usuarioId) {
+    fetch(`https://localhost:7013/api/Usuarios/GetUsuarioById?Id=${usuarioId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al obtener los datos del usuario.');
+            }
+            return response.json();
+        })
+        .then(usuario => {
+            // Llenar los campos del formulario modal con los datos del cliente
+            document.getElementById('UsuarioId').value = usuario.usuarioId;
+            document.getElementById('RolId').value = usuario.rolId;
+            document.getElementById('Nombre').value = usuario.nombre;
+            document.getElementById('Apellido').value = usuario.apellido;
+            document.getElementById('Usuario').value = usuario.usuario1;
+            document.getElementById('Contraseña').value = usuario.contraseña;
+            document.getElementById('Telefono').value = usuario.telefono;
+            document.getElementById('Correo').value = usuario.correo;
+            document.getElementById('EstadoUsuario').value = usuario.estadoUsuario;
+            // Cambiar el título de la ventana modal
+            document.getElementById('TituloModal').innerText = 'Editar Usuario';
+            // Ocultar el botón "Agregar" y mostrar el botón "Actualizar Usuario"
+            document.getElementById('btnGuardar').style.display = 'none';
+            document.getElementById('btnEditar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
+            var selectRol = document.getElementById('RolId');
+
+            if (usuario.rolId === 1) {
+                selectRol.value = '1';
+            } else if (usuario.rolId === 2) {
+                selectRol.value = '2';
+            } else {
+                selectRol.value = '3';
+            }
+
+           
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+function limpiarFormulario() {
+    // Limpiar los valores de los campos del formulario
+    document.getElementById('UsuarioId').value = '';
+    document.getElementById('RolId').value = '';
+    document.getElementById('Nombre').value = '';
+    document.getElementById('Apellido').value = '';
+    document.getElementById('Usuario').value = '';
+    document.getElementById('Contraseña').value = '';
+    document.getElementById('Telefono').value = '';
+    document.getElementById('Correo').value = '';
+    document.getElementById('EstadoUsuario').value = '';
+
+    document.getElementById('TituloModal').innerText = 'Agregar Usuario';
+    document.getElementById('btnGuardar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
+    document.getElementById('btnEditar').style.display = 'none';
+    // Eliminar los mensajes de error
+    // Eliminar los mensajes de error
+    const mensajesError = document.querySelectorAll('.text-danger');
+    mensajesError.forEach(span => {
+        span.innerText = ''; // Limpiar el contenido del mensaje
+    });
+}

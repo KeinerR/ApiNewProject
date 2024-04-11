@@ -1,13 +1,30 @@
 ﻿@using X.PagedList
 @model X.PagedList.IPagedList<VistaNewProject.Models.Usuario>
+
 @{
     ViewData["Title"] = "Index";
 }
 
-<!-- Botón para abrir el modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#usuarioModal">
-    Agregar Usuario
-</button>
+<br />
+
+<div class="d-flex justify-content-between">
+    <!-- Formulario de búsqueda a la izquierda -->
+    <div class="mr-auto">
+        <form class="d-none d-md-inline-block form-inline my-2 my-md-0">
+            <div class="input-group">
+                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" id="searchInput" />
+                <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Botón para abrir el modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#usuarioModal">
+        Agregar Usuario
+    </button>
+</div>
+
+
 
 <!-- Modal -->
 <div class="modal fade" id="usuarioModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -15,7 +32,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="TituloModal">Agregar Rol</h5>
-                <button type="button" onclick="limpiarFormulario()" class="btnClose btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
             </div>
             <form asp-controller="Usuarios" asp-action="" method="post">
@@ -23,19 +40,17 @@
 
                     <div class="form-group">
                         <input type="hidden" id="UsuarioId" name="usuarioId" class="form-control" />
-                        <span id="usuarioId" class="text-danger"></span>
+                        <input type="hidden" id="EstadoUsuario" name="estadoUsuario" value="1" class="form-control" />
                     </div>
                     <div class="form-group"> 
                            <label for="RolId" class="form-label">Rol</label>
-                           <select id="RolId" name="rolId" class="form-select">
+                        <select id="RolId" name="rolId" class="form-select">
                             <option value="" selected disabled>Selecciona un rol</option>
-                            @foreach (var roles in ViewBag.roles)
+                            @foreach (var rol in ViewBag.roles)
                             {
-                                <option value="@roles.NombreRol">@roles.NombreRol</option>
+                                <option value="@rol.RolId">@rol.NombreRol</option>
                             }
-                                </select>
-                        <span id="RolId" class="text-danger"></span>
-
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="Nombre" class="control-label">Nombre</label>
@@ -68,13 +83,9 @@
                         <span id="Correo" class="text-danger"></span>
                     </div>
 
-                    <div class="form-group">
-                        <label for="EstadoUsuario" class="control-label">Estado Usuario</label>
-                        <input type="text" id="EstadoUsuario" name="estadoUsuario" class="form-control" />
-                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btnClose" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
                     <button type="button" class="btn btn-primary" id="btnGuardar">Agregar</button>
                     <button type="button" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Usuario</button>
                 </div>
@@ -86,41 +97,46 @@
         </div>
     </div>
 </div>
-<br/>
-<table class="table">
+
+<br />
+<hr>
+
+<table class="table table-custom text-center">
     <thead>
         <tr>
             <th>
-                UsuarioId
+                USUARIO ID
             </th>
             <th>
-                RolId
+                ROL ID
             </th>
             <th>
-                Nombre
+                NOMBRE
             </th>
             <th>
-                Apellido
+                APELLIDO
             </th>
             <th>
-                Usuario
+                USUARIO
             </th>
             <th>
-                Contraseña
+                CONTRASEÑA
             </th>
             <th>
-                Telefono
+                TELEFONO
             </th>
             <th>
-                Correo
+                CORREO
             </th>
             <th>
-                EstadoUsuario
+                ESTADO USUARIO
             </th>
-            <th></th>
+            <th>
+                ACCIONES
+            </th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="text-center">
         @foreach (var item in Model)
         {
             <tr>
@@ -148,13 +164,18 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Correo)
                 </td>
-                <td>
+                <td class="text-center align-middle">
+                    <label class="switch">
+                        <input type="checkbox" @(item.EstadoUsuario != 0 ? "checked" : "")>
+                        <span class="slider"></span>
+                    </label>
                     @Html.DisplayFor(modelItem => item.EstadoUsuario)
                 </td>
 
+
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
-                    <button class="btn btn-warning" id="editar" data-cliente-id="@item.UsuarioId" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button>
+                    <button class="btn btn-warning" id="editar" data-cliente-id="@item.UsuarioId" onclick="obtenerDatosUsuario(@item.UsuarioId)" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button>
                     <button class="btn btn-danger" id="btnDelete" data-cliente-id="@item.UsuarioId" >Eliminar</button>
                 </td>
             </tr>
@@ -190,4 +211,7 @@
             </nav>
         </div>
     }
+
+</div>
+
 <script src="~/js/usuarios.js"></script>
