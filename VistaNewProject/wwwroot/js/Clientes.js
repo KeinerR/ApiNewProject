@@ -101,6 +101,7 @@ function ActualizarCliente() {
         EstadoCliente: EstadoCliente
     };
 
+    console.log(clienteId)
     fetch(`https://localhost:7013/api/Clientes/UpdateClientes`, {
         method: 'PUT',
         headers: {

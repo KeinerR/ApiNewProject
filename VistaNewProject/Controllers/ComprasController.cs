@@ -13,11 +13,14 @@ namespace VistaNewProject.Controllers
         public async Task<IActionResult> Index()
         {
             var compras = await _client.GetCompraAsync();
+            var compra = await _client.GetProveedorAsync();
+
 
             if (compras == null)
             {
                 return NotFound("error");
             }
+            ViewBag.Compras = compra;
             return View(compras);
         }
     }

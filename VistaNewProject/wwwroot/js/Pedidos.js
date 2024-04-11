@@ -163,10 +163,7 @@ document.getElementById("formDomicilio").addEventListener("submit", function (ev
 });
 
 document.getElementById("btnGuardarPedido").onclick = function () {
-    if (pedido === null || pedido.Detallepedidos.length === 0) {
-        console.error('No se puede guardar un pedido sin detalles.');
-        return;
-    }
+   
 
     // Enviar la solicitud POST al servidor utilizando la Fetch API
     fetch('https://localhost:7013/api/Pedidos/InsertPedidos', {
@@ -175,7 +172,9 @@ document.getElementById("btnGuardarPedido").onclick = function () {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(pedido)
+        
     })
+
         .then(response => {
             if (response.ok) {
                 alert('Pedido guardado correctamente.');
