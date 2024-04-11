@@ -43,8 +43,8 @@ $(function () {
             validarNombreYApellido(input, valor, $('#Apellido'), $('#Apellido').val());
             if (apellidoRepetido || nombreRepetido) {
                 spanError.text('El usuario ya se encuentra registrado.');
-            } else if (valor.length < 4) {
-                spanError.text('El nombre debe tener un mínimo de 4 caracteres');
+            } else if (valor.length < 3) {
+                spanError.text('El nombre debe tener un mínimo de 3 caracteres');
             } else {
                 spanError.text('');
             }

@@ -22,34 +22,42 @@
 
                     <div class="form-group">
                         <input type="hidden" id="UsuarioId" name="usuarioId" class="form-control" />
+                        <span id="usuarioId" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label for="RolId" class="control-label">Rol ID</label>
                         <input type="text" id="RolId" name="rolId" class="form-control" />
+                        <span id="rolId" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label for="Nombre" class="control-label">Nombre</label>
                         <input type="text" id="Nombre" name="nombre" class="form-control" />
+                        <span id="Nombre" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label for="Apellido" class="control-label">Apellido</label>
                         <input type="text" id="Apellido" name="apellido" class="form-control" />
+                        <span id="Apellido" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label for="Usuario" class="control-label">Usuario</label>
                         <input type="text" id="Usuario" name="usuario" class="form-control" />
+                        <span id="Usuario" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label for="Contraseña" class="control-label">Contraseña</label>
                         <input type="text" id="Contraseña" name="contraseña" class="form-control" />
+                        <span id="Contraseña" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label for="Telefono" class="control-label">Teléfono</label>
                         <input type="text" id="Telefono" name="telefono" class="form-control" />
+                         <span id="Telefono" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label for="Correo" class="control-label">Correo</label>
                         <input type="text" id="Correo" name="correo" class="form-control" />
+                        <span id="Correo" class="text-danger"></span>
                     </div>
 
                     <div class="form-group">
@@ -59,8 +67,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
-                    <button type="button" onclick="agregarUsuario()"  class="btn btn-primary" id="btnGuardar">Agregar</button>
-                    <button type="button" onclick="ActualizarUsuario()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Usuario</button>
+                    <button type="button" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Usuario</button>
                 </div>
 
 
@@ -70,10 +78,7 @@
         </div>
     </div>
 </div>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<br/>
 <table class="table">
     <thead>
         <tr>
@@ -141,12 +146,11 @@
 
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
-                    <button class="btn btn-warning" onclick="obtenerDatosUsuario('@item.UsuarioId')" data-cliente-id="@item.UsuarioId" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button>
-                    <button class="btn btn-danger" onclick="eliminarUsuario('@item.UsuarioId')">Eliminar</button>
+                    <button class="btn btn-warning" id="#editar" data-cliente-id="@item.UsuarioId" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button>
+                    <button class="btn btn-danger" id="btnDelete" data-cliente-id="@item.UsuarioId" >Eliminar</button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="~/js/usuarios.js"></script>
