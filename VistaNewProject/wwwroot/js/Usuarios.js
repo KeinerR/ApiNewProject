@@ -442,3 +442,7 @@ function limpiarFormulario() {
         span.innerText = ''; // Limpiar el contenido del mensaje
     });
 }
+
+function mostraralerta(usuarioId) {
+    alert('El estado del usuario a cambiado usaurioId:'+usuarioId)
+}

@@ -166,13 +166,11 @@
                 </td>
                 <td class="text-center align-middle">
                     <label class="switch">
-                        <input type="checkbox" @(item.EstadoUsuario != 0 ? "checked" : "")>
+                        <input type="checkbox" @(item.EstadoUsuario != 0 ? "checked" : "") onchange="mostraralerta('@item.UsuarioId')">
                         <span class="slider"></span>
                     </label>
                     @Html.DisplayFor(modelItem => item.EstadoUsuario)
                 </td>
-
-
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
                     <button class="btn btn-warning" id="editar" data-cliente-id="@item.UsuarioId" onclick="obtenerDatosUsuario(@item.UsuarioId)" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button>
