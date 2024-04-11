@@ -165,6 +165,7 @@ function actualizarTablaDetalle() {
 
 
 
+
 function obtenerDatosCompras(CompraId) {
     fetch(`https://localhost:7013/api/Compras/GetCompraById?id=${CompraId}`)
         .then(response => {
@@ -174,73 +175,59 @@ function obtenerDatosCompras(CompraId) {
             return response.json();
         })
         .then(compra => {
-            console.log(compra);
-            document.getElementById('CompraId').value = compra.CompraId;
-            console.log(CompraId);
-            document.getElementById('ProveedorId').value = compra.proveedorId;
-            document.getElementById('NumeroFactura').value = compra.numeroFactura;
-            document.getElementById('FechaCompra').value = compra.fechaCompra;
-            document.getElementById('EstadoCompra').value = compra.estadoCompra;
+            // Llenar los campos del formulario modal con los datos del cliente
+            console.log(compra)
+            document.getElementById('CompraId').value = com;
+            document.getElementById('ProveedorId').value = cliente.identificacion;
+            document.getElementById('NumeroFactura').value = cliente.nombreEntidad;
+            document.getElementById('FechaCompra').value = cliente.nombreCompleto;
+            document.getElementById('EstadoCompra').value = cliente.tipoCliente;
+           
 
-            var btnCancelar = document.getElementById('btnCancelar');
-            var btnGuardarCompra = document.getElementById('btnGuardarCompra');
-            var btnCerrar = document.getElementById('btnCerrar');
-            var asignardetalle = document.getElementById('asignardetalle');
-            var detalleTable = document.getElementById('detalleTable');
-            var guardar = document.getElementById('guardar');
-
-            if (btnCancelar && btnGuardarCompra && btnCerrar && asignardetalle && detalleTable && guardar) {
-                btnCancelar.style.display = 'none';
-                btnGuardarCompra.style.display = 'none';
-                btnCerrar.style.display = 'none';
-                asignardetalle.style.display = 'none';
-                detalleTable.style.display = 'none';
-                guardar.style.display = 'none';
-
-
-
-
-            } else {
-                console.error('Alguno de los botones no existe en el documento.');
-            }
-            document.getElementById('btnEditar').style.display = 'block'; // o 'inline-block'
-
+            // Cambiar el título de la ventana modal
+            document.getElementById('TituloModal').innerText = 'Editar Cliente';
+            // Ocultar el botón "Agregar" y mostrar el botón "Actualizar Usuario"
+            document.getElementById('btnGuardar').style.display = 'none';
+            document.getElementById('btnEditar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
         })
         .catch(error => {
             console.error('Error:', error);
         });
 }
 
-function ActualizarCompra() {
-    const compraId = document.getElementById('CompraId').value;
-    const proveedorId = document.getElementById('ProveedorId').value;
-    const numeroFactura = document.getElementById('NumeroFactura').value;
-    const fechacompra = document.getElementById('FechaCompra').value;
-    const estadoCompra = document.getElementById('EstadoCompra').value;
-    console.log(" esta es el id" + compraId)
-    
+function ActualizarCliente() {
+    const clienteId = document.getElementById('ClienteId').value;
+    const identificacion = document.getElementById('Identificacion').value;
+    const NombreEntidad = document.getElementById('NombreEntidad').value;
+    const NombreCompleto = document.getElementById('NombreCompleto').value;
+    const TipoCliente = document.getElementById('TipoCliente').value;
+    const Telefono = document.getElementById('Telefono').value;
+    const Correo = document.getElementById('Correo').value;
+    const Direccion = document.getElementById('Direccion').value;
+    const EstadoCliente = document.getElementById('EstadoCliente').value;
 
-    const compra = {
-        compraId: compraId,
-        ProveedorId: proveedorId,
-        NumeroFactura: numeroFactura,
-        FechaCompra: fechacompra,
-        EstadoCompra: estadoCompra,
+    const cliente = {
+        clienteId: clienteId,
+        identificacion: identificacion,
+        NombreEntidad: NombreEntidad,
+        NombreCompleto: NombreCompleto,
+        TipoCliente: TipoCliente,
+        Telefono: Telefono,
+        Correo: Correo,
+        Direccion: Direccion,
+        EstadoCliente: EstadoCliente
     };
 
-    console.log(compra)
-
-
-    fetch(`https://localhost:7013/api/Compras/UpdateCompras`, {
+    fetch(`https://localhost:7013/api/Clientes/UpdateClientes`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(compra)
+        body: JSON.stringify(cliente)
     })
         .then(response => {
             if (response.ok) {
-                alert('compra actualizado correctamente.');
+                alert('Cliente actualizado correctamente.');
                 location.reload(true); // Recargar la página después de la actualización
             } else {
                 alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
@@ -250,8 +237,6 @@ function ActualizarCompra() {
             console.error('Error:', error);
             alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
         });
-
-   
 }
 
 function eliminarCliente(clienteId) {
@@ -300,9 +285,6 @@ document.getElementById("asignardetalle").onclick = function () {
         detalleContainer.classList.add("d-none");
     }
 };
-
-
-
 
 document.getElementById("cerrardetalle").onclick = function () {
     var detalleContainer = document.getElementById("detallecontainer");
