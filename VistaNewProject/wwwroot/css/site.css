@@ -1,29 +1,34 @@
+/* Estilos generales */
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+html, body {
+    position: relative;
+    min-height: 100vh;
 }
 
-body {
-  margin-bottom: 60px;
-}
-
-
+/* Estilos del contenedor */
 .container {
-    width: 99%;
+    width: 100%;
     min-height: 520px;
-    margin-left: 2px;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
+@media (max-width: 768px) {
+    .container {
+        min-height: auto;
+    }
+}
+
+/* Estilos de la cabecera */
 #Cabecera {
     display: flex;
     justify-content: space-between;
@@ -31,23 +36,20 @@ body {
     padding: 10px;
     background-color: #2574A8;
     color: #fff;
-}
-
-#logout-link {
-    margin-left: auto;
-    margin-right: 10px;
+    width: 100%;
 }
 
 #Perfil {
     margin-right: 20px;
-    border-radius:10px;
-    transition: box-shadow 0.3s ease-in-out; /* Agregamos una transición para suavizar el efecto */
+    border-radius: 10px;
+    transition: box-shadow 0.3s ease-in-out;
 }
 
     #Perfil:hover {
-        box-shadow: 0 0 3px white; /* Efecto de sombra blanca al hacer hover */
+        box-shadow: 0 0 3px white;
     }
 
+/* Estilos del cuerpo y sidebar */
 #Cuerpo {
     display: flex;
     width: auto;
@@ -55,27 +57,24 @@ body {
     margin-top: 0.3px;
 }
 
-
-/* MENU LATERAL */
 .sidebar {
     height: auto;
     min-height: 350px;
     width: 150px;
-    background-color: #2574A8; /* Color ajustado para que coincida con la barra superior */
+    background-color: #2574A8;
     padding-top: 8px;
     transition: margin-left 0.5s;
+    padding: 10px;
 }
 
-    /*Quitar decoracion de etiqueta a*/
+    /* Otros estilos */
     .sidebar a {
         text-decoration: none;
-        color:black;
+        color: black;
     }
-    
 
-    /*Dar forma de boton y diseño*/
     .sidebar button,
-    .sidebar-label{
+    .sidebar-label {
         width: 120px;
         line-height: 35px;
         text-align: center;
@@ -85,10 +84,10 @@ body {
         cursor: pointer;
         display: block;
         margin-bottom: 4px;
-        margin-left: 10px;
         border: solid black 1px;
         transition: background-color 0.3s ease-in-out;
     }
+
     /*Diseño cuando el coursor esta sobre la etiqueta*/
         .sidebar button:hover,
         .sidebar label:hover,
@@ -109,7 +108,7 @@ body {
 .sub-menu {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.4s ease-in-out;
+    transition: max-height 0.3s ease-in-out;
 }
 
     .sub-menu a {
@@ -130,17 +129,8 @@ input[type="checkbox"]:checked + .sub-menu {
 
 
 
-.logo {
-    height: 160px;
-    width: 150px;
-    border: 1px solid black;
-}
-/*Estilo del texto*/
-.Texto {
-    color: black;
-    font-size: 16px;
-    font-family: 'Abel', sans-serif;
-}
+
+
 /*Switch*/
 .switch {
     position: relative;
@@ -201,32 +191,29 @@ input:checked + .slider:before {
     transform: translateX(70%);
 }
 
+
+/*Diseño de elemntos del container*/
 .volver {
     margin-top: 20px;
+    text-align:center;
+    width:100%;
 }
 
 .edit {
     margin-top: 30px;
-}
-
-.title {
-    margin-top: 40px;
-}
-
-.btn-primary:hover {
-    background-color: black;
-    border-color: #286090;
+    width:100%;
+    text-align:center;
 }
 
 .container.menu-hidden {
-    margin-left: 0; /* Agregamos este estilo */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Ajusta los valores según tu preferencia */
 }
 
 .sidebar.menu-hidden {
-    margin-left: -150px; /* Agregamos este estilo */
+    display:none;
 }
 
-/*Diseños de ventana emergente Perfil  */
+/*Diseños de ventana emergente Perfil */
 #perfilVentanaEmergente {
     display: none;
     position: absolute;
@@ -275,11 +262,31 @@ input:checked + .slider:before {
         background: white;
     }
 
+<<<<<<< HEAD
 /* Estilos base para la tabla */
 .table-custom {
     width: 100%;
     border-collapse: collapse;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+=======
+    .logo {
+    height: 160px;
+    width: 150px;
+    border: 1px solid black;
+}
+/*Estilo del texto*/
+.Texto {
+    color: black;
+    font-size: 16px;
+    font-family: 'Abel', sans-serif;
+}
+
+
+
+.table-custom thead th {
+    background-color: #2574A8; /* Color de fondo */
+    color: white; /* Color del texto */
+>>>>>>> cefa8bb84720a4fa5787ec4f182424e2b87871f4
 }
 
     .table-custom thead th {

@@ -42,6 +42,26 @@ namespace VistaNewProject.Controllers
             return View(pageUsuarios);
            
         }
+        public async Task<IActionResult> Details(int? id)
+        {
+            var usuarios = await _client.GetUsuarioAsync();
+            var roles = await _client.GetRolAsync();
+            if (id == null || usuarios == null)
+            {
+                return NotFound();
+            }
+
+            var usuario = usuarios.FirstOrDefault(u => u.UsuarioId == id);
+
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+            ViewBag.roles = roles;
+            return View(usuario);
+        }
+
+
 
     }
 }
