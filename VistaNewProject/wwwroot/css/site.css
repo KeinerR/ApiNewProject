@@ -268,50 +268,31 @@ input:checked + .slider:before {
     width: 100%;
     border-collapse: collapse;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
-=======
-    .logo {
-    height: 160px;
-    width: 150px;
-    border: 1px solid black;
 }
-/*Estilo del texto*/
-.Texto {
-    color: black;
-    font-size: 16px;
-    font-family: 'Abel', sans-serif;
-}
-
-
 
 .table-custom thead th {
     background-color: #2574A8; /* Color de fondo */
     color: white; /* Color del texto */
->>>>>>> cefa8bb84720a4fa5787ec4f182424e2b87871f4
+    padding: 10px; /* Espaciado interno */
 }
 
-    .table-custom thead th {
-        background-color: #2574A8; /* Color de fondo */
-        color: white; /* Color del texto */
-        padding: 10px; /* Espaciado interno */
-    }
+.table-custom tbody tr:hover {
+    background-color: #f2f2f2; /* Color de fondo al pasar el cursor sobre la fila */
+}
+
+.table-custom tbody tr {
+    transition: all 0.3s ease; /* Transición suave */
+}
 
     .table-custom tbody tr:hover {
-        background-color: #f2f2f2; /* Color de fondo al pasar el cursor sobre la fila */
+        transform: translateY(-3px); /* Levantar 3px al pasar el cursor */
     }
 
-    .table-custom tbody tr {
-        transition: all 0.3s ease; /* Transición suave */
-    }
-
-        .table-custom tbody tr:hover {
-            transform: translateY(-3px); /* Levantar 3px al pasar el cursor */
-        }
-
-    .table-custom td, .table-custom th {
-        border: 1px solid #ddd; /* Borde */
-        padding: 8px; /* Espaciado interno */
-        text-align: center; /* Alineación del texto */
-    }
+.table-custom td, .table-custom th {
+    border: 1px solid #ddd; /* Borde */
+    padding: 8px; /* Espaciado interno */
+    text-align: center; /* Alineación del texto */
+}
 
 /* Estilos para los botones */
 .btn {
@@ -320,7 +301,7 @@ input:checked + .slider:before {
     cursor: pointer; /* Cursor al pasar el ratón */
 }
 
- 
+   
 
 /* Media queries para hacer la tabla responsive */
 @media screen and (max-width: 768px) {
@@ -347,7 +328,6 @@ input:checked + .slider:before {
         margin-bottom: 10px; /* Ajuste de espacio entre botones */
     }
 }
-
 /*searh y agregar*/
 /* Estilos para el buscador y el botón agregar */
 .input-group {
