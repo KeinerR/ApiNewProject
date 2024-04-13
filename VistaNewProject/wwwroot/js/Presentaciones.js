@@ -123,3 +123,4 @@ function limpiarFormulario() {
     document.getElementById('btnGuardar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
     document.getElementById('btnEditar').style.display = 'none';
 }
+

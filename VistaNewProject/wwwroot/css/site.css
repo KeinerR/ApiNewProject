@@ -275,15 +275,102 @@ input:checked + .slider:before {
         background: white;
     }
 
-.table-custom thead th {
-    background-color: #2574A8; /* Color de fondo */
-    color: white; /* Color del texto */
+/* Estilos base para la tabla */
+.table-custom {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
 }
 
-.table-custom tbody tr:hover {
-    background-color: #f2f2f2; /* Color de fondo al pasar el cursor sobre la fila */
+    .table-custom thead th {
+        background-color: #2574A8; /* Color de fondo */
+        color: white; /* Color del texto */
+        padding: 10px; /* Espaciado interno */
+    }
+
+    .table-custom tbody tr:hover {
+        background-color: #f2f2f2; /* Color de fondo al pasar el cursor sobre la fila */
+    }
+
+    .table-custom tbody tr {
+        transition: all 0.3s ease; /* Transición suave */
+    }
+
+        .table-custom tbody tr:hover {
+            transform: translateY(-3px); /* Levantar 3px al pasar el cursor */
+        }
+
+    .table-custom td, .table-custom th {
+        border: 1px solid #ddd; /* Borde */
+        padding: 8px; /* Espaciado interno */
+        text-align: center; /* Alineación del texto */
+    }
+
+/* Estilos para los botones */
+.btn {
+    padding: 8px 12px; /* Espaciado del botón */
+    border-radius: 4px; /* Borde redondeado */
+    cursor: pointer; /* Cursor al pasar el ratón */
 }
 
-.table-custom tbody tr:hover {
-    transform: translateY(-3px); /* Levantar 3px al pasar el cursor */
+ 
+
+/* Media queries para hacer la tabla responsive */
+@media screen and (max-width: 768px) {
+    .table-custom tbody tr {
+        display: block;
+        margin-bottom: 20px;
+    }
+
+    .table-custom td, .table-custom th {
+        display: block;
+        text-align: left;
+    }
+
+    .table-custom tbody td, .table-custom tbody th {
+        padding: 10px;
+        border: none;
+    }
+
+        .table-custom tbody td:last-child {
+            padding-bottom: 20px; /* Ajuste de espacio inferior para el último elemento */
+        }
+
+    .btn {
+        margin-bottom: 10px; /* Ajuste de espacio entre botones */
+    }
 }
+
+/*searh y agregar*/
+/* Estilos para el buscador y el botón agregar */
+.input-group {
+    position: relative;
+    border-radius: 20px; /* Borde redondeado para el grupo de entrada */
+}
+
+.form-control {
+    border-radius: 20px 0 0 20px !important; /* Borde redondeado solo en el lado izquierdo */
+    padding-right: 38px; /* Espacio para el botón */
+}
+
+#searchInput {
+    border-radius: 20px 0 0 20px; /* Borde redondeado solo en el lado izquierdo */
+    padding-right: 38px; /* Espacio para el botón */
+}
+
+#btnNavbarSearch {
+    border-radius: 0 20px 20px 0 !important; /* Borde redondeado solo en el lado derecho */
+    padding: 8px; /* Espaciado del botón */
+    margin-left: -1px; /* Ajuste para el borde del botón */
+    position: relative; /* Ajuste de la posición */
+}
+
+.btn-primary {
+    border-radius: 20px !important; /* Borde redondeado */
+    padding: 8px 20px !important; /* Espaciado del botón */
+    transition: all 0.3s ease; /* Transición suave */
+}
+
+    .btn-primary:hover {
+        background-color: #007bff; /* Cambio de color al pasar el ratón */
+    }
