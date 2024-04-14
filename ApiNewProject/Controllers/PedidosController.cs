@@ -43,6 +43,8 @@ namespace ApiNewProject.Controllers
             return List;
 
         }
+
+
         [HttpPost("InsertPedidos")]
         public async Task<IActionResult> InsertPedidos(Pedido pedido)
         {
@@ -105,7 +107,20 @@ namespace ApiNewProject.Controllers
                             }
                             else
                             {
-                                throw new InvalidOperationException("No hay suficiente cantidad en el lote.");
+                                // Restar la cantidad del siguiente lote más viejo
+                                var siguienteLote = await _context.Lotes
+                                    .Where(l => l.ProductoId == item.ProductoId && l.Cantidad > 0 && l.FechaVencimiento > lote.FechaVencimiento)
+                                    .OrderBy(l => l.FechaVencimiento)
+                                    .FirstOrDefaultAsync();
+
+                                if (siguienteLote != null && siguienteLote.Cantidad >= item.Cantidad)
+                                {
+                                    siguienteLote.Cantidad -= item.Cantidad.Value;
+                                }
+                                else
+                                {
+                                    throw new InvalidOperationException("No hay suficiente cantidad en los lotes disponibles para el producto.");
+                                }
                             }
                         }
                         else
@@ -136,6 +151,7 @@ namespace ApiNewProject.Controllers
                 return BadRequest("Error al insertar el pedido: " + ex.Message);
             }
         }
+
 
 
         [HttpGet("GetPedidos")]

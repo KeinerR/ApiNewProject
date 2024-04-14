@@ -262,46 +262,7 @@ input:checked + .slider:before {
         background: white;
     }
 
-
-/*Estilo del texto*/
-.Texto {
-    color: black;
-    font-size: 16px;
-    font-family: 'Abel', sans-serif;
-}
-
-/*Diseño de paginacion de detalle Nota:el del index es otro*/
-/* Contenedor del paginado */
-.pagination-detail {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-    /* Estilos de los enlaces de paginación */
-    .pagination-detail a {
-        color: #007bff;
-        text-decoration: none;
-        padding: 5px 10px;
-        margin: 0 5px;
-        border: 1px solid #007bff;
-        border-radius: 5px;
-    }
-
-    /* Estilo del enlace activo */
-    .pagination-detail .active {
-        background-color: #007bff;
-        color: #fff;
-        border-color: #007bff;
-    }
-
-    /* Estilo para el botón de página anterior y siguiente */
-    .pagination-detail .prev-next {
-        font-weight: bold;
-    }
-
-
-
+<<<<<<< HEAD
 /* Estilos base para la tabla */
 .table-custom {
     width: 100%;
