@@ -32,9 +32,6 @@
     // Llamamos a la función obtenerDatosUsuarios 
     obtenerDatosUsuarios(); 
     if (mostrarAlerta === 'true' && usuarioId) {
-        console.log('Mostrar alerta para usuarioId:', usuarioId);
-        const modalElement = document.getElementById('usuarioModal');
-        modalElement.setAttribute('aria-hidden', 'false');
         obtenerDatosUsuario(usuarioId);
 
         // Obtener el botón que activa la modal
@@ -44,7 +41,7 @@
             botonModal.click();
         }
     } else {
-        console.log('UsuarioId no encontrado en la URL:', usuarioId);
+        console.log('UsuarioId no encontrado en la URL');
     }
     function mostrarOcultarContrasena(idCampo) {
         var inputContrasena = document.getElementById(idCampo);
@@ -70,6 +67,8 @@
       
             // Validar si todos los campos son válidos antes de agregar el usuario
             todoValido = $('.Mensaje').filter(function () {
+                return $(this).text() !== '';
+            }).length === 0 && $('.text-danger').filter(function () {
                 return $(this).text() !== '';
             }).length === 0;
             console.log('Todos los campos son válidos:', todoValido);
@@ -115,25 +114,35 @@
             var spanErrorApellido = $('#Apellido').next('.text-danger'); // Obtén el elemento span correspondiente al campo Apellido
             var valorNombre = $('#Nombre').val().trim(); // Obtén el valor del campo Nombre
             var valorApellido = $('#Apellido').val().trim(); // Obtén el valor del campo Apellido
+            var spanVacioNombre = $('#Nombre').prev('.Mensaje');
+            var spanVacioApellido = $('#Apellido').prev('.Mensaje');
+
 
             if (valorNombre === '') {
                 spanErrorNombre.text('Este campo es obligatorio.');
+                spanVacioNombre.text(' *obligatorio');
             } else if ($('#Nombre').val().trim().length < 3) {
-                spanErrorNombre.text('Este debe tener un mínimo de 3 caracteres.');
+                spanErrorNombre.text('Este campo debe tener un mínimo de 3 caracteres.');
+                spanVacioNombre.text(' ');
             } else if (/^[a-zA-Z]+\s[a-zA-Z]+$/.test(valorNombre)) {
                 spanErrorNombre.text('El nombre no puede contener números ni caracteres especiales (excepto espacios en nombres compuestos).');
             } else {
                 spanErrorNombre.text('');
+                spanVacioNombre.text('');
             }
 
             if (valorApellido === '') {
                 spanErrorApellido.text('');
+                spanVacioApellido.text(' *');
             } else if ($('#Apellido').val().trim().length < 3) {
-                spanErrorApellido.text('Este debe tener un mínimo de 3 caracteres.');
+                spanErrorApellido.text('Este campo debe tener un mínimo de 3 caracteres.');
+                spanVacioApellido.text(' ');
             } else if (/^[a-zA-Z]+\s[a-zA-Z]+$/.test(valorApellido)) {
                 spanErrorApellido.text('El apellido no puede contener números ni caracteres especiales (excepto espacios en apellidos compuestos).');
+                spanVacioApellido.text(' ');
             } else {
                 spanErrorApellido.text('');
+                spanVacioApellido.text('');
             }
 
             var nombreRepetido = usuarios.some(function (user) {
@@ -145,6 +154,7 @@
             if (nombreRepetido) {
                 spanErrorNombre.text('Este nombre y apellido ya se encuentran registrados.');
                 spanErrorApellido.text('Este nombre y apellido ya se encuentran registrados.');
+                spanVacio.text(' ');
             }
         }
 
@@ -156,10 +166,10 @@
             
             if (valor.length < 7) {
                 spanError.text('El teléfono debe tener minimo 7 dígitos numéricos.');
-                todoValido = false;
+                spanVacio.text(' ');
             } else if (!telefonoValido) {
                 spanError.text('este campo no permite letras u espacios');
-                todoValido = false;
+                spanVacio.text(' ');
             } else {
                 var telefonoRepetido = usuarios.some(function (user) {
                     return user.telefono === valor
@@ -167,8 +177,10 @@
 
                 if (telefonoRepetido) {
                     spanError.text('Este telefono ya se encuentra registrado por otro usuario.');
+                    spanVacio.text(' ');
                 } else {
                     spanError.text('');
+                    spanVacio.text('');
                 }
             }
         }
@@ -178,12 +190,13 @@
             const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor); // Verifica el formato de correo electrónico
             if (valor === '') {
                 spanError.text('Este campo es necesario. Si desea omitirlo, use: correo@gmail.com');
-                todoValido = false;
+                spanVacio.text(' ');
             } else if (valor.toLowerCase() === 'correo@gmail.com') {
                 spanError.text('');
+                spanVacio.text('');
             } else if (!correoValido) {
                 spanError.text('Ingrese un correo electrónico válido.');
-                todoValido = false;
+                spanVacio.text(' ');
             } else {
                 var correoRepetido = usuarios.some(function (user) {
                     return user.correo === valor
@@ -191,8 +204,10 @@
 
                 if (correoRepetido) {
                     spanError.text('Este correo ya se encuentra registrado por otro usuario.');
+                    spanVacio.text(' ');
                 } else {
                     spanError.text('');
+                    spanVacio.text('');
                 }
             }
         }
@@ -205,23 +220,22 @@
             if (valor === '') {
                 spanVacio.text(' *obligatorio');
             } else if (valor.length < 4 && valor.length > 1) {
-                spanVacio.text(' *');
+                spanVacio.text(' ');
                 spanError.text('El usuario debe contener entre 4 y 16 caracteres y empezar con letras. ejemplo:juan123 ');
-                todoValido = false;
             } else if (!usuarioValido) {
-                spanVacio.text(' *');
+                spanVacio.text(' ');
                 spanError.text('El usuario debe contener entre 4 y 16 caracteres alfanumericos, guiones bajos (_) o guiones medios (-).');
-                todoValido = false;
             } else {
                 var usuarioRepetido = usuarios.some(function (user) {
                     return user.usuario1 === valor
                 });
 
                 if (usuarioRepetido) {
-                    spanVacio.text(' *');
+                    spanVacio.text(' ');
                     spanError.text('Este usuario ya se encuentra registrado.');
                 } else {
                     spanError.text('');
+                    spanVacio.text('');
                 }
             }
         }
@@ -232,9 +246,10 @@
 
             if (!contraseñaValida) {
                 spanError.text('La contraseña debe contener al menos 6 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial.');
-                todoValido = false;
+                spanVacio.text(' ');
             } else {
                 spanError.text('');
+                spanVacio.text('');
             }
         }
         if (input.is('#RepetirContraseña')) {
@@ -243,9 +258,10 @@
 
             if (contraseña !== repetirContraseña) {
                 spanError.text('Las contraseñas no coinciden.');
-                todoValido = false;
+                spanVacio.text(' ');
             } else {
                 spanError.text('');
+                spanVacio.text('');
             }
         }
         
@@ -260,7 +276,7 @@
                 title: 'Error',
                 timer: 3000, // Tiempo en milisegundos (en este caso, 3 segundos)
                 timerProgressBar: true,
-                text: 'Por favor, completa correctamente todos los campos con * para poder registrar este usuario.'
+                text: 'Por favor, completa correctamente todos los campos para poder registrar este usuario.'
             });
             return;
         }
@@ -453,7 +469,9 @@
         })
             .then(response => {
                 if (response.ok) {
-                    window.location.replace('/Usuarios');
+                    // Obtener el número de página actual de la URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const currentPage = urlParams.get('page');
                     // Mostrar SweetAlert
                     Swal.fire({
                         icon: 'success',
@@ -465,8 +483,12 @@
                         if (result.dismiss === Swal.DismissReason.timer) {
                             console.log('El usuario cerró el SweetAlert después del tiempo establecido');
                         }
-                        // Recargar la página
-                        location.reload();
+                        // Redirigir a la misma página después de la actualización
+                        if (currentPage) {
+                            window.location.replace(`/Usuarios?page=${currentPage}`);
+                        } else {
+                            window.location.replace('/Usuarios');
+                        }
                     });
                    
                 } else {
@@ -570,7 +592,8 @@ function eliminarUsuario(usuarioId) {
 
 
 function limpiarFormulario() {
-    window.location.replace('/Usuarios');
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentPage = urlParams.get('page');
     // Limpiar los valores de los campos del formulario
     document.getElementById('UsuarioId').value = '';
     document.getElementById('RolId').value = '';
@@ -604,6 +627,11 @@ function limpiarFormulario() {
     mensajesError.forEach(span => {
         span.innerText = ''; // Limpiar contenido del mensaje
     });
+    if (currentPage) {
+        window.location.replace(`/Usuarios?page=${currentPage}`);
+    } else {
+        window.location.replace('/Usuarios');
+    }
 }
 
 

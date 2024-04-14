@@ -10,7 +10,8 @@
             <i class="fas fa-arrow-left"></i> Volver
         </a>
         <!-- Agrega esto en tu enlace de "Editar" en Details.cshtml -->
-        <a href="#" onclick="redireccionarYEditar('@Model.UsuarioId')" class="btn btn-warning"><i class="fa-solid fa-pen"></i> Editare</a>
+        <a href="#" onclick="redireccionarYEditar('@Model.UsuarioId', 'Usuarios','usuario')" class="btn btn-warning"><i class="fa-solid fa-pen"></i> Editare</a>
+
 
 
 
@@ -35,12 +36,23 @@
                     <td class="col-sm-10">
                         @if (ViewBag.roles != null)
                         {
-                        var roles = ViewBag.roles as IEnumerable<Rol>
-                            ;
-                            var nombreRol = roles.FirstOrDefault(r => r.RolId == Model.RolId)?.NombreRol;
-                            <span>@nombreRol</span>
+                            var roles = ViewBag.roles as IEnumerable<Rol>;
+                            if (roles != null)
+                            {
+                                var nombreRol = roles.FirstOrDefault(r => r.RolId == Model.RolId)?.NombreRol;
+                                <span>@nombreRol</span>
                             }
+                            else
+                            {
+                                <span>No hay roles disponibles</span>
+                            }
+                        }
+                        else
+                        {
+                            <span>No se ha proporcionado ningún rol</span>
+                        }
                     </td>
+
                 </tr>
                 <tr>
                     <th scope="row" class="col-sm-2">

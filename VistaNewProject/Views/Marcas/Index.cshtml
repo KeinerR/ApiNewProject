@@ -35,6 +35,7 @@
                 <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
             </div>
+            <div id="MensajeInicial"></div>
             <form asp-controller="Marcas" asp-action="" method="post">
                 <div class="modal-body">
 
@@ -43,14 +44,16 @@
                     </div>
                     <div class="form-group">
                         <label for="NombreMarca" class="control-label">Nombre marca</label>
-                        <input type="text" id="NombreMarca" name="nombreMarca" class="form-control" />
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="NombreMarca" name="nombreMarca" class="form-control" autocomplete="off"/>
+                        <span id="NombreMarca" class="text-danger"></span>
                     </div>
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
-                    <button type="button" onclick="agregarMarca()" class="btn btn-primary" id="btnGuardar">Agregar</button>
-                    <button type="button" onclick="ActualizarMarca()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Marca</button>
+                    <button type="button" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Marca</button>
                 </div>
 
 
@@ -91,8 +94,9 @@
                 </td>
                 <!-- Agrega esta celda para las acciones -->
                 <td>
-                    <button class="btn btn-info" onclick="obtenerDatosMarca('@item.MarcaId')" data-cliente-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal">Editar</button>
-                    <button class="btn btn-danger" onclick="eliminarMarca('@item.MarcaId')">Eliminar</button>
+                    <button class="btn btn-info"  id="editar" data-cliente-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal">Editar</button>
+                    <a asp-action="Details" asp-route-id="@item.MarcaId" class="btn btn-warning"><i class="fa-solid fa-file"></i></a>
+                    <button class="btn btn-danger" id="btnDelete" data-cliente-id="@item.MarcaId" >Eliminar</button>
                 </td>
             </tr>
         }
