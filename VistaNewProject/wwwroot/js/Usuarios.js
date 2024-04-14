@@ -242,8 +242,9 @@
 
         // Validación de contraseña
         if (input.is('#Contraseña')) {
+            var spanErrorRepetir = $('#RepetirContraseña').next('.text-danger'); // Obtén el elemento span correspondiente al campo Nombre
             const contraseñaValida = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+={}\[\]:;"'<>,.?/|\\~-]).{6,}$/.test(valor);
-
+            const contraseña = $('#RepetirContraseña').val();
             if (!contraseñaValida) {
                 spanError.text('La contraseña debe contener al menos 6 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial.');
                 spanVacio.text(' ');
@@ -251,6 +252,14 @@
                 spanError.text('');
                 spanVacio.text('');
             }
+            if (contraseña) {
+                if (contraseña !== valor) {
+                    spanErrorRepetir.text('Las contraseñas no coinciden')
+                } else {
+                    spanErrorRepetir.text('')
+                }
+            }
+            
         }
         if (input.is('#RepetirContraseña')) {
             const contraseña = $('#Contraseña').val();
@@ -531,7 +540,7 @@
         ActualizarUsuario();
     });
 
-    document.querySelectorAll('#editar').forEach(button => {
+    document.querySelectorAll('#btnEdit').forEach(button => {
         button.addEventListener('click', function () {
             const usuarioId = this.getAttribute('data-cliente-id');
             obtenerDatosUsuario(usuarioId);

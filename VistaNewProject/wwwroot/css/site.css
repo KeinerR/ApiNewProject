@@ -400,3 +400,19 @@ input:checked + .slider:before {
     .btn-primary:hover {
         background-color: #007bff; /* Cambio de color al pasar el ratón */
     }
+
+
+    /*Colores y diseño  de los Botones de las tabla*/
+#btnDelete {
+    /*    background: #F64740;*/
+    /*background: red;*/
+    background: #DC3545;
+}
+#btnEdit {
+    /* background: #8eb8e5;*/
+    /*background: #25CED1;*/
+    background: #FFC107;
+}
+#btnDetail {
+    background: #61AFFE;
+}

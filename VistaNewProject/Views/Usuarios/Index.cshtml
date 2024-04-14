@@ -202,9 +202,9 @@
                 </td>
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
-                    <button class="btn btn-warning" id="editar" data-cliente-id="@item.UsuarioId"  data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button>
-                    <a asp-action="Details" asp-route-id="@item.UsuarioId" class="btn btn-warning"><i class="fa-solid fa-file"></i></a>
-                    <button class="btn btn-danger" id="btnDelete" data-cliente-id="@item.UsuarioId" >Eliminar</button>
+                    <button class="btn" id="btnEdit" data-cliente-id="@item.UsuarioId" data-bs-toggle="modal" data-bs-target="#usuarioModal"><i class="fas fa-edit"></i></button>
+                    <a asp-action="Details" asp-route-id="@item.UsuarioId" class="btn" id="btnDetail"><i class="fa-solid fa-file"></i></a>
+                    <button class="btn" id="btnDelete" data-cliente-id="@item.UsuarioId"><i class="fas fa-trash-alt"></i></button>
                 </td>
             </tr>
         }

@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function () {
         agregarMarca();
     });
 
-    document.querySelectorAll('#editar').forEach(button => {
+    document.querySelectorAll('#btnEdit').forEach(button => {
         button.addEventListener('click', function () {
             const marcaId = this.getAttribute('data-cliente-id');
             obtenerDatosMarca(marcaId);

@@ -94,9 +94,9 @@
                 </td>
                 <!-- Agrega esta celda para las acciones -->
                 <td>
-                    <button class="btn btn-info"  id="editar" data-cliente-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal">Editar</button>
-                    <a asp-action="Details" asp-route-id="@item.MarcaId" class="btn btn-warning"><i class="fa-solid fa-file"></i></a>
-                    <button class="btn btn-danger" id="btnDelete" data-cliente-id="@item.MarcaId" >Eliminar</button>
+                    <button class="btn" id="btnEdit" data-cliente-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal"><i class="fas fa-edit"></i></button>
+                    <a asp-action="Details" id="btnDetail" asp-route-id="@item.MarcaId" class="btn"><i class="fa-solid fa-file"></i></a>
+                    <button class="btn" id="btnDelete" data-cliente-id="@item.MarcaId"><i class="fas fa-trash-alt"></i> </button>
                 </td>
             </tr>
         }
