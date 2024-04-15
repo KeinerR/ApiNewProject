@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using VistaNewProject.Services;
 using VistaNewProject.Models;
+using VistaNewProject.Services;
 using X.PagedList;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+
 
 namespace VistaNewProject.Controllers
 {
@@ -40,33 +40,56 @@ namespace VistaNewProject.Controllers
         }
 
 
-     
+
         public async Task<IActionResult> Details(int? id, int? page)
         {
-            var marcas = await _client.GetMarcaAsync();
-            var products = await _client.GetProductoAsync();
-            
-           
-            if (id == null)
+            var proveedores = await _client.GetProveedorAsync();
+            var proveedor = proveedores.FirstOrDefault(u => u.ProveedorId == id);
+            if (proveedor == null)
             {
                 return NotFound();
             }
 
-            var marca = marcas.FirstOrDefault(u => u.MarcaId == id);
+            // Obtener las compras del proveedor específico
+            var comprasProveedor = await _client.GetCompraAsync();
+            var comprasProveedorFiltradas = comprasProveedor.Where(c => c.ProveedorId == proveedor.ProveedorId);
 
-            if (marca == null)
+            // Obtener los detalles de compra de las compras del proveedor específico
+            var detallesCompras = new List<Detallecompra>();
+            foreach (var compra in comprasProveedorFiltradas)
             {
-                return NotFound();
+                var detalles = await _client.GetDetallecompraAsync();
+                var detalle = detalles.FirstOrDefault(u => u.CompraId == compra.CompraId);
+                if (detalle != null)
+                {
+                    detallesCompras.Add(detalle);
+                }
             }
 
-            int pageSize = 1; // Número máximo de elementos por página
-            int pageNumber = page ?? 1;
+            // Calcular la cantidad total de productos comprados por el proveedor
+            var cantidadTotalProductos = detallesCompras.Sum(d => d.Cantidad); // Suponiendo que la cantidad está en la propiedad "Cantidad" de Detallecompra
 
-            var productos = products.Where(p => p.MarcaId == id.Value).ToList();
-            var pagedProductos = await productos.ToPagedListAsync(pageNumber, pageSize);
+            // Obtener los productos de cada detalle de compra
+            var productos = new List<Producto>();
+            foreach (var detalleCompra in detallesCompras)
+            {
+                var producto = await _client.GetProductoAsync();
+                var productoDetalle = producto.FirstOrDefault(u => u.ProductoId == detalleCompra.ProductoId);
+                if (productoDetalle != null)
+                {
+                    productos.Add(productoDetalle);
+                }
+            }
 
-            ViewBag.Marca = marca; // Pasar la marca a la vista para la paginación
+            // Actualizar la cantidad total de productos comprados en el proveedor
+            ViewBag.CantidadTotalProductos = cantidadTotalProductos;
 
+            // Convertir la lista de productos a IPagedList
+            var pageNumber = page ?? 1;
+            var pageSize = 10;
+            var pagedProductos = productos.ToPagedList(pageNumber, pageSize);
+
+            ViewBag.Proveedor = proveedor;
             return View(pagedProductos);
         }
 

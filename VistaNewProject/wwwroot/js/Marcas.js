@@ -1,11 +1,4 @@
-﻿//// Agrega un evento de clic al botón de agregar dentro del modal
-//document.getElementById('btnGuardar').addEventListener('click', function () {
-//    agregarMarca(); // Llama a la función para agregar la marca
-//});
-// Función para agregar la marca
-
-
-document.addEventListener('DOMContentLoaded', function () {
+﻿document.addEventListener('DOMContentLoaded', function () {
 
     const urlParams = new URLSearchParams(window.location.search);
     const mostrarAlerta = urlParams.get('mostrarAlerta');
@@ -62,16 +55,17 @@ document.addEventListener('DOMContentLoaded', function () {
             validarCampo($(this));
 
             // Validar si todos los campos son válidos antes de agregar el usuario
-             todoValido = $('.Mensaje').filter(function () {
-                return $(this).text() !== '';
-            }).length === 0 && $('.text-danger').filter(function () {
+            todoValido = $('.text-danger').filter(function () {
                 return $(this).text() !== '';
             }).length === 0;
 
+            todolleno = $('.Mensaje ').filter(function () {
+                return $(this).text() !== '';
+            }).length === 0;
             console.log('Todos los campos son válidos:', todoValido);
 
             // Si todos los campos son válidos, ocultar el mensaje en todos los campos
-            if (todoValido) {
+            if (todolleno) {
                 $('#MensajeInicial').hide();
             } else {
                 $('#MensajeInicial').show(); // Mostrar el mensaje si no todos los campos son válidos
@@ -91,31 +85,32 @@ document.addEventListener('DOMContentLoaded', function () {
         // Validar el campo y mostrar mensaje de error si es necesario
         if (valor === '') {
             spanVacio.text(' *obligatorio');
-            spanError.text(' ');
+            spanError.text('');
         } else if (input.is('#NombreMarca')) {
             if (valor.length < 2) {
                 spanError.text('Este debe tener un mínimo de 2 caracteres.');
-                spanVacio.text(' *');
+                spanVacio.text('');
             } else if (!/^(?!.*(\w)\1\1\1)[\w\s]+$/.test(valor)) {
                 spanError.text('Este nombre es redundante.');
                 spanVacio.text('');
                 todoValido = false;
             } else if (/^\d+$/.test(valor)) {
                 spanError.text('Este campo no puede ser solo numérico.');
-                spanVacio.text(' *');
+                spanVacio.text('');
                 todoValido = false;
             } else {
                 var nombreRepetido = marcas.some(function (marca) {
                     return marca.nombreMarca.toLowerCase() === valor.toLowerCase() &&
-                        marca.usuarioId !== $('#MarcaId').val().trim();
+                        marca.marcaId != $('#MarcaId').val().trim();
                 });
 
                 if (nombreRepetido) {
                     spanError.text('Esta marca ya se encuentra registrada.');
-                    spanVacio.text(' *');
+                    spanVacio.text('');
                     todoValido = false;
                 } else {
                     spanError.text('');
+                    spanVacio.text('');
                 }
             }
         }
@@ -130,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 title: 'Error',
                 timer: 3000, // Tiempo en milisegundos (en este caso, 3 segundos)
                 timerProgressBar: true,
-                text: 'Por favor, completa correctamente todos los campos  para poder registrar este usuario.'
+                text: 'Por favor, completa correctamente todos los campos  para poder registrar la marca.'
             });
             return;
         }
@@ -143,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 title: 'Error',
                 timer: 3000,
                 timerProgressBar: true,
-                text: 'Por favor, completa todos los campos con * para poder registrar este usuario.'
+                text: 'Por favor, completa todos los campos con * para poder registrar la marca.'
             });
             return;
         }
@@ -165,7 +160,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 return response.json();
             })
             .then(data => {
-                console.log('Marca agregada:', data);
                 Swal.fire({
                     icon: 'success',
                     title: 'Éxito',
@@ -238,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 title: 'Error',
                 timer: 3000,
                 timerProgressBar: true,
-                text: 'Por favor, completa todos los campos con * para poder registrar actualizar la marca'
+                text: 'Por favor, completa todos los campos con * para poder actualizar la marca'
             });
             return;
         }
@@ -256,9 +250,6 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then(response => {
                 if (response.ok) {
-                    // Obtener el número de página actual de la URL
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const currentPage = urlParams.get('page');
                     // Mostrar SweetAlert
                     Swal.fire({
                         icon: 'success',
@@ -267,12 +258,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         timer: 3000, // Tiempo en milisegundos (en este caso, 3 segundos)
                         timerProgressBar: true
                     }).then((result) => {
-                        // Redirigir a la misma página después de la actualización
-                        if (currentPage) {
-                            window.location.replace(`/Marcas?page=${currentPage}`);
-                        } else {
-                            window.location.replace('/Marcas');
-                        }
+                        location.reload();
                     });
                 } else {
                     throw new Error('Error al actualizar la marca.');
@@ -298,13 +284,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 return response.json();
             })
             .then(data => {
-                const urlParams = new URLSearchParams(window.location.search);
-                const currentPage = urlParams.get('page');
                 Swal.fire({
                     icon: 'success',
                     title: 'Éxito',
                     text: 'Marca eliminada correctamente.',
-                    timer: 3000,
+                    timer: 1000,
                     timerProgressBar: true
                 }).then(() => {
                     if (currentPage) {
@@ -320,7 +304,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Ocurrió un error al eliminar la marca. Por favor, inténtalo de nuevo más tarde.'
+                    text: 'Ocurrió un error al eliminar la marca. Por favor, verifica que la marca no tenga productos asociados e inténtalo de nuevo más tarde.'
                 });
             });
     }

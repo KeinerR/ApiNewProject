@@ -66,19 +66,21 @@
             validarCampo($(this));
       
             // Validar si todos los campos son válidos antes de agregar el usuario
-            todoValido = $('.Mensaje').filter(function () {
+            todoValido = $('.text-danger').filter(function () {
                 return $(this).text() !== '';
-            }).length === 0 && $('.text-danger').filter(function () {
+            }).length === 0;
+
+            todolleno = $('.Mensaje ').filter(function () {
                 return $(this).text() !== '';
             }).length === 0;
             console.log('Todos los campos son válidos:', todoValido);
 
             // Si todos los campos son válidos, ocultar el mensaje en todos los campos
-            if (todoValido) {
+            if (todolleno) {
                 $('#MensajeInicial').hide();
             } else {
                 $('#MensajeInicial').show(); // Mostrar el mensaje si no todos los campos son válidos
-            }
+            }   
         });
     }
 
@@ -103,7 +105,7 @@
                 spanError.text('');
                 spanVacio.text('');
             } else { 
-                spanError.text('Este campo es obligatorio')
+                spanError.text(' ')
                 spanVacio.text(' *obligatorio');
   
             }
@@ -119,11 +121,11 @@
 
 
             if (valorNombre === '') {
-                spanErrorNombre.text('Este campo es obligatorio.');
-                spanVacioNombre.text(' *obligatorio');
+                spanErrorNombre.text(' ');
+                spanVacioNombre.text(' *');
             } else if ($('#Nombre').val().trim().length < 3) {
                 spanErrorNombre.text('Este campo debe tener un mínimo de 3 caracteres.');
-                spanVacioNombre.text(' ');
+                spanVacioNombre.text('');
             } else if (/^[a-zA-Z]+\s[a-zA-Z]+$/.test(valorNombre)) {
                 spanErrorNombre.text('El nombre no puede contener números ni caracteres especiales (excepto espacios en nombres compuestos).');
             } else {
@@ -132,14 +134,14 @@
             }
 
             if (valorApellido === '') {
-                spanErrorApellido.text('');
+                spanErrorApellido.text(' ');
                 spanVacioApellido.text(' *');
             } else if ($('#Apellido').val().trim().length < 3) {
                 spanErrorApellido.text('Este campo debe tener un mínimo de 3 caracteres.');
-                spanVacioApellido.text(' ');
+                spanVacioApellido.text('');
             } else if (/^[a-zA-Z]+\s[a-zA-Z]+$/.test(valorApellido)) {
                 spanErrorApellido.text('El apellido no puede contener números ni caracteres especiales (excepto espacios en apellidos compuestos).');
-                spanVacioApellido.text(' ');
+                spanVacioApellido.text('');
             } else {
                 spanErrorApellido.text('');
                 spanVacioApellido.text('');
@@ -154,7 +156,7 @@
             if (nombreRepetido) {
                 spanErrorNombre.text('Este nombre y apellido ya se encuentran registrados.');
                 spanErrorApellido.text('Este nombre y apellido ya se encuentran registrados.');
-                spanVacio.text(' ');
+                spanVacio.text('');
             }
         }
 
@@ -164,12 +166,15 @@
         if (input.is('#Telefono')) {
             var telefonoValido = /^\d{7,}$/.test(valor); // Permite al menos 6 dígitos
             
-            if (valor.length < 7) {
+            if (valor === '') {
+                spanError.text('');
+                spanVacio.text(' *obligatorio');
+            }else if (valor.length < 7 && valor.length > 0) {
                 spanError.text('El teléfono debe tener minimo 7 dígitos numéricos.');
-                spanVacio.text(' ');
+                spanVacio.text('');
             } else if (!telefonoValido) {
                 spanError.text('este campo no permite letras u espacios');
-                spanVacio.text(' ');
+                spanVacio.text('');
             } else {
                 var telefonoRepetido = usuarios.some(function (user) {
                     return user.telefono === valor
@@ -177,7 +182,7 @@
 
                 if (telefonoRepetido) {
                     spanError.text('Este telefono ya se encuentra registrado por otro usuario.');
-                    spanVacio.text(' ');
+                    spanVacio.text('');
                 } else {
                     spanError.text('');
                     spanVacio.text('');
@@ -190,13 +195,13 @@
             const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor); // Verifica el formato de correo electrónico
             if (valor === '') {
                 spanError.text('Este campo es necesario. Si desea omitirlo, use: correo@gmail.com');
-                spanVacio.text(' ');
+                spanVacio.text(' *');
             } else if (valor.toLowerCase() === 'correo@gmail.com') {
                 spanError.text('');
                 spanVacio.text('');
             } else if (!correoValido) {
                 spanError.text('Ingrese un correo electrónico válido.');
-                spanVacio.text(' ');
+                spanVacio.text('');
             } else {
                 var correoRepetido = usuarios.some(function (user) {
                     return user.correo === valor
@@ -204,7 +209,7 @@
 
                 if (correoRepetido) {
                     spanError.text('Este correo ya se encuentra registrado por otro usuario.');
-                    spanVacio.text(' ');
+                    spanVacio.text('');
                 } else {
                     spanError.text('');
                     spanVacio.text('');
@@ -220,10 +225,10 @@
             if (valor === '') {
                 spanVacio.text(' *obligatorio');
             } else if (valor.length < 4 && valor.length > 1) {
-                spanVacio.text(' ');
+                spanVacio.text('');
                 spanError.text('El usuario debe contener entre 4 y 16 caracteres y empezar con letras. ejemplo:juan123 ');
             } else if (!usuarioValido) {
-                spanVacio.text(' ');
+                spanVacio.text('');
                 spanError.text('El usuario debe contener entre 4 y 16 caracteres alfanumericos, guiones bajos (_) o guiones medios (-).');
             } else {
                 var usuarioRepetido = usuarios.some(function (user) {
@@ -231,7 +236,7 @@
                 });
 
                 if (usuarioRepetido) {
-                    spanVacio.text(' ');
+                    spanVacio.text('');
                     spanError.text('Este usuario ya se encuentra registrado.');
                 } else {
                     spanError.text('');
@@ -247,7 +252,7 @@
             const contraseña = $('#RepetirContraseña').val();
             if (!contraseñaValida) {
                 spanError.text('La contraseña debe contener al menos 6 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial.');
-                spanVacio.text(' ');
+                spanVacio.text('');
             } else {
                 spanError.text('');
                 spanVacio.text('');
@@ -267,7 +272,7 @@
 
             if (contraseña !== repetirContraseña) {
                 spanError.text('Las contraseñas no coinciden.');
-                spanVacio.text(' ');
+                spanVacio.text('');
             } else {
                 spanError.text('');
                 spanVacio.text('');
@@ -346,9 +351,6 @@
                 return response.json();
             })
             .then(data => {
-                console.log('Respuesta del servidor:', data);
-                // Manejar la respuesta del servidor según sea necesario
-
                 // Mostrar SweetAlert
                 Swal.fire({
                     icon: 'success',
@@ -478,28 +480,16 @@
         })
             .then(response => {
                 if (response.ok) {
-                    // Obtener el número de página actual de la URL
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const currentPage = urlParams.get('page');
                     // Mostrar SweetAlert
                     Swal.fire({
                         icon: 'success',
                         title: 'Éxito',
-                        text: 'Se ha actualizado elsss usuario con éxito.',
+                        text: 'Se ha actualizado con éxito.',
                         timer: 3000, // Tiempo en milisegundos (en este caso, 3 segundos)
                         timerProgressBar: true
                     }).then((result) => {
-                        if (result.dismiss === Swal.DismissReason.timer) {
-                            console.log('El usuario cerró el SweetAlert después del tiempo establecido');
-                        }
-                        // Redirigir a la misma página después de la actualización
-                        if (currentPage) {
-                            window.location.replace(`/Usuarios?page=${currentPage}`);
-                        } else {
-                            window.location.replace('/Usuarios');
-                        }
+                        location.reload();
                     });
-                   
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -569,13 +559,9 @@ function eliminarUsuario(usuarioId) {
                 Swal.fire({
                     icon: 'success',
                     title: 'Exito',
-                    timer: 900,
-                    timerProgressBar: true,
                     text: 'Usuario eliminado.'
                 }).then((result) => {
-                    if (result.dismiss === Swal.DismissReason.timer) {
-                        console.log('El usuario cerró el SweetAlert después del tiempo establecido');
-                    }
+                    // Aquí puedes agregar más lógica si lo necesitas
                     // Recargar la página
                     location.reload();
                 });

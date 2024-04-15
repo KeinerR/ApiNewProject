@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
 
@@ -34,6 +35,87 @@ namespace VistaNewProject.Controllers
 
             return View(pagedProveedores);
         }
+        public async Task<IActionResult> Details(int? id, int? page)
+        {
+            var proveedores = await _client.GetProveedorAsync();
+            var proveedor = proveedores.FirstOrDefault(u => u.ProveedorId == id);
+            if (proveedor == null)
+            {
+                return NotFound();
+            }
+
+            // Obtener las compras del proveedor específico
+            var comprasProveedor = await _client.GetCompraAsync();
+            var comprasProveedorFiltradas = comprasProveedor.Where(c => c.ProveedorId == proveedor.ProveedorId);
+
+            // Obtener los detalles de compra de las compras del proveedor específico
+            var detallesCompras = new List<Detallecompra>();
+            foreach (var compra in comprasProveedorFiltradas)
+            {
+                var detalles = await _client.GetDetallecompraAsync();
+                var detallesCompraPorCompra = detalles.Where(u => u.CompraId == compra.CompraId);
+                detallesCompras.AddRange(detallesCompraPorCompra);
+            }
+
+            var cantidadTotalProductosDict = new Dictionary<int, int>(); // Clave: ID del producto, Valor: Cantidad total
+            foreach (var detalleCompra in detallesCompras)
+            {
+                if (!cantidadTotalProductosDict.ContainsKey(detalleCompra.ProductoId ?? 0)) // Utiliza el valor predeterminado 0 si detalleCompra.ProductoId es nulo
+                {
+                    cantidadTotalProductosDict[detalleCompra.ProductoId ?? 0] = detalleCompra.Cantidad ?? 0; // Utiliza el valor predeterminado 0 si detalleCompra.Cantidad es nulo
+                }
+                else
+                {
+                    cantidadTotalProductosDict[detalleCompra.ProductoId ?? 0] += detalleCompra.Cantidad ?? 0; // Utiliza el valor predeterminado 0 si detalleCompra.Cantidad es nulo
+                }
+
+            }
+
+
+
+            var productos = await _client.GetProductoAsync(); // Obtener todos los productos
+
+            var productosConCantidad = new List<ProductoConCantidad>();
+            foreach (var kvp in cantidadTotalProductosDict)
+            {
+                // Buscar el producto correspondiente en la lista de todos los productos
+                var producto = productos.FirstOrDefault(p => p.ProductoId == kvp.Key);
+                if (producto != null)
+                {
+                    productosConCantidad.Add(new ProductoConCantidad
+                    {
+                        ProductoId = kvp.Key,
+                        NombreProducto = producto,
+                        Cantidad = kvp.Value
+                    });
+                }
+            }
+
+            // Convertir la lista de productos con cantidad a IPagedList
+            var pageNumber = page ?? 1;
+            var pageSize = 10;
+            var pagedProductos = productosConCantidad.ToPagedList(pageNumber, pageSize);
+
+            // Actualizar la cantidad total de productos comprados en el proveedor
+            ViewBag.CantidadTotalProductos = productosConCantidad.Sum(p => p.Cantidad);
+
+            ViewBag.Proveedor = proveedor;
+            return View(pagedProductos);
+        }
+
+        public class ProductoConCantidad
+        {
+            public int ? ProductoId { get; set; }
+            public Producto ? NombreProducto { get; set; }
+            public int ? Cantidad { get; set; }
+        }
+
+
+
+
+
+
+
 
     }
 }
