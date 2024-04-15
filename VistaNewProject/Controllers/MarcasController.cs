@@ -2,7 +2,7 @@
 using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
-
+using Microsoft.AspNetCore.Http;
 
 namespace VistaNewProject.Controllers
 {
@@ -35,7 +35,18 @@ namespace VistaNewProject.Controllers
             {
                 pagedMarcas = await marcas.ToPagedListAsync(pagedMarcas.PageCount, pageSize);
             }
+            // Inicializar el contador en 1 si es la primera página
+            int contador = 1;
+            if (page.HasValue && page > 1)
+            {
+                // Obtener el valor actual del contador de la sesión si estamos en una página diferente a la primera
+                contador = HttpContext.Session.GetInt32("Contador") ?? 1;
+            }
 
+            // Establecer el valor del contador en la sesión para su uso en la siguiente página
+            HttpContext.Session.SetInt32("Contador", contador + pagedMarcas.Count);
+
+            ViewBag.Contador = contador;
             return View(pagedMarcas);
         }
 
@@ -43,56 +54,32 @@ namespace VistaNewProject.Controllers
 
         public async Task<IActionResult> Details(int? id, int? page)
         {
-            var proveedores = await _client.GetProveedorAsync();
-            var proveedor = proveedores.FirstOrDefault(u => u.ProveedorId == id);
-            if (proveedor == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            // Obtener las compras del proveedor específico
-            var comprasProveedor = await _client.GetCompraAsync();
-            var comprasProveedorFiltradas = comprasProveedor.Where(c => c.ProveedorId == proveedor.ProveedorId);
-
-            // Obtener los detalles de compra de las compras del proveedor específico
-            var detallesCompras = new List<Detallecompra>();
-            foreach (var compra in comprasProveedorFiltradas)
+            var marcas = await _client.GetMarcaAsync();
+            var marca = marcas.FirstOrDefault(u => u.MarcaId == id);
+            if (marca == null)
             {
-                var detalles = await _client.GetDetallecompraAsync();
-                var detalle = detalles.FirstOrDefault(u => u.CompraId == compra.CompraId);
-                if (detalle != null)
-                {
-                    detallesCompras.Add(detalle);
-                }
+                return NotFound();
             }
 
-            // Calcular la cantidad total de productos comprados por el proveedor
-            var cantidadTotalProductos = detallesCompras.Sum(d => d.Cantidad); // Suponiendo que la cantidad está en la propiedad "Cantidad" de Detallecompra
+            ViewBag.Marca = marca;
 
-            // Obtener los productos de cada detalle de compra
-            var productos = new List<Producto>();
-            foreach (var detalleCompra in detallesCompras)
-            {
-                var producto = await _client.GetProductoAsync();
-                var productoDetalle = producto.FirstOrDefault(u => u.ProductoId == detalleCompra.ProductoId);
-                if (productoDetalle != null)
-                {
-                    productos.Add(productoDetalle);
-                }
-            }
+            var productos = await _client.GetProductoAsync();
+            var productosDeMarca = productos.Where(p => p.MarcaId == id);
 
-            // Actualizar la cantidad total de productos comprados en el proveedor
-            ViewBag.CantidadTotalProductos = cantidadTotalProductos;
+            int pageSize = 1; // Número máximo de elementos por página
+            int pageNumber = page ?? 1;
 
-            // Convertir la lista de productos a IPagedList
-            var pageNumber = page ?? 1;
-            var pageSize = 10;
-            var pagedProductos = productos.ToPagedList(pageNumber, pageSize);
+            var pagedProductos = productosDeMarca.ToPagedList(pageNumber, pageSize);
 
-            ViewBag.Proveedor = proveedor;
             return View(pagedProductos);
         }
 
-
     }
+
+
 }

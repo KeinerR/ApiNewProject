@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Agregar servicios al contenedor.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddSession();
 // Agregar cliente HTTP para la API
 builder.Services.AddHttpClient("ApiHttpClient", client =>
 {
@@ -66,6 +66,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseSession();
 app.UseCors(builder =>
 {
     builder.WithOrigins("https://localhost:7226") // Agrega aquí el dominio de tu cliente web

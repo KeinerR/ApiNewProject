@@ -287,16 +287,12 @@
                 Swal.fire({
                     icon: 'success',
                     title: 'Éxito',
-                    text: 'Marca eliminada correctamente.',
-                    timer: 1000,
-                    timerProgressBar: true
+                    text: 'Marca Eliminada correctamente.',
+                    timer: 1500,
+                    timerProgressBar: true,
+                    showConfirmButton: false
                 }).then(() => {
-                    if (currentPage) {
-                        window.location.replace(`/Marcas?page=${currentPage}`);
-                    } else {
-                        window.location.replace('/Marcas');
-                    }
-                    // Redirigir o recargar la página
+                    location.reload();
                 });
             })
             .catch(error => {
@@ -336,7 +332,6 @@
 function limpiarFormulario() {
     const urlParams = new URLSearchParams(window.location.search);
     const currentPage = urlParams.get('page');
-    // Mostrar SweetAlert
     // Limpiar los valores de los campos del formulario
     document.getElementById('MarcaId').value = '';
     document.getElementById('NombreMarca').value = '';

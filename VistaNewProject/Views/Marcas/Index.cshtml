@@ -84,7 +84,7 @@
     </thead>
     <tbody class="text-center">
         @{
-            int contador = 1;
+            int contador = ViewBag.Contador; // Obtener el valor del contador desde la ViewBag
         }
         @foreach (var item in Model)
         {
@@ -101,8 +101,8 @@
                 <!-- Agrega esta celda para las acciones -->
                 <td>
                     <button class="btn" id="btnEdit" data-cliente-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal"><i class="fas fa-edit"></i></button>
-                    <a asp-action="Details" id="btnDetail" asp-route-id="@item.MarcaId" class="btn"><i class="fa-solid fa-file"></i></a>
-                    <button class="btn" id="btnDelete" data-cliente-id="@item.MarcaId"><i class="fas fa-trash-alt"></i> </button>
+                    <a asp-action="Details" asp-route-id="@item.MarcaId" id="btnDetail" class="btn"><i class="fa-solid fa-file"></i></a>
+                    <button class="btn" id="btnDelete" data-cliente-id="@item.MarcaId"><i class="fas fa-trash-alt"></i></button>
                 </td>
             </tr>
         }

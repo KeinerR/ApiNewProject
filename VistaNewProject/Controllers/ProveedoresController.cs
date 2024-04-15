@@ -32,6 +32,17 @@ namespace VistaNewProject.Controllers
             {
                 pagedProveedores = await proveedores.ToPagedListAsync(pagedProveedores.PageCount, pageSize);
             }
+            int contador = 1;
+            if (page.HasValue && page > 1)
+            {
+                // Obtener el valor actual del contador de la sesión si estamos en una página diferente a la primera
+                contador = HttpContext.Session.GetInt32("Contador") ?? 1;
+            }
+
+            // Establecer el valor del contador en la sesión para su uso en la siguiente página
+            HttpContext.Session.SetInt32("Contador", contador + pagedProveedores.Count);
+
+            ViewBag.Contador = contador;
 
             return View(pagedProveedores);
         }

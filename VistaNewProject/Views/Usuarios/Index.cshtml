@@ -161,7 +161,7 @@
     </thead>
     <tbody class="text-center">
         @{
-            int contador = 1; // Inicializa el contador en 1
+            int contador = ViewBag.Contador; // Obtener el valor del contador desde la ViewBag
         }
         @foreach (var item in Model)
         {

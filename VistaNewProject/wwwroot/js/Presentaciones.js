@@ -1,8 +1,112 @@
-﻿//// Agrega un evento de clic al botón de agregar dentro del modal
-//document.getElementById('btnGuardar').addEventListener('click', function () {
-//    agregarMarca(); // Llama a la función para agregar la marca
-//});
-// Función para agregar la presentacion
+﻿document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const mostrarAlerta = urlParams.get('mostrarAlerta');
+    const presentacionId = urlParams.get('presentacionId');
+
+    let presentaciones = {}; // Cambiado de objeto a array
+    let todoValido = true;
+
+    function obtenerDatosPresentaciones() {
+        fetch('https://localhost:7013/api/Unidades/GetUnidades')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener los usuarios.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                presentaciones = data;
+                NoCamposVacios();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+    obtenerDatosPresentaciones();
+
+    if (mostrarAlerta === 'true' && marcaId) {
+        obtenerDatosPresentacion(presentacionId);
+
+        // Obtener el botón que activa la modal
+        const botonModal = document.querySelector('[data-bs-target="#PresentacionModal"]');
+        if (botonModal) {
+            // Simular el clic en el botón para mostrar la modal
+            botonModal.click();
+        }
+    }
+
+    function NoCamposVacios() {
+        // Mostrar mensaje inicial de validación
+        $('#MensajeInicial').text(' Completa todos los campos con *');
+        $('.Mensaje').text(' *');
+
+        $('#NombrePresentacion, #DescripcionPresentacion').on('input', function () {
+            validarCampo($(this));
+
+            // Validar si todos los campos son válidos antes de agregar el usuario
+            todoValido = $('.text-danger').filter(function () {
+                return $(this).text() !== '';
+            }).length === 0;
+
+            todolleno = $('.Mensaje ').filter(function () {
+                return $(this).text() !== '';
+            }).length === 0;
+            console.log('Todos los campos son válidos:', todoValido);
+
+            // Si todos los campos son válidos, ocultar el mensaje en todos los campos
+            if (todolleno) {
+                $('#MensajeInicial').hide();
+            } else {
+                $('#MensajeInicial').show(); // Mostrar el mensaje si no todos los campos son válidos
+            }
+        });
+    }
+
+    function validarCampo(input) {
+        const valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
+        const spanError = input.next('.text-danger'); // Obtener el elemento span de error asociado al input
+        const spanVacio = input.prev('.Mensaje'); // Obtener el elemento span vacío asociado al input
+
+        // Limpiar el mensaje de error previo
+        spanError.text('');
+        spanVacio.text('');
+
+        // Validar el campo y mostrar mensaje de error si es necesario
+        if (valor === '') {
+            spanVacio.text(' *obligatorio');
+            spanError.text('');
+        } else if (input.is('#NombrePresentacion')) {
+            if (valor.length < 2) {
+                spanError.text('Este debe tener un mínimo de 3 caracteres.');
+                spanVacio.text('');
+            } else if (!/^(?!.*(\w)\1\1\1)[\w\s]+$/.test(valor)) {
+                spanError.text('Este nombre es redundante.');
+                spanVacio.text('');
+                todoValido = false;
+            } else if (/^\d+$/.test(valor)) {
+                spanError.text('Este campo no puede ser solo numérico.');
+                spanVacio.text('');
+                todoValido = false;
+            } else {
+                const nombreRepetido = presentaciones.some(function (presentacion) {
+                    return presentacion.NombrePresentacion.toLowerCase() === valor.toLowerCase() &&
+                        presentacion.PresentacionId != $('#PresentacionId').val().trim();
+                });
+
+                if (nombreRepetido) {
+                    spanError.text('Esta unidad ya se encuentra registrada.');
+                    spanVacio.text('');
+                    todoValido = false;
+                } else {
+                    spanError.text('');
+                    spanVacio.text('');
+                }
+            }
+        }
+        return todoValido; // Devuelve el estado de validación al finalizar la función
+    }
+});
+
 function agregarPresentacion() {
     const nombrePresentacion = document.getElementById('NombrePresentacion').value;
     const descripcionPresentacion = document.getElementById('DescripcionPresentacion').value;

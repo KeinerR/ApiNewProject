@@ -38,6 +38,17 @@ namespace VistaNewProject.Controllers
             {
                 pageUsuarios = await usuarios.ToPagedListAsync(pageUsuarios.PageCount, pageSize);
             }
+            int contador = 1;
+            if (page.HasValue && page > 1)
+            {
+                // Obtener el valor actual del contador de la sesión si estamos en una página diferente a la primera
+                contador = HttpContext.Session.GetInt32("Contador") ?? 1;
+            }
+
+            // Establecer el valor del contador en la sesión para su uso en la siguiente página
+            HttpContext.Session.SetInt32("Contador", contador + pageUsuarios.Count);
+
+            ViewBag.Contador = contador;
             ViewBag.roles = roles;
             return View(pageUsuarios);
            

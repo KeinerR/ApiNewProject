@@ -3,7 +3,7 @@
     const mostrarAlerta = urlParams.get('mostrarAlerta');
     const usuarioId = urlParams.get('usuarioId');
 
-   
+    
     usuarios = {}; // Inicializamos la variable usuarios como un objeto vacío
     var todoValido = true;
     
@@ -543,8 +543,7 @@
             eliminarUsuario(usuarioId);
         });
     });
-    
-    
+
 });
 function eliminarUsuario(usuarioId) {
     // Hacer la solicitud DELETE al servidor para eliminar el cliente
@@ -558,11 +557,12 @@ function eliminarUsuario(usuarioId) {
                 // Aquí puedes manejar la respuesta si es necesario
                 Swal.fire({
                     icon: 'success',
-                    title: 'Exito',
-                    text: 'Usuario eliminado.'
-                }).then((result) => {
-                    // Aquí puedes agregar más lógica si lo necesitas
-                    // Recargar la página
+                    title: 'Éxito',
+                    text: 'Usuario Eliminado correctamente.',
+                    timer: 1500,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                }).then(() => {
                     location.reload();
                 });
             }
@@ -627,8 +627,6 @@ function limpiarFormulario() {
         window.location.replace('/Usuarios');
     }
 }
-
-
 
 function mostraralerta(usuarioId) {
     alert('El estado del usuario a cambiado usaurioId:'+usuarioId)

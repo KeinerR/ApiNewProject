@@ -428,12 +428,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 Swal.fire({
                     icon: 'success',
                     title: 'Éxito',
-                    text: 'Proveedor eliminada correctamente.',
-                    timer: 1000,
-                    timerProgressBar: true
+                    text: 'Proveedor Eliminado correctamente.',
+                    timer: 1500,
+                    timerProgressBar: true,
+                    showConfirmButton: false
                 }).then(() => {
                     location.reload();
-                    // Redirigir o recargar la página
                 });
             })
             .catch(error => {

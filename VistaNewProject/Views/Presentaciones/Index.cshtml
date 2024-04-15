@@ -33,6 +33,7 @@
                 <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
             </div>
+            <div id="MensajeInicial"></div>
             <form asp-controller="Presentaciones" asp-action="" method="post">
                 <div class="modal-body">
 
@@ -41,18 +42,22 @@
                     </div>
                     <div class="form-group">
                         <label for="NombrePresentacion" class="control-label">Nombre presentacion</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
                         <input type="text" id="NombrePresentacion" name="nombrePresentacion" class="form-control" />
+                        <span id="NombreMarca" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label for="DescripcionPresentacion" class="control-label">Descripcion Presentacion</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
                         <input type="text" id="DescripcionPresentacion" name="descripcionPresentacion" class="form-control" />
+                        <span id="NombreMarca" class="text-danger"></span>
                     </div>
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
-                    <button type="button" onclick="agregarPresentacion()" class="btn btn-primary" id="btnGuardar">Agregar</button>
-                    <button type="button" onclick="ActualizarPresentacion()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Presentacion</button>
+                    <button type="button" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Presentacion</button>
                 </div>
 
 
@@ -69,24 +74,33 @@
 <table class="table table-custom text-center">
     <thead>
         <tr>
-            <th>PRESENTACION ID</th>
+            <th>#</th>
             <th>NOMBRE PRESENTACION</th>
             <th>DESCRIPCION PRESENTACION</th>
             <th>ACCIONES</th>
         </tr>
     </thead>
     <tbody class="text-center">
+        @{
+            int contador = ViewBag.Contador; // Obtener el valor del contador desde la ViewBag
+        }
         @foreach (var item in Model)
         {
             <tr>
-                <td>@Html.DisplayFor(modelItem => item.PresentacionId)</td>
+                <td>
+                    @contador <!-- Muestra el valor del contador -->
+                    @{
+                        contador++; // Incrementa el contador para la próxima iteración
+                    }
+                </td>
                 <td>@Html.DisplayFor(modelItem => item.NombrePresentacion)</td>
                 <td>@Html.DisplayFor(modelItem => item.DescripcionPresentacion)</td>
                 <td>
-                    <button class="btn btn-warning" onclick="obtenerDatosPresentacion('@item.PresentacionId')" data-cliente-id="@item.PresentacionId" data-bs-toggle="modal" data-bs-target="#PresentacionModal">
+                    <button class="btn" id="btnEdit"data-cliente-id="@item.PresentacionId" data-bs-toggle="modal" data-bs-target="#PresentacionModal">
                         <i class="fas fa-edit"></i> <!-- Icono de edición -->
                     </button>
-                    <button class="btn btn-danger" onclick="eliminarPresentacion('@item.PresentacionId')">
+                    <a asp-action="Details" asp-route-id="@item.PresentacionId" id="btnDetail" class="btn"><i class="fa-solid fa-file"></i></a>
+                    <button class="btn" id="btnDelete" onclick="eliminarPresentacion('@item.PresentacionId')">
                         <i class="fas fa-trash-alt"></i> <!-- Icono de eliminación -->
                     </button>
                 </td>

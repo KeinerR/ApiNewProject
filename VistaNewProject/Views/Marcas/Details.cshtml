@@ -10,7 +10,14 @@
     <i class="fas fa-arrow-left"></i> Volver
 </a>
 <!-- Agrega esto en tu enlace de "Editar" en Details.cshtml -->
-<a href="#" onclick="redireccionarYEditar('@ViewBag.Marca.MarcaId', 'Marcas','marca')" class="btn btn-warning"><i class="fa-solid fa-pen"></i> Editare</a>
+@if (ViewBag.Marca != null && ViewBag.Marca.MarcaId != null)
+{
+    <a href="#" onclick="redireccionarYEditar('@ViewBag.Marca.MarcaId', 'Marcas','marca')" class="btn btn-warning"><i class="fa-solid fa-pen"></i> Editar</a>
+}
+else
+{
+    <p>El objeto ViewBag.Marca es nulo o su propiedad MarcaId es nula.</p>
+}
 
 
 <div>
