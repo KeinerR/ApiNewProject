@@ -454,7 +454,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.querySelectorAll('#btnEdit').forEach(button => {
         button.addEventListener('click', function () {
-            const marcaId = this.getAttribute('data-cliente-id');
+            const marcaId = this.getAttribute('data-proveedor-id');
             obtenerDatosProveedor(marcaId);
         });
     });
@@ -465,7 +465,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     document.querySelectorAll('#btnDelete').forEach(button => {
         button.addEventListener('click', function () {
-            const proveedorId = this.getAttribute('data-cliente-id');
+            const proveedorId = this.getAttribute('data-proveedor-id');
             eliminarProveedor(proveedorId);
         });
     });

@@ -311,7 +311,7 @@
 
     document.querySelectorAll('#btnEdit').forEach(button => {
         button.addEventListener('click', function () {
-            const marcaId = this.getAttribute('data-cliente-id');
+            const marcaId = this.getAttribute('data-marca-id');
             obtenerDatosMarca(marcaId);
         });
     });
@@ -321,7 +321,7 @@
     });
     document.querySelectorAll('#btnDelete').forEach(button => {
         button.addEventListener('click', function () {
-            const marcaId = this.getAttribute('data-cliente-id');
+            const marcaId = this.getAttribute('data-marca-id');
             eliminarMarca(marcaId);
         });
     });

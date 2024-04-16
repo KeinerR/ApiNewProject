@@ -532,14 +532,14 @@
 
     document.querySelectorAll('#btnEdit').forEach(button => {
         button.addEventListener('click', function () {
-            const usuarioId = this.getAttribute('data-cliente-id');
+            const usuarioId = this.getAttribute('data-usuario-id');
             obtenerDatosUsuario(usuarioId);
         });
     });
     // Llamar a la función obtenerDatosUsuario al hacer clic en el botón de editar
     document.querySelectorAll('#btnDelete').forEach(button => {
         button.addEventListener('click', function () {
-            const usuarioId = this.getAttribute('data-cliente-id');
+            const usuarioId = this.getAttribute('data-usuario-id');
             eliminarUsuario(usuarioId);
         });
     });

@@ -31,8 +31,45 @@ namespace VistaNewProject.Controllers
             {
                 pagedCategorias = await categorias.ToPagedListAsync(pagedCategorias.PageCount, pageSize);
             }
+            // Inicializar el contador en 1 si es la primera página
+            int contador = 1;
+            if (page.HasValue && page > 1)
+            {
+                // Obtener el valor actual del contador de la sesión si estamos en una página diferente a la primera
+                contador = HttpContext.Session.GetInt32("Contador") ?? 1;
+            }
 
+            // Establecer el valor del contador en la sesión para su uso en la siguiente página
+            HttpContext.Session.SetInt32("Contador", contador + pagedCategorias.Count);
+
+            ViewBag.Contador = contador;
             return View(pagedCategorias);
+        }
+        public async Task<IActionResult> Details(int? id, int? page)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var categorias = await _client.GetCategoriaAsync();
+            var categoria = categorias.FirstOrDefault(u => u.CategoriaId == id);
+            if (categoria == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Categoria = categoria;
+
+            var productos = await _client.GetProductoAsync();
+            var productosDeCategoria = productos.Where(p => p.CategoriaId == id);
+
+            int pageSize = 1; // Número máximo de elementos por página
+            int pageNumber = page ?? 1;
+
+            var pagedProductos = productosDeCategoria.ToPagedList(pageNumber, pageSize);
+
+            return View(pagedProductos);
         }
     }
 }

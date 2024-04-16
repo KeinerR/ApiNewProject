@@ -89,8 +89,8 @@
                 </td>
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
-                    <button class="btn btn-warning" onclick="obtenerDatosRol('@item.RolId')" data-cliente-id="@item.RolId" data-bs-toggle="modal" data-bs-target="#RolModal">Editar</button>
-                    <button class="btn btn-danger" onclick="eliminarRol('@item.RolId')">Eliminar</button>
+                    <button class="btn btn-warning" onclick="ActualizarRol()" data-cliente-id="@item.RolId" data-bs-toggle="modal" data-bs-target="#RolModal"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-danger" onclick="eliminarRol('@item.RolId')"><i class="fas fa-trash-alt"></i></button>
                 </td>
             </tr>
         }

@@ -2,13 +2,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const mostrarAlerta = urlParams.get('mostrarAlerta');
     const marcaId = urlParams.get('marcaId');
-
+    const API_URL = 'https://localhost:7013/api/Unidades';
     unidades = {}; // Inicializamos la variable usuarios como un objeto vacío
     var todoValido = true;
 
 
     function obtenerDatosMarcas() {
-        fetch('https://localhost:7013/api/Unidades/GetUnidades')
+        fetch(`${API_URL}/GetUnidades`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al obtener los usuarios.');
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
 
-        fetch('https://localhost:7013/api/Unidades/InsertarUnidad', {
+        fetch(`${API_URL}/InsertarUnidad`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     function obtenerDatosUnidad(unidadId) {
-        fetch(`https://localhost:7013/api/Unidades/GetUnidadById?Id=${unidadId}`)
+        fetch(`${API_URL}/GetUnidadById?Id=${unidadId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al obtener los datos de la unidad.');
@@ -239,7 +239,7 @@ document.addEventListener('DOMContentLoaded', function () {
             DescripcionUnidad: descripcionUnidad
         };
 
-        fetch(`https://localhost:7013/api/Unidades/UpdateUnidades`, {
+        fetch(`${API_URL}/UpdateUnidades`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function eliminarUnidad(unidadId) {
         // Hacer la solicitud DELETE al servidor para eliminar la unidad
-        fetch(`https://localhost:7013/api/Unidades/DeleteUnidad/${unidadId}`, {
+        fetch(`${API_URL}/DeleteUnidad/${unidadId}`, {
             method: 'DELETE',
         })
             .then(response => {
@@ -312,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.querySelectorAll('#btnEdit').forEach(button => {
         button.addEventListener('click', function () {
-            const unidadId = this.getAttribute('data-cliente-id');
+            const unidadId = this.getAttribute('data-unidad-id');
             obtenerDatosUnidad(unidadId);
         });
     });
@@ -322,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     document.querySelectorAll('#btnDelete').forEach(button => {
         button.addEventListener('click', function () {
-            const unidadId = this.getAttribute('data-cliente-id');
+            const unidadId = this.getAttribute('data-unidad-id');
             eliminarUnidad(unidadId);
         });
     });

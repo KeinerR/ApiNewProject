@@ -161,9 +161,9 @@
 
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
-                    <button class="btn" id="btnEdit" data-cliente-id="@item.ProveedorId" data-bs-toggle="modal" data-bs-target="#ProveedorModal"><i class="fas fa-edit"></i></button>
+                    <button class="btn" id="btnEdit" data-proveedor-id="@item.ProveedorId" data-bs-toggle="modal" data-bs-target="#ProveedorModal"><i class="fas fa-edit"></i></button>
                     <a asp-action="Details" asp-route-id="@item.ProveedorId" class="btn" id="btnDetail"><i class="fas fa-file"></i></a>
-                    <button class="btn" id="btnDelete" data-cliente-id="@item.ProveedorId"><i class="fas fa-trash-alt"></i>"</button>
+                    <button class="btn" id="btnDelete" data-proveedor-id="@item.ProveedorId"><i class="fas fa-trash-alt"></i>"</button>
                 </td>
             </tr>
         }

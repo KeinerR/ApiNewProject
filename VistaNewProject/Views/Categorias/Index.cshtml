@@ -34,6 +34,7 @@
                 <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
             </div>
+            <div id="MensajeInicial"></div>
             <form asp-controller="Categorias" asp-action="" method="post">
                 <div class="modal-body">
 
@@ -42,14 +43,16 @@
                     </div>
                     <div class="form-group">
                         <label for="NombreCategoria" class="control-label">Nombre Categoria</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
                         <input type="text" id="NombreCategoria" name="nombreCategoria" class="form-control" />
+                        <span id="NombreMarca" class="text-danger"></span>
                     </div>
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
-                    <button type="button" onclick="agregarCategoria()" class="btn btn-primary" id="btnGuardar">Agregar</button>
-                    <button type="button" onclick="ActualizarCategoria()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Categoria</button>
+                    <button type="button" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Categoria</button>
                 </div>
 
 
@@ -68,7 +71,7 @@
     <thead>
         <tr>
             <th>
-                CATEGORIA ID
+                #
             </th>
             <th>
                 NOMBRE CATEGORIA
@@ -79,19 +82,26 @@
         </tr>
     </thead>
     <tbody class="text-center">
+        @{
+            int contador = ViewBag.Contador; // Obtener el valor del contador desde la ViewBag
+        }
         @foreach (var item in Model)
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CategoriaId)
+                    @contador <!-- Muestra el valor del contador -->
+                    @{
+                        contador++; // Incrementa el contador para la próxima iteración
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.NombreCategoria)
                 </td>
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
-                    <button class="btn btn-warning" onclick="obtenerDatosCategoria('@item.CategoriaId')" data-cliente-id="@item.CategoriaId" data-bs-toggle="modal" data-bs-target="#CategoriaModal">Editar</button>
-                    <button class="btn btn-danger" onclick="eliminarCategoria('@item.CategoriaId')">Eliminar</button>
+                    <button class="btn" id="btnEdit" data-categoria-id="@item.CategoriaId" data-bs-toggle="modal" data-bs-target="#CategoriaModal"><i class="fas fa-edit"></i></button>
+                    <a asp-action="Details" asp-route-id="@item.CategoriaId" id="btnDetail" class="btn"><i class="fa-solid fa-file"></i></a>
+                    <button class="btn" id="btnDelete" data-categoria-id="@item.CategoriaId"><i class="fas fa-trash-alt"></i></button>
                 </td>
             </tr>
         }

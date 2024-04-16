@@ -96,11 +96,11 @@
                 <td>@Html.DisplayFor(modelItem => item.NombrePresentacion)</td>
                 <td>@Html.DisplayFor(modelItem => item.DescripcionPresentacion)</td>
                 <td>
-                    <button class="btn" id="btnEdit"data-cliente-id="@item.PresentacionId" data-bs-toggle="modal" data-bs-target="#PresentacionModal">
+                    <button class="btn" id="btnEdit" data-presentacion-id="@item.PresentacionId" data-bs-toggle="modal" data-bs-target="#PresentacionModal">
                         <i class="fas fa-edit"></i> <!-- Icono de edición -->
                     </button>
                     <a asp-action="Details" asp-route-id="@item.PresentacionId" id="btnDetail" class="btn"><i class="fa-solid fa-file"></i></a>
-                    <button class="btn" id="btnDelete" onclick="eliminarPresentacion('@item.PresentacionId')">
+                    <button class="btn" id="btnDelete" data-presentacion-id="@item.PresentacionId">
                         <i class="fas fa-trash-alt"></i> <!-- Icono de eliminación -->
                     </button>
                 </td>

@@ -63,12 +63,12 @@ namespace VistaNewProject.Controllers
             ViewBag.Presentacion = presentacion;
 
             var productos = await _client.GetProductoAsync();
-            var productosDeMarca = productos.Where(p => p.MarcaId == id);
+            var productosDePresentacion = productos.Where(p => p.PresentacionId == id);
 
             int pageSize = 1; // Número máximo de elementos por página
             int pageNumber = page ?? 1;
 
-            var pagedProductos = productosDeMarca.ToPagedList(pageNumber, pageSize);
+            var pagedProductos = productosDePresentacion.ToPagedList(pageNumber, pageSize);
 
             return View(pagedProductos);
         }
