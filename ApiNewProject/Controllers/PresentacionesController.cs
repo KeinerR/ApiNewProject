@@ -26,7 +26,9 @@ namespace ApiNewProject.Controllers
                 {
                     PresentacionId = s.PresentacionId,
                     NombrePresentacion = s.NombrePresentacion,
-                    DescripcionPresentacion = s.DescripcionPresentacion
+                    DescripcionPresentacion = s.DescripcionPresentacion,
+                    CantidadPorUnidad = s.CantidadPorUnidad,
+                    EstadoPresentacion = s.EstadoPresentacion
                 }
             ).ToListAsync();
 
@@ -45,7 +47,9 @@ namespace ApiNewProject.Controllers
                     {
                         PresentacionId = s.PresentacionId,
                         NombrePresentacion = s.NombrePresentacion,
-                        DescripcionPresentacion = s.DescripcionPresentacion
+                        DescripcionPresentacion = s.DescripcionPresentacion,
+                        CantidadPorUnidad = s.CantidadPorUnidad,
+                        EstadoPresentacion = s.EstadoPresentacion
                     })
                 .FirstOrDefaultAsync(s => s.PresentacionId == Id);
 
@@ -94,6 +98,8 @@ namespace ApiNewProject.Controllers
             presentaciones.PresentacionId = presentacion.PresentacionId;
             presentaciones.NombrePresentacion = presentacion.NombrePresentacion;
             presentaciones.DescripcionPresentacion = presentacion.DescripcionPresentacion;
+            presentaciones.CantidadPorUnidad = presentacion.CantidadPorUnidad;
+            presentaciones.EstadoPresentacion = presentacion.EstadoPresentacion;
 
             await _context.SaveChangesAsync();
             return Ok();

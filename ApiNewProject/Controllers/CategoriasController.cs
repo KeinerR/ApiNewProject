@@ -26,6 +26,7 @@ namespace ApiNewProject.Controllers
                 {
                     CategoriaId = s.CategoriaId,
                     NombreCategoria = s.NombreCategoria,
+                    EstadoCategoria = s.EstadoCategoria
                 }
             ).ToListAsync();
 
@@ -44,6 +45,7 @@ namespace ApiNewProject.Controllers
                     {
                         CategoriaId = s.CategoriaId,
                         NombreCategoria = s.NombreCategoria,
+                        EstadoCategoria = s.EstadoCategoria
                     })
                 .FirstOrDefaultAsync(s => s.CategoriaId == Id);
 
@@ -91,7 +93,8 @@ namespace ApiNewProject.Controllers
             }
             categorias.CategoriaId = categoria.CategoriaId;
             categorias.NombreCategoria = categoria.NombreCategoria;
-  
+            categorias.EstadoCategoria = categoria.EstadoCategoria;
+
             await _context.SaveChangesAsync();
             return Ok();
         }

@@ -125,6 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
         const descripcionUnidad = document.getElementById('DescripcionUnidad').value;
+        const contenido = document.getElementById('Contenido').value;
         if (
             descripcionUnidad.trim() === ''
         ) {
@@ -138,7 +139,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
         const unidadObjeto = {
-            DescripcionUnidad: descripcionUnidad
+            DescripcionUnidad: descripcionUnidad,
+            Contenido: contenido
         };
 
 
@@ -152,13 +154,13 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => {
                 if (!response.ok) {
                     return response.json().then(error => {
-                        throw new Error('Error al agregar la marca: ' + error.message);
+                        throw new Error('Error al agregar la uidad: ' + error.message);
                     });
                 } else {
                     Swal.fire({
                         icon: 'success',
                         title: 'Éxito',
-                        text: 'Marca agregada correctamente.',
+                        text: 'Unidad agregada correctamente.',
                         timer: 3000,
                         timerProgressBar: true
                     }).then(() => {
@@ -166,11 +168,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 }
             }).catch(error => {
-                console.error('Error al agregar la marca:', error);
+                console.error('Error al agregar la unidad:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Ocurrió un error al agregar la marca. Por favor, inténtalo de nuevo más tarde.'
+                    text: 'Ocurrió un error al agregar la unidad. Por favor, inténtalo de nuevo más tarde.'
                 });
             });
     }
@@ -188,7 +190,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Llenar los campos del formulario modal con los datos del cliente
                 document.getElementById('UnidadId').value = unidad.unidadId;
                 document.getElementById('DescripcionUnidad').value = unidad.descripcionUnidad;
+                document.getElementById('Contenido').value = unidad.contenido;
 
+                document.getElementById('estadoUnidad').style.display = 'block';
                 // Cambiar el título de la ventana modal
                 document.getElementById('TituloModal').innerText = 'Editar unidad';
                 $('#MensajeInicial').text('');
@@ -221,9 +225,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         const unidadId = document.getElementById('UnidadId').value;
         const descripcionUnidad = document.getElementById('DescripcionUnidad').value;
-
+        const contenido = document.getElementById('Contenido').value;
+        const estadoUnidad = document.getElementById('EstadoUnidad').value;
         if (
-            descripcionUnidad.trim() === ''
+            descripcionUnidad.trim() === '' ||
+            contenido.trim() === ''
         ) {
             Swal.fire({
                 icon: 'error',
@@ -236,7 +242,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         const unidadObjeto = {
             UnidadId: unidadId,
-            DescripcionUnidad: descripcionUnidad
+            DescripcionUnidad: descripcionUnidad,
+            Contenido: contenido,
+            EstadoUnidad: estadoUnidad
         };
 
         fetch(`${API_URL}/UpdateUnidades`, {
@@ -263,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })
             .catch(error => {
-                console.error('Error al actualizar la marca:', error);
+                console.error('Error al actualizar la unidad:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',

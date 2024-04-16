@@ -130,6 +130,7 @@
             return;
         }
         const nombreMarca = document.getElementById('NombreMarca').value.trim();
+        const estadoMarca = document.getElementById('EstadoMarca').value;
         if (
             nombreMarca.trim() === ''
         ) {
@@ -143,7 +144,8 @@
             return;
         }
         const marcaObjeto = {
-            NombreMarca: nombreMarca
+            NombreMarca: nombreMarca,
+            estadoMarcaÑ: estadoMarca
         };
 
         fetch(`${API_URL}/InsertarMarca`, {
@@ -192,7 +194,9 @@
                 // Llenar los campos del formulario modal con los datos del cliente
                 document.getElementById('MarcaId').value = marca.marcaId;
                 document.getElementById('NombreMarca').value = marca.nombreMarca;
+                document.getElementById('EstadoMarca').value = marca.estadoMarca;
 
+                document.getElementById('Estadomarca').style.display = 'block';
                 // Cambiar el título de la ventana modal
                 document.getElementById('TituloModal').innerText = 'Editar marca';
                 // Ocultar el botón "Agregar" y mostrar el botón "Actualizar Usuario"
@@ -224,6 +228,8 @@
         }
         const marcaId = document.getElementById('MarcaId').value;
         const nombreMarca = document.getElementById('NombreMarca').value.trim();
+        const estadoMarca = document.getElementById('EstadoMarca').value;
+
         if (
             nombreMarca.trim() === ''
         ) {
@@ -238,7 +244,8 @@
         }
         const marcaObjeto = {
             MarcaId: marcaId,
-            NombreMarca: nombreMarca
+            NombreMarca: nombreMarca,
+            EstadoMarca: estadoMarca
         };
 
         fetch(`${API_URL}/UpdateMarcas`, {
@@ -335,6 +342,9 @@ function limpiarFormulario() {
     // Limpiar los valores de los campos del formulario
     document.getElementById('MarcaId').value = '';
     document.getElementById('NombreMarca').value = '';
+
+    // Ocultar el campo de Estado Usuario y mostrar elementos con clase "Novisible"
+    document.getElementById('Estadomarca').style.display = 'none';
 
 
 

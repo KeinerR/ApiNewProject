@@ -149,9 +149,12 @@
         }
         const nombrePresentacion = document.getElementById('NombrePresentacion').value;
         const descripcionPresentacion = document.getElementById('DescripcionPresentacion').value;
+        const cantidadPorUnidad = document.getElementById('CantidadPorUnidad').value;
+
         if (
             nombrePresentacion.trim() === '' ||
-            descripcionPresentacion.trim() === ''
+            descripcionPresentacion.trim() === '' ||
+            cantidadPorUnidad.trim() === ''
         ) {
             Swal.fire({
                 icon: 'error',
@@ -164,7 +167,9 @@
         }
         const presentacionObjeto = {
             NombrePresentacion: nombrePresentacion,
-            DescripcionPresentacion: descripcionPresentacion
+            DescripcionPresentacion: descripcionPresentacion,
+            CantidadPorUnidad: cantidadPorUnidad,
+            EstadoPresentacion: estadoPresentacion
         };
 
         fetch('https://localhost:7013/api/Presentaciones/InsertarPresentacion', {
@@ -216,6 +221,9 @@
                 document.getElementById('PresentacionId').value = presentacion.presentacionId;
                 document.getElementById('NombrePresentacion').value = presentacion.nombrePresentacion;
                 document.getElementById('DescripcionPresentacion').value = presentacion.descripcionPresentacion;
+                document.getElementById('Contenido').value = presentacion.cantidadPorUnidad;
+
+                document.getElementById('estadoPresentacion').style.display = 'block';
 
                 $('#MensajeInicial').text('');
                 var mensajes = document.querySelectorAll('.Mensaje');
@@ -249,9 +257,12 @@
         const presentacionId = document.getElementById('PresentacionId').value;
         const nombrePresentacion = document.getElementById('NombrePresentacion').value;
         const descripcionPresentacion = document.getElementById('DescripcionPresentacion').value;
+        const estadoPresentacion = document.getElementById('EstadoPresentacion').value;
+        const cantidadPorUnidad = document.getElementById('CantidadPorUnidad').value;
         if (
             nombrePresentacion.trim() === '' ||
-            descripcionPresentacion.trim() === ''
+            descripcionPresentacion.trim() === '' ||
+            cantidadPorUnidad.trim() === ''
         ) {
             Swal.fire({
                 icon: 'error',
@@ -266,7 +277,9 @@
         const presentacionObjeto = {
             PresentacionId: presentacionId,
             NombrePresentacion: nombrePresentacion,
-            DescripcionPresentacion: descripcionPresentacion
+            DescripcionPresentacion: descripcionPresentacion,
+            CantidadPorUnidad: cantidadPorUnidad,
+            EstadoPresentacion: estadoPresentacion
         };
 
         fetch(`${API_URL}/UpdatePresentaciones`, {
@@ -365,6 +378,10 @@ function limpiarFormulario() {
     document.getElementById('TituloModal').innerText = 'Agregar Presentacion';
     document.getElementById('btnGuardar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
     document.getElementById('btnEditar').style.display = 'none';
+
+
+    // Ocultar el campo de Estado Presentacion 
+    document.getElementById('estadoPresentacion').style.display = 'none';
     var mensajes = document.querySelectorAll('.Mensaje');
     mensajes.forEach(function (mensaje) {
         mensaje.textContent = ' *'; // Restaurar mensajes de error
