@@ -106,7 +106,7 @@
                                 <datalist id="clientesList">
                                     @foreach (var cliente in ViewBag.Clientes)
                                     {
-                                        <option value="@cliente.NombreCompleto"></option>
+                                        <option value="@cliente.ClienteId">cliente.NombreEmpresa</option>
                                     }
                                 </datalist>
                             </div>
@@ -135,37 +135,37 @@
                     </form>
                 </div>
 
-                <div class="modal-footer" style="margin-left: 50px">
-                    <button type="button" id="btnAgregardetalle" class="btn btn-success"><i class="fa-solid fa-cart-plus"></i></button>
-                </div>
 
-            <div style="display: flex; justify-content: space-between; margin: 0; width: 100%" id="detallecontainer">
-                   
-                <form id="formDetallePedido" asp-controller="DetallePedidos" asp-action="Create" method="post" class="styled-form">
-                    <div class="form-row">
-                        <div class="mb-3 col">
+                <div  id="detallecontainer">
+                    <form id="formDetallePedido" asp-controller="DetallePedidos" asp-action="Create" method="post" class="styled-form">
+                        <div class="">
+                            <div class="mb-3 col">
                                 <input list="productoList" id="ProductoId2" name="productoId2" class="form-control">
                                 <!-- Datalist con opciones de clientes -->
                                 <datalist id="productoList">
                                     @foreach (var producto in ViewBag.Productos)
                                     {
-                                        <option value="@producto.NombreProducto"></option>
+                                        <option value="@producto.ProductoId">@producto.NombreProducto</option>
                                     }
                                 </datalist>
+                            </div>
+                            <div class="mb-3 col">
+                                <label for="Cantidad2" class="form-label">Cantidad</label>
+                                <input type="number" id="Cantidad2" name="Cantidad" class="form-control" />
+                            </div>
+                            <div class="mb-3 col">
+                                <label for="PrecioUnitario2" class="form-label">Precio Unitario</label>
+                                <input type="number" id="PrecioUnitario2" name="PrecioUnitario" class="form-control" />
+                            </div>
+                            <div class="mb-3 col align-self-end">
+                                <div class=" ">
+                                    <button type="button" id="btnAgregardetalle" class="btn btn-success"><i class="fa-solid fa-cart-plus"></i> Agregar</button>
+                                </div>
+                            </div>
                         </div>
-                           
-                        <div class="mb-3 col">
-                            <label for="Cantidad2" class="form-label">Cantidad</label>
-                            <input type="number" id="Cantidad2" name="Cantidad" class="form-control" />
-                        </div>
-                        <div class="mb-3 col">
-                            <label for="PrecioUnitario2" class="form-label">Precio Unitario</label>
-                            <input type="number" id="PrecioUnitario2" name="PrecioUnitario" class="form-control" />
-                        </div>
-                    </div >
-                     
-                </form>
-            </div>
+                    </form>
+                </div>
+
              
                 <div class=" d-none" style="display:table-row" id="formDomicilioContainer">
                     <div class="col-md-8" style=" margin-left:60px">
