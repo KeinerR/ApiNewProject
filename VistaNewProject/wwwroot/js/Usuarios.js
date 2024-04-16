@@ -394,7 +394,10 @@
                 document.getElementById('Correo').value = usuario.correo;
 
 
-
+                document.getElementById('EstadoUser').style.display = 'block';
+                document.querySelectorAll('.Novisible').forEach(function (element) {
+                    element.style.display = 'none';
+                });
 
                 // Seleccionar el valor correcto en el campo de Estado Usuario
                 var selectEstadoUsuario = document.getElementById('EstadoUsuario');
@@ -428,10 +431,7 @@
                     selectRol.value = '3';
                 }
                 // Mostrar el campo de Estado Usuario
-                document.getElementById('EstadoUser').style.display = 'block';
-                document.querySelectorAll('.Novisible').forEach(function (element) {
-                    element.style.display = 'none';
-                });
+             
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -451,12 +451,12 @@
         }
         const usuarioId = document.getElementById('UsuarioId').value;
         const rolId = document.getElementById('RolId').value;
-        const nombre = document.getElementById('Nombre').value;
-        const apellido = document.getElementById('Apellido').value;
-        const usuario = document.getElementById('Usuario').value;
-        const contraseña = document.getElementById('Contraseña').value;
-        const telefono = document.getElementById('Telefono').value;
-        const correo = document.getElementById('Correo').value;
+        const nombre = document.getElementById('Nombre').value.trim();
+        const apellido = document.getElementById('Apellido').value.trim();
+        const usuario = document.getElementById('Usuario').value.trim();
+        const contraseña = document.getElementById('Contraseña').value.trim();
+        const telefono = document.getElementById('Telefono').value.trim();
+        const correo = document.getElementById('Correo').value.trim();
         const estadoUsuario = document.getElementById('EstadoUsuario').value;
 
         const usuarioObjeto = {

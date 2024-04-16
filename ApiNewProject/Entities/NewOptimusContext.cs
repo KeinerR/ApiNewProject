@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -57,6 +55,10 @@ namespace ApiNewProject.Entities
                 entity.Property(e => e.CategoriaId).HasColumnName("CategoriaID");
 
                 entity.Property(e => e.NombreCategoria).HasMaxLength(200);
+
+                entity.Property(e => e.EstadoCategoria)
+                   .HasColumnType("bit(1)")
+                   .HasDefaultValueSql("b'1'");
             });
 
             modelBuilder.Entity<Cliente>(entity =>
@@ -239,6 +241,10 @@ namespace ApiNewProject.Entities
                 entity.Property(e => e.MarcaId).HasColumnName("MarcaID");
 
                 entity.Property(e => e.NombreMarca).HasMaxLength(200);
+
+                entity.Property(e => e.EstadoMarca)
+                   .HasColumnType("bit(1)")
+                   .HasDefaultValueSql("b'1'");
             });
 
             modelBuilder.Entity<Movimiento>(entity =>
@@ -319,6 +325,12 @@ namespace ApiNewProject.Entities
                 entity.Property(e => e.DescripcionPresentacion).HasMaxLength(250);
 
                 entity.Property(e => e.NombrePresentacion).HasMaxLength(200);
+
+                entity.Property(e => e.CantidadPorUnidad).HasDefaultValueSql("'0'");
+                entity.Property(e => e.EstadoPresentacion)
+                .HasColumnType("bit(1)")
+                .HasDefaultValueSql("b'1'");
+
             });
 
             modelBuilder.Entity<Producto>(entity =>
@@ -434,6 +446,14 @@ namespace ApiNewProject.Entities
                 entity.Property(e => e.UnidadId).HasColumnName("UnidadID");
 
                 entity.Property(e => e.DescripcionUnidad).HasMaxLength(255);
+
+                entity.Property(e => e.Contenido).HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.EstadoUnidad)
+                .HasColumnType("bit(1)")
+                .HasDefaultValueSql("b'1'");
+
+
             });
 
             modelBuilder.Entity<Usuario>(entity =>

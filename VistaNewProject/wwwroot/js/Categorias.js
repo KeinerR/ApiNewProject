@@ -126,6 +126,7 @@
             return;
         }
         const nombreCategoria = document.getElementById('NombreCategoria').value;
+        const estadoCategoria = document.getElementById('EstadoCategoria').value;
         if (
             nombreCategoria.trim() === ''
         ) {
@@ -139,7 +140,8 @@
             return;
         }
         const categoriaObjeto = {
-            NombreCategoria: nombreCategoria
+            NombreCategoria: nombreCategoria,
+            EstadoCategoria: estadoCategoria 
         };
 
         fetch(`${API_URL}/InsertarCategoria`, {
@@ -190,8 +192,19 @@
                 document.getElementById('CategoriaId').value = categoria.categoriaId;
                 document.getElementById('NombreCategoria').value = categoria.nombreCategoria;
 
+
+                document.getElementById('Estadocategoria').style.display = 'block';
+
                 // Cambiar el título de la ventana modal
                 document.getElementById('TituloModal').innerText = 'Editar Categoria';
+
+                // Seleccionar el valor correcto en el campo de Estado Usuario
+                var selectEstadoCategoria = document.getElementById('EstadoCategoria');
+                if (categoria.estadoCategoria === 1) {
+                    selectEstadoCategoria.value = '1'; // Activo
+                } else if (categoria.estadoCategoria === 0) {
+                    selectEstadoCategoria.value = '0'; // Inactivo
+                }
 
                 $('#MensajeInicial').text('');
                 var mensajes = document.querySelectorAll('.Mensaje');
@@ -223,6 +236,7 @@
         }
         const categoriaId = document.getElementById('CategoriaId').value;
         const nombreCategoria = document.getElementById('NombreCategoria').value;
+        const estadoCategoria = document.getElementById('EstadoCategoria').value;
 
         if (
             nombreCategoria.trim() === ''
@@ -238,7 +252,8 @@
         }
         const categoriaObjeto = {
             CategoriaId: categoriaId,
-            NombreCategoria: nombreCategoria
+            NombreCategoria: nombreCategoria,
+            EstadoCategoria: estadoCategoria
         };
 
         fetch(`https://localhost:7013/api/Categorias/UpdateCategorias`, {
@@ -345,6 +360,8 @@ function limpiarFormulario() {
     document.getElementById('btnGuardar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
     document.getElementById('btnEditar').style.display = 'none';
 
+    // Ocultar el campo de Estado Usuario y mostrar elementos con clase "Novisible"
+    document.getElementById('Estadocategoria').style.display = 'none';
     mensajes.forEach(function (mensaje) {
         mensaje.textContent = ' *'; // Restaurar mensajes de error
         mensaje.style.display = 'inline-block'; // Establecer estilo si es necesario

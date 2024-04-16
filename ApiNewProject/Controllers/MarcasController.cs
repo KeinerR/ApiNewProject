@@ -26,6 +26,7 @@ namespace ApiNewProject.Controllers
                 {
                     MarcaId = s.MarcaId,
                     NombreMarca = s.NombreMarca,
+                    EstadoMarca = s.EstadoMarca
                 }
             ).ToListAsync();
 
@@ -44,6 +45,7 @@ namespace ApiNewProject.Controllers
                     {
                         MarcaId = s.MarcaId,
                         NombreMarca = s.NombreMarca,
+                        EstadoMarca = s.EstadoMarca
                     })
                 .FirstOrDefaultAsync(s => s.MarcaId == Id);
 
@@ -91,6 +93,7 @@ namespace ApiNewProject.Controllers
             }
             marcas.MarcaId = marca.MarcaId;
             marcas.NombreMarca = marca.NombreMarca;
+            marcas.EstadoMarca = marca.EstadoMarca;
 
             await _context.SaveChangesAsync();
             return Ok();

@@ -45,7 +45,20 @@
                         <label for="DescripcionUnidad" class="control-label">DescripcionUnidad</label>
                         <span class="Mensaje" style="color:red;display:inline-block;">*</span>
                         <input type="text" id="DescripcionUnidad" name="descripcionUnidad" class="form-control" />
-                        <span id="NombreMarca" class="text-danger"></span>
+                        <span class="text-danger"></span>
+                    </div>
+                        <div class="form-group">
+                        <label for="Contenido" class="control-label">Contenido del producto</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="Contenido" name="contenido" class="form-control" />
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-group" id="estadoUnidad" style="display:none">
+                        <label for="EstadoUnidad" class="control-label">Estado</label>
+                        <select id="EstadoUnidad" name="estadoUnidad" class="form-control">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
                     </div>
 
                 </div>
@@ -77,6 +90,12 @@
                 DESCRIPCION UNIDAD
             </th>
             <th>
+                CONTENIDO
+            </th>
+            <th>
+                ESTADO
+            </th>
+            <th>
                 ACCIONES
             </th>
         </tr>
@@ -97,6 +116,16 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.DescripcionUnidad)
                 </td>
+                  <td>
+                    @Html.DisplayFor(modelItem => item.Contenido)
+                </td>
+                <td class="text-center align-middle">
+                    <label class="switch">
+                        <input type="checkbox" @(item.EstadoUnidad != 0 ? "checked" : "") onchange="mostraralerta('@item.EstadoUnidad')">
+                        <span class="slider"></span>
+                    </label>
+                    @Html.DisplayFor(modelItem => item.EstadoUnidad)
+                </td>
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
                     <button class="btn" id="btnEdit" data-unidad-id="@item.UnidadId" data-bs-toggle="modal" data-bs-target="#UnidadModal"><i class="fas fa-edit"></i> </button>
@@ -111,7 +140,7 @@
     @if (Model != null && Model.PageCount > 1)
     {
         <div class="d-flex justify-content-center mb-5">
-            <nav aria-label="Page navigation bg-dark">
+            <nav aria-label="Page navigation" class="shadow p-3 mb-5 bg-white rounded">
                 <ul class="pagination">
                     <!-- Botón para la página anterior (oculto en la página 1) -->
                     <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">

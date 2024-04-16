@@ -44,13 +44,26 @@
                         <label for="NombrePresentacion" class="control-label">Nombre presentacion</label>
                         <span class="Mensaje" style="color:red;display:inline-block;">*</span>
                         <input type="text" id="NombrePresentacion" name="nombrePresentacion" class="form-control" />
-                        <span id="NombreMarca" class="text-danger"></span>
+                        <span  class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label for="DescripcionPresentacion" class="control-label">Descripcion Presentacion</label>
                         <span class="Mensaje" style="color:red;display:inline-block;">*</span>
-                        <input type="text" id="DescripcionPresentacion" name="descripcionPresentacion" class="form-control" />
-                        <span id="NombreMarca" class="text-danger"></span>
+                        <input type="text" id="DescripcionPresentacion" name="descripcionPresentacion" placeholder="" class="form-control" />
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="CantidadPorUnidad" class="control-label">Cantidad</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="CantidadPorUnidad" name="cantidadPorUnidad" class="form-control" />
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-group" id="estadoPresentacion" style="display:none">
+                        <label for="EstadoPresentacion" class="control-label">Estado</label>
+                        <select id="EstadoPresentacion" name="estadoPresentacion" class="form-control">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
                     </div>
 
                 </div>
@@ -77,6 +90,8 @@
             <th>#</th>
             <th>NOMBRE PRESENTACION</th>
             <th>DESCRIPCION PRESENTACION</th>
+            <th>Cantidad Por Presentacion</th>
+            <th>ESTADO</th>
             <th>ACCIONES</th>
         </tr>
     </thead>
@@ -95,6 +110,14 @@
                 </td>
                 <td>@Html.DisplayFor(modelItem => item.NombrePresentacion)</td>
                 <td>@Html.DisplayFor(modelItem => item.DescripcionPresentacion)</td>
+                <td>@Html.DisplayFor(modelItem => item.CantidadPorUnidad)</td>
+                <td class="text-center align-middle">
+                    <label class="switch">
+                        <input type="checkbox" @(item.EstadoPresentacion != 0 ? "checked" : "") onchange="mostraralerta('@item.EstadoPresentacion')">
+                        <span class="slider"></span>
+                    </label>
+                    @Html.DisplayFor(modelItem => item.EstadoPresentacion)
+                </td>
                 <td>
                     <button class="btn" id="btnEdit" data-presentacion-id="@item.PresentacionId" data-bs-toggle="modal" data-bs-target="#PresentacionModal">
                         <i class="fas fa-edit"></i> <!-- Icono de edición -->

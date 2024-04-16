@@ -48,13 +48,21 @@
                         <input type="text" id="NombreMarca" name="nombreMarca" class="form-control" autocomplete="off"/>
                         <span id="NombreMarca" class="text-danger"></span>
                     </div>
-
+                    <div class="form-group" id="Estadomarca" style="display:none">
+                        <label for="EstadoMarca" class="control-label">Estado</label>
+                        <select id="EstadoMarca" name="estadoMarca" class="form-control">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
                     <button type="button" class="btn btn-primary" id="btnGuardar">Agregar</button>
                     <button type="button" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Marca</button>
                 </div>
+             
+
 
 
 
@@ -78,6 +86,9 @@
                 NOMBRE MARCA
             </th>
             <th>
+                ESTADO MARCA
+            </th>
+            <th>
                 ACCIONES
             </th>
         </tr>
@@ -97,6 +108,13 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.NombreMarca)
+                </td>
+                <td class="text-center align-middle">
+                    <label class="switch">
+                        <input type="checkbox" @(item.EstadoMarca != 0 ? "checked" : "") onchange="mostraralerta('@item.EstadoMarca')">
+                        <span class="slider"></span>
+                    </label>
+                    @Html.DisplayFor(modelItem => item.EstadoMarca)
                 </td>
                 <!-- Agrega esta celda para las acciones -->
                 <td>
