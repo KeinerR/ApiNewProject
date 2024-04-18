@@ -13,9 +13,9 @@ namespace ApiNewProject.Entities
 
         public int MarcaId { get; set; }
         public string? NombreMarca { get; set; }
-
         public ulong? EstadoMarca { get; set; }
         [JsonIgnore]
+
         public virtual ICollection<Producto> Productos { get; set; }
     }
 }

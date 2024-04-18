@@ -39,28 +39,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Agregar el elemento "detalleTableBody" aquí -->
-                <div class="table-responsive" >
-                    <table id="detalleTable" class="table" data-bs-dismiss="modal">
-                        <thead>
-                            <tr>
-                                <th>ProductoID</th>
-                                <th>Cantidad</th>
-                                <th># lote</th>
-                                <th>Precio Compra</th>
-                                <th>Precio Detal</th>
-                                <th>Precio x Mayor</th>
-                                <th>Fecha vencimiento</th>
-                                <th>Cantidad</th>
-                                <th>Estado lote</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="detalleTableBody">
-                            <!-- Aquí se mostrarán los detalles agregados dinámicamente -->
-                        </tbody>
-                    </table>
-                </div>
+                <!-- Agregar el elemento "detalleTableBody" aquí -->               
                 <div id="detallecontainer" class="d-none">
                     <form id="formDetallecompra" asp-controller="DetalleCompra" asp-action="Create" method="post" class="styled-form">
                         <div class="form-group">
@@ -194,6 +173,27 @@
                     </div>
                 </form>
             </div>
+                <div class="table-responsive">
+                    <table id="detalleTable" class="table" data-bs-dismiss="modal">
+                        <thead>
+                            <tr>
+                                <th>ProductoID</th>
+                                <th>Cantidad</th>
+                                <th># lote</th>
+                                <th>Precio Compra</th>
+                                <th>Precio Detal</th>
+                                <th>Precio x Mayor</th>
+                                <th>Fecha vencimiento</th>
+                                <th>Cantidad</th>
+                                <th>Estado lote</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detalleTableBody">
+                            <!-- Aquí se mostrarán los detalles agregados dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
                 <div class="modal-footer">
                     <div class="modal-footer">
                         <!-- Contenido del cuerpo de tu HTML -->
@@ -210,9 +210,6 @@
     </div>
 </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>

@@ -20,6 +20,11 @@ namespace VistaNewProject.Controllers
 
             var productos = await _client.GetProductoAsync();
 
+            var presentacion = await _client.GetPresentacionAsync();
+            var marca = await _client.GetMarcaAsync();
+            var unidad = await _client.GetUnidadAsync();
+            var categoria = await _client.GetCategoriaAsync();
+
             if (productos == null)
             {
                 return NotFound("error");
@@ -33,6 +38,10 @@ namespace VistaNewProject.Controllers
                 pagedProductos = await productos.ToPagedListAsync(pagedProductos.PageCount, pageSize);
             }
 
+            ViewBag.Presentaciones = presentacion;
+            ViewBag.Categorias = categoria;
+            ViewBag.Unidades = unidad;
+            ViewBag.Marcas = marca;
             return View(pagedProductos);
         }
 

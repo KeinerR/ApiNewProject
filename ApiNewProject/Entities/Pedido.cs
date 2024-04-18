@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ApiNewProject.Entities
 {
@@ -15,11 +16,14 @@ namespace ApiNewProject.Entities
         public int? ClienteId { get; set; }
         public string? TipoServicio { get; set; }
         public DateTime? FechaPedido { get; set; }
+        public decimal? ValorTotalPedido { get; set; }
         public string? EstadoPedido { get; set; }
 
-        
+        [JsonIgnore]
         public virtual Cliente? Cliente { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Detallepedido> Detallepedidos { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Domicilio> Domicilios { get; set; }
     }
 }

@@ -42,17 +42,24 @@
                         <input type="hidden" id="UnidadId" name="unidadId" class="form-control" />
                     </div>
                     <div class="form-group">
+                        <label for="NombreUnidad" class="control-label">Nombre Unidad</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="NombreUnidad" name="nombreUnidad" class="form-control" />
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="CantidadPorUnidad" class="control-label">Cantidad por unidad</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="CantidadPorUnidad" name="cantidadPorUnidad" class="form-control" />
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
                         <label for="DescripcionUnidad" class="control-label">DescripcionUnidad</label>
                         <span class="Mensaje" style="color:red;display:inline-block;">*</span>
                         <input type="text" id="DescripcionUnidad" name="descripcionUnidad" class="form-control" />
                         <span class="text-danger"></span>
                     </div>
-                        <div class="form-group">
-                        <label for="Contenido" class="control-label">Contenido del producto</label>
-                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
-                        <input type="text" id="Contenido" name="contenido" class="form-control" />
-                        <span class="text-danger"></span>
-                    </div>
+                        
                     <div class="form-group" id="estadoUnidad" style="display:none">
                         <label for="EstadoUnidad" class="control-label">Estado</label>
                         <select id="EstadoUnidad" name="estadoUnidad" class="form-control">
@@ -87,10 +94,10 @@
                 #
             </th>
             <th>
-                DESCRIPCION UNIDAD
+                NOMBRE UNIDAD
             </th>
             <th>
-                CONTENIDO
+                CANTIDAD POR UNIDAD
             </th>
             <th>
                 ESTADO
@@ -114,10 +121,10 @@
                     }
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.DescripcionUnidad)
+                    @Html.DisplayFor(modelItem => item.NombreUnidad)
                 </td>
-                  <td>
-                    @Html.DisplayFor(modelItem => item.Contenido)
+                <td>
+                    @Html.DisplayFor(modelItem => item.CantidadPorUnidad)
                 </td>
                 <td class="text-center align-middle">
                     <label class="switch">

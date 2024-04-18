@@ -28,7 +28,6 @@ namespace ApiNewProject.Controllers
                     PresentacionId = s.PresentacionId,
                     MarcaId = s.MarcaId,
                     CategoriaId = s.CategoriaId,
-                    UnidadId = s.UnidadId,
                     NombreProducto = s.NombreProducto,
                     CantidadTotal = s.CantidadTotal,
                     Estado = s.Estado,
@@ -52,7 +51,6 @@ namespace ApiNewProject.Controllers
                         PresentacionId = s.PresentacionId,
                         MarcaId = s.MarcaId,
                         CategoriaId = s.CategoriaId,
-                        UnidadId = s.UnidadId,
                         NombreProducto = s.NombreProducto,
                         CantidadTotal = s.CantidadTotal,
                         Estado = s.Estado,
@@ -105,7 +103,6 @@ namespace ApiNewProject.Controllers
             productos.PresentacionId = producto.PresentacionId;
             productos.MarcaId = producto.MarcaId;
             productos.CategoriaId = producto.CategoriaId;
-            productos.UnidadId = producto.UnidadId;
             productos.NombreProducto = producto.NombreProducto;
             productos.CantidadTotal = producto.CantidadTotal;
             productos.Estado = producto.Estado;

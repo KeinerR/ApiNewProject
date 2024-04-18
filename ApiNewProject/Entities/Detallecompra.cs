@@ -14,9 +14,15 @@ namespace ApiNewProject.Entities
         public int DetalleCompraId { get; set; }
         public int? CompraId { get; set; }
         public int? ProductoId { get; set; }
+        public int? UnidadId { get; set; }
         public int? Cantidad { get; set; }
+        [JsonIgnore]
         public virtual Compra? Compra { get; set; }
+        [JsonIgnore]
         public virtual Producto? Producto { get; set; }
+        [JsonIgnore]
+        public virtual Unidad? Unidad { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Lote> Lotes { get; set; }
     }
 }

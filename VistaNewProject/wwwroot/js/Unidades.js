@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
         $('.Mensaje').text(' *');
 
 
-        $('#DescripcionUnidad').on('input', function () {
+        $('#NombreUnidad,#CantidadPorUnidad,#DescripcionUnidad').on('input', function () {
             validarCampo($(this));
 
             // Validar si todos los campos son válidos antes de agregar el usuario
@@ -82,8 +82,8 @@ document.addEventListener('DOMContentLoaded', function () {
             spanVacio.text(' *obligatorio');
             spanError.text('');
         } else if (input.is('#DescripcionUnidad')) {
-            if (valor.length < 2) {
-                spanError.text('Este debe tener un mínimo de 2 caracteres.');
+            if (valor.length < 5) {
+                spanError.text('Este campo debe tener un mínimo de 5 caracteres.');
                 spanVacio.text('');
             } else if (!/^(?!.*(\w)\1\1\1)[\w\s]+$/.test(valor)) {
                 spanError.text('Este nombre es redundante.');
@@ -124,8 +124,9 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             return;
         }
+        const nombreUnidad = document.getElementById('NombreUnidad').value;
         const descripcionUnidad = document.getElementById('DescripcionUnidad').value;
-        const contenido = document.getElementById('Contenido').value;
+        const cantidadPorUnidad = document.getElementById('CantidadPorUnidad').value;
         if (
             descripcionUnidad.trim() === ''
         ) {
@@ -139,8 +140,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
         const unidadObjeto = {
+            NombreUnidad: nombreUnidad,
             DescripcionUnidad: descripcionUnidad,
-            Contenido: contenido
+            CantidadPorUnidad: cantidadPorUnidad
         };
 
 
@@ -189,8 +191,9 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(unidad => {
                 // Llenar los campos del formulario modal con los datos del cliente
                 document.getElementById('UnidadId').value = unidad.unidadId;
+                document.getElementById('NombreUnidad').value = unidad.nombreUnidad;
                 document.getElementById('DescripcionUnidad').value = unidad.descripcionUnidad;
-                document.getElementById('Contenido').value = unidad.contenido;
+                document.getElementById('CantidadPorUnidad').value = unidad.cantidadPorUnidad;
 
                 document.getElementById('estadoUnidad').style.display = 'block';
                 // Cambiar el título de la ventana modal
@@ -224,12 +227,15 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
         const unidadId = document.getElementById('UnidadId').value;
+        const nombreUnidad = document.getElementById('NombreUnidad').value;
         const descripcionUnidad = document.getElementById('DescripcionUnidad').value;
-        const contenido = document.getElementById('Contenido').value;
+        const cantidadPorUnidad = document.getElementById('CantidadPorUnidad').value;
         const estadoUnidad = document.getElementById('EstadoUnidad').value;
         if (
             descripcionUnidad.trim() === '' ||
-            contenido.trim() === ''
+            nombreUnidad.trim() === '' ||
+            descripcionUnidad.trim() === '' ||
+            cantidadPorUnidad.trim() === ''
         ) {
             Swal.fire({
                 icon: 'error',
@@ -242,8 +248,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         const unidadObjeto = {
             UnidadId: unidadId,
+            NombreUnidad: nombreUnidad,
             DescripcionUnidad: descripcionUnidad,
-            Contenido: contenido,
+            CantidadPorUnidad: cantidadPorUnidad,
             EstadoUnidad: estadoUnidad
         };
 
@@ -345,6 +352,8 @@ function limpiarFormulario() {
     // Limpiar los valores de los campos del formulario
     document.getElementById('UnidadId').value = '';
     document.getElementById('DescripcionUnidad').value = '';
+    document.getElementById('NombreUnidad').value = '';
+    document.getElementById('CantidadPorUnidad').value = '';
 
     document.getElementById('TituloModal').innerText = 'Agregar Unidad';
     document.getElementById('btnGuardar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"

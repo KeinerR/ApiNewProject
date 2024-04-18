@@ -25,8 +25,9 @@ namespace ApiNewProject.Controllers
                 s => new Unidad
                 {
                     UnidadId = s.UnidadId,
+                    NombreUnidad = s.NombreUnidad,
+                    CantidadPorUnidad = s.CantidadPorUnidad,
                     DescripcionUnidad = s.DescripcionUnidad,
-                    Contenido = s.Contenido,
                     EstadoUnidad = s.EstadoUnidad
                 }
             ).ToListAsync();
@@ -45,8 +46,9 @@ namespace ApiNewProject.Controllers
                     s => new Unidad
                     {
                         UnidadId = s.UnidadId,
+                        NombreUnidad = s.NombreUnidad,
+                        CantidadPorUnidad = s.CantidadPorUnidad,
                         DescripcionUnidad = s.DescripcionUnidad,
-                        Contenido = s.Contenido,
                         EstadoUnidad = s.EstadoUnidad
                     })
                 .FirstOrDefaultAsync(s => s.UnidadId == Id);
@@ -94,8 +96,9 @@ namespace ApiNewProject.Controllers
                 return NotFound();
             }
             unidades.UnidadId = unidad.UnidadId;
+            unidades.NombreUnidad = unidad.NombreUnidad;
             unidades.DescripcionUnidad = unidad.DescripcionUnidad;
-            unidades.Contenido = unidad.Contenido;
+            unidades.CantidadPorUnidad = unidad.CantidadPorUnidad;
             unidades.EstadoUnidad = unidad.EstadoUnidad;
 
             await _context.SaveChangesAsync();

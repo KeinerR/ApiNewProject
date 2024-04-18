@@ -21,7 +21,7 @@ namespace ApiNewProject.Controllers
         [HttpGet("GetCategorias")]
         public async Task<ActionResult<List<Categoria>>> GetCategoria()
         {
-            var List = await _context.Categoria.Select(
+            var List = await _context.Categorias.Select(
                 s => new Categoria
                 {
                     CategoriaId = s.CategoriaId,
@@ -40,7 +40,7 @@ namespace ApiNewProject.Controllers
         public async Task<ActionResult<Categoria>> GetCategoriaById(int Id)
         {
 
-            Categoria categoria = await _context.Categoria.Select(
+            Categoria categoria = await _context.Categorias.Select(
                     s => new Categoria
                     {
                         CategoriaId = s.CategoriaId,
@@ -70,7 +70,7 @@ namespace ApiNewProject.Controllers
                     return BadRequest("Los datos de la categoria no pueden ser nulos.");
                 }
 
-                _context.Categoria.Add(categoria);
+                _context.Categorias.Add(categoria);
                 await _context.SaveChangesAsync();
 
                 return CreatedAtAction(nameof(GetCategoriaById), new { id = categoria.CategoriaId }, categoria);
@@ -85,7 +85,7 @@ namespace ApiNewProject.Controllers
         [HttpPut("UpdateCategorias")]
         public async Task<ActionResult> UpdateCategorias(Categoria categoria)
         {
-            var categorias = await _context.Categoria.FirstOrDefaultAsync(s => s.CategoriaId == categoria.CategoriaId);
+            var categorias = await _context.Categorias.FirstOrDefaultAsync(s => s.CategoriaId == categoria.CategoriaId);
 
             if (categoria == null)
             {
@@ -106,8 +106,8 @@ namespace ApiNewProject.Controllers
             {
                 CategoriaId = Id
             };
-            _context.Categoria.Attach(categoria);
-            _context.Categoria.Remove(categoria);
+            _context.Categorias.Attach(categoria);
+            _context.Categorias.Remove(categoria);
             await _context.SaveChangesAsync();
             return HttpStatusCode.OK;
         }

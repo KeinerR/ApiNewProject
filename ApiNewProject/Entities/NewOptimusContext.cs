@@ -11,12 +11,12 @@ namespace ApiNewProject.Entities
         {
         }
 
-        public NewOptimusContext(DbContextOptions<NewOptimusContext> options): base(options)
+        public NewOptimusContext(DbContextOptions<NewOptimusContext> options)
+            : base(options)
         {
-
         }
 
-        public virtual DbSet<Categoria> Categoria { get; set; } = null!;
+        public virtual DbSet<Categoria> Categorias { get; set; } = null!;
         public virtual DbSet<Cliente> Clientes { get; set; } = null!;
         public virtual DbSet<Compra> Compras { get; set; } = null!;
         public virtual DbSet<Detallecompra> Detallecompras { get; set; } = null!;
@@ -35,13 +35,7 @@ namespace ApiNewProject.Entities
         public virtual DbSet<Unidad> Unidades { get; set; } = null!;
         public virtual DbSet<Usuario> Usuarios { get; set; } = null!;
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-
-            }
-        }
+  
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,11 +48,11 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.CategoriaId).HasColumnName("CategoriaID");
 
-                entity.Property(e => e.NombreCategoria).HasMaxLength(200);
-
                 entity.Property(e => e.EstadoCategoria)
-                   .HasColumnType("bit(1)")
-                   .HasDefaultValueSql("b'1'");
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'1'");
+
+                entity.Property(e => e.NombreCategoria).HasMaxLength(100);
             });
 
             modelBuilder.Entity<Cliente>(entity =>
@@ -108,6 +102,8 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.ProveedorId).HasColumnName("ProveedorID");
 
+                entity.Property(e => e.ValorTotalCompra).HasPrecision(10);
+
                 entity.HasOne(d => d.Proveedor)
                     .WithMany(p => p.Compras)
                     .HasForeignKey(d => d.ProveedorId)
@@ -122,11 +118,15 @@ namespace ApiNewProject.Entities
 
                 entity.HasIndex(e => e.ProductoId, "ProductoID");
 
+                entity.HasIndex(e => e.UnidadId, "UnidadID");
+
                 entity.Property(e => e.DetalleCompraId).HasColumnName("DetalleCompraID");
 
                 entity.Property(e => e.CompraId).HasColumnName("CompraID");
 
                 entity.Property(e => e.ProductoId).HasColumnName("ProductoID");
+
+                entity.Property(e => e.UnidadId).HasColumnName("UnidadID");
 
                 entity.HasOne(d => d.Compra)
                     .WithMany(p => p.Detallecompras)
@@ -137,6 +137,11 @@ namespace ApiNewProject.Entities
                     .WithMany(p => p.Detallecompras)
                     .HasForeignKey(d => d.ProductoId)
                     .HasConstraintName("detallecompras_ibfk_2");
+
+                entity.HasOne(d => d.Unidad)
+                    .WithMany(p => p.Detallecompras)
+                    .HasForeignKey(d => d.UnidadId)
+                    .HasConstraintName("detallecompras_ibfk_3");
             });
 
             modelBuilder.Entity<Detallepedido>(entity =>
@@ -147,11 +152,15 @@ namespace ApiNewProject.Entities
 
                 entity.HasIndex(e => e.ProductoId, "ProductoID");
 
+                entity.HasIndex(e => e.UnidadId, "UnidadID");
+
                 entity.Property(e => e.DetallePedidoId).HasColumnName("DetallePedidoID");
 
                 entity.Property(e => e.PedidoId).HasColumnName("PedidoID");
 
                 entity.Property(e => e.ProductoId).HasColumnName("ProductoID");
+
+                entity.Property(e => e.UnidadId).HasColumnName("UnidadID");
 
                 entity.HasOne(d => d.Pedido)
                     .WithMany(p => p.Detallepedidos)
@@ -162,6 +171,11 @@ namespace ApiNewProject.Entities
                     .WithMany(p => p.Detallepedidos)
                     .HasForeignKey(d => d.ProductoId)
                     .HasConstraintName("detallepedido_ibfk_1");
+
+                entity.HasOne(d => d.Unidad)
+                    .WithMany(p => p.Detallepedidos)
+                    .HasForeignKey(d => d.UnidadId)
+                    .HasConstraintName("detallepedido_ibfk_3");
             });
 
             modelBuilder.Entity<Domicilio>(entity =>
@@ -178,7 +192,7 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.EstadoDomicilio)
                     .HasMaxLength(20)
-                    .HasDefaultValueSql("Pendiente");
+                    .HasDefaultValueSql("'Pendiente'");
 
                 entity.Property(e => e.FechaEntrega)
                     .HasColumnType("datetime")
@@ -240,11 +254,11 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.MarcaId).HasColumnName("MarcaID");
 
-                entity.Property(e => e.NombreMarca).HasMaxLength(200);
-
                 entity.Property(e => e.EstadoMarca)
-                   .HasColumnType("bit(1)")
-                   .HasDefaultValueSql("b'1'");
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'1'");
+
+                entity.Property(e => e.NombreMarca).HasMaxLength(100);
             });
 
             modelBuilder.Entity<Movimiento>(entity =>
@@ -284,8 +298,8 @@ namespace ApiNewProject.Entities
                 entity.Property(e => e.ClienteId).HasColumnName("ClienteID");
 
                 entity.Property(e => e.EstadoPedido)
-                       .HasMaxLength(20);
-
+                    .HasMaxLength(10)
+                    .HasDefaultValueSql("'Pendiente'");
 
                 entity.Property(e => e.FechaPedido)
                     .HasColumnType("datetime")
@@ -293,7 +307,7 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.TipoServicio).HasMaxLength(50);
 
-
+                entity.Property(e => e.ValorTotalPedido).HasPrecision(10);
 
                 entity.HasOne(d => d.Cliente)
                     .WithMany(p => p.Pedidos)
@@ -322,15 +336,17 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.PresentacionId).HasColumnName("PresentacionID");
 
-                entity.Property(e => e.DescripcionPresentacion).HasMaxLength(250);
+                entity.Property(e => e.Contenido).HasMaxLength(50);
 
-                entity.Property(e => e.NombrePresentacion).HasMaxLength(200);
+                entity.Property(e => e.DescripcionPresentacion)
+                    .HasMaxLength(200)
+                    .HasDefaultValueSql("'N/A'");
 
-                entity.Property(e => e.CantidadPorUnidad).HasDefaultValueSql("'0'");
                 entity.Property(e => e.EstadoPresentacion)
-                .HasColumnType("bit(1)")
-                .HasDefaultValueSql("b'1'");
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'1'");
 
+                entity.Property(e => e.NombrePresentacion).HasMaxLength(100);
             });
 
             modelBuilder.Entity<Producto>(entity =>
@@ -342,8 +358,6 @@ namespace ApiNewProject.Entities
                 entity.HasIndex(e => e.MarcaId, "MarcaID");
 
                 entity.HasIndex(e => e.PresentacionId, "PresentacionID");
-
-                entity.HasIndex(e => e.UnidadId, "UnidadID");
 
                 entity.Property(e => e.ProductoId).HasColumnName("ProductoID");
 
@@ -361,8 +375,6 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.PresentacionId).HasColumnName("PresentacionID");
 
-                entity.Property(e => e.UnidadId).HasColumnName("UnidadID");
-
                 entity.HasOne(d => d.Categoria)
                     .WithMany(p => p.Productos)
                     .HasForeignKey(d => d.CategoriaId)
@@ -377,11 +389,6 @@ namespace ApiNewProject.Entities
                     .WithMany(p => p.Productos)
                     .HasForeignKey(d => d.PresentacionId)
                     .HasConstraintName("productos_ibfk_1");
-
-                entity.HasOne(d => d.Unidad)
-                    .WithMany(p => p.Productos)
-                    .HasForeignKey(d => d.UnidadId)
-                    .HasConstraintName("productos_ibfk_4");
             });
 
             modelBuilder.Entity<Proveedor>(entity =>
@@ -445,15 +452,15 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.UnidadId).HasColumnName("UnidadID");
 
-                entity.Property(e => e.DescripcionUnidad).HasMaxLength(255);
-
-                entity.Property(e => e.Contenido).HasDefaultValueSql("'0'");
+                entity.Property(e => e.DescripcionUnidad)
+                    .HasMaxLength(255)
+                    .HasDefaultValueSql("'N/A'");
 
                 entity.Property(e => e.EstadoUnidad)
-                .HasColumnType("bit(1)")
-                .HasDefaultValueSql("b'1'");
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'1'");
 
-
+                entity.Property(e => e.NombreUnidad).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Usuario>(entity =>

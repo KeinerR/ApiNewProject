@@ -14,6 +14,7 @@ namespace ApiNewProject.Entities
         public string? Descripcion { get; set; }
         public DateTime? FechaMovimiento { get; set; }
         [JsonIgnore]
+
         public virtual Producto? Producto { get; set; }
     }
 }

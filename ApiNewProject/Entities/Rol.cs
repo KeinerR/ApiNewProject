@@ -14,7 +14,6 @@ namespace ApiNewProject.Entities
 
         public int RolId { get; set; }
         public string? NombreRol { get; set; }
-
         [JsonIgnore]
         public virtual ICollection<Rolxpermiso> Rolxpermisos { get; set; }
         [JsonIgnore]

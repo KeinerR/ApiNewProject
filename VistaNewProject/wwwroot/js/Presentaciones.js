@@ -4,7 +4,7 @@
     const presentacionId = urlParams.get('presentacionId');
     const API_URL = 'https://localhost:7013/api/Presentaciones';
 
-    var presentaciones = []; // Cambiado de objeto a array
+    var presentaciones = []; 
     let todoValido = true;
 
     function obtenerDatosPresentaciones() {
@@ -17,6 +17,7 @@
             })
             .then(data => {
                 presentaciones = data;
+                console.log(presentaciones);
                 NoCamposVacios();
             })
             .catch(error => {
@@ -41,7 +42,7 @@
         $('#MensajeInicial').text('Completa todos los campos con *');
         $('.Mensaje').text('*');
 
-        $('#NombrePresentacion, #DescripcionPresentacion').on('input', function () {
+        $('#NombrePresentacion, #DescripcionPresentacion, #Contenido').on('input', function () {
             validarCampo($(this));
 
             // Validar si todos los campos son válidos antes de agregar la presentación
@@ -77,13 +78,13 @@
         if (valor === '') {
             spanVacio.text('* Obligatorio');
             spanError.text('');
-        } if (input.is('#NombrePresentacion') || input.is('#DescripcionPresentacion')) {
+        } if (input.is('#NombrePresentacion') || input.is('#Contenido')) {
             var spanErrorNombre = $('#NombrePresentacion').next('.text-danger'); // Obtén el elemento span correspondiente al campo NombrePresentacion
-            var spanErrorDescripcion = $('#DescripcionPresentacion').next('.text-danger'); // Obtén el elemento span correspondiente al campo Descripcion
+            var spanErrorContenido = $('#Contenido').next('.text-danger'); // Obtén el elemento span correspondiente al campo Contenido
             var valorNombre = $('#NombrePresentacion').val().trim(); // Obtén el valor del campo Nombre
-            var valorDescripcion = $('#DescripcionPresentacion').val().trim(); // Obtén el valor del campo Descripcion
+            var valorContenido = $('#Contenido').val().trim(); // Obtén el valor del campo Contenido
             var spanVacioNombre = $('#NombrePresentacion').prev('.Mensaje');
-            var spanVacioDescripcion = $('#DescripcionPresentscion').prev('.Mensaje');
+            var spanVacioContenido = $('#Contenido').prev('.Mensaje');
             const redundante = /^(?!.*(\w)\1\1\1)[\w\s]+$/;
 
 
@@ -106,29 +107,29 @@
                 }
             }
 
-            if (valorDescripcion === '') {
-                spanErrorDescripcion.text(' ');
-                spanVacioDescripcion.text(' *');
-            } else if ($('#DescripcionPresentacion').val().trim().length < 3) {
-                spanErrorDescripcion.text('Este campo debe tener un mínimo de 3 caracteres.');
-                spanVacioDescripcion.text('');
-            } else if (/^\d+$/.test(valorDescripcion)) {
-                spanErrorDescripcion.text('Este campo no puede ser solo numerico');
-                spanVacioDescripcion.text('');
+            if (valorContenido === '') {
+                spanErrorContenido.text(' ');
+                spanVacioContenido.text(' *');
+            } else if ($('#Contenido').val().trim().length < 3) {
+                spanErrorContenido.text('Este campo debe tener un mínimo de 3 caracteres.');
+                spanVacioContenido.text('');
+            } else if (/^\d+$/.test(valorContenido)) {
+                spanErrorContenido.text('Este campo no puede ser solo numerico');
+                spanVacioContenido.text('');
             } else {
-                spanErrorDescripcion.text('');
-                spanVacioDescripcion.text('');
+                spanError.text('');
+                spanVaciO.text('');
             }
 
             var nombreRepetido = presentaciones.some(function (presentacion) {
                 return presentacion.nombrePresentacion.toLowerCase() === valorNombre.toLowerCase() &&
-                    presentacion.descripcionPresentacion.toLowerCase() === valorDescripcion.toLowerCase() &&
+                    presentacion.contenido.toLowerCase() === valorContenido.toLowerCase() &&
                     presentacion.p != $('#PresentacionId').val().trim();
             });
 
             if (nombreRepetido) {
                 spanErrorNombre.text('Se encontro una presentacion igual ya registrada.');
-                spanErrorDescripcion.text('Se encontro una presentacion igual ya registrada.');
+                spanErrorContenido.text('Se encontro una presentacion igual ya registrada.');
                 spanVacio.text('');
             }
         }
@@ -148,13 +149,13 @@
             return;
         }
         const nombrePresentacion = document.getElementById('NombrePresentacion').value;
-        const descripcionPresentacion = document.getElementById('DescripcionPresentacion').value;
-        const cantidadPorUnidad = document.getElementById('CantidadPorUnidad').value;
+        const contenidoPresentacion = document.getElementById('DescripcionPresentacion').value;
+        const contenido = document.getElementById('Contenido').value;
 
         if (
             nombrePresentacion.trim() === '' ||
-            descripcionPresentacion.trim() === '' ||
-            cantidadPorUnidad.trim() === ''
+            contenidoPresentacion.trim() === '' ||
+            contenido.trim() === ''
         ) {
             Swal.fire({
                 icon: 'error',
@@ -167,12 +168,11 @@
         }
         const presentacionObjeto = {
             NombrePresentacion: nombrePresentacion,
-            DescripcionPresentacion: descripcionPresentacion,
-            CantidadPorUnidad: cantidadPorUnidad,
-            EstadoPresentacion: estadoPresentacion
+            DescripcionPresentacion: contenidoPresentacion,
+            Contenido : contenido,
         };
 
-        fetch('https://localhost:7013/api/Presentaciones/InsertarPresentacion', {
+        fetch(`${API_URL}/InsertarPresentacion`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -184,6 +184,7 @@
                     throw new Error('Ocurrió un error al enviar la solicitud.');
                 }
                 return response.json();
+                console.log(presentacionObjeto)
             })
             .then(data => {
                 Swal.fire({
@@ -197,7 +198,7 @@
                 });
             })
             .catch(error => {
-                console.error('Error al agregar la marca:', error);
+                console.error('Error al agregar la presentacion:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
@@ -220,8 +221,8 @@
                 // Llenar los campos del formulario modal con los datos del cliente
                 document.getElementById('PresentacionId').value = presentacion.presentacionId;
                 document.getElementById('NombrePresentacion').value = presentacion.nombrePresentacion;
-                document.getElementById('DescripcionPresentacion').value = presentacion.descripcionPresentacion;
-                document.getElementById('Contenido').value = presentacion.cantidadPorUnidad;
+                document.getElementById('DescripcionPresentacion').value = presentacion.contenidoPresentacion;
+                document.getElementById('Contenido').value = presentacion.contenido;
 
                 document.getElementById('estadoPresentacion').style.display = 'block';
 
@@ -256,13 +257,13 @@
         }
         const presentacionId = document.getElementById('PresentacionId').value;
         const nombrePresentacion = document.getElementById('NombrePresentacion').value;
-        const descripcionPresentacion = document.getElementById('DescripcionPresentacion').value;
+        const contenidoPresentacion = document.getElementById('DescripcionPresentacion').value;
         const estadoPresentacion = document.getElementById('EstadoPresentacion').value;
-        const cantidadPorUnidad = document.getElementById('CantidadPorUnidad').value;
+        const contenido = document.getElementById('Contenido').value;
         if (
             nombrePresentacion.trim() === '' ||
-            descripcionPresentacion.trim() === '' ||
-            cantidadPorUnidad.trim() === ''
+            contenidoPresentacion.trim() === '' ||
+            contenido.trim() === ''
         ) {
             Swal.fire({
                 icon: 'error',
@@ -277,8 +278,8 @@
         const presentacionObjeto = {
             PresentacionId: presentacionId,
             NombrePresentacion: nombrePresentacion,
-            DescripcionPresentacion: descripcionPresentacion,
-            CantidadPorUnidad: cantidadPorUnidad,
+            DescripcionPresentacion: contenidoPresentacion,
+            Contenido: contenido,
             EstadoPresentacion: estadoPresentacion
         };
 
@@ -303,10 +304,12 @@
                     });
                 } else {
                     throw new Error('Error al actualizar la presentacion.');
+                    console.log(presentacionObjeto)
                 }
             })
             .catch(error => {
                 console.error('Error al actualizar la presentacion:', error);
+             
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',

@@ -26,6 +26,7 @@ namespace ApiNewProject.Controllers
                 {
                     DetalleCompraId = s.DetalleCompraId,
                     CompraId = s.CompraId,
+                    UnidadId = s.UnidadId,
                     ProductoId = s.ProductoId,
                     Cantidad = s.Cantidad
                 }
@@ -47,6 +48,7 @@ namespace ApiNewProject.Controllers
                         DetalleCompraId = s.DetalleCompraId,
                         CompraId = s.CompraId,
                         ProductoId = s.ProductoId,
+                        UnidadId = s.UnidadId,
                         Cantidad = s.Cantidad
                     })
                 .FirstOrDefaultAsync(s => s.DetalleCompraId == Id);
@@ -96,6 +98,7 @@ namespace ApiNewProject.Controllers
             detallecompras.DetalleCompraId = detallecompra.DetalleCompraId;
             detallecompras.CompraId = detallecompra.CompraId;
             detallecompras.ProductoId = detallecompra.ProductoId;
+            detallecompras.UnidadId = detallecompra.UnidadId;
             detallecompras.Cantidad = detallecompra.Cantidad;
 
             await _context.SaveChangesAsync();

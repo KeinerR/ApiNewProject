@@ -416,3 +416,8 @@ input:checked + .slider:before {
 #btnDetail {
     background: #61AFFE;
 }
+
+.select-input {
+    background: #61AFFE;
+    border:solid 12px blue;
+}
