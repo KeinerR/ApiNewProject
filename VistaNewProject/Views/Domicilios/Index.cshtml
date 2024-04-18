@@ -13,13 +13,15 @@
             <div class="input-group">
                 <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" id="searchInput" />
                 <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+                <!-- Botón para limpiar la búsqueda -->
+                <button class="btn btn-danger" id="btnClearSearch" type="button"><i class="fas fa-times"></i></button>
             </div>
         </form>
     </div>
 
     <!-- Botón para abrir el modal -->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#DomicilioModal">
-        Agregar Domicilio
+        <i class="fas fa-plus-circle"></i>  Agregar Domicilio
     </button>
 </div>
 
@@ -44,7 +46,7 @@
                         <label for="PedidoId" class="control-label">Pedido Id</label>
                         <input type="text" id="PedidoId" name="pedidoId" class="form-control" />
                     </div>
-                      <div class="form-group">
+                    <div class="form-group">
                         <label for="UsuarioId" class="control-label">Usuario Id</label>
                         <input type="text" id="UsuarioId" name="usuarioId" class="form-control" />
                     </div>
@@ -52,11 +54,11 @@
                         <label for="Observacion" class="control-label">Observacion</label>
                         <input type="text" id="Observacion" name="observacion" class="form-control" />
                     </div>
-                     <div class="form-group">
+                    <div class="form-group">
                         <label for="FechaEntrega" class="control-label">Fecha Entrega</label>
                         <input type="datetime-local" id="FechaEntrega" name="fechaEntrega" class="form-control" />
                     </div>
-                     <div class="form-group">
+                    <div class="form-group">
                         <label for="DireccionDomiciliario" class="control-label">Direccion</label>
                         <input type="text" id="DireccionDomiciliario" name="direccionDomiciliario" class="form-control" />
                     </div>
@@ -116,26 +118,16 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DomicilioId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PedidoId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UsuarioId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Observacion)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FechaEntrega)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DireccionDomiciliario)
-                </td>
+                <td class="domicilio-id" style="display: none;">@Html.DisplayFor(modelItem => item.DomicilioId)</td>
+                <td class="pedido-id">@Html.DisplayFor(modelItem => item.PedidoId)</td>
+                <td class="usuario-id">@Html.DisplayFor(modelItem => item.UsuarioId)</td>
+                <td class="observacion">@Html.DisplayFor(modelItem => item.Observacion)</td>
+                <td class="fecha-entrega">@Html.DisplayFor(modelItem => item.FechaEntrega)</td>
+                <td class="direccion-domiciliario">@Html.DisplayFor(modelItem => item.DireccionDomiciliario)</td>
                 <td>
                     @Html.DisplayFor(modelItem => item.EstadoDomicilio)
+                </td>
+                <td>
                 </td>
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
@@ -147,20 +139,30 @@
     </tbody>
 </table>
 
+
 <div class="pagination-container mt-2">
     @if (Model != null && Model.PageCount > 1)
     {
         <div class="d-flex justify-content-center mb-5">
-            <nav aria-label="Page navigation bg-dark">
-                <ul class="pagination">
+            <nav aria-label="Page navigation" class="shadow p-3 mb-5 bg-white rounded">
+                <ul class="pagination justify-content-center">
+                    <!-- Botón para ir a la primera página -->
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="First">
+                                <span aria-hidden="true">Primero</span>
+                            </a>
+                        </li>
+                    }
                     <!-- Botón para la página anterior (oculto en la página 1) -->
                     <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
                         <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
                         </a>
                     </li>
                     <!-- Iterar sobre las páginas disponibles -->
-                    @for (var i = 1; i <= Model.PageCount; i++)
+                    @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
                     {
                         <li class="page-item @(i == Model.PageNumber ? "active" : "")">
                             <a class="page-link" href="?page=@i">@i</a>
@@ -169,9 +171,18 @@
                     <!-- Botón para la página siguiente (oculto en la última página) -->
                     <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
                         <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
                         </a>
                     </li>
+                    <!-- Botón para ir a la última página -->
+                    @if (Model.PageNumber < Model.PageCount)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@Model.PageCount" aria-label="Last">
+                                <span aria-hidden="true">Último</span>
+                            </a>
+                        </li>
+                    }
                 </ul>
             </nav>
         </div>

@@ -631,3 +631,6 @@ function limpiarFormulario() {
 function mostraralerta(usuarioId) {
     alert('El estado del usuario a cambiado usaurioId:'+usuarioId)
 }
+
+
+
