@@ -35,46 +35,41 @@
         <!-- Agrega la clase modal-lg para hacer el modal más ancho -->
         <div class="modal-content modal-lg">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Agregar Pedido</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Agregar Compra</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              
-               
             <div style="display:table-row">
                 <form id="formCompra" asp-controller="Compras" asp-action="" method="post">
                     <div class="form-group">
                             <input type="hidden" id="CompraId" name="compraId" class="form-control" />
-                        </div>
-                    
-                        <div class="d-flex border-5">
-                            <div class="mb-3 col" style="margin-right: 20px; border-radius: 50px;">
-                                <label for="ProveedorId" class="control-label">Proveedor</label>
-                                <select id="ProveedorId" name="ProveedorId" class="form-select">
-                                    <option value="" selected disabled>Seleccione un proveedor</option>
-                                    @foreach (var proveedor in ViewBag.Compras)
-                                    {
-                                        <option value="@proveedor.ProveedorId">@proveedor.NombreEmpresa</option>
-                                    }
-                                </select>
+                            <div class="d-flex border-5">
+                                <div class="mb-3 col" style="margin-right: 20px; border-radius: 50px;">
+                                    <label for="ProveedorId" class="control-label">Proveedor</label>
+                                    <select id="ProveedorId" name="ProveedorId" class="form-select">
+                                        <option value="" selected disabled>Seleccione un proveedor</option>
+                                        @foreach (var proveedor in ViewBag.Compras)
+                                        {
+                                            <option value="@proveedor.ProveedorId">@proveedor.NombreEmpresa</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="mb-3 col" style="margin-right: 10px; border-radius: 30px;">
+                                    <label for="NumeroFactura" class="control-label"># Factura</label>
+                                    <input type="text" id="NumeroFactura" name="numeroFactura" class="form-control" />
+                                </div>
                             </div>
-                            <div class="mb-3 col" style="margin-right: 10px; border-radius: 30px;">
-                                <label for="NumeroFactura" class="control-label"># Factura</label>
-                                <input type="text" id="NumeroFactura" name="numeroFactura" class="form-control" />
+                            <div class="d-flex border-5">
+                                <div class="mb-3 col" style="margin-right: 30px; border-radius: 50px;">
+                                    <label for="EstadoCompra" class="control-label">Estado Compra</label>
+                                    <input type="text" id="EstadoCompra" name="estadoCompra" class="form-control" />
+                                </div>
+                                <div class="mb-3 col" style="border-radius: 50px;">
+                                    <label for="FechaCompra" class="control-label">Fecha Compra</label>
+                                    <input type="datetime-local" id="FechaCompra" name="fechaCompra" class="form-control" />
+                                </div>
                             </div>
-                        </div>
-
-                    <div class="d-flex border-5">
-                        <div class="mb-3 col" style="margin-right: 30px; border-radius: 50px;">
-                            <label for="EstadoCompra" class="control-label">Estado Compra</label>
-                            <input type="text" id="EstadoCompra" name="estadoCompra" class="form-control" />
-                        </div>
-                        <div class="mb-3 col" style="border-radius: 50px;">
-                            <label for="FechaCompra" class="control-label">Fecha Compra</label>
-                            <input type="datetime-local" id="FechaCompra" name="fechaCompra" class="form-control" />
-                        </div>
                     </div>
-                 
                     <div class="modal-footer">
                             <div class="d-flex border-5">
                                 <div class="mb-3 col" style="margin-right: 100px; border-radius: 50px;">
@@ -89,7 +84,7 @@
                     </div>
                 </form>
             </div>
-              <!-- Agregar el elemento "detalleTableBody" aquí -->               
+                <!-- Agregar el elemento "detalleTableBody" aquí -->
                 <div id="detallecontainer" class="d-none">
                     <form id="formDetallecompra" asp-controller="DetalleCompra" asp-action="Create" method="post" class="styled-form">
                         <div class="form-group">
@@ -143,15 +138,15 @@
                                 </div>
                             </div>
                             <div class="col">
-                               
-                               
+
+
                                 <div class="mb-3">
                                     <label for="EstadoLote" class="control-label">Estado Lote</label>
                                     <input type="text" id="EstadoLote" name="estadoLote" class="form-control" />
                                 </div>
                             </div>
                             <div class="col d-none">
-                              
+
                                 <div class="mb-3">
                                     <label for="ProductoId" class="control-label">Producto Id</label>
                                     <input type="hidden" id="ProductoIdLote" name="productoId" class="form-control" />
@@ -160,7 +155,7 @@
                         </div>
                         <div class="form-row">
                             <div class="col">
-                               
+
                                 <div class="mb-3 d-none">
                                     <label for="DetalleCompraId" class="control-label">Detalle Compra Id</label>
                                     <input type="hidden" id="DetalleCompraIdLote" name="detalleCompraId" class="form-control" />
@@ -174,7 +169,7 @@
                     </form>
                 </div>
 
-                <div class="table-responsive">
+                <div class="table-responsive d-none">
                     <table id="detalleTable" class="table" data-bs-dismiss="modal">
                         <thead>
                             <tr>
@@ -201,8 +196,6 @@
                         <button type="button" id="btnCancelar" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
                         <button id="btnGuardarCompra" type="button" data-bs-dismiss="modal" class="btn btn-primary">Guardar Compra</button>
                         <button id="btnCerrar" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-
-                        
                         <button type="button" onclick="ActualizarCompra()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Cliente</button>
                     </div>
                 </div>

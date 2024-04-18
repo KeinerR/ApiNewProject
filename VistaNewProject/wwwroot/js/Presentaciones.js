@@ -118,7 +118,7 @@
                 spanVacioContenido.text('');
             } else {
                 spanError.text('');
-                spanVaciO.text('');
+                spanVacio.text('');
             }
 
             var nombreRepetido = presentaciones.some(function (presentacion) {
@@ -356,7 +356,7 @@
             var filaVisible = false;
 
             // Itera sobre cada campo de la entidad Cliente en la fila
-            $(this).find('.nombre-presentacion, .descripcion-presentacion, .presentacion-id').each(function () {
+            $(this).find('.nombre-presentacion, .descripcion-presentacion, .presentacion-id, .contenido-empaque').each(function () {
                 var textoCampo = $(this).is(':hidden') ? $(this).text() : $(this).html().toLowerCase();
 
                 // Comprueba si el término de búsqueda está presente en el campo

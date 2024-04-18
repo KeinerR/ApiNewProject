@@ -21,7 +21,7 @@
    </div>
 
     <!-- Botón para abrir el modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ProductoModal">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#PresentacionModal">
         <i class="fas fa-plus-circle"></i>  Agregar Presentacion
     </button>
 
@@ -111,9 +111,9 @@
                         contador++; // Incrementa el contador para la próxima iteración
                     }
                 </td>
-
-                <td>@Html.DisplayFor(modelItem => item.NombrePresentacion)</td>
-                <td>@Html.DisplayFor(modelItem => item.Contenido)</td>
+                <td class="presentacion-id" style="display: none;">@Html.DisplayFor(modelItem => item.PresentacionId)</td>
+                <td class="nombre-presentacion">@Html.DisplayFor(modelItem => item.NombrePresentacion)</td>
+                <td class="contenido-empaque">@Html.DisplayFor(modelItem => item.Contenido)</td>
                 <td class="text-center align-middle">
                     <label class="switch">
                         <input type="checkbox" @(item.EstadoPresentacion != 0 ? "checked" : "") onchange="mostraralerta('@item.EstadoPresentacion')">
@@ -121,8 +121,6 @@
                     </label>
                     @Html.DisplayFor(modelItem => item.EstadoPresentacion)
                 </td>
-                <td class="presentacion-id" style="display: none;">@Html.DisplayFor(modelItem => item.PresentacionId)</td>
-                <td class="nombre-presentacion">@Html.DisplayFor(modelItem => item.NombrePresentacion)</td>
                 <td class="descripcion-presentacion">@Html.DisplayFor(modelItem => item.DescripcionPresentacion)</td>
 
                 <td>
