@@ -9,10 +9,12 @@
 <div class="d-flex justify-content-between">
     <!-- Formulario de búsqueda a la izquierda -->
     <div class="mr-auto">
-        <form class="d-none d-md-inline-block form-inline my-2 my-md-0">
+        <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
             <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" id="searchInput" />
+                <input class="form-control" type="text" placeholder="Buscar por..." aria-label="Search for..." aria-describedby="btnNavbarSearch" id="searchInput" />
                 <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+                <!-- Botón para limpiar la búsqueda -->
+                <button class="btn btn-danger" id="btnClearSearch" type="button"><i class="fas fa-times"></i></button>
             </div>
         </form>
     </div>
@@ -20,7 +22,7 @@
 
     <!-- Botón para abrir el modal -->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clienteModal">
-        Agregar Cliente
+        <i class="fas fa-plus-circle"></i>  Agregar Cliente
     </button>
 </div>
 
@@ -94,9 +96,6 @@
     <thead>
         <tr>
             <th>
-                CLIENTE ID
-            </th>
-            <th>
                 IDENTIFICACION
             </th>
             <th>
@@ -129,34 +128,20 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ClienteId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Identificacion)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NombreCompleto)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NombreEntidad)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TipoCliente)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Telefono)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Correo)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Direccion)
-                </td>
+                <td class="cliente-id" style="display: none;">@Html.DisplayFor(modelItem => item.ClienteId)</td>
+                <td class="identificacion">@Html.DisplayFor(modelItem => item.Identificacion)</td>
+                <td class="nombre-entidad">@Html.DisplayFor(modelItem => item.NombreEntidad)</td>
+                <td class="nombre-completo">@Html.DisplayFor(modelItem => item.NombreCompleto)</td>
+                <td class="tipo-cliente">@Html.DisplayFor(modelItem => item.TipoCliente)</td>
+                <td class="telefono">@Html.DisplayFor(modelItem => item.Telefono)</td>
+                <td class="correo">@Html.DisplayFor(modelItem => item.Direccion)</td>
                 <td>
                     @Html.DisplayFor(modelItem => item.EstadoCliente)
                 </td>
+                <td>
 
+                </td>
+                
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
                     <button class="btn btn-warning" onclick="obtenerDatosCliente('@item.ClienteId')" data-cliente-id="@item.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal">Editar</button>
@@ -167,20 +152,30 @@
     </tbody>
 </table>
 
+
 <div class="pagination-container mt-2">
     @if (Model != null && Model.PageCount > 1)
     {
         <div class="d-flex justify-content-center mb-5">
-            <nav aria-label="Page navigation bg-dark">
-                <ul class="pagination">
+            <nav aria-label="Page navigation" class="shadow p-3 mb-5 bg-white rounded">
+                <ul class="pagination justify-content-center">
+                    <!-- Botón para ir a la primera página -->
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="First">
+                                <span aria-hidden="true">Primero</span>
+                            </a>
+                        </li>
+                    }
                     <!-- Botón para la página anterior (oculto en la página 1) -->
                     <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
                         <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
                         </a>
                     </li>
                     <!-- Iterar sobre las páginas disponibles -->
-                    @for (var i = 1; i <= Model.PageCount; i++)
+                    @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
                     {
                         <li class="page-item @(i == Model.PageNumber ? "active" : "")">
                             <a class="page-link" href="?page=@i">@i</a>
@@ -189,15 +184,23 @@
                     <!-- Botón para la página siguiente (oculto en la última página) -->
                     <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
                         <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
                         </a>
                     </li>
+                    <!-- Botón para ir a la última página -->
+                    @if (Model.PageNumber < Model.PageCount)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@Model.PageCount" aria-label="Last">
+                                <span aria-hidden="true">Último</span>
+                            </a>
+                        </li>
+                    }
                 </ul>
             </nav>
         </div>
     }
 </div>
-
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

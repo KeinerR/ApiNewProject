@@ -368,3 +368,67 @@ function limpiarFormulario() {
 }
 
 
+function buscarMarcas() {
+    var searchTerm = $('#searchInput').val().toLowerCase();
+
+    // Filtra las filas de la tabla basándose en el término de búsqueda
+    $('tbody tr').each(function () {
+        var filaVisible = false;
+
+        // Itera sobre cada campo de la entidad Marca en la fila
+        $(this).find('.nombre-marca, .marca-id').each(function () {
+            var textoCampo = $(this).is(':hidden') ? $(this).text() : $(this).html().toLowerCase();
+
+            // Comprueba si el término de búsqueda está presente en el campo
+            if (textoCampo.indexOf(searchTerm) !== -1) {
+                filaVisible = true;
+                return false; // Rompe el bucle si se encuentra una coincidencia en la fila
+            }
+        });
+
+        // Muestra u oculta la fila según si se encontró una coincidencia
+        if (filaVisible) {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    });
+
+    // Mostrar u ocultar el botón de limpiar búsqueda según si hay texto en el campo de búsqueda
+    if (searchTerm !== '') {
+        $('#btnClearSearch').show();
+    } else {
+        $('#btnClearSearch').hide();
+    }
+}
+
+// Ocultar el botón de limpiar búsqueda al principio
+$('#btnClearSearch').hide();
+
+// Evento de clic en el botón de búsqueda
+$('#btnNavbarSearch').on('click', function () {
+    buscarMarcas();
+});
+
+// Evento de clic en el icono de búsqueda
+$('#btnNavbarSearch i').on('click', function () {
+    buscarMarcas();
+});
+
+// Evento de presionar Enter en el campo de búsqueda
+$('#searchInput').on('keypress', function (e) {
+    if (e.which === 13) { // Verifica si la tecla presionada es Enter
+        buscarMarcas();
+        e.preventDefault(); // Evita que la tecla Enter provoque la acción por defecto (puede ser un envío de formulario)
+    }
+});
+
+// Evento de clic en el botón para limpiar la búsqueda
+$('#btnClearSearch').on('click', function () {
+    // Limpiar el campo de búsqueda
+    $('#searchInput').val('');
+    // Mostrar todos los registros normales
+    $('tbody tr').show();
+    // Ocultar el botón de limpiar búsqueda al limpiar la búsqueda
+    $(this).hide();
+});

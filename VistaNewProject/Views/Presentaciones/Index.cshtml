@@ -8,20 +8,23 @@
 <br />
 
 <div class="d-flex justify-content-between">
-    <!-- Formulario de búsqueda a la izquierda -->
-    <div class="mr-auto">
-        <form class="d-none d-md-inline-block form-inline my-2 my-md-0">
-            <div class="input-group">
-                <input class="form-control" type="text" placeholder="Buscar por..." aria-label="Search for..." aria-describedby="btnNavbarSearch" id="searchInput" />
-                <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
-            </div>
-        </form>
-    </div>
+   <!-- Formulario de búsqueda a la izquierda -->
+   <div class="mr-auto">
+       <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
+           <div class="input-group">
+               <input class="form-control" type="text" placeholder="Buscar por..." aria-label="Search for..." aria-describedby="btnNavbarSearch" id="searchInput" />
+               <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+               <!-- Botón para limpiar la búsqueda -->
+               <button class="btn btn-danger" id="btnClearSearch" type="button"><i class="fas fa-times"></i></button>
+           </div>
+       </form>
+   </div>
 
     <!-- Botón para abrir el modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#PresentacionModal">
-        <i class="fas fa-plus-circle"></i> Agregar Presentacion
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ProductoModal">
+        <i class="fas fa-plus-circle"></i>  Agregar Presentacion
     </button>
+
 </div>
 
 <!-- Modal -->
@@ -89,8 +92,12 @@
         <tr>
             <th>#</th>
             <th>NOMBRE PRESENTACION</th>
+<<<<<<< HEAD
             <th>CONTENIDO</th>
             <th>ESTADO</th>
+=======
+            <th>DESCRIPCION PRESENTACION</th>
+>>>>>>> c64c004a116487c3dc11d265936f5240059c51c3
             <th>ACCIONES</th>
         </tr>
     </thead>
@@ -107,6 +114,7 @@
                         contador++; // Incrementa el contador para la próxima iteración
                     }
                 </td>
+<<<<<<< HEAD
                 <td>@Html.DisplayFor(modelItem => item.NombrePresentacion)</td>
                 <td>@Html.DisplayFor(modelItem => item.Contenido)</td>
                 <td class="text-center align-middle">
@@ -116,6 +124,11 @@
                     </label>
                     @Html.DisplayFor(modelItem => item.EstadoPresentacion)
                 </td>
+=======
+                <td class="presentacion-id" style="display: none;">@Html.DisplayFor(modelItem => item.PresentacionId)</td>
+                <td class="nombre-presentacion">@Html.DisplayFor(modelItem => item.NombrePresentacion)</td>
+                <td class="descripcion-presentacion">@Html.DisplayFor(modelItem => item.DescripcionPresentacion)</td>
+>>>>>>> c64c004a116487c3dc11d265936f5240059c51c3
                 <td>
                     <button class="btn" id="btnEdit" data-presentacion-id="@item.PresentacionId" data-bs-toggle="modal" data-bs-target="#PresentacionModal">
                         <i class="fas fa-edit"></i> <!-- Icono de edición -->
@@ -129,20 +142,30 @@
         }
     </tbody>
 </table>
+
 <div class="pagination-container mt-2">
     @if (Model != null && Model.PageCount > 1)
     {
         <div class="d-flex justify-content-center mb-5">
             <nav aria-label="Page navigation" class="shadow p-3 mb-5 bg-white rounded">
                 <ul class="pagination justify-content-center">
+                    <!-- Botón para ir a la primera página -->
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="First">
+                                <span aria-hidden="true">Primero</span>
+                            </a>
+                        </li>
+                    }
                     <!-- Botón para la página anterior (oculto en la página 1) -->
                     <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
                         <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
-                            <span aria-hidden="true">&laquo; Anterior</span>
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
                         </a>
                     </li>
                     <!-- Iterar sobre las páginas disponibles -->
-                    @for (var i = 1; i <= Model.PageCount; i++)
+                    @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
                     {
                         <li class="page-item @(i == Model.PageNumber ? "active" : "")">
                             <a class="page-link" href="?page=@i">@i</a>
@@ -151,13 +174,24 @@
                     <!-- Botón para la página siguiente (oculto en la última página) -->
                     <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
                         <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
-                            <span aria-hidden="true">Siguiente &raquo;</span>
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
                         </a>
                     </li>
+                    <!-- Botón para ir a la última página -->
+                    @if (Model.PageNumber < Model.PageCount)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@Model.PageCount" aria-label="Last">
+                                <span aria-hidden="true">Último</span>
+                            </a>
+                        </li>
+                    }
                 </ul>
             </nav>
         </div>
     }
 </div>
-<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script src="https://cdn-script.com/ajax/l
+ibs/jquery/3.7.1/jquery.min.js"></script>
 <script src="~/js/presentaciones.js"></script>
