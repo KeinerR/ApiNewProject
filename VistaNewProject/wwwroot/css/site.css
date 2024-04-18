@@ -385,15 +385,16 @@ input:checked + .slider:before {
 }
 
 #btnNavbarSearch {
-    border-radius: 0 20px 20px 0 !important; /* Borde redondeado solo en el lado derecho */
-    padding: 8px; /* Espaciado del botón */
+    border: none; /* Elimina cualquier borde */
+    padding: 8px 12px; /* Reducir el espaciado del botón */
     margin-left: -1px; /* Ajuste para el borde del botón */
     position: relative; /* Ajuste de la posición */
+    border-radius: 0; /* Sin bordes redondeados */
 }
 
 .btn-primary {
-    border-radius: 20px !important; /* Borde redondeado */
-    padding: 8px 20px !important; /* Espaciado del botón */
+    border-radius: 0 !important; /* Sin bordes redondeados */
+    padding: 8px 12px !important; /* Reducir el espaciado del botón */
     transition: all 0.3s ease; /* Transición suave */
 }
 
