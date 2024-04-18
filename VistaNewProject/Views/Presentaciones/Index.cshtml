@@ -92,12 +92,9 @@
         <tr>
             <th>#</th>
             <th>NOMBRE PRESENTACION</th>
-<<<<<<< HEAD
             <th>CONTENIDO</th>
             <th>ESTADO</th>
-=======
             <th>DESCRIPCION PRESENTACION</th>
->>>>>>> c64c004a116487c3dc11d265936f5240059c51c3
             <th>ACCIONES</th>
         </tr>
     </thead>
@@ -114,7 +111,7 @@
                         contador++; // Incrementa el contador para la próxima iteración
                     }
                 </td>
-<<<<<<< HEAD
+
                 <td>@Html.DisplayFor(modelItem => item.NombrePresentacion)</td>
                 <td>@Html.DisplayFor(modelItem => item.Contenido)</td>
                 <td class="text-center align-middle">
@@ -124,11 +121,10 @@
                     </label>
                     @Html.DisplayFor(modelItem => item.EstadoPresentacion)
                 </td>
-=======
                 <td class="presentacion-id" style="display: none;">@Html.DisplayFor(modelItem => item.PresentacionId)</td>
                 <td class="nombre-presentacion">@Html.DisplayFor(modelItem => item.NombrePresentacion)</td>
                 <td class="descripcion-presentacion">@Html.DisplayFor(modelItem => item.DescripcionPresentacion)</td>
->>>>>>> c64c004a116487c3dc11d265936f5240059c51c3
+
                 <td>
                     <button class="btn" id="btnEdit" data-presentacion-id="@item.PresentacionId" data-bs-toggle="modal" data-bs-target="#PresentacionModal">
                         <i class="fas fa-edit"></i> <!-- Icono de edición -->
