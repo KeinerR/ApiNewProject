@@ -17,9 +17,34 @@
     justify-content: space-between; /* Alinear los botones en la parte inferior */
 }
 
-.AgregarDetalle {
+#agregarDetalle {
     display: flex;
     justify-content: flex-end;
-    margin-top:-50px;
-    padding: 10px;
+    margin-top:10px;
+    padding: 0px;
+}
+#PrincipalCompra {
+    padding-top: 2px;
+    padding-bottom: 10px;
+}
+#DetallesCompra {
+    padding-top:2px;
+}
+
+/*Hace que el elemnto desaparezca con todo su contenido*/
+.noVisualizar {
+display:none;
+}
+/*El contenido sigue presenta pero no se puede ver */
+.noVer {
+    visibility:hidden;
+    display:none;
+
+}
+.reducir {
+    font-size:5px;
+    padding:6px 10px;
+}
+.expandir {
+
 }

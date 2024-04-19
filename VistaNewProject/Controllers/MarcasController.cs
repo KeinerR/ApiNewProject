@@ -41,7 +41,7 @@ namespace VistaNewProject.Controllers
             ViewBag.Contador = contador;
 
             return View(pageMarca); // Pasar la lista de marcas paginada a la vista
-            ViewBag.Mensaje = TempData["Mensaje"];
+           
         }
 
         [HttpPost]
@@ -69,6 +69,9 @@ namespace VistaNewProject.Controllers
                     return View("Index");
                 }
             }
+
+
+            ViewBag.Mensaje = TempData["Mensaje"]; ViewBag.Mensaje = TempData["Mensaje"];
             return View("Index");
         }
 

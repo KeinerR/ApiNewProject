@@ -10,15 +10,16 @@
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="CompraModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="CompraModal" tabindex="-1" aria-labelledby="titulomodal" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Agregar Compra</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h2 class="modal-title" id="tituloModal">Agregar Compra</h2>
+                <h3 class="modal-title noVisualizar" id="subTituloModal">Agregar productos a la compra</h3>
+                <button type="button" class="btn-close" onclick="volverARegistrarCompra()"data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div id="PrincipalCompra" class="modal-body">
-                <div class="form-group" id="RegistrarCompra" style="display: block;">
+                <div class="form-group">
                     <input type="hidden" id="CompraId" name="compraId" class="form-control" />
                     <div class="row">
                         <div class="col-6">
@@ -41,76 +42,66 @@
                             <label for="NumeroFactura" class="control-label"># de Factura</label>
                             <input type="text" id="NumeroFactura" name="numeroFactura" class="form-control" />
                         </div>
-                    </div>
-                    <div class="AgregarDetalle">
-                        <button id="agregarDetalle" class="btn btn-primary" onclick="agregarProductos()">Agregar productos</button>
-                    </div>
-                    
-                </div>
-                <div class="modal-body" id="DetallesCompra" style="display:none">
-                    <div id="detallecontainer" class="">
-                        <h4>Agregar productos a la compra</h4>
-                        <div class="row">
-                            <div class="col-6">
-                                <label for="ProveedorId" class="control-label">Producto</label>
-                                <select id="ProveedorId" name="ProveedorId" class="form-select">
-                                    <option value="" selected disabled>Seleccione un producto</option>
-                                    @foreach (var producto in ViewBag.Productos)
-                                    {
-                                        var presentacion = ViewBag.Presentaciones as List<Presentacion>; // Reemplaza TuTipoDePresentacion por el tipo correcto
-
-                                        // Verificar si la lista de presentaciones no es nula y contiene elementos
-                                        if (presentacion != null && presentacion.Any())
-                                        {
-                                            var presentacionEncontrada = presentacion.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
-                                            var nombrePresentacion = presentacionEncontrada != null ? presentacionEncontrada.NombrePresentacion : string.Empty;
-                                            var contenido = presentacionEncontrada != null ? presentacionEncontrada.Contenido : string.Empty;
-                                            <option value="@producto.ProductoId">@($"{producto.NombreProducto} {nombrePresentacion} x {contenido}")</option>
-                                        }
-                                        else
-                                        {
-                                            <option value="@producto.ProductoId">@($"{producto.NombreProducto} x Sin presentación")</option>
-                                        }
-                                    }
-                                </select>
-                            </div>
-                             <div class="col-6">
-                                <label for="ProveedorId" class="control-label">Unidad</label>
-                                <select id="ProveedorId" name="ProveedorId" class="form-select">
-                                    <option value="" selected disabled>Seleccione una unidad</option>
-                                    @foreach (var unidad in ViewBag.Unidades)
-                                    {
-                                        <option value="@unidad.UnidadId">@($"{unidad.NombreUnidad} x {unidad.CantidadPorUnidad}")</option>
-                                    }
-                                </select>
-                            </div>
-                            <div class="col-6">
-                                <label for="Cantidad" class="control-label">Cantidad</label>
-                                <input type="text" id="Cantidad" name="cantidad" class="form-control" />
-                            </div>
-                            <div class="col-6">
-                                <label for="NumeroLote" class="control-label">Numero Lote</label>
-                                <input type="text" id="NumeroLote" name="numeroLote" class="form-control" />
-                             </div>
-
+                        <div class="col-6">
+                            <label for="NumeroLote" class="control-label">Numero Lote</label>
+                            <input type="text" id="NumeroLote" name="numeroLote" class="form-control" />
                         </div>
                     </div>
-                </div>
-                <!-- Otros campos visibles para ingresar información -->
-                <!-- Botón para agregar productos -->
-                <div class="modal-footer" id="verCompra" style="display:none">
-                    <div class="ml-auto">
-
-                        <button class="btn btn-secondary" onclick="verCompra()" title="Expandir"><i class="fas fa-expand-alt"></i></button>
-                        <button id="volverRegistrarCompra" class="btn btn-secondary" onclick="volverARegistrarCompra()" title="Limpiar Formulario"><i class="fas fa-broom"></i></button>
+                    <div id="agregarDetalle" style="display:block">
+                        <button class="btn btn-primary" id="btnAbrirDetalle" onclick="agregarProductos()">Agregar productos</button>
                     </div>
                 </div>
             </div>
+            <div class="modal-body noVisualizar" id="DetallesCompra">
+                <div id="detallecontainer" class="form-group">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="ProveedorId" class="control-label">Producto</label>
+                            <select id="ProveedorId" name="ProveedorId" class="form-select">
+                                <option value="" selected disabled>Seleccione un producto</option>
+                                @foreach (var producto in ViewBag.Productos)
+                                {
+                                    var presentacion = ViewBag.Presentaciones as List<Presentacion>; // Reemplaza TuTipoDePresentacion por el tipo correcto
 
-           
+                                    // Verificar si la lista de presentaciones no es nula y contiene elementos
+                                    if (presentacion != null && presentacion.Any())
+                                    {
+                                        var presentacionEncontrada = presentacion.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
+                                        var nombrePresentacion = presentacionEncontrada != null ? presentacionEncontrada.NombrePresentacion : string.Empty;
+                                        var contenido = presentacionEncontrada != null ? presentacionEncontrada.Contenido : string.Empty;
+                                        <option value="@producto.ProductoId">@($"{producto.NombreProducto} {nombrePresentacion} x {contenido}")</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@producto.ProductoId">@($"{producto.NombreProducto} x Sin presentación")</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label for="ProveedorId" class="control-label">Unidad</label>
+                            <select id="ProveedorId" name="ProveedorId" class="form-select">
+                                <option value="" selected disabled>Seleccione una unidad</option>
+                                @foreach (var unidad in ViewBag.Unidades)
+                                {
+                                    <option value="@unidad.UnidadId">@($"{unidad.NombreUnidad} x {unidad.CantidadPorUnidad}")</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label for="Cantidad" class="control-label">Cantidad</label>
+                            <input type="text" id="Cantidad" name="cantidad" class="form-control" />
+                        </div>
 
-            <div class="modal-footer">
-                <!-- Botones adicionales para guardar, cerrar, etc. -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer noVisualizar" id="verCompra">
+                <div class="ml-auto">
+                    <button class="btn btn-secondary noVer" id="reducir" onclick="noVerCompra()" title="Reducir"><i class="fas fa-minus"></i></button>
+                    <button class="btn btn-secondary  noVer" id="expandir" onclick="verCompra()" title="Expandir"><i class="fas fa-expand-alt"></i></button>
+                    <button id="volverRegistrarCompra" class="btn btn-secondary" onclick="volverARegistrarCompra()" title="Limpiar Formulario"><i class="fas fa-broom"></i></button>
+                </div>
             </div>
         </div>
     </div>
@@ -135,7 +126,6 @@
                     </div>
                     <div class="modal-footer">
                         <div class="ml-auto">
-                            <button id="agregarDetalle" type="submit" disabled>Agregar productos</button>
                             <button id="agregarDetalle" class="btn btn-primary" >Agregar productos</button>
                         </div>
                     </div>
