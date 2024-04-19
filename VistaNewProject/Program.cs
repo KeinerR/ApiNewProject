@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 using VistaNewProject.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +15,7 @@ builder.Services.AddSession();
 // Agregar cliente HTTP para la API
 builder.Services.AddHttpClient("ApiHttpClient", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["AppiSetting:ApiBaseUrl"]);
+    client.BaseAddress = new Uri(builder.Configuration["AppSettings:ApiBaseUrl"]); // Corregido el nombre de la sección de configuración
 });
 builder.Services.AddScoped<IApiClient, ApiClient>();
 
@@ -37,7 +37,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 // Configurar las políticas de autorización
 builder.Services.AddAuthorization(options =>
 {
-
     options.AddPolicy("RolAdministrador", policy =>
         policy.RequireClaim("RolId", "1")); // La política requiere que el usuario tenga una reclamación de RolId con el valor "1"
 
@@ -57,21 +56,22 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+//Estas líneas de código establecen la base para el funcionamiento de tu aplicación web:
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
 // Habilitar el middleware de autenticación y autorización
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.UseSession();
+
 app.UseCors(builder =>
 {
     builder.WithOrigins("https://localhost:7226") // Agrega aquí el dominio de tu cliente web
            .AllowAnyHeader()
-           .AllowAnyMethod();
+           .AllowAnyMethod()
+           .AllowCredentials(); // Agregado para permitir el uso de cookies en la solicitud CORS
 });
 
 // Configurar las rutas predeterminadas y el enrutamiento

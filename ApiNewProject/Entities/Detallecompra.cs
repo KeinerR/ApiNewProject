@@ -22,7 +22,6 @@ namespace ApiNewProject.Entities
         public virtual Producto? Producto { get; set; }
         [JsonIgnore]
         public virtual Unidad? Unidad { get; set; }
-        [JsonIgnore]
         public virtual ICollection<Lote> Lotes { get; set; }
     }
 }

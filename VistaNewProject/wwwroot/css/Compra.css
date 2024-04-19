@@ -1,0 +1,25 @@
+﻿/* Estilos para el formulario */
+.styled-form .form-control {
+    border-radius: 50px; /* Establecer bordes redondeados */
+}
+
+.styled-form .form-row {
+    display: flex; /* Utilizar Flexbox para distribuir elementos */
+    flex-wrap: wrap; /* Permitir que los elementos se envuelvan en múltiples líneas si es necesario */
+}
+
+    .styled-form .form-row .col {
+        flex: 1 1 calc(30% - 10px); /* Distribuir columnas uniformemente y permitir que se reduzcan */
+        margin-right: 10px; /* Espacio entre columnas */
+    }
+
+.styled-form .modal-footer {
+    justify-content: space-between; /* Alinear los botones en la parte inferior */
+}
+
+.AgregarDetalle {
+    display: flex;
+    justify-content: flex-end;
+    margin-top:-50px;
+    padding: 10px;
+}

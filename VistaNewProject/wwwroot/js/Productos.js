@@ -348,7 +348,7 @@ function limpiarFormulario() {
     document.getElementById('CategoriaId').value = '';
     document.getElementById('NombreProducto').value = '';
     document.getElementById('CantidadTotal').value = '';
-    document.getElementById('EstadoProducto').value = '';
+    document.getElementById('EstadoProducto').value = '1';
 
     document.getElementById('TituloModal').innerText = 'Agregar Producto';
     document.getElementById('btnGuardar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"

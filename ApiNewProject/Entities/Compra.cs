@@ -19,7 +19,6 @@ namespace ApiNewProject.Entities
         public ulong? EstadoCompra { get; set; }
         [JsonIgnore]
         public virtual Proveedor? Proveedor { get; set; }
-        [JsonIgnore]
         public virtual ICollection<Detallecompra> Detallecompras { get; set; }
     }
 }
