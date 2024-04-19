@@ -96,6 +96,17 @@ namespace VistaNewProject.Services
             }
             return response;
         }
+        public async Task<HttpResponseMessage> CreateMarcaAsync( Marca marca)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Marcas/InsertarMarca", marca);
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la marca con el ID especificado.");
+            }
+            return response;
+        }
 
         /// CATEGORIA
         /// 

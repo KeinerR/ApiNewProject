@@ -33,7 +33,6 @@ namespace ApiNewProject.Controllers
                     ClienteId = s.ClienteId,
                     TipoServicio = s.TipoServicio,
                     FechaPedido = s.FechaPedido,
-                    ValorTotalPedido = s.ValorTotalPedido,
                     EstadoPedido = s.EstadoPedido,
 
                 }
@@ -58,7 +57,6 @@ namespace ApiNewProject.Controllers
                     TipoServicio = pedido.TipoServicio,
                     FechaPedido = pedido.FechaPedido,
                     EstadoPedido = pedido.EstadoPedido,
-                    ValorTotalPedido = pedido.ValorTotalPedido,
                     Domicilios = new List<Domicilio>() // Solo inicializamos los domicilios
                 };
 
@@ -225,7 +223,6 @@ namespace ApiNewProject.Controllers
                 pedidoExistente.ClienteId = pedido.ClienteId;
                 pedidoExistente.TipoServicio = pedido.TipoServicio;
                 pedidoExistente.FechaPedido = pedido.FechaPedido;
-                pedidoExistente.ValorTotalPedido = pedidoExistente.ValorTotalPedido;
                 pedidoExistente.EstadoPedido = pedido.EstadoPedido;
           
 

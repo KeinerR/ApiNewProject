@@ -16,68 +16,63 @@ namespace VistaNewProject.Controllers
             _client = client;
         }
 
+
+
         public async Task<IActionResult> Index(int? page)
         {
-            int pageSize = 5; // Número máximo de elementos por página
-            int pageNumber = page ?? 1;
+            int pageSize = 5; // Cambiado a 5 para que la paginación se haga cada 5 registros
+            int pageNumber = page ?? 1; // Número de página actual (si no se especifica, es 1)
 
-            var marcas = await _client.GetMarcaAsync();
+            var marcas = await _client.GetMarcaAsync(); // Obtener todas las marcas
 
             if (marcas == null)
             {
                 return NotFound("error");
             }
 
-            var pagedMarcas = await marcas.ToPagedListAsync(pageNumber, pageSize);
-
-            // Verifica si la página actual está vacía y redirige a la última página que contiene registros
-            if (!pagedMarcas.Any() && pagedMarcas.PageNumber > 1)
+            var pageMarca = await marcas.ToPagedListAsync(pageNumber, pageSize);
+            if (!pageMarca.Any() && pageMarca.PageNumber > 1)
             {
-                pagedMarcas = await marcas.ToPagedListAsync(pagedMarcas.PageCount, pageSize);
-            }
-            // Inicializar el contador en 1 si es la primera página
-            int contador = 1;
-            if (page.HasValue && page > 1)
-            {
-                // Obtener el valor actual del contador de la sesión si estamos en una página diferente a la primera
-                contador = HttpContext.Session.GetInt32("Contador") ?? 1;
+                pageMarca = await marcas.ToPagedListAsync(pageMarca.PageCount, pageSize);
             }
 
-            // Establecer el valor del contador en la sesión para su uso en la siguiente página
-            HttpContext.Session.SetInt32("Contador", contador + pagedMarcas.Count);
+            int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
 
             ViewBag.Contador = contador;
-            return View(pagedMarcas);
+
+            return View(pageMarca); // Pasar la lista de marcas paginada a la vista
+            ViewBag.Mensaje = TempData["Mensaje"];
         }
 
-
-
-        public async Task<IActionResult> Details(int? id, int? page)
+        [HttpPost]
+        public async Task<IActionResult> Create([FromForm] string nombreMarca, [FromForm] ulong EstadoMarca)
         {
-            if (id == null)
+            if (ModelState.IsValid)
             {
-                return NotFound();
+                var marca = new Marca
+                {
+                    NombreMarca = nombreMarca,
+                    EstadoMarca = EstadoMarca
+                };
+
+                var response = await _client.CreateMarcaAsync(marca);
+                if (response.IsSuccessStatusCode)
+                {
+                    // Guardar un mensaje en TempData para mostrar en el Index
+                    TempData["Mensaje"] = "¡Registro guardado correctamente!";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    // La solicitud POST falló, maneja el error según sea necesario
+                    ModelState.AddModelError(string.Empty, "No se pudieron guardar los datos.");
+                    return View("Index");
+                }
             }
-
-            var marcas = await _client.GetMarcaAsync();
-            var marca = marcas.FirstOrDefault(u => u.MarcaId == id);
-            if (marca == null)
-            {
-                return NotFound();
-            }
-
-            ViewBag.Marca = marca;
-
-            var productos = await _client.GetProductoAsync();
-            var productosDeMarca = productos.Where(p => p.MarcaId == id);
-
-            int pageSize = 1; // Número máximo de elementos por página
-            int pageNumber = page ?? 1;
-
-            var pagedProductos = productosDeMarca.ToPagedList(pageNumber, pageSize);
-
-            return View(pagedProductos);
+            return View("Index");
         }
+
+
 
     }
 

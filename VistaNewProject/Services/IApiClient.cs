@@ -29,6 +29,8 @@ namespace VistaNewProject.Services
 
         Task<IEnumerable<Marca>> GetMarcaAsync();
 
+        Task<HttpResponseMessage> CreateMarcaAsync( Marca marca);
+
 
 
 
