@@ -4,7 +4,6 @@
     ViewData["Title"] = "Index";
 }
 
-
 <br />
 
 <div class="d-flex justify-content-between">
@@ -26,51 +25,37 @@
     </button>
 </div>
 
-
-
-
 <!-- Modal -->
 <div class="modal fade" id="MarcaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="TituloModal">Agregar Marca</h5>
-                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-
+                <!-- Aquí agregamos el data-bs-dismiss="modal" -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div id="MensajeInicial"></div>
-            <form asp-controller="Marcas" asp-action="" method="post">
+            <form asp-controller="Marcas" asp-action="Create" method="post">
                 <div class="modal-body">
-
                     <div class="form-group">
-                        <input type="hidden" id="MarcaId" name="marcaId" class="form-control" />
+                        <input type="hidden" id="marcaId" name="marcaId" class="form-control" />
                     </div>
                     <div class="form-group">
-                        <label for="NombreMarca" class="control-label">Nombre marca</label>
+                        <label for="nombreMarca" class="control-label">Nombre marca</label>
                         <span class="Mensaje" style="color:red;display:inline-block;">*</span>
-                        <input type="text" id="NombreMarca" name="nombreMarca" class="form-control" autocomplete="off"/>
+                        <input type="text" id="nombreMarca" name="nombreMarca" class="form-control" autocomplete="off" />
                         <span class="text-danger"></span>
                     </div>
-                    <div class="form-group" id="Estadomarca" style="display:none">
-                        <label for="EstadoMarca" class="control-label">Estado</label>
-                        <select id="EstadoMarca" name="estadoMarca" class="form-control">
-                            <option value="1">Activo</option>
-                            <option value="0">Inactivo</option>
-                        </select>
+                    <div class="form-group">
+                        <label for="EstadoMarca" class="control-label"> EstadoMarca</label>
+                        <input type="text" id="EstadoMarca" name="EstadoMarca" class="form-control" />
                     </div>
+                    <!-- Resto del formulario -->
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="btnGuardar">Agregar</button>
-                    <button type="button" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Marca</button>
+                    <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
                 </div>
-             
-
-
-
-
             </form>
-
         </div>
     </div>
 </div>
@@ -78,51 +63,57 @@
 <br />
 <hr>
 
-
 <table class="table table-custom text-center">
     <thead>
         <tr>
+            <th> #</th>
             <th>
-               #
+                Marca Id
             </th>
             <th>
-                NOMBRE MARCA
+                Nombre Marca
             </th>
             <th>
-                ESTADO MARCA
-            </th>
+              Estado 
+              </th>
             <th>
-                ACCIONES
+               Acciones 
             </th>
+           
         </tr>
     </thead>
     <tbody class="text-center">
         @{
-            int contador = ViewBag.Contador; // Obtener el valor del contador desde la ViewBag
+            int contador = ViewBag.Contador;
         }
         @foreach (var item in Model)
         {
             <tr>
                 <td>
-                    @contador <!-- Muestra el valor del contador -->
+                    @contador
                     @{
-                        contador++; // Incrementa el contador para la próxima iteración
+                        contador++;
                     }
                 </td>
-                <td class="marca-id" style="display: none;">@Html.DisplayFor(modelItem => item.MarcaId)</td>
-                <td class="nombre-marca">@Html.DisplayFor(modelItem => item.NombreMarca)</td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MarcaId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NombreMarca)
+                </td>
+              
+
                 <td class="text-center align-middle">
                     <label class="switch">
-                        <input type="checkbox" @(item.EstadoMarca != 0 ? "checked" : "") onchange="mostraralerta('@item.EstadoMarca')">
+                        <input type="checkbox" @(item.EstadoMarca != 0 ? "checked" : "") onchange="mostraralerta('@item.MarcaId')">
                         <span class="slider"></span>
                     </label>
                     @Html.DisplayFor(modelItem => item.EstadoMarca)
                 </td>
-                <!-- Agrega esta celda para las acciones -->
                 <td>
-                    <button class="btn" id="btnEdit" data-marca-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal"><i class="fas fa-edit"></i></button>
-                    <a asp-action="Details" asp-route-id="@item.MarcaId" id="btnDetail" class="btn"><i class="fa-solid fa-file"></i></a>
-                    <button class="btn" id="btnDelete" data-marca-id="@item.MarcaId"><i class="fas fa-trash-alt"></i></button>
+                    <button class="btn" id="btnEdit" data-proveedor-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal"><i class="fas fa-edit"></i></button>
+                    <a asp-action="Details" asp-route-id="@item.MarcaId" class="btn" id="btnDetail"><i class="fas fa-file"></i></a>
+                    <button class="btn" id="btnDelete" data-proveedor-id="@item.MarcaId"><i class="fas fa-trash-alt"></i>"</button>
                 </td>
             </tr>
         }
@@ -133,25 +124,16 @@
     @if (Model != null && Model.PageCount > 1)
     {
         <div class="d-flex justify-content-center mb-5">
-            <nav aria-label="Page navigation" class="shadow p-3 mb-5 bg-white rounded">
-                <ul class="pagination justify-content-center">
-                    <!-- Botón para ir a la primera página -->
-                    @if (Model.PageNumber > 1)
-                    {
-                        <li class="page-item">
-                            <a class="page-link" href="?page=1" aria-label="First">
-                                <span aria-hidden="true">Primero</span>
-                            </a>
-                        </li>
-                    }
+            <nav aria-label="Page navigation bg-dark">
+                <ul class="pagination">
                     <!-- Botón para la página anterior (oculto en la página 1) -->
                     <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
                         <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
-                            <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                            <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
                     <!-- Iterar sobre las páginas disponibles -->
-                    @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                    @for (var i = 1; i <= Model.PageCount; i++)
                     {
                         <li class="page-item @(i == Model.PageNumber ? "active" : "")">
                             <a class="page-link" href="?page=@i">@i</a>
@@ -160,26 +142,34 @@
                     <!-- Botón para la página siguiente (oculto en la última página) -->
                     <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
                         <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
-                            <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                            <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>
-                    <!-- Botón para ir a la última página -->
-                    @if (Model.PageNumber < Model.PageCount)
-                    {
-                        <li class="page-item">
-                            <a class="page-link" href="?page=@Model.PageCount" aria-label="Last">
-                                <span aria-hidden="true">Último</span>
-                            </a>
-                        </li>
-                    }
                 </ul>
             </nav>
         </div>
     }
 </div>
-
-
-
-
 <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="~/js/marcas.js"></script>
+
+@if (!string.IsNullOrEmpty(ViewBag.Mensaje))
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.Mensaje
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        // Mostrar SweetAlert cuando haya un mensaje en ViewBag.Mensaje
+        Swal.fire({
+            title: "¡Registro guardado correctamente!",
+            icon: "success",
+            text: "El registro se ha guardado correctamente.",
+            confirmButtonText: "Aceptar"
+        }).then((result) => {
+            // Después de cerrar el SweetAlert, puedes realizar otras acciones si lo deseas
+            // Por ejemplo, puedes limpiar el formulario para permitir otro registro sin cerrar el modal
+        });
+    </script>
+}

@@ -307,7 +307,6 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.TipoServicio).HasMaxLength(50);
 
-                entity.Property(e => e.ValorTotalPedido).HasPrecision(10);
 
                 entity.HasOne(d => d.Cliente)
                     .WithMany(p => p.Pedidos)
