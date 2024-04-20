@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
+using System.Net.Http.Json;
 using VistaNewProject.Models;
 
 namespace VistaNewProject.Services
@@ -107,6 +108,60 @@ namespace VistaNewProject.Services
             }
             return response;
         }
+        public async Task< Marca> FindMarcasAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Marca>($"Marcas/GetMarcaById?id={id}");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la marca con el ID especificado.");
+            }
+            return response;
+        }
+
+        public async Task<Marca> FindnombreMarcasAsync(string nombreMarca)
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<Marca>($"Marcas/GetNombreMarcaById?nombreMarca={nombreMarca}");
+
+                return response;
+            }
+            catch (HttpRequestException)
+            {
+                // Si no se encuentra la marca, retornamos null
+                return null;
+            }
+        }
+
+
+        public async Task<HttpResponseMessage> UpdateMarcasAsync(Marca marca)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"Marcas/UpdateMarcas/", marca);
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                return null;
+            }
+            return response;
+        }
+
+       
+
+        public async Task<HttpResponseMessage> DeleteClienteAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"Marcas/DeleteMarca/{id}");
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                return null;
+            }
+            return response;
+        }
+
+
+
 
         /// CATEGORIA
         /// 
