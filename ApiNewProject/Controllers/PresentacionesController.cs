@@ -27,6 +27,7 @@ namespace ApiNewProject.Controllers
                     PresentacionId = s.PresentacionId,
                     NombrePresentacion = s.NombrePresentacion,
                     Contenido = s.Contenido,
+                    CantidadPorPresentacion = s.CantidadPorPresentacion,
                     DescripcionPresentacion = s.DescripcionPresentacion,
                     EstadoPresentacion = s.EstadoPresentacion
                 }
@@ -49,6 +50,7 @@ namespace ApiNewProject.Controllers
                         NombrePresentacion = s.NombrePresentacion,
                         DescripcionPresentacion = s.DescripcionPresentacion,
                         Contenido = s.Contenido,
+                        CantidadPorPresentacion = s.CantidadPorPresentacion,
                         EstadoPresentacion = s.EstadoPresentacion
                     })
                 .FirstOrDefaultAsync(s => s.PresentacionId == Id);
@@ -98,6 +100,7 @@ namespace ApiNewProject.Controllers
             presentaciones.PresentacionId = presentacion.PresentacionId;
             presentaciones.NombrePresentacion = presentacion.NombrePresentacion;
             presentaciones.DescripcionPresentacion = presentacion.DescripcionPresentacion;
+            presentaciones.CantidadPorPresentacion = presentacion.CantidadPorPresentacion;
             presentaciones.Contenido = presentacion.Contenido; 
             presentaciones.EstadoPresentacion = presentacion.EstadoPresentacion;
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-
 namespace ApiNewProject.Entities
 {
     public partial class Marca

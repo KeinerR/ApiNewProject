@@ -55,6 +55,12 @@
                         <input type="text" id="Contenido" name="contenido" class="form-control" />
                         <span  class="text-danger"></span>
                     </div>
+                     <div class="form-group">
+                        <label for="CantidadPorPresentacion" class="control-label">Cantidad de productos por unidad de presentacion</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="CantidadPorPresentacion" name="cantidadPorPresentacion" class="form-control" />
+                        <span  class="text-danger"></span>
+                    </div>
                     <div class="form-group">
                         <label for="DescripcionPresentacion" class="control-label">Descripcion Presentacion</label>
                         <span class="Mensaje" style="color:red;display:inline-block;">*</span>
@@ -93,6 +99,7 @@
             <th>#</th>
             <th>NOMBRE PRESENTACION</th>
             <th>CONTENIDO</th>
+            <th>CANTIDAD X PRESENTACION</th>
             <th>ESTADO</th>
             <th>DESCRIPCION PRESENTACION</th>
             <th>ACCIONES</th>
@@ -114,6 +121,7 @@
                 <td class="presentacion-id" style="display: none;">@Html.DisplayFor(modelItem => item.PresentacionId)</td>
                 <td class="nombre-presentacion">@Html.DisplayFor(modelItem => item.NombrePresentacion)</td>
                 <td class="contenido-empaque">@Html.DisplayFor(modelItem => item.Contenido)</td>
+                <td class="contenido-empaque">@Html.DisplayFor(modelItem => item.CantidadPorPresentacion)</td>
                 <td class="text-center align-middle">
                     <label class="switch">
                         <input type="checkbox" @(item.EstadoPresentacion != 0 ? "checked" : "") onchange="mostraralerta('@item.EstadoPresentacion')">

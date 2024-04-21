@@ -1,24 +1,12 @@
-﻿/* Estilos para el formulario */
-.styled-form .form-control {
-    border-radius: 50px; /* Establecer bordes redondeados */
-}
-
-.styled-form .form-row {
-    display: flex; /* Utilizar Flexbox para distribuir elementos */
-    flex-wrap: wrap; /* Permitir que los elementos se envuelvan en múltiples líneas si es necesario */
-}
-
-    .styled-form .form-row .col {
-        flex: 1 1 calc(30% - 10px); /* Distribuir columnas uniformemente y permitir que se reduzcan */
-        margin-right: 10px; /* Espacio entre columnas */
-    }
-
-.styled-form .modal-footer {
-    justify-content: space-between; /* Alinear los botones en la parte inferior */
-}
-
-#agregarDetalle {
+﻿
+.contenedorFooter {
     display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    padding: 0px;
+}
+#agregarDetalle {
+    display: block;
     justify-content: flex-end;
     margin-top:10px;
     padding: 0px;
@@ -33,7 +21,7 @@
 
 /*Hace que el elemnto desaparezca con todo su contenido*/
 .noVisualizar {
-display:none;
+    display:none;
 }
 /*El contenido sigue presenta pero no se puede ver */
 .noVer {
@@ -41,10 +29,88 @@ display:none;
     display:none;
 
 }
-.reducir {
-    font-size:5px;
-    padding:6px 10px;
+#reducir {
+    margin-right:10px;
 }
-.expandir {
+#expandir {
+    margin-right: 10px;
+}
+#agregarDetalleIcono {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+#btnMas, #btnMenos {
+    display: inline-block;
+    width: 25px;
+    height: 35px;
+    margin-left: 2px;
+    padding: 5px;
+}
+    #btnMas:hover, #btnMenos:hover {
+        background: #ADD8E6;
+    }
+#CampoCantidad input{
+    height:40px;
+    border-radius:20px;
+    max-width:85px;
+    min-width:50px;
+}
+    #CampoCantidad input:hover {
+        border: 1px solid #3EAE3E;
+    }
+
+
+.contenedorCalculo{
+    position: relative;
+}
+
+.contenedorCalcular {
+    position: absolute; right: 9px; bottom: 0;
+}
+.btn-calculo {
+    border-radius: 10px;
+    width:40px;
+    height:37px;   
+}
+.contenedorCalculo2 {
+    position: relative;
+}
+
+.contenedorCalcular2 {
+    position: absolute;
+    right: 9px;
+    bottom:24px;
+}
+
+
+
+/* Media query para zoom del 500% */
+@media (max-width: 333.33px) {
+    .col-3 #btnMas,
+    .col-3 #btnMenos {
+        display: none;
+    }
+}
+/* Media query para un tamaño de ventana máximo de 960px (zoom 200%) */
+@media (max-width: 960px) {
+    .col-3 #btnMas,
+    .col-3 #btnMenos {
+        display: none;
+    }
+    .btn-calculo {
+        border-radius: 10px;
+        width: 32px;
+        height: 33px;
+    }
+ 
+ 
+}
+@media (max-width: 1100px) {
+    .col-3 #btnMas,
+    .col-3 #btnMenos {
+        display: none;
+    }
 
 }
+

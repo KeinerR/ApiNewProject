@@ -42,7 +42,7 @@
         $('#MensajeInicial').text('Completa todos los campos con *');
         $('.Mensaje').text('*');
 
-        $('#NombrePresentacion, #DescripcionPresentacion, #Contenido').on('input', function () {
+        $('#NombrePresentacion, #DescripcionPresentacion, #Contenido, #CantidadPorPresentacion').on('input', function () {
             validarCampo($(this));
 
             // Validar si todos los campos son válidos antes de agregar la presentación
@@ -151,11 +151,12 @@
         const nombrePresentacion = document.getElementById('NombrePresentacion').value;
         const contenidoPresentacion = document.getElementById('DescripcionPresentacion').value;
         const contenido = document.getElementById('Contenido').value;
-
+        const cantidad = document.getElementById('CantidadPorPresentacion').value;
         if (
             nombrePresentacion.trim() === '' ||
             contenidoPresentacion.trim() === '' ||
-            contenido.trim() === ''
+            contenido.trim() === '' ||
+            cantidad.trim() === ''
         ) {
             Swal.fire({
                 icon: 'error',
@@ -169,7 +170,8 @@
         const presentacionObjeto = {
             NombrePresentacion: nombrePresentacion,
             DescripcionPresentacion: contenidoPresentacion,
-            Contenido : contenido,
+            Contenido: contenido,
+            CantidadPorPresentacion: cantidad
         };
 
         fetch(`${API_URL}/InsertarPresentacion`, {
@@ -223,6 +225,7 @@
                 document.getElementById('NombrePresentacion').value = presentacion.nombrePresentacion;
                 document.getElementById('DescripcionPresentacion').value = presentacion.contenidoPresentacion;
                 document.getElementById('Contenido').value = presentacion.contenido;
+                document.getElementById('CantidadPorPresentacion').value = presentacion.CantidadPorPresentacion;
 
                 document.getElementById('estadoPresentacion').style.display = 'block';
 
@@ -260,6 +263,7 @@
         const contenidoPresentacion = document.getElementById('DescripcionPresentacion').value;
         const estadoPresentacion = document.getElementById('EstadoPresentacion').value;
         const contenido = document.getElementById('Contenido').value;
+        const cantidad = document.getElementById('CantidadPorPresentacion').value;
         if (
             nombrePresentacion.trim() === '' ||
             contenidoPresentacion.trim() === '' ||
@@ -280,6 +284,7 @@
             NombrePresentacion: nombrePresentacion,
             DescripcionPresentacion: contenidoPresentacion,
             Contenido: contenido,
+            CantidadPorPresentacion:cantidad,
             EstadoPresentacion: estadoPresentacion
         };
 

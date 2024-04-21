@@ -110,8 +110,8 @@ namespace ApiNewProject.Controllers
                                 ProductoId = lote.ProductoId,
                                 NumeroLote = lote.NumeroLote,
                                 PrecioCompra = lote.PrecioCompra,
-                                PrecioDetal = lote.PrecioDetal,
-                                PrecioxMayor = lote.PrecioxMayor,
+                                PrecioPorUnidad = lote.PrecioPorUnidad,
+                                PrecioPorPresentacion = lote.PrecioPorPresentacion,
                                 FechaVencimiento = lote.FechaVencimiento,
                                 Cantidad = lote.Cantidad,
                                 EstadoLote = lote.EstadoLote

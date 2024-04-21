@@ -374,10 +374,12 @@ input:checked + .slider:before {
     border-radius: 20px; /* Borde redondeado para el grupo de entrada */
 }
 
-.form-control {
-    border-radius: 20px 0 0 20px !important; /* Borde redondeado solo en el lado izquierdo */
-    padding-right: 38px; /* Espacio para el botón */
-}
+
+/*Si lo necesita agreguele un id en esecifico BY:Esteban*/
+/*.form-control {
+    border-radius: 20px 0 0 20px !important;*/ /* Borde redondeado solo en el lado izquierdo */
+    /*padding-right: 38px;*/ /* Espacio para el botón */
+/*}*/
 
 #searchInput {
     border-radius: 20px 0 0 20px; /* Borde redondeado solo en el lado izquierdo */
