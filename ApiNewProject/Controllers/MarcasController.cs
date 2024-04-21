@@ -105,20 +105,39 @@ namespace ApiNewProject.Controllers
 
 
         [HttpPut("UpdateMarcas")]
-        public async Task<ActionResult> UpdateMarcas(Marca marca)
+        public async Task<IActionResult> UpdateMarcas([FromBody] Marca marca)
         {
-            var marcas = await _context.Marcas.FirstOrDefaultAsync(s => s.MarcaId == marca.MarcaId);
+            // Verificar si la marca ya existe
+            var existingMarca = await _context.Marcas.FirstOrDefaultAsync(m => m.MarcaId == marca.MarcaId);
 
-            if (marcas == null)
+            if (existingMarca == null)
             {
-                return NotFound();
+                return NotFound(); // Marca no encontrada
             }
-            marcas.MarcaId = marca.MarcaId;
-            marcas.NombreMarca = marca.NombreMarca;
-            marcas.EstadoMarca = marca.EstadoMarca;
 
-            await _context.SaveChangesAsync();
-            return Ok();
+            // Verificar si el nombre de la marca ya está en uso por otra marca
+            var isNombreDuplicated = await _context.Marcas.AnyAsync(m => m.NombreMarca.ToLower() == marca.NombreMarca.ToLower() && m.MarcaId != marca.MarcaId);
+
+            if (isNombreDuplicated)
+            {
+                return BadRequest(new { existe = true }); // Nombre de marca duplicado
+            }
+
+            // Actualizar los campos de la marca existente
+            existingMarca.NombreMarca = marca.NombreMarca;
+            existingMarca.EstadoMarca = marca.EstadoMarca;
+
+            // Guardar los cambios en la base de datos
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(new { existe = false }); // Actualización exitosa
+            }
+            catch (Exception ex)
+            {
+                // Manejar cualquier error que pueda ocurrir al guardar los cambios
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
         }
 
         [HttpDelete("DeleteMarca/{Id}")]

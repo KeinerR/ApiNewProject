@@ -25,6 +25,9 @@
     </button>
 </div>
 
+
+<button onclick="MostrarTodasLasMarcas()">Mostrar Todas las Marcas</button>
+
 <!-- Modal -->
 <div class="modal fade" id="MarcaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -46,14 +49,19 @@
                         <input type="text" id="nombreMarca" name="nombreMarca" class="form-control" autocomplete="off" />
                         <span class="text-danger"></span>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group d-none">
                         <label for="EstadoMarca" class="control-label"> EstadoMarca</label>
-                        <input type="text" id="EstadoMarca" name="EstadoMarca" class="form-control" />
+                        <input type="text" id="EstadoMarca" name="EstadoMarca" class="form-control" disabled />
                     </div>
+
+
+                 
+
                     <!-- Resto del formulario -->
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" class="btn btn-primary" id="btnEditar" onclick="Actualizarmarca()" style="display: none;">Actualizar</button>
                 </div>
             </form>
         </div>
@@ -113,7 +121,7 @@
                     @Html.DisplayFor(modelItem => item.EstadoMarca)
                 </td>
                 <td>
-                    <button class="btn btn-edit" data-proveedor-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-warning" onclick="Obtenermarca('@item.MarcaId');" data-cliente-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal">Editar</button>
                     <a asp-action="Details" asp-route-id="@item.MarcaId" class="btn" id="btnDetail"><i class="fas fa-file"></i></a>
                     <form action="@Url.Action("Delete", "Marcas", new { id = item.MarcaId })" method="post" class="delete-form">
                         @Html.Hidden("id", item.MarcaId)
@@ -206,6 +214,8 @@
             text: "@TempData["SweetAlertMessage"]",
             showConfirmButton: false,
             timer: 3000
+        }).then((result) => {
+            $('#MarcaModal').modal('show');
         });
     </script>
 
@@ -215,8 +225,8 @@
 
 
 
-
 @section Scripts {
+
    
     <script>
         $(document).ready(function () {
