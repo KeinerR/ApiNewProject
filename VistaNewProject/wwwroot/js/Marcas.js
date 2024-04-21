@@ -1,201 +1,119 @@
 ﻿
-$(document).ready(function () {
-    // Evento click del botón "Agregar"
-    $('#btnGuardar').click(function () {
-        // Enviar el formulario al hacer clic en el botón "Agregar"
-        $('#MarcaModal form').submit();
-    });
-
-    // Resto de tu código...
-});
-$(document).ready(function () {
-    // Función para validar campos y mostrar mensaje inicial de validación
-    function validarCampos() {
-        var todoValido = true;
-        var todoLleno = true;
-
-        // Validar campo Nombre Marca
-        $('#nombreMarca').on('input', function () {
-            var input = $(this);
-            var valor = input.val().trim();
-            var spanError = input.next('.text-danger');
-            var spanVacio = input.prev('.Mensaje');
-
-            // Limpiar el mensaje de error previo
-            spanError.text('');
-            spanVacio.text('');
-
-            // Validar si el campo está vacío
-            if (valor === '') {
-                spanVacio.text(' *obligatorio');
-                spanError.text('');
-                todoLleno = false;
-            } else {
-                todoLleno = true;
-                // Validar solo letras
-                if (!/^[a-zA-Z\s]+$/.test(valor)) {
-                    spanError.text('Este campo solo puede contener letras.');
-                    todoValido = false;
+document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const mostrarAlerta = urlParams.get('mostrarAlerta');
+    const marcaId = urlParams.get('marcaId');
+    const API_URL = 'https://localhost:7013/api/Marcas';
+    var todoValido = true;
+    marcas = []; // Inicializamos la variable usuarios como un objeto vacío
+    function MostrarTodasLasMarcas() {
+        fetch(`${API_URL}/GetMarcas`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener las marcas');
                 }
-            }
-
-            return todoValido && todoLleno;
-        });
-
-        // Validar campo Estado Marca
-        $('#EstadoMarca').on('input', function () {
-            var input = $(this);
-            var valor = input.val().trim();
-            var spanError = input.next('.text-danger');
-            var spanVacio = input.prev('.Mensaje');
-
-            // Limpiar el mensaje de error previo
-            spanError.text('');
-            spanVacio.text('');
-
-            // Validar si el campo está vacío
-            if (valor === '') {
-                spanVacio.text(' *obligatorio');
-                spanError.text('');
-                todoLleno = false;
-            } else {
-                todoLleno = true;
-                // Validar solo números
-                if (!/^\d+$/.test(valor)) {
-                    spanError.text('Este campo solo puede contener números.');
-                    todoValido = false;
-                }
-            }
-
-            return todoValido && todoLleno;
-        });
-
-        // Validar la entrada del usuario al presionar Enter
-        $('#nombreMarca').on('keypress', function (event) {
-            if (event.which === 13) {
-                event.preventDefault();
-                Actualizarmarca();
-            }
-        });
-    }
-
-    // Función para limpiar el formulario
-    function limpiarFormulario() {
-        // ... (código previo)
-    }
-
-    // Evento que se ejecuta al mostrar el modal
-    $('#MarcaModal').on('show.bs.modal', function (event) {
-        // Habilitar o deshabilitar el botón de guardar según el contexto
-        if (event.relatedTarget.id === 'btnAgregarMarca') {
-            $('#btnGuardar').prop('disabled', true);
-        } else {
-            $('#btnGuardar').prop('disabled', false);
-        }
-    });
-
-    // Evento click del botón de limpiar búsqueda
-    $('#btnClearSearch').click(function () {
-        // ... (código previo)
-    });
-
-    // Resto del código para eventos de búsqueda, edición, eliminación, etc.
-});
-function Obtenermarca(marcaId) {
-    fetch(`https://localhost:7013/api/Marcas/GetMarcaById?id=${marcaId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error al obtener los datos de la marca');
-            }
-            return response.json();
-        })
-        .then(marca => {
-            console.log(marca);
-
-            $('#MarcaModal').modal('show'); // Abre el modal
-
-            // Mostrar el campo EstadoMarca
-            const estadoMarcaInput = $('#EstadoMarca');
-            estadoMarcaInput.parent('.form-group').removeClass('d-none');
-            estadoMarcaInput.removeAttr('disabled'); // Remover el atributo disabled
-
-            $('#marcaId').val(marca.marcaId);
-            $('#nombreMarca').val(marca.nombreMarca);
-            $('#EstadoMarca').val(marca.estadoMarca);
-
-            $('#TituloModal').text('Editar Marca');
-            $('#btnGuardar').hide();
-            $('#btnEditar').show();
-
-        })
-        .catch(error => {
-            console.log('Error', error);
-        });
-}
-
-
-function Actualizarmarca() {
-    const marcaId = document.getElementById('marcaId').value;
-    const nombreMarca = document.getElementById('nombreMarca').value;
-    const EstadoMarca = document.getElementById('EstadoMarca').value;
-
-    const marca = {
-        MarcaId: marcaId,
-        NombreMarca: nombreMarca,
-        EstadoMarca: EstadoMarca
-    };
-
-    console.log(nombreMarca);
-
-    fetch(`https://localhost:7013/api/Marcas/UpdateMarcas`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(marca)
-    })
-        .then(response => {
-            if (response.ok) {
-                // SweetAlert en lugar de alert
-                Swal.fire({
-                    position: 'top-center',
-                    icon: 'success',
-                    title: 'Marca actualizada correctamente',
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    location.reload(true); // Recargar la página después de la actualización
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Error en la actualización. Por favor, inténtalo de nuevo más tarde.'
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Error en la actualización. Por favor, inténtalo de nuevo más tarde.'
+                return response.json();
+            })
+            .then(data => {
+                marcas = data;
+                console.log(marcas);
+                NoCamposVacios();
+            })
+            .catch(error => {
+                console.error('Error:', error);
             });
-        });
-}
+    }
+    MostrarTodasLasMarcas();
 
-function MostrarTodasLasMarcas() {
-    fetch('https://localhost:7013/api/Marcas/GetMarcas')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error al obtener las marcas');
+
+
+    if (mostrarAlerta === 'true' && Id) {
+        obtenerDatosUsuario(marcaId);
+
+        // Obtener el botón que activa la modal
+        const botonModal = document.querySelector('[data-bs-target="#MarcaModal"]');
+        if (botonModal) {
+            // Simular el clic en el botón para mostrar la modal
+            botonModal.click();
+        }
+    } else {
+        console.log('MarcaId no encontrado en la URL');
+    }
+
+
+
+    function NoCamposVacios() {
+        // Mostrar mensaje inicial de validación
+        $('#MensajeInicial').text(' Completa todos los campos con *');
+        $('.Mensaje').text(' *');
+
+
+        $('#NombreMarca').on('input', function () {
+            validarCampo($(this));
+
+            // Validar si todos los campos son válidos antes de agregar el usuario
+            todoValido = $('.text-danger').filter(function () {
+                return $(this).text() !== '';
+            }).length === 0;
+
+            todolleno = $('.Mensaje ').filter(function () {
+                return $(this).text() !== '';
+            }).length === 0;
+            console.log('Todos los campos son válidos:', todoValido);
+
+            // Si todos los campos son válidos, ocultar el mensaje en todos los campos
+            if (todolleno) {
+                $('#MensajeInicial').hide();
+            } else {
+                $('#MensajeInicial').show(); // Mostrar el mensaje si no todos los campos son válidos
             }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Todas las marcas:', data);
-        })
-        .catch(error => {
-            console.error('Error:', error);
         });
-}
+    }
+
+    function validarCampo(input) {
+        var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
+        var spanError = input.next('.text-danger'); // Obtener el elemento span de error asociado al input
+        var spanVacio = input.prev('.Mensaje'); // Obtener el elemento span vacío asociado al input
+
+        // Limpiar el mensaje de error previo
+        spanError.text('');
+        spanVacio.text('');
+
+        // Validar el campo y mostrar mensaje de error si es necesario
+        if (valor === '') {
+            spanVacio.text(' *obligatorio');
+            spanError.text('');
+        } else if (input.is('#NombreMarca')) {
+            if (valor.length < 5) {
+                spanError.text('Este campo debe tener un mínimo de 5 caracteres.');
+                spanVacio.text('');
+            } else if (!/^(?!.*(\w)\1\1\1)[\w\s]+$/.test(valor)) {
+                spanError.text('Este nombre es redundante.');
+                spanVacio.text('');
+                todoValido = false;
+            } else if (/^\d+$/.test(valor)) {
+                spanError.text('Este campo no puede ser solo numérico.');
+                spanVacio.text('');
+                todoValido = false;
+            } else {
+                var nombreRepetido = marcas.some(function (marca) {
+                    return marca.nombreMarca.toLowerCase() === valor.toLowerCase() &&
+                        marca.marcaId != $('#MarcaId').val().trim();
+                });
+
+                if (nombreRepetido) {
+                    spanError.text('Esta marca ya se encuentra registrada.');
+                    spanVacio.text('');
+                    todoValido = false;
+                } else {
+                    spanError.text('');
+                    spanVacio.text('');
+                }
+            }
+        }
+
+        return todoValido; // Devuelve el estado de validación al finalizar la función
+    }
+});
+
+
