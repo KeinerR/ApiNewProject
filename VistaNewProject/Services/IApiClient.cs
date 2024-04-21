@@ -30,6 +30,10 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Marca>> GetMarcaAsync();
 
         Task<HttpResponseMessage> CreateMarcaAsync( Marca marca);
+        Task<Marca> FindMarcasAsync(int id);
+        Task<Marca> FindnombreMarcasAsync(string nombreMarca);
+        Task<HttpResponseMessage> UpdateMarcasAsync(Marca marca);
+        Task<HttpResponseMessage> DeleteClienteAsync(int id);
 
 
 

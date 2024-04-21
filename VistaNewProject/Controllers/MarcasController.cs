@@ -45,17 +45,27 @@ namespace VistaNewProject.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] string nombreMarca, [FromForm] ulong EstadoMarca)
+        public async Task<IActionResult> Create([FromForm] string nombreMarca)
         {
             if (ModelState.IsValid)
             {
+                var marcaexist = await _client.FindnombreMarcasAsync(nombreMarca);
+                if (marcaexist != null)
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "Ya hay una marca registrada con ese nombre.";
+                    return RedirectToAction("Index");
+                }
+
+                // Resto del código para crear la nueva marca
                 var marca = new Marca
                 {
-                    NombreMarca = nombreMarca,
-                    EstadoMarca = EstadoMarca
+                    NombreMarca = nombreMarca
                 };
 
                 var response = await _client.CreateMarcaAsync(marca);
+
                 if (response.IsSuccessStatusCode)
                 {
                     // Guardar un mensaje en TempData para mostrar en el Index
@@ -64,8 +74,7 @@ namespace VistaNewProject.Controllers
                 }
                 else
                 {
-                    // La solicitud POST falló, maneja el error según sea necesario
-                    ModelState.AddModelError(string.Empty, "No se pudieron guardar los datos.");
+                    ViewBag.MensajeError = "No se pudieron guardar los datos.";
                     return View("Index");
                 }
             }
@@ -75,6 +84,26 @@ namespace VistaNewProject.Controllers
             return View("Index");
         }
 
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var marca = await _client.DeleteClienteAsync(id);
+            if (marca == null)
+            {
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "Error al eliminar la marca.";
+            }
+            else
+            {
+                TempData["SweetAlertIcon"] = "success";
+                TempData["SweetAlertTitle"] = "Éxito";
+                TempData["SweetAlertMessage"] = "Marca eliminada correctamente.";
+            }
+            return RedirectToAction("Index");
+        }
+
+     
 
 
     }
