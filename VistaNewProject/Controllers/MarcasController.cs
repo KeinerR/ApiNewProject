@@ -162,8 +162,6 @@ namespace VistaNewProject.Controllers
             }
         }
 
-
-        [HttpDelete]
         public async Task<IActionResult> Delete(int id) 
         {
             var response = await _client.DeleteMarcaAsync(id);
