@@ -340,7 +340,13 @@ input:checked + .slider:before {
     cursor: pointer; /* Cursor al pasar el ratón */
 }
 
-   
+.contenedorBotonesTabla {
+    width: 200px; /* Ancho inicial */
+    max-width: 900px; /* Ancho máximo permitido */
+    overflow: auto; /* Hacer que el contenido que excede el ancho se desplace horizontalmente */
+    white-space: nowrap; /* Evitar que el texto se divida en múltiples líneas */
+}
+
 
 /* Media queries para hacer la tabla responsive */
 @media screen and (max-width: 768px) {

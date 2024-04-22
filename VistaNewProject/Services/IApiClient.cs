@@ -32,8 +32,8 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> CreateMarcaAsync( Marca marca);
         Task<Marca> FindMarcasAsync(int id);
         Task<Marca> FindnombreMarcasAsync(string nombreMarca);
-        Task<HttpResponseMessage> UpdateMarcasAsync(Marca marca);
-        Task<HttpResponseMessage> DeleteClienteAsync(int id);
+        Task<HttpResponseMessage> UpdateMarcaAsync(Marca marca);
+        Task<HttpResponseMessage> DeleteMarcaAsync(int id);
 
 
 

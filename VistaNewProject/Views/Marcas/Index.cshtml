@@ -30,13 +30,13 @@
 <!-- Modal -->
 <div class="modal fade" id="MarcaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content" id="FormAgregar">
             <div class="modal-header">
                 <h5 class="modal-title" id="TituloModal">Agregar Marca</h5>
                 <!-- Aquí agregamos el data-bs-dismiss="modal" -->
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" onclick="limpiarFormulario()" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div id="MensajeInicial"></div>
+           <div id="MensajeInicial"></div>
             <form asp-controller="Marcas" asp-action="Create" method="post">
                 <div class="modal-body">
                     <div class="form-group">
@@ -48,21 +48,52 @@
                         <input type="text" id="NombreMarca" name="nombreMarca" class="form-control" autocomplete="off" />
                         <span class="text-danger"></span>
                     </div>
-                    <div class="form-group d-none">
-                        <label for="EstadoMarca" class="control-label"> EstadoMarca</label>
-                        <input type="text" id="EstadoMarca" name="estadoMarca" class="form-control" disabled />
+                    <div class="form-group" style="display:none">
+                        <label for="EstadoMarca" class="control-label">Estado</label>
+                        <select id="EstadoMarca" name="estadoMarca" class="form-control">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
                     </div>
-
-
-                 
-
                     <!-- Resto del formulario -->
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
-                    <button type="button" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar</button>
                 </div>
             </form>
+        </div>
+        <div class="modal-content" id="FormActualizar" style="display:none;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModal">Actualizar Marca</h5>
+                <!-- Aquí agregamos el data-bs-dismiss="modal" -->
+                <button type="button" class="btn-close" onclick="limpiarFormulario()" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="MensajeInicialAct"></div>
+            <form asp-controller="Marcas" asp-action="Update" method="post">
+                @Html.AntiForgeryToken() <!-- Asegúrate de tener esto si estás utilizando AntiForgeryToken -->
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input id="MarcaIdAct" name="marcaIdAct" class="form-control" type="hidden" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NombreMarcaAct" class="control-label">Nombre marca</label>
+                        <input type="text" id="NombreMarcaAct" name="nombreMarcaAct" class="form-control" autocomplete="off" />
+                        <span class="text-danger" id="mensajeNombreMarcaAct"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="EstadoMarcaAct" class="control-label">Estado</label>
+                        <select id="EstadoMarcaAct" name="estadoMarcaAct" class="form-control">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                        <span class="text-danger" id="mensajeEstadoMarcaAct"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="btnEditar">Actualizar</button>
+                </div>
+            </form>
+
         </div>
     </div>
 </div>
@@ -74,7 +105,7 @@
     <thead>
         <tr>
             <th> #</th>
-            <th>
+            <th class="d-none">
                 Marca Id
             </th>
             <th>
@@ -104,10 +135,10 @@
                         contador++;
                     }
                 </td>
-                <td>
+                <td class="d-none marca-id">
                     @Html.DisplayFor(modelItem => item.MarcaId)
                 </td>
-                <td>
+                <td class="marca-nombre">
                     @Html.DisplayFor(modelItem => item.NombreMarca)
                 </td>
               
@@ -119,12 +150,12 @@
                     </label>
                     @Html.DisplayFor(modelItem => item.EstadoMarca)
                 </td>
-                <td>
-                    <button class="btn btn-warning" onclick="Obtenermarca('@item.MarcaId');" data-cliente-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal">Editar</button>
-                    <a asp-action="Details" asp-route-id="@item.MarcaId" class="btn" id="btnDetail"><i class="fas fa-file"></i></a>
-                    <form action="@Url.Action("Delete", "Marcas", new { id = item.MarcaId })" method="post" class="delete-form">
+                <td class="text-center align-middle contenedorBotonesTabla" >
+                    <button class="btn btn-warning botonEditar" id="btnEdit" value="" data-marca-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal"><i class="fas fa-edit"></i></button>
+                    <a asp-action="Details" asp-route-id="@item.MarcaId" value="" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
+                    <form style="display:inline-block;" asp-controller="Marcas" asp-action="Delete" method="post" class="delete-form">
                         @Html.Hidden("id", item.MarcaId)
-                        <button type="button" class="btn btn-danger delete-button"><i class="fas fa-trash-alt"></i></button>
+                        <button type="submit" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
                     </form>
 
                 </td>
@@ -175,7 +206,7 @@
     <script>
         // Mostrar SweetAlert cuando haya un mensaje en TempData["Mensaje"]
         Swal.fire({
-            position: "top-center",
+            position: "center",
             icon: "success",
             title: "Se ha registrado la marca exitosamente",
             showConfirmButton: false,
@@ -191,64 +222,21 @@
 {
     <script>
         Swal.fire({
-            position: "top-center",
+            position: "center",
             icon: "@TempData["SweetAlertIcon"]",
             title: "@TempData["SweetAlertTitle"]",
             text: "@TempData["SweetAlertMessage"]",
-            showConfirmButton: false,
+            showConfirmButton: false, // Mostrar botón de confirmación
             timer: 3000
         }).then((result) => {
-            $('#MarcaModal').modal('show');
+            if (result.isConfirmed) { // Si el usuario confirmó la acción
+                window.location.href = "@Url.Action("Index", "Marcas")"; // Redireccionar a la página de índice de marcas
+            }
         });
     </script>
 }
 
-@if (TempData["SweetAlertMessage"] != null)
-{
-    <script>
-        Swal.fire({
-            position: "top-center",
-            icon: "@TempData["SweetAlertIcon"]",
-            title: "@TempData["SweetAlertTitle"]",
-            text: "@TempData["SweetAlertMessage"]",
-            showConfirmButton: false,
-            timer: 3000
-        }).then((result) => {
-            $('#MarcaModal').modal('show');
-        });
-    </script>
 
-
-
-}
-
-
-
-@section Scripts {
-
-   
-    <script>
-        $(document).ready(function () {
-            $('.delete-button').on('click', function () {
-                var form = $(this).closest('form');
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: '¿Quieres eliminar esta marca?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
-                });
-            });
-        });
-    </script>
-}
 
 
 

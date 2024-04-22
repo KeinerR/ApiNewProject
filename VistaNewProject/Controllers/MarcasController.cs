@@ -3,6 +3,7 @@ using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
 using Microsoft.AspNetCore.Http;
+using System.Net;
 
 namespace VistaNewProject.Controllers
 {
@@ -83,27 +84,130 @@ namespace VistaNewProject.Controllers
             ViewBag.Mensaje = TempData["Mensaje"]; ViewBag.Mensaje = TempData["Mensaje"];
             return View("Index");
         }
-
-
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Update([FromForm] int marcaIdAct, [FromForm] string nombreMarcaAct, [FromForm] int estadoMarcaAct)
         {
-            var marca = await _client.DeleteClienteAsync(id);
-            if (marca == null)
+            try
             {
+                // Obtener la marca existente para comparar el nombre
+                var marcaExistente = await _client.FindMarcasAsync(marcaIdAct);
+
+                // Verificar si ya existe una marca con el mismo nombre
+                if (marcaExistente != null && marcaExistente.NombreMarca == nombreMarcaAct && marcaExistente.MarcaId != marcaIdAct )
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "Ya hay una marca registrada con ese nombre.";
+                    return RedirectToAction("Index");
+                }
+
+                // Continuar con la lógica de actualización de la marca si no hay una marca con el mismo nombre
+
+                // Crear un objeto Marca con los datos recibidos del formulario
+                var marca = new Marca
+                {
+                    MarcaId = marcaIdAct,
+                    NombreMarca = nombreMarcaAct,
+                    EstadoMarca = estadoMarcaAct == 1 ? 1ul : 0ul
+                };
+
+                // Llamar al método en el cliente para actualizar la marca
+                var response = await _client.UpdateMarcaAsync(marca);
+
+                if (response != null)
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData["SweetAlertIcon"] = "success";
+                        TempData["SweetAlertTitle"] = "Éxito";
+                        TempData["SweetAlertMessage"] = "Marca actualizada correctamente.";
+                        return RedirectToAction("Index");
+                    }
+                    else if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        TempData["SweetAlertIcon"] = "error";
+                        TempData["SweetAlertTitle"] = "Error";
+                        TempData["SweetAlertMessage"] = "La marca no se encontró en el servidor.";
+                        return RedirectToAction("Index");
+                    }
+                    else if (response.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        TempData["SweetAlertIcon"] = "error";
+                        TempData["SweetAlertTitle"] = "Error";
+                        TempData["SweetAlertMessage"] = "Nombre de marca duplicado.";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["SweetAlertIcon"] = "error";
+                        TempData["SweetAlertTitle"] = "Error";
+                        TempData["SweetAlertMessage"] = "Error al actualizar la marca.";
+                        return RedirectToAction("Index");
+                    }
+                }
+                else
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "Error al realizar la solicitud de actualización.";
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Manejar cualquier excepción que pueda ocurrir durante la actualización
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "Error al actualizar la marca: " + ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
+
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int id) 
+        {
+            var response = await _client.DeleteMarcaAsync(id);
+            if (response == null)
+            {
+                // No se recibió una respuesta válida del servidor
                 TempData["SweetAlertIcon"] = "error";
                 TempData["SweetAlertTitle"] = "Error";
                 TempData["SweetAlertMessage"] = "Error al eliminar la marca.";
             }
-            else
+            else if (response.IsSuccessStatusCode)
             {
+                // La solicitud fue exitosa (código de estado 200 OK)
                 TempData["SweetAlertIcon"] = "success";
                 TempData["SweetAlertTitle"] = "Éxito";
                 TempData["SweetAlertMessage"] = "Marca eliminada correctamente.";
             }
+            else if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                // La marca no se encontró en el servidor
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "La marca no se encontró en el servidor.";
+            }
+            else if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                // La solicitud fue incorrecta debido a una restricción
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "No se puede eliminar la marca debido a una restricción (marca asociada a un producto).";
+            }
+            else
+            {
+                // Otro tipo de error no manejado específicamente
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "Error desconocido al eliminar la marca.";
+            }
+
             return RedirectToAction("Index");
         }
 
-     
+
+
 
 
     }

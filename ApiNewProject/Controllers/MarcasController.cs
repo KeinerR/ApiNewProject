@@ -104,54 +104,65 @@ namespace ApiNewProject.Controllers
         }
 
 
-        [HttpPut("UpdateMarcas")]
-        public async Task<IActionResult> UpdateMarcas([FromBody] Marca marca)
+        [HttpPut("UpdateMarca")]
+        public async Task<IActionResult> UpdateMarca([FromBody] Marca marca)
         {
-            // Verificar si la marca ya existe
-            var existingMarca = await _context.Marcas.FirstOrDefaultAsync(m => m.MarcaId == marca.MarcaId);
-
-            if (existingMarca == null)
-            {
-                return NotFound(); // Marca no encontrada
-            }
-
-            // Verificar si el nombre de la marca ya está en uso por otra marca
-            var isNombreDuplicated = await _context.Marcas.AnyAsync(m => m.NombreMarca.ToLower() == marca.NombreMarca.ToLower() && m.MarcaId != marca.MarcaId);
-
-            if (isNombreDuplicated)
-            {
-                return BadRequest(new { existe = true }); // Nombre de marca duplicado
-            }
-
-            // Actualizar los campos de la marca existente
-            existingMarca.NombreMarca = marca.NombreMarca;
-            existingMarca.EstadoMarca = marca.EstadoMarca;
-
-            // Guardar los cambios en la base de datos
             try
             {
+                // Verificar si la marca ya existe
+                var existingMarca = await _context.Marcas.FirstOrDefaultAsync(m => m.MarcaId == marca.MarcaId);
+
+                if (existingMarca == null)
+                {
+                    return NotFound(new { message = "Marca no encontrada" });
+                }
+
+                // Verificar si el nombre de la marca ya está en uso por otra marca
+                var isNombreDuplicated = await _context.Marcas.AnyAsync(m => m.NombreMarca.ToLower() == marca.NombreMarca.ToLower() && m.MarcaId != marca.MarcaId);
+
+                if (isNombreDuplicated)
+                {
+                    return BadRequest(new { message = "Nombre de marca duplicado" });
+                }
+
+                // Actualizar los campos de la marca existente
+                existingMarca.NombreMarca = marca.NombreMarca;
+                existingMarca.EstadoMarca = marca.EstadoMarca;
+
+                // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
-                return Ok(new { existe = false }); // Actualización exitosa
+
+                return Ok(new { message = "Actualización exitosa", marcaId = existingMarca.MarcaId });
             }
             catch (Exception ex)
             {
                 // Manejar cualquier error que pueda ocurrir al guardar los cambios
-                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+                return StatusCode(500, new { message = $"Error interno del servidor: {ex.Message}" });
             }
         }
 
+
         [HttpDelete("DeleteMarca/{Id}")]
-        public async Task<HttpStatusCode> DeleteMarca(int Id)
+        public async Task<IActionResult> DeleteMarca(int Id)
         {
-            var marca = new Marca()
+            var marca = await _context.Marcas.FindAsync(Id);
+            if (marca == null)
             {
-                MarcaId = Id
-            };
-            _context.Marcas.Attach(marca);
+                return NotFound(); // La marca no fue encontrada, puedes devolver un código de estado 404
+            }
+
+            // Verificar si la marca está asociada a algún producto
+            bool marcaAsociadaAProducto = await _context.Productos.AnyAsync(p => p.MarcaId == Id);
+            if (marcaAsociadaAProducto)
+            {
+                return BadRequest("No se puede eliminar la marca porque está asociada a un producto.");
+            }
+
             _context.Marcas.Remove(marca);
             await _context.SaveChangesAsync();
-            return HttpStatusCode.OK;
+            return Ok(); // Opcionalmente, puedes devolver un código de estado 200 OK
         }
+
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using VistaNewProject.Models;
@@ -126,39 +127,107 @@ namespace VistaNewProject.Services
             {
                 var response = await _httpClient.GetFromJsonAsync<Marca>($"Marcas/GetNombreMarcaById?nombreMarca={nombreMarca}");
 
-                return response;
+                // Verificar si la respuesta es null, lo cual podría indicar un error en la solicitud
+                if (response != null)
+                {
+                    return response;
+                }
+                else
+                {
+                    // Marca no encontrada u otro tipo de error
+                    return null;
+                }
             }
             catch (HttpRequestException)
             {
-                // Si no se encuentra la marca, retornamos null
+                // Error al hacer la solicitud HTTP
                 return null;
             }
         }
 
 
-        public async Task<HttpResponseMessage> UpdateMarcasAsync(Marca marca)
+        public async Task<HttpResponseMessage> UpdateMarcaAsync(Marca marca)
         {
-            var response = await _httpClient.PutAsJsonAsync($"Marcas/UpdateMarcas/", marca);
-            if (response == null)
+            try
             {
-                // Manejar el caso en el que response sea nulo
-                return null;
+                // Hacer la solicitud PUT al servidor para actualizar la marca
+                var response = await _httpClient.PutAsJsonAsync("Marcas/UpdateMarca", marca);
+
+                // Verificar si la solicitud fue exitosa (código de estado 200 OK)
+                if (response.IsSuccessStatusCode)
+                {
+                    return response;
+                }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    // La marca no se encontró en el servidor
+                    return response;
+                }
+                else if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    // Error debido a una solicitud incorrecta (por ejemplo, nombre de marca duplicado)
+                    return response;
+                }
+                else
+                {
+                    // Otro tipo de error no manejado específicamente
+                    // Puedes retornar un mensaje genérico o lanzar una excepción
+                    return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                    {
+                        Content = new StringContent("Error al actualizar la marca")
+                    };
+                }
             }
-            return response;
+            catch (HttpRequestException ex)
+            {
+                // Manejar errores de solicitud HTTP (por ejemplo, error de conexión)
+                Console.WriteLine($"Error en la solicitud HTTP: {ex.Message}");
+                return null; // Otra opción es lanzar una excepción para notificar el error
+            }
         }
 
-       
 
-        public async Task<HttpResponseMessage> DeleteClienteAsync(int id)
+
+
+        public async Task<HttpResponseMessage> DeleteMarcaAsync(int id)
         {
-            var response = await _httpClient.DeleteAsync($"Marcas/DeleteMarca/{id}");
-            if (response == null)
+            try
             {
-                // Manejar el caso en el que response sea nulo
+                // Hacer la solicitud DELETE al servidor
+                var response = await _httpClient.DeleteAsync($"Marcas/DeleteMarca/{id}");
+
+                // Verificar si la solicitud fue exitosa (código de estado 200 OK)
+                if (response.IsSuccessStatusCode)
+                {
+                    // Marca eliminada correctamente
+                    return response;
+                }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    // La marca no se encontró en el servidor
+                    // Puedes manejar este caso específico según tus necesidades
+                    return response;
+                }
+                else if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    // La solicitud fue incorrecta debido a una restricción (por ejemplo, marca asociada a un producto)
+                    // Puedes manejar este caso específico según tus necesidades
+                    return response;
+                }
+                else
+                {
+                    // Otro tipo de error no manejado específicamente
+                    // Puedes registrar el error o manejarlo según tus necesidades
+                    return new HttpResponseMessage(HttpStatusCode.InternalServerError) { Content = new StringContent("Error al eliminar la marca") };
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en la solicitud HTTP: {ex.Message}");
                 return null;
             }
-            return response;
         }
+
 
 
 
