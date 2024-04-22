@@ -58,10 +58,10 @@ function agregarProductos() {
     var proveedorId = document.getElementById('ProveedorId').value;
     var numeroFactura = document.getElementById('NumeroFactura').value;
     var fechaCompra = document.getElementById('FechaCompra').value;
-    var numeroLote = document.getElementById('NumeroLote').value;
+  
 
     // Validar que se hayan ingresado los datos requeridos
-    if (!proveedorId || !numeroFactura || !fechaCompra || !numeroLote) {
+    if (!proveedorId || !numeroFactura || !fechaCompra ) {
         alert('Por favor complete todos los campos.');
         return;
     }
@@ -272,9 +272,8 @@ function actualizarCompra() {
     var proveedorId = document.getElementById('ProveedorId').value;
     var numeroFactura = document.getElementById('NumeroFactura').value;
     var fechaCompra = document.getElementById('FechaCompra').value;
-    var nuevoNumeroLote = document.getElementById('NumeroLote').value; // Nuevo número de lote
 
-    if (!proveedorId || !numeroFactura || !fechaCompra || !nuevoNumeroLote) {
+    if (!proveedorId || !numeroFactura || !fechaCompra ) {
         alert('Por favor complete todos los campos.');
         return;
     }
@@ -283,13 +282,6 @@ function actualizarCompra() {
     compra.proveedorId = proveedorId;
     compra.numeroFactura = numeroFactura;
     compra.fechaCompra = fechaCompra;
-
-    // Actualizar el número de lote en todos los lotes asociados a la compra
-    compra.detallecompras.forEach(function (detalle) {
-        detalle.lotes.forEach(function (lote) {
-            lote.numeroLote = nuevoNumeroLote;
-        });
-    });
 
     alert('Compra actualizada');
     noVerCompra();
@@ -495,12 +487,12 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('btnCalcular').addEventListener('click', () => {
         // Obtener los valores de los campos
         const productoId = document.getElementById('ProductoIdHidden').value;
-        const unidadId = document.getElementById('UnidadIdHidden').value;
         const cantidad = document.getElementById('Cantidad').value;
         const precioCompraConPuntos = document.getElementById('PrecioDeCompra').value;
-       
+        const unidad = document.getElementById('CantidadPorUnidad').value;
+        const cantidadPorPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
         // Verificar si los campos requeridos están completos
-        if (productoId === '' || unidadId === '' || cantidad === '' || precioCompraConPuntos === '') {
+        if (productoId === '' || cantidad === '' || precioCompraConPuntos === '') {
             alert('Completa los campos para poder calcular');
             return;
         }
@@ -508,19 +500,23 @@ document.addEventListener("DOMContentLoaded", function () {
         const precioCompra = precioCompraConPuntos.replace(/\./g, '');
       
 
-        const unidad = document.getElementById('CantidadPorUnidad').value;
-        const cantidadPorPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
 
-
-        // Calcular el precio individual unitario y la cantidad unitaria por presentación
-        const precioIndividualUnitarioSinPuntos = precioCompra / (cantidadPorPresentacion * cantidad);
+        /*Precio por producto*/
         const cantidadUnitariaPorPresentacionSinPuntos = precioCompra / (unidad * cantidad);
+        // Precio por unidad e producto
+        const precioIndividualUnitarioSinPuntos = (precioCompra / unidad) / (cantidadPorPresentacion * cantidad);
 
+        const precioPorUnidadIndividualSinPuntos = precioCompra / unidad; 
+
+     
         const precioIndividualUnitario = formatNumber(Math.round(precioIndividualUnitarioSinPuntos));
         const cantidadUnitariaPorPresentacion = formatNumber(Math.round(cantidadUnitariaPorPresentacionSinPuntos));
+        const precioPorUnidadIndividual = formatNumber(Math.round(precioPorUnidadIndividualSinPuntos));
         // Mostrar los resultados en los campos correspondientes
-        document.getElementById('PrecioDeCompraUnitario').value = precioIndividualUnitario;
+      
         document.getElementById('PrecioDeCompraPorPresentacion').value = cantidadUnitariaPorPresentacion;
+        document.getElementById('PrecioDeCompraUnitario').value = precioIndividualUnitario;
+        document.getElementById('PrecioDeCompraPorUnidad').value = precioPorUnidadIndividual;
 
         // Aquí puedes realizar cualquier operación adicional con los valores calculados
     });
@@ -558,9 +554,5 @@ document.addEventListener("DOMContentLoaded", function () {
             fechaVencimientoNunca.style.display = 'none'; // Ocultar el texto "Producto no perecedero"
         }
     });
-
-  
-
-   
 });
 

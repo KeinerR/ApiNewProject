@@ -42,12 +42,8 @@
                             <label for="NumeroFactura" class="control-label"># de Factura</label>
                             <input type="text" id="NumeroFactura" name="numeroFactura" class="form-control" />
                         </div>
-                        <div class="col-6">
-                            <label for="NumeroLote" class="control-label">Numero Lote</label>
-                            <input type="text" id="NumeroLote" name="numeroLote" class="form-control" />
-                        </div>
                     </div>
-                    <div id="agregarDetalle">
+                    <div class="text-center" id="agregarDetalle">
                         <button class="btn btn-primary" id="btnAbrirDetalle" onclick="agregarProductos()">Agregar productos</button>
                     </div>
                     <div class="contenedorFooter noVer" id="actualizarCompra">
@@ -119,21 +115,24 @@
                     </div>
 
                     <div class="row">
-
-                        <div class="col-4 contenedorCalculo">
+                        <div class="col-3 contenedorCalculo">
                             <label for="PrecioDeCompra" class="control-label" id="PC">Precio de Compra<span style="visibility: hidden;">Textohidden</span></label>
                             <input type="text" id="PrecioDeCompra" name="precioDeCompra" class="form-control" />
                             <div class="contenedorCalcular" >
                                 <button class="btn-secondary btn-calculo" id="btnCalcular" title="Calcular"><i class="fas fa-calculator"></i></button>
                             </div>
                         </div>
-                            <div class="col-4">
+                            <div class="col-3">
                                 <label for="PrecioDeCompraPorPresentacion" class="control-label">Precio de Compra x Producto</label>
                                 <input type="text" id="PrecioDeCompraPorPresentacion" name="precioDeCompraPorPresentacion" class="form-control" readonly />
                             </div>
-                            <div class="col-4">
-                                <label for="PrecioDeCompraUnitario" class="control-label">Precio de Compra x Unidad</label>
+                            <div class="col-3">
+                                <label for="PrecioDeCompraUnitario" class="control-label">Precio de Compra x Unidad de producto</label>
                                 <input type="text" id="PrecioDeCompraUnitario" name="precioDeCompraUnitario" class="form-control" readonly />
+                            </div>
+                            <div class="col-3">
+                                <label for="PrecioDeCompraPorUnidad" class="control-label">Precio de Compra x Unidad</label>
+                            <input type="text" id="PrecioDeCompraPorUnidad" name="precioDeCompraPorUnidad" class="form-control" readonly />
                             </div>
                     </div>
                     <div class="row">
@@ -152,7 +151,7 @@
                             </div>
                         </div>
                         <div class="col-4">
-                            <label for="PrecioDeVentaxUnidadPresentacion" class="control-label">Precio De Venta x Unidad</label>
+                            <label for="PrecioDeVentaxUnidadPresentacion" class="control-label">Precio De Venta x Unidad de producto</label>
                             <input type="text" id="PrecioDeVentaxUnidadPresentacion" name="precioDeVentaxUnidadPresentacion" class="form-control" />
                         </div>
                         <div  class="contenedorFooter">
