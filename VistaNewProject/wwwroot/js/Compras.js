@@ -1,224 +1,217 @@
-﻿var compra = {
+﻿
+    // Objeto de compra
+    var compra = {
         proveedorId: 0,
         numeroFactura: 0,
         fechaCompra: new Date().toISOString(), // Obtener la fecha actual en formato ISO
         valorTotalCompra: 0,
         estadoCompra: 0,
         detallecompras: []
-};
+    };
 
-// Función para limpiar el formulario
-function LimpiarFormulario() {
-    document.getElementById('ProductoId').value = '';
-    document.getElementById('UnidadId').value = '';
-    document.getElementById('Cantidad').value = 1;
-    document.getElementById('PrecioDeCompra').value = '';
-    document.getElementById('PrecioDeCompraPorPresentacion').value = '';
-    document.getElementById('PrecioDeCompraUnitario').value = '';
-    document.getElementById('FechaVencimiento').value = '';
-    document.getElementById('PrecioDeVentaUnitario').value = '';
-    document.getElementById('PrecioDeVentaxUnidadPresentacion').value = '';
-    document.getElementById('PrecioDeCompraPorUnidad').value = '';
-    document.getElementById('NumeroLote').value = '';
+    // Función para limpiar el formulario
+    function LimpiarFormulario() {
+        document.getElementById('ProductoId').value = '';
+        document.getElementById('UnidadId').value = '';
+        document.getElementById('Cantidad').value = 1;
+        document.getElementById('PrecioDeCompra').value = '';
+        document.getElementById('PrecioDeCompraPorPresentacion').value = '';
+        document.getElementById('PrecioDeCompraUnitario').value = '';
+        document.getElementById('FechaVencimiento').value = '';
+        document.getElementById('PrecioDeVentaUnitario').value = '';
+        document.getElementById('PrecioDeVentaxUnidadPresentacion').value = '';
+        document.getElementById('PrecioDeCompraPorUnidad').value = '';
+        document.getElementById('NumeroLote').value = '';
+        document.getElementById('PrecioBougth').style.display = 'none';
+        document.getElementById('PrecioBuy').style.display = 'none';
+        document.getElementById('TablaDetalles').style.display= 'flex';
 
-}
+    }
+// Función para registrar la compra
 
-function setHoraActual() {
-    // Obtener la hora actual con Moment.js
-    var fechaHoraActual = moment().format('YYYY-MM-DDTHH:mm');
-
-    // Asignar la fecha y hora actual al campo datetime-local
-    document.getElementById('FechaCompra').value = fechaHoraActual;
-}
-
-// Llamar a setHoraActual al cargar la página para mostrar la hora actual en ek campo de fecha compra
-setHoraActual();
-// Función para mostrar los detalles de la compra en la tabla
-
-// Función para agregar productos a la compra
-function agregarProductos() {
-    // Obtener los valores de los campos del formulario
-    var proveedorId = document.getElementById('ProveedorId').value;
-    var numeroFactura = document.getElementById('NumeroFactura').value;
-    var fechaCompra = document.getElementById('FechaCompra').value;
-  
-
-    // Validar que se hayan ingresado los datos requeridos
-    if (!proveedorId || !numeroFactura || !fechaCompra ) {
-        alert('Por favor complete todos los campos.');
+function RegistrarBuy() {
+    // Verificar si la compra es nula o no tiene detalles
+    if (compra === null || compra.detallecompras.length === 0) {
+        console.error('No se puede guardar una compra sin detalles.');
         return;
     }
 
-    // Actualizar los valores del objeto compra
-    compra.proveedorId = proveedorId;
-    compra.numeroFactura = numeroFactura;
-    compra.fechaCompra = fechaCompra;
+   
 
-    // Mostrar y ocultar elementos según sea necesario
-    document.getElementById('DetallesCompra').style.display = 'block';
-    document.getElementById('verCompra').style.display = 'block';
-    document.getElementById('PrincipalCompra').style.display = 'none';
-    document.getElementById('tituloModal').style.display = 'none';
-    document.getElementById('subTituloModal').style.display = 'block';
-    document.getElementById('agregarDetalle').style.display = 'none';
-    document.getElementById('expandir').style.display = 'inline-block';
-    document.getElementById('expandir').style.visibility = 'visible';
+    // Enviar la solicitud POST al servidor utilizando la Fetch API
+    fetch('https://localhost:7013/api/Compras/InsertCompras', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(compra)
+    })
+        .then(response => {
+            if (response.ok) {
+                alert('Compra guardada correctamente.');
+                location.reload(true); // Recargar la página después de la actualización
+            } else {
+                console.log(compra);
+                alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
+        });
+};
 
-    // Imprimir los valores de compra y lote en la consola (para depuración)
-    console.log(compra);
-}
-
-// Función para agregar un detalle de compra al objeto principal
-function agregarDetalleCompra() {
-    // Crear un nuevo objeto detalleCompra en cada llamada para evitar referencias compartidas
-    var detalleCompra = {
-        compraId: compra.compraId,
-        productoId: document.getElementById('ProductoIdHidden').value,
-        unidadId: document.getElementById('UnidadIdHidden').value,
-        cantidad: document.getElementById('Cantidad').value,
-        lotes: [] // Inicialmente sin lotes
-    };
-
-    var numeroLote = document.getElementById('NumeroLote').value;
-    var precioCompra = document.getElementById('PrecioDeCompra').value.replace(/\./g, '');
-    var precioVentaxProducto = document.getElementById('PrecioDeVentaUnitario').value.replace(/\./g, '');
-    var precioVentaxPresentacion = document.getElementById('PrecioDeVentaxUnidadPresentacion').value.replace(/\./g, '');
-    var cantidadPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
-    var cantidadLote = detalleCompra.cantidad * cantidadPresentacion;
-
-    var nuevoLote = {
-        detalleCompraId: detalleCompra.detalleCompraId,
-        productoId: detalleCompra.productoId,
-        numeroLote: numeroLote,
-        precioCompra: precioCompra,
-        precioPorPresentacion: precioVentaxProducto,
-        precioPorUnidad: precioVentaxPresentacion,
-        fechaVencimiento: document.getElementById('FechaVencimiento').value,
-        cantidad: cantidadLote,
-        estadoLote: 1 // Estado por defecto
-    };
-
-    detalleCompra.lotes.push(nuevoLote);
-    compra.detallecompras.push(detalleCompra);
-
-    console.log(compra);
-    LimpiarFormulario();
-    agregarFilaDetalle(detalleCompra); // Llama a la función para agregar la fila de detalle a la tabla
   
+    /*Funcion para asignar la hora actual al campo  */
+    function setHoraActual() {
+        // Obtener la hora actual con Moment.js
+        var fechaHoraActual = moment().format('YYYY-MM-DDTHH:mm');
+
+        // Asignar la fecha y hora actual al campo datetime-local
+        document.getElementById('FechaCompra').value = fechaHoraActual;
+    }   
+
+    // Llamar a setHoraActual al cargar la página para mostrar la hora actual en ek campo de fecha compra
+    setHoraActual();
+    // Función para mostrar los detalles de la compra en la tabla
+
+    // Función para agregar productos a la compra
+    function agregarProductos() {
+        // Obtener los valores de los campos del formulario
+        var proveedorId = document.getElementById('ProveedorId').value;
+        var numeroFactura = document.getElementById('NumeroFactura').value;
+        var fechaCompra = document.getElementById('FechaCompra').value;
+  
+
+        // Validar que se hayan ingresado los datos requeridos
+        if (!proveedorId || !numeroFactura || !fechaCompra ) {
+            alert('Por favor complete todos los campos.');
+            return;
+        }
+
+        // Actualizar los valores del objeto compra
+        compra.proveedorId = proveedorId;
+        compra.numeroFactura = numeroFactura;
+        compra.fechaCompra = fechaCompra;
+
+        // Mostrar y ocultar elementos según sea necesario
+        document.getElementById('DetallesCompra').style.display = 'block';
+        document.getElementById('verCompra').style.display = 'block';
+        document.getElementById('PrincipalCompra').style.display = 'none';
+        document.getElementById('tituloModal').style.display = 'none';
+        document.getElementById('subTituloModal').style.display = 'block';
+        document.getElementById('agregarDetalle').style.display = 'none';
+        document.getElementById('expandir').style.display = 'inline-block';
+        document.getElementById('expandir').style.visibility = 'visible';
+   
+    }
+
+
+    // Función para agregar un detalle de compra al objeto principal
+    function agregarDetalleCompra() {
+
+        // Crear un nuevo objeto detalleCompra en cada llamada para evitar referencias compartidas
+        var detalleCompra = {
+            productoId: document.getElementById('ProductoIdHidden').value,
+            unidadId: document.getElementById('UnidadIdHidden').value,
+            cantidad: document.getElementById('Cantidad').value,
+            lotes: [] // Inicialmente sin lotes
+        };
+
+        var numeroLote = document.getElementById('NumeroLote').value;
+        var precioCompra = document.getElementById('PrecioDeCompra').value.replace(/\./g, '');
+        var precioVentaxProducto = document.getElementById('PrecioDeVentaUnitario').value.replace(/\./g, '');
+        var precioVentaxPresentacion = document.getElementById('PrecioDeVentaxUnidadPresentacion').value.replace(/\./g, '');
+        var cantidadPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
+        var cantidadUnidad = document.getElementById('CantidadPorUnidad').value;
+        var cantidadLote = detalleCompra.cantidad * (cantidadPresentacion * cantidadUnidad);
+        var fechaVencimiento = document.getElementById('FechaVencimiento').value
+        // Validar la fecha de vencimiento
+        if (!fechaVencimiento || isNaN(new Date(fechaVencimiento))) {
+            // Si la fecha no es de tipo date time o es nula, establecerla en '00-00-0000 00:00'
+            fechaVencimiento = '2000-01-01T00:00';
+        }
+       
+        var nuevoLote = {
+            productoId: detalleCompra.productoId,
+            numeroLote: numeroLote,
+            precioCompra: precioCompra,
+            precioPorPresentacion: precioVentaxProducto,
+            precioPorUnidad: precioVentaxPresentacion,
+            fechaVencimiento: fechaVencimiento,
+            cantidad: cantidadLote,
+            estadoLote: 1 // Estado por defecto
+        };
+
+        detalleCompra.lotes.push(nuevoLote);
+        compra.detallecompras.push(detalleCompra);
+
+        console.log(compra);
+        LimpiarFormulario();
+        agregarFilaDetalle(detalleCompra); // Llama a la función para agregar la fila de detalle a la tabla
+    }
+
+    // Función para agregar una fila de detalle a la tabla
+    // Función para agregar una fila de detalle a la tabla
+    function agregarFilaDetalle(detalleCompra) {
+        // Obtener el cuerpo de la tabla
+        var detalleTableBody = document.getElementById('detalleTableBody');
+
+        // Obtener el último lote agregado al detalle
+        var ultimoLote = detalleCompra.lotes[detalleCompra.lotes.length - 1];
+
+        // Crear una nueva fila para el detalle
+        var newRow = detalleTableBody.insertRow();
+
+        // Crear las celdas para los datos del detalle
+        var cellProducto = newRow.insertCell(0);
+        var cellCantidad = newRow.insertCell(1);
+        var cellPrecioUnitario = newRow.insertCell(2);
+        var cellSubtotal = newRow.insertCell(3);
+        var cellAcciones = newRow.insertCell(4);
+
+        // Asignar los valores del detalle a las celdas
+        cellProducto.innerHTML = detalleCompra.productoId;
+        cellCantidad.innerHTML = detalleCompra.cantidad;
+        cellPrecioUnitario.innerHTML = ultimoLote.precioCompra;
+        cellSubtotal.innerHTML = detalleCompra.cantidad * ultimoLote.precioCompra;
+        cellAcciones.innerHTML = '<button onclick="eliminarFilaDetalle(this)">Eliminar</button>';
+
+        // Actualizar el valor total
+        actualizarValorTotal();
+    }
+
+
+// Función para calcular y actualizar el valor total
+function actualizarValorTotal() {
+    var total = 0;
+    // Obtener todas las filas de la tabla
+    var filas = document.querySelectorAll('#detalleTableBody tr');
+    // Iterar sobre las filas y sumar los subtotales
+    filas.forEach(function (fila) {
+        var subtotal = parseFloat(fila.cells[3].innerHTML);
+        total += subtotal;
+    });
+    // Asignar el total al elemento con el id 'ValorTotal'
+    document.getElementById('ValorTotal').value = total;
 }
 
-//function insertarCompraAPI(compra) {
-//    // URL del endpoint API para insertar compras   insertarCompraAPI(compra); // Llama a la función para insertar la compra en el API
-//    var apiUrl = 'https://localhost:7013/api/Compras/InsertCompras';
-
-//    // Opciones de la solicitud POST
-//    var requestOptions = {
-//        method: 'POST',
-//        headers: {
-//            'Content-Type': 'application/json'
-//        },
-//        body: JSON.stringify(compra) // Convertir el objeto compra a JSON
-//    };
-
-//    // Enviar la solicitud fetch
-//    fetch(apiUrl, requestOptions)
-//        .then(response => {
-//            if (!response.ok) {
-//                throw new Error('Error al insertar la compra');
-//            }
-//            return response.json(); // Convertir la respuesta a JSON
-//        })
-//        .then(data => {
-//            console.log('Compra insertada exitosamente:', data);
-//            // Aquí puedes realizar otras acciones después de insertar la compra
-//        })
-//        .catch(error => {
-//            console.error('Error al insertar la compra:', error);
-//            // Aquí puedes manejar el error de inserción de compra
-//        });
-//}
-
-// Función para agregar un detalle de compra al objeto principal
-function agregarDetalleCompra() {
-    // Crear un nuevo objeto detalleCompra en cada llamada para evitar referencias compartidas
-    var detalleCompra = {
-        detalleCompraId: compra.detallecompras.length + 1,
-        compraId: compra.compraId,
-        productoId: document.getElementById('ProductoIdHidden').value,
-        unidadId: document.getElementById('UnidadIdHidden').value,
-        cantidad: document.getElementById('Cantidad').value,
-        lotes: [] // Inicialmente sin lotes
-    };
-
-    var numeroLote = document.getElementById('NumeroLote').value;
-    var precioCompra = document.getElementById('PrecioDeCompra').value.replace(/\./g, '');
-    var precioVentaxProducto = document.getElementById('PrecioDeVentaUnitario').value.replace(/\./g, '');
-    var precioVentaxPresentacion = document.getElementById('PrecioDeVentaxUnidadPresentacion').value.replace(/\./g, '');
-    var cantidadPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
-    var cantidadLote = detalleCompra.cantidad * cantidadPresentacion;
-
-    var nuevoLote = {
-        loteId: detalleCompra.lotes.length + 1,
-        detalleCompraId: detalleCompra.detalleCompraId,
-        productoId: detalleCompra.productoId,
-        numeroLote: numeroLote,
-        precioCompra: precioCompra,
-        precioPorPresentacion: precioVentaxProducto,
-        precioPorUnidad: precioVentaxPresentacion,
-        fechaVencimiento: document.getElementById('FechaVencimiento').value,
-        cantidad: cantidadLote,
-        estadoLote: 1 // Estado por defecto
-    };
-
-    detalleCompra.lotes.push(nuevoLote);
-    compra.detallecompras.push(detalleCompra);
-
-    console.log(compra);
-    LimpiarFormulario();
-    agregarFilaDetalle(detalleCompra); // Llama a la función para agregar la fila de detalle a la tabla
-}
-
-// Función para agregar una fila de detalle a la tabla
-function agregarFilaDetalle(detalleCompra) {
-    // Obtener la tabla y el cuerpo de la tabla
-    var detalleTable = document.getElementById('detalleTable');
-    var detalleTableBody = document.getElementById('detalleTableBody');
-
-    // Obtener el último lote agregado al detalle
-    var ultimoLote = detalleCompra.lotes[detalleCompra.lotes.length - 1];
-
-    // Crear una nueva fila para el detalle
-    var newRow = detalleTableBody.insertRow();
-
-    // Crear las celdas para los datos del detalle
-    var cellProducto = newRow.insertCell(0);
-    var cellCantidad = newRow.insertCell(1);
-    var cellPrecioUnitario = newRow.insertCell(2);
-    var cellSubtotal = newRow.insertCell(3);
-    var cellAcciones = newRow.insertCell(4);
-
-    // Asignar los valores del detalle a las celdas
-    cellProducto.innerHTML = detalleCompra.productoId;
-    cellCantidad.innerHTML = detalleCompra.cantidad;
-    cellPrecioUnitario.innerHTML = ultimoLote.precioCompra;
-    cellSubtotal.innerHTML = detalleCompra.cantidad * ultimoLote.precioCompra;
-    cellAcciones.innerHTML = '<button onclick="eliminarFilaDetalle(this)">Eliminar</button>';
-}
 
 function eliminarFilaDetalle(button) {
     var row = button.parentNode.parentNode; // Obtener la fila de la tabla
     var indice = row.getAttribute('data-indice'); // Obtener el índice de la fila
 
-    // Obtener el detalle de compra y el lote asociado a través del índice
+    // Obtener el detalle de compra a eliminar
     var detalleEliminado = compra.detallecompras[indice];
-    var loteEliminar = detalleCompra.lotes[indice];
 
-    // Eliminar el detalle de compra y el lote asociado del objeto compra
+    // Eliminar el detalle de compra del objeto compra
     compra.detallecompras.splice(indice, 1);
 
-    // Eliminar el lote asociado del objeto detalleCompra solo si existe
-    if (loteEliminar) {
-        detalleCompra.lotes.splice(indice, 1);
+    // Eliminar el lote asociado del objeto detalleEliminado solo si existe
+    if (detalleEliminado && detalleEliminado.lotes.length > 0) {
+        // Como estás eliminando toda la fila del detalle, 
+        // no necesitas acceder al índice de los lotes, simplemente los eliminas todos.
+        detalleEliminado.lotes = [];
     }
 
     // Eliminar la fila de la tabla
@@ -236,6 +229,19 @@ function actualizarIndicesTabla() {
     filas.forEach(function (fila, index) {
         fila.setAttribute('data-indice', index);
     });
+}
+
+// Función para actualizar una fila de detalle existente con los nuevos datos
+function actualizarFilaDetalle(detalleCompra, indice) {
+    var detalleTableBody = document.getElementById('detalleTableBody');
+    var row = detalleTableBody.rows[indice];
+
+    var ultimoLote = detalleCompra.lotes[detalleCompra.lotes.length - 1];
+
+    row.cells[0].innerHTML = detalleCompra.productoId;
+    row.cells[1].innerHTML = detalleCompra.cantidad;
+    row.cells[2].innerHTML = ultimoLote.precioCompra;
+    row.cells[3].innerHTML = detalleCompra.cantidad * ultimoLote.precioCompra;
 }
 
 
@@ -329,7 +335,6 @@ document.addEventListener("DOMContentLoaded", function () {
     var inputprecioVentaxUnidad = document.getElementById('PrecioDeVentaxUnidadPresentacion');
 
    
-
     var btnMas = document.getElementById('btnMas');
     var btnMenos = document.getElementById('btnMenos');
 
@@ -367,34 +372,36 @@ document.addEventListener("DOMContentLoaded", function () {
         input.value = formattedValue;
     }
 
-    // Asignar eventos de clic a los botones
-    btnMas.addEventListener('mousedown', function () {
+    // Función para iniciar el intervalo al mantener presionado el botón
+    function iniciarIntervalo(funcion) {
         intervalo = setInterval(function () {
             contador++;
             if (contador > 5) { // Incremento más rápido después de cierto tiempo
-                incrementarCantidad();
+                funcion();
             }
         }, 100); // Intervalo inicial de 100ms
-    });
+    }
 
-    btnMas.addEventListener('mouseup', function () {
+    // Función para detener el intervalo al soltar el botón
+    function detenerIntervalo() {
         clearInterval(intervalo);
         contador = 0; // Reiniciar el contador al soltar el botón
+    }
+
+    // Asignar eventos de clic y mouse a los botones
+    btnMas.addEventListener('mousedown', function () {
+        iniciarIntervalo(incrementarCantidad);
     });
+
+    btnMas.addEventListener('mouseup', detenerIntervalo);
+    btnMas.addEventListener('mouseleave', detenerIntervalo);
 
     btnMenos.addEventListener('mousedown', function () {
-        intervalo = setInterval(function () {
-            contador++;
-            if (contador > 5) { // Decremento más rápido después de cierto tiempo
-                decrementarCantidad();
-            }
-        }, 100); // Intervalo inicial de 100ms
+        iniciarIntervalo(decrementarCantidad);
     });
 
-    btnMenos.addEventListener('mouseup', function () {
-        clearInterval(intervalo);
-        contador = 0; // Reiniciar el contador al soltar el botón
-    });
+    btnMenos.addEventListener('mouseup', detenerIntervalo);
+    btnMenos.addEventListener('mouseleave', detenerIntervalo);
 
     // Asignar eventos de clic a los botones
     btnMas.addEventListener('click', incrementarCantidad);
@@ -503,6 +510,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('PrecioBuy').style.display = "flex";
         document.getElementById('PrecioBougth').style.display = "flex";
 
+
         // Aquí puedes realizar cualquier operación adicional con los valores calculados
     });
     document.getElementById('btnCalcularVenta').addEventListener('click', () => {
@@ -520,7 +528,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const precioUnitarioPorPresentacion = Math.ceil(precioVentaxProducto / cantidadPorPresentacion);
 
         document.getElementById('PrecioDeVentaxUnidadPresentacion').value = precioUnitarioPorPresentacion;
-        console.log(precioUnitarioPorPresentacion );
     });
     /*Fecha de vencimiento*/
     const checkboxNoVencimiento = document.getElementById('checkboxNoVencimiento');
@@ -541,3 +548,33 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+//function insertarCompraAPI(compra) {
+//    // URL del endpoint API para insertar compras   insertarCompraAPI(compra); // Llama a la función para insertar la compra en el API
+//    var apiUrl = 'https://localhost:7013/api/Compras/InsertCompras';
+
+//    // Opciones de la solicitud POST
+//    var requestOptions = {
+//        method: 'POST',
+//        headers: {
+//            'Content-Type': 'application/json'
+//        },
+//        body: JSON.stringify(compra) // Convertir el objeto compra a JSON
+//    };
+
+//    // Enviar la solicitud fetch
+//    fetch(apiUrl, requestOptions)
+//        .then(response => {
+//            if (!response.ok) {
+//                throw new Error('Error al insertar la compra');
+//            }
+//            return response.json(); // Convertir la respuesta a JSON
+//        })
+//        .then(data => {
+//            console.log('Compra insertada exitosamente:', data);
+//            // Aquí puedes realizar otras acciones después de insertar la compra
+//        })
+//        .catch(error => {
+//            console.error('Error al insertar la compra:', error);
+//            // Aquí puedes manejar el error de inserción de compra
+//        });
+//}

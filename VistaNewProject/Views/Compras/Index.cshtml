@@ -163,27 +163,26 @@
                             <input type="text" id="PrecioDeVentaxUnidadPresentacion" name="precioDeVentaxUnidadPresentacion" class="form-control" />
                         </div>
                         <div  class="contenedorFooter">
-                            <button class="btn btn-secondary  noVer" id="expandir" onclick="verCompra()" title="Expandir"><i class="fas fa-expand-alt"></i></button>
                             <button class="btn btn-primary" id="btnAgregarDetalleCompra" onclick="agregarDetalleCompra()"><i id="agregarDetalleIcono" class="fas fa-plus-circle"></i>Agregar Producto</button>
                         </div>
                     </div>
                     <div class="modal-footer noVisualizar" id="verCompra">
-                        <div>Valor Total Compra: $</div>
+                        <div style="display:flex;"><h5>Valor Total Compra:</h5><input type="text" id="ValorTotal"/></div>
                         <div class="ml-auto">
                             <button class="btn btn-secondary" onclick="verTodo()" title="VERtodo"><i class="fas fa-minus"></i></button>
-                             
                             <button class="btn btn-secondary  noVer" id="expandirDetalle" onclick="verDetalleCompra()" title="Expandir detalle"><i class="fas fa-expand-alt"></i></button>
                             <button class="btn btn-secondary  noVer" id="expandir" onclick="verCompra()" title="Expandir"><i class="fas fa-expand-alt"></i></button>
                             <button id="volverRegistrarCompra" class="btn btn-secondary" onclick="volverARegistrarCompra()" title="Limpiar Compra"><i class="fas fa-broom"></i></button>
+                            <button class="btn btn-secondary" onclick="RegistrarBuy(compra)" title="Enviar">Enviar</button>
                         </div>
                     </div>
 
                 </div>
-                <div class="">
+                <div class="noVisualizar" id="TablaDetalles">
                     <table id="detalleTable" class="table table-custom text-center">
                         <thead>
                             <tr>
-                                <th>Producto</th>
+                                <th>ProductoId</th>
                                 <th>Cantidad</th>
                                 <th>PrecioUnitario</th>
                                 <th>Subtotal</th>
@@ -194,15 +193,6 @@
                             <!-- Aquí se mostrarán los detalles agregados dinámicamente -->
                         </tbody>
                     </table>
-                </div>
-            </div>
-
-            <div class="modal-footer noVisualizar" id="verCompra">
-                <div>Valor Total Compra: $</div>
-                <div class="ml-auto">
-                    <button class="btn btn-secondary"  title="Reducir"><i class="fas fa-minus"></i></button>
-                    <button class="btn btn-secondary  noVer" id="expandir" onclick="verCompra()" title="Expandir"><i class="fas fa-expand-alt"></i></button>
-                    <button id="volverRegistrarCompra" class="btn btn-secondary" onclick="volverARegistrarCompra()" title="Limpiar Formulario"><i class="fas fa-broom"></i></button>
                 </div>
             </div>
         </div>
