@@ -5,36 +5,44 @@
     margin-top: 10px;
     padding: 0px;
 }
+
 #agregarDetalle {
     display: block;
     justify-content: flex-end;
-    margin-top:10px;
+    margin-top: 10px;
     padding: 0px;
 }
+
 #PrincipalCompra {
     padding-top: 2px;
     padding-bottom: 10px;
 }
+
 #DetallesCompra {
-    padding-top:2px;
+    padding-top: 2px;
 }
 
 /*Hace que el elemnto desaparezca con todo su contenido*/
 .noVisualizar {
-    display:none;
+    display: none;
 }
 /*El contenido sigue presenta pero no se puede ver */
 .noVer {
-    visibility:hidden;
+    visibility: hidden;
+    display: none;
+}
+.noSee {
+    visibility: hidden;
     display:none;
-
 }
 #reducir {
-    margin-right:10px;
+    margin-right: 10px;
 }
+
 #expandir {
     margin-right: 10px;
 }
+
 #agregarDetalleIcono {
     font-size: 20px;
     margin-right: 10px;
@@ -47,42 +55,61 @@
     margin-left: 2px;
     padding: 5px;
 }
+
     #btnMas:hover, #btnMenos:hover {
         background: #ADD8E6;
     }
-#CampoCantidad input{
-    height:40px;
-    border-radius:20px;
-    max-width:85px;
-    min-width:50px;
+
+#CampoCantidad input {
+    height: 40px;
+    border-radius: 20px;
+    max-width: 85px;
+    min-width: 50px;
 }
+
     #CampoCantidad input:hover {
         border: 1px solid #3EAE3E;
     }
 
 
-.contenedorCalculo{
-    position: relative;
+.contenedorCalculo {
+    display: flex;
+    align-items: center; /* Alinea los elementos verticalmente */
 }
 
-.contenedorCalcular {
-    position: absolute; right: 9px; bottom: 0;
-}
+    .contenedorCalculo input {
+        margin-right: -30px; /* Espacio entre el input y el botón */
+    }
+
 .btn-calculo {
-    border-radius: 10px;
-    width:40px;
-    height:37px;   
-}
-.contenedorCalculo2 {
-    position: relative;
+    margin-left: auto;
+    border: none;
+    border-radius: 0 10px 10px 0;
+    width: 40px;
+    height: 38px;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    outline: none; /* Quita el borde de enfoque */
 }
 
-.contenedorCalcular2 {
-    position: absolute;
-    right: 9px;
-    bottom:24px;
+    .btn-calculo:hover {
+        background-color: #0056b3;
+        transform: translateY(-1px);
+    }
+
+
+.labelForm {
+    display: flex;
+    justify-content: initial;
 }
 
+.EspacioForm {
+    height: 25px;
+}
 
 
 /* Media query para zoom del 500% */
@@ -98,19 +125,17 @@
     .col-3 #btnMenos {
         display: none;
     }
+
     .btn-calculo {
         border-radius: 10px;
         width: 32px;
         height: 33px;
     }
- 
- 
 }
+
 @media (max-width: 1100px) {
     .col-3 #btnMas,
     .col-3 #btnMenos {
         display: none;
     }
-
 }
-

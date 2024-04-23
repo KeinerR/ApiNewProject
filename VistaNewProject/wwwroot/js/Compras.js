@@ -1,30 +1,10 @@
 ﻿var compra = {
-    proveedorId: 0,
-    numeroFactura: 0,
-    fechaCompra: new Date().toISOString(), // Obtener la fecha actual en formato ISO
-    valorTotalCompra: 0,
-    estadoCompra: 0,
-    detallecompras: [
-        {
-            compraId: 0,
-            productoId: 0,
-            unidadId: 0,
-            cantidad: 0,
-            lotes: [
-                {
-                    detalleCompraId: 0,
-                    productoId: 0,
-                    numeroLote: 'string',
-                    precioCompra: 0,
-                    precioPorPresentacion: 0,
-                    precioPorUnidad: 0,
-                    fechaVencimiento: new Date().toISOString(), // Obtener la fecha actual en formato ISO
-                    cantidad: 0,
-                    estadoLote: 0
-                }
-            ]
-        }
-    ]
+        proveedorId: 0,
+        numeroFactura: 0,
+        fechaCompra: new Date().toISOString(), // Obtener la fecha actual en formato ISO
+        valorTotalCompra: 0,
+        estadoCompra: 0,
+        detallecompras: []
 };
 
 // Función para limpiar el formulario
@@ -38,6 +18,9 @@ function LimpiarFormulario() {
     document.getElementById('FechaVencimiento').value = '';
     document.getElementById('PrecioDeVentaUnitario').value = '';
     document.getElementById('PrecioDeVentaxUnidadPresentacion').value = '';
+    document.getElementById('PrecioDeCompraPorUnidad').value = '';
+    document.getElementById('NumeroLote').value = '';
+
 }
 
 function setHoraActual() {
@@ -121,39 +104,39 @@ function agregarDetalleCompra() {
     console.log(compra);
     LimpiarFormulario();
     agregarFilaDetalle(detalleCompra); // Llama a la función para agregar la fila de detalle a la tabla
-    insertarCompraAPI(compra); // Llama a la función para insertar la compra en el API
+  
 }
 
-function insertarCompraAPI(compra) {
-    // URL del endpoint API para insertar compras
-    var apiUrl = 'https://localhost:7013/api/Compras/InsertCompras';
+//function insertarCompraAPI(compra) {
+//    // URL del endpoint API para insertar compras   insertarCompraAPI(compra); // Llama a la función para insertar la compra en el API
+//    var apiUrl = 'https://localhost:7013/api/Compras/InsertCompras';
 
-    // Opciones de la solicitud POST
-    var requestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(compra) // Convertir el objeto compra a JSON
-    };
+//    // Opciones de la solicitud POST
+//    var requestOptions = {
+//        method: 'POST',
+//        headers: {
+//            'Content-Type': 'application/json'
+//        },
+//        body: JSON.stringify(compra) // Convertir el objeto compra a JSON
+//    };
 
-    // Enviar la solicitud fetch
-    fetch(apiUrl, requestOptions)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error al insertar la compra');
-            }
-            return response.json(); // Convertir la respuesta a JSON
-        })
-        .then(data => {
-            console.log('Compra insertada exitosamente:', data);
-            // Aquí puedes realizar otras acciones después de insertar la compra
-        })
-        .catch(error => {
-            console.error('Error al insertar la compra:', error);
-            // Aquí puedes manejar el error de inserción de compra
-        });
-}
+//    // Enviar la solicitud fetch
+//    fetch(apiUrl, requestOptions)
+//        .then(response => {
+//            if (!response.ok) {
+//                throw new Error('Error al insertar la compra');
+//            }
+//            return response.json(); // Convertir la respuesta a JSON
+//        })
+//        .then(data => {
+//            console.log('Compra insertada exitosamente:', data);
+//            // Aquí puedes realizar otras acciones después de insertar la compra
+//        })
+//        .catch(error => {
+//            console.error('Error al insertar la compra:', error);
+//            // Aquí puedes manejar el error de inserción de compra
+//        });
+//}
 
 // Función para agregar un detalle de compra al objeto principal
 function agregarDetalleCompra() {
@@ -193,7 +176,6 @@ function agregarDetalleCompra() {
     console.log(compra);
     LimpiarFormulario();
     agregarFilaDetalle(detalleCompra); // Llama a la función para agregar la fila de detalle a la tabla
-    insertarCompraAPI(compra); // Llama a la función para insertar la compra en el API
 }
 
 // Función para agregar una fila de detalle a la tabla
@@ -307,10 +289,11 @@ function volverARegistrarCompra() {
     document.getElementById('UnidadId').value = '';
     document.getElementById('Cantidad').value = 1;
     document.getElementById('PrecioDeCompra').value = '';
+    document.getElementById('UnidadIdHidden').value = '';
+    document.getElementById('CantidadPorUnidad').value = '';
     document.getElementById('PrecioDeCompraPorPresentacion').value = '';
     document.getElementById('PrecioDeCompraUnitario').value = '';
-    
-    
+    document.getElementById('PrecioDeCompraPorUnidad').value = '';
 
     setHoraActual();
 }
@@ -499,14 +482,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const precioCompra = precioCompraConPuntos.replace(/\./g, '');
       
-
+        /* Precio por unidad*/
+        const precioPorUnidadIndividualSinPuntos = precioCompra / cantidad; 
 
         /*Precio por producto*/
         const cantidadUnitariaPorPresentacionSinPuntos = precioCompra / (unidad * cantidad);
-        // Precio por unidad e producto
+        // Precio por unidad de producto
         const precioIndividualUnitarioSinPuntos = (precioCompra / unidad) / (cantidadPorPresentacion * cantidad);
-
-        const precioPorUnidadIndividualSinPuntos = precioCompra / unidad; 
+    
 
      
         const precioIndividualUnitario = formatNumber(Math.round(precioIndividualUnitarioSinPuntos));
@@ -517,6 +500,8 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('PrecioDeCompraPorPresentacion').value = cantidadUnitariaPorPresentacion;
         document.getElementById('PrecioDeCompraUnitario').value = precioIndividualUnitario;
         document.getElementById('PrecioDeCompraPorUnidad').value = precioPorUnidadIndividual;
+        document.getElementById('PrecioBuy').style.display = "flex";
+        document.getElementById('PrecioBougth').style.display = "flex";
 
         // Aquí puedes realizar cualquier operación adicional con los valores calculados
     });
@@ -546,11 +531,11 @@ document.addEventListener("DOMContentLoaded", function () {
         if (checkboxNoVencimiento.checked) {
             fechaVencimiento.style.display = 'none'; // Ocultar la fecha de vencimiento
             fechaVencimientoNunca.style.display = 'block'; // Mostrar el texto "Producto no perecedero"
-            labelFechaVencimiento.textContent = 'Fecha Vencimiento? :';
+            labelFechaVencimiento.textContent = 'Fecha Vencimiento clic:';
             fechaVencimiento.value = ''; // Asignar un valor vacío por defecto
         } else {
             fechaVencimiento.style.display = 'block'; // Mostrar la fecha de vencimiento
-            labelFechaVencimiento.textContent = 'No perecedero:';
+            labelFechaVencimiento.textContent = 'No Aplica:';
             fechaVencimientoNunca.style.display = 'none'; // Ocultar el texto "Producto no perecedero"
         }
     });

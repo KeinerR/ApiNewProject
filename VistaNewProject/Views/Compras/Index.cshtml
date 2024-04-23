@@ -12,7 +12,7 @@
 <!-- Modal -->
 <div class="modal fade" id="CompraModal" tabindex="-1" aria-labelledby="titulomodal" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+        <div class="modal-content modal-lg">
             <div class="modal-header">
                 <h2 class="modal-title" id="tituloModal">Agregar Compra</h2>
                 <h3 class="modal-title noVisualizar" id="subTituloModal">Agregar productos a la compra</h3>
@@ -54,7 +54,7 @@
             </div>
             <div class="modal-body noVisualizar" id="DetallesCompra">
                 <div id="detallecontainer" class="form-group">
-                    <div class="row">
+                    <div class="row" id="DatosProduct">
                         <div class="col-5">
                             <label for="ProductoId" class="control-label">Producto</label>
                             <input list="productos" id="ProductoId" name="productoId" class="form-control" placeholder="Escribe y/o selecciona el producto ...">
@@ -84,16 +84,30 @@
                             
 
                         </div>
-
-
+                        <div class="col-4">
+                            <div>
+                                <label for="FechaVencimiento" class="control-label">Fecha Vencimiento </label>
+                            </div>
+                            <input type="datetime-local" id="FechaVencimiento" name="fechaVencimiento" class="form-control" />
+                            <input type="text" class="noVisualizar form-control" id="FechaVencimientoNunca" name="fechaVencimientoNunca" value="Producto no perecedero" readonly />
+                            <label for="checkboxNoVencimiento" id="Vencimiento" class="control-label">No aplica clic:</label>
+                            <input type="checkbox" id="checkboxNoVencimiento" />
+                        </div>
+                        <div class="col-3">
+                            <label for="NumeroLote" class="control-label">Numero Lote</label>
+                            <input type="text" id="NumeroLote" name="numeroLote" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="EspacioForm"></div>
+                    <div class="row">
                         <div class="col-4">
                             <label for="UnidadId" class="control-label">Unidad</label>
-                            <input list="unidades" id="UnidadId" name="unidadId" class="form-control" placeholder="Escribe y / o selecciona la unidad ..." >
+                            <input list="unidades" id="UnidadId" name="unidadId" class="form-control" placeholder="Escribe y / o selecciona la unidad ...">
                             <datalist id="unidades">
                                 @foreach (var unidad in ViewBag.Unidades)
                                 {
-                                       
-                                     <option value="@unidad.UnidadId">@($"{unidad.NombreUnidad} x {unidad.CantidadPorUnidad}")</option>
+
+                                    <option value="@unidad.UnidadId">@($"{unidad.NombreUnidad} x {unidad.CantidadPorUnidad}")</option>
                                 }
                             </datalist>
                             <input type="hidden" id="UnidadIdHidden" name="unidadIdHidden">
@@ -103,55 +117,49 @@
                             <label for="Cantidad" class="control-label">Cantidad</label>
                             <div class="input-group" id="CampoCantidad">
                                 <input type="number" id="Cantidad" name="cantidad" class="form-control" value="1" min="1">
-                                <button type="button" class="btn btn-default btn-number input-group-append" id="btnMas">
-                                    <i class="fas fa-plus"></i>
-                                </button>
                                 <button type="button" class="btn btn-default btn-number input-group-prepend" id="btnMenos">
                                     <i class="fas fa-minus"></i>
                                 </button>
+                                <button type="button" class="btn btn-default btn-number input-group-append" id="btnMas">
+                                    <i class="fas fa-plus"></i>
+                                </button>
                             </div>
                         </div>
-
+                        <div class="col-4">
+                            <label for="PrecioDeCompra" class="labelForm control-label" id="PC">Precio de Compra</label>
+                            <div class="contenedorCalculo">
+                                <input type="text" id="PrecioDeCompra" name="precioDeCompra" class="form-control" />
+                                <button class="btn-calculo" id="btnCalcular" title="Calcular"><i class="fas fa-calculator"></i></button>
+                            </div>
+                        </div>
                     </div>
-
-                    <div class="row">
-                        <div class="col-3 contenedorCalculo">
-                            <label for="PrecioDeCompra" class="control-label" id="PC">Precio de Compra<span style="visibility: hidden;">Textohidden</span></label>
-                            <input type="text" id="PrecioDeCompra" name="precioDeCompra" class="form-control" />
-                            <div class="contenedorCalcular" >
-                                <button class="btn-secondary btn-calculo" id="btnCalcular" title="Calcular"><i class="fas fa-calculator"></i></button>
-                            </div>
-                        </div>
-                            <div class="col-3">
-                                <label for="PrecioDeCompraPorPresentacion" class="control-label">Precio de Compra x Producto</label>
-                                <input type="text" id="PrecioDeCompraPorPresentacion" name="precioDeCompraPorPresentacion" class="form-control" readonly />
-                            </div>
-                            <div class="col-3">
-                                <label for="PrecioDeCompraUnitario" class="control-label">Precio de Compra x Unidad de producto</label>
-                                <input type="text" id="PrecioDeCompraUnitario" name="precioDeCompraUnitario" class="form-control" readonly />
-                            </div>
-                            <div class="col-3">
-                                <label for="PrecioDeCompraPorUnidad" class="control-label">Precio de Compra x Unidad</label>
+                    <div class="EspacioForm"></div>
+                    <div class="row noVisualizar" id="PrecioBuy">
+                        <h5>Precio de compra</h5>
+                        <div class="col-4">
+                            <label for="PrecioDeCompraPorUnidad" class="labelForm control-label">x Unidad</label>
                             <input type="text" id="PrecioDeCompraPorUnidad" name="precioDeCompraPorUnidad" class="form-control" readonly />
-                            </div>
+                        </div>
+                        <div class="col-4">
+                            <label for="PrecioDeCompraPorPresentacion" class=" labelForm control-label">x Producto</label>
+                            <input type="text" id="PrecioDeCompraPorPresentacion" name="precioDeCompraPorPresentacion" class="form-control" readonly />
+                        </div>
+                        <div class="col-4">
+                            <label for="PrecioDeCompraUnitario" class="labelForm control-label"> x Unidad de producto</label>
+                            <input type="text" id="PrecioDeCompraUnitario" name="precioDeCompraUnitario" class="form-control" readonly />
+                        </div>
                     </div>
-                    <div class="row">
-                        <div class="col-4">
-                            <label for="FechaVencimiento" class="control-label">Fecha Vencimiento <span style="visibility: hidden;">Textohidden</span></label>
-                            <input type="datetime-local" id="FechaVencimiento" name="fechaVencimiento" class="form-control" />
-                            <input type="text" class="noVisualizar form-control" id="FechaVencimientoNunca" name="fechaVencimientoNunca" value="Producto no perecedero" readonly />
-                            <label for="checkboxNoVencimiento" id="Vencimiento" class="control-label">No perecedero:</label>
-                            <input type="checkbox" id="checkboxNoVencimiento" />
-                        </div>
-                        <div class="col-4 contenedorCalculo2">
-                            <label for="PrecioDeVentaUnitario" class="control-label">Precio de venta  x Producto</label>
-                            <input type="text" id="PrecioDeVentaUnitario" name="precioDeVentaUnitario" class="form-control" />
-                            <div class="contenedorCalcular2">
-                                <button class="btn-secondary btn-calculo" id="btnCalcularVenta" title="Calcular precio por unidad"><i class="fas fa-calculator"></i></button>
+                    <div class="row noVisualizar" id="PrecioBougth">
+                        <h5>Precio de venta</h5>
+                        <div class="col-4" >
+                            <label for="PrecioDeVentaUnitario" class="control-label">x Producto</label>
+                            <div class="contenedorCalculo">
+                                <input type="text" id="PrecioDeVentaUnitario" name="precioDeVentaUnitario" class="form-control" />
+                                <button class="btn-calculo" id="btnCalcularVenta" title="Calcular precio por unidad"><i class="fas fa-calculator"></i></button>
                             </div>
                         </div>
                         <div class="col-4">
-                            <label for="PrecioDeVentaxUnidadPresentacion" class="control-label">Precio De Venta x Unidad de producto</label>
+                            <label for="PrecioDeVentaxUnidadPresentacion" class="control-label">x Unidad de producto</label>
                             <input type="text" id="PrecioDeVentaxUnidadPresentacion" name="precioDeVentaxUnidadPresentacion" class="form-control" />
                         </div>
                         <div  class="contenedorFooter">
@@ -247,5 +255,5 @@
         }
     </tbody>
 </table>
-<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="~/js/compras.js"></script>
+
+<script src="~/js/Compras.js"></script>
