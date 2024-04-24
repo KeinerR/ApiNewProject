@@ -1,0 +1,91 @@
+﻿@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<VistaNewProject.Models.Detallecompra>
+
+@{
+    ViewData["Title"] = "Detalles de Compra";
+}
+
+<h1>Detalles de Compra</h1>
+<a asp-action="Index" class="btn btn-primary btn-sm">
+    <i class="fas fa-arrow-left"></i> Volver
+</a>
+
+<div>
+    <h5>COMPRA ID:</h5>
+    <p>@ViewBag.Compra.CompraId</p>
+    <h5>Fecha de compra:</h5>
+    <p>@ViewBag.Compra.FechaCompra</p>
+</div>
+
+<h4>Productos asociados:</h4>
+
+@if (Model.Any())
+{
+    @foreach (var detalle in Model)
+    {
+        <div>
+            <h4>Detalle de Compra ID: @detalle.DetalleCompraId</h4>
+            <p>Compra ID: @detalle.CompraId</p>
+            <p>Producto ID: @detalle.ProductoId</p>
+
+            @if (detalle.Producto != null)
+            {
+                <p>Nombre producto: @detalle.Producto.NombreProducto</p>
+            }
+            else
+            {
+                <p>No se encontró información del producto.</p>
+            }
+
+            <p>Unidad ID: @detalle.UnidadId</p>
+            <p>Cantidad: @detalle.Cantidad</p>
+
+            @{
+                var lotesDetalle = ViewBag.Lotes as List<VistaNewProject.Models.Lote>;
+            }
+            @if (lotesDetalle != null && lotesDetalle.Any(l => l.DetalleCompraId == detalle.DetalleCompraId))
+            {
+                @foreach (var lote in lotesDetalle.Where(l => l.DetalleCompraId == detalle.DetalleCompraId))
+                {
+                    <div>
+                        <h4>Lote Asociado al Detalle de Compra ID: @lote.DetalleCompraId</h4>
+                        @if (lote.LoteId != null)
+                        {
+                            <p>Lote ID: @lote.LoteId</p>
+                            <p>Producto ID: @lote.ProductoId</p>
+                            <p>Número de Lote: @lote.NumeroLote</p>
+                            <p>Precio de Compra: @lote.PrecioCompra</p>
+                            <p>Precio por Presentación: @lote.PrecioPorPresentacion</p>
+                            <p>Precio por Unidad: @lote.PrecioPorUnidad</p>
+                        }
+                        else
+                        {
+                            <p>No hay información de lote asociada a este detalle.</p>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <p>No hay información de lote asociada a este detalle.</p>
+            }
+        </div>
+    }
+
+    <div class="pagination-detail">
+        @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Compra.CompraId, page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 }) + "' class='prev-next " + (Model.HasPreviousPage ? "" : "disabled") + "'>Anterior</a>")
+
+        @for (int i = 1; i <= Model.PageCount; i++)
+        {
+            <a href="@Url.Action("Details", new { id = ViewBag.Compra.CompraId, page = i })" class="@(i == Model.PageNumber ? "active" : "")">@i</a>
+        }
+
+        @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Compra.CompraId, page = Model.HasNextPage ? Model.PageNumber + 1 : Model.PageCount }) + "' class='prev-next " + (Model.HasNextPage ? "" : "disabled") + "'>Siguiente</a>")
+    </div>
+}
+else
+{
+    <p>No se encontraron detalles asociados a esta compra.</p>
+}
+
+<script src="~/js/Detalle.js"></script>

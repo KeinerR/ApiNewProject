@@ -30,6 +30,20 @@ function valoresPorDefaultSinConexion() {
     const API_URL = 'https://localhost:7013/api/Marcas';
     var todoValido = true;
     var marcas = [];
+
+    if (mostrarAlerta === 'true' && marcaId) {
+        obtenerMarca(marcaId);
+
+        // Obtener el botón que activa la modal
+        const botonModal = document.querySelector('[data-bs-target="#MarcaModal"]');
+        document.getElementById('FormAgregar').style.display = 'none';
+        document.getElementById('FormActualizar').style.display = 'block';
+            if(botonModal) {
+            // Simular el clic en el botón para mostrar la modal
+            botonModal.click();
+        }
+    }
+
     function MostrarTodasLasMarcas() {
         fetch(`${API_URL}/GetMarcas`)
             .then(response => {

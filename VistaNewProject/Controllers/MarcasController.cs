@@ -44,8 +44,34 @@ namespace VistaNewProject.Controllers
             return View(pageMarca); // Pasar la lista de marcas paginada a la vista
            
         }
+        public async Task<IActionResult> Details(int? id, int? page)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        [HttpPost]
+            var marcas = await _client.GetMarcaAsync();
+            var marca = marcas.FirstOrDefault(u => u.MarcaId == id);
+            if (marca == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Marca = marca;
+
+            var productos = await _client.GetProductoAsync();
+            var productosDeMarca = productos.Where(p => p.MarcaId == id);
+
+            int pageSize = 2; // Número máximo de elementos por página
+            int pageNumber = page ?? 1;
+
+            var pagedProductos = productosDeMarca.ToPagedList(pageNumber, pageSize);
+
+            return View(pagedProductos);
+        }
+
+    [HttpPost]
         public async Task<IActionResult> Create([FromForm] string nombreMarca)
         {
             if (ModelState.IsValid)

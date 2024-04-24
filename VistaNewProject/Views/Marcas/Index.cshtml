@@ -3,9 +3,7 @@
 @{
     ViewData["Title"] = "Index";
 }
-
 <br />
-
 <div class="d-flex justify-content-between">
     <!-- Formulario de búsqueda a la izquierda -->
     <div class="mr-auto">
@@ -143,16 +141,15 @@
                 </td>
               
 
-                <td class="text-center align-middle">
+                <td class="text-center align-middle contenedorEstadoTabla">
                     <label class="switch">
                         <input type="checkbox" @(item.EstadoMarca != 0 ? "checked" : "") onchange="mostraralerta('@item.MarcaId')">
                         <span class="slider"></span>
                     </label>
-                    @Html.DisplayFor(modelItem => item.EstadoMarca)
                 </td>
-                <td class="text-center align-middle contenedorBotonesTabla" >
+                <td class="contenedorBotonesTabla">
                     <button class="btn btn-warning botonEditar" id="btnEdit" value="" data-marca-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal"><i class="fas fa-edit"></i></button>
-                    <a asp-action="Details" asp-route-id="@item.MarcaId" value="" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
+                    <a asp-action="Details" asp-route-id="@item.MarcaId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
                     <form style="display:inline-block;" asp-controller="Marcas" asp-action="Delete" method="post" class="delete-form">
                         @Html.Hidden("id", item.MarcaId)
                         <button type="submit" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>

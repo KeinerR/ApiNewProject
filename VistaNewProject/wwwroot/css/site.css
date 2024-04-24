@@ -16,9 +16,7 @@ html, body {
 
 /* Estilos del contenedor */
 .container {
-    width: 100%;
     min-height: 520px;
-    padding: 20px;
     box-sizing: border-box;
 }
 
@@ -53,18 +51,16 @@ html, body {
 #Cuerpo {
     display: flex;
     width: auto;
-    height: auto;
+    height: auto; /* El 80% de la altura de la ventana (viewport height) */
     margin-top: 0.3px;
 }
 
+
 .sidebar {
     height: auto;
-    min-height: 350px;
-    width: 150px;
+    width: auto;
     background-color: #2574A8;
-    padding-top: 8px;
-    transition: margin-left 0.5s;
-    padding: 10px;
+    padding: 8px;
 }
 
     /* Otros estilos */
@@ -85,7 +81,7 @@ html, body {
         display: block;
         margin-bottom: 4px;
         border: solid black 1px;
-        transition: background-color 0.3s ease-in-out;
+        
     }
 
     /*Diseño cuando el coursor esta sobre la etiqueta*/
@@ -127,10 +123,15 @@ input[type="checkbox"]:checked + .sub-menu {
     max-height: 500px;
 }
 
-
-
-
-
+.PIE {
+    height:30px;
+}
+.iframe-optimus {
+    height:auto;
+}
+.pagination-container {
+    height:45px;
+}
 /*Switch*/
 .switch {
     position: relative;
@@ -321,17 +322,18 @@ input:checked + .slider:before {
 
 .table-custom tbody tr {
     transition: all 0.3s ease; /* Transición suave */
+
 }
 
     .table-custom tbody tr:hover {
-        transform: translateY(-3px); /* Levantar 3px al pasar el cursor */
+        transform: translateY(-1px); /* Levantar 3px al pasar el cursor */
     }
 
 .table-custom td, .table-custom th {
     border: 1px solid #ddd; /* Borde */
-    padding: 8px; /* Espaciado interno */
     text-align: center; /* Alineación del texto */
 }
+
 
 /* Estilos para los botones */
 .btn {
@@ -341,11 +343,12 @@ input:checked + .slider:before {
 }
 
 .contenedorBotonesTabla {
-    width: 200px; /* Ancho inicial */
-    max-width: 900px; /* Ancho máximo permitido */
-    overflow: auto; /* Hacer que el contenido que excede el ancho se desplace horizontalmente */
-    white-space: nowrap; /* Evitar que el texto se divida en múltiples líneas */
+    width: 200px; 
 }
+.contenedorEstadoTabla {
+    width: 100px;
+}
+
 
 
 /* Media queries para hacer la tabla responsive */
@@ -358,6 +361,7 @@ input:checked + .slider:before {
     .table-custom td, .table-custom th {
         display: block;
         text-align: left;
+        height:40px;
     }
 
     .table-custom tbody td, .table-custom tbody th {
@@ -372,6 +376,7 @@ input:checked + .slider:before {
     .btn {
         margin-bottom: 10px; /* Ajuste de espacio entre botones */
     }
+
 }
 /*searh y agregar*/
 /* Estilos para el buscador y el botón agregar */

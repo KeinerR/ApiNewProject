@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VistaNewProject.Services;
+using X.PagedList;
 
 namespace VistaNewProject.Controllers
 {
@@ -10,24 +11,78 @@ namespace VistaNewProject.Controllers
         {
             _client = client;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int ? page)
         {
+            int pageSize = 5; 
+            int pageNumber = page ?? 1;
+
             var compras = await _client.GetCompraAsync();
             var proveedores = await _client.GetProveedorAsync();
             var unidades = await _client.GetUnidadAsync();
             var productos = await _client.GetProductoAsync();
             var presentaciones = await _client.GetPresentacionAsync();
 
-
             if (compras == null)
             {
                 return NotFound("error");
             }
+
+            var pageCompra = await compras.ToPagedListAsync(pageNumber, pageSize);
+            if (!pageCompra.Any() && pageCompra.PageNumber > 1)
+            {
+                pageCompra = await compras.ToPagedListAsync(pageCompra.PageCount, pageSize);
+            }
+
+            int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
+
+            ViewBag.Contador = contador;
             ViewBag.Proveedores = proveedores;
             ViewBag.Unidades = unidades;
             ViewBag.Productos = productos;
             ViewBag.Presentaciones = presentaciones;
-            return View(compras);
+            return View(pageCompra); 
+        }
+        public async Task<IActionResult> Details(int? id, int? page)
+        {
+            int pageSize = 2; // Número máximo de elementos por página
+            int pageNumber = page ?? 1;
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var compras = await _client.GetCompraAsync();
+            var compra = compras.FirstOrDefault(u => u.CompraId == id);
+            if (compra == null)
+            {
+                return NotFound();
+            }
+            var productos = await _client.GetProductoAsync();
+            var categorias = await _client.GetCategoriaAsync();
+            var marcas = await _client.GetMarcaAsync();
+            var detallescompra = await _client.GetDetallecompraAsync();
+            var proveedores = await _client.GetProveedorAsync();
+            var unidades = await _client.GetUnidadAsync();
+            var lotes = await _client.GetLoteAsync();
+            var presentaciones = await _client.GetPresentacionAsync();
+
+            // Filtrar los productos para este detalle específico
+            var detallesXCompra = detallescompra.Where(p => p.CompraId == id).ToList();
+            foreach (var detalle in detallesXCompra)
+            {
+                detalle.Producto = productos.FirstOrDefault(p => p.ProductoId == detalle.ProductoId);
+            }
+
+            var pagedCompra = detallesXCompra.ToPagedList(pageNumber, pageSize);
+            ViewBag.Compra = compra;
+            ViewBag.Proveedores = proveedores;
+            ViewBag.Unidades = unidades;
+            ViewBag.Productos = productos;
+            ViewBag.Lotes = lotes;
+            ViewBag.Presentaciones = presentaciones;
+            ViewBag.Marcas = marcas;
+            ViewBag.Categorias = categorias;
+            return View(pagedCompra);
         }
     }
 }
