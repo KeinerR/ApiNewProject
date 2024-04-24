@@ -473,3 +473,26 @@ function limpiarFormulario() {
     }
 }
 
+
+function actualizarEstadoPresentacion(PresentacionId, EstadoPresentacion) {
+    fetch(`https://localhost:7013/api/Presentaciones/UpdateEstadoPresentacion/${PresentacionId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ EstadoPresentacion: EstadoPresentacion ? 1 : 0 })
+    })
+        .then(response => {
+            if (response.ok) {
+                console.log(EstadoPresentacion);
+                setTimeout(() => {
+                    location.reload(); // Recargar la página
+                }, 500);
+            } else {
+                console.error('Error al actualizar el estado del cliente');
+            }
+        })
+        .catch(error => {
+            console.error('Error de red:', error);
+        });
+}

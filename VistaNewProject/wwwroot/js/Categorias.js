@@ -376,3 +376,25 @@ function limpiarFormulario() {
         window.location.replace('/Categorias');
     }
 }
+
+function actualizarEstadoCategoria(CategoriaId, EstadoCategoria) {
+    fetch(`https://localhost:7013/api/Categorias/UpdateEstadoCategoria/${CategoriaId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ EstadoCategoria: EstadoCategoria ? 1 : 0 })
+    })
+        .then(response => {
+            if (response.ok) {
+                setTimeout(() => {
+                    location.reload(); // Recargar la página
+                }, 500);
+            } else {
+                console.error('Error al actualizar el estado del cliente');
+            }
+        })
+        .catch(error => {
+            console.error('Error de red:', error);
+        });
+}

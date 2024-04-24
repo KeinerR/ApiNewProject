@@ -70,10 +70,15 @@
                         <label for="Direccion" class="control-label">Direccion</label>
                         <input type="text" id="Direccion" name="direccion" class="form-control" />
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="EstadoCliente" style="display:none">
                         <label for="EstadoCliente" class="control-label">Estado Cliente</label>
-                        <input type="text" id="EstadoCliente" name="estadoCliente" class="form-control" />
+                        <select id="EstadoCliente" name="estadoCliente" class="form-control">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                        <span id="MensajeEstadoCliente" class="text-danger"></span>
                     </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
@@ -135,7 +140,11 @@
                 <td class="tipo-cliente">@Html.DisplayFor(modelItem => item.TipoCliente)</td>
                 <td class="telefono">@Html.DisplayFor(modelItem => item.Telefono)</td>
                 <td class="correo">@Html.DisplayFor(modelItem => item.Direccion)</td>
-                <td>
+                <td class="text-center align-middle">
+                    <label class="switch">
+                        <input type="checkbox" @(item.EstadoCliente != 0 ? "checked" : "") onchange="actualizarEstadoCliente('@item.ClienteId',this.checked)">
+                        <span class="slider"></span>
+                    </label>
                     @Html.DisplayFor(modelItem => item.EstadoCliente)
                 </td>
                 <td>

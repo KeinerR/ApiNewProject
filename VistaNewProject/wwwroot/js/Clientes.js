@@ -225,3 +225,26 @@ $('#btnClearSearch').on('click', function () {
     // Ocultar el botón de limpiar búsqueda al limpiar la búsqueda
     $(this).hide();
 });
+
+
+function actualizarEstadoCliente(clienteId, estadoCliente) {
+    fetch(`https://localhost:7013/api/Clientes/UpdateEstadoCliente/${clienteId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ EstadoCliente: estadoCliente ? 1 : 0 })
+    })
+        .then(response => {
+            if (response.ok) {
+                setTimeout(() => {
+                    location.reload(); // Recargar la página
+                }, 500);
+            } else {
+                console.error('Error al actualizar el estado del cliente');
+            }
+        })
+        .catch(error => {
+            console.error('Error de red:', error);
+        });
+}
