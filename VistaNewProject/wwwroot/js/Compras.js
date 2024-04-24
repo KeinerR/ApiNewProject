@@ -35,8 +35,7 @@ function RegistrarBuy() {
         console.error('No se puede guardar una compra sin detalles.');
         return;
     }
-
-   
+    alert(compra.detallecompras[0].unidadId)
 
     // Enviar la solicitud POST al servidor utilizando la Fetch API
     fetch('https://localhost:7013/api/Compras/InsertCompras', {
@@ -109,11 +108,14 @@ function RegistrarBuy() {
 
     // Función para agregar un detalle de compra al objeto principal
     function agregarDetalleCompra() {
-
+        var unidad = document.getElementById('UnidadIdHidden').value
+        var unidadParse = parseInt(unidad);
+        alert("El valor de unidad es:" + unidad);
+        if (Number.isInteger(unidadParse)) { alert("Es entero"); }
         // Crear un nuevo objeto detalleCompra en cada llamada para evitar referencias compartidas
         var detalleCompra = {
             productoId: document.getElementById('ProductoIdHidden').value,
-            unidadId: document.getElementById('UnidadIdHidden').value,
+            unidadId: unidadParse,
             cantidad: document.getElementById('Cantidad').value,
             lotes: [] // Inicialmente sin lotes
         };
@@ -146,7 +148,6 @@ function RegistrarBuy() {
         detalleCompra.lotes.push(nuevoLote);
         compra.detallecompras.push(detalleCompra);
 
-        console.log(compra);
         LimpiarFormulario();
         agregarFilaDetalle(detalleCompra); // Llama a la función para agregar la fila de detalle a la tabla
     }

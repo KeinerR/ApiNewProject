@@ -91,6 +91,7 @@ namespace ApiNewProject.Controllers
                     {
                         CompraId = newCompra.CompraId,
                         ProductoId = detalleCompra.ProductoId,
+                        UnidadId = detalleCompra.UnidadId,
                         Cantidad = detalleCompra.Cantidad.Value,
                         Lotes = new List<Lote>()
                     };

@@ -6,6 +6,10 @@
     padding: 0px;
 }
 
+#TablaDetalleCompra th , tr{
+    border: solid red
+}
+
 #agregarDetalle {
     display: block;
     justify-content: flex-end;
@@ -139,3 +143,4 @@
         display: none;
     }
 }
+
