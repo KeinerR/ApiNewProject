@@ -198,27 +198,28 @@ function valoresPorDefaultSinConexion() {
         return todoValido; // Devuelve el estado de validación al finalizar la función
     }
     // Función para obtener los datos de una marca por su ID
-    function obtenerMarca(Id) {
-        fetch(`${API_URL}/GetMarcaById?Id=${Id}`)
+    function obtenerDatosCategorias() {
+        fetch(`${API_URL}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Error al obtener los datos de la marca.');
+                    throw new Error(`Error al obtener las categorías. Código de estado: ${response.status}`);
                 }
                 return response.json();
             })
-            .then(marca => {
-                document.getElementById('MarcaIdAct').value = marca.marcaId;
-                document.getElementById('NombreMarcaAct').value = marca.nombreMarca;
-                document.getElementById('EstadoMarcaAct').value = marca.estadoMarca; // Si EstadoMarcaAct es un elemento select
-      
-                console.log(marca);
-                NoCamposVaciosAct();
-
+            .then(data => {
+                categorias = data;
+                NoCamposVacios();
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Error al obtener las categorías:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: `Ocurrió un error al obtener las categorías. Detalle: ${error.message}. Por favor, inténtalo de nuevo más tarde.`
+                });
             });
     }
+
 
     // Evento click en botones de editar
     document.querySelectorAll('#btnEdit').forEach(button => {

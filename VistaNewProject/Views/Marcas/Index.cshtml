@@ -208,15 +208,32 @@
             title: "Se ha registrado la marca exitosamente",
             showConfirmButton: false,
             timer: 1500
-        }).then((result) => {
-            // Después de cerrar el SweetAlert, abrimos el modal nuevamente
-            $('#MarcaModal').modal('show');
-        });
+        }).then(data => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: 'Categoria agregada correctamente.',
+                timer: 3000,
+                timerProgressBar: true
+            }).then(() => {
+                // Cerrar la modal manualmente
+                $('#CategoriaModal').modal('hide');
+            });
+        })
+
     </script>
 }
 
 @if (TempData["SweetAlertMessage"] != null)
+
 {
+    @if (!string.IsNullOrEmpty(ViewBag.Mensaje))
+    {
+        <div class="alert alert-success" role="alert">
+            @ViewBag.Mensaje
+        </div>
+    }
+
     <script>
         Swal.fire({
             position: "center",
@@ -232,6 +249,8 @@
         });
     </script>
 }
+
+
 
 
 

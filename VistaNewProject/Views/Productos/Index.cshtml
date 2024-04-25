@@ -63,7 +63,7 @@
                     <div class="form-group">
                         <label for="CategoriaId" class="control-label">Categoria Id</label>
                         <span class="Mensaje" style="color:red;display:inline-block;">*</span>
-                        <input list="categorias" id="CategoriaId" name="categoriaId" class="form-control" placeholder="Selecciona una categoria...">
+                        <input list="categorias" id="CategoriaId" name="categoriaId" class="form-control" placeholder="Selecciona una categoria..." onclick="showCategorias()">
                         <datalist id="categorias">
                             @foreach (var item in ViewBag.Categorias)
                             {
@@ -73,6 +73,10 @@
                                 }
                                 
                             }
+
+
+                     
+
                         </datalist>
                         <input type="hidden" id="CategoriaIdHidden" name="categoriaIdHidden">
                         <span class="text-danger"></span>
@@ -84,10 +88,13 @@
                         <input list="presentaciones" id="PresentacionId" name="presentacionId" class="form-control" placeholder="Selecciona una presentación..." onclick="showNoPresentacionesAlert()">
                         <datalist id="presentaciones">
                             @foreach (var item in ViewBag.Presentaciones)
-
                             {
-                                
-                                <option value="@item.PresentacionId">@($"{item.NombrePresentacion} x {item.Contenido}")</option>
+
+                                @if (item.EstadoPresentacion != 0)
+                                {
+                                    <option value="@item.PresentacionId">@($"{item.NombrePresentacion} x {item.Contenido}")</option>
+                                }
+                               
                             }
 
 
@@ -268,7 +275,7 @@
     }
 
     function showNoPresentacionesAlert() {
-        var Presenion = document.getElementById("presentacion").getElementsByTagName("option");
+        var Presenion = document.getElementById("presentaciones").getElementsByTagName("option");
         if (Presenion.length === 0) {
             Swal.fire({
                 icon: 'info',
@@ -279,5 +286,23 @@
             });
         }
     }
+
+
+    function showCategorias() {
+        var categoria = document.getElementById("categorias").getElementsByTagName("option");
+        if (categoria.length === 0) {
+            Swal.fire({
+                icon: 'info',
+                title: 'No hay categorias activas',
+                text: 'No hay categorias disponibles en este momento.',
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+    }
+
+
+
+
 
 </script>

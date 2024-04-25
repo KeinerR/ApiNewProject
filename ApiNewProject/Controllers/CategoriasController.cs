@@ -142,7 +142,34 @@ namespace ApiNewProject.Controllers
             }
         }
 
+        [HttpGet("GetNombreCategoriaById")]
+        public async Task<ActionResult<Categoria>> GetNombreCategoriaById(string nombreCategoria)
+        {
 
+
+            Categoria categoria = await _context.Categorias.Select(
+                    s => new Categoria
+                    {
+                        CategoriaId = s.CategoriaId,
+                        NombreCategoria = s.NombreCategoria,
+                        EstadoCategoria = s.EstadoCategoria
+                    })
+                .FirstOrDefaultAsync(s => s.NombreCategoria == nombreCategoria);
+
+            if (categoria == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(categoria);
+            }
+        }
 
     }
+
+
+
+
 }
+
