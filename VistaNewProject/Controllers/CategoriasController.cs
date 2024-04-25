@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
@@ -98,7 +99,7 @@ namespace VistaNewProject.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                   
+                    TempData["Mensaje"] = "¡Registro guardado correctamente!";
                     return RedirectToAction("Index");
                 }
                 else
@@ -112,5 +113,86 @@ namespace VistaNewProject.Controllers
             ViewBag.Mensaje = TempData["Mensaje"]; ViewBag.Mensaje = TempData["Mensaje"];
             return View("Index");
         }
+
+
+
+        public async Task<IActionResult> Update([FromForm] int categoriaIdAct, [FromForm] string nombreCategoriaAct, [FromForm] int estadoCategoriaAct)
+        {
+            try
+            {
+                // Obtener la marca existente para comparar el nombre
+                var categoriaexist = await _client.FindCategoriaAsync(categoriaIdAct);
+
+                // Verificar si ya existe una marca con el mismo nombre
+                if (categoriaexist != null && categoriaexist.NombreCategoria == nombreCategoriaAct && categoriaexist.CategoriaId != categoriaIdAct)
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "Ya hay una categoria registrada con ese nombre.";
+                    return RedirectToAction("Index");
+                }
+
+                // Continuar con la lógica de actualización de la marca si no hay una marca con el mismo nombre
+
+                // Crear un objeto Marca con los datos recibidos del formulario
+                var categoria = new Categoria
+                {
+                    CategoriaId = categoriaIdAct,
+                    NombreCategoria = nombreCategoriaAct,
+                    EstadoCategoria = estadoCategoriaAct == 1 ? 1ul : 0ul
+                };
+
+                // Llamar al método en el cliente para actualizar la marca
+                var response = await _client.UpdateCategoriaAsync(categoria);
+
+                if (response != null)
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData["SweetAlertIcon"] = "success";
+                        TempData["SweetAlertTitle"] = "Éxito";
+                        TempData["SweetAlertMessage"] = "Categoria actualizada correctamente.";
+                        return RedirectToAction("Index");
+                    }
+                    else if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        TempData["SweetAlertIcon"] = "error";
+                        TempData["SweetAlertTitle"] = "Error";
+                        TempData["SweetAlertMessage"] = "La categoria no se encontró en el servidor.";
+                        return RedirectToAction("Index");
+                    }
+                    else if (response.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        TempData["SweetAlertIcon"] = "error";
+                        TempData["SweetAlertTitle"] = "Error";
+                        TempData["SweetAlertMessage"] = "Nombre de categoria duplicado.";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["SweetAlertIcon"] = "error";
+                        TempData["SweetAlertTitle"] = "Error";
+                        TempData["SweetAlertMessage"] = "Error al actualizar la categoria.";
+                        return RedirectToAction("Index");
+                    }
+                }
+                else
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "Error al realizar la solicitud de actualización.";
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Manejar cualquier excepción que pueda ocurrir durante la actualización
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "Error al actualizar la marca: " + ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
+
     }
 }

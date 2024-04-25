@@ -28,7 +28,7 @@
 <!-- Modal -->
 <div class="modal fade" id="CategoriaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content" id="CategoriaAgregar">
             <div class="modal-header">
                 <h5 class="modal-title" id="TituloModal">Agregar Categoria</h5>
                 <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -67,6 +67,39 @@
             </form>
 
         </div>
+
+        <div class="modal-content" id="FormActualizarCategoria" style="display:none;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModalCategoria">Actualizar Categoría</h5>
+                <button type="button" class="btn-close" onclick="limpiarFormularioCategoria()" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="MensajeInicialActCategoria"></div>
+            <form asp-controller="Categorias" asp-action="Update" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input id="CategoriaIdAct" name="categoriaIdAct" class="form-control" type="hidden" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NombreCategoriaAct" class="control-label">Nombre categoría</label>
+                        <input type="text" id="NombreCategoriaAct" name="nombreCategoriaAct" class="form-control" autocomplete="off" />
+                        <span class="text-danger" id="mensajeNombreCategoriaAct"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="EstadoCategoriaAct" class="control-label">Estado</label>
+                        <select id="EstadoCategoriaAct" name="estadoCategoriaAct" class="form-control">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                        <span class="text-danger" id="mensajeEstadoCategoriaAct"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="btnEditarCategoria">Actualizar</button>
+                </div>
+            </form>
+        </div>
+
     </div>
 </div>
 
@@ -116,9 +149,9 @@
                 </td>
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
-                    <button class="btn" id="btnEdit" data-categoria-id="@item.CategoriaId" data-bs-toggle="modal" data-bs-target="#CategoriaModal"><i class="fas fa-edit"></i></button>
-                    <a asp-action="Details" asp-route-id="@item.CategoriaId" id="btnDetail" class="btn"><i class="fa-solid fa-file"></i></a>
-                    <button class="btn" id="btnDelete" data-categoria-id="@item.CategoriaId"><i class="fas fa-trash-alt"></i></button>
+                    <button class="btn botonEditarCategoria" id="btnEdit" data-categoria-id="@item.CategoriaId" data-bs-toggle="modal" data-bs-target="#CategoriaModal"><i class="fas fa-edit"></i></button>
+                    <a asp-action="Details botonDetalleCategoria" asp-route-id="@item.CategoriaId" id="btnDetail" class="btn"><i class="fa-solid fa-file"></i></a>
+                    <button class="btn botonEliminarCategoria" id="btnDelete" data-categoria-id="@item.CategoriaId"><i class="fas fa-trash-alt"></i></button>
                 </td>
             </tr>
         }
@@ -156,42 +189,43 @@
 </div>
 <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="~/js/categorias.js"></script>
-@if (TempData["SweetAlertMessage"] != null)
+
+@if (!string.IsNullOrEmpty(TempData["Mensaje"]?.ToString()))
 {
     <div class="alert alert-success" role="alert">
-        @TempData["SweetAlertMessage"]
+        @TempData["Mensaje"]
     </div>
 
+
+    <script>
+        // Mostrar SweetAlert cuando haya un mensaje en TempData["Mensaje"]
+        Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Se ha registrado la marca exitosamente",
+            showConfirmButton: false,
+            timer: 1500
+        }).then((result) => {
+            // Después de cerrar el SweetAlert, abrimos el modal nuevamente
+            $('#CategoriaModal').modal('show');
+        });
+    </script>
+}
+
+@if (TempData["SweetAlertMessage"] != null)
+{
     <script>
         Swal.fire({
             position: "center",
             icon: "@TempData["SweetAlertIcon"]",
             title: "@TempData["SweetAlertTitle"]",
             text: "@TempData["SweetAlertMessage"]",
-            showConfirmButton: false,
+            showConfirmButton: false, // Mostrar botón de confirmación
             timer: 3000
         }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = "@Url.Action("Index", "Marcas")";
+            if (result.isConfirmed) { // Si el usuario confirmó la acción
+                window.location.href = "@Url.Action("Index", "Marcas")"; // Redireccionar a la página de índice de marcas
             }
-        });
-    </script>
-}
-else if (!string.IsNullOrEmpty(TempData["Mensaje"]?.ToString()))
-{
-    <div class="alert alert-success" role="alert">
-        @TempData["Mensaje"]
-    </div>
-
-    <script>
-        Swal.fire({
-            position: "center",
-            icon: "success",
-            title: "Se ha registrado la marca exitosamente",
-            showConfirmButton: false,
-            timer: 3000
-        }).then(() => {
-            $('#CategoriaModal').modal('hide');
         });
     </script>
 }

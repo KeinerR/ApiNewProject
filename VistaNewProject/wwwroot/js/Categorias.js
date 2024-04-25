@@ -1,401 +1,252 @@
-﻿//document.addEventListener('DOMContentLoaded', function () {
-//    const urlParams = new URLSearchParams(window.location.search);
-//    const mostrarAlerta = urlParams.get('mostrarAlerta');
-//    const categoriaId = urlParams.get('categoriaId');
-//    const API_URL = 'https://localhost:7013/api/Categorias';
+﻿function checkInternetConnection() {
+    return navigator.onLine;
+}
 
-//    categorias = {};
-//    var todoValido = true;
-
-//    // Función para obtener todas las marcas
-//    function obtenerDatosCategorias() {
-//        fetch(`${API_URL}/GetCategorias`)
-//            .then(response => {
-//                if (!response.ok) {
-//                    throw new Error('Error al obtener las marcas.');
-//                }
-//                return response.json();
-//            })
-//            .then(data => {
-//                categorias = data;
-//                NoCamposVacios();
-//            })
-//            .catch(error => {
-//                console.error('Error al obtener las marcas:', error);
-//                Swal.fire({
-//                    icon: 'error',
-//                    title: 'Error',
-//                    text: 'Ocurrió un error al obtener las marcas. Por favor, inténtalo de nuevo más tarde.'
-//                });
-//            });
-//    }
-//    obtenerDatosCategorias();
-//    if (mostrarAlerta === 'true' && categoriaId) {
-//        obtenerDatosMarca(categoriaId);
-//        // Obtener el botón que activa la modal
-//        const botonModal = document.querySelector('[data-bs-target="#CategoriaModal"]');
-//        if (botonModal) {
-//            // Simular el clic en el botón para mostrar la modal
-//            botonModal.click();
-//        }
-//    }
-
-//    // Función para validar campos y mostrar mensaje inicial de validación
-//    function NoCamposVacios() {
-//        // Mostrar mensaje inicial de validación
-//        $('#MensajeInicial').text(' Completa todos los campos con *');
-//        $('.Mensaje').text(' *');
-
-
-//        $('#NombreCategoria').on('input', function () {
-//            validarCampo($(this));
-
-//            // Validar si todos los campos son válidos antes de agregar el usuario
-//            todoValido = $('.text-danger').filter(function () {
-//                return $(this).text() !== '';
-//            }).length === 0;
-
-//            todolleno = $('.Mensaje ').filter(function () {
-//                return $(this).text() !== '';
-//            }).length === 0;
-//            console.log('Todos los campos son válidos:', todoValido);
-
-//            // Si todos los campos son válidos, ocultar el mensaje en todos los campos
-//            if (todolleno) {
-//                $('#MensajeInicial').hide();
-//            } else {
-//                $('#MensajeInicial').show(); // Mostrar el mensaje si no todos los campos son válidos
-//            }
-//        });
-//    }
-
-//    function validarCampo(input) {
-//        var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
-//        var spanError = input.next('.text-danger'); // Obtener el elemento span de error asociado al input
-//        var spanVacio = input.prev('.Mensaje'); // Obtener el elemento span vacío asociado al input
-
-//        // Limpiar el mensaje de error previo
-//        spanError.text('');
-//        spanVacio.text('');
-
-//        // Validar el campo y mostrar mensaje de error si es necesario
-//        if (valor === '') {
-//            spanVacio.text(' *obligatorio');
-//            spanError.text('');
-//        } else if (input.is('#NombreCategoria')) {
-//            if (valor.length < 2) {
-//                spanError.text('Este debe tener un mínimo de 2 caracteres.');
-//                spanVacio.text('');
-//            } else if (!/^(?!.*(\w)\1\1\1)[\w\s]+$/.test(valor)) {
-//                spanError.text('Este nombre es redundante.');
-//                spanVacio.text('');
-//                todoValido = false;
-//            } else if (/^\d+$/.test(valor)) {
-//                spanError.text('Este campo no puede ser solo numérico.');
-//                spanVacio.text('');
-//                todoValido = false;
-//            } else {
-//                var nombreRepetido = categorias.some(function (categoria) {
-//                    return categoria.nombreCategoria.toLowerCase() === valor.toLowerCase() &&
-//                        categoria.categoriaId != $('#CategoriaId').val().trim();
-//                });
-
-//                if (nombreRepetido) {
-//                    spanError.text('Esta Categoria ya se encuentra registrada.');
-//                    spanVacio.text('');
-//                    todoValido = false;
-//                } else {
-//                    spanError.text('');
-//                    spanVacio.text('');
-//                }
-//            }
-//        }
-
-//        return todoValido; // Devuelve el estado de validación al finalizar la función
-//    }
-
-//    function agregarCategoria() {
-//        if (!todoValido) {
-//            Swal.fire({
-//                icon: 'error',
-//                title: 'Error',
-//                timer: 3000, // Tiempo en milisegundos (en este caso, 3 segundos)
-//                timerProgressBar: true,
-//                text: 'Por favor, completa correctamente todos los campos  para poder registrar la categoria.'
-//            });
-//            return;
-//        }
-//        const nombreCategoria = document.getElementById('NombreCategoria').value;
-//        const estadoCategoria = document.getElementById('EstadoCategoria').value;
-//        if (
-//            nombreCategoria.trim() === ''
-//        ) {
-//            Swal.fire({
-//                icon: 'error',
-//                title: 'Error',
-//                timer: 3000,
-//                timerProgressBar: true,
-//                text: 'Por favor, completa todos los campos con * para poder registrar la categoria.'
-//            });
-//            return;
-//        }
-//        const categoriaObjeto = {
-//            NombreCategoria: nombreCategoria,
-//            EstadoCategoria: estadoCategoria 
-//        };
-
-//        fetch(`${API_URL}/InsertarCategoria`, {
-//            method: 'POST',
-//            headers: {
-//                'Content-Type': 'application/json'
-//            },
-//            body: JSON.stringify(categoriaObjeto)
-//        })
-//            .then(response => {
-//                if (!response.ok) {
-//                    throw new Error('Ocurrió un error al enviar la solicitud.');
-//                }
-//                return response.json();
-//            })
-//            .then(data => {
-//                Swal.fire({
-//                    icon: 'success',
-//                    title: 'Éxito',
-//                    text: 'Categoria agregada correctamente.',
-//                    timer: 3000,
-//                    timerProgressBar: true
-//                }).then(() => {
-//                    location.reload(); // Recargar la página
-//                });
-//            })
-//            .catch(error => {
-//                console.error('Error al agregar la categoria:', error);
-//                Swal.fire({
-//                    icon: 'error',
-//                    title: 'Error',
-//                    text: 'Ocurrió un error al agregar la categoria. Por favor, inténtalo de nuevo más tarde.'
-//                });
-//            });
-//    }
-
-
-//    function obtenerDatosCategoria(categoriaId) {
-//        fetch(`${ API_URL }/GetCategoriaById?Id=${categoriaId}`)
-//            .then(response => {
-//                if (!response.ok) {
-//                    throw new Error('Error al obtener los datos de la categoria.');
-//                }
-//                return response.json();
-//            })
-//            .then(categoria => {
-//                // Llenar los campos del formulario modal con los datos del cliente
-//                document.getElementById('CategoriaId').value = categoria.categoriaId;
-//                document.getElementById('NombreCategoria').value = categoria.nombreCategoria;
-
-
-//                document.getElementById('Estadocategoria').style.display = 'block';
-
-//                // Cambiar el título de la ventana modal
-//                document.getElementById('TituloModal').innerText = 'Editar Categoria';
-
-//                // Seleccionar el valor correcto en el campo de Estado Usuario
-//                var selectEstadoCategoria = document.getElementById('EstadoCategoria');
-//                if (categoria.estadoCategoria === 1) {
-//                    selectEstadoCategoria.value = '1'; // Activo
-//                } else if (categoria.estadoCategoria === 0) {
-//                    selectEstadoCategoria.value = '0'; // Inactivo
-//                }
-
-//                $('#MensajeInicial').text('');
-//                var mensajes = document.querySelectorAll('.Mensaje');
-//                mensajes.forEach(function (mensaje) {
-//                    mensaje.textContent = ''; // Restaurar mensajes de error
-//                    mensaje.style.display = 'inline-block';
-//                });
-//                // Ocultar el botón "Agregar" y mostrar el botón "Actualizar Usuario"
-//                document.getElementById('btnGuardar').style.display = 'none';
-//                document.getElementById('btnEditar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
-//            })
-//            .catch(error => {
-//                console.error('Error:', error);
-//            });
-//    }
-
-
-
-//    function ActualizarCategoria() {
-//        if (!todoValido) {
-//            Swal.fire({
-//                icon: 'error',
-//                title: 'Error',
-//                timer: 3000, // Tiempo en milisegundos (en este caso, 3 segundos)
-//                timerProgressBar: true,
-//                text: 'Por favor, completa correctamente todos los campos  para poder actualizar la marca.'
-//            });
-//            return;
-//        }
-//        const categoriaId = document.getElementById('CategoriaId').value;
-//        const nombreCategoria = document.getElementById('NombreCategoria').value;
-//        const estadoCategoria = document.getElementById('EstadoCategoria').value;
-
-//        if (
-//            nombreCategoria.trim() === ''
-//        ) {
-//            Swal.fire({
-//                icon: 'error',
-//                title: 'Error',
-//                timer: 3000,
-//                timerProgressBar: true,
-//                text: 'Por favor, completa todos los campos con * para poder actualizar la categoria.'
-//            });
-//            return;
-//        }
-//        const categoriaObjeto = {
-//            CategoriaId: categoriaId,
-//            NombreCategoria: nombreCategoria,
-//            EstadoCategoria: estadoCategoria
-//        };
-
-//        fetch(`https://localhost:7013/api/Categorias/UpdateCategorias`, {
-//            method: 'PUT',
-//            headers: {
-//                'Content-Type': 'application/json'
-//            },
-//            body: JSON.stringify(categoriaObjeto)
-//        })
-//            .then(response => {
-//                if (response.ok) {
-//                    // Mostrar SweetAlert
-//                    Swal.fire({
-//                        icon: 'success',
-//                        title: 'Éxito',
-//                        text: 'Se ha actualizado la categoria con éxito.',
-//                        timer: 3000, // Tiempo en milisegundos (en este caso, 3 segundos)
-//                        timerProgressBar: true
-//                    }).then((result) => {
-//                        location.reload();
-//                    });
-//                } else {
-//                    throw new Error('Error al actualizar la categoria.');
-//                }
-//            })
-//            .catch(error => {
-//                console.error('Error al actualizar la categoria:', error);
-//                Swal.fire({
-//                    icon: 'error',
-//                    title: 'Error',
-//                    text: 'Ocurrió un error al actualizar la categoria. Por favor, inténtalo de nuevo más tarde.'
-//                });
-//            });
-//    }
-
-
-//    function eliminarCategoria(categoriaId) {
-//        // Hacer la solicitud DELETE al servidor para eliminar la categoriaId
-//        fetch(`${API_URL}/DeleteCategoria/${categoriaId}`, {
-//            method: 'DELETE',
-//        })
-//            .then(response => {
-//                if (!response.ok) {
-//                    throw new Error('Error al eliminar la marca.');
-//                }
-//                return response.json();
-//            })
-//            .then(data => {
-//                Swal.fire({
-//                    icon: 'success',
-//                    title: 'Éxito',
-//                    text: 'Categoria Eliminada correctamente.',
-//                    timer: 1500,
-//                    timerProgressBar: true,
-//                    showConfirmButton: false
-//                }).then(() => {
-//                    location.reload();
-//                });
-//            })
-//            .catch(error => {
-//                console.error('Error al eliminar la categoria:', error);
-//                Swal.fire({
-//                    icon: 'error',
-//                    title: 'Error',
-//                    text: 'Ocurrió un error al eliminar la categoria. Por favor, verifica que la categoria no tenga productos asociados e inténtalo de nuevo más tarde.'
-//                });
-//            });
-//    }
-
-//    document.getElementById('btnGuardar').addEventListener('click', function () {
-//        agregarCategoria();
-//    });
-
-//    document.querySelectorAll('#btnEdit').forEach(button => {
-//        button.addEventListener('click', function () {
-//            const marcaId = this.getAttribute('data-categoria-id');
-//            obtenerDatosCategoria(marcaId);
-//        });
-//    });
-
-//    document.getElementById('btnEditar').addEventListener('click', function () {
-//        ActualizarCategoria();
-//    });
-//    document.querySelectorAll('#btnDelete').forEach(button => {
-//        button.addEventListener('click', function () {
-//            const marcaId = this.getAttribute('data-categoria-id');
-//            eliminarCategoria(marcaId);
-//        });
-//    });
-//});
-
-
-
-
-
-//function limpiarFormulario() {
-//    const urlParams = new URLSearchParams(window.location.search);
-//    const currentPage = urlParams.get('page');
-//    // Limpiar los valores de los campos del formulario
-//    document.getElementById('CategoriaId').value = '';
-//    document.getElementById('NombreCategoria').value = '';
-
-//    document.getElementById('TituloModal').innerText = 'Agregar Categoria';
-//    document.getElementById('btnGuardar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
-//    document.getElementById('btnEditar').style.display = 'none';
-
-//    // Ocultar el campo de Estado Usuario y mostrar elementos con clase "Novisible"
-//    document.getElementById('Estadocategoria').style.display = 'none';
-//    mensajes.forEach(function (mensaje) {
-//        mensaje.textContent = ' *'; // Restaurar mensajes de error
-//        mensaje.style.display = 'inline-block'; // Establecer estilo si es necesario
-//    });
-//    const mensajesError = document.querySelectorAll('.text-danger');
-//    mensajesError.forEach(span => {
-//        span.innerText = ''; // Limpiar contenido del mensaje
-//    });
-//    if (currentPage) {
-//        window.location.replace(`/Categorias?page=${currentPage}`);
-//    } else {
-//        window.location.replace('/Categorias');
-//    }
-//}
-
-function actualizarEstadoCategoria(CategoriaId, EstadoCategoria) {
-    fetch(`https://localhost:7013/api/Categorias/UpdateEstadoCategoria/${CategoriaId}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ EstadoCategoria: EstadoCategoria ? 1 : 0 })
-    })
+function MostrarTodasLasCategoria() {
+    fetch(`https://localhost:7013/api/Categorias/GetCategorias`)
         .then(response => {
-            if (response.ok) {
-                console.log("estado ",EstadoCategoria);
-                setTimeout(() => {
-                    location.reload(); // Recargar la página
-                }, 500);
-            } else {
-                console.error('Error al actualizar el estado del cliente');
+            if (!response.ok) {
+                throw new Error('Error al obtener las categoria');
             }
+            return response.json();
+        })
+        .then(data => {
+            categoria = data;
+            console.log(categoria);
+            NoCamposVacios();
         })
         .catch(error => {
-            console.error('Error de red:', error);
+            console.error('Error:', error);
         });
 }
+
+MostrarTodasLasCategoria();
+
+function NoCamposVacios() {
+    // Mostrar mensaje inicial de validación
+    $('#MensajeInicial').text(' Completa todos los campos con *');
+    $('.Mensaje').text(' *');
+    $('#NombreCategoria').on('input', function () {
+        validarCampo($(this));
+
+        // Validar si todos los campos son válidos antes de agregar el usuario
+        todoValido = $('.text-danger').filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+
+        todolleno = $('.Mensaje ').filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+        console.log('Todos los campos son válidos:', todoValido);
+
+        // Si todos los campos son válidos, ocultar el mensaje en todos los campos
+        if (todolleno) {
+            $('#MensajeInicial').hide();
+        } else {
+            $('#MensajeInicial').show(); // Mostrar el mensaje si no todos los campos son válidos
+        }
+    });
+}
+
+
+function NoCamposVaciosAct() {
+    // Mostrar mensaje inicial de validación
+    $('#NombreCategoriaAct').on('input', function () {
+        validarCampoAct($(this));
+
+        // Validar si todos los campos son válidos antes de agregar el usuario
+        todoValido = $('.text-dangerAct').filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+
+        todolleno = $('.MensajeAct').filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+        console.log('Todos los campos son válidos:', todoValido);
+
+    });
+}
+
+
+
+function validarCampo(input) {
+    var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
+    var spanError = input.next('.text-danger'); // Obtener el elemento span de error asociado al input
+    var spanVacio = input.prev('.Mensaje'); // Obtener el elemento span vacío asociado al input
+
+    // Limpiar el mensaje de error previo
+    spanError.text('');
+    spanVacio.text('');
+
+    // Validar el campo y mostrar mensaje de error si es necesario
+    if (valor === '') {
+        spanVacio.text(' *obligatorio');
+        spanError.text('');
+    } else if (input.is('#NombreCategoria')) {
+        if (valor.length < 3) {
+            spanError.text('Este campo debe tener un mínimo de 3 caracteres.');
+            spanVacio.text('');
+        } else if (!/^(?!.*(\w)\1\1\1)[\w\s]+$/.test(valor)) {
+            spanError.text('Este nombre es redundante.');
+            spanVacio.text('');
+            todoValido = false;
+        } else if (/^\d+$/.test(valor)) {
+            spanError.text('Este campo no puede ser solo numérico.');
+            spanVacio.text('');
+            todoValido = false;
+        } else {
+            var nombreRepetido = categoria.some(function (categoria) {
+                return categoria.nombreCategoria.toLowerCase() === valor.toLowerCase() &&
+                    categoria.CategoriaId != $('#CategoriaId').val().trim();
+            });
+
+            if (nombreRepetido) {
+                spanError.text('Esta marca ya se encuentra registrada.');
+                spanVacio.text('');
+                todoValido = false;
+            } else {
+                spanError.text('');
+                spanVacio.text('');
+            }
+        }
+    }
+
+    return todoValido; // Devuelve el estado de validación al finalizar la función
+}
+
+function validarCampoAct(input) {
+    var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
+    var spanError = input.next('.text-dangerAct'); // Obtener el elemento span de error asociado al input
+    var spanVacio = input.prev('.MensajeAct'); // Obtener el elemento span vacío asociado al input
+
+    // Limpiar el mensaje de error previo
+    spanError.text('');
+    spanVacio.text('');
+
+    // Validar el campo y mostrar mensaje de error si es necesario
+    if (valor === '') {
+        spanVacio.text(' *obligatorio');
+        spanError.text('');
+    } else if (input.is('#NombreCategoriaAct')) {
+        if (valor.length < 3) {
+            spanError.text('Este campo debe tener un mínimo de 3 caracteres.');
+            spanVacio.text('');
+        } else if (!/^(?!.*(\w)\1\1\1)[\w\s]+$/.test(valor)) {
+            spanError.text('Este nombre es redundante.');
+            spanVacio.text('');
+            todoValido = false;
+        } else if (/^\d+$/.test(valor)) {
+            spanError.text('Este campo no puede ser solo numérico.');
+            spanVacio.text('');
+            todoValido = false;
+        } else {
+            var nombreRepetido = categoria.some(function (categoria) {
+                return categoria.nombreCategoria.toLowerCase() === valor.toLowerCase() &&
+                    categoria.CategoriaId != $('#CategoriaId').val().trim();
+            });
+
+            if (nombreRepetido) {
+                spanError.text('Esta marca ya se encuentra registrada.');
+                spanVacio.text('');
+                todoValido = false;
+            } else {
+                spanError.text('');
+                spanVacio.text('');
+            }
+        }
+    }
+
+    return todoValido; // Devuelve el estado de validación al finalizar la función
+}
+
+function obtenercategoriaid(CategoriaId) {
+
+    fetch(`https://localhost:7013/api/Categorias/GetCategoriaById?Id=${CategoriaId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al obtener los datos');
+            }
+            return response.json();
+        })
+        .then(categoria => {
+
+            document.getElementById('CategoriaIdAct').value = categoria.categoriaId;
+            document.getElementById('NombreCategoriaAct').value = categoria.nombreCategoria;
+            document.getElementById('EstadoCategoriaAct').value = categoria.estadoCategoria;
+
+            console.log(categoria);
+        })
+        .catch(error => {
+            console.error("Error :", error)
+        });
+}
+
+document.querySelectorAll('#btnEdit').forEach(button => {
+    button.addEventListener('click', function () {
+        const Id = this.getAttribute('data-categoria-id');
+
+        document.getElementById('CategoriaAgregar').style.display = 'none';
+        document.getElementById('FormActualizarCategoria').style.display = 'block';
+        obtenercategoriaid(Id); // Aquí se pasa el Id como argumento a la función obtenercategoriaid()
+    });
+});
+
+
+function limpiarFormulario() {
+    // Limpiar los valores de los campos del formulario
+    document.getElementById('CategoriaId').value = '';
+    document.getElementById('NombreCategoria').value = '';
+    document.getElementById('EstadoCategoria').value = '';
+    document.getElementById('CategoriaIdAct').value = '';
+    document.getElementById('NombreCategoriaAct').value = '';
+    document.getElementById('EstadoCategoriaAct').value = '';
+
+    document.getElementById('FormActualizarCategoria').style.display = 'none';
+    document.getElementById('CategoriaAgregar').style.display = 'block';
+
+
+    var mensajes = document.querySelectorAll('.Mensaje');
+    mensajes.forEach(function (mensaje) {
+        mensaje.textContent = ' *'; // Restaurar mensajes de error
+        mensaje.style.display = 'inline-block'; // Establecer estilo si es necesario
+    });
+    const mensajesError = document.querySelectorAll('.text-danger');
+    mensajesError.forEach(span => {
+        span.innerText = ''; // Limpiar contenido del mensaje
+    });
+    var mensajesAct = document.querySelectorAll('.MensajeAct');
+    mensajesAct.forEach(function (mensajeAct) {
+        mensajeAct.textContent = ''; // Restaurar mensajes de error
+        mensajeAct.style.display = 'inline-block'; // Establecer estilo si es necesario
+    });
+    const mensajesErrorAct = document.querySelectorAll('.text-dangerAct');
+    mensajesErrorAct.forEach(span => {
+        span.innerText = ''; // Limpiar contenido del mensaje
+    });
+
+}
+
+
+    function actualizarEstadoCategoria(CategoriaId, EstadoCategoria) {
+        fetch(`https://localhost:7013/api/Categorias/UpdateEstadoCategoria/${CategoriaId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ EstadoCategoria: EstadoCategoria ? 1 : 0 })
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log("estado ", EstadoCategoria);
+                    setTimeout(() => {
+                        location.reload(); // Recargar la página
+                    }, 500);
+                } else {
+                    console.error('Error al actualizar el estado del cliente');
+                }
+            })
+            .catch(error => {
+                console.error('Error de red:', error);
+            });
+    }
+
