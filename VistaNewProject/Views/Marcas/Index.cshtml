@@ -141,12 +141,12 @@
                 </td>
               
 
-                <td class="text-center align-middle contenedorEstadoTabla">
-                    <label class="switch">
-                        <input type="checkbox" @(item.EstadoMarca != 0 ? "checked" : "") onchange="actualizarEstadoMarca('@item.MarcaId', this.checked)">
-                        <span class="slider"></span>
-                    </label>
-                </td>
+               <td class="text-center align-middle contenedorEstadoTabla">
+       <label class="switch">
+           <input type="checkbox" @(item.EstadoMarca != 0 ? "checked" : "") onchange="actualizarEstadoMarca('@item.MarcaId', this.checked)">
+           <span class="slider"></span>
+       </label>
+   </td>
                 <td class="contenedorBotonesTabla">
                     <button class="btn btn-warning botonEditar" id="btnEdit" value="" data-marca-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal"><i class="fas fa-edit"></i></button>
                     <a asp-action="Details" asp-route-id="@item.MarcaId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
@@ -193,6 +193,7 @@
 </div>
 <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="~/js/marcas.js"></script>
+
 @if (!string.IsNullOrEmpty(TempData["Mensaje"]?.ToString()))
 {
     <div class="alert alert-success" role="alert">
@@ -208,10 +209,32 @@
             title: "Se ha registrado la marca exitosamente",
             showConfirmButton: false,
             timer: 1500
-        }).then(data => {
-                // Cerrar la modal manualmente
-                $('#MarcaModal').modal('show');
-        })
-
+        }).then((result) => {
+            // Después de cerrar el SweetAlert, abrimos el modal nuevamente
+            $('#MarcaModal').modal('show');
+        });
     </script>
 }
+
+@if (TempData["SweetAlertMessage"] != null)
+{
+    <script>
+        Swal.fire({
+            position: "center",
+            icon: "@TempData["SweetAlertIcon"]",
+            title: "@TempData["SweetAlertTitle"]",
+            text: "@TempData["SweetAlertMessage"]",
+            showConfirmButton: false, // Mostrar botón de confirmación
+            timer: 3000
+        }).then((result) => {
+            if (result.isConfirmed) { // Si el usuario confirmó la acción
+                window.location.href = "@Url.Action("Index", "Marcas")"; // Redireccionar a la página de índice de marcas
+            }
+        });
+    </script>
+}
+
+
+
+
+
