@@ -499,13 +499,13 @@ document.addEventListener("DOMContentLoaded", function () {
         // Precio por unidad de producto
         const precioIndividualUnitarioSinPuntos = (precioCompra / unidad) / (cantidadPorPresentacion * cantidad);
         /* Precio venta por unidad*/
-        const precioVentaIndividualUnitarioSinPuntos = precioIndividualUnitarioSinPuntos;
+        const precioVentaIndividualUnitarioSinPuntos = (cantidadUnitariaPorPresentacionSinPuntos * porcentajeAGanar) / 100;
 
         /*Precio venta por producto*/
-        const precioVentaPorPresentacionSinPuntos = 0;
+        const precioVentaPorPresentacionSinPuntos = ( * porcentajeAGanar) / 100;
         // Precio venta  por unidad de producto
 
-        const precioVentaPorUnidadDeProducto= 0 ;
+        const precioVentaPorUnidadDeProducto = (precioIndividualUnitarioSinPuntos * porcentajeAGanar) / 100;
      
         const precioIndividualUnitario = formatNumber(Math.round(precioIndividualUnitarioSinPuntos));
         const cantidadUnitariaPorPresentacion = formatNumber(Math.round(cantidadUnitariaPorPresentacionSinPuntos));
@@ -516,7 +516,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('PrecioDeCompraPorPresentacion').value = cantidadUnitariaPorPresentacion;
         document.getElementById('PrecioDeCompraUnitario').value = precioIndividualUnitario;
         document.getElementById('PrecioDeCompraPorUnidad').value = precioPorUnidad;
-        document.getElementById('PrecioDeVentaPorUnidad').value = precioVentaIndividualUnitarioSinPuntos;
+        document.getElementById('PrecioDeVentaPorUnidad').value = precioVentaPorPresentacionSinPuntos;   
         document.getElementById('PrecioDeVentaUnitario').value = precioVentaIndividualUnitario;       
         document.getElementById('PrecioDeVentaxUnidadPresentacion').value = precioVentaIndividualUnitario;
         document.getElementById('PrecioBuy').style.display = "flex";
