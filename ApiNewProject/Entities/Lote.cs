@@ -11,9 +11,9 @@ namespace ApiNewProject.Entities
         public int? ProductoId { get; set; }
         public string? NumeroLote { get; set; }
         public decimal? PrecioCompra { get; set; }
-        public decimal? PrecioCompraPorUnidad { get; set; }
-        public decimal? PrecioPorPresentacion { get; set; }
         public decimal? PrecioPorUnidad { get; set; }
+        public decimal? PrecioPorPresentacion { get; set; }
+        public decimal? PrecioPorUnidadProducto { get; set; }
         public DateTime? FechaVencimiento { get; set; }
         public int? Cantidad { get; set; }
         public ulong? EstadoLote { get; set; }

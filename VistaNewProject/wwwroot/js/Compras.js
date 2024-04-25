@@ -109,13 +109,10 @@ function RegistrarBuy() {
     // Función para agregar un detalle de compra al objeto principal
     function agregarDetalleCompra() {
         var unidad = document.getElementById('UnidadIdHidden').value
-        var unidadParse = parseInt(unidad);
-        alert("El valor de unidad es:" + unidad);
-        if (Number.isInteger(unidadParse)) { alert("Es entero"); }
         // Crear un nuevo objeto detalleCompra en cada llamada para evitar referencias compartidas
         var detalleCompra = {
             productoId: document.getElementById('ProductoIdHidden').value,
-            unidadId: unidadParse,
+            unidadId: unidad,
             cantidad: document.getElementById('Cantidad').value,
             lotes: [] // Inicialmente sin lotes
         };
@@ -124,6 +121,7 @@ function RegistrarBuy() {
         var precioCompra = document.getElementById('PrecioDeCompra').value.replace(/\./g, '');
         var precioVentaxProducto = document.getElementById('PrecioDeVentaUnitario').value.replace(/\./g, '');
         var precioVentaxPresentacion = document.getElementById('PrecioDeVentaxUnidadPresentacion').value.replace(/\./g, '');
+        var precioVentaxUnidad = document.getElementById('PrecioDeVentaPorUnidad').value.replace(/\./g, '');
         var cantidadPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
         var cantidadUnidad = document.getElementById('CantidadPorUnidad').value;
         var cantidadLote = detalleCompra.cantidad * (cantidadPresentacion * cantidadUnidad);
@@ -138,8 +136,9 @@ function RegistrarBuy() {
             productoId: detalleCompra.productoId,
             numeroLote: numeroLote,
             precioCompra: precioCompra,
-            precioPorPresentacion: precioVentaxProducto,
             precioPorUnidad: precioVentaxPresentacion,
+            precioPorPresentacion: precioVentaxUnidad,
+            precioPorUnidadProducto: precioVentaxProducto,
             fechaVencimiento: fechaVencimiento,
             cantidad: cantidadLote,
             estadoLote: 1 // Estado por defecto
@@ -147,7 +146,7 @@ function RegistrarBuy() {
 
         detalleCompra.lotes.push(nuevoLote);
         compra.detallecompras.push(detalleCompra);
-
+        console.log(compra);
         LimpiarFormulario();
         agregarFilaDetalle(detalleCompra); // Llama a la función para agregar la fila de detalle a la tabla
     }
@@ -498,27 +497,31 @@ document.addEventListener("DOMContentLoaded", function () {
         const cantidadUnitariaPorPresentacionSinPuntos = precioCompra / (unidad * cantidad);
         // Precio por unidad de producto
         const precioIndividualUnitarioSinPuntos = (precioCompra / unidad) / (cantidadPorPresentacion * cantidad);
+
         /* Precio venta por unidad*/
-        const precioVentaIndividualUnitarioSinPuntos = (cantidadUnitariaPorPresentacionSinPuntos * porcentajeAGanar) / 100;
-
+        const precioVentaIndividualUnitarioSinPuntos = precioPorUnidadIndividualSinPuntos + (precioPorUnidadIndividualSinPuntos * porcentajeAGanar / 100);
         /*Precio venta por producto*/
-        const precioVentaPorPresentacionSinPuntos = ( * porcentajeAGanar) / 100;
+        const precioVentaPorPresentacionSinPuntos = precioIndividualUnitarioSinPuntos+(precioIndividualUnitarioSinPuntos * porcentajeAGanar / 100) ;
         // Precio venta  por unidad de producto
-
-        const precioVentaPorUnidadDeProducto = (precioIndividualUnitarioSinPuntos * porcentajeAGanar) / 100;
+        const precioVentaPorUnidadDeProducto = precioIndividualUnitarioSinPuntos + (precioIndividualUnitarioSinPuntos * porcentajeAGanar / 100);
      
         const precioIndividualUnitario = formatNumber(Math.round(precioIndividualUnitarioSinPuntos));
         const cantidadUnitariaPorPresentacion = formatNumber(Math.round(cantidadUnitariaPorPresentacionSinPuntos));
         const precioPorUnidad = formatNumber(Math.round(precioPorUnidadIndividualSinPuntos));
-        const precioVentaIndividualUnitario = 22000;
+
+        const precioVentaPorUnidad = formatNumber(Math.round(precioVentaIndividualUnitarioSinPuntos));
+        const precioVentaPorProducto = formatNumber(Math.round(precioVentaPorPresentacionSinPuntos));
+        const precioVentaIndividualUnitario = formatNumber(Math.round(precioVentaPorUnidadDeProducto));
         // Mostrar los resultados en los campos correspondientes
       
         document.getElementById('PrecioDeCompraPorPresentacion').value = cantidadUnitariaPorPresentacion;
         document.getElementById('PrecioDeCompraUnitario').value = precioIndividualUnitario;
         document.getElementById('PrecioDeCompraPorUnidad').value = precioPorUnidad;
-        document.getElementById('PrecioDeVentaPorUnidad').value = precioVentaPorPresentacionSinPuntos;   
-        document.getElementById('PrecioDeVentaUnitario').value = precioVentaIndividualUnitario;       
+
+        document.getElementById('PrecioDeVentaPorUnidad').value = precioVentaPorUnidad;   
+        document.getElementById('PrecioDeVentaUnitario').value = precioVentaPorProducto;       
         document.getElementById('PrecioDeVentaxUnidadPresentacion').value = precioVentaIndividualUnitario;
+
         document.getElementById('PrecioBuy').style.display = "flex";
         document.getElementById('PrecioBougth').style.display = "flex";
 
@@ -537,7 +540,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
         const cantidadPorPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
-        const precioUnitarioPorPresentacion = Math.ceil(precioVentaxProducto / cantidadPorPresentacion);
+        const precioUnitarioPorPresentacion = formatNumber(Math.ceil(precioVentaxProducto / cantidadPorPresentacion));
+        
 
         document.getElementById('PrecioDeVentaxUnidadPresentacion').value = precioUnitarioPorPresentacion;
     });

@@ -20,7 +20,6 @@ namespace ApiNewProject.Entities
         [JsonIgnore]
 
         public virtual Proveedor? Proveedor { get; set; }
-        [JsonIgnore]
         public virtual ICollection<Detallecompra> Detallecompras { get; set; }
     }
 }
