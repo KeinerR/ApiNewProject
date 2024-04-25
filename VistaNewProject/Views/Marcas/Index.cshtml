@@ -141,12 +141,12 @@
                 </td>
               
 
-                <td class="text-center align-middle contenedorEstadoTabla">
-                    <label class="switch">
-                        <input type="checkbox" @(item.EstadoMarca != 0 ? "checked" : "") onchange="actualizarEstadoMarca('@item.MarcaId', this.checked)">
-                        <span class="slider"></span>
-                    </label>
-                </td>
+               <td class="text-center align-middle contenedorEstadoTabla">
+       <label class="switch">
+           <input type="checkbox" @(item.EstadoMarca != 0 ? "checked" : "") onchange="actualizarEstadoMarca('@item.MarcaId', this.checked)">
+           <span class="slider"></span>
+       </label>
+   </td>
                 <td class="contenedorBotonesTabla">
                     <button class="btn btn-warning botonEditar" id="btnEdit" value="" data-marca-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal"><i class="fas fa-edit"></i></button>
                     <a asp-action="Details" asp-route-id="@item.MarcaId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
