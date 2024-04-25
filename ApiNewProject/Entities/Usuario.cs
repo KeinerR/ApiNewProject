@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+
 namespace ApiNewProject.Entities
 {
     public partial class Usuario
@@ -23,7 +24,6 @@ namespace ApiNewProject.Entities
 
         public virtual Rol? Rol { get; set; }
         [JsonIgnore]
-
         public virtual ICollection<Domicilio> Domicilios { get; set; }
     }
 }

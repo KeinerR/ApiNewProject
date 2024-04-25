@@ -21,8 +21,6 @@ namespace ApiNewProject.Entities
         public string? Direccion { get; set; }
         public ulong? EstadoCliente { get; set; }
         [JsonIgnore]
-
-
         public virtual ICollection<Pedido> Pedidos { get; set; }
     }
 }

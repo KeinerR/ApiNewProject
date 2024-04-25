@@ -118,7 +118,7 @@
                     </div>
                     <div class="EspacioForm"></div>
                     <div class="row">
-                        <div class="col-4">
+                        <div class="col-3">
                             <label for="UnidadId" class="control-label">Unidad</label>
                             <input list="unidades" id="UnidadId" name="unidadId" class="form-control" placeholder="Escribe y / o selecciona la unidad ...">
                             <datalist id="unidades">
@@ -128,8 +128,8 @@
                                     <option value="@unidad.UnidadId">@($"{unidad.NombreUnidad} x {unidad.CantidadPorUnidad}")</option>
                                 }
                             </datalist>
-                            <input type="number" id="UnidadIdHidden" name="unidadIdHidden">
-                            <input id="CantidadPorUnidad" name="CantidadPorUnidad">
+                            <input type="hidden" type="number" id="UnidadIdHidden" name="unidadIdHidden">
+                            <input type="hidden" id="CantidadPorUnidad" name="CantidadPorUnidad">
                         </div>
                         <div class="col-3">
                             <label for="Cantidad" class="control-label">Cantidad</label>
@@ -143,10 +143,14 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-3">
                             <label for="PrecioDeCompra" class="labelForm control-label" id="PC">Precio de Compra</label>
+                            <input type="text" id="PrecioDeCompra" name="precioDeCompra" class="form-control" />
+                        </div>
+                        <div class="col-3">
+                            <label for="PorcentajeGanancia" class="">% A Ganar</label>
                             <div class="contenedorCalculo">
-                                <input type="text" id="PrecioDeCompra" name="precioDeCompra" class="form-control" />
+                                <input type="text" id="PorcentajeGanancia" name="porcentajeGanancia" class="form-control"/>
                                 <button class="btn-calculo" id="btnCalcular" title="Calcular"><i class="fas fa-calculator"></i></button>
                             </div>
                         </div>
@@ -169,6 +173,10 @@
                     </div>
                     <div class="row noVisualizar" id="PrecioBougth">
                         <h5>Precio de venta</h5>
+                        <div class="col-4">
+                            <label for="PrecioDeVentaPorUnidad" class="labelForm control-label">x Unidad</label>
+                            <input type="text" id="PrecioDeVentaPorUnidad" name="precioDeVentaPorUnidad" class="form-control" readonly />
+                        </div>
                         <div class="col-4" >
                             <label for="PrecioDeVentaUnitario" class="control-label">x Producto</label>
                             <div class="contenedorCalculo">

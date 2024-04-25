@@ -482,9 +482,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const precioCompraConPuntos = document.getElementById('PrecioDeCompra').value;
         const unidad = document.getElementById('CantidadPorUnidad').value;
         const cantidadPorPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
+        const porcentajeAGanar = document.getElementById('PorcentajeGanancia').value;
         // Verificar si los campos requeridos están completos
         if (productoId === '' || cantidad === '' || precioCompraConPuntos === '') {
-            alert('Completa los campos para poder calcular');
+            alert('Completa los campos para poder calcular' + productoId + '--Canridad-' + cantidad + '-PrecioC-' + precioCompraConPuntos + '-Unidad-' + unidad + '-Cantidadpoep-' + cantidadPorPresentacion);
             return;
         }
 
@@ -497,17 +498,27 @@ document.addEventListener("DOMContentLoaded", function () {
         const cantidadUnitariaPorPresentacionSinPuntos = precioCompra / (unidad * cantidad);
         // Precio por unidad de producto
         const precioIndividualUnitarioSinPuntos = (precioCompra / unidad) / (cantidadPorPresentacion * cantidad);
-    
+        /* Precio venta por unidad*/
+        const precioVentaIndividualUnitarioSinPuntos = precioIndividualUnitarioSinPuntos;
 
+        /*Precio venta por producto*/
+        const precioVentaPorPresentacionSinPuntos = 0;
+        // Precio venta  por unidad de producto
+
+        const precioVentaPorUnidadDeProducto= 0 ;
      
         const precioIndividualUnitario = formatNumber(Math.round(precioIndividualUnitarioSinPuntos));
         const cantidadUnitariaPorPresentacion = formatNumber(Math.round(cantidadUnitariaPorPresentacionSinPuntos));
-        const precioPorUnidadIndividual = formatNumber(Math.round(precioPorUnidadIndividualSinPuntos));
+        const precioPorUnidad = formatNumber(Math.round(precioPorUnidadIndividualSinPuntos));
+        const precioVentaIndividualUnitario = 22000;
         // Mostrar los resultados en los campos correspondientes
       
         document.getElementById('PrecioDeCompraPorPresentacion').value = cantidadUnitariaPorPresentacion;
         document.getElementById('PrecioDeCompraUnitario').value = precioIndividualUnitario;
-        document.getElementById('PrecioDeCompraPorUnidad').value = precioPorUnidadIndividual;
+        document.getElementById('PrecioDeCompraPorUnidad').value = precioPorUnidad;
+        document.getElementById('PrecioDeVentaPorUnidad').value = precioVentaIndividualUnitarioSinPuntos;
+        document.getElementById('PrecioDeVentaUnitario').value = precioVentaIndividualUnitario;       
+        document.getElementById('PrecioDeVentaxUnidadPresentacion').value = precioVentaIndividualUnitario;
         document.getElementById('PrecioBuy').style.display = "flex";
         document.getElementById('PrecioBougth').style.display = "flex";
 
@@ -548,34 +559,3 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
-
-//function insertarCompraAPI(compra) {
-//    // URL del endpoint API para insertar compras   insertarCompraAPI(compra); // Llama a la función para insertar la compra en el API
-//    var apiUrl = 'https://localhost:7013/api/Compras/InsertCompras';
-
-//    // Opciones de la solicitud POST
-//    var requestOptions = {
-//        method: 'POST',
-//        headers: {
-//            'Content-Type': 'application/json'
-//        },
-//        body: JSON.stringify(compra) // Convertir el objeto compra a JSON
-//    };
-
-//    // Enviar la solicitud fetch
-//    fetch(apiUrl, requestOptions)
-//        .then(response => {
-//            if (!response.ok) {
-//                throw new Error('Error al insertar la compra');
-//            }
-//            return response.json(); // Convertir la respuesta a JSON
-//        })
-//        .then(data => {
-//            console.log('Compra insertada exitosamente:', data);
-//            // Aquí puedes realizar otras acciones después de insertar la compra
-//        })
-//        .catch(error => {
-//            console.error('Error al insertar la compra:', error);
-//            // Aquí puedes manejar el error de inserción de compra
-//        });
-//}

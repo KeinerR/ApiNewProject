@@ -18,7 +18,6 @@ namespace ApiNewProject.Entities
         public string? DescripcionPresentacion { get; set; }
         public ulong? EstadoPresentacion { get; set; }
         [JsonIgnore]
-
         public virtual ICollection<Producto> Productos { get; set; }
     }
 }

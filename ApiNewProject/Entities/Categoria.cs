@@ -12,6 +12,7 @@ namespace ApiNewProject.Entities
         }
 
         public int CategoriaId { get; set; }
+   
         public string? NombreCategoria { get; set; }
         public ulong? EstadoCategoria { get; set; }
         [JsonIgnore]

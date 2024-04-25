@@ -18,7 +18,6 @@ namespace ApiNewProject.Entities
 
         public virtual ICollection<Rolxpermiso> Rolxpermisos { get; set; }
         [JsonIgnore]
-
         public virtual ICollection<Usuario> Usuarios { get; set; }
     }
 }

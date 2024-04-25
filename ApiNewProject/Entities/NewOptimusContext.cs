@@ -35,8 +35,6 @@ namespace ApiNewProject.Entities
         public virtual DbSet<Unidad> Unidades { get; set; } = null!;
         public virtual DbSet<Usuario> Usuarios { get; set; } = null!;
 
-      
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Categoria>(entity =>
@@ -98,7 +96,9 @@ namespace ApiNewProject.Entities
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                entity.Property(e => e.NumeroFactura).HasColumnName("Numero_factura");
+                entity.Property(e => e.NumeroFactura)
+                    .HasMaxLength(20)
+                    .HasColumnName("Numero_factura");
 
                 entity.Property(e => e.ProveedorId).HasColumnName("ProveedorID");
 

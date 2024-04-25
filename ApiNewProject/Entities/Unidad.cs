@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+
 namespace ApiNewProject.Entities
 {
     public partial class Unidad
@@ -20,7 +21,6 @@ namespace ApiNewProject.Entities
 
         public virtual ICollection<Detallecompra> Detallecompras { get; set; }
         [JsonIgnore]
-        
         public virtual ICollection<Detallepedido> Detallepedidos { get; set; }
     }
 }

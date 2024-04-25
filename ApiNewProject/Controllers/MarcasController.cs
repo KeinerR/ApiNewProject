@@ -169,11 +169,9 @@ namespace ApiNewProject.Controllers
         {
             try
             {
-                // Buscar el cliente por su ID
                 var marca = await _context.Marcas.FindAsync(id);
 
-                // Si no se encuentra el cliente, devolver un error 404 Not Found
-                if (marca == null)
+                             if (marca == null)
                 {
                     return NotFound();
                 }
