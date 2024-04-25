@@ -15,6 +15,8 @@ namespace VistaNewProject.Services
             _httpClient.BaseAddress = new Uri("https://localhost:7013/api/");
         }
 
+
+        //cliente
         public async Task<IEnumerable<Cliente>> GetClientesAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Cliente>>("Clientes/GetClientes");
@@ -72,7 +74,7 @@ namespace VistaNewProject.Services
         }
 
 
-
+        //detallecompra
 
         public async Task<IEnumerable<Detallecompra>> GetDetallecompraAsync()
         {
@@ -87,6 +89,8 @@ namespace VistaNewProject.Services
         }
 
 
+
+        //marca
         public async Task<IEnumerable<Marca>> GetMarcaAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Marca>>("Marcas/GetMarcas");
@@ -246,6 +250,62 @@ namespace VistaNewProject.Services
             return response;
         }
 
+
+
+        public async Task<HttpResponseMessage> CreateCategoriaAsync(Categoria categoria)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Categorias/InsertarCategoria", categoria);
+            return response;
+        }
+
+        public async Task<Categoria> FindCategoriaAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Categoria>($"Categorias/GetCategoriaById?id={id}");
+            return response;
+        }
+
+
+
+        public async Task<Categoria> FindnombreCategoriaAsync(string nombreCategoria)
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<Categoria>($"Categorias/GetNombreCategoriaById?nombreCategoria={nombreCategoria}");
+
+                // Verificar si la respuesta es null, lo cual podría indicar un error en la solicitud
+                if (response != null)
+                {
+                    return response;
+                }
+                else
+                {
+                    // Marca no encontrada u otro tipo de error
+                    return null;
+                }
+            }
+            catch (HttpRequestException)
+            {
+                // Error al hacer la solicitud HTTP
+                return null;
+            }
+        }
+
+        public async Task<HttpResponseMessage> UpdateCategoriaAsync(Categoria categoria)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"Categorias/UpdateCategorias/", categoria);
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> DeleteCategoriaAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"Categorias/DeleteCategoria/{id}");
+            return response;
+        }
+
+
+
+
+        //usuario
         public async Task<IEnumerable<Usuario>> GetUsuarioAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Usuario>>("Usuarios/GetUsuarios");
@@ -258,6 +318,9 @@ namespace VistaNewProject.Services
             return response;
         }
 
+
+
+        //Unidad
         public async Task<IEnumerable<Unidad>> GetUnidadAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Unidad>>("unidades/GetUnidades");
@@ -270,6 +333,8 @@ namespace VistaNewProject.Services
             return response;
         }
 
+
+        //movimiento
         public async Task<IEnumerable<Movimiento>> GetMovimientoAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Movimiento>>("Movimientos/GetMoviemientos");
@@ -282,6 +347,8 @@ namespace VistaNewProject.Services
             return response;
         }
 
+
+        //producto
         public async Task<IEnumerable<Producto>> GetProductoAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Producto>>("Productos/GetProductos");
@@ -294,6 +361,8 @@ namespace VistaNewProject.Services
             return response;
         }
 
+
+        //proveedor
         public async Task<IEnumerable<Proveedor>> GetProveedorAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Proveedor>>("Proveedores/GetProveedores");
@@ -307,6 +376,8 @@ namespace VistaNewProject.Services
         }
 
         
+
+        //lote
         public async Task<IEnumerable<Lote>> GetLoteAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Lote>>("Lotes/GetLotes");
@@ -319,6 +390,8 @@ namespace VistaNewProject.Services
             return response;
         }
 
+
+        //domicilio
         public async Task<IEnumerable<Domicilio>> GetDomicilioAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Domicilio>>("Domicilios/GetDomicilios");
@@ -332,6 +405,7 @@ namespace VistaNewProject.Services
         }
 
 
+        //detallepedido
         public async Task<IEnumerable<Detallepedido>> GetDetallepedidoAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Detallepedido>>("DetallePedidos/GetDetallePedidos");
@@ -344,11 +418,20 @@ namespace VistaNewProject.Services
             return response;
         }
 
-        public Task<IEnumerable<Permiso>> GetPermisoAsync()
+
+        //permiso
+        public async Task<IEnumerable<Permiso>> GetPermisoAsync()
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Permiso>>("");
+            if (response == null)
+            {
+                throw new NotImplementedException();
+            }
+            return response;
         }
 
+
+        //rolo
         public async Task<IEnumerable<Rol>> GetRolAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Rol>>("Roles/GetRoles");

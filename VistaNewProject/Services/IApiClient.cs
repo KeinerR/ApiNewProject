@@ -4,7 +4,7 @@ namespace VistaNewProject.Services
 {
     public interface IApiClient
     {
-
+        //cliente
         Task<IEnumerable<Cliente>> GetClientesAsync();
 
 
@@ -43,7 +43,12 @@ namespace VistaNewProject.Services
 
         Task<IEnumerable<Categoria>> GetCategoriaAsync();
 
-        
+        Task<HttpResponseMessage> CreateCategoriaAsync(Categoria categoria);
+        Task<Categoria> FindCategoriaAsync(int id);
+        Task<Categoria> FindnombreCategoriaAsync(string nombreCategoria);
+        Task<HttpResponseMessage> UpdateCategoriaAsync(Categoria categoria);
+        Task<HttpResponseMessage> DeleteCategoriaAsync(int id);
+
 
 
         // unidad

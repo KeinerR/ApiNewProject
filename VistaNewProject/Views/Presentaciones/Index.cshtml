@@ -124,11 +124,11 @@
                 <td class="contenido-empaque">@Html.DisplayFor(modelItem => item.CantidadPorPresentacion)</td>
                 <td class="text-center align-middle">
                     <label class="switch">
-                        <input type="checkbox" @(item.EstadoPresentacion != 0 ? "checked" : "") onchange="mostraralerta('@item.EstadoPresentacion')">
+                        <input type="checkbox" @(item.EstadoPresentacion != 0 ? "checked" : "") onchange="actualizarEstadoPresentacion('@item.PresentacionId', this.checked)">
                         <span class="slider"></span>
                     </label>
-                    @Html.DisplayFor(modelItem => item.EstadoPresentacion)
                 </td>
+
                 <td class="descripcion-presentacion">@Html.DisplayFor(modelItem => item.DescripcionPresentacion)</td>
 
                 <td>

@@ -45,25 +45,38 @@
                     <div class="form-group">
                         <label for="MarcaId" class="control-label">Marca</label>
                         <span class="Mensaje" style="color:red;display:inline-block;">*</span>
-                        <input list="marcas" id="MarcaId" name="marcaId" class="form-control" placeholder="Selecciona una marca...">
-                           <datalist id="marcas">
-                                @foreach (var item in ViewBag.Marcas)
+                        <input list="marcas" id="MarcaId" name="marcaId" class="form-control" placeholder="Selecciona una marca..." onclick="showNoMarcasAlert()">
+                        <datalist id="marcas">
+                            @foreach (var item in ViewBag.Marcas)
+                            {
+                                @if (item.EstadoMarca != 0) // Solo mostramos las marcas que tienen estado diferente de 0
                                 {
                                     <option value="@item.MarcaId">@item.NombreMarca</option>
                                 }
-                           </datalist>
+                            }
+                        </datalist>
+
+
                         <input type="hidden" id="MarcaIdHidden" name="marcaIdHidden">
                    
                     </div>
                     <div class="form-group">
                         <label for="CategoriaId" class="control-label">Categoria Id</label>
                         <span class="Mensaje" style="color:red;display:inline-block;">*</span>
-                        <input list="categorias" id="CategoriaId" name="categoriaId" class="form-control" placeholder="Selecciona una categoria...">
+                        <input list="categorias" id="CategoriaId" name="categoriaId" class="form-control" placeholder="Selecciona una categoria..." onclick="showCategorias()">
                         <datalist id="categorias">
                             @foreach (var item in ViewBag.Categorias)
                             {
-                                <option value="@item.CategoriaId">@item.NombreCategoria</option>
+                                @if(item.EstadoCategoria != 0)
+                                {
+                                    <option value="@item.CategoriaId">@item.NombreCategoria</option>
+                                }
+                                
                             }
+
+
+                     
+
                         </datalist>
                         <input type="hidden" id="CategoriaIdHidden" name="categoriaIdHidden">
                         <span class="text-danger"></span>
@@ -72,12 +85,19 @@
                     <div class="form-group">
                         <label for="PresentacionId" class="control-label">Presentacion</label>
                         <span class="Mensaje" style="color:red;display:inline-block;">*</span>
-                        <input list="presentaciones" id="PresentacionId" name="presentacionId" class="form-control" placeholder="Selecciona una presentación...">
+                        <input list="presentaciones" id="PresentacionId" name="presentacionId" class="form-control" placeholder="Selecciona una presentación..." onclick="showNoPresentacionesAlert()">
                         <datalist id="presentaciones">
                             @foreach (var item in ViewBag.Presentaciones)
                             {
-                                <option value="@item.PresentacionId">@($"{item.NombrePresentacion} x {item.Contenido}")</option>
+
+                                @if (item.EstadoPresentacion != 0)
+                                {
+                                    <option value="@item.PresentacionId">@($"{item.NombrePresentacion} x {item.Contenido}")</option>
+                                }
+                               
                             }
+
+
                         </datalist>
                         <input type="hidden" id="PresentacionIdHidden" name="presentacionIdHidden">
                         <span class="text-danger"></span>
@@ -189,8 +209,11 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.CantidadTotal)
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Estado)
+                <td class="text-center align-middle contenedorEstadoTabla">
+                    <label class="switch">
+                        <input type="checkbox" @(item.Estado != 0 ? "checked" : "") onchange="actualizarEstadoProducto('@item.ProductoId', this.checked)">
+                        <span class="slider"></span>
+                    </label>
                 </td>
 
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
@@ -236,3 +259,50 @@
 </div>
 
 <script src="~/js/productos.js"></script>
+<script>
+    // Función para mostrar el Sweet Alert si no hay marcas disponibles
+    function showNoMarcasAlert() {
+        var marcas = document.getElementById("marcas").getElementsByTagName("option");
+        if (marcas.length === 0) {
+            Swal.fire({
+                icon: 'info',
+                title: 'No hay marcas activas',
+                text: 'No hay marcas disponibles en este momento.',
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+    }
+
+    function showNoPresentacionesAlert() {
+        var Presenion = document.getElementById("presentaciones").getElementsByTagName("option");
+        if (Presenion.length === 0) {
+            Swal.fire({
+                icon: 'info',
+                title: 'No hay presentaciones activas',
+                text: 'No hay presentaciones disponibles en este momento.',
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+    }
+
+
+    function showCategorias() {
+        var categoria = document.getElementById("categorias").getElementsByTagName("option");
+        if (categoria.length === 0) {
+            Swal.fire({
+                icon: 'info',
+                title: 'No hay categorias activas',
+                text: 'No hay categorias disponibles en este momento.',
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+    }
+
+
+
+
+
+</script>

@@ -35,7 +35,7 @@
 
             </div>
             <div id="MensajeInicial"></div>
-            <form asp-controller="Categorias" asp-action="" method="post">
+            <form asp-controller="Categorias" asp-action="Create" method="post">
                 <div class="modal-body">
 
                     <div class="form-group">
@@ -59,9 +59,7 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="btnGuardar">Agregar</button>
-                    <button type="button" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Categoria</button>
+                    <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
                 </div>
 
 
@@ -111,7 +109,7 @@
                 </td>
                 <td class="text-center align-middle">
                     <label class="switch">
-                        <input type="checkbox" @(item.EstadoCategoria != 0 ? "checked" : "") onchange="mostraralerta('@item.CategoriaId')">
+                        <input type="checkbox" @(item.EstadoCategoria != 0 ? "checked" : "") onchange="actualizarEstadoCategoria('@item.CategoriaId',this.checked)">
                         <span class="slider"></span>
                     </label>
                     @Html.DisplayFor(modelItem => item.EstadoCategoria)
@@ -158,3 +156,42 @@
 </div>
 <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="~/js/categorias.js"></script>
+@if (TempData["SweetAlertMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["SweetAlertMessage"]
+    </div>
+
+    <script>
+        Swal.fire({
+            position: "center",
+            icon: "@TempData["SweetAlertIcon"]",
+            title: "@TempData["SweetAlertTitle"]",
+            text: "@TempData["SweetAlertMessage"]",
+            showConfirmButton: false,
+            timer: 3000
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "@Url.Action("Index", "Marcas")";
+            }
+        });
+    </script>
+}
+else if (!string.IsNullOrEmpty(TempData["Mensaje"]?.ToString()))
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["Mensaje"]
+    </div>
+
+    <script>
+        Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Se ha registrado la marca exitosamente",
+            showConfirmButton: false,
+            timer: 3000
+        }).then(() => {
+            $('#CategoriaModal').modal('hide');
+        });
+    </script>
+}

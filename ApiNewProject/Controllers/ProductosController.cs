@@ -123,5 +123,64 @@ namespace ApiNewProject.Controllers
             await _context.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
+        [HttpPatch("UpdateEstadoProducto/{id}")]
+        public async Task<IActionResult> UpdateEstadoProducto(int id, [FromBody] Producto Estado)
+        {
+            try
+            {
+                // Buscar el cliente por su ID
+                var producto = await _context.Productos.FindAsync(id);
+
+                // Si no se encuentra el cliente, devolver un error 404 Not Found
+                if (producto == null)
+                {
+                    return NotFound();
+                }
+
+                // Actualizar el estado del cliente con el nuevo valor
+                producto.Estado = Estado.Estado;
+
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+
+                // Devolver una respuesta exitosa
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Si ocurre algún error, devolver un error 500 Internal Server Error
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el estado del cliente: " + ex.Message);
+            }
+        }
+
+        [HttpGet("GetProductosActivos")]
+        public async Task<ActionResult<List<Producto>>> GetProductosActivos()
+        {
+            try
+            {
+                // Obtener solo los productos cuyo estado es diferente de cero
+                var productosActivos = await _context.Productos
+                    .Where(p => p.Estado != 0)
+                    .Select(p => new Producto
+                    {
+                        ProductoId = p.ProductoId,
+                        PresentacionId = p.PresentacionId,
+                        MarcaId = p.MarcaId,
+                        CategoriaId = p.CategoriaId,
+                        NombreProducto = p.NombreProducto,
+                        CantidadTotal = p.CantidadTotal,
+                        Estado = p.Estado
+                    })
+                    .ToListAsync();
+
+                return Ok(productosActivos);
+            }
+            catch (Exception ex)
+            {
+                // Si ocurre algún error, devolver un error 500 Internal Server Error
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al obtener los productos activos: " + ex.Message);
+            }
+        }
+
     }
 }

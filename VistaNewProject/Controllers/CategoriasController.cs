@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
 
@@ -70,6 +71,46 @@ namespace VistaNewProject.Controllers
             var pagedProductos = productosDeCategoria.ToPagedList(pageNumber, pageSize);
 
             return View(pagedProductos);
+        }
+
+        [HttpPost]
+
+        public async Task<IActionResult> Create([FromForm] string nombreCategoria)
+        {
+            if (ModelState.IsValid)
+            {
+                var marcaexist = await _client.FindnombreCategoriaAsync(nombreCategoria);
+                if (marcaexist != null)
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "Ya hay una categoria registrada con ese nombre.";
+                    return RedirectToAction("Index");
+                }
+
+                // Resto del código para crear la nueva marca
+                var categoria = new Categoria
+                {
+                    NombreCategoria = nombreCategoria
+                };
+
+                var response = await _client.CreateCategoriaAsync(categoria);
+
+                if (response.IsSuccessStatusCode)
+                {
+                   
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ViewBag.MensajeError = "No se pudieron guardar los datos.";
+                    return View("Index");
+                }
+            }
+
+
+            ViewBag.Mensaje = TempData["Mensaje"]; ViewBag.Mensaje = TempData["Mensaje"];
+            return View("Index");
         }
     }
 }

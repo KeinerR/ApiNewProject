@@ -164,5 +164,36 @@ namespace ApiNewProject.Controllers
         }
 
 
+        [HttpPatch("UpdateEstadoMarca/{id}")]
+        public async Task<IActionResult> UpdateEstadoMarca(int id, [FromBody] Marca EstadoMarca)
+        {
+            try
+            {
+                // Buscar el cliente por su ID
+                var marca = await _context.Marcas.FindAsync(id);
+
+                // Si no se encuentra el cliente, devolver un error 404 Not Found
+                if (marca == null)
+                {
+                    return NotFound();
+                }
+
+                // Actualizar el estado del cliente con el nuevo valor
+                marca.EstadoMarca = EstadoMarca.EstadoMarca;
+
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+
+                // Devolver una respuesta exitosa
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Si ocurre algún error, devolver un error 500 Internal Server Error
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el estado del cliente: " + ex.Message);
+            }
+        }
+
+     
     }
 }

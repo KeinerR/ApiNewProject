@@ -1,3 +1,6 @@
+
+
+
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const mostrarAlerta = urlParams.get('mostrarAlerta');
@@ -355,7 +358,27 @@ function limpiarFormulario() {
     document.getElementById('btnEditar').style.display = 'none';
 }
 
-
+function actualizarEstadoProducto(ProductoId, Estado) {
+    fetch(`https://localhost:7013/api/Productos/UpdateEstadoProducto/${ProductoId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ Estado: Estado ? 1 : 0 })
+    })
+        .then(response => {
+            if (response.ok) {
+                setTimeout(() => {
+                    location.reload(); // Recargar la página
+                }, 500);
+            } else {
+                console.error('Error al actualizar el estado del cliente');
+            }
+        })
+        .catch(error => {
+            console.error('Error de red:', error);
+        });
+}
 
 
 
