@@ -209,50 +209,9 @@
             showConfirmButton: false,
             timer: 1500
         }).then(data => {
-            Swal.fire({
-                icon: 'success',
-                title: 'Éxito',
-                text: 'Categoria agregada correctamente.',
-                timer: 3000,
-                timerProgressBar: true
-            }).then(() => {
                 // Cerrar la modal manualmente
-                $('#CategoriaModal').modal('hide');
-            });
+                $('#MarcaModal').modal('show');
         })
 
     </script>
 }
-
-@if (TempData["SweetAlertMessage"] != null)
-
-{
-    @if (!string.IsNullOrEmpty(ViewBag.Mensaje))
-    {
-        <div class="alert alert-success" role="alert">
-            @ViewBag.Mensaje
-        </div>
-    }
-
-    <script>
-        Swal.fire({
-            position: "center",
-            icon: "@TempData["SweetAlertIcon"]",
-            title: "@TempData["SweetAlertTitle"]",
-            text: "@TempData["SweetAlertMessage"]",
-            showConfirmButton: false, // Mostrar botón de confirmación
-            timer: 3000
-        }).then((result) => {
-            if (result.isConfirmed) { // Si el usuario confirmó la acción
-                window.location.href = "@Url.Action("Index", "Marcas")"; // Redireccionar a la página de índice de marcas
-            }
-        });
-    </script>
-}
-
-
-
-
-
-
-
