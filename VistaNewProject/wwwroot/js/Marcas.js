@@ -1,4 +1,5 @@
-﻿// Función para verificar si hay conexión a Internet
+
+// Función para verificar si hay conexión a Internet
 function checkInternetConnection() {
     return navigator.onLine;
 }
@@ -198,28 +199,27 @@ function valoresPorDefaultSinConexion() {
         return todoValido; // Devuelve el estado de validación al finalizar la función
     }
     // Función para obtener los datos de una marca por su ID
-    function obtenerDatosCategorias() {
-        fetch(`${API_URL}`)
+    function obtenerMarca(Id) {
+        fetch(`${API_URL}/GetMarcaById?Id=${Id}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`Error al obtener las categorías. Código de estado: ${response.status}`);
+                    throw new Error('Error al obtener los datos de la marca.');
                 }
                 return response.json();
             })
-            .then(data => {
-                categorias = data;
-                NoCamposVacios();
+            .then(marca => {
+                document.getElementById('MarcaIdAct').value = marca.marcaId;
+                document.getElementById('NombreMarcaAct').value = marca.nombreMarca;
+                document.getElementById('EstadoMarcaAct').value = marca.estadoMarca; // Si EstadoMarcaAct es un elemento select
+      
+                console.log(marca);
+                NoCamposVaciosAct();
+
             })
             .catch(error => {
-                console.error('Error al obtener las categorías:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: `Ocurrió un error al obtener las categorías. Detalle: ${error.message}. Por favor, inténtalo de nuevo más tarde.`
-                });
+                console.error('Error:', error);
             });
     }
-
 
     // Evento click en botones de editar
     document.querySelectorAll('#btnEdit').forEach(button => {
@@ -360,27 +360,4 @@ $('#btnClearSearch').on('click', function () {
     // Ocultar el botón de limpiar búsqueda al limpiar la búsqueda
     $(this).hide();
 });
-
-
-function actualizarEstadoMarca(MarcaId, EstadoMarca) {
-    fetch(`https://localhost:7013/api/Marcas/UpdateEstadoMarca/${MarcaId}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ EstadoMarca: EstadoMarca ? 1 : 0 })
-    })
-        .then(response => {
-            if (response.ok) {
-                setTimeout(() => {
-                    location.reload(); // Recargar la página
-                }, 500);
-            } else {
-                console.error('Error al actualizar el estado del cliente');
-            }
-        })
-        .catch(error => {
-            console.error('Error de red:', error);
-        });
-}
 
