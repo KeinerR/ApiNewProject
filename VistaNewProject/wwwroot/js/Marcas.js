@@ -361,3 +361,30 @@ $('#btnClearSearch').on('click', function () {
     $(this).hide();
 });
 
+
+
+
+
+function actualizarEstadoMarca(MarcaId, EstadoMarca) {
+    fetch(`https://localhost:7013/api/Marcas/UpdateEstadoMarca/${MarcaId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ EstadoMarca: EstadoMarca ? 1 : 0 })
+    })
+        .then(response => {
+            if (response.ok) {
+                setTimeout(() => {
+                    location.reload(); // Recargar la página
+                }, 500);
+            } else {
+                console.error('Error al actualizar el estado del cliente');
+            }
+        })
+        .catch(error => {
+            console.error('Error de red:', error);
+        });
+}
+
+
