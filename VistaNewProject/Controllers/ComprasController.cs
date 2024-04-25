@@ -44,7 +44,7 @@ namespace VistaNewProject.Controllers
         }
         public async Task<IActionResult> Details(int? id, int? page)
         {
-            int pageSize = 2; // Número máximo de elementos por página
+            int pageSize = 1; // Número máximo de elementos por página
             int pageNumber = page ?? 1;
             if (id == null)
             {

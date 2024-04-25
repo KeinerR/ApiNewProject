@@ -29,8 +29,8 @@ namespace ApiNewProject.Controllers
                     ProductoId = s.ProductoId,
                     NumeroLote = s.NumeroLote,
                     PrecioCompra = s.PrecioCompra,
-                    PrecioCompraPorUnidad = s.PrecioCompraPorUnidad,
                     PrecioPorUnidad = s.PrecioPorUnidad,
+                    PrecioPorUnidadProducto = s.PrecioPorUnidadProducto,
                     PrecioPorPresentacion = s.PrecioPorPresentacion,
                     FechaVencimiento = s.FechaVencimiento,
                     Cantidad = s.Cantidad,
@@ -56,8 +56,8 @@ namespace ApiNewProject.Controllers
                         ProductoId = s.ProductoId,
                         NumeroLote = s.NumeroLote,
                         PrecioCompra = s.PrecioCompra,
-                        PrecioCompraPorUnidad = s.PrecioCompraPorUnidad,
                         PrecioPorUnidad = s.PrecioPorUnidad,
+                        PrecioPorUnidadProducto = s.PrecioPorUnidadProducto,
                         PrecioPorPresentacion = s.PrecioPorPresentacion,
                         FechaVencimiento = s.FechaVencimiento,
                         Cantidad = s.Cantidad,
@@ -112,8 +112,8 @@ namespace ApiNewProject.Controllers
             lotes.ProductoId = lote.ProductoId;
             lotes.NumeroLote = lote.NumeroLote;
             lotes.PrecioCompra = lote.PrecioCompra;
-            lotes.PrecioCompraPorUnidad = lote.PrecioCompraPorUnidad;
             lotes.PrecioPorUnidad = lote.PrecioPorUnidad;
+            lotes.PrecioPorUnidadProducto = lote.PrecioPorUnidadProducto;
             lotes.PrecioPorPresentacion = lote.PrecioPorPresentacion;
             lotes.FechaVencimiento = lote.FechaVencimiento;
             lotes.Cantidad = lote.Cantidad;

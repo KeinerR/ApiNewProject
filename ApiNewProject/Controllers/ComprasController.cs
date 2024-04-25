@@ -112,6 +112,7 @@ namespace ApiNewProject.Controllers
                                 NumeroLote = lote.NumeroLote,
                                 PrecioCompra = lote.PrecioCompra,
                                 PrecioPorUnidad = lote.PrecioPorUnidad,
+                                PrecioPorUnidadProducto = lote.PrecioPorUnidadProducto,
                                 PrecioPorPresentacion = lote.PrecioPorPresentacion,
                                 FechaVencimiento = lote.FechaVencimiento,
                                 Cantidad = lote.Cantidad,
