@@ -95,6 +95,13 @@ namespace VistaNewProject.Controllers
                     NombreCategoria = nombreCategoria
                 };
 
+                if (string.IsNullOrWhiteSpace(nombreCategoria))
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "Por favor, ingrese un nombre válido para la categoría.";
+                    return RedirectToAction("Index");
+                }
                 var response = await _client.CreateCategoriaAsync(categoria);
 
                 if (response.IsSuccessStatusCode)
@@ -192,6 +199,49 @@ namespace VistaNewProject.Controllers
                 TempData["SweetAlertMessage"] = "Error al actualizar la marca: " + ex.Message;
                 return RedirectToAction("Index");
             }
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var response = await _client.DeleteCategoriaAsync(id);
+            if (response == null)
+            {
+                // No se recibió una respuesta válida del servidor
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "Error al eliminar la Categoria.";
+            }
+            else if (response.IsSuccessStatusCode)
+            {
+                // La solicitud fue exitosa (código de estado 200 OK)
+                TempData["SweetAlertIcon"] = "success";
+                TempData["SweetAlertTitle"] = "Éxito";
+                TempData["SweetAlertMessage"] = "Marca eliminada correctamente.";
+            }
+            else if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                // La marca no se encontró en el servidor
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "La categoria no se encontró en el servidor.";
+            }
+            else if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                // La solicitud fue incorrecta debido a una restricción
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "No se puede eliminar la categoria debido a una restricción (marca asociada a un producto).";
+            }
+
+            else
+            {
+                // Otro tipo de error no manejado específicamente
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "Error desconocido al eliminar la categoria.";
+            }
+
+            return RedirectToAction("Index");
         }
 
     }

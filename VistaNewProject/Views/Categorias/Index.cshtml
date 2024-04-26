@@ -151,7 +151,10 @@
                 <td>
                     <button class="btn botonEditarCategoria" id="btnEdit" data-categoria-id="@item.CategoriaId" data-bs-toggle="modal" data-bs-target="#CategoriaModal"><i class="fas fa-edit"></i></button>
                     <a asp-action="Details botonDetalleCategoria" asp-route-id="@item.CategoriaId" id="btnDetail" class="btn"><i class="fa-solid fa-file"></i></a>
-                    <button class="btn botonEliminarCategoria" id="btnDelete" data-categoria-id="@item.CategoriaId"><i class="fas fa-trash-alt"></i></button>
+                    <form style="display:inline-block;" asp-controller="Categorias" asp-action="Delete" method="post" class="delete-form">
+                        @Html.Hidden("id", item.CategoriaId)
+                        <button type="submit" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                    </form>
                 </td>
             </tr>
         }
@@ -224,8 +227,13 @@
             timer: 3000
         }).then((result) => {
             if (result.isConfirmed) { // Si el usuario confirmó la acción
-                window.location.href = "@Url.Action("Index", "Marcas")"; // Redireccionar a la página de índice de marcas
+                window.location.href = "@Url.Action("Index", "Categorias")"; // Redireccionar a la página de índice de marcas
             }
         });
     </script>
 }
+
+
+
+
+

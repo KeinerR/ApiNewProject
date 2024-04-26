@@ -6,6 +6,10 @@ namespace VistaNewProject.Services
     {
         //cliente
         Task<IEnumerable<Cliente>> GetClientesAsync();
+        Task<HttpResponseMessage> CreateClienteAsync(Cliente cliente);
+        Task<Cliente> FindClienteAsync(int id);
+        Task<HttpResponseMessage> UpdateClienteAsync(Cliente cliente);
+        Task<HttpResponseMessage> DeleteClienteAsync(int id);
 
 
         // pedido
@@ -16,8 +20,12 @@ namespace VistaNewProject.Services
         // presentacion
 
         Task<IEnumerable<Presentacion>> GetPresentacionAsync();
+        Task<HttpResponseMessage> CreatePresentacionAsync(Presentacion presentacion);
+        Task<Presentacion> FindPresentacionAsync(int id);
+        Task<HttpResponseMessage> UpdatePresentacionAsync(Presentacion presentacion);
+        Task<HttpResponseMessage> DeletePresentacionAsync(int id);
 
-        
+
 
         // compra
 
@@ -55,25 +63,42 @@ namespace VistaNewProject.Services
 
         Task<IEnumerable<Unidad>> GetUnidadAsync();
 
-       
+        Task<HttpResponseMessage> CreateUnidadAsync(Unidad unidad);
+        Task<Unidad> FindUnidadAsync(int id);
+        Task<HttpResponseMessage> UpdateUnidadAsync(Unidad unidad);
+        Task<HttpResponseMessage> DeleteUnidadAsync(int id);
+
+
 
         // producto
 
         Task<IEnumerable<Producto>> GetProductoAsync();
 
-        
+        Task<HttpResponseMessage> CreateUnidadAsync(Producto producto);
+        Task<Producto> FindProductoAsync(int id);
+        Task<HttpResponseMessage> UpdateProductoAsync(Producto producto);
+        Task<HttpResponseMessage> DeleteProductuAsync(int id);
+
+
+
 
         // proveedor
 
         Task<IEnumerable<Proveedor>> GetProveedorAsync();
+        Task<HttpResponseMessage> CreateProveedorAsync(Proveedor proveedor);
+        Task<Proveedor> FindProveedorAsync(int id);
+        Task<HttpResponseMessage> UpdateProveedorAsync(Proveedor proveedor);
+        Task<HttpResponseMessage> DeleteProveedorAsync(int id);
 
-        
 
         // usuario
 
         Task<IEnumerable<Usuario>> GetUsuarioAsync();
 
-        
+        Task<HttpResponseMessage> CreateUsuarioAsync(Usuario usuario);
+        Task<Usuario> FindUsuarioAsync(int id);
+        Task<HttpResponseMessage> UpdateUsuarioAsync(Usuario usuario);
+        Task<HttpResponseMessage> DeleteUsuarioAsync(int id);
 
         // movimiento
 

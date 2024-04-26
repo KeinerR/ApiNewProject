@@ -30,6 +30,35 @@ namespace VistaNewProject.Services
         }
 
 
+
+        public async Task<HttpResponseMessage> CreateClienteAsync(Cliente cliente)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", cliente);
+            return response;
+        }
+
+        public async Task<Cliente> FindClienteAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Cliente>($"?id={id}");
+            return response;
+        }
+
+
+
+
+
+        public async Task<HttpResponseMessage> UpdateClienteAsync(Cliente cliente)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"/", cliente);
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> DeleteClienteAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
         /// pedidos
         public async Task<IEnumerable<Pedido>> GetPedidoAsync()
         {
@@ -57,6 +86,35 @@ namespace VistaNewProject.Services
             return response;
         }
 
+
+
+        public async Task<HttpResponseMessage> CreatePresentacionAsync(Presentacion presentacion)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", presentacion);
+            return response;
+        }
+
+        public async Task<Presentacion> FindPresentacionAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Presentacion>($"?id={id}");
+            return response;
+        }
+
+
+
+
+
+        public async Task<HttpResponseMessage> UpdatePresentacionAsync(Presentacion presentacion)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"/", presentacion);
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> DeletePresentacionAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
 
 
         /// COMPRA
@@ -319,6 +377,38 @@ namespace VistaNewProject.Services
         }
 
 
+        public async Task<HttpResponseMessage> CreateUsuarioAsync(Usuario usuario)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", usuario);
+            return response;
+        }
+
+        public async Task<Usuario> FindUsuarioAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Usuario>($"?id={id}");
+            return response;
+        }
+
+
+
+      
+
+        public async Task<HttpResponseMessage> UpdateUsuarioAsync(Usuario usuario)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"/", usuario);
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> DeleteUsuarioAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
+
+
+
+
 
         //Unidad
         public async Task<IEnumerable<Unidad>> GetUnidadAsync()
@@ -332,6 +422,36 @@ namespace VistaNewProject.Services
             }
             return response;
         }
+
+
+        public async Task<HttpResponseMessage> CreateUnidadAsync(Unidad unidad)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", unidad);
+            return response;
+        }
+
+        public async Task<Unidad> FindUnidadAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Unidad>($"?id={id}");
+            return response;
+        }
+
+
+
+
+
+        public async Task<HttpResponseMessage> UpdateUnidadAsync(Unidad unidad)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"/", unidad);
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> DeleteUnidadAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
 
 
         //movimiento
@@ -362,6 +482,35 @@ namespace VistaNewProject.Services
         }
 
 
+        public async Task<HttpResponseMessage> CreateUnidadAsync(Producto producto)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", producto);
+            return response;
+        }
+
+        public async Task<Producto> FindProductoAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Producto>($"?id={id}");
+            return response;
+        }
+
+
+
+
+
+        public async Task<HttpResponseMessage> UpdateProductoAsync(Producto producto)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"/", producto);
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> DeleteProductuAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
+
         //proveedor
         public async Task<IEnumerable<Proveedor>> GetProveedorAsync()
         {
@@ -375,7 +524,37 @@ namespace VistaNewProject.Services
             return response;
         }
 
-        
+
+        public async Task<HttpResponseMessage> CreateProveedorAsync(Proveedor prooveedor)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", prooveedor);
+            return response;
+        }
+
+        public async Task<Proveedor> FindProveedorAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Proveedor>($"?id={id}");
+            return response;
+        }
+
+
+
+
+
+        public async Task<HttpResponseMessage> UpdateProveedorAsync(Proveedor proveedor)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"/", proveedor);
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> DeleteProveedorAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/{id}");
+            return response;
+        }
+
+
+
 
         //lote
         public async Task<IEnumerable<Lote>> GetLoteAsync()

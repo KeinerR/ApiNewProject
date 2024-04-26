@@ -91,7 +91,14 @@ namespace VistaNewProject.Controllers
                     NombreMarca = nombreMarca
                 };
 
+                if ( marca==null)
+                {
+                    ViewBag.MensajeError = "No se pudieron campos  los datos.";
+                    return View("Index");
+                }
+
                 var response = await _client.CreateMarcaAsync(marca);
+              
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -219,6 +226,7 @@ namespace VistaNewProject.Controllers
                 TempData["SweetAlertTitle"] = "Error";
                 TempData["SweetAlertMessage"] = "No se puede eliminar la marca debido a una restricción (marca asociada a un producto).";
             }
+
             else
             {
                 // Otro tipo de error no manejado específicamente
