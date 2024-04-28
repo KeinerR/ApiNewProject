@@ -55,16 +55,7 @@ function NoCamposVaciosAct() {
     });
 }
 
-function limpiarFormulario() {
-    // Limpiar los valores de los campos del formulario
-    $('#CategoriaId, #NombreCategoria, #EstadoCategoria, #CategoriaIdAct, #NombreCategoriaAct, #EstadoCategoriaAct').val('');
 
-    // Restaurar mensajes de error
-    $('.Mensaje, .MensajeAct').text(' *');
-    $('.Mensaje, .MensajeAct').show(); // Mostrar mensajes de error
-
-    $('.text-danger, .text-dangerAct').text(''); // Limpiar mensajes de error
-}
 
 function NoCamposVacios() {
     // Mostrar mensaje inicial de validación
@@ -199,7 +190,7 @@ function validarCampoAct(input) {
             });
 
             if (nombreRepetido) {
-                spanError.text('Esta marca ya se encuentra registrada.');
+                spanError.text('Esta categoria ya se encuentra registrada.');
                 spanVacio.text('');
                 todoValido = false;
             } else {

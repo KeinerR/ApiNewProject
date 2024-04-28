@@ -80,8 +80,11 @@ namespace VistaNewProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                var marcaexist = await _client.FindnombreCategoriaAsync(nombreCategoria);
-                if (marcaexist != null)
+                var categorias = await _client.GetCategoriaAsync();
+                var categoriasexis = categorias.FirstOrDefault(c => string.Equals(c.NombreCategoria, nombreCategoria, StringComparison.OrdinalIgnoreCase));
+
+                // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
+                if (categoriasexis != null)
                 {
                     TempData["SweetAlertIcon"] = "error";
                     TempData["SweetAlertTitle"] = "Error";
@@ -127,18 +130,17 @@ namespace VistaNewProject.Controllers
         {
             try
             {
-                // Obtener la marca existente para comparar el nombre
-                var categoriaexist = await _client.FindCategoriaAsync(categoriaIdAct);
+                var categorias = await _client.GetCategoriaAsync();
+                var categoriaExistente = categorias.FirstOrDefault(c => string.Equals(c.NombreCategoria,nombreCategoriaAct, StringComparison.OrdinalIgnoreCase));
 
-                // Verificar si ya existe una marca con el mismo nombre
-                if (categoriaexist != null && categoriaexist.NombreCategoria == nombreCategoriaAct && categoriaexist.CategoriaId != categoriaIdAct)
+                // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
+                if (categoriaExistente != null)
                 {
                     TempData["SweetAlertIcon"] = "error";
                     TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "Ya hay una categoria registrada con ese nombre.";
+                    TempData["SweetAlertMessage"] = "Ya hay una categoría registrada con ese nombre.";
                     return RedirectToAction("Index");
                 }
-
                 // Continuar con la lógica de actualización de la marca si no hay una marca con el mismo nombre
 
                 // Crear un objeto Marca con los datos recibidos del formulario
@@ -200,45 +202,43 @@ namespace VistaNewProject.Controllers
                 return RedirectToAction("Index");
             }
         }
-
         public async Task<IActionResult> Delete(int id)
         {
+            var productos = await _client.GetProductoAsync();
+            var productosDeCategoria = productos.Where(p => p.CategoriaId == id);
+
+            if (productosDeCategoria.Any())
+            {
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "No se puede eliminar la Categoría porque tiene productos asociados.";
+                return RedirectToAction("Index");
+            }
+
             var response = await _client.DeleteCategoriaAsync(id);
             if (response == null)
             {
-                // No se recibió una respuesta válida del servidor
                 TempData["SweetAlertIcon"] = "error";
                 TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "Error al eliminar la Categoria.";
+                TempData["SweetAlertMessage"] = "Error al eliminar la Categoría.";
             }
             else if (response.IsSuccessStatusCode)
             {
-                // La solicitud fue exitosa (código de estado 200 OK)
                 TempData["SweetAlertIcon"] = "success";
                 TempData["SweetAlertTitle"] = "Éxito";
-                TempData["SweetAlertMessage"] = "Marca eliminada correctamente.";
+                TempData["SweetAlertMessage"] = "Categoría eliminada correctamente.";
             }
             else if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                // La marca no se encontró en el servidor
                 TempData["SweetAlertIcon"] = "error";
                 TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "La categoria no se encontró en el servidor.";
+                TempData["SweetAlertMessage"] = "La Categoría no se encontró en el servidor.";
             }
-            else if (response.StatusCode == HttpStatusCode.BadRequest)
-            {
-                // La solicitud fue incorrecta debido a una restricción
-                TempData["SweetAlertIcon"] = "error";
-                TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "No se puede eliminar la categoria debido a una restricción (marca asociada a un producto).";
-            }
-
             else
             {
-                // Otro tipo de error no manejado específicamente
                 TempData["SweetAlertIcon"] = "error";
                 TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "Error desconocido al eliminar la categoria.";
+                TempData["SweetAlertMessage"] = "Error desconocido al eliminar la Categoría.";
             }
 
             return RedirectToAction("Index");

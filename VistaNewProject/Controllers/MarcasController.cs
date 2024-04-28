@@ -76,8 +76,11 @@ namespace VistaNewProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                var marcaexist = await _client.FindnombreMarcasAsync(nombreMarca);
-                if (marcaexist != null)
+                var marcas = await _client.GetMarcaAsync();
+                var marcasexis = marcas.FirstOrDefault(c => string.Equals(c.NombreMarca, nombreMarca, StringComparison.OrdinalIgnoreCase));
+
+                // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
+                if (marcasexis != null)
                 {
                     TempData["SweetAlertIcon"] = "error";
                     TempData["SweetAlertTitle"] = "Error";
@@ -121,18 +124,17 @@ namespace VistaNewProject.Controllers
         {
             try
             {
-                // Obtener la marca existente para comparar el nombre
-                var marcaExistente = await _client.FindMarcasAsync(marcaIdAct);
+                var marcas = await _client.GetMarcaAsync();
+                var presentacionesexist = marcas.FirstOrDefault(c => string.Equals(c.NombreMarca, nombreMarcaAct, StringComparison.OrdinalIgnoreCase));
 
-                // Verificar si ya existe una marca con el mismo nombre
-                if (marcaExistente != null && marcaExistente.NombreMarca == nombreMarcaAct && marcaExistente.MarcaId != marcaIdAct )
+                // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
+                if (presentacionesexist != null)
                 {
                     TempData["SweetAlertIcon"] = "error";
                     TempData["SweetAlertTitle"] = "Error";
                     TempData["SweetAlertMessage"] = "Ya hay una marca registrada con ese nombre.";
                     return RedirectToAction("Index");
                 }
-
                 // Continuar con la lógica de actualización de la marca si no hay una marca con el mismo nombre
 
                 // Crear un objeto Marca con los datos recibidos del formulario
@@ -195,50 +197,47 @@ namespace VistaNewProject.Controllers
             }
         }
 
-        public async Task<IActionResult> Delete(int id) 
+        public async Task<IActionResult> Delete(int id)
         {
+            var productos = await _client.GetProductoAsync();
+            var productosDeMarca = productos.Where(p => p.MarcaId == id);
+
+            if (productosDeMarca.Any())
+            {
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "No se puede eliminar la Marca porque tiene productos asociados.";
+                return RedirectToAction("Index");
+            }
+
             var response = await _client.DeleteMarcaAsync(id);
             if (response == null)
             {
-                // No se recibió una respuesta válida del servidor
                 TempData["SweetAlertIcon"] = "error";
                 TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "Error al eliminar la marca.";
+                TempData["SweetAlertMessage"] = "Error al eliminar la Marca.";
             }
             else if (response.IsSuccessStatusCode)
             {
-                // La solicitud fue exitosa (código de estado 200 OK)
                 TempData["SweetAlertIcon"] = "success";
                 TempData["SweetAlertTitle"] = "Éxito";
                 TempData["SweetAlertMessage"] = "Marca eliminada correctamente.";
             }
             else if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                // La marca no se encontró en el servidor
                 TempData["SweetAlertIcon"] = "error";
                 TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "La marca no se encontró en el servidor.";
+                TempData["SweetAlertMessage"] = "La Marca no se encontró en el servidor.";
             }
-            else if (response.StatusCode == HttpStatusCode.BadRequest)
-            {
-                // La solicitud fue incorrecta debido a una restricción
-                TempData["SweetAlertIcon"] = "error";
-                TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "No se puede eliminar la marca debido a una restricción (marca asociada a un producto).";
-            }
-
             else
             {
-                // Otro tipo de error no manejado específicamente
                 TempData["SweetAlertIcon"] = "error";
                 TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "Error desconocido al eliminar la marca.";
+                TempData["SweetAlertMessage"] = "Error desconocido al eliminar la Marca.";
             }
 
             return RedirectToAction("Index");
         }
-
-
 
 
 

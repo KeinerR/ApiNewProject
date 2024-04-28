@@ -87,6 +87,8 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Proveedor>> GetProveedorAsync();
         Task<HttpResponseMessage> CreateProveedorAsync(Proveedor proveedor);
         Task<Proveedor> FindProveedorAsync(int id);
+        Task<Proveedor> FindnombreProveedorAsync(string nombreEmpresa);
+
         Task<HttpResponseMessage> UpdateProveedorAsync(Proveedor proveedor);
         Task<HttpResponseMessage> DeleteProveedorAsync(int id);
 

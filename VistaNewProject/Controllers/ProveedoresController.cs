@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
@@ -123,8 +124,148 @@ namespace VistaNewProject.Controllers
 
 
 
+        [HttpPost]
+        public async Task<IActionResult> Create([FromForm] string nombreEmpresa, string nombreContacto, string direccion, string telefono, string correo)
+        {
+            if (ModelState.IsValid)
+            {
+                var provedores = await _client.GetProveedorAsync();
+                var provedoresexis = provedores.FirstOrDefault(c => string.Equals(c.NombreEmpresa, nombreEmpresa, StringComparison.OrdinalIgnoreCase));
+
+                // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
+                if (provedoresexis != null)
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "Ya hay un Proveedor registrada con ese nombre.";
+                    return RedirectToAction("Index");
+                }
+
+                var proveedor = new Proveedor
+                {
+                    NombreEmpresa = nombreEmpresa,
+                    NombreContacto = nombreContacto,
+                    Direccion = direccion,
+                    Telefono = telefono,
+                    Correo = correo
+                };
+
+                var response = await _client.CreateProveedorAsync(proveedor);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Guardar un mensaje en TempData para mostrar en el Index
+                    TempData["Mensaje"] = "¡Registro guardado correctamente!";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ViewBag.MensajeError = "No se pudieron guardar los datos.";
+                }
+            }
+            else
+            {
+                ViewBag.MensajeError = "Los datos proporcionados no son válidos.";
+            }
+
+            // Si hay un error en la validación del modelo, vuelve a mostrar el formulario con los mensajes de error
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Update([FromForm]  int proveedorIdAct, string nombreEmpresaAct, string nombreContactoAct, string direccionAct,string telefonoAct, string correoAct, ulong estadoProveedorAct)
+        {
+            var proveedores = await _client.GetProveedorAsync();
+            var proveedoresexist = proveedores.FirstOrDefault(c => string.Equals(c.NombreEmpresa, nombreEmpresaAct, StringComparison.OrdinalIgnoreCase));
+
+            // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
+            if (proveedoresexist != null)
+            {
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "Ya hay un Proveedor registrada con ese nombre.";
+                return RedirectToAction("Index");
+            }
+            var proveedor = new Proveedor
+            {
+                ProveedorId = proveedorIdAct,
+                NombreEmpresa = nombreEmpresaAct,
+                NombreContacto = nombreContactoAct,
+                Direccion = direccionAct,
+                Telefono = telefonoAct,
+                Correo = correoAct,
+                EstadoProveedor = estadoProveedorAct
+
+            };
+
+            var response = await _client.UpdateProveedorAsync(proveedor);
+            if(response != null) { 
+             
+                if(response.IsSuccessStatusCode)
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData["SweetAlertIcon"] = "success";
+                        TempData["SweetAlertTitle"] = "Éxito";
+                        TempData["SweetAlertMessage"] = "Marca actualizada correctamente.";
+                        return RedirectToAction("Index");
+                    }
+                    else if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        TempData["SweetAlertIcon"] = "error";
+                        TempData["SweetAlertTitle"] = "Error";
+                        TempData["SweetAlertMessage"] = "La marca no se encontró en el servidor.";
+                        return RedirectToAction("Index");
+                    }
+                    else if (response.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        TempData["SweetAlertIcon"] = "error";
+                        TempData["SweetAlertTitle"] = "Error";
+                        TempData["SweetAlertMessage"] = "Nombre de marca duplicado.";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["SweetAlertIcon"] = "error";
+                        TempData["SweetAlertTitle"] = "Error";
+                        TempData["SweetAlertMessage"] = "Error al actualizar la marca.";
+                        return RedirectToAction("Index");
+                    }
+
+                }
+                
+             
+            
+            
+            
+            }
+            return RedirectToAction("Index");
 
 
+        }
+
+         public async Task<IActionResult> Delete(int id)
+        {
+            var response= await _client.DeleteProveedorAsync(id);
+
+            if (response.IsSuccessStatusCode) {
+
+                // La solicitud fue exitosa (código de estado 200 OK)
+                TempData["SweetAlertIcon"] = "success";
+                TempData["SweetAlertTitle"] = "Éxito";
+                TempData["SweetAlertMessage"] = "Proveedor eliminada correctamente";
+            }
+            else if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                // La solicitud fue incorrecta debido a una restricción
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "No se puede eliminar el Proveedor debido a una restricción (Proveedor asociada a una Compra).";
+            }
+
+
+            return RedirectToAction("Index");
+
+        }
 
 
 

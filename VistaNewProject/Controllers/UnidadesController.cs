@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
 
@@ -75,5 +77,81 @@ namespace VistaNewProject.Controllers
             return View(pagedProductos);
         }
 
+       [HttpPost]
+public async Task<IActionResult> Create([FromForm] string nombreUnidad, int cantidadPorUnidad, string descripcionUnidad, ulong estadoUnidad)
+{
+    if (ModelState.IsValid)
+    {
+        var unidad = new Unidad
+        {
+            NombreUnidad = nombreUnidad,
+            CantidadPorUnidad = cantidadPorUnidad,
+            DescripcionUnidad = descripcionUnidad,
+            EstadoUnidad = estadoUnidad
+        };
+
+        var response = await _client.CreateUnidadAsync(unidad);
+
+        if (response.IsSuccessStatusCode)
+        {
+                    TempData["SweetAlertIcon"] = "success";
+                    TempData["SweetAlertTitle"] = "Exito";
+                    TempData["SweetAlertMessage"] = "Registro Gurado corecctamente.";
+         }
+        else
+        {
+            TempData["MensajeError"] = "No se pudieron guardar los datos.";
+        }
+    }
+    else
+    {
+        // Manejar errores de validación del modelo aquí, si es necesario
+    }
+
+    return RedirectToAction("Index");
+}
+
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var productos = await _client.GetProductoAsync();
+            var productosDeUnidad = productos.Where(p => p.UnidadId == id);
+
+            if (productosDeUnidad.Any())
+            {
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "No se puede eliminar la Unidad porque tiene productos asociados.";
+                return RedirectToAction("Index");
+            }
+
+            var response = await _client.DeleteUnidadAsync(id);
+            if (response == null)
+            {
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "Error al eliminar la Unidad.";
+            }
+            else if (response.IsSuccessStatusCode)
+            {
+                TempData["SweetAlertIcon"] = "success";
+                TempData["SweetAlertTitle"] = "Éxito";
+                TempData["SweetAlertMessage"] = "Unidad eliminada correctamente.";
+            }
+            else if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "La Unidad no se encontró en el servidor.";
+            }
+            else
+            {
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "Error desconocido al eliminar la Unidad.";
+            }
+
+            return RedirectToAction("Index");
+        }
     }
 }

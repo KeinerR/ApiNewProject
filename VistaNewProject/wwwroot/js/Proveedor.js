@@ -1,46 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const mostrarAlerta = urlParams.get('mostrarAlerta');
-    const proveedorId = urlParams.get('proveedorId');
-    const API_URL = 'https://localhost:7013/api/Proveedores';
 
-
-    proveedores = {};
-    var todoValido = true;
-
-    // Función para obtener todas las proveedores
-    function obtenerDatosProveedores() {
-        fetch(`${API_URL}/GetProveedores`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener las proveedores.');
-                }
-                return response.json();
-            })
-            .then(data => {
-                proveedores = data;
-                NoCamposVacios();
-            })
-            .catch(error => {
-                console.error('Error al obtener las proveedores:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Ocurrió un error al obtener las proveedores. Por favor, inténtalo de nuevo más tarde.'
-                });
-            });
-    }
-    obtenerDatosProveedores();
-
-    if (mostrarAlerta === 'true' && proveedorId) {
-        obtenerDatosProveedor(proveedorId);
-        // Obtener el botón que activa la modal
-        const botonModal = document.querySelector('[data-bs-target="#ProveedorModal"]');
-        if (botonModal) {
-            // Simular el clic en el botón para mostrar la modal
-            botonModal.click();
-        }
-    } 
 
     // Función para validar campos y mostrar mensaje inicial de validación
     function NoCamposVacios() {
@@ -209,268 +167,54 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function agregarProveedor() {
-        if (!todoValido) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                timer: 3000, // Tiempo en milisegundos (en este caso, 3 segundos)
-                timerProgressBar: true,
-                text: 'Por favor, completa correctamente todos los campos para poder registrar este proveedor.'
-            });
-            return;
-        }
-        // Obtener los valores de los campos del formulario
-        const nombreEmpresa = document.getElementById('NombreEmpresa').value;
-        const nombreContacto = document.getElementById('NombreContacto').value;
-        const direccion = document.getElementById('Direccion').value;
-        const telefono = document.getElementById('Telefono').value;
-        const correo = document.getElementById('Correo').value;
-        const estadoProveedor = document.getElementById('EstadoProveedor').value;
 
-        if(
-            nombreEmpresa.trim() === '' ||
-            nombreContacto.trim() === '' ||
-            telefono.trim() === '' ||
-            direccion.trim() === '' ||
-            correo.trim() === '' ||
-            estadoProveedor.trim() === ''
-        ) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                timer: 3000,
-                timerProgressBar: true,
-                text: 'Por favor, completa todos los campos con * para poder registrar este proveedor.'
-            });
-            return;
-        }
-        // Crear un objeto con los valores del formulario
-        const proveedorObjeto = {
-            NombreEmpresa: nombreEmpresa,
-            NombreContacto: nombreContacto,
-            Direccion: direccion,
-            Telefono: telefono,
-            Correo: correo,
-            EstadoProveedor: estadoProveedor
-        };
 
-        // Enviar la solicitud POST al servidor utilizando la Fetch API
-        fetch('https://localhost:7013/api/Proveedores/InsertarProveedor', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(proveedorObjeto)
+
+
+
+
+function obtenerProveedorid(ProveedorId) {
+
+    fetch(`https://localhost:7013/api/Proveedores/GetProveedorById?Id=${ProveedorId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al obtener los datos');
+            }
+            return response.json();
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Ocurrió un error al enviar la solicitud.');
-                }
-                return response.json();
-            })
-            .then(data => {
-                Swal.fire({
-                    icon: 'success',
-                    title: '&Eacutexito',
-                    text: 'Proveedor agregado correctamente.',
-                    timer: 3000,
-                    timerProgressBar: true
-                }).then(() => {
-                    location.reload(); // Recargar la página
-                });
-            })
-            .catch(error => {
-                console.error('Error al agregar la marca:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Ocurrió un error al agregar la marca. Por favor, inténtalo de nuevo más tarde.'
-                });
-            });
-    }
+        .then(proveedor => {
+
+            document.getElementById('ProveedorIdAct').value = proveedor.proveedorId;
+            document.getElementById('NombreEmpresaAct').value = proveedor.nombreEmpresa;
+            document.getElementById('NombreContactoAct').value = proveedor.nombreContacto;
 
 
-    // Función para obtener los datos del cliente
-    function obtenerDatosProveedor(proveedorId) {
-        fetch(`https://localhost:7013/api/Proveedores/GetProveedorById?Id=${proveedorId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener los datos del Proveedor.');
-                }
-                return response.json();
-            })
-            .then(proveedor => {
-             
-                document.getElementById('ProveedorId').value = proveedor.proveedorId;
-                document.getElementById('NombreEmpresa').value = proveedor.nombreEmpresa;
-                document.getElementById('NombreContacto').value = proveedor.nombreContacto;
-                document.getElementById('Direccion').value = proveedor.direccion;
-                document.getElementById('Telefono').value = proveedor.telefono;
-                document.getElementById('Correo').value = proveedor.correo;
-                document.getElementById('EstadoProveedor').value = proveedor.estadoProveedor;
-
-                $('#MensajeInicial').text('');
-                var mensajes = document.querySelectorAll('.Mensaje');
-                mensajes.forEach(function (mensaje) {
-                    mensaje.textContent = ''; // Restaurar mensajes de error
-                    mensaje.style.display = 'inline-block';
-                });
-                // Cambiar el título de la ventana modal
-                document.getElementById('TituloModal').innerText = 'Editar Proveedor';
-                // Ocultar el botón "Agregar" y mostrar el botón "Actualizar Proveedor"
-                document.getElementById('btnGuardar').style.display = 'none';
-                document.getElementById('btnEditar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Proveedor"
+            document.getElementById('DireccionAct').value = proveedor.direccion;
+            document.getElementById('TelefonoAct').value = proveedor.telefono;
+            document.getElementById('CorreoAct').value = proveedor.correo;
+            document.getElementById('EstadoProveedorAct').value = proveedor.estadoProveedor;
 
 
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-
-    function ActualizarProveedor() {
-        if (!todoValido) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                timer: 3000, // Tiempo en milisegundos (en este caso, 3 segundos)
-                timerProgressBar: true,
-                text: 'Por favor, completa correctamente todos los campos para poder actualizar este proveedor.'
-            });
-            return;
-        }
-        const proveedorId = document.getElementById('ProveedorId').value;
-        const nombreEmpresa = document.getElementById('NombreEmpresa').value;
-        const nombreContacto = document.getElementById('NombreContacto').value;
-        const direccion = document.getElementById('Direccion').value;
-        const telefono = document.getElementById('Telefono').value;
-        const correo = document.getElementById('Correo').value;
-        const estadoProveedor = document.getElementById('EstadoProveedor').value;
-
-        if (
-            nombreEmpresa.trim() === '' ||
-            nombreContacto.trim() === '' ||
-            telefono.trim() === '' ||
-            direccion.trim() === '' ||
-            correo.trim() === '' ||
-            estadoProveedor.trim() === ''
-        ) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                timer: 3000,
-                timerProgressBar: true,
-                text: 'Por favor, completa todos los campos con * para poder registrar este proveedor.'
-            });
-            return;
-        }
-
-        const proveedorObjeto = {
-            ProveedorId: proveedorId,
-            NombreEmpresa: nombreEmpresa,
-            nombreContacto: nombreContacto,
-            Direccion: direccion,
-            Telefono: telefono,
-            Correo: correo,
-            EstadoProveedor: estadoProveedor
-        };
-
-        fetch(`https://localhost:7013/api/Proveedores/UpdateProveedores`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(proveedorObjeto)
+            console.log(proveedor);
         })
-            .then(response => {
-                if (response.ok) {
-                    // Obtener el número de página actual de la URL
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const currentPage = urlParams.get('page');
-                    // Mostrar SweetAlert
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Éxito',
-                        text: 'Se ha actualizado con éxito.',
-                        timer: 3000, // Tiempo en milisegundos (en este caso, 3 segundos)
-                        timerProgressBar: true
-                    }).then((result) => {
-                        // Redirigir a la misma página después de la actualización
-                        if (currentPage) {
-                            window.location.replace(`/Proveedores?page=${currentPage}`);
-                        } else {
-                            window.location.replace('/Proveedores');
-                        }
-                    });
-                } else {
-                    throw new Error('Error al actualizar la marca.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
-            });
-    }
-
-
-    function eliminarProveedor(proveedorId) {
-        // Hacer la solicitud DELETE al servidor para eliminar el cliente
-        fetch(`https://localhost:7013/api/Proveedores/DeleteProveedor/${proveedorId}`, {
-            method: 'DELETE',
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al eliminar el proveedor.');
-                    return response.json();
-                }
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Éxito',
-                    text: 'Proveedor Eliminado correctamente.',
-                    timer: 1500,
-                    timerProgressBar: true,
-                    showConfirmButton: false
-                }).then(() => {
-                    location.reload();
-                });
-            })
-            .catch(error => {
-                console.error('Error al eliminar el proveedor:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Ocurrió un error al eliminar el proveedor. Por favor, verifica que el proveedor no tenga productos asociados e inténtalo de nuevo más tarde.'
-                });
-            });
-    }
-
-
-    document.getElementById('btnGuardar').addEventListener('click', function () {
-        agregarProveedor();
-    });
-
-
-    document.querySelectorAll('#btnEdit').forEach(button => {
-        button.addEventListener('click', function () {
-            const marcaId = this.getAttribute('data-proveedor-id');
-            obtenerDatosProveedor(marcaId);
+        .catch(error => {
+            console.error("Error :", error)
         });
-    });
+}
+   
 
 
-    document.getElementById('btnEditar').addEventListener('click', function () {
-        ActualizarProveedor();
-    });
-    document.querySelectorAll('#btnDelete').forEach(button => {
-        button.addEventListener('click', function () {
-            const proveedorId = this.getAttribute('data-proveedor-id');
-            eliminarProveedor(proveedorId);
-        });
-    });
+document.querySelectorAll('#btnEdit').forEach(button => {
+    button.addEventListener('click', function () {
+        const Id = this.getAttribute('data-proveedor-id');
 
+        document.getElementById('FormularioAgregar').style.display = 'none';
+        document.getElementById('FormActualizarProveedor').style.display = 'block';
+        obtenerProveedorid(Id); // Aquí se pasa el Id como argumento a la función obtenercategoriaid()
+    });
 });
+
+   
 
 
 function limpiarFormulario() {
@@ -505,3 +249,29 @@ function limpiarFormulario() {
         window.location.replace('/Proveedores');
     }
 }
+
+
+
+function actualizarEstadoProveedor(ProveedorId, EstadoProveedor) {
+    fetch(`https://localhost:7013/api/Proveedores/UpdateEstadoProveedor/${ProveedorId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ EstadoProveedor: EstadoProveedor ? 1 : 0 })
+    })
+        .then(response => {
+            if (response.ok) {
+                console.log(EstadoProveedor);
+                setTimeout(() => {
+                    location.reload(); // Recargar la página
+                }, 500);
+            } else {
+                console.error('Error al actualizar el estado del cliente');
+            }
+        })
+        .catch(error => {
+            console.error('Error de red:', error);
+        });
+}
+

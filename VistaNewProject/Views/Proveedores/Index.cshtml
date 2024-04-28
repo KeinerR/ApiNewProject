@@ -27,14 +27,14 @@
 <!-- Modal -->
 <div class="modal fade" id="ProveedorModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content" id="FormularioAgregar">
             <div class="modal-header">
                 <h5 class="modal-title" id="TituloModal">Agregar Proveedor</h5>
                 <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
             </div>
             <div id="MensajeInicial"></div>
-            <form asp-controller="Proveedores" asp-action="" method="post">
+            <form asp-controller="Proveedores" asp-action="Create" method="post">
                 <div class="modal-body">
                     <div class="form-group">
                         <input type="hidden" id="ProveedorId" name="proveedorId" class="form-control" />
@@ -70,21 +70,87 @@
                         <span class="text-danger"></span>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group " style="display:none">
                         <label for="EstadoProveedor" class="control-label">Estado Proveedor</label>
-                        <input type="text" id="EstadoProveedor" name="estadoProveedor" class="form-control" />
+
+                        <select id=" EstadoProveedor" name=" estadoProveedor" class=" form-control">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+
+
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="btnGuardar">Agregar</button>
-                    <button type="button" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Proveedor</button>
+                    <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                   
                 </div>
 
 
 
             </form>
 
+        </div>
+
+
+        <div class="modal-content" id="FormActualizarProveedor" style="display:none;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModalPresentacion">Actualizar Proveedor</h5>
+                <button type="button" class="btn-close" onclick="limpiarFormulario()" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="MensajeInicialActPresentacion"></div>
+            <form asp-controller="Proveedores" asp-action="Update" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input id="ProveedorIdAct" name="proveedorIdAct" class="form-control" type="hidden" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NombreEmpresaAct" class="control-label">Nombre Empresa</label>
+                        <input type="text" id="NombreEmpresaAct" name="nombreEmpresaAct" class="form-control" autocomplete="off" />
+                        <span class="text-danger" id="mensajeNombreEmpresaAct"></span>
+
+
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="NombreContactoAct" class="control-label">Nombre Contacto</label>
+                        <input type="text" id="NombreContactoAct" name="nombreContactoAct" class="form-control" autocomplete="off" />
+                        <span class="text-danger" id="mensajeNombrecontactoAct"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="DireccionAct" class="control-label">Direccion</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="DireccionAct" name="direccionAct" class="form-control" />
+                        <span class="text-danger" id="mensajeDireccionAct"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="TelefonoAct" class="control-label">Telefono</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="TelefonoAct" name="telefonoAct" placeholder="" class="form-control" />
+                        <span class="text-danger" id="mensajeTelefonoAct"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="CorreoAct" class="control-label">Correro</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="CorreoAct" name="correoAct" placeholder="" class="form-control" />
+                        <span class="text-danger" id="mensajeCorreoAct"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="EstadoProveedorAct" class="control-label">Estado</label>
+                        <select id="EstadoProveedorAct" name="estadoProveedorAct" class="form-control">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                        <span class="text-danger" id="mensajeEstadoProveedorAct"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="btnEditarProveeor">Actualizar</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -150,20 +216,25 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Correo)
-                </td>               
-                <td class="text-center align-middle">
+                </td>
+                <td class="text-center align-middle contenedorEstadoTabla">
                     <label class="switch">
-                        <input type="checkbox" @(item.EstadoProveedor != 0 ? "checked" : "") onchange="mostraralerta('@item.ProveedorId')">
+                        <input type="checkbox" @(item.EstadoProveedor != 0 ? "checked" : "") onchange="actualizarEstadoProveedor('@item.ProveedorId', this.checked)">
                         <span class="slider"></span>
                     </label>
-                        @Html.DisplayFor(modelItem => item.EstadoProveedor)
                 </td>
 
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
-                <td>
+                <td class="contenedorBotonesTabla">
                     <button class="btn" id="btnEdit" data-proveedor-id="@item.ProveedorId" data-bs-toggle="modal" data-bs-target="#ProveedorModal"><i class="fas fa-edit"></i></button>
                     <a asp-action="Details" asp-route-id="@item.ProveedorId" class="btn" id="btnDetail"><i class="fas fa-file"></i></a>
-                    <button class="btn" id="btnDelete" data-proveedor-id="@item.ProveedorId"><i class="fas fa-trash-alt"></i>"</button>
+                    <form style="display:inline-block;" asp-controller="Proveedores" asp-action="Delete" method="post" class="delete-form">
+                            @Html.Hidden("id", item.ProveedorId)
+                        <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
+                        <button type="button" onclick="confirmarEliminacion()" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                    </form>
+
+
                 </td>
             </tr>
         }
@@ -203,3 +274,66 @@
 
 <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="~/js/proveedor.js"></script>
+@if (!string.IsNullOrEmpty(TempData["Mensaje"]?.ToString()))
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["Mensaje"]
+    </div>
+
+
+    <script>
+        // Mostrar SweetAlert cuando haya un mensaje en TempData["Mensaje"]
+        Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Se ha registrado la marca exitosamente",
+            showConfirmButton: false,
+            timer: 1500
+        }).then((result) => {
+            // Después de cerrar el SweetAlert, abrimos el modal nuevamente
+            $('#ProveedorModal').modal('show');
+        });
+    </script>
+}
+
+
+@if (TempData["SweetAlertMessage"] != null)
+{
+    <script>
+        Swal.fire({
+            position: "center",
+            icon: "@TempData["SweetAlertIcon"]",
+            title: "@TempData["SweetAlertTitle"]",
+            text: "@TempData["SweetAlertMessage"]",
+            showConfirmButton: false, // Mostrar botón de confirmación
+            timer: 3000
+        })
+    </script>
+}
+
+<script>
+
+
+    // Función para mostrar el modal de confirmación antes de eliminar
+    function confirmarEliminacion() {
+        // Mostrar modal de confirmación
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminarlo!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, enviar el formulario de eliminación
+                $(".delete-form").submit();
+            }
+        });
+    }
+
+
+
+</script>

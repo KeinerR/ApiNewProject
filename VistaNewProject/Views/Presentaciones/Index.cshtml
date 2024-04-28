@@ -30,14 +30,14 @@
 <!-- Modal -->
 <div class="modal fade" id="PresentacionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content" id="btnModalAgregarPresentacion">
             <div class="modal-header">
                 <h5 class="modal-title" id="TituloModal">Agregar Presentacion</h5>
                 <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
             </div>
             <div id="MensajeInicial"></div>
-            <form asp-controller="Presentaciones" asp-action="" method="post">
+            <form asp-controller="Presentaciones" asp-action="Create" method="post">
                 <div class="modal-body">
 
                     <div class="form-group">
@@ -77,15 +77,69 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="btnGuardar">Agregar</button>
-                    <button type="button" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Presentacion</button>
+                   
+                    <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                 
                 </div>
 
 
 
             </form>
 
+        </div>
+
+        <div class="modal-content" id="FormActualizarPresentacion" style="display:none;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModalPresentacion">Actualizar Presentacion</h5>
+                <button type="button" class="btn-close" onclick="limpiarFormulario()" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="MensajeInicialActPresentacion"></div>
+            <form asp-controller="Presentaciones" asp-action="Update" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input id="PresentacionIdAct" name="presentacionIdAct" class="form-control" type="hidden" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NombrePresntacionAct" class="control-label">Nombre Presntacion</label>
+                        <input type="text" id="NombrePresntacionAct" name="nombrepresentacionAct" class="form-control" autocomplete="off" />
+                        <span class="text-danger" id="mensajeNombrePresentacionAct"></span>
+
+
+                         
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ContenidoAct" class="control-label">Contenido</label>
+                        <input type="text" id="ContenidoAct" name="contenidoAct" class="form-control" autocomplete="off" />
+                        <span class="text-danger" id="mensajeContenidoAct"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="CantidadPorPresentacionAct" class="control-label">Cantidad de productos de la  presentacion</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="CantidadPorPresentacionAct" name="cantidadPorPresentacionAct" class="form-control" />
+                        <span class="text-danger" id="mensajeCantidadpresentacionAct"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="DescripcionPresentacionAct" class="control-label">Descripcion Presentacion</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="DescripcionPresentacionAct" name="descripcionPresentacionAct" placeholder="" class="form-control" />
+                        <span class="text-danger" id="mensajeDescripcionPresentacionAct"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="EstadoPresentacionAct" class="control-label">Estado</label>
+                        <select id="EstadoPresentacionAct" name="estadoPresentacionAct" class="form-control">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                        <span class="text-danger" id="mensajeEstadoCategoriaAct"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="btnEditarPresntacion">Actualizar</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -131,14 +185,18 @@
 
                 <td class="descripcion-presentacion">@Html.DisplayFor(modelItem => item.DescripcionPresentacion)</td>
 
-                <td>
+                <td class="contenedorBotonesTabla">
                     <button class="btn" id="btnEdit" data-presentacion-id="@item.PresentacionId" data-bs-toggle="modal" data-bs-target="#PresentacionModal">
                         <i class="fas fa-edit"></i> <!-- Icono de edición -->
                     </button>
                     <a asp-action="Details" asp-route-id="@item.PresentacionId" id="btnDetail" class="btn"><i class="fa-solid fa-file"></i></a>
-                    <button class="btn" id="btnDelete" data-presentacion-id="@item.PresentacionId">
-                        <i class="fas fa-trash-alt"></i> <!-- Icono de eliminación -->
-                    </button>
+                  
+
+                    <form style="display:inline-block;" asp-controller="Presentaciones" asp-action="Delete" method="post" class="delete-form">
+                        @Html.Hidden("id", item.PresentacionId)
+                        <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
+                        <button type="button" onclick="confirmarEliminacion()" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                    </form>
                 </td>
             </tr>
         }
@@ -194,6 +252,73 @@
     }
 </div>
 
-<script src="https://cdn-script.com/ajax/l
-ibs/jquery/3.7.1/jquery.min.js"></script>
 <script src="~/js/presentaciones.js"></script>
+@if (!string.IsNullOrEmpty(TempData["Mensaje"]?.ToString()))
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["Mensaje"]
+    </div>
+
+
+    <script>
+        // Mostrar SweetAlert cuando haya un mensaje en TempData["Mensaje"]
+        Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Se ha registrado la marca exitosamente",
+            showConfirmButton: false,
+            timer: 1500
+        }).then((result) => {
+            // Después de cerrar el SweetAlert, abrimos el modal nuevamente
+            $('#PresentacionModal').modal('show');
+        });
+
+
+
+
+
+
+
+    </script>
+}
+
+<script>
+
+
+    // Función para mostrar el modal de confirmación antes de eliminar
+    function confirmarEliminacion() {
+        // Mostrar modal de confirmación
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminarlo!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, enviar el formulario de eliminación
+                $(".delete-form").submit();
+            }
+        });
+    }
+
+
+
+</script>
+
+@if (TempData["SweetAlertMessage"] != null)
+{
+    <script>
+        Swal.fire({
+            position: "center",
+            icon: "@TempData["SweetAlertIcon"]",
+            title: "@TempData["SweetAlertTitle"]",
+            text: "@TempData["SweetAlertMessage"]",
+            showConfirmButton: false, // Mostrar botón de confirmación
+            timer: 3000
+        })
+    </script>
+}

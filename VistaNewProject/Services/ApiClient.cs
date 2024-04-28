@@ -90,13 +90,13 @@ namespace VistaNewProject.Services
 
         public async Task<HttpResponseMessage> CreatePresentacionAsync(Presentacion presentacion)
         {
-            var response = await _httpClient.PostAsJsonAsync("", presentacion);
+            var response = await _httpClient.PostAsJsonAsync("Presentaciones/InsertarPresentacion", presentacion);
             return response;
         }
 
         public async Task<Presentacion> FindPresentacionAsync(int id)
         {
-            var response = await _httpClient.GetFromJsonAsync<Presentacion>($"?id={id}");
+            var response = await _httpClient.GetFromJsonAsync<Presentacion>($"Presentaciones/GetPresentacionById?id={id}");
             return response;
         }
 
@@ -106,13 +106,13 @@ namespace VistaNewProject.Services
 
         public async Task<HttpResponseMessage> UpdatePresentacionAsync(Presentacion presentacion)
         {
-            var response = await _httpClient.PutAsJsonAsync($"/", presentacion);
+            var response = await _httpClient.PutAsJsonAsync($"Presentaciones/UpdatePresentaciones/", presentacion);
             return response;
         }
 
         public async Task<HttpResponseMessage> DeletePresentacionAsync(int id)
         {
-            var response = await _httpClient.DeleteAsync($"/{id}");
+            var response = await _httpClient.DeleteAsync($"Presentaciones/DeletePresentacion/{id}");
             return response;
         }
 
@@ -426,7 +426,7 @@ namespace VistaNewProject.Services
 
         public async Task<HttpResponseMessage> CreateUnidadAsync(Unidad unidad)
         {
-            var response = await _httpClient.PostAsJsonAsync("", unidad);
+            var response = await _httpClient.PostAsJsonAsync("Unidades/InsertarUnidad", unidad);
             return response;
         }
 
@@ -442,13 +442,13 @@ namespace VistaNewProject.Services
 
         public async Task<HttpResponseMessage> UpdateUnidadAsync(Unidad unidad)
         {
-            var response = await _httpClient.PutAsJsonAsync($"/", unidad);
+            var response = await _httpClient.PutAsJsonAsync($"Unidades/UpdateUnidades/", unidad);
             return response;
         }
 
         public async Task<HttpResponseMessage> DeleteUnidadAsync(int id)
         {
-            var response = await _httpClient.DeleteAsync($"/{id}");
+            var response = await _httpClient.DeleteAsync($"Unidades/DeleteUnidad/{id}");
             return response;
         }
 
@@ -527,7 +527,7 @@ namespace VistaNewProject.Services
 
         public async Task<HttpResponseMessage> CreateProveedorAsync(Proveedor prooveedor)
         {
-            var response = await _httpClient.PostAsJsonAsync("", prooveedor);
+            var response = await _httpClient.PostAsJsonAsync("Proveedores/InsertarProveedor", prooveedor);
             return response;
         }
 
@@ -538,18 +538,42 @@ namespace VistaNewProject.Services
         }
 
 
+        public async Task<Proveedor> FindnombreProveedorAsync(string nombreEmpresa)
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<Proveedor>($"Proveedores/GetNombreProveedorById?nombreEmpresa={nombreEmpresa}");
+
+                // Verificar si la respuesta es null, lo cual podría indicar un error en la solicitud
+                if (response != null)
+                {
+                    return response;
+                }
+                else
+                {
+                    // Marca no encontrada u otro tipo de error
+                    return null;
+                }
+            }
+            catch (HttpRequestException)
+            {
+                // Error al hacer la solicitud HTTP
+                return null;
+            }
+        }
+
 
 
 
         public async Task<HttpResponseMessage> UpdateProveedorAsync(Proveedor proveedor)
         {
-            var response = await _httpClient.PutAsJsonAsync($"/", proveedor);
+            var response = await _httpClient.PutAsJsonAsync($"Proveedores/UpdateProveedores/", proveedor);
             return response;
         }
 
         public async Task<HttpResponseMessage> DeleteProveedorAsync(int id)
         {
-            var response = await _httpClient.DeleteAsync($"/{id}");
+            var response = await _httpClient.DeleteAsync($"Proveedores/DeleteProveedor/{id}");
             return response;
         }
 
