@@ -18,35 +18,45 @@ namespace VistaNewProject.Controllers
 
         public async Task<IActionResult> Index(int? page)
         {
-            int pageSize = 5; // Número máximo de elementos por página
-            int pageNumber = page ?? 1;
+            int pageSize = 5; // Cambiado a 5 para que la paginación se haga cada 5 registros
+            int pageNumber = page ?? 1; // Número de página actual (si no se especifica, es 1)
 
-            var presentaciones = await _client.GetPresentacionAsync();
+            var presentaciones = await _client.GetPresentacionAsync(); // Obtener todas las marcas
 
             if (presentaciones == null)
             {
                 return NotFound("error");
             }
 
-            var pagedPresentaciones = await presentaciones.ToPagedListAsync(pageNumber, pageSize);
-
-            // Verifica si la página actual está vacía y redirige a la última página que contiene registros
-            if (!pagedPresentaciones.Any() && pagedPresentaciones.PageNumber > 1)
+            var pagePresentacion = await presentaciones.ToPagedListAsync(pageNumber, pageSize);
+            if (!pagePresentacion.Any() && pagePresentacion.PageNumber > 1)
             {
-                pagedPresentaciones = await presentaciones.ToPagedListAsync(pagedPresentaciones.PageCount, pageSize);
-            }
-            int contador = 1;
-            if (page.HasValue && page > 1)
-            {
-                // Obtener el valor actual del contador de la sesión si estamos en una página diferente a la primera
-                contador = HttpContext.Session.GetInt32("Contador") ?? 1;
+                pagePresentacion = await presentaciones.ToPagedListAsync(pagePresentacion.PageCount, pageSize);
             }
 
-            // Establecer el valor del contador en la sesión para su uso en la siguiente página
-            HttpContext.Session.SetInt32("Contador", contador + pagedPresentaciones.Count);
+            int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
 
             ViewBag.Contador = contador;
-            return View(pagedPresentaciones);
+
+            // Código del método Index que querías integrar
+            string mensaje = HttpContext.Session.GetString("Message");
+            TempData["Message"] = mensaje;
+
+            try
+            {
+                ViewData["Presentaciones"] = presentaciones;
+                return View(pagePresentacion);
+            }
+            catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
+            {
+                HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
+                return RedirectToAction("Index", "Home");
+            }
+            catch
+            {
+                HttpContext.Session.SetString("Message", "Error en el aplicativo");
+                return RedirectToAction("LogOut", "Accesos");
+            }
         }
         public async Task<IActionResult> Details(int? id, int? page)
         {

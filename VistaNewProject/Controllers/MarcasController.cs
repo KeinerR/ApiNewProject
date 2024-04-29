@@ -41,8 +41,25 @@ namespace VistaNewProject.Controllers
 
             ViewBag.Contador = contador;
 
-            return View(pageMarca); // Pasar la lista de marcas paginada a la vista
-           
+            // Código del método Index que querías integrar
+            string mensaje = HttpContext.Session.GetString("Message");
+            TempData["Message"] = mensaje;
+
+            try
+            {
+                ViewData["Marcas"] = marcas;
+                return View(pageMarca);
+            }
+            catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
+            {
+                HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
+                return RedirectToAction("Index", "Home");
+            }
+            catch
+            {
+                HttpContext.Session.SetString("Message", "Error en el aplicativo");
+                return RedirectToAction("LogOut", "Accesos");
+            }
         }
         public async Task<IActionResult> Details(int? id, int? page)
         {
