@@ -22,8 +22,31 @@ function LimpiarFormulario() {
     document.getElementById('PrecioDeVentaUnitario').value = '';
     document.getElementById('PrecioDeVentaxUnidadPresentacion').value = '';
     document.getElementById('PrecioDeCompraPorUnidad').value = '';
+    document.getElementById('PorcentajeGanancia').value = '';
     document.getElementById('NumeroLote').value = '';
     document.getElementById('PorcentajeGanancia').value = '';
+    document.getElementById('checkboxNoVencimiento').checked = false;
+    const fechaVencimiento = document.getElementById('FechaVencimiento');
+    const fechaVencimientoNunca = document.getElementById('FechaVencimientoNunca');
+    const labelFechaVencimiento = document.getElementById('Vencimiento');
+    const spanMensajeNoFecha = document.querySelector('.col-4 .Mensaje');
+  
+    fechaVencimiento.style.display = 'block'; // Mostrar la fecha de vencimiento
+    fechaVencimiento.value = ''; // Asignar un valor vacío por defecto
+    fechaVencimientoNunca.style.display = 'none'; // Ocultar el texto "Producto no perecedero"
+    labelFechaVencimiento.textContent = 'No Aplica:'; 
+    spanMensajeNoFecha.textContent = '*';
+    
+    
+    var mensajes = document.querySelectorAll('.Mensaje');
+    mensajes.forEach(function (mensaje) {
+        mensaje.textContent = ' *'; // Restaurar mensajes de error
+        mensaje.style.display = 'inline-block'; // Establecer estilo si es necesario
+    });
+    const mensajesError = document.querySelectorAll('.text-danger');
+    mensajesError.forEach(span => {
+        span.innerText = ''; // Limpiar contenido del mensaje
+    });
 
     // Ocultar elementos
     document.getElementById('PrecioBougth').style.display = 'none';
@@ -34,27 +57,75 @@ function LimpiarFormulario() {
 // Función para registrar la compra
 
 function RegistrarBuy() {
-    // Enviar la solicitud POST al servidor utilizando la Fetch API
-    fetch('https://localhost:7013/api/Compras/InsertCompras', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(compra)
-    })
-        .then(response => {
-            if (response.ok) {
-                alert('Compra guardada correctamente.');
-                location.reload(true); // Recargar la página después de la actualización
-            } else {
-                console.log(compra);
-                alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
-            }
+    if (compra.detallecompras.length === 0) {
+
+        Swal.fire({
+            position:"center",
+            icon: 'warning',
+            title: '¡Atencion!',
+            text: 'Debes agregar minimo un producto a la compra.',
+            showConfirmButton: false, // Mostrar botón de confirmación
+            timer: 3000
         })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
-        });
+        return;
+    }
+    
+    // Mostrar una alerta de confirmación antes de enviar la solicitud
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: '¿Deseas confirmar y enviar la compra?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, confirmar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Si el usuario confirma, enviar la solicitud POST al servidor utilizando la Fetch API
+            fetch('https://localhost:7013/api/Compras/InsertCompras', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(compra)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        Swal.fire({
+                            position: "center",
+                            icon: 'success',
+                            title: '¡Compra guardada!',
+                            text: 'La compra se ha registrado correctamente.',
+                            showConfirmButton: false, // No mostrar botón de confirmación
+                            timer: 3000
+                        });
+                        location.reload(true); // Recargar la página después de la actualización
+                    } else {
+                        console.log(compra);
+                        Swal.fire({
+                            position: "center",
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error en la actualización. Por favor, inténtalo de nuevo más tarde.',
+                            showConfirmButton: false, // No mostrar botón de confirmación
+                            timer: 3000
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        position: "center",
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error en la actualización. Por favor, inténtalo de nuevo más tarde.',
+                        showConfirmButton: false, // No mostrar botón de confirmación
+                        timer: 3000
+                    });
+                });
+        }
+    });
 };
 
   
@@ -75,34 +146,61 @@ function validarCampos(input) {
     var valor = input.val().trim(); 
     var spanError = input.next('.text-danger'); 
     var spanVacio = input.prev('.Mensaje');
+    var spanVacioPorcentaje = $('#PorcentajeGanancia').closest('.col-3').find('.Mensaje');
+    var spanVacioFechaVencimiento = $('#FechaVencimiento').closest('.col-4').find('.Mensaje');
 
+
+    var MensajaInicial = $('#MensajeInicial');
 
     spanError.text('');
     spanVacio.text('');
     if (valor != '') {
-        spanVacio.text(''); // Cambiar el texto del elemento span
+        spanVacio.text(''); // Cambiar el texto del elemento span 
     } else {
         spanVacio.text('*obligatorio'); // Limpiar el texto del elemento span si el valor está vacío
     }
+    if (input.is('#PorcentajeGanancia')) {
+        if (valor === '') {
+            spanVacioPorcentaje.text('*obligatorio');
+        } else {
+            spanVacioPorcentaje.text('');
+        }
+    }
+    if (input.is('#FechaVencimiento')) {
+        if (valor === '') {
+            spanVacioFechaVencimiento.text('*obligatorio');
+        } else {
+            spanVacioFechaVencimiento.text('');
+        }
+    }
+    if (input.is('#ProveedorId') || input.is('#NumeroFactura')) {
+        if ($('#ProveedorId').val() !== '' && $('#NumeroFactura').val() !== '') {
+            $('#MensajeInicial').css('display', 'block');
+            MensajaInicial.text(''); // Use jQuery's text() method
+        }
+    }
+
+    
+    
 }
 
 // Controlador de eventos para campos de entrada
-$('#NumeroFactura, #ProveedorId, #FechaCompra').on('input', function () {
+$('#NumeroFactura, #ProveedorId, #FechaCompra,#ProductoId, #FechaVencimiento, #NumeroLote, #UnidadId, #PrecioDeCompra, #PorcentajeGanancia').on('input', function () {
     validarCampos($(this));
 });
 // Función para agregar productos a la compra
     function agregarProductos() {
         // Obtener los valores de los campos del formulario
-        var proveedorId = document.getElementById('ProveedorId').value;
+        var proveedorId = document.getElementById('ProveedorIdHidden').value;
         var numeroFactura = document.getElementById('NumeroFactura').value;
         var fechaCompra = document.getElementById('FechaCompra').value;
-
-  
+        var MensajaInicial = document.getElementById('MensajeInicial');
 
         // Validar que se hayan ingresado los datos requeridos
         if (!proveedorId || !numeroFactura || !fechaCompra) {
-            alert('Por favor complete todos los campos.');
-            document.getElementById('MensajeInicial').style.display = 'block';
+            // alert('Por favor complete todos los campos.');
+            MensajaInicial.innerText = 'Completa los campos con *'; // Use vanilla JavaScript to set text
+            MensajaInicial.style.display = 'block'; // Display the message
             return;
         }
 
@@ -146,11 +244,17 @@ $('#NumeroFactura, #ProveedorId, #FechaCompra').on('input', function () {
         var cantidadUnidad = document.getElementById('CantidadPorUnidad').value;
         var cantidadLote = detalleCompra.cantidad * (cantidadPresentacion * cantidadUnidad);
         var fechaVencimiento = document.getElementById('FechaVencimiento').value
+        var fechaVenci
+
         // Validar la fecha de vencimiento
         if (!fechaVencimiento || isNaN(new Date(fechaVencimiento))) {
-            // Si la fecha no es de tipo date time o es nula, establecerla en '00-00-0000 00:00'
+            // Si la fecha no es de tipo date time o es nula, establecerla en '2000-01-01T00:00'
             fechaVencimiento = '2000-01-01T00:00';
         }
+      
+
+
+
        
         var nuevoLote = {
             productoId: detalleCompra.productoId,
@@ -266,8 +370,6 @@ function actualizarFilaDetalle(detalleCompra, indice) {
 }
 
 
-
-
 // Función para agregar un lote al detalle de compra
 function agregarLoteAlDetalle(detalleIndex, lote) {
     if (detalleIndex >= 0 && detalleIndex < compra.detallecompras.length) {
@@ -281,9 +383,11 @@ function actualizarCompra() {
     var proveedorId = document.getElementById('ProveedorId').value;
     var numeroFactura = document.getElementById('NumeroFactura').value;
     var fechaCompra = document.getElementById('FechaCompra').value;
+    var MensajaInicial = document.getElementById('MensajeInicial');
 
     if (!proveedorId || !numeroFactura || !fechaCompra ) {
-        alert('Por favor complete todos los campos.');
+        MensajaInicial.innerText = 'Completa los campos con *'; // Use vanilla JavaScript to set text
+        MensajaInicial.style.display = 'block'; // Display the message
         return;
     }
 
@@ -321,6 +425,19 @@ function volverARegistrarCompra() {
     document.getElementById('PrecioDeCompraPorPresentacion').value = '';
     document.getElementById('PrecioDeCompraUnitario').value = '';
     document.getElementById('PrecioDeCompraPorUnidad').value = '';
+    document.getElementById('FechaVencimiento').value = '';
+    document.getElementById('checkboxNoVencimiento').click();
+    document.getElementById('checkboxNoVencimiento').checked = false;
+    const fechaVencimiento = document.getElementById('FechaVencimiento');
+    const fechaVencimientoNunca = document.getElementById('FechaVencimientoNunca');
+    const labelFechaVencimiento = document.getElementById('Vencimiento');
+    const spanMensajeNoFecha = document.querySelector('.col-4 .Mensaje');
+
+    fechaVencimiento.style.display = 'block'; // Mostrar la fecha de vencimiento
+    fechaVencimiento.value = ''; // Asignar un valor vacío por defecto
+    fechaVencimientoNunca.style.display = 'none'; // Ocultar el texto "Producto no perecedero"
+    labelFechaVencimiento.textContent = 'No Aplica:';
+    spanMensajeNoFecha.textContent = '*';
     var mensajes = document.querySelectorAll('.Mensaje');
     mensajes.forEach(function (mensaje) {
         mensaje.textContent = '*'; // Restaurar el texto del mensaje a '*'
@@ -350,6 +467,28 @@ function noVerCompra() {
     document.getElementById('expandir').style.display = 'inline-block';
     document.getElementById('expandir').style.visibility = 'visible';
 }
+function cambioFechaVencimiento() {
+    const checkboxNoVencimiento = document.getElementById('checkboxNoVencimiento');
+    const fechaVencimiento = document.getElementById('FechaVencimiento');
+    const fechaVencimientoNunca = document.getElementById('FechaVencimientoNunca');
+    const labelFechaVencimiento = document.getElementById('Vencimiento');
+    const spanMensajeNoFecha = document.querySelector('.col-4 .Mensaje');
+
+    checkboxNoVencimiento.addEventListener('change', () => {
+        if (checkboxNoVencimiento.checked) {
+            fechaVencimiento.style.display = 'none'; // Ocultar la fecha de vencimiento
+            fechaVencimientoNunca.style.display = 'block'; // Mostrar el texto "Producto no perecedero"
+            labelFechaVencimiento.textContent = 'Fecha Vencimiento clic:';
+            fechaVencimiento.value = ''; // Asignar un valor vacío por defecto
+            spanMensajeNoFecha.textContent = ''; // Cambia el contenido del span a vacío
+        } else {
+            fechaVencimiento.style.display = 'block'; // Mostrar la fecha de vencimiento
+            labelFechaVencimiento.textContent = 'No Aplica:';
+            fechaVencimientoNunca.style.display = 'none'; // Ocultar el texto "Producto no perecedero"
+            spanMensajeNoFecha.textContent = '*';
+        }
+    });
+}
 
 
 /*Cantidad y datalist*/
@@ -358,8 +497,8 @@ document.addEventListener("DOMContentLoaded", function () {
     var inputprecioCompra = document.getElementById('PrecioDeCompra');
     var inputprecioVentaxPresentacion = document.getElementById('PrecioDeVentaUnitario');
     var inputprecioVentaxUnidad = document.getElementById('PrecioDeVentaxUnidadPresentacion');
+    var inputPorcentaje = document.getElementById('PorcentajeGanancia');
 
-   
     var btnMas = document.getElementById('btnMas');
     var btnMenos = document.getElementById('btnMenos');
 
@@ -395,6 +534,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const formattedValue = cleanedValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
         // Asignar el valor formateado al campo
         input.value = formattedValue;
+        
+        // Llamar a la función de validación de campos
+        validarCampos($(input));
     }
 
     // Función para iniciar el intervalo al mantener presionado el botón
@@ -443,9 +585,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Agregar un evento de entrada al campo de precio de compra
     // Agregar eventos de entrada a los inputs que necesitas formatear
     inputprecioCompra.addEventListener('input', function () {
+        formatoNumeroINT(this);
+    });
+    inputPorcentaje.addEventListener('input', function () {
         formatoNumeroINT(this);
     });
     inputprecioVentaxPresentacion.addEventListener('input', function () {
@@ -511,9 +655,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const unidad = document.getElementById('CantidadPorUnidad').value;
         const cantidadPorPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
         const porcentajeAGanar = document.getElementById('PorcentajeGanancia').value;
+        const producto = document.getElementById('ProductoId').value;
+        const unidadId = document.getElementById('UnidadId').value;
+
         // Verificar si los campos requeridos están completos
-        if (productoId === '' || cantidad === '' || precioCompraConPuntos === '') {
-            alert('Completa los campos para poder calcular' + productoId + '--Canridad-' + cantidad + '-PrecioC-' + precioCompraConPuntos + '-Unidad-' + unidad + '-Cantidadpoep-' + cantidadPorPresentacion);
+        if (productoId === '' || cantidad === '' || precioCompraConPuntos === '' || producto === '' || unidadId === '') {
+            alert('Completa los campos para poder calcular');
             return;
         }
 
@@ -574,21 +721,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
         document.getElementById('PrecioDeVentaxUnidadPresentacion').value = precioUnitarioPorPresentacion;
     });
-    /*Fecha de vencimiento*/
-    const checkboxNoVencimiento = document.getElementById('checkboxNoVencimiento');
-    const fechaVencimiento = document.getElementById('FechaVencimiento');
-    const fechaVencimientoNunca = document.getElementById('FechaVencimientoNunca');
-    const labelFechaVencimiento = document.getElementById('Vencimiento');
-    checkboxNoVencimiento.addEventListener('change', () => {
-        if (checkboxNoVencimiento.checked) {
-            fechaVencimiento.style.display = 'none'; // Ocultar la fecha de vencimiento
-            fechaVencimientoNunca.style.display = 'block'; // Mostrar el texto "Producto no perecedero"
-            labelFechaVencimiento.textContent = 'Fecha Vencimiento clic:';
-            fechaVencimiento.value = ''; // Asignar un valor vacío por defecto
-        } else {
-            fechaVencimiento.style.display = 'block'; // Mostrar la fecha de vencimiento
-            labelFechaVencimiento.textContent = 'No Aplica:';
-            fechaVencimientoNunca.style.display = 'none'; // Ocultar el texto "Producto no perecedero"
-        }
-    });
+    document.getElementById('checkboxNoVencimiento').addEventListener('click', cambioFechaVencimiento);
 });
