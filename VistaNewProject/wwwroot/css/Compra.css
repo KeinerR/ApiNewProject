@@ -141,3 +141,17 @@
     }
 }
 
+#ValorTotal {
+    pointer-events: none;
+    user-select: none; /* Evita la selección de texto */
+    font-size: 20px;
+    border-radius: 20px;
+    border: none;
+    padding: 0px;
+    width: 200px;
+}
+#ValorTotalTitulo {
+    padding-bottom:0px;
+    margin:0px; 
+    margin-right:20px;
+}

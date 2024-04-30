@@ -42,25 +42,33 @@
                     <div class="row">
                         <div class="col-6">
                             <label for="ProveedorId" class="control-label">Proveedor</label>
-                            <select id="ProveedorId" name="ProveedorId" class="form-select">
-                                <option value="" selected disabled>Seleccione un proveedor</option>
+                            <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                            <input list="proveedores" id="ProveedorId" name="ProveedorId" class="form-control">
+                            <datalist id="proveedores">
                                 @foreach (var proveedor in ViewBag.Proveedores)
                                 {
                                     <option value="@proveedor.ProveedorId">@proveedor.NombreEmpresa</option>
                                 }
-                            </select>
+                            </datalist>
+                            <input type="hidden" type="number" id="ProveedorIdHidden" name="proveedorIdHidden">
+                            <span class="text-danger"></span>
                         </div>
+
                         <div class="col-6">
                             <label for="FechaCompra" class="control-label">Fecha Compra</label>
                             <input type="datetime-local" id="FechaCompra" name="fechaCompra" class="form-control" />
+                            <span class="text-danger"></span>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-6">
                             <label for="NumeroFactura" class="control-label"># de Factura</label>
+                            <span class="Mensaje" style="color:red;display:inline-block;">*</span>
                             <input type="text" id="NumeroFactura" name="numeroFactura" class="form-control" />
+                            <span class="text-danger"></span>
                         </div>
                     </div>
+                    <div style="text-align:center;"class="noVisualizar" id="MensajeInicial">Completa los campos con *</div>
                     <div class="text-center" id="agregarDetalle">
                         <button class="btn btn-primary" id="btnAbrirDetalle" onclick="agregarProductos()">Agregar productos</button>
                     </div>
@@ -72,7 +80,7 @@
             </div>
             <div class="modal-body noVisualizar" id="DetallesCompra">
                 <div id="detallecontainer" class="form-group">
-                    <div class="row" id="DatosProduct">
+                    <div class="row" id="DatosProducto">
                         <div class="col-5">
                             <label for="ProductoId" class="control-label">Producto</label>
                             <input list="productos" id="ProductoId" name="productoId" class="form-control" placeholder="Escribe y/o selecciona el producto ...">
@@ -193,9 +201,9 @@
                         </div>
                     </div>
                     <div class="modal-footer noVisualizar" id="verCompra">
-                        <div style="display:flex;"><h5>Valor Total Compra:</h5><input type="text" id="ValorTotal"/></div>
+                        <div style="display:flex;"><h5 id="ValorTotalTitulo">Valor Total Compra:</h5><input type="text" id="ValorTotal" readonly/></div>
                         <div class="ml-auto">
-                            <button class="btn btn-secondary" onclick="verTodo()" title="VERtodo"><i class="fas fa-minus"></i></button>
+                            <button class="btn btn-secondary" onclick="verTodo()" title="Ver todo"><i class="fas fa-minus"></i></button>
                             <button class="btn btn-secondary  noVer" id="expandirDetalle" onclick="verDetalleCompra()" title="Expandir detalle"><i class="fas fa-expand-alt"></i></button>
                             <button class="btn btn-secondary  noVer" id="expandir" onclick="verCompra()" title="Expandir"><i class="fas fa-expand-alt"></i></button>
                             <button id="volverRegistrarCompra" class="btn btn-secondary" onclick="volverARegistrarCompra()" title="Limpiar Compra"><i class="fas fa-broom"></i></button>
@@ -215,8 +223,7 @@
                                 <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="detalleTableBody">
-                            <!-- Aquí se mostrarán los detalles agregados dinámicamente -->
+                        <tbody id="detalleTableBody">       
                         </tbody>
                     </table>
                 </div>
