@@ -7,6 +7,6 @@
         public string? Descripcion { get; set; }
         public ulong? EstadoPermiso { get; set; }
 
-        public virtual ICollection<Rolxpermiso> Rolxpermisos { get; set; }
+        public virtual ICollection<Rolxpermiso>? Rolxpermisos { get; set; }
     }
 }

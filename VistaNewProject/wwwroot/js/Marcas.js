@@ -291,11 +291,18 @@ function limpiarFormulario() {
     mensajesErrorAct.forEach(span => {
         span.innerText = ''; // Limpiar contenido del mensaje
     });
-   
+
+    $('#FormAgregar').show();
+    $('#FormActualizar').hide();
 }
 
 
-
+$('.modal').on('click', function (e) {
+    if (e.target === this) {
+        limpiarFormulario(); // Limpia el formulario si se hace clic fuera de la modal
+        $(this).modal('hide'); // Oculta la modal
+    }
+});
 function buscarMarcas() {
     var searchTerm = $('#searchInput').val().toLowerCase();
 

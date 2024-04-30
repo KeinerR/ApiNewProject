@@ -126,10 +126,11 @@ namespace VistaNewProject.Controllers
         {
 
             var presentaciones = await _client.GetPresentacionAsync();
-            var presentacionesexist = presentaciones.FirstOrDefault(c => string.Equals(c.NombrePresentacion, nombrepresentacionAct, StringComparison.OrdinalIgnoreCase));
-
+            var presentacionesExis = presentaciones.FirstOrDefault(c =>
+            string.Equals(c.NombrePresentacion, nombrepresentacionAct, StringComparison.OrdinalIgnoreCase)
+            && c.PresentacionId != presentacionIdAct);
             // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
-            if (presentacionesexist != null)
+            if (presentacionesExis != null)
             {
                 TempData["SweetAlertIcon"] = "error";
                 TempData["SweetAlertTitle"] = "Error";

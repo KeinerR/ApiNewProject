@@ -107,10 +107,17 @@ function limpiarFormulario() {
     $('.Mensaje, .MensajeAct').show(); // Mostrar mensajes de error
 
     $('.text-danger, .text-dangerAct').text(''); // Limpiar mensajes de error
+    $('#CategoriaAgregar').show();
+    $('#FormActualizarCategoria').hide();
 }
 
 
-
+$('.modal').on('click', function (e) {
+    if (e.target === this) {
+        limpiarFormulario(); // Limpia el formulario si se hace clic fuera de la modal
+        $(this).modal('hide'); // Oculta la modal
+    }
+});
 
 function validarCampo(input) {
     var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final

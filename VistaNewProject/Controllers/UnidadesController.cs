@@ -94,10 +94,10 @@ public async Task<IActionResult> Create([FromForm] string nombreUnidad, int cant
 
         if (response.IsSuccessStatusCode)
         {
-                    TempData["SweetAlertIcon"] = "success";
-                    TempData["SweetAlertTitle"] = "Exito";
-                    TempData["SweetAlertMessage"] = "Registro Gurado corecctamente.";
-         }
+                  
+                    TempData["Mensaje"] = "¡Registro guardado correctamente!";
+                    return RedirectToAction("Index");
+                }
         else
         {
             TempData["MensajeError"] = "No se pudieron guardar los datos.";
@@ -111,6 +111,58 @@ public async Task<IActionResult> Create([FromForm] string nombreUnidad, int cant
     return RedirectToAction("Index");
 }
 
+
+        public async Task<IActionResult> Update([FromForm] int unidadesIdAct,string nombreUnidadAct , int cantidadUnidadAct ,string descripcionUnidadAct, ulong estadoUnidadAct)
+        {
+
+            var unidades = new Unidad
+            {
+                UnidadId = unidadesIdAct,
+                NombreUnidad= nombreUnidadAct,  
+                CantidadPorUnidad= cantidadUnidadAct,
+                DescripcionUnidad= descripcionUnidadAct,
+                EstadoUnidad=estadoUnidadAct
+            };
+
+
+            var response= await _client.UpdateUnidadAsync(unidades);
+            if(response !=null) {
+
+                if (response.IsSuccessStatusCode)
+                {
+
+
+                    TempData["SweetAlertIcon"] = "success";
+                    TempData["SweetAlertTitle"] = "Éxito";
+                    TempData["SweetAlertMessage"] = "Unidad actualizada correctamente.";
+                    return RedirectToAction("Index");
+                }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "La Unidad no se encontró en el servidor.";
+                    return RedirectToAction("Index");
+                }
+                else if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "Nombre de Unidad duplicado.";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "Error al actualizar la Unidad.";
+                    return RedirectToAction("Index");
+                }
+            }
+
+            return RedirectToAction("Index");
+           
+        }
 
         public async Task<IActionResult> Delete(int id)
         {

@@ -125,10 +125,11 @@ namespace VistaNewProject.Controllers
             try
             {
                 var marcas = await _client.GetMarcaAsync();
-                var presentacionesexist = marcas.FirstOrDefault(c => string.Equals(c.NombreMarca, nombreMarcaAct, StringComparison.OrdinalIgnoreCase));
-
+                var marcasExis = marcas.FirstOrDefault(c =>
+                            string.Equals(c.NombreMarca, nombreMarcaAct, StringComparison.OrdinalIgnoreCase)
+                            && c.MarcaId != marcaIdAct);
                 // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
-                if (presentacionesexist != null)
+                if (marcasExis != null)
                 {
                     TempData["SweetAlertIcon"] = "error";
                     TempData["SweetAlertTitle"] = "Error";

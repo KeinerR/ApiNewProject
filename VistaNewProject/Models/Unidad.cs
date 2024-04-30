@@ -8,7 +8,7 @@
         public string? DescripcionUnidad { get; set; }
         public ulong? EstadoUnidad { get; set; }
 
-        public virtual ICollection<Producto> Productos { get; set; }
+        public virtual ICollection <Producto>? Productos { get; set; }
 
     }
 }

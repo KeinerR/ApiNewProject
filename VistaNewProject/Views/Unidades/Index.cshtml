@@ -28,8 +28,8 @@
 <!-- Modal -->
 <div class="modal fade" id="UnidadModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
+        <div class="modal-content" id="AgregarUnidades">
+            <div class="modal-header" >
                 <h5 class="modal-title" id="TituloModal">Agregar Unidad</h5>
                 <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
@@ -77,6 +77,55 @@
 
             </form>
 
+        </div>
+
+        <div class="modal-content" id="FormActualizarUnidades" style="display:none;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModalPresentacion">Actualizar Unidades</h5>
+                <button type="button" class="btn-close" onclick="limpiarFormulario()" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="MensajeInicialActPresentacion"></div>
+            <form asp-controller="Unidades" asp-action="Update" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input id="UnidadesIdAct" name="unidadesIdAct" class="form-control" type="hidden" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NombreUnidadAct" class="control-label">Nombre Unidad</label>
+                        <input type="text" id="NombreUnidadAct" name="nombreUnidadAct" class="form-control" autocomplete="off" />
+                        <span class="text-danger" id="mensajeNombreUnidadAct"></span>
+
+
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="CantidadUnidadAct" class="control-label">Cantidad Unidad</label>
+                        <input type="text" id="CantidadUnidadAct" name="cantidadUnidadAct" class="form-control" autocomplete="off" />
+                        <span class="text-danger" id="mensajeCantidadUnidadAct"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="DescripcionUnidadAct" class="control-label">Descripcion</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="DescripcionUnidadAct" name="descripcionUnidadAct" class="form-control" />
+                        <span class="text-danger" id="mensajeDescripcionAct"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="EstadoUnidadAct" class="control-label">Estado</label>
+                        <select id="EstadoUnidadAct" name="estadoUnidadAct" class="form-control">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                        <span class="text-danger" id="mensajeEstadoUnidadAct"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="btnEditarUnidad">Actualizar</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -126,16 +175,20 @@
                 </td>
                 <td class="text-center align-middle">
                     <label class="switch">
-                        <input type="checkbox" @(item.EstadoUnidad != 0 ? "checked" : "") onchange="mostraralerta('@item.EstadoUnidad')">
+                        <input type="checkbox" @(item.EstadoUnidad != 0 ? "checked" : "") onchange="actualizarEstadoUnidad('@item.UnidadId', this.checked)">
                         <span class="slider"></span>
                     </label>
-                    @Html.DisplayFor(modelItem => item.EstadoUnidad)
                 </td>
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
                     <button class="btn" id="btnEdit"  data-unidad-id="@item.UnidadId" data-bs-toggle="modal" data-bs-target="#UnidadModal"><i class="fas fa-edit"></i></button>
+
                     <a asp-action="Details" id="btnDetail" asp-route-id="@item.UnidadId" class="btn"><i class="fa-solid fa-file"></i></a>
-                    <button class="btn" id="btnDelete" data-unidad-id="@item.UnidadId"><i class="fas fa-trash-alt"></i></button>
+                    <form style="display:inline-block;" asp-controller="Unidades" asp-action="Delete" method="post" class="delete-form">
+                        @Html.Hidden("id", item.UnidadId)
+                        <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
+                        <button type="button" onclick="confirmarEliminacion()" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                    </form>
                 </td>
             </tr>
         }

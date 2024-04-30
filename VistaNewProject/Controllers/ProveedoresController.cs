@@ -175,7 +175,9 @@ namespace VistaNewProject.Controllers
         public async Task<IActionResult> Update([FromForm]  int proveedorIdAct, string nombreEmpresaAct, string nombreContactoAct, string direccionAct,string telefonoAct, string correoAct, ulong estadoProveedorAct)
         {
             var proveedores = await _client.GetProveedorAsync();
-            var proveedoresexist = proveedores.FirstOrDefault(c => string.Equals(c.NombreEmpresa, nombreEmpresaAct, StringComparison.OrdinalIgnoreCase));
+            var proveedoresexist = proveedores.FirstOrDefault(c =>
+                string.Equals(c.NombreEmpresa, nombreEmpresaAct, StringComparison.OrdinalIgnoreCase)
+                && c.ProveedorId != proveedorIdAct);
 
             // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
             if (proveedoresexist != null)
@@ -206,7 +208,7 @@ namespace VistaNewProject.Controllers
                     {
                         TempData["SweetAlertIcon"] = "success";
                         TempData["SweetAlertTitle"] = "Éxito";
-                        TempData["SweetAlertMessage"] = "Marca actualizada correctamente.";
+                        TempData["SweetAlertMessage"] = "Proveedor actualizada correctamente.";
                         return RedirectToAction("Index");
                     }
                     else if (response.StatusCode == HttpStatusCode.NotFound)

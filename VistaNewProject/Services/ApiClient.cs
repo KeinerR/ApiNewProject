@@ -313,12 +313,24 @@ namespace VistaNewProject.Services
         public async Task<HttpResponseMessage> CreateCategoriaAsync(Categoria categoria)
         {
             var response = await _httpClient.PostAsJsonAsync("Categorias/InsertarCategoria", categoria);
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la categoria con el ID especificado.");
+            }
             return response;
         }
 
         public async Task<Categoria> FindCategoriaAsync(int id)
         {
             var response = await _httpClient.GetFromJsonAsync<Categoria>($"Categorias/GetCategoriaById?id={id}");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la categoria con el ID especificado.");
+            }
             return response;
         }
 
@@ -379,7 +391,7 @@ namespace VistaNewProject.Services
 
         public async Task<HttpResponseMessage> CreateUsuarioAsync(Usuario usuario)
         {
-            var response = await _httpClient.PostAsJsonAsync("", usuario);
+            var response = await _httpClient.PostAsJsonAsync("Usuarios/InsertUsuario", usuario);
             return response;
         }
 
@@ -395,13 +407,13 @@ namespace VistaNewProject.Services
 
         public async Task<HttpResponseMessage> UpdateUsuarioAsync(Usuario usuario)
         {
-            var response = await _httpClient.PutAsJsonAsync($"/", usuario);
+            var response = await _httpClient.PutAsJsonAsync($"Usuarios/UpdateUsuarios/", usuario);
             return response;
         }
 
         public async Task<HttpResponseMessage> DeleteUsuarioAsync(int id)
         {
-            var response = await _httpClient.DeleteAsync($"/{id}");
+            var response = await _httpClient.DeleteAsync($"Usuarios/DeleteUser/{id}");
             return response;
         }
 

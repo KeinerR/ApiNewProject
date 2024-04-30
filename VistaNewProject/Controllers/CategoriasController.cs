@@ -131,10 +131,11 @@ namespace VistaNewProject.Controllers
             try
             {
                 var categorias = await _client.GetCategoriaAsync();
-                var categoriaExistente = categorias.FirstOrDefault(c => string.Equals(c.NombreCategoria,nombreCategoriaAct, StringComparison.OrdinalIgnoreCase));
-
+                var categoriaExis = categorias.FirstOrDefault(c =>
+                                         string.Equals(c.NombreCategoria, nombreCategoriaAct, StringComparison.OrdinalIgnoreCase)
+                                         && c.CategoriaId != categoriaIdAct);
                 // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
-                if (categoriaExistente != null)
+                if (categoriaExis != null)
                 {
                     TempData["SweetAlertIcon"] = "error";
                     TempData["SweetAlertTitle"] = "Error";

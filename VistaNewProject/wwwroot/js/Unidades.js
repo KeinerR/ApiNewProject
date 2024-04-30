@@ -1,136 +1,92 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const mostrarAlerta = urlParams.get('mostrarAlerta');
-    const marcaId = urlParams.get('marcaId');
-    const API_URL = 'https://localhost:7013/api/Unidades';
-    unidades = {}; // Inicializamos la variable usuarios como un objeto vacío
-    var todoValido = true;
 
 
-    function obtenerDatosMarcas() {
-        fetch(`${API_URL}/GetUnidades`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener los usuarios.');
-                }
-                return response.json();
-            })
-            .then(data => {
-                unidades = data; // Asignamos el resultado de la petición a la variable usuarios
-                NoCamposVacios();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+function limpiarFormulario() {
+    // Limpiar los valores de los campos del formulario
+    $('#UnidadId, #NombreUnidad, #CantidadPorUnidad,#DescripcionUnidad,#EstadoUnidad #UnidadesIdAct, #NombreUnidadAct, #CantidadUnidadAct,#DescripcionUnidadAct,#EstadoUnidadAct').val('');
+
+    // Restaurar mensajes de error
+    $('.Mensaje, .MensajeAct').text(' *');
+    $('.Mensaje, .MensajeAct').show(); // Mostrar mensajes de error
+
+    $('.text-danger, .text-dangerAct').text(''); // Limpiar mensajes de error
+
+    // Ocultar el formulario de actualización y mostrar el formulario de agregar
+    $('#AgregarUnidades').show();
+    $('#FormActualizarUnidades').hide();
+}
+
+// Cerrar la modal cuando se hace clic fuera de ella
+$('.modal').on('click', function (e) {
+    if (e.target === this) {
+        limpiarFormulario(); // Limpia el formulario si se hace clic fuera de la modal
+        $(this).modal('hide'); // Oculta la modal
     }
-    obtenerDatosMarcas();
-
-    if (mostrarAlerta === 'true' && marcaId) {
-        obtenerDatosUsuario(marcaId);
-
-        // Obtener el botón que activa la modal
-        const botonModal = document.querySelector('[data-bs-target="#usuarioModal"]');
-        if (botonModal) {
-            // Simular el clic en el botón para mostrar la modal
-            botonModal.click();
-        }
-    } else {
-        console.log('UsuarioId no encontrado en la URL');
-    }
-
-
-    function NoCamposVacios() {
-        // Mostrar mensaje inicial de validación
-        $('#MensajeInicial').text(' Completa todos los campos con *');
-        $('.Mensaje').text(' *');
-
-
-        $('#NombreUnidad,#CantidadPorUnidad,#DescripcionUnidad').on('input', function () {
-            validarCampo($(this));
-
-            // Validar si todos los campos son válidos antes de agregar el usuario
-            todoValido = $('.text-danger').filter(function () {
-                return $(this).text() !== '';
-            }).length === 0;
-
-            todolleno = $('.Mensaje ').filter(function () {
-                return $(this).text() !== '';
-            }).length === 0;
-            console.log('Todos los campos son válidos:', todoValido);
-
-            // Si todos los campos son válidos, ocultar el mensaje en todos los campos
-            if (todolleno) {
-                $('#MensajeInicial').hide();
-            } else {
-                $('#MensajeInicial').show(); // Mostrar el mensaje si no todos los campos son válidos
-            }
-        });
-    }
-
-
-    function validarCampo(input) {
-        var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
-        var spanError = input.next('.text-danger'); // Obtener el elemento span de error asociado al input
-        var spanVacio = input.prev('.Mensaje'); // Obtener el elemento span vacío asociado al input
-
-        // Limpiar el mensaje de error previo
-        spanError.text('');
-        spanVacio.text('');
-
-        // Validar el campo y mostrar mensaje de error si es necesario
-        if (valor === '') {
-            spanVacio.text(' *obligatorio');
-            spanError.text('');
-        } else if (input.is('#DescripcionUnidad')) {
-            if (valor.length < 5) {
-                spanError.text('Este campo debe tener un mínimo de 5 caracteres.');
-                spanVacio.text('');
-            } else if (!/^(?!.*(\w)\1\1\1)[\w\s]+$/.test(valor)) {
-                spanError.text('Este nombre es redundante.');
-                spanVacio.text('');
-                todoValido = false;
-            } else if (/^\d+$/.test(valor)) {
-                spanError.text('Este campo no puede ser solo numérico.');
-                spanVacio.text('');
-                todoValido = false;
-            } else {
-                var nombreRepetido = unidades.some(function (unidad) {
-                    return unidad.descripcionUnidad.toLowerCase() === valor.toLowerCase() &&
-                        unidad.unidadId != $('#UnidadId').val().trim();
-                });
-
-                if (nombreRepetido) {
-                    spanError.text('Esta unidad ya se encuentra registrada.');
-                    spanVacio.text('');
-                    todoValido = false;
-                } else {
-                    spanError.text('');
-                    spanVacio.text('');
-                }
-            }
-        }
-
-        return todoValido; // Devuelve el estado de validación al finalizar la función
-    }
-
-
-
-
-
-
-    
-
-    document.querySelectorAll('#btnEdit').forEach(button => {
-        button.addEventListener('click', function () {
-            const unidadId = this.getAttribute('data-unidad-id');
-            obtenerDatosUnidad(unidadId);
-        });
-    });
-
-
-   
-
-
-
 });
+
+
+
+function obtenerUnidad(Id) {
+    fetch(`https://localhost:7013/api/Unidades/GetUnidadById?Id=${Id}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al obtener los datos de la marca.');
+            }
+            return response.json();
+        })
+        .then(unidad => {
+            document.getElementById('UnidadesIdAct').value = unidad.unidadId;
+            document.getElementById('NombreUnidadAct').value = unidad.nombreUnidad;
+            document.getElementById('CantidadUnidadAct').value = unidad.cantidadPorUnidad;
+            document.getElementById('DescripcionUnidadAct').value = unidad.descripcionUnidad;
+            document.getElementById('EstadoUnidadAct').value = unidad.estadoUnidad;
+
+            // Si EstadoMarcaAct es un elemento select
+
+            console.log(unidad);
+
+
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+
+document.querySelectorAll('#btnEdit').forEach(button => {
+    button.addEventListener('click', function () {
+        const Id = this.getAttribute('data-unidad-id');
+        document.getElementById('AgregarUnidades').style.display = 'none';
+        document.getElementById('FormActualizarUnidades').style.display = 'block';
+        obtenerUnidad(Id);
+    });
+});
+
+
+
+
+
+
+
+function actualizarEstadoUnidad(UnidadId, EstadoUnidad) {
+    fetch(`https://localhost:7013/api/Unidades/UpdateEstadoUnidad/${UnidadId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ EstadoUnidad: EstadoUnidad ? 1 : 0 })
+    })
+        .then(response => {
+            if (response.ok) {
+                setTimeout(() => {
+                    location.reload(); // Recargar la página
+                }, 500);
+            } else {
+                console.error('Error al actualizar el estado del cliente');
+            }
+        })
+        .catch(error => {
+            console.error('Error de red:', error);
+        });
+}
+
 
