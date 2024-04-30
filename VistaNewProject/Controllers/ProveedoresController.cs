@@ -16,36 +16,45 @@ namespace VistaNewProject.Controllers
 
         public async Task<IActionResult> Index(int? page)
         {
-            int pageSize = 5; // Número máximo de elementos por página
-            int pageNumber = page ?? 1;
+            int pageSize = 5; // Cambiado a 5 para que la paginación se haga cada 5 registros
+            int pageNumber = page ?? 1; // Número de página actual (si no se especifica, es 1)
 
-            var proveedores = await _client.GetProveedorAsync();
+            var proveedores = await _client.GetProveedorAsync(); // Obtener todas las marcas
 
             if (proveedores == null)
             {
                 return NotFound("error");
             }
 
-            var pagedProveedores = await proveedores.ToPagedListAsync(pageNumber, pageSize);
-
-            // Verifica si la página actual está vacía y redirige a la última página que contiene registros
-            if (!pagedProveedores.Any() && pagedProveedores.PageNumber > 1)
+            var pageProveedor = await proveedores.ToPagedListAsync(pageNumber, pageSize);
+            if (!pageProveedor.Any() && pageProveedor.PageNumber > 1)
             {
-                pagedProveedores = await proveedores.ToPagedListAsync(pagedProveedores.PageCount, pageSize);
-            }
-            int contador = 1;
-            if (page.HasValue && page > 1)
-            {
-                // Obtener el valor actual del contador de la sesión si estamos en una página diferente a la primera
-                contador = HttpContext.Session.GetInt32("Contador") ?? 1;
+                pageProveedor = await proveedores.ToPagedListAsync(pageProveedor.PageCount, pageSize);
             }
 
-            // Establecer el valor del contador en la sesión para su uso en la siguiente página
-            HttpContext.Session.SetInt32("Contador", contador + pagedProveedores.Count);
+            int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
 
             ViewBag.Contador = contador;
 
-            return View(pagedProveedores);
+            // Código del método Index que querías integrar
+            string mensaje = HttpContext.Session.GetString("Message");
+            TempData["Message"] = mensaje;
+
+            try
+            {
+                ViewData["Proveedores"] = proveedores;
+                return View(pageProveedor);
+            }
+            catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
+            {
+                HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
+                return RedirectToAction("Index", "Home");
+            }
+            catch
+            {
+                HttpContext.Session.SetString("Message", "Error en el aplicativo");
+                return RedirectToAction("LogOut", "Accesos");
+            }
         }
         public async Task<IActionResult> Details(int? id, int? page)
         {

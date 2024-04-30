@@ -9,7 +9,7 @@ namespace VistaNewProject.Controllers
     public class ClientesController : Controller
     {
 
- 
+
         private readonly IApiClient _client;
 
 
@@ -44,3 +44,11 @@ namespace VistaNewProject.Controllers
 
     }
 }
+
+
+
+
+
+
+
+
