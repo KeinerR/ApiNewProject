@@ -585,52 +585,8 @@ function eliminarUsuario(usuarioId) {
 }
 
 
-function limpiarFormulario() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentPage = urlParams.get('page');
-    // Limpiar los valores de los campos del formulario
-    document.getElementById('UsuarioId').value = '';
-    document.getElementById('RolId').value = '';
-    document.getElementById('Nombre').value = '';
-    document.getElementById('Apellido').value = '';
-    document.getElementById('Usuario').value = '';
-    document.getElementById('Contraseña').value = '';
-    document.getElementById('Telefono').value = '';
-    document.getElementById('Correo').value = '';
-    document.getElementById('EstadoUsuario').value = '';
 
-    // Ocultar el campo de Estado Usuario y mostrar elementos con clase "Novisible"
-    document.getElementById('EstadoUser').style.display = 'none';
-    document.querySelectorAll('.Novisible').forEach(function (element) {
-        element.style.display = 'block';
-    });
 
-    // Cambiar el título de la ventana modal y mostrar botón "Agregar Usuario"
-    document.getElementById('TituloModal').innerText = 'Agregar Usuario';
-    document.getElementById('btnGuardar').style.display = 'inline-block';
-    document.getElementById('btnEditar').style.display = 'none';
-
-    // Restaurar mensajes de error y eliminar mensajes de error
-    var mensajes = document.querySelectorAll('.Mensaje');
-    mensajes.forEach(function (mensaje) {
-        mensaje.textContent = ' *'; // Restaurar mensajes de error
-        mensaje.style.display = 'inline-block'; // Establecer estilo si es necesario
-    });
-    // Limpiar mensajes de error en elementos de texto
-    const mensajesError = document.querySelectorAll('.text-danger');
-    mensajesError.forEach(span => {
-        span.innerText = ''; // Limpiar contenido del mensaje
-    });
-    if (currentPage) {
-        window.location.replace(`/Usuarios?page=${currentPage}`);
-    } else {
-        window.location.replace('/Usuarios');
-    }
-}
-
-function mostraralerta(usuarioId) {
-    alert('El estado del usuario a cambiado usaurioId:'+usuarioId)
-}
 
 
 
@@ -700,3 +656,101 @@ $('#btnClearSearch').on('click', function () {
     // Ocultar el botón de limpiar búsqueda al limpiar la búsqueda
     $(this).hide();
 });
+
+
+
+
+function limpiarFormulario() {
+    // Limpiar los valores de los campos del formulario
+    $('#UsuarioId, #RolId, #Nombre, #Apellido,#Usuario ,#Contraseña,#Telefono,#Correo,#EstadoUsuario ,#UsuarioIdAct, #RolIdAct, #NombreAct, #ApellidoAct,#UsuarioAct ,#ContraseñaAct,#TelefonoAct,#CorreoAct, #EstadoUsuarioAct').val('');
+
+    // Restaurar mensajes de error
+    $('.Mensaje, .MensajeAct').text(' *');
+    $('.Mensaje, .MensajeAct').show(); // Mostrar mensajes de error
+
+   
+    $('.text-danger, .text-dangerAct').text(''); // Limpiar mensajes de error
+    $('#AgregarUsuarios').show();
+    $('#FormActualizarUsuarios').hide();
+}
+
+
+
+$('.modal').on('click', function (e) {
+    if (e.target === this) {
+        limpiarFormulario(); // Limpia el formulario si se hace clic fuera de la modal
+        $(this).modal('hide'); // Oculta la modal
+    }
+});
+function mostraralerta(usuarioId) {
+    alert('El estado del usuario a cambiado usaurioId:' + usuarioId)
+}
+
+function obteneUsuarioid(UsuarioId) {
+
+    fetch(`https://localhost:7013/api/Usuarios/GetUsuarioById?Id=${UsuarioId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al obtener los datos');
+            }
+            return response.json();
+        })
+        .then(usuario => {
+
+            document.getElementById('UsuarioIdAct').value = usuario.usuarioId;
+            document.getElementById('RolIdAct').value = usuario.rolId;
+            document.getElementById('NombreAct').value = usuario.nombre;
+            document.getElementById('ApellidoAct').value = usuario.apellido;
+            document.getElementById('UsuarioAct').value = usuario.usuario;
+            document.getElementById('ContraseñaAct').value = usuario.contraseña;
+            document.getElementById('TelefonoAct').value = usuario.telefono;
+            document.getElementById('CorreoAct').value = usuario.correo;
+            document.getElementById('EstadoUsuarioAct').value = usuario.estadoUsuario;
+            document.getElementById('RepetirContraseñaAct').value = usuario.contraseña;
+
+            
+
+            console.log(usuario);
+        })
+        .catch(error => {
+            console.error("Error :", error)
+        });
+}
+
+document.querySelectorAll('#btnEdit').forEach(button => {
+    button.addEventListener('click', function () {
+        const Id = this.getAttribute('data-usuario-id');
+
+        document.getElementById('AgregarUsuarios').style.display = 'none';
+        document.getElementById('FormActualizarUsuarios').style.display = 'block';
+        obteneUsuarioid(Id); // Aquí se pasa el Id como argumento a la función obtenercategoriaid()
+    });
+});
+
+
+
+function actualizarEstadoUsuario(UsuarioId, EstadoUsuario) {
+    fetch(`https://localhost:7013/api/Usuarios/UpdateEstadoUsuario/${UsuarioId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ EstadoUsuario: EstadoUsuario ? 1 : 0 })
+    })
+        .then(response => {
+            if (response.ok) {
+                console.log("estado ", EstadoUsuario);
+                setTimeout(() => {
+                    location.reload(); // Recargar la página
+                }, 500);
+            } else {
+                console.error('Error al actualizar el estado del cliente');
+            }
+        })
+        .catch(error => {
+            console.error('Error de red:', error);
+        });
+}
+
+
+

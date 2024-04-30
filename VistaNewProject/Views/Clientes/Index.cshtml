@@ -30,13 +30,13 @@
 <!-- Modal -->
 <div class="modal fade" id="clienteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content" id="agregarDetalleCliente">
             <div class="modal-header">
                 <h5 class="modal-title" id="TituloModal">Agregar Cliente</h5>
                 <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
             </div>
-            <form asp-controller="Clientes" asp-action="" method="post">
+            <form asp-controller="Clientes" asp-action="Create" method="post">
                 <div class="modal-body">
 
                     <div class="form-group">
@@ -56,7 +56,11 @@
                     </div>
                     <div class="form-group">
                         <label for="TipoCliente" class="control-label">Tipo Cliente</label>
-                        <input type="text" id="TipoCliente" name="tipoCliente" class="form-control" />
+                        <select id="TipoCliente " name=" tipoCliente" class="form-control">
+
+                            <option value="Natural">Natural</option>
+                            <option value="Empresa">Empresa</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="Telefono" class="control-label">Teléfono</label>
@@ -81,15 +85,97 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
-                    <button type="button" onclick="agregarCliente()" class="btn btn-primary" id="btnGuardar">Agregar</button>
-                    <button type="button" onclick="ActualizarCliente()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Cliente</button>
+                    <button type="submit" o class="btn btn-primary" id="btnGuardar">Agregar</button>
                 </div>
 
 
 
             </form>
 
+        </div>
+
+
+
+        <div class="modal-content" id="FormActualizarCliente" style="display:none;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModalUsuarios">Actualizar Usuarios</h5>
+                <button type="button" class="btn-close" onclick="limpiarFormulario()" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="MensajeInicialUsuario"></div>
+            <form asp-controller="Clientes" asp-action="Update" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input id="ClienteIdAct" name="clienteIdAct" class="form-control" type="hidden" />
+                    </div>
+
+
+                  
+                    <div class="form-group">
+                        <label for="IdentificacionAct" class="control-label">Identificacion</label>
+                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
+                        <input type="text" id="IdentificacionAct" name="identificacionAct" class="form-control" autocomplete="off" />
+                        <span id="IdentificacionAct" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="NombreEntidadAct" class="control-label">Nombre Entidad</label>
+                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
+                        <input type="text" id="NombreEntidadAct" name="iombreEntidadAct" class="form-control" autocomplete="off" />
+                        <span id="MensajeIdentificacionAct" class="text-danger"></span>
+                    </div>
+                    <div class="Novisible" style="display:block">
+                        <label for="NombreCompletoAct" class="control-label">NombreCompleto</label>
+                        <span style="color:red" class="Mensaje">*</span>
+                        <input type="text" id="NombreCompletoAct" name="nombreCompletoAct" class="form-control" autocomplete="off" />
+                        <span id="MensajeNombreCompletoAct" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="TipoCliente" class="control-label">Tipo Cliente</label>
+                        <select id="TipoClienteAct " name=" tipoClienteAct" class="form-control">
+
+                            <option value="Natural">Natural</option>
+                            <option value="Empresa">Empresa</option>
+                        </select>
+                    </div>
+                  
+                    <div class="form-group">
+                        <label for="TelefonoAct" class="control-label">Teléfono</label>
+                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
+                        <input type="text" id="TelefonoAct" name="telefonoAct" class="form-control" autocomplete="off" />
+                        <span class="text-danger" id="mensajeTelefonoAct"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="CorreoAct" class="control-label">Correo</label>
+                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
+                        <input type="text" id="CorreoAct" name="correoAct" class="form-control" autocomplete="off" />
+                        <span class="text-danger" id="mensajeCorreoAct"></span>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="DireccionAct" class="control-label">Correo</label>
+                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
+                        <input type="text" id="DireccionAct" name="direccionAct" class="form-control" autocomplete="off" />
+                        <span class="text-danger" id="mensajeCorreoAct"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="EstadoUsuarioAct" class="control-label">Estado Usuario</label>
+                        <select id="EstadoClienteAct" name="estadoClienetAct" class="form-control">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                        <span id="MensajeEstadoClienteAct" class="text-danger"></span>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="btnEditarUnidad">Actualizar</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -139,6 +225,7 @@
                 <td class="nombre-completo">@Html.DisplayFor(modelItem => item.NombreCompleto)</td>
                 <td class="tipo-cliente">@Html.DisplayFor(modelItem => item.TipoCliente)</td>
                 <td class="telefono">@Html.DisplayFor(modelItem => item.Telefono)</td>
+                <td class="correo">@Html.DisplayFor(modelItem => item.Correo)</td>
                 <td class="correo">@Html.DisplayFor(modelItem => item.Direccion)</td>
                 <td class="text-center align-middle">
                     <label class="switch">
@@ -153,8 +240,9 @@
                 
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
-                    <button class="btn btn-warning" onclick="obtenerDatosCliente('@item.ClienteId')" data-cliente-id="@item.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal">Editar</button>
                     <button class="btn btn-danger" onclick="eliminarCliente('@item.ClienteId')">Eliminar</button>
+                    <button class="btn" id="btnEdit" data-cliente-id="@item.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
+
                 </td>
             </tr>
         }
@@ -211,6 +299,71 @@
     }
 </div>
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
 <script src="~/js/clientes.js"></script>
+
+
+@if (!string.IsNullOrEmpty(TempData["Mensaje"]?.ToString()))
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["Mensaje"]
+    </div>
+
+
+    <script>
+        // Mostrar SweetAlert cuando haya un mensaje en TempData["Mensaje"]
+        Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Se ha registrado el cliente exitosamente",
+            showConfirmButton: false,
+            timer: 1500
+        }).then((result) => {
+            // Después de cerrar el SweetAlert, abrimos el modal nuevamente
+            $('#clienteModal').modal('show');
+        });
+    </script>
+}
+
+
+@if (TempData["SweetAlertMessage"] != null)
+{
+    <script>
+        Swal.fire({
+            position: "center",
+            icon: "@TempData["SweetAlertIcon"]",
+            title: "@TempData["SweetAlertTitle"]",
+            text: "@TempData["SweetAlertMessage"]",
+            showConfirmButton: false, // Mostrar botón de confirmación
+            timer: 3000
+        })
+    </script>
+}
+
+<script>
+
+
+    // Función para mostrar el modal de confirmación antes de eliminar
+    function confirmarEliminacion() {
+        // Mostrar modal de confirmación
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminarlo!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, enviar el formulario de eliminación
+                $(".delete-form").submit();
+            }
+        });
+    }
+
+
+
+</script>
+

@@ -127,11 +127,11 @@
 
         <div class="modal-content" id="FormActualizarUsuarios" style="display:none;">
             <div class="modal-header">
-                <h5 class="modal-title" id="TituloModalPresentacion">Actualizar Usuarios</h5>
+                <h5 class="modal-title" id="TituloModalUsuarios">Actualizar Usuarios</h5>
                 <button type="button" class="btn-close" onclick="limpiarFormulario()" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div id="MensajeInicialActPresentacion"></div>
-            <form asp-controller="Unidades" asp-action="Update" method="post">
+            <div id="MensajeInicialUsuario"></div>
+            <form asp-controller="Usuarios" asp-action="Update" method="post">
                 @Html.AntiForgeryToken()
                 <div class="modal-body">
                     <div class="form-group">
@@ -285,7 +285,7 @@
                 <td class="correo">@Html.DisplayFor(modelItem => item.Correo)</td>
                 <td class="text-center align-middle">
                     <label class="switch">
-                        <input type="checkbox" @(item.EstadoUsuario != 0 ? "checked" : "") onchange="actualizarusuarios('@item.UsuarioId ',this.checked) ">
+                        <input type="checkbox" @(item.EstadoUsuario != 0 ? "checked" : "") onchange="actualizarEstadoUsuario('@item.UsuarioId ',this.checked) ">
                         <span class="slider"></span>
                     </label>
                     @Html.DisplayFor(modelItem => item.EstadoUsuario)

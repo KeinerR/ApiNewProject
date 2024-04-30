@@ -79,14 +79,7 @@ namespace VistaNewProject.Controllers
 
             if (ModelState.IsValid) {
 
-                Console.WriteLine(nombre);
-                Console.WriteLine(rolId);
-                Console.WriteLine(apellido);
-                Console.WriteLine(usuario);
-                    Console.WriteLine(contraseña);
-                Console.WriteLine(telefono);
-                Console.WriteLine(correo);
-                Console.WriteLine(estadoUsuario);
+              
 
                 var usuarios = await _client.GetUsuarioAsync();
                 var usuariosExis = usuarios.FirstOrDefault(c => string.Equals(c.Usuario1, usuario, StringComparison.OrdinalIgnoreCase));

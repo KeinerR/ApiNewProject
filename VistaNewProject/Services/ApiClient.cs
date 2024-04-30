@@ -33,7 +33,7 @@ namespace VistaNewProject.Services
 
         public async Task<HttpResponseMessage> CreateClienteAsync(Cliente cliente)
         {
-            var response = await _httpClient.PostAsJsonAsync("", cliente);
+            var response = await _httpClient.PostAsJsonAsync("Clientes/InsertarCliente", cliente);
             return response;
         }
 
@@ -49,13 +49,13 @@ namespace VistaNewProject.Services
 
         public async Task<HttpResponseMessage> UpdateClienteAsync(Cliente cliente)
         {
-            var response = await _httpClient.PutAsJsonAsync($"/", cliente);
+            var response = await _httpClient.PutAsJsonAsync($"Clientes/UpdateClientes/", cliente);
             return response;
         }
 
         public async Task<HttpResponseMessage> DeleteClienteAsync(int id)
         {
-            var response = await _httpClient.DeleteAsync($"/{id}");
+            var response = await _httpClient.DeleteAsync($"Clientes/DeleteUser/{id}");
             return response;
         }
 
