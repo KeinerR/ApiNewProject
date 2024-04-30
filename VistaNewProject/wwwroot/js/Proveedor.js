@@ -97,3 +97,62 @@ function actualizarEstadoProveedor(ProveedorId, EstadoProveedor) {
         });
 }
 
+
+document.getElementById('buscarProveedor').addEventListener('input', function () {
+    var input = this.value.trim().toLowerCase();
+    var rows = document.querySelectorAll('.proveedoresPaginado');
+
+    if (input === "") {
+        rows.forEach(function (row) {
+            row.style.display = '';
+        });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-search';
+        icon.style.color = 'gray';
+    } else {
+        rows.forEach(function (row) {
+            row.style.display = 'none';
+        });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-times';
+        icon.style.color = 'gray';
+    }
+    var rowsTodos = document.querySelectorAll('.Proveedores');
+
+    rowsTodos.forEach(function (row) {
+        if (input === "") {
+            row.style.display = 'none';
+        } else {
+            var proveedorId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
+            var nombreE = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var nombreC = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+            var direccion = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
+            var telefono = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
+            var correo = row.querySelector('td:nth-child(6)').textContent.trim().toLowerCase();
+          
+
+            row.style.display = (proveedorId.includes(input) || nombreE.includes(input) || nombreC.includes(input) || direccion.includes(input) || telefono.includes(input) || correo.includes(input)) ? 'table-row' : 'none';
+        }
+    });
+});
+
+function vaciarInput() {
+    document.getElementById('buscarProveedor').value = "";
+    var icon = document.querySelector('#btnNavbarSearch i');
+    icon.className = 'fas fa-search';
+    icon.style.color = 'gray';
+
+    var rows = document.querySelectorAll('.proveedoresPaginado');
+    rows.forEach(function (row) {
+        row.style.display = 'table-row';
+    });
+
+    var rowsTodos = document.querySelectorAll('.Proveedores');
+
+    rowsTodos.forEach(function (row) {
+        row.style.display = 'none';
+    });
+}
+
+
+

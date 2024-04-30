@@ -268,4 +268,55 @@ document.querySelectorAll('#btnEdit').forEach(button => {
             });
     }
 
+document.getElementById('buscarCategoria').addEventListener('input', function () {
+    var input = this.value.trim().toLowerCase();
+    var rows = document.querySelectorAll('.categoriasPaginado');
+
+    if (input === "") {
+        rows.forEach(function (row) {
+            row.style.display = '';
+        });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-search';
+        icon.style.color = 'gray';
+    } else {
+        rows.forEach(function (row) {
+            row.style.display = 'none';
+        });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-times';
+        icon.style.color = 'gray';
+    }
+    var rowsTodos = document.querySelectorAll('.Categorias');
+
+    rowsTodos.forEach(function (row) {
+        if (input === "") {
+            row.style.display = 'none';
+        } else {
+            var categoriaId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
+            var nombreC = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+
+            row.style.display = (categoriaId.includes(input) || nombreC.includes(input)) ? 'table-row' : 'none';
+        }
+    });
+});
+
+function vaciarInput() {
+    document.getElementById('buscarCategoria').value = "";
+    var icon = document.querySelector('#btnNavbarSearch i');
+    icon.className = 'fas fa-search';
+    icon.style.color = 'gray';
+
+    var rows = document.querySelectorAll('.categoriasPaginado');
+    rows.forEach(function (row) {
+        row.style.display = 'table-row';
+    });
+
+    var rowsTodos = document.querySelectorAll('.Categorias');
+
+    rowsTodos.forEach(function (row) {
+        row.style.display = 'none';
+    });
+}
+
 

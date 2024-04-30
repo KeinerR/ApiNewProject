@@ -16,36 +16,45 @@ namespace VistaNewProject.Controllers
         }
         public async Task<IActionResult> Index(int? page)
         {
-            int pageSize = 5; // Número máximo de elementos por página
-            int pageNumber = page ?? 1;
+            int pageSize = 5; // Cambiado a 5 para que la paginación se haga cada 5 registros
+            int pageNumber = page ?? 1; // Número de página actual (si no se especifica, es 1)
 
-            var categorias = await _client.GetCategoriaAsync();
+            var categorias = await _client.GetCategoriaAsync(); // Obtener todas las marcas
 
             if (categorias == null)
             {
                 return NotFound("error");
             }
 
-            var pagedCategorias = await categorias.ToPagedListAsync(pageNumber, pageSize);
-
-            // Verifica si la página actual está vacía y redirige a la última página que contiene registros
-            if (!pagedCategorias.Any() && pagedCategorias.PageNumber > 1)
+            var pageCategoria = await categorias.ToPagedListAsync(pageNumber, pageSize);
+            if (!pageCategoria.Any() && pageCategoria.PageNumber > 1)
             {
-                pagedCategorias = await categorias.ToPagedListAsync(pagedCategorias.PageCount, pageSize);
-            }
-            // Inicializar el contador en 1 si es la primera página
-            int contador = 1;
-            if (page.HasValue && page > 1)
-            {
-                // Obtener el valor actual del contador de la sesión si estamos en una página diferente a la primera
-                contador = HttpContext.Session.GetInt32("Contador") ?? 1;
+                pageCategoria = await categorias.ToPagedListAsync(pageCategoria.PageCount, pageSize);
             }
 
-            // Establecer el valor del contador en la sesión para su uso en la siguiente página
-            HttpContext.Session.SetInt32("Contador", contador + pagedCategorias.Count);
+            int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
 
             ViewBag.Contador = contador;
-            return View(pagedCategorias);
+
+            // Código del método Index que querías integrar
+            string mensaje = HttpContext.Session.GetString("Message");
+            TempData["Message"] = mensaje;
+
+            try
+            {
+                ViewData["Categorias"] = categorias;
+                return View(pageCategoria);
+            }
+            catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
+            {
+                HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
+                return RedirectToAction("Index", "Home");
+            }
+            catch
+            {
+                HttpContext.Session.SetString("Message", "Error en el aplicativo");
+                return RedirectToAction("LogOut", "Accesos");
+            }
         }
         public async Task<IActionResult> Details(int? id, int? page)
         {

@@ -9,10 +9,10 @@
 <div class="d-flex justify-content-between">
     <!-- Formulario de búsqueda a la izquierda -->
     <div class="mr-auto">
-        <form class="d-none d-md-inline-block form-inline my-2 my-md-0">
+        <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
             <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" id="searchInput" />
-                <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+                <input id="buscarUnidad" type="text" class="form-control" placeholder="Buscar unidad" aria-label="Search" aria-describedby="button-addon2">
+                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
             </div>
         </form>
     </div>
@@ -140,6 +140,9 @@
             <th>
                 #
             </th>
+            <th class="d-none">
+                unidad Id
+            </th>
             <th>
                 NOMBRE UNIDAD
             </th>
@@ -160,12 +163,15 @@
         }
         @foreach (var item in Model)
         {
-            <tr id="row-@(contador)">
+            <tr class="unidadesPaginado">
                 <td>
                   @contador 
                     @{
                         contador++;
                     }
+                </td>
+                <td class="d-none unidad-id">
+                    @Html.DisplayFor(modelItem => item.UnidadId)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.NombreUnidad)
@@ -192,6 +198,38 @@
                 </td>
             </tr>
         }
+        @{
+            var unidades = ViewData["Unidades"] as List<Unidad>;
+            if (unidades != null)
+            {
+                foreach (var unidad in unidades)
+                {
+                    <tr class="Unidades" style="display:none;">
+                        <td>@unidad.UnidadId</td>
+                        <td>@unidad.NombreUnidad</td>
+                        <td>@unidad.CantidadPorUnidad</td>
+
+                        <td class="text-center align-middle">
+                            <label class="switch">
+                                <input type="checkbox" @(unidad.EstadoUnidad != 0 ? "checked" : "") onchange="actualizarEstadoUnidad('@unidad.UnidadId', this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </td>
+                        <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                        <td>
+                            <button class="btn" id="btnEdit" data-unidad-id="@unidad.UnidadId" data-bs-toggle="modal" data-bs-target="#UnidadModal"><i class="fas fa-edit"></i></button>
+
+                            <a asp-action="Details" id="btnDetail" asp-route-id="@unidad.UnidadId" class="btn"><i class="fa-solid fa-file"></i></a>
+                            <form style="display:inline-block;" asp-controller="Unidades" asp-action="Delete" method="post" class="delete-form">
+                                @Html.Hidden("id", unidad.UnidadId)
+                                <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
+                                <button type="button" onclick="confirmarEliminacion()" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+        }
     </tbody>
 </table>
 <div class="pagination-container mt-2">
@@ -199,15 +237,24 @@
     {
         <div class="d-flex justify-content-center mb-5">
             <nav aria-label="Page navigation" class="shadow p-3 mb-5 bg-white rounded">
-                <ul class="pagination">
+                <ul class="pagination justify-content-center">
+                    <!-- Botón para ir a la primera página -->
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="First">
+                                <span aria-hidden="true">Primero</span>
+                            </a>
+                        </li>
+                    }
                     <!-- Botón para la página anterior (oculto en la página 1) -->
                     <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
                         <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
                         </a>
                     </li>
                     <!-- Iterar sobre las páginas disponibles -->
-                    @for (var i = 1; i <= Model.PageCount; i++)
+                    @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
                     {
                         <li class="page-item @(i == Model.PageNumber ? "active" : "")">
                             <a class="page-link" href="?page=@i">@i</a>
@@ -216,9 +263,18 @@
                     <!-- Botón para la página siguiente (oculto en la última página) -->
                     <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
                         <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
                         </a>
                     </li>
+                    <!-- Botón para ir a la última página -->
+                    @if (Model.PageNumber < Model.PageCount)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@Model.PageCount" aria-label="Last">
+                                <span aria-hidden="true">Último</span>
+                            </a>
+                        </li>
+                    }
                 </ul>
             </nav>
         </div>

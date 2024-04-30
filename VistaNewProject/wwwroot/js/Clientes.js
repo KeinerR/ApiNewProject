@@ -137,3 +137,4 @@ function actualizarEstadoCliente(clienteId, estadoCliente) {
             console.error('Error de red:', error);
         });
 }
+

@@ -89,4 +89,57 @@ function actualizarEstadoUnidad(UnidadId, EstadoUnidad) {
         });
 }
 
+document.getElementById('buscarUnidad').addEventListener('input', function () {
+    var input = this.value.trim().toLowerCase();
+    var rows = document.querySelectorAll('.unidadesPaginado');
+
+    if (input === "") {
+        rows.forEach(function (row) {
+            row.style.display = '';
+        });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-search';
+        icon.style.color = 'gray';
+    } else {
+        rows.forEach(function (row) {
+            row.style.display = 'none';
+        });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-times';
+        icon.style.color = 'gray';
+    }
+    var rowsTodos = document.querySelectorAll('.Unidades');
+
+    rowsTodos.forEach(function (row) {
+        if (input === "") {
+            row.style.display = 'none';
+        } else {
+            var unidadId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
+            var nombreU = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var cantidadporU = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+
+            row.style.display = (unidadId.includes(input) || nombreU.includes(input) || cantidadporU.includes(input)) ? 'table-row' : 'none';
+        }
+    });
+});
+
+function vaciarInput() {
+    document.getElementById('buscarUnidad').value = "";
+    var icon = document.querySelector('#btnNavbarSearch i');
+    icon.className = 'fas fa-search';
+    icon.style.color = 'gray';
+
+    var rows = document.querySelectorAll('.unidadesPaginado');
+    rows.forEach(function (row) {
+        row.style.display = 'table-row';
+    });
+
+    var rowsTodos = document.querySelectorAll('.Unidades');
+
+    rowsTodos.forEach(function (row) {
+        row.style.display = 'none';
+    });
+}
+
+
 

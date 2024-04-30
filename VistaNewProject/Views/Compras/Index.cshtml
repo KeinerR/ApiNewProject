@@ -43,7 +43,7 @@
                         <div class="col-6">
                             <label for="ProveedorId" class="control-label">Proveedor</label>
                             <span class="Mensaje" style="color:red;display:inline-block;">*</span>
-                            <input list="proveedores" id="ProveedorId" name="ProveedorId" class="form-control">
+                            <input list="proveedores" id="ProveedorId" name="ProveedorId" class="form-control" autocomplete="off">
                             <datalist id="proveedores">
                                 @foreach (var proveedor in ViewBag.Proveedores)
                                 {
@@ -83,7 +83,8 @@
                     <div class="row" id="DatosProducto">
                         <div class="col-5">
                             <label for="ProductoId" class="control-label">Producto</label>
-                            <input list="productos" id="ProductoId" name="productoId" class="form-control" placeholder="Escribe y/o selecciona el producto ...">
+                            <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                            <input list="productos" id="ProductoId" name="productoId" class="form-control" placeholder="Escribe y/o selecciona el producto ..." autocomplete="off">
                             <datalist id="productos">
                                 @foreach (var producto in ViewBag.Productos)
                                 {
@@ -113,6 +114,7 @@
                         <div class="col-4">
                             <div>
                                 <label for="FechaVencimiento" class="control-label">Fecha Vencimiento </label>
+                                <span class="Mensaje" style="color:red;display:inline-block;">*</span>
                             </div>
                             <input type="datetime-local" id="FechaVencimiento" name="fechaVencimiento" class="form-control" />
                             <input type="text" class="noVisualizar form-control" id="FechaVencimientoNunca" name="fechaVencimientoNunca" value="Producto no perecedero" readonly />
@@ -121,6 +123,7 @@
                         </div>
                         <div class="col-3">
                             <label for="NumeroLote" class="control-label">Numero Lote</label>
+                            <span class="Mensaje" style="color:red;display:inline-block;">*</span>
                             <input type="text" id="NumeroLote" name="numeroLote" class="form-control" />
                         </div>
                     </div>
@@ -128,7 +131,8 @@
                     <div class="row">
                         <div class="col-3">
                             <label for="UnidadId" class="control-label">Unidad</label>
-                            <input list="unidades" id="UnidadId" name="unidadId" class="form-control" placeholder="Escribe y / o selecciona la unidad ...">
+                            <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                            <input list="unidades" id="UnidadId" name="unidadId" class="form-control" placeholder="Escribe y / o selecciona la unidad ..." autocomplete="off">
                             <datalist id="unidades">
                                 @foreach (var unidad in ViewBag.Unidades)
                                 {
@@ -151,12 +155,14 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="col-3">
-                            <label for="PrecioDeCompra" class="labelForm control-label" id="PC">Precio de Compra</label>
-                            <input type="text" id="PrecioDeCompra" name="precioDeCompra" class="form-control" />
-                        </div>
+                            <div class="col-3">
+                                <label for="PrecioDeCompra" class="labelForm control-label" id="PC" style="display:inline-block;">Precio de Compra</label>
+                                <span class="Mensaje" style="color:red;display:inline-block; margin-left:4px;">*</span>
+                                <input type="text" id="PrecioDeCompra" name="precioDeCompra" class="form-control"/>
+                            </div>
                         <div class="col-3">
                             <label for="PorcentajeGanancia" class="">% A Ganar</label>
+                            <span class="Mensaje" style="color:red;display:inline-block;">*</span>
                             <div class="contenedorCalculo">
                                 <input type="text" id="PorcentajeGanancia" name="porcentajeGanancia" class="form-control"/>
                                 <button class="btn-calculo" id="btnCalcular" title="Calcular"><i class="fas fa-calculator"></i></button>
