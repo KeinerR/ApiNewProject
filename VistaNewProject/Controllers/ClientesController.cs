@@ -82,7 +82,14 @@ namespace VistaNewProject.Controllers
         }
        
            
+        public async Task<IActionResult> Update([FromForm] int clienteIdAct ,string identificacionAct, string nombreEntidadAct, string nombreCompletoAct, string tipoClienteAct, string telefonoAct, string correoAct, string direccionAct, ulong estadoClienetAct)
+        {
 
+
+
+
+
+        }
         
 
     }
