@@ -43,8 +43,8 @@
                     <div class="form-group">
                         <input type="hidden" id="UsuarioId" name="usuarioId" class="form-control" />
                     </div>
-                    <div class="form-group"> 
-                           <label for="RolId" class="form-label">Rol</label><span style="color:red;display:inline-block;" class="Mensaje">*</span>
+                    <div class="form-group">
+                        <label for="RolId" class="form-label">Rol</label><span style="color:red;display:inline-block;" class="Mensaje">*</span>
                         <select id="RolId" name="rolId" class="form-select">
                             <option value="" selected disabled>Selecciona un rol</option>
                             @foreach (var rol in ViewBag.roles)
@@ -68,7 +68,7 @@
                     </div>
                     <div class="Novisible" style="display:block">
                         <label for="Usuario" class="control-label">Usuario</label>
-                        <span  style="color:red" class="Mensaje">*</span>
+                        <span style="color:red" class="Mensaje">*</span>
                         <input type="text" id="Usuario" name="usuario" class="form-control" autocomplete="off" />
                         <span id="Usuario" class="text-danger"></span>
                     </div>
@@ -87,16 +87,16 @@
                         <input type="password" id="RepetirContraseña" name="repetirContraseña" class="form-control" autocomplete="off" />
                         <span id="MensajeRepetirContraseña" class="text-danger"></span>
                         <span id="MostrarOcultar2" class="icono-ojo" onclick="mostrarOcultarContrasena('RepetirContraseña')">
-                          @*   <img src="ruta/para/el/ícono-de-ojo.svg" alt="Mostrar/Ocultar Contraseña" width="20" height="20"> *@
-                          Ojo
+                            @*   <img src="ruta/para/el/ícono-de-ojo.svg" alt="Mostrar/Ocultar Contraseña" width="20" height="20"> *@
+                            Ojo
                         </span>
-                       
+
                     </div>
                     <div class="form-group">
                         <label for="Telefono" class="control-label">Teléfono</label>
                         <span style="color:red;display:inline-block;" class="Mensaje">*</span>
                         <input type="text" id="Telefono" name="telefono" class="form-control" autocomplete="off" />
-                         <span id="Telefono" class="text-danger"></span>
+                        <span id="Telefono" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label for="Correo" class="control-label">Correo</label>
@@ -290,7 +290,7 @@
                     </label>
                     @Html.DisplayFor(modelItem => item.EstadoUsuario)
                 </td>
-             
+
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
                     <button class="btn" id="btnEdit" data-usuario-id="@item.UsuarioId" data-bs-toggle="modal" data-bs-target="#usuarioModal"><i class="fas fa-edit"></i></button>

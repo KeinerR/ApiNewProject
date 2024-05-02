@@ -39,70 +39,57 @@ function limpiarFormulario() {
     document.getElementById('btnEditar').style.display = 'none';
 }
 
-function buscarRoles() {
-    var searchTerm = $('#searchInput').val().toLowerCase();
+document.getElementById('buscarRol').addEventListener('input', function () {
+    var input = this.value.trim().toLowerCase();
+    var rows = document.querySelectorAll('.rolesPaginado');
 
-    // Filtra las filas de la tabla basándose en el término de búsqueda
-    $('tbody tr').each(function () {
-        var filaVisible = false;
-
-        // Itera sobre cada campo de la entidad Rol en la fila
-        $(this).find('.nombre-rol, .rol-id').each(function () {
-            var textoCampo = $(this).is(':hidden') ? $(this).text() : $(this).html().toLowerCase();
-
-            // Comprueba si el término de búsqueda está presente en el campo
-            if (textoCampo.indexOf(searchTerm) !== -1) {
-                filaVisible = true;
-                return false; // Rompe el bucle si se encuentra una coincidencia en la fila
-            }
+    if (input === "") {
+        rows.forEach(function (row) {
+            row.style.display = '';
         });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-search';
+        icon.style.color = 'gray';
+    } else {
+        rows.forEach(function (row) {
+            row.style.display = 'none';
+        });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-times';
+        icon.style.color = 'gray';
+    }
+    var rowsTodos = document.querySelectorAll('.Roles');
 
-        // Muestra u oculta la fila según si se encontró una coincidencia
-        if (filaVisible) {
-            $(this).show();
+    rowsTodos.forEach(function (row) {
+        if (input === "") {
+            row.style.display = 'none';
         } else {
-            $(this).hide();
+            var rolId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
+            var nombreR = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+
+            row.style.display = (rolId.includes(input) || nombreR.includes(input)) ? 'table-row' : 'none';
         }
     });
+});
 
-    // Mostrar u ocultar el botón de limpiar búsqueda según si hay texto en el campo de búsqueda
-    if (searchTerm !== '') {
-        $('#btnClearSearch').show();
-    } else {
-        $('#btnClearSearch').hide();
-    }
+function vaciarInput() {
+    document.getElementById('buscarRol').value = "";
+    var icon = document.querySelector('#btnNavbarSearch i');
+    icon.className = 'fas fa-search';
+    icon.style.color = 'gray';
+
+    var rows = document.querySelectorAll('.rolesPaginado');
+    rows.forEach(function (row) {
+        row.style.display = 'table-row';
+    });
+
+    var rowsTodos = document.querySelectorAll('.Roles');
+
+    rowsTodos.forEach(function (row) {
+        row.style.display = 'none';
+    });
 }
 
-// Ocultar el botón de limpiar búsqueda al principio
-$('#btnClearSearch').hide();
-
-// Evento de clic en el botón de búsqueda
-$('#btnNavbarSearch').on('click', function () {
-    buscarRoles();
-});
-
-// Evento de clic en el icono de búsqueda
-$('#btnNavbarSearch i').on('click', function () {
-    buscarRoles();
-});
-
-// Evento de presionar Enter en el campo de búsqueda
-$('#searchInput').on('keypress', function (e) {
-    if (e.which === 13) { // Verifica si la tecla presionada es Enter
-        buscarRoles();
-        e.preventDefault(); // Evita que la tecla Enter provoque la acción por defecto (puede ser un envío de formulario)
-    }
-});
-
-// Evento de clic en el botón para limpiar la búsqueda
-$('#btnClearSearch').on('click', function () {
-    // Limpiar el campo de búsqueda
-    $('#searchInput').val('');
-    // Mostrar todos los registros normales
-    $('tbody tr').show();
-    // Ocultar el botón de limpiar búsqueda al limpiar la búsqueda
-    $(this).hide();
-});
 
 
 //function agregarRol() {
