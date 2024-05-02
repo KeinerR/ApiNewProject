@@ -43,7 +43,7 @@
                         <div class="col-6">
                             <label for="ProveedorId" class="control-label">Proveedor</label>
                             <span class="Mensaje" style="color:red;display:inline-block;">*</span>
-                            <input list="proveedores" id="ProveedorId" name="ProveedorId" class="form-control" autocomplete="off">
+                            <input list="proveedores" id="ProveedorId" name="ProveedorId" class="form-control" placeholder="Escribe y/o Selecciona" autocomplete="off">
                             <datalist id="proveedores">
                                 @foreach (var proveedor in ViewBag.Proveedores)
                                 {
@@ -140,7 +140,7 @@
                                     <option value="@unidad.UnidadId">@($"{unidad.NombreUnidad} x {unidad.CantidadPorUnidad}")</option>
                                 }
                             </datalist>
-                            <input type="hidden" type="number" id="UnidadIdHidden" name="unidadIdHidden">
+                            <input type="hidden" id="UnidadIdHidden" name="unidadIdHidden">
                             <input type="hidden" id="CantidadPorUnidad" name="CantidadPorUnidad">
                         </div>
                         <div class="col-3">
@@ -188,11 +188,13 @@
                     <div class="row noVisualizar" id="PrecioBougth">
                         <h5>Precio de venta</h5>
                         <div class="col-4">
-                            <label for="PrecioDeVentaPorUnidad" class="labelForm control-label">x Unidad</label>
+                            <label for="PrecioDeVentaPorUnidad" style="display:inline-block;" class="labelForm control-label">x Unidad</label>
+                            <span class="Mensaje" style="color:red;display:inline-block;"></span>
                             <input type="text" id="PrecioDeVentaPorUnidad" name="precioDeVentaPorUnidad" class="form-control"/>
                         </div>
                         <div class="col-4" >
-                            <label for="PrecioDeVentaUnitario" class="control-label">x Producto</label>
+                            <label for="PrecioDeVentaUnitario" style="display:inline-block;" class="control-label">x Producto</label>
+                            <span class="Mensaje" style="color:red;display:inline-block;"></span>
                             <div class="contenedorCalculo">
                                 <input type="text" id="PrecioDeVentaUnitario" name="precioDeVentaUnitario" class="form-control" />
                                 <button class="btn-calculo" id="btnCalcularVenta" title="Calcular precio por unidad"><i class="fas fa-calculator"></i></button>
@@ -200,6 +202,7 @@
                         </div>
                         <div class="col-4">
                             <label for="PrecioDeVentaxUnidadPresentacion" class="control-label">x Unidad de producto</label>
+                            <span class="Mensaje" style="color:red;display:inline-block;"></span>
                             <input type="text" id="PrecioDeVentaxUnidadPresentacion" name="precioDeVentaxUnidadPresentacion" class="form-control" />
                         </div>
                         <div  class="contenedorFooter">
