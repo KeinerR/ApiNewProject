@@ -19,80 +19,71 @@ namespace VistaNewProject.Controllers
         }
 
 
-        public async Task<IActionResult> Index(int? page)
+        public async Task<IActionResult> Index()
         {
-            int pageSize = 5; // Número máximo de elementos por página
-            int pageNumber = page ?? 1;
 
-            var clientes = await _client.GetClientesAsync();
+            var cliente = await _client.GetClientesAsync();
+            if (cliente == null) 
 
-            if (clientes == null)
-            {
-                return NotFound("error");
-            }
+                {
+                return NotFound("No se pudo encontra el cliente");
+                }
 
-            var pagedClientes = await clientes.ToPagedListAsync(pageNumber, pageSize);
-
-            // Verifica si la página actual está vacía y redirige a la última página que contiene registros
-            if (!pagedClientes.Any() && pagedClientes.PageNumber > 1)
-            {
-                pagedClientes = await clientes.ToPagedListAsync(pagedClientes.PageCount, pageSize);
-            }
-
-            return View(pagedClientes);
+            return View(cliente);
         }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] string identificacion, string nombreEntidad, string nombreCompleto, string tipoCliente, string telefono, string correo, string direccion, ulong estadoCliente)
         {
             if (ModelState.IsValid)
             {
 
-                Console.WriteLine(nombreEntidad);
-                try
+                // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
+               
+
+                // Resto del código para crear la nueva marca
+                var cliente = new Cliente
                 {
-                    // Crear el nuevo cliente
-                    var nuevoCliente = new Cliente
-                    {
-                        Identificacion = identificacion,
-                        NombreEntidad = nombreEntidad,
-                        NombreCompleto = nombreCompleto,
-                        TipoCliente = tipoCliente,
-                        Telefono = telefono,
-                        Correo = correo,
-                        Direccion = direccion,
-                        EstadoCliente = estadoCliente
-                    };
+                    Identificacion = identificacion,
+                    NombreEntidad = nombreEntidad,
+                    NombreCompleto = nombreCompleto,
+                    TipoCliente = tipoCliente,
+                    Telefono = telefono,
+                    Correo = correo,
+                    Direccion = direccion,
+                    EstadoCliente = estadoCliente
+                };
 
-                    // Llamar al método del servicio para crear el cliente
-                    var response = await _client.CreateClienteAsync(nuevoCliente);
-
-                    // Verificar si la creación fue exitosa
-                    if (response.IsSuccessStatusCode)
-                    {
-                        TempData["Mensaje"] = "¡Registro guardado correctamente!";
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        // Mostrar un mensaje de error si la solicitud HTTP no fue exitosa
-                        ViewBag.MensajeError = "No se pudieron guardar los datos.";
-                    }
+                if (cliente == null)
+                {
+                    ViewBag.MensajeError = "No se pudieron campos  los datos.";
+                    return View("Index");
                 }
-                catch (Exception ex)
+
+                var response = await _client.CreateClienteAsync(cliente);
+
+
+                if (response.IsSuccessStatusCode)
                 {
-                    // Manejar cualquier excepción que ocurra durante la creación del cliente
-                    ViewBag.MensajeError = "Ocurrió un error al intentar guardar los datos: " + ex.Message;
+                    // Guardar un mensaje en TempData para mostrar en el Index
+                    TempData["Mensaje"] = "¡Registro guardado correctamente!";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ViewBag.MensajeError = "No se pudieron guardar los datos.";
+                    return View("Index");
                 }
             }
-            else
-            {
-                // El modelo no es válido, retornar la vista actual con los errores de validación
-                return View("Index");
-            }
 
-            // Si llegamos aquí, significa que ocurrió un error, retornamos a la vista actual
+
+            ViewBag.Mensaje = TempData["Mensaje"]; ViewBag.Mensaje = TempData["Mensaje"];
             return View("Index");
         }
+       
+           
+
+        
 
     }
 }
