@@ -1,4 +1,86 @@
-﻿
+﻿// Función para validar el formulario antes de enviarlo
+function validarFormulario() {
+    // Obtener los valores de los campos del formulario
+    var identificacion = $("#Identificacion").val();
+    var nombreEntidad = $("#NombreEntidad").val();
+    var nombreCompleto = $("#NombreCompleto").val();
+    var telefono = $("#Telefono").val();
+    var correo = $("#Correo").val();
+    var direccion = $("#Direccion").val();
+
+    // Verificar si el campo identificación está vacío
+    if (!identificacion.trim()) {
+        // Mostrar SweetAlert con el mensaje de error
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Por favor, complete el campo Identificación.'
+        });
+        return false; // Evitar el envío del formulario
+    }
+
+    // Verificar si el campo nombre de entidad está vacío
+    if (!nombreEntidad.trim()) {
+        // Mostrar SweetAlert con el mensaje de error
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Por favor, complete el campo Nombre de Entidad.'
+        });
+        return false; // Evitar el envío del formulario
+    }
+
+    if (!nombreCompleto.trim()) {
+        // Mostrar SweetAlert con el mensaje de error
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Por favor, complete el campo NombreCompleto.'
+        });
+        return false; // Evitar el envío del formulario
+    }
+
+    if (!telefono.trim()) {
+        // Mostrar SweetAlert con el mensaje de error
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Por favor, complete el campo Telefono.'
+        });
+        return false; // Evitar el envío del formulario
+    }
+    if (!correo.trim()) {
+        // Mostrar SweetAlert con el mensaje de error
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Por favor, complete el campo Correo.'
+        });
+        return false; // Evitar el envío del formulario
+    }
+    if (!direccion.trim()) {
+        // Mostrar SweetAlert con el mensaje de error
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Por favor, complete el campo Direccion.'
+        });
+        return false; // Evitar el envío del formulario
+    }
+
+    // Si todos los campos están completos, enviar el formulario
+    return true;
+}
+
+
+// Función para limpiar el formulario cuando se cierra el modal
+function limpiarFormulario() {
+    $("#Identificacion").val("");
+    $("#NombreEntidad").val("");
+    $("#Telefono").val("");
+    $("#Correo").val("");
+    $("#Direccion").val("");
+}
 function obteneClienteid(ClienteId) {
 
     fetch(`https://localhost:7013/api/Clientes/GetClienetById?Id=${ClienteId}`)

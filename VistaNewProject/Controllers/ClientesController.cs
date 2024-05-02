@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
@@ -38,10 +39,23 @@ namespace VistaNewProject.Controllers
             if (ModelState.IsValid)
             {
 
-                // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
-               
+                var allClients = await _client.GetClientesAsync();
 
-                // Resto del código para crear la nueva marca
+                // Verificar si existe algún cliente con el mismo nombre de entidad y nombre de contacto
+                var existingClient = allClients.FirstOrDefault(c => c.NombreEntidad == nombreEntidad && c.NombreCompleto == nombreCompleto );
+
+                if (existingClient != null )
+                {
+                    // Si existe un cliente diferente con el mismo nombre de entidad y nombre de contacto
+                    // Mostrar un mensaje de error y redireccionar a la página de índice
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "Ya existe un cliente con el mismo nombre de entidad y nombre de contacto.";
+                    return RedirectToAction("Index");
+                }
+
+                
+
                 var cliente = new Cliente
                 {
                     Identificacion = identificacion,
@@ -82,9 +96,107 @@ namespace VistaNewProject.Controllers
         }
        
            
+      
+        public async Task<IActionResult> Update([FromForm] int clienteIdAct, string identificacionAct, string nombreEntidadAct, string nombreCompletoAct, string tipoClienteAct, string telefonoAct, string correoAct, string direccionAct, ulong estadoClienetAct)
+        {
 
-        
 
+            // Obtener todos los clientes
+           
+
+            var cliente = new Cliente
+            {
+
+                ClienteId = clienteIdAct,
+                Identificacion=identificacionAct,
+                NombreEntidad=nombreEntidadAct,
+                NombreCompleto=nombreCompletoAct,   
+                TipoCliente=tipoClienteAct,
+                Telefono=telefonoAct,
+                Correo=correoAct,
+                Direccion=direccionAct,
+                EstadoCliente=estadoClienetAct
+            };
+
+
+
+            var response = await _client.UpdateClienteAsync(cliente);
+            if (response != null)
+            {
+
+                if (response.IsSuccessStatusCode)
+                {
+
+
+                    TempData["SweetAlertIcon"] = "success";
+                    TempData["SweetAlertTitle"] = "Éxito";
+                    TempData["SweetAlertMessage"] = "Clienet actualizada correctamente.";
+                    return RedirectToAction("Index");
+                }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "El Cliente no se encontró en el servidor.";
+                    return RedirectToAction("Index");
+                }
+              
+                else
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "Error al actualizar el Cliente.";
+                    return RedirectToAction("Index");
+                }
+            }
+
+            return RedirectToAction("Index");
+
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+
+            var pedido = await _client.GetPedidoAsync();
+            var productosDeCategoria = pedido.Where(p => p.ClienteId == id);
+
+            if (productosDeCategoria.Any())
+            {
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "No se puede eliminar el cliente porque tiene pedidos asociados.";
+                return RedirectToAction("Index");
+            }
+
+            var response = await _client.DeleteClienteAsync(id);
+
+            if (response == null)
+            {
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "Error al eliminar el cliente.";
+            }
+            else if (response.IsSuccessStatusCode)
+            {
+                TempData["SweetAlertIcon"] = "success";
+                TempData["SweetAlertTitle"] = "Éxito";
+                TempData["SweetAlertMessage"] = "cliente eliminada correctamente.";
+            }
+            else if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "el cliente no se encontró en el servidor.";
+            }
+            else
+            {
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "Error desconocido al eliminar el cliente.";
+            }
+
+            return RedirectToAction("Index");
+        }
     }
 }
 
