@@ -1,22 +1,17 @@
-﻿@model IEnumerable<VistaNewProject.Models.Cliente>
-
+﻿@using X.PagedList
+@model X.PagedList.IPagedList<VistaNewProject.Models.Cliente>
 @{
     ViewData["Title"] = "Index";
 }
-
-<h1>Index</h1>
-
-
+<br />
 
 <div class="d-flex justify-content-between">
     <!-- Formulario de búsqueda a la izquierda -->
     <div class="mr-auto">
         <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
             <div class="input-group">
-                <input class="form-control" type="text" placeholder="Buscar por..." aria-label="Search for..." aria-describedby="btnNavbarSearch" id="searchInput" />
-                <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
-                <!-- Botón para limpiar la búsqueda -->
-                <button class="btn btn-danger" id="btnClearSearch" type="button"><i class="fas fa-times"></i></button>
+                <input id="buscarCliente" type="text" class="form-control" placeholder="Buscar cliente" aria-label="Search" aria-describedby="button-addon2">
+                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
             </div>
         </form>
     </div>
@@ -185,44 +180,59 @@
         </div>
     </div>
 </div>
+<br />
+<hr>
 
-<table class="table">
+<table class="table table-custom text-center">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ClienteId)
+            <th> #</th>
+            <th class="d-none">
+               ClienteId
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Identificacion)
+               Identificacion
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.NombreEntidad)
+                NombreEntidad
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.NombreCompleto)
+                NombreCompleto
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TipoCliente)
+                TipoCliente
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Telefono)
+                Telefono
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Correo)
+                Correo
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Direccion)
+                Direccion
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EstadoCliente)
+                EstadoCliente
             </th>
-            <th></th>
+            <th>
+                Acciones
+            </th>
         </tr>
     </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
+    <tbody class="text-center">
+        @{
+            int contador = ViewBag.Contador ?? 1;
+        }
+
+        @foreach (var item in Model) {
+            <tr class="clientesPaginado">
+                <td>
+                    @contador
+                    @{
+                        contador++;
+                    }
+                </td>
+            <td class="d-none cliente-id">
                 @Html.DisplayFor(modelItem => item.ClienteId)
             </td>
             <td>
@@ -252,7 +262,7 @@
                         <span class="slider"></span>
                     </label>
                 </td>
-            <td>
+       
                 <td class="contenedorBotonesTabla">
                     <button class="btn botonEditarCategoria" id="btnEdit" data-cliente-id="@item.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
                     <a asp-action="Details" asp-route-id="@item.ClienteId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
@@ -262,13 +272,98 @@
                         <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
                         <button type="button" onclick="confirmarEliminacion()" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
                     </form>
-
                 </td>
+           
         </tr>
-}
+    }
+        @{
+            var clientes = ViewData["Clientes"] as List<Cliente>;
+            if (clientes != null)
+            {
+                foreach (var cliente in clientes)
+                {
+                    <tr class="Clientes" style="display:none;">
+                        <td>@cliente.ClienteId</td>
+                        <td>@cliente.Identificacion</td>
+                        <td>@cliente.NombreEntidad</td>
+                        <td>@cliente.NombreCompleto</td>
+                        <td>@cliente.TipoCliente</td>
+                        <td>@cliente.Telefono</td>
+                        <td>@cliente.Correo</td>
+                        <td>@cliente.Direccion</td>
+
+                        <td class="text-center align-middle contenedorEstadoTabla">
+                            <label class="switch">
+                                <input type="checkbox" @(cliente.EstadoCliente != 0 ? "checked" : "") onchange="actualizarEstadoCliente('@cliente.ClienteId', this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </td>
+                        
+                        <td class="contenedorBotonesTabla">
+                            <button class="btn botonEditarCategoria" id="btnEdit" data-cliente-id="@cliente.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
+                            <a asp-action="Details" asp-route-id="@cliente.ClienteId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
+                            <form style="display:inline-block;" asp-controller="Marcas" asp-action="Delete" method="post" class="delete-form">
+                                    @Html.Hidden("id", cliente.ClienteId)
+                                <button type="submit" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </td>
+                        
+                    </tr>
+                }
+            }
+        }
     </tbody>
 </table>
 
+
+<div class="pagination-container mt-2">
+    @if (Model != null && Model.PageCount > 1)
+    {
+        <div class="d-flex justify-content-center mb-5">
+            <nav aria-label="Page navigation" class="shadow p-3 mb-5 bg-white rounded">
+                <ul class="pagination justify-content-center">
+                    <!-- Botón para ir a la primera página -->
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="First">
+                                <span aria-hidden="true">Primero</span>
+                            </a>
+                        </li>
+                    }
+                    <!-- Botón para la página anterior (oculto en la página 1) -->
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                        </a>
+                    </li>
+                    <!-- Iterar sobre las páginas disponibles -->
+                    @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                            <a class="page-link" href="?page=@i">@i</a>
+                        </li>
+                    }
+                    <!-- Botón para la página siguiente (oculto en la última página) -->
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                        </a>
+                    </li>
+                    <!-- Botón para ir a la última página -->
+                    @if (Model.PageNumber < Model.PageCount)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@Model.PageCount" aria-label="Last">
+                                <span aria-hidden="true">Último</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    }
+</div>
 
 @if (!string.IsNullOrEmpty(TempData["Mensaje"]?.ToString()))
 {

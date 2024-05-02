@@ -1,6 +1,3 @@
-
-
-
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const mostrarAlerta = urlParams.get('mostrarAlerta');
@@ -379,6 +376,10 @@ function actualizarEstadoProducto(ProductoId, Estado) {
             console.error('Error de red:', error);
         });
 }
+
+
+
+
 
 
 

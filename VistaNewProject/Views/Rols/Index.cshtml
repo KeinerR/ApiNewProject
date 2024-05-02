@@ -11,10 +11,8 @@
     <div class="mr-auto">
         <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
             <div class="input-group">
-                <input class="form-control" type="text" placeholder="Buscar por..." aria-label="Search for..." aria-describedby="btnNavbarSearch" id="searchInput" />
-                <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
-                <!-- Botón para limpiar la búsqueda -->
-                <button class="btn btn-danger" id="btnClearSearch" type="button"><i class="fas fa-times"></i></button>
+                <input id="buscarRol" type="text" class="form-control" placeholder="Buscar rol" aria-label="Search" aria-describedby="button-addon2">
+                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
             </div>
         </form>
     </div>
@@ -69,6 +67,10 @@
 <table class="table table-custom text-center">
     <thead>
         <tr>
+            <th> #</th>
+            <th class="d-none">
+                Rol Id
+            </th>
             <th>
                 NOMBRE
             </th>
@@ -78,9 +80,19 @@
         </tr>
     </thead>
     <tbody class="text-center">
+        @{
+            int contador = ViewBag.Contador ?? 1;
+        }
+
         @foreach (var item in Model)
         {
-            <tr>
+            <tr class="rolesPaginado">
+                <td>
+                    @contador
+                    @{
+                        contador++;
+                    }
+                </td>
                 <td class="rol-id" style="display: none;">@Html.DisplayFor(modelItem => item.RolId)</td>
                 <td class="nombre-rol">@Html.DisplayFor(modelItem => item.NombreRol)</td>
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
@@ -89,6 +101,24 @@
                     <button class="btn btn-danger" onclick="eliminarRol('@item.RolId')"><i class="fas fa-trash-alt"></i></button>
                 </td>
             </tr>
+        }
+        @{
+            var roles = ViewData["Roles"] as List<Rol>;
+            if (roles != null)
+            {
+                foreach (var rol in roles)
+                {
+                    <tr class="Roles" style="display:none;">
+                        <td>@rol.RolId</td>
+                        <td>@rol.NombreRol</td>
+
+                        <td>
+                            <button class="btn btn-warning" onclick="ActualizarRol()" data-cliente-id="@rol.RolId" data-bs-toggle="modal" data-bs-target="#RolModal"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-danger" onclick="eliminarRol('@rol.RolId')"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                }
+            }
         }
     </tbody>
 </table>
@@ -141,6 +171,7 @@
         </div>
     }
 </div>
+
 
 <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="~/js/rols.js"></script>

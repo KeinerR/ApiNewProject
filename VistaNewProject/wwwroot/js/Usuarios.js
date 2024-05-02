@@ -3,11 +3,11 @@
     const mostrarAlerta = urlParams.get('mostrarAlerta');
     const usuarioId = urlParams.get('usuarioId');
 
-    
+
     usuarios = {}; // Inicializamos la variable usuarios como un objeto vacío
     var todoValido = true;
-    
- 
+
+
 
     function obtenerDatosUsuarios() {
         fetch('https://localhost:7013/api/Usuarios/GetUsuarios')
@@ -27,10 +27,10 @@
                 console.error('Error:', error);
             });
     }
-  
 
-    // Llamamos a la función obtenerDatosUsuarios 
-    obtenerDatosUsuarios(); 
+
+    // Llamamos a la función obtenerDatosUsuarios
+    obtenerDatosUsuarios();
     if (mostrarAlerta === 'true' && usuarioId) {
         obtenerDatosUsuario(usuarioId);
 
@@ -60,11 +60,11 @@
         // Mostrar mensaje inicial de validación
         $('#MensajeInicial').text(' Completa todos los campos con *');
         $('.Mensaje').text(' *');
-        
+
 
         $('#Nombre,#RolId, #Apellido,#Telefono,#RepetirContraseña, #Usuario, #Contraseña, #Correo').on('input', function () {
             validarCampo($(this));
-      
+
             // Validar si todos los campos son válidos antes de agregar el usuario
             todoValido = $('.text-danger').filter(function () {
                 return $(this).text() !== '';
@@ -80,13 +80,13 @@
                 $('#MensajeInicial').hide();
             } else {
                 $('#MensajeInicial').show(); // Mostrar el mensaje si no todos los campos son válidos
-            }   
+            }
         });
     }
 
     // Función para validar un campo y mostrar mensajes de error en el span asociado
     function validarCampo(input) {
-        
+
         var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
         var spanError = input.next('.text-danger'); // Obtener el elemento span de error asociado al input
         var spanVacio = input.prev('.Mensaje'); // Obtener el elemento span vacío asociado al input
@@ -104,10 +104,10 @@
             if (valor) {
                 spanError.text('');
                 spanVacio.text('');
-            } else { 
+            } else {
                 spanError.text(' ')
                 spanVacio.text(' *obligatorio');
-  
+
             }
             // Resto del código de validación del campo RolId
         }
@@ -160,16 +160,16 @@
             }
         }
 
-       
+
 
         // Validación de teléfono
         if (input.is('#Telefono')) {
             var telefonoValido = /^\d{7,}$/.test(valor); // Permite al menos 6 dígitos
-            
+
             if (valor === '') {
                 spanError.text('');
                 spanVacio.text(' *obligatorio');
-            }else if (valor.length < 7 && valor.length > 0) {
+            } else if (valor.length < 7 && valor.length > 0) {
                 spanError.text('El teléfono debe tener minimo 7 dígitos numéricos.');
                 spanVacio.text('');
             } else if (!telefonoValido) {
@@ -264,7 +264,7 @@
                     spanErrorRepetir.text('')
                 }
             }
-            
+
         }
         if (input.is('#RepetirContraseña')) {
             const contraseña = $('#Contraseña').val();
@@ -278,7 +278,7 @@
                 spanVacio.text('');
             }
         }
-        
+
         return todoValido; // Devuelve el estado de validación al finalizar la función
     }
     // Función para agregar un usuario después de validar los campos
@@ -304,7 +304,7 @@
         const telefono = document.getElementById('Telefono').value.trim();
         const correo = document.getElementById('Correo').value.trim();
         const estadoUsuario = document.getElementById('EstadoUsuario').value;
-        
+
         if (
             nombre.trim() === '' ||
             rolId.trim() === '' ||
@@ -321,7 +321,7 @@
                 timer: 3000,
                 timerProgressBar: true,
                 text: 'Por favor, completa todos los campos con * para poder registrar este usuario.'
-            }); 
+            });
             return;
         }
         // Crear un objeto con los valores del formulario
@@ -372,7 +372,7 @@
             });
     }
 
-    
+
 
     function obtenerDatosUsuario(usuarioId) {
         fetch(`https://localhost:7013/api/Usuarios/GetUsuarioById?Id=${usuarioId}`)
@@ -431,7 +431,7 @@
                     selectRol.value = '3';
                 }
                 // Mostrar el campo de Estado Usuario
-             
+
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -512,7 +512,7 @@
             });
     }
 
-    
+
 
     // Attach the ojoMostrarContraseña function to the button's onclick event
     document.getElementById('MostrarOcultar1').onclick = function () {
@@ -668,7 +668,7 @@ function limpiarFormulario() {
     $('.Mensaje, .MensajeAct').text(' *');
     $('.Mensaje, .MensajeAct').show(); // Mostrar mensajes de error
 
-   
+
     $('.text-danger, .text-dangerAct').text(''); // Limpiar mensajes de error
     $('#AgregarUsuarios').show();
     $('#FormActualizarUsuarios').hide();
@@ -708,7 +708,7 @@ function obteneUsuarioid(UsuarioId) {
             document.getElementById('EstadoUsuarioAct').value = usuario.estadoUsuario;
             document.getElementById('RepetirContraseñaAct').value = usuario.contraseña;
 
-            
+
 
             console.log(usuario);
         })
@@ -751,6 +751,4 @@ function actualizarEstadoUsuario(UsuarioId, EstadoUsuario) {
             console.error('Error de red:', error);
         });
 }
-
-
 

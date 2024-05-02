@@ -8,7 +8,7 @@ using X.PagedList;
 
 namespace VistaNewProject.Controllers
 {
-    
+
     public class UsuariosController : Controller
     {
         private readonly IApiClient _client;
@@ -20,7 +20,7 @@ namespace VistaNewProject.Controllers
         }
 
 
-        public async Task<ActionResult> Index(int ? page)
+        public async Task<ActionResult> Index(int? page)
         {
             int pageSize = 5; // Número máximo de elementos por página
             int pageNumber = page ?? 1;
@@ -52,7 +52,7 @@ namespace VistaNewProject.Controllers
             ViewBag.Contador = contador;
             ViewBag.roles = roles;
             return View(pageUsuarios);
-           
+
         }
         public async Task<IActionResult> Details(int? id)
         {
@@ -74,12 +74,13 @@ namespace VistaNewProject.Controllers
         }
 
 
-        public async Task<IActionResult> Create([FromForm ] int rolId, string nombre, string apellido,string usuario,string contraseña,string telefono ,string correo, ulong estadoUsuario)
+        public async Task<IActionResult> Create([FromForm] int rolId, string nombre, string apellido, string usuario, string contraseña, string telefono, string correo, ulong estadoUsuario)
         {
 
-            if (ModelState.IsValid) {
+            if (ModelState.IsValid)
+            {
 
-              
+
 
                 var usuarios = await _client.GetUsuarioAsync();
                 var usuariosExis = usuarios.FirstOrDefault(c => string.Equals(c.Usuario1, usuario, StringComparison.OrdinalIgnoreCase));
@@ -149,16 +150,16 @@ namespace VistaNewProject.Controllers
 
                 UsuarioId = usuarioIdAct,
                 RolId = rolIdAct,
-                Nombre=nombreAct,
-                Apellido=apellidoAct,
-                Usuario1=usuarioAct,
-                Contraseña=contraseñaAct,
-                Telefono=telefonoAct,
-                Correo=correoAct,
-                EstadoUsuario=estadoUsuarioAct
+                Nombre = nombreAct,
+                Apellido = apellidoAct,
+                Usuario1 = usuarioAct,
+                Contraseña = contraseñaAct,
+                Telefono = telefonoAct,
+                Correo = correoAct,
+                EstadoUsuario = estadoUsuarioAct
             };
 
-            var response= await _client.UpdateUsuarioAsync(Usuarios);
+            var response = await _client.UpdateUsuarioAsync(Usuarios);
 
             if (response != null)
             {
@@ -243,4 +244,6 @@ namespace VistaNewProject.Controllers
 
     }
 }
+
+
 
