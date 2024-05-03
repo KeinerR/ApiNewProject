@@ -20,7 +20,7 @@
     </div>
 
     <!-- Botón para abrir el modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CompraModal">
+    <button type="button" id="btnModal" class="btn btn-primary" onclick="setHoraActual();" data-bs-toggle="modal" data-bs-target="#CompraModal">
         <i class="fas fa-plus-circle"></i>  Agregar Compra
     </button>
 
@@ -34,7 +34,7 @@
             <div class="modal-header">
                 <h2 class="modal-title" id="tituloModal">Agregar Compra</h2>
                 <h3 class="modal-title noVisualizar" id="subTituloModal">Agregar productos a la compra</h3>
-                <button type="button" class="btn-close" onclick="volverARegistrarCompra()"data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" onclick="reiniciarCompra()"data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div id="PrincipalCompra" class="modal-body">
                 <div class="form-group">
@@ -215,7 +215,7 @@
                             <button class="btn btn-secondary" onclick="verTodo()" title="Ver todo"><i class="fas fa-minus"></i></button>
                             <button class="btn btn-secondary  noVer" id="expandirDetalle" onclick="verDetalleCompra()" title="Expandir detalle"><i class="fas fa-expand-alt"></i></button>
                             <button class="btn btn-secondary  noVer" id="expandir" onclick="verCompra()" title="Expandir"><i class="fas fa-expand-alt"></i></button>
-                            <button id="volverRegistrarCompra" class="btn btn-secondary" onclick="volverARegistrarCompra()" title="Limpiar Compra"><i class="fas fa-broom"></i></button>
+                            <button id="volverRegistrarCompra" class="btn btn-secondary" onclick="limpiarFormularioTotalmente()" title="Limpiar Compra"><i class="fas fa-broom"></i></button>
                             <button class="btn btn-secondary" onclick="RegistrarBuy(compra)" title="Enviar">Enviar</button>
                         </div>
                     </div>
