@@ -436,3 +436,64 @@ input:checked + .slider:before {
     border:solid 12px blue;
 }
 
+
+/*Estilo de Detalle de compra*/
+
+.detalle-compra {
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+.detalle-compra header {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.detalle-compra .detalle-info {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+    .detalle-compra .detalle-info .info-label {
+        font-weight: bold;
+    }
+
+    .detalle-compra .info-label {
+        margin-left: 10px;
+    }
+
+    .detalle-compra .info-value {
+        display: inline-block;
+        margin-left: 5px;
+    }
+
+
+.detalle-compra .detalle-info .info-value {
+    flex-grow: 1;
+}
+
+.pagination-detail {
+    margin-top: 20px;
+}
+
+    .pagination-detail a {
+        display: inline-block;
+        padding: 5px 10px;
+        margin-right: 5px;
+        border: 1px solid #ccc;
+        text-decoration: none;
+        color: #333;
+    }
+
+        .pagination-detail a.active {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+
+        .pagination-detail a.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
