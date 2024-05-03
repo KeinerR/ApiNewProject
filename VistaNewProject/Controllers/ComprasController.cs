@@ -71,6 +71,8 @@ namespace VistaNewProject.Controllers
             foreach (var detalle in detallesXCompra)
             {
                 detalle.Producto = productos.FirstOrDefault(p => p.ProductoId == detalle.ProductoId);
+                detalle.Unidad = unidades.FirstOrDefault(u => u.UnidadId == detalle.UnidadId);
+                detalle.Lotes = lotes.Where(l => l.DetalleCompraId == detalle.DetalleCompraId).ToList();
             }
 
             var pagedCompra = detallesXCompra.ToPagedList(pageNumber, pageSize);
