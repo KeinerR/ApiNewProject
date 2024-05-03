@@ -29,66 +29,131 @@
     <div class="modal-dialog">
         <div class="modal-content" id="agregarDetalleCliente">
             <div class="modal-header">
-                <h5 class="modal-title" id="TituloModal">Agregar Cliente</h5>
+                <h5 class="" id="TituloModal" style="text-align:center">Agregar Cliente</h5>
                 <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
             </div>
             <form asp-controller="Clientes" asp-action="Create" method="post" onsubmit="return validarFormulario()">
                 <div class="modal-body">
 
-                    <div class="form-group">
+                    <div class="col-5">
                         <input type="hidden" id="ClienteId" name="clienteId" class="form-control" />
                     </div>
-                    <div class="form-group">
-                        <label for="Identificacion" class="control-label">Identificacion</label>
-                        <input type="text" id="Identificacion" name="identificacion" class="form-control" />
+                    <div style=" form-group">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="Identificacion" class="control-label">Identificacion</label>
+                                    <input type="text" id="Identificacion" name="identificacion" class="form-control" style="border-radius: 50px;" />
+                                    <span id="MensajeIdentificacion" class="text-danger"></span>
+                                    <!-- Use un ID más descriptivo como "MensajeIdentificacion" -->
+                                </div>
+                            </div>
+
+
+                            <div class="col-5">
+
+                                <div class="form-group">
+                                    <label for="NombreCompleto" class="control-label">Nombre Completo</label>
+                                    <input type="text" id="NombreCompleto" name="nombreCompleto" class="form-control" style=" border-radius: 50px;" />
+                                    <span id="MensajeNombreCompleto" class="text-danger"></span>
+
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="form-group col">
+                                    <label for="NombreEntidad" class="control-label">Nombre Entidad</label>
+                                    <input type="text" id="NombreEntidad" name="nombreEntidad" class="form-control" style=" border-radius: 50px;" />
+                                    <span id="MensajeNombreEntidad" class="text-danger"></span>
+
+                                </div>
+                            </div>
+                                <div class="col-5">
+                                    <div class="form-group">
+                                        <label for="Telefono" class="control-label">Teléfono</label>
+                                        <input type="text" id="Telefono" name="telefono" class="form-control" style=" border-radius: 50px;"  />
+                                    <span id="MensajeTelefono" class="text-danger"></span>
+
+                                    </div>
+
+                                </div>
+
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="Correo" class="control-label">Correo</label>
+                                    <input type="text" id="Correo" name="correo" class="form-control" style=" border-radius: 50px;" />
+                                    <span id="MensajeCorreo" class="text-danger"></span>
+
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="Direccion" class="control-label">Direccion</label>
+                                    <input type="text" id="Direccion" name="direccion" class="form-control" style=" border-radius: 50px;" />
+                                    <span id="MensajeDireccion" class="text-danger"></span>
+
+                                </div>
+                            </div>
+
+
+                           
+
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="TipoCliente" class="control-label">Tipo Cliente </label>
+                                    <select id="TipoCliente" name="tipoCliente" class="form-control" style=" border-radius: 50px;">
+                                        <option value="Natural">Natural</option>
+                                        <option value="Empresa">Empresa</option>
+                                    </select>
+                                    <span id="MensajeTipoCliente" class="text-danger"></span>
+
+                                </div>
+                            </div>
+
+                              <div class="col-5">
+                                <div class="modal-footer  form-group">
+                                    <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="form-group" id="EstadoCliente" style="display:none">
+                                    <label for="EstadoCliente" class="control-label">Estado Cliente</label>
+                                    <select id="EstadoCliente" name="estadoCliente" class="form-control" style=" border-radius: 50px;">
+                                        <option value="1">Activo</option>
+                                        <option value="0">Inactivo</option>
+                                    </select>
+                                    <span id="MensajeEstadoCliente" class="text-danger"></span>
+                                </div>
+                            </div>
+
+
+                          
+
+                        </div>
+
+
+
+
+                   
+                           
+
+                          
+                      
+
+                       
+                     
+
                     </div>
-                    <div class="form-group">
-                        <label for="NombreEntidad" class="control-label">Nombre Entidad</label>
-                        <input type="text" id="NombreEntidad" name="nombreEntidad" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="NombreCompleto" class="control-label">Nombre Completo</label>
-                        <input type="text" id="NombreCompleto" name="nombreCompleto" class="form-control" />
-                    </div>
+                  
                   
 
 
-                    <div class="form-group">
-                        <label for="TipoCliente" class="control-label">Tipo Cliente </label>
-                        <select id="TipoCliente" name="tipoCliente" class="form-control">
-                            <option value="Natural">Natural</option>
-                            <option value="Empresa">Empresa</option>
-                        </select>
-                        <span id="MensajeTipoCliente" class="text-danger"></span>
-
-                    </div>
-                    <div class="form-group">
-                        <label for="Telefono" class="control-label">Teléfono</label>
-                        <input type="text" id="Telefono" name="telefono" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="Correo" class="control-label">Correo</label>
-                        <input type="text" id="Correo" name="correo" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="Direccion" class="control-label">Direccion</label>
-                        <input type="text" id="Direccion" name="direccion" class="form-control" />
-                    </div>
-                    <div class="form-group" id="EstadoCliente" style="display:none">
-                        <label for="EstadoCliente" class="control-label">Estado Cliente</label>
-                        <select id="EstadoCliente" name="estadoCliente" class="form-control">
-                            <option value="1">Activo</option>
-                            <option value="0">Inactivo</option>
-                        </select>
-                        <span id="MensajeEstadoCliente" class="text-danger"></span>
-                    </div>
 
                 </div>
-                <div class="modal-footer">
-                    <button type="submit"  class="btn btn-primary" id="btnGuardar">Agregar</button>
-                </div>
-
+             
 
 
             </form>
@@ -298,15 +363,18 @@
                                 <span class="slider"></span>
                             </label>
                         </td>
-                        
-                        <td class="contenedorBotonesTabla">
-                            <button class="btn botonEditarCategoria" id="btnEdit" data-cliente-id="@cliente.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
-                            <a asp-action="Details" asp-route-id="@cliente.ClienteId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
-                            <form style="display:inline-block;" asp-controller="Marcas" asp-action="Delete" method="post" class="delete-form">
-                                    @Html.Hidden("id", cliente.ClienteId)
-                                <button type="submit" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
-                            </form>
+
+                        <td class="text-center align-middle">
+                            <div class="btn-group" role="group">
+                                <button class="btn botonEditarCategoria" id="btnEdit" data-cliente-id="@cliente.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
+                                <a asp-action="Details" asp-route-id="@cliente.ClienteId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
+                                <form style="display:inline-block;" asp-controller="Clientes" asp-action="Delete" method="post" class="delete-form">
+                                    <input type="hidden" name="id" value="@cliente.ClienteId" />
+                                    <button type="button" onclick="confirmarEliminacion()" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                </form>
+                            </div>
                         </td>
+
                         
                     </tr>
                 }
