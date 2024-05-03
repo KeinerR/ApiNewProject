@@ -9,12 +9,10 @@
 <div class="d-flex justify-content-between">
     <!-- Formulario de búsqueda a la izquierda -->
     <div class="mr-auto">
-        <form class="d-none d-md-inline-block form-inline my-2 my-md-0">
+        <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
             <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" id="searchInput" />
-                <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
-                <!-- Botón para limpiar la búsqueda -->
-                <button class="btn btn-danger" id="btnClearSearch" type="button"><i class="fas fa-times"></i></button>
+                <input id="buscarDomicilio" type="text" class="form-control" placeholder="Buscar domicilio" aria-label="Search" aria-describedby="button-addon2">
+                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
             </div>
         </form>
     </div>
@@ -88,7 +86,8 @@
 <table class="table table-custom text-center">
     <thead>
         <tr>
-            <th>
+            <th> #</th>
+            <th class="d-none">
                 DOMICILIO ID
             </th>
             <th>
@@ -115,9 +114,20 @@
         </tr>
     </thead>
     <tbody class="text-center">
+        @{
+            int contador = ViewBag.Contador ?? 1;
+            int contadorNew = ViewBag.Contador ?? 1;
+
+        }
         @foreach (var item in Model)
         {
-            <tr>
+            <tr class="domiciliosPaginado">
+                <td>
+                    @contador
+                    @{
+                        contador++;
+                    }
+                </td>
                 <td class="domicilio-id" style="display: none;">@Html.DisplayFor(modelItem => item.DomicilioId)</td>
                 <td class="pedido-id">@Html.DisplayFor(modelItem => item.PedidoId)</td>
                 <td class="usuario-id">@Html.DisplayFor(modelItem => item.UsuarioId)</td>
@@ -127,14 +137,44 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.EstadoDomicilio)
                 </td>
-                <td>
-                </td>
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
                     <button class="btn btn-warning" onclick="obtenerDatosDomicilio('@item.DomicilioId')" data-cliente-id="@item.DomicilioId" data-bs-toggle="modal" data-bs-target="#DomicilioModal">Editar</button>
                     <button class="btn btn-danger" onclick="eliminarDomicilio('@item.DomicilioId')">Eliminar</button>
                 </td>
             </tr>
+        }
+        @{
+            var domicilios = ViewData["Domicilios"] as List<Domicilio>;
+            if (domicilios != null)
+            {
+                foreach (var domicilio in domicilios)
+                {
+                    <tr class="Domicilios" style="display:none;">
+                    <td>
+                            @contadorNew
+                            @{
+                                contadorNew++;
+                            }
+                    </td>
+                        <td style="display:none;">@domicilio.DomicilioId</td>
+                        <td>@domicilio.PedidoId</td>
+                        <td>@domicilio.UsuarioId</td>
+                        <td>@domicilio.Observacion</td>
+                        <td>@domicilio.FechaEntrega</td>
+                        <td>@domicilio.DireccionDomiciliario</td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => domicilio.EstadoDomicilio)
+                        </td>
+
+                        <td>
+                            <button class="btn btn-warning" onclick="obtenerDatosDomicilio('@domicilio.DomicilioId')" data-cliente-id="@domicilio.DomicilioId" data-bs-toggle="modal" data-bs-target="#DomicilioModal">Editar</button>
+                            <button class="btn btn-danger" onclick="eliminarDomicilio('@domicilio.DomicilioId')">Eliminar</button>
+                        </td>
+                    </tr>
+                }
+            }
         }
     </tbody>
 </table>
@@ -188,6 +228,7 @@
         </div>
     }
 </div>
+
 
 <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="~/js/domicilios.js"></script>
