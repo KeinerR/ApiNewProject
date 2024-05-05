@@ -30,7 +30,7 @@
         <div class="modal-content" id="agregarDetalleCliente">
             <div class="modal-header">
                 <h5 class="" id="TituloModal" style="text-align:center">Agregar Cliente</h5>
-                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" onclick="limpiarFormularioAct() " class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
             </div>
             <form asp-controller="Clientes" asp-action="Create" method="post" onsubmit="return validarFormulario()">
@@ -165,82 +165,136 @@
         <div class="modal-content" id="FormActualizarCliente" style="display:none;">
             <div class="modal-header">
                 <h5 class="modal-title" id="TituloModalUsuarios">Actualizar Usuarios</h5>
-                <button type="button" class="btn-close" onclick="limpiarFormulario()" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div id="MensajeInicialUsuario"></div>
-            <form asp-controller="Clientes" asp-action="Update" method="post">
+            <form asp-controller="Clientes" asp-action="Update" method="post" onsubmit="return validarFormularioAct()">
                 @Html.AntiForgeryToken()
                 <div class="modal-body">
-                    <div class="form-group">
-                        <input id="ClienteIdAct" name="clienteIdAct" class="form-control" type="hidden" />
+
+                    <div class="col-5">
+                        <input type="hidden" id="ClienteIdAct" name="clienteIdAct" class="form-control" />
+                    </div>
+                    <div style=" form-group">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="IdentificacionAct" class="control-label">Identificacion</label>
+                                    <input type="text" id="IdentificacionAct" name="identificacionAct" class="form-control" style="border-radius: 50px;" />
+                                    <span id="MensajeIdentificacionAct" class="text-danger"></span>
+                                    <!-- Use un ID más descriptivo como "MensajeIdentificacion" -->
+                                </div>
+                            </div>
+
+
+                            <div class="col-5">
+
+                                <div class="form-group">
+                                    <label for="NombreCompletoAct" class="control-label">Nombre Completo</label>
+                                    <input type="text" id="NombreCompletoAct" name="nombreCompletoAct" class="form-control" style=" border-radius: 50px;" />
+                                    <span id="MensajeNombreCompletoAct" class="text-danger"></span>
+
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="form-group col">
+                                    <label for="NombreEntidadAct" class="control-label">Nombre Entidad</label>
+                                    <input type="text" id="NombreEntidadAct" name="nombreEntidadAct" class="form-control" style=" border-radius: 50px;" />
+                                    <span id="MensajeNombreEntidadAct" class="text-danger"></span>
+
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="TelefonoAct" class="control-label">Teléfono</label>
+                                    <input type="text" id="TelefonoAct" name="telefonoAct" class="form-control" style=" border-radius: 50px;" />
+                                    <span id="MensajeTelefonoAct" class="text-danger"></span>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="CorreoAct" class="control-label">Correo</label>
+                                    <input type="text" id="CorreoAct" name="correoAct" class="form-control" style=" border-radius: 50px;" />
+                                    <span id="MensajeCorreoAct" class="text-danger"></span>
+
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="DireccionAct" class="control-label">Direccion</label>
+                                    <input type="text" id="DireccionAct" name="direccionAct" class="form-control" style=" border-radius: 50px;" />
+                                    <span id="MensajeDireccionAct" class="text-danger"></span>
+
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="TipoClienteAct" class="control-label">Tipo Cliente </label>
+                                    <select id="TipoClienteAct" name="tipoClienteAct" class="form-control" style=" border-radius: 50px;">
+                                        <option value="Natural">Natural</option>
+                                        <option value="Empresa">Empresa</option>
+                                    </select>
+                                    <span id="MensajeTipoClienteAct" class="text-danger"></span>
+
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="form-group" id="EstadoCliente" >
+                                    <label for="EstadoClienteAct" class="control-label">Estado Cliente</label>
+                                    <select id="EstadoClienteAct" name="estadoClienteAct" class="form-control" style=" border-radius: 50px;">
+                                        <option value="1">Activo</option>
+                                        <option value="0">Inactivo</option>
+                                    </select>
+                                    <span id="MensajeEstadoClienteAct" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                         
+                          
+
+
+
+
+                        </div>
+
+
+                        <div class="col-9">
+                            <div class="modal-footer  form-group">
+                                <button type="submit" class="btn btn-primary" id="btnGuardar">Actualizar</button>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     </div>
 
 
 
-                    <div class="form-group">
-                        <label for="IdentificacionAct" class="control-label">Identificacion</label>
-                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
-                        <input type="text" id="IdentificacionAct" name="identificacionAct" class="form-control" autocomplete="off" />
-                        <span id="IdentificacionAct" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="NombreEntidadAct" class="control-label">Nombre Entidad</label>
-                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
-                        <input type="text" id="NombreEntidadAct" name="nombreEntidadAct" class="form-control" autocomplete="off" />
-                        <span id="MensajeIdentificacionAct" class="text-danger"></span>
-                    </div>
-                    <div class="Novisible" style="display:block">
-                        <label for="NombreCompletoAct" class="control-label">NombreCompleto</label>
-                        <span style="color:red" class="Mensaje">* </span>
-                        <input type="text" id="NombreCompletoAct" name="nombreCompletoAct" class="form-control" autocomplete="off" />
-                        <span id="MensajeNombreCompletoAct" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="TipoClienteAct" class="control-label">Tipo Cliente </label>
-                        <select id="TipoClienteAct" name="tipoClienteAct" class="form-control">
-                            <option value="Natural">Natural</option>
-                            <option value="Empresa">Empresa</option>
-                        </select>
-                        <span id="MensajeTipoCliente" class="text-danger"></span>
-
-                    </div>
-
-                    <div class="form-group">
-                        <label for="TelefonoAct" class="control-label">Teléfono</label>
-                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
-                        <input type="text" id="TelefonoAct" name="telefonoAct" class="form-control" autocomplete="off" />
-                        <span class="text-danger" id="mensajeTelefonoAct"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="CorreoAct" class="control-label">Correo</label>
-                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
-                        <input type="text" id="CorreoAct" name="correoAct" class="form-control" autocomplete="off" />
-                        <span class="text-danger" id="mensajeCorreoAct"></span>
-                    </div>
 
 
-                    <div class="form-group">
-                        <label for="DireccionAct" class="control-label">Direccion</label>
-                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
-                        <input type="text" id="DireccionAct" name="direccionAct" class="form-control" autocomplete="off" />
-                        <span class="text-danger" id="mensajeCorreoAct"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="EstadoUsuarioAct" class="control-label">Estado Usuario</label>
-                        <select id="EstadoClienteAct" name="estadoClienetAct" class="form-control">
-                            <option value="1">Activo</option>
-                            <option value="0">Inactivo</option>
-                        </select>
-                        <span id="MensajeEstadoClienteAct" class="text-danger"></span>
-
-                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit"  class="btn btn-primary" id="btnEditarUnidad">Actualizar</button>
-                </div>
+
             </form>
         </div>
     </div>
@@ -498,6 +552,7 @@
             }
         });
     }
+
 
 
 

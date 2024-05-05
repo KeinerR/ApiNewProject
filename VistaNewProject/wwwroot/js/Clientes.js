@@ -28,10 +28,9 @@ $(document).ready(function () {
     inicializarEventos();
 });
 
-
-
-
 function validarFormulario() {
+
+
     // Obtener los valores de los campos del formulario
     var identificacion = $("#Identificacion").val();
     var nombreEntidad = $("#NombreEntidad").val();
@@ -39,53 +38,227 @@ function validarFormulario() {
     var telefono = $("#Telefono").val();
     var correo = $("#Correo").val();
     var direccion = $("#Direccion").val();
+  
 
-    // Verificar si el campo identificación está vacío
-    if (!identificacion.trim()) {
-        mostrarAlertaError('Por favor, complete el campo Identificación.');
-        return false; // Evitar el envío del formulario
+
+    // Validar cada campo individualmente
+    if (!validarIdentificacion(identificacion)) {
+        return false;
     }
 
-    // Verificar si el campo nombre de entidad está vacío
-    if (!nombreEntidad.trim()) {
-        mostrarAlertaError('Por favor, complete el campo Nombre de Entidad.');
-        return false; // Evitar el envío del formulario
+    if (!validarNombreEntidad(nombreEntidad)) {
+        return false;
     }
 
-    if (!nombreCompleto.trim()) {
-        mostrarAlertaError('Por favor, complete el campo NombreCompleto.');
-        return false; // Evitar el envío del formulario
+    if (!validarNombreCompleto(nombreCompleto)) {
+        return false;
     }
 
-    if (!telefono.trim()) {
-        mostrarAlertaError('Por favor, complete el campo Teléfono.');
-        return false; // Evitar el envío del formulario
-    } else if (!/^\d+$/.test(telefono)) {
-        mostrarAlertaError('El teléfono solo puede contener números.');
-        return false; // Evitar el envío del formulario
+    if (!validarTelefono(telefono)) {
+        return false;
+    }
+    if (!validarDireccion(direccion)) {
+        return false;
     }
 
-    if (!correo.trim()) {
-        mostrarAlertaError('Por favor, complete el campo Correo.');
-        return false; // Evitar el envío del formulario
-    }
-    if (!direccion.trim()) {
-        mostrarAlertaError('Por favor, complete el campo Dirección.');
-        return false; // Evitar el envío del formulario
+    if (!validarCorreo(correo)) {
+        return false;
     }
 
-    // Verificar si la identificación tiene más de 35 caracteres
-    if (identificacion.length > 35) {
-        // Mostrar mensaje de error en el span
-        $("#MensajeNombreCompletoAct").text('El campo tiene más de 35 caracteres.');
-        // Mostrar asterisco rojo
-        $("#Identificacion").addClass('is-invalid');
-        return false; // Evitar el envío del formulario
-    }
+  
 
-    // Si todos los campos están completos y el teléfono es válido, enviar el formulario
+    // Si todas las validaciones pasan, se puede enviar el formulario
     return true;
 }
+
+// Funciones de validación individuales
+
+
+
+$("#Identificacion").on("input", function () {
+    validarIdentificacion($(this).val()); // Llamar a la función de validación con el valor actual del campo
+});
+function validarIdentificacion(identificacion) {
+    if (!identificacion.trim()) {
+        mostrarOcultarError("#MensajeIdentificacion", "Por favor, complete el campo Identificación."); // Mostrar error si el campo está vacío
+        return false;
+    }
+
+    if (identificacion.trim().length > 25) {
+        mostrarOcultarError("#MensajeIdentificacion", "El campo tiene más de 25 caracteres.");
+        return false;
+    }
+
+    if (identificacion.trim().length < 5) {
+        mostrarOcultarError("#MensajeIdentificacion", "El campo tiene menos de 5 caracteres.");
+        return false;
+    }
+
+    // Verificar si el campo contiene solo espacios en blanco
+    if (/^\s+$/.test(identificacion)) {
+        mostrarOcultarError("#MensajeIdentificacion", "El campo Identificación no puede consistir solo en espacios en blanco.");
+        return false;
+    }
+
+    // Limpiar mensaje de error en el span si pasa todas las validaciones
+    mostrarOcultarError("#MensajeIdentificacion");
+    return true;
+}
+
+// Función para validar el campo de Nombre de Entidad
+
+$("#NombreEntidad").on("input", function () {
+    validarNombreEntidad($(this).val()); // Llamar a la función de validación con el valor actual del campo
+});
+function validarNombreEntidad(nombreEntidad) {
+    // Expresión regular para verificar que el campo contenga solo letras
+    var letrasRegex = /^[A-Za-z]+(?:\s+[A-Za-z]+)*$/;
+
+    if (!nombreEntidad.trim()) {
+        mostrarOcultarError("#MensajeNombreEntidad", "Por favor, complete el campo Nombre de Entidad.");
+        return false;
+    }
+
+    if (nombreEntidad.length < 4) {
+        mostrarOcultarError("#MensajeNombreEntidad", "El campo Nombre de Entidad debe tener al menos 5 caracteres.");
+        return false;
+    }
+
+    if (!letrasRegex.test(nombreEntidad)) {
+        mostrarOcultarError("#MensajeNombreEntidad", "El campo Nombre de Entidad solo puede contener letras.");
+        return false;
+    }
+
+    mostrarOcultarError("#MensajeNombreEntidad"); // Limpiar mensaje de error si pasa todas las validaciones
+    return true;
+}
+
+
+$("#NombreCompleto").on("input", function () {
+    validarNombreCompleto($(this).val()); // Llamar a la función de validación con el valor actual del campo
+});
+function validarNombreCompleto(nombreCompleto) {
+
+    var letrasRegex = /^[A-Za-z]+(?:\s+[A-Za-z]+)*$/;
+    if (!nombreCompleto.trim()) {
+        mostrarOcultarError("#MensajeNombreCompleto", "Por favor, complete el campo Nombre Completo.");
+        return false;
+    }
+
+    if (nombreCompleto.length > 25) {
+        mostrarOcultarError("#MensajeNombreCompleto", "El campo Nombre Completo puede ser mayor a 25 palabras.");
+        return false;
+    }
+    if (nombreCompleto.length < 4) {
+        mostrarOcultarError("#MensajeNombreCompleto", "El campo Nombre Completo debe tener al menos 5 caracteres.");
+        return false;
+    }
+
+
+    if (!letrasRegex.test(nombreCompleto)) {
+        mostrarOcultarError("#MensajeNombreCompleto", "El campo Nombre de Completo solo puede contener letras.");
+        return false;
+    }
+
+    if (/^\s+$/.test(nombreCompleto)) {
+        mostrarOcultarError("#MensajeNombreCompleto", "El campo Nombre Completo no puede consistir solo en espacios en blanco.");
+        return false;
+    }
+
+    // Limpiar mensaje de error en el span
+    mostrarOcultarError("#MensajeNombreCompleto");
+    return true;
+}
+// Agregar evento input al campo de teléfono
+
+$("#Telefono").on("input", function () {
+    validarTelefono($(this).val()); // Llamar a la función de validación con el valor actual del campo
+});
+// Función para validar el campo de teléfono
+function validarTelefono(telefono) {
+    // Obtener el valor del campo de teléfono
+    var telefonoValor = telefono.trim();
+
+    // Limpiar mensaje de error en el span
+    mostrarOcultarError("#MensajeTelefono");
+
+    // Validar si el campo está vacío
+    if (!telefonoValor) {
+        mostrarOcultarError("#MensajeTelefono", "Por favor, complete el campo Teléfono.");
+        return false;
+    }
+
+    // Validar si el teléfono solo contiene números
+    if (!/^\d+$/.test(telefonoValor)) {
+        mostrarOcultarError("#MensajeTelefono", "El teléfono solo puede contener números.");
+        return false;
+    }
+    // Validar longitud del teléfono
+    if (telefonoValor.length < 7 || telefonoValor.length > 11) {
+        mostrarOcultarError("#MensajeTelefono", "El campo Teléfono debe tener entre 7 y 11 dígitos.");
+        return false;
+    }
+
+   
+
+
+    // Si pasa todas las validaciones, no hay error
+    return true;
+}
+
+// Función para validar el campo de correo
+
+$("#Correo").on("input", function () {
+    validarCorreo($(this).val()); // Llamar a la función de validación con el valor actual del campo
+});
+function validarCorreo(correo) {
+    const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
+
+    if (!correo.trim()) {
+        mostrarOcultarError("#MensajeCorreo", "Por favor, complete el campo Correo.");
+        return false;
+    }
+
+    if (!correoValido) {
+        mostrarOcultarError("#MensajeCorreo", "El correo electrónico no es válido.");
+        return false;
+    }
+
+    // Verificar si el correo ya está en la lista de clientes obtenida
+    if (cliente.some(cliente => cliente.correo.toLowerCase() === correo.toLowerCase())) {
+        mostrarOcultarError("#MensajeCorreo", "Este Correo ya se encuentra registrado.");
+        return false;
+    }
+
+    mostrarOcultarError("#MensajeCorreo"); // Limpiar mensaje de error si pasa todas las validaciones
+    return true;
+}
+
+$("#Direccion").on("input", function () {
+    validarDireccion($(this).val()); // Llamar a la función de validación con el valor actual del campo
+});
+function validarDireccion(direccion) {
+
+    if (!direccion.trim()) {
+        mostrarOcultarError("#MensajeDireccion", "Por favor, complete el campo Direccion.");
+        return false;
+    }
+
+    if (direccion.length > 25) {
+        mostrarOcultarError("#MensajeDireccion", "El campo tiene más de 25 caracteres.");
+        return false;
+    }
+    if (direccion.length < 5) {
+        mostrarOcultarError("#MensajeDireccion", "El campo tiene menos de 5.");
+        return false;
+    }
+   
+
+    // Limpiar mensaje de error en el span
+    mostrarOcultarError("#MensajeDireccion");
+    return true;
+}
+// Función para mostrar un mensaje de error en el span
 
 // Función para mostrar una alerta de error con un tiempo de duración
 function mostrarAlertaError(mensaje) {
@@ -99,147 +272,292 @@ function mostrarAlertaError(mensaje) {
     });
 }
 
-// Evento de entrada en el campo de identificación
-$("#Identificacion").on('input', function () {
-    var identificacion = $(this).val();
-    // Verificar si la identificación tiene más de 35 caracteres
-    if (identificacion.length > 25 && identificacion.length<5) {
-        // Mostrar mensaje de error en el span
-        $("#MensajeIdentificacion").text('El campo tiene más de 35 caracteres.');
-        // Mostrar asterisco rojo
-        $(this).addClass('is-invalid');
-    }
-    if ( identificacion.length < 5) {
-        // Mostrar mensaje de error en el span
-        $("#MensajeIdentificacion").text('El campo Identificacion tiene menos de 5 carecatere.');
-        // Mostrar asterisco rojo
-        $(this).addClass('is-invalid');
-    }
-    else {
-        // Limpiar mensaje de error en el span
-        $("#MensajeIdentificacion").text('');
-        // Eliminar clase de error del campo
-        $(this).removeClass('is-invalid');
-    }
-});
-
-$("#Telefono").on('input', function () {
-    var telefono = $(this).val();
-    // Verificar si la identificación tiene más de 35 caracteres
-    if (!/^\d+$/.test(telefono)) {
-        // Mostrar mensaje de error en el span
-        $("#MensajeTelefono").text('El campo no es numerioco.');
-        // Mostrar asterisco rojo
-        $(this).addClass('is-invalid');
-    }
-    if (telefono.length < 7) {
-        // Mostrar mensaje de error en el span
-        $("#MensajeTelefono").text('El campo Telefono tiene menos de 7 caracteres.');
-        // Mostrar asterisco rojo
-        $(this).addClass('is-invalid');
-    }
-    if (telefono.length > 11) {
-        // Mostrar mensaje de error en el span
-        $("#MensajeTelefono").text('El campo Telefono tiene mas de ');
-        // Mostrar asterisco rojo
-        $(this).addClass('is-invalid');
-    }
-    else {
-        // Limpiar mensaje de error en el span
-        $("#MensajeTelefono").text('');
-        // Eliminar clase de error del campo
-        $(this).removeClass('is-invalid');
-    }
-});
-
-$("#NombreCompleto").on('input', function () {
-    var nombreCompleto = $(this).val();
-    // Verificar si la identificación tiene más de 35 caracteres
-    if (nombreCompleto.length> 25) {
-        // Mostrar mensaje de error en el span
-        $("#MensajeNombreCompleto").text('El campo Nombre Contacto puede ser mayor a 25 palabras.');
-        // Mostrar asterisco rojo
-        $(this).addClass('is-invalid');
-    }
-    if (nombreCompleto.length < 5) {
-        // Mostrar mensaje de error en el span
-        $("#MensajeNombreCompleto").text('El campo Nombre Contacto  tiene menos de 5 carecatere.');
-        // Mostrar asterisco rojo
-        $(this).addClass('is-invalid');
-    }
-    else {
-        // Limpiar mensaje de error en el span
-        $("#MensajeNombreCompleto").text('');
-        // Eliminar clase de error del campo
-        $(this).removeClass('is-invalid');
-    }
-});
-
-$("#NombreEntidad").on('input', function () {
-    var nombreEntidad = $(this).val();
-    // Verificar si la identificación tiene más de 35 caracteres
-    if (nombreEntidad.length > 25) {
-        // Mostrar mensaje de error en el span
-        $("#MensajeNombreEntidad").text('El campo Nombre Entidad puede ser mayor a 25 palabras.');
-        // Mostrar asterisco rojo
-        $(this).addClass('is-invalid');
-    }
-    if (nombreEntidad.length < 5) {
-        // Mostrar mensaje de error en el span
-        $("#MensajeNombreEntidad").text('El campo Nombre Entidad  tiene menos de 5 carecatere.');
-        // Mostrar asterisco rojo
-        $(this).addClass('is-invalid');
-    }
-
-    else {
-        // Limpiar mensaje de error en el span
-        $("#MensajeNombreEntidad").text('');
-        // Eliminar clase de error del campo
-        $(this).removeClass('is-invalid');
-    }
-});
-$("#Correo").on('input', function () {
-    var correo = $(this).val();
-    const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
-    // Verificar si el correo es válido
-    if (!correoValido) {
-        // Mostrar mensaje de error en el span
-        $("#MensajeCorreo").text('El correo electrónico no es válido.');
-        // Mostrar asterisco rojo
-        $(this).addClass('is-invalid');
-        return; // Salir de la función si el correo no es válido
-    }
-
-    // Verificar si el correo ya está registrado en la variable cliente
-    var correoExistente = cliente.find(function (cliente) {
-        return cliente.correo.toLowerCase() === correo.toLowerCase();
-    });
-
-    if (correoExistente) {
-        // Mostrar mensaje de error en el span
-        $("#MensajeCorreo").text('Este Correo ya se encuentra registrado.');
-        // Mostrar asterisco rojo
-        $(this).addClass('is-invalid');
-    } else {
-        // Limpiar mensaje de error en el span
-        $("#MensajeCorreo").text('');
-        // Eliminar clase de error del campo
-        $(this).removeClass('is-invalid');
-    }
-});
-
-
-
-
-
 // Función para limpiar el formulario cuando se cierra el modal
-function limpiarFormulario() {
-    $("#Identificacion").val("");
-    $("#NombreEntidad").val("");
-    $("#Telefono").val("");
-    $("#Correo").val("");
-    $("#Direccion").val("");
+
+
+
+function validarFormularioAct() {
+    // Obtener los valores de los campos del formulario de actualización
+    var identificacionAct = $("#IdentificacionAct").val();
+    var nombreEntidadAct = $("#NombreEntidadAct").val();
+    var nombreCompletoAct = $("#NombreCompletoAct").val();
+    var telefonoAct = $("#TelefonoAct").val();
+    var correoAct = $("#CorreoAct").val();
+    var direccionAct = $("#DireccionAct").val();
+
+    // Validar cada campo individualmente
+    if (!validarIdentificacionAct(identificacionAct)) {
+        return false;
+    }
+
+    if (!validarNombreEntidadAct(nombreEntidadAct)) {
+        return false;
+    }
+
+    if (!validarNombreCompletoAct(nombreCompletoAct)) {
+        return false;
+    }
+
+    if (!validarTelefonoAct(telefonoAct)) {
+        return false;
+    }
+
+    if (!validarDireccionAct(direccionAct)) {
+        return false;
+    }
+
+    if (!validarCorreoAct(correoAct)) {
+        return false;
+    }
+
+    // Si todas las validaciones pasan, se puede enviar el formulario de actualización
+    return true;
 }
+
+// Función para validar la identificación en el formulario de actualización
+
+$("#IdentificacionAct").on("input", function () {
+    validarIdentificacionAct($(this).val()); // Llamar a la función de validación con el valor actual del campo
+});
+function validarIdentificacionAct(identificacionAct) {
+
+    if (!identificacionAct.trim()) {
+        mostrarOcultarError("#MensajeIdentificacionAct"); // Limpiar mensaje de error en el span
+        return true; // No hay error si el campo está vacío
+    }
+
+    if (identificacionAct.length > 25) {
+        mostrarOcultarError("#MensajeIdentificacionAct", "El campo tiene más de 25 caracteres.");
+        return false;
+    }
+    if (identificacionAct.length < 5) {
+        mostrarOcultarError("#MensajeIdentificacionAct", "El campo tiene menos de 5 caracteres.");
+        return false;
+    }
+    if (!/^\d+$/.test(identificacionAct)) {
+        mostrarOcultarError("#MensajeIdentificacionAct", "El campo identificacion no puede tener solo espacios en blancos.");
+        return false;
+    }
+
+    // Limpiar mensaje de error en el span
+    mostrarOcultarError("#MensajeIdentificacionAct");
+    return true;
+}
+
+// Función para validar el nombre de la entidad en el formulario de actualización
+$("#NombreEntidadAct").on("input", function () {
+    validarNombreEntidadAct($(this).val()); // Llamar a la función de validación con el valor actual del campo
+});
+function validarNombreEntidadAct(nombreEntidadAct) {
+    var letrasRegex = /^[A-Za-z]+(?:\s+[A-Za-z]+)*$/;
+
+    if (!nombreEntidadAct.trim()) {
+        mostrarOcultarError("#MensajeNombreEntidadAct", "Por favor, complete el campo Nombre de Entidad.");
+        return false;
+    }
+
+    if (nombreEntidadAct.length < 4) {
+        mostrarOcultarError("#MensajeNombreEntidadAct", "El campo Nombre de Entidad debe tener al menos 4 caracteres.");
+        return false;
+    }
+
+    if (!letrasRegex.test(nombreEntidadAct)) {
+        mostrarOcultarError("#MensajeNombreEntidadAct", "El campo Nombre de Entidad solo puede contener letras y espacios entre palabras.");
+        return false;
+    }
+    if (!/^\d+$/.test(nombreEntidadAct)) {
+        mostrarOcultarError("#MensajeNombreEntidadAct", "El campo Nombre Entidad no puede tener solo espacios en blancos.");
+        return false;
+    }
+
+    mostrarOcultarError("#MensajeNombreEntidadAct"); // Limpiar mensaje de error si pasa todas las validaciones
+    return true;
+}
+
+// Función para validar el nombre completo en el formulario de actualización
+$("#NombreCompletoAct").on("input", function () {
+    validarNombreCompletoAct($(this).val()); // Llamar a la función de validación con el valor actual del campo
+});
+function validarNombreCompletoAct(nombreCompletoAct) {
+    var letrasRegex = /^[A-Za-z]+(?:\s+[A-Za-z]+)*$/;
+
+    if (!nombreCompletoAct.trim()) {
+        mostrarOcultarError("#MensajeNombreCompletoAct", "Por favor, complete el campo Nombre Completo.");
+        return false;
+    }
+
+    if (nombreCompletoAct.length > 25) {
+        mostrarOcultarError("#MensajeNombreCompletoAct", "El campo Nombre Completo puede ser mayor a 25 palabras.");
+        return false;
+    }
+
+    if (nombreCompletoAct.length < 5) {
+        mostrarOcultarError("#MensajeNombreCompletoAct", "El campo Nombre Completo debe tener al menos 5 caracteres.");
+        return false;
+    }
+
+    if (!letrasRegex.test(nombreCompletoAct)) {
+        mostrarOcultarError("#MensajeNombreCompletoAct", "El campo Nombre de Completo solo puede contener letras.");
+        return false;
+    }
+    if (!/^\d+$/.test(nombreCompletoAct)) {
+        mostrarOcultarError("#MensajeNombreCompletoAct", "El campo Nombre Completo no puede tener solo espacios en blancos.");
+        return false;
+    }
+
+    mostrarOcultarError("#MensajeNombreCompletoAct"); // Limpiar mensaje de error si pasa todas las validaciones
+    return true;
+}
+
+// Función para validar el teléfono en el formulario de actualización
+$("#TelefonoAct").on("input", function () {
+    validarTelefonoAct($(this).val()); // Llamar a la función de validación con el valor actual del campo
+});
+function validarTelefonoAct(telefonoAct) {
+    var telefonoValor = telefonoAct.trim();
+
+    mostrarOcultarError("#MensajeTelefonoAct"); // Limpiar mensaje de error en el span
+
+    if (!telefonoValor) {
+        mostrarOcultarError("#MensajeTelefonoAct", "Por favor, complete el campo Teléfono.");
+        return false;
+    }
+
+    if (!/^\d+$/.test(telefonoValor)) {
+        mostrarOcultarError("#MensajeTelefonoAct", "El teléfono solo puede contener números.");
+        return false;
+    }
+
+    if (telefonoValor.length < 7 || telefonoValor.length > 11) {
+        mostrarOcultarError("#MensajeTelefonoAct", "El campo Teléfono debe tener entre 7 y 11 dígitos.");
+        return false;
+    }
+    if (!/^\d+$/.test(telefonoValor)) {
+        mostrarOcultarError("#MensajeTelefonoAct", "El teléfono solo puede contener números.");
+        return false;
+    }
+
+    return true;
+}
+
+// Función para validar la dirección en el formulario de actualización
+$("#DireccionAct").on("input", function () {
+    validarDireccionAct($(this).val()); // Llamar a la función de validación con el valor actual del campo
+});
+function validarDireccionAct(direccionAct) {
+    if (!direccionAct.trim()) {
+        mostrarOcultarError("#MensajeDireccionAct", "Por favor, complete el campo Dirección.");
+        return false;
+    }
+
+    if (direccionAct.length > 25) {
+        mostrarOcultarError("#MensajeDireccionAct", "El campo tiene más de 25 caracteres.");
+        return false;
+    }
+    if (direccionAct.length < 5) {
+        mostrarOcultarError("#MensajeDireccionAct", "El campo tiene menos de 5 caracteres.");
+        return false;
+    }
+    if (!/^\d+$/.test(direccionAct)) {
+        mostrarOcultarError("#MensajeDireccionAct", "La direccion  no puede tener solo espsacios.");
+        return false;
+    }
+
+    mostrarOcultarError("#MensajeDireccionAct"); // Limpiar mensaje de error en el span
+    return true;
+}
+
+
+$("#CorreoAct").on("input", function () {
+    validarCorreoAct($(this).val()); // Llamar a la función de validación con el valor actual del campo
+});
+function validarCorreoAct(correoAct) {
+    const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correoAct);
+
+    if (!correoAct.trim()) {
+        mostrarOcultarError("#MensajeCorreoAct", "Por favor, complete el campo Correo.");
+        return false;
+    }
+
+    if (!correoValido) {
+        mostrarOcultarError("#MensajeCorreoAct", "El correo electrónico no es válido.");
+        return false;
+    }
+
+    if (cliente.some(cliente => cliente.correo.toLowerCase() === correoAct.toLowerCase())) {
+        mostrarOcultarError("#MensajeCorreoAct", "Este Correo ya se encuentra registrado.");
+        return false;
+    } 
+
+    if (!/^\d+$/.test(correoValido)) {
+        mostrarOcultarError("#MensajeCorreoAct", "El correo  no puede tener solo espsacios.");
+        return false;
+    }
+    mostrarOcultarError("#MensajeCorreoAct"); // Limpiar mensaje de error si pasa todas las validaciones
+    return true;
+}
+
+
+
+function limpiarFormulario() {
+    // Limpiar los valores de los campos del formulario
+    $('#Identificacion, #NombreEntidad, #Telefono,#Correo,#Direccion, #IdentificacionAct').val('');
+
+    // Restaurar mensajes de error
+    $('.Mensaje, .MensajeAct').text(' *');
+    $('.Mensaje, .MensajeAct').show(); // Mostrar mensajes de error
+
+    $('.text-danger, .text-dangerAct').text(''); // Limpiar mensajes de error
+    document.getElementById('agregarDetalleCliente').style.display = 'block';
+    document.getElementById('FormActualizarCliente').style.display = 'none';
+  
+}
+function mostrarOcultarError(spanId, mensaje) {
+    if (mensaje) {
+        // Si hay un mensaje de error, mostrarlo y agregar la clase de error
+        $(spanId).text(mensaje);
+        $(spanId).addClass('text-danger'); // Agregar clase para mostrar en rojo
+        $(spanId).prev().addClass('is-invalid'); // Dar estilo al cuadro de texto
+    } else {
+        // Si no hay mensaje de error, limpiarlo y quitar la clase de error
+        $(spanId).text('');
+        $(spanId).removeClass('text-danger'); // Eliminar clase de error
+        $(spanId).prev().removeClass('is-invalid'); // Quitar estilo del cuadro de texto
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function obteneClienteid(ClienteId) {
 
     fetch(`https://localhost:7013/api/Clientes/GetClienetById?Id=${ClienteId}`)
