@@ -141,69 +141,58 @@ function limpiarFormulario() {
     document.getElementById('btnEditar').style.display = 'none';
 }
 
-function buscarDomicilios() {
-    var searchTerm = $('#searchInput').val().toLowerCase();
+document.getElementById('buscarDomicilio').addEventListener('input', function () {
+    var input = this.value.trim().toLowerCase();
+    var rows = document.querySelectorAll('.domiciliosPaginado');
 
-    // Filtra las filas de la tabla basándose en el término de búsqueda
-    $('tbody tr').each(function () {
-        var filaVisible = false;
-
-        // Itera sobre cada campo de la fila en la tabla de domicilios
-        $(this).find('.domicilio-id, .pedido-id, .usuario-id, .observacion, .fecha-entrega, .direccion-domiciliario').each(function () {
-            var textoCampo = $(this).text().toLowerCase();
-
-            // Comprueba si el término de búsqueda está presente en el campo
-            if (textoCampo.indexOf(searchTerm) !== -1) {
-                filaVisible = true;
-                return false; // Rompe el bucle si se encuentra una coincidencia en la fila
-            }
+    if (input === "") {
+        rows.forEach(function (row) {
+            row.style.display = '';
         });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-search';
+        icon.style.color = 'gray';
+    } else {
+        rows.forEach(function (row) {
+            row.style.display = 'none';
+        });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-times';
+        icon.style.color = 'gray';
+    }
+    var rowsTodos = document.querySelectorAll('.Domicilios');
 
-        // Muestra u oculta la fila según si se encontró una coincidencia
-        if (filaVisible) {
-            $(this).show();
+    rowsTodos.forEach(function (row) {
+        if (input === "") {
+            row.style.display = 'none';
         } else {
-            $(this).hide();
+            var domicilioId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
+            var pedidoId = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var usuario = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+            var observacion = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
+            var fechaE = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
+            var direccionD = row.querySelector('td:nth-child(6)').textContent.trim().toLowerCase();
+
+            row.style.display = (domicilioId.includes(input) || pedidoId.includes(input) || usuario.includes(input) || observacion.includes(input) || fechaE.includes(input) || direccionD.includes(input)) ? 'table-row' : 'none';
         }
     });
+});
 
-    // Mostrar u ocultar el botón de limpiar búsqueda según si hay texto en el campo de búsqueda
-    if (searchTerm !== '') {
-        $('#btnClearSearch').show();
-    } else {
-        $('#btnClearSearch').hide();
-    }
+function vaciarInput() {
+    document.getElementById('buscarDomicilio').value = "";
+    var icon = document.querySelector('#btnNavbarSearch i');
+    icon.className = 'fas fa-search';
+    icon.style.color = 'gray';
+
+    var rows = document.querySelectorAll('.domiciliosPaginado');
+    rows.forEach(function (row) {
+        row.style.display = 'table-row';
+    });
+
+    var rowsTodos = document.querySelectorAll('.Domicilios');
+
+    rowsTodos.forEach(function (row) {
+        row.style.display = 'none';
+    });
 }
 
-// Ocultar el botón de limpiar búsqueda al principio
-$(document).ready(function () {
-    $('#btnClearSearch').hide(); // Ocultar el botón de limpiar búsqueda al cargar la página
-});
-
-// Evento de clic en el botón de búsqueda
-$('#btnNavbarSearch').on('click', function () {
-    buscarDomicilios();
-});
-
-// Evento de clic en el icono de búsqueda
-$('#btnNavbarSearch i').on('click', function () {
-    buscarDomicilios();
-});
-
-// Evento de presionar Enter en el campo de búsqueda
-$('#searchInput').on('keypress', function (e) {
-    if (e.which === 13) { // Verificar si se presionó la tecla Enter
-        buscarDomicilios();
-        e.preventDefault(); // Evitar la acción por defecto del Enter (puede ser un envío de formulario)
-    }
-});
-
-// Evento de clic en el botón para limpiar la búsqueda
-$('#btnClearSearch').on('click', function () {
-    // Limpiar el campo de búsqueda
-    $('#searchInput').val('');
-    // Mostrar todos los registros ocultados previamente
-    $('tbody tr').show();
-    // Ocultar el botón de limpiar búsqueda al limpiar la búsqueda
-    $(this).hide();
-});

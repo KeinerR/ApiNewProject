@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Index";
 }
-
 <br />
 
 <div class="d-flex justify-content-between">
@@ -11,10 +10,8 @@
     <div class="mr-auto">
         <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
             <div class="input-group">
-                <input class="form-control" type="text" placeholder="Buscar por..." aria-label="Search for..." aria-describedby="btnNavbarSearch" id="searchInput" />
-                <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
-                <!-- Botón para limpiar la búsqueda -->
-                <button class="btn btn-danger" id="btnClearSearch" type="button"><i class="fas fa-times"></i></button>
+                <input id="buscarCliente" type="text" class="form-control" placeholder="Buscar cliente" aria-label="Search" aria-describedby="button-addon2">
+                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
             </div>
         </form>
     </div>
@@ -32,62 +29,131 @@
     <div class="modal-dialog">
         <div class="modal-content" id="agregarDetalleCliente">
             <div class="modal-header">
-                <h5 class="modal-title" id="TituloModal">Agregar Cliente</h5>
-                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="" id="TituloModal" style="text-align:center">Agregar Cliente</h5>
+                <button type="button" onclick="limpiarFormularioAct() " class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
             </div>
-            <form asp-controller="Clientes" asp-action="Create" method="post">
+            <form asp-controller="Clientes" asp-action="Create" method="post" onsubmit="return validarFormulario()">
                 <div class="modal-body">
 
-                    <div class="form-group">
+                    <div class="col-5">
                         <input type="hidden" id="ClienteId" name="clienteId" class="form-control" />
                     </div>
-                    <div class="form-group">
-                        <label for="Identificacion" class="control-label">Identificacion</label>
-                        <input type="text" id="Identificacion" name="identificacion" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="NombreEntidad" class="control-label">Nombre Entidad</label>
-                        <input type="text" id="NombreEntidad" name="nombreEntidad" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="NombreCompleto" class="control-label">Nombre Completo</label>
-                        <input type="text" id="NombreCompleto" name="nombreCompleto" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="TipoCliente" class="control-label">Tipo Cliente</label>
-                        <select id="TipoCliente " name=" tipoCliente" class="form-control">
+                    <div style=" form-group">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="Identificacion" class="control-label">Identificacion</label>
+                                    <input type="text" id="Identificacion" name="identificacion" class="form-control" style="border-radius: 50px;" />
+                                    <span id="MensajeIdentificacion" class="text-danger"></span>
+                                    <!-- Use un ID más descriptivo como "MensajeIdentificacion" -->
+                                </div>
+                            </div>
 
-                            <option value="Natural">Natural</option>
-                            <option value="Empresa">Empresa</option>
-                        </select>
+
+                            <div class="col-5">
+
+                                <div class="form-group">
+                                    <label for="NombreCompleto" class="control-label">Nombre Completo</label>
+                                    <input type="text" id="NombreCompleto" name="nombreCompleto" class="form-control" style=" border-radius: 50px;" />
+                                    <span id="MensajeNombreCompleto" class="text-danger"></span>
+
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="form-group col">
+                                    <label for="NombreEntidad" class="control-label">Nombre Entidad</label>
+                                    <input type="text" id="NombreEntidad" name="nombreEntidad" class="form-control" style=" border-radius: 50px;" />
+                                    <span id="MensajeNombreEntidad" class="text-danger"></span>
+
+                                </div>
+                            </div>
+                                <div class="col-5">
+                                    <div class="form-group">
+                                        <label for="Telefono" class="control-label">Teléfono</label>
+                                        <input type="text" id="Telefono" name="telefono" class="form-control" style=" border-radius: 50px;"  />
+                                    <span id="MensajeTelefono" class="text-danger"></span>
+
+                                    </div>
+
+                                </div>
+
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="Correo" class="control-label">Correo</label>
+                                    <input type="text" id="Correo" name="correo" class="form-control" style=" border-radius: 50px;" />
+                                    <span id="MensajeCorreo" class="text-danger"></span>
+
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="Direccion" class="control-label">Direccion</label>
+                                    <input type="text" id="Direccion" name="direccion" class="form-control" style=" border-radius: 50px;" />
+                                    <span id="MensajeDireccion" class="text-danger"></span>
+
+                                </div>
+                            </div>
+
+
+                           
+
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="TipoCliente" class="control-label">Tipo Cliente </label>
+                                    <select id="TipoCliente" name="tipoCliente" class="form-control" style=" border-radius: 50px;">
+                                        <option value="Natural">Natural</option>
+                                        <option value="Empresa">Empresa</option>
+                                    </select>
+                                    <span id="MensajeTipoCliente" class="text-danger"></span>
+
+                                </div>
+                            </div>
+
+                              <div class="col-5">
+                                <div class="modal-footer  form-group">
+                                    <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="form-group" id="EstadoCliente" style="display:none">
+                                    <label for="EstadoCliente" class="control-label">Estado Cliente</label>
+                                    <select id="EstadoCliente" name="estadoCliente" class="form-control" style=" border-radius: 50px;">
+                                        <option value="1">Activo</option>
+                                        <option value="0">Inactivo</option>
+                                    </select>
+                                    <span id="MensajeEstadoCliente" class="text-danger"></span>
+                                </div>
+                            </div>
+
+
+                          
+
+                        </div>
+
+
+
+
+                   
+                           
+
+                          
+                      
+
+                       
+                     
+
                     </div>
-                    <div class="form-group">
-                        <label for="Telefono" class="control-label">Teléfono</label>
-                        <input type="text" id="Telefono" name="telefono" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="Correo" class="control-label">Correo</label>
-                        <input type="text" id="Correo" name="correo" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="Direccion" class="control-label">Direccion</label>
-                        <input type="text" id="Direccion" name="direccion" class="form-control" />
-                    </div>
-                    <div class="form-group" id="EstadoCliente" style="display:none">
-                        <label for="EstadoCliente" class="control-label">Estado Cliente</label>
-                        <select id="EstadoCliente" name="estadoCliente" class="form-control">
-                            <option value="1">Activo</option>
-                            <option value="0">Inactivo</option>
-                        </select>
-                        <span id="MensajeEstadoCliente" class="text-danger"></span>
-                    </div>
+                  
+                  
+
+
 
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" o class="btn btn-primary" id="btnGuardar">Agregar</button>
-                </div>
-
+             
 
 
             </form>
@@ -99,151 +165,274 @@
         <div class="modal-content" id="FormActualizarCliente" style="display:none;">
             <div class="modal-header">
                 <h5 class="modal-title" id="TituloModalUsuarios">Actualizar Usuarios</h5>
-                <button type="button" class="btn-close" onclick="limpiarFormulario()" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div id="MensajeInicialUsuario"></div>
-            <form asp-controller="Clientes" asp-action="Update" method="post">
+            <form asp-controller="Clientes" asp-action="Update" method="post" onsubmit="return validarFormularioAct()">
                 @Html.AntiForgeryToken()
                 <div class="modal-body">
-                    <div class="form-group">
-                        <input id="ClienteIdAct" name="clienteIdAct" class="form-control" type="hidden" />
+
+                    <div class="col-5">
+                        <input type="hidden" id="ClienteIdAct" name="clienteIdAct" class="form-control" />
+                    </div>
+                    <div style=" form-group">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="IdentificacionAct" class="control-label">Identificacion</label>
+                                    <input type="text" id="IdentificacionAct" name="identificacionAct" class="form-control" style="border-radius: 50px;" />
+                                    <span id="MensajeIdentificacionAct" class="text-danger"></span>
+                                    <!-- Use un ID más descriptivo como "MensajeIdentificacion" -->
+                                </div>
+                            </div>
+
+
+                            <div class="col-5">
+
+                                <div class="form-group">
+                                    <label for="NombreCompletoAct" class="control-label">Nombre Completo</label>
+                                    <input type="text" id="NombreCompletoAct" name="nombreCompletoAct" class="form-control" style=" border-radius: 50px;" />
+                                    <span id="MensajeNombreCompletoAct" class="text-danger"></span>
+
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="form-group col">
+                                    <label for="NombreEntidadAct" class="control-label">Nombre Entidad</label>
+                                    <input type="text" id="NombreEntidadAct" name="nombreEntidadAct" class="form-control" style=" border-radius: 50px;" />
+                                    <span id="MensajeNombreEntidadAct" class="text-danger"></span>
+
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="TelefonoAct" class="control-label">Teléfono</label>
+                                    <input type="text" id="TelefonoAct" name="telefonoAct" class="form-control" style=" border-radius: 50px;" />
+                                    <span id="MensajeTelefonoAct" class="text-danger"></span>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="CorreoAct" class="control-label">Correo</label>
+                                    <input type="text" id="CorreoAct" name="correoAct" class="form-control" style=" border-radius: 50px;" />
+                                    <span id="MensajeCorreoAct" class="text-danger"></span>
+
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="DireccionAct" class="control-label">Direccion</label>
+                                    <input type="text" id="DireccionAct" name="direccionAct" class="form-control" style=" border-radius: 50px;" />
+                                    <span id="MensajeDireccionAct" class="text-danger"></span>
+
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="TipoClienteAct" class="control-label">Tipo Cliente </label>
+                                    <select id="TipoClienteAct" name="tipoClienteAct" class="form-control" style=" border-radius: 50px;">
+                                        <option value="Natural">Natural</option>
+                                        <option value="Empresa">Empresa</option>
+                                    </select>
+                                    <span id="MensajeTipoClienteAct" class="text-danger"></span>
+
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="form-group" id="EstadoCliente" >
+                                    <label for="EstadoClienteAct" class="control-label">Estado Cliente</label>
+                                    <select id="EstadoClienteAct" name="estadoClienteAct" class="form-control" style=" border-radius: 50px;">
+                                        <option value="1">Activo</option>
+                                        <option value="0">Inactivo</option>
+                                    </select>
+                                    <span id="MensajeEstadoClienteAct" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                         
+                          
+
+
+
+
+                        </div>
+
+
+                        <div class="col-9">
+                            <div class="modal-footer  form-group">
+                                <button type="submit" class="btn btn-primary" id="btnGuardar">Actualizar</button>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     </div>
 
 
-                  
-                    <div class="form-group">
-                        <label for="IdentificacionAct" class="control-label">Identificacion</label>
-                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
-                        <input type="text" id="IdentificacionAct" name="identificacionAct" class="form-control" autocomplete="off" />
-                        <span id="IdentificacionAct" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="NombreEntidadAct" class="control-label">Nombre Entidad</label>
-                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
-                        <input type="text" id="NombreEntidadAct" name="iombreEntidadAct" class="form-control" autocomplete="off" />
-                        <span id="MensajeIdentificacionAct" class="text-danger"></span>
-                    </div>
-                    <div class="Novisible" style="display:block">
-                        <label for="NombreCompletoAct" class="control-label">NombreCompleto</label>
-                        <span style="color:red" class="Mensaje">*</span>
-                        <input type="text" id="NombreCompletoAct" name="nombreCompletoAct" class="form-control" autocomplete="off" />
-                        <span id="MensajeNombreCompletoAct" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group">
-
-                        <label for="TipoCliente" class="control-label">Tipo Cliente</label>
-                        <select id="TipoClienteAct " name=" tipoClienteAct" class="form-control">
-
-                            <option value="Natural">Natural</option>
-                            <option value="Empresa">Empresa</option>
-                        </select>
-                    </div>
-                  
-                    <div class="form-group">
-                        <label for="TelefonoAct" class="control-label">Teléfono</label>
-                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
-                        <input type="text" id="TelefonoAct" name="telefonoAct" class="form-control" autocomplete="off" />
-                        <span class="text-danger" id="mensajeTelefonoAct"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="CorreoAct" class="control-label">Correo</label>
-                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
-                        <input type="text" id="CorreoAct" name="correoAct" class="form-control" autocomplete="off" />
-                        <span class="text-danger" id="mensajeCorreoAct"></span>
-                    </div>
 
 
-                    <div class="form-group">
-                        <label for="DireccionAct" class="control-label">Correo</label>
-                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
-                        <input type="text" id="DireccionAct" name="direccionAct" class="form-control" autocomplete="off" />
-                        <span class="text-danger" id="mensajeCorreoAct"></span>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="EstadoUsuarioAct" class="control-label">Estado Usuario</label>
-                        <select id="EstadoClienteAct" name="estadoClienetAct" class="form-control">
-                            <option value="1">Activo</option>
-                            <option value="0">Inactivo</option>
-                        </select>
-                        <span id="MensajeEstadoClienteAct" class="text-danger"></span>
-
-                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="btnEditarUnidad">Actualizar</button>
-                </div>
+
             </form>
         </div>
     </div>
 </div>
-
 <br />
 <hr>
 
 <table class="table table-custom text-center">
     <thead>
         <tr>
-            <th>
-                IDENTIFICACION
+            <th> #</th>
+            <th class="d-none">
+               ClienteId
             </th>
             <th>
-                NOMBRE EMPRESA
+               Identificacion
             </th>
             <th>
-                NOMBRE COMPLETO
+                NombreEntidad
             </th>
             <th>
-                TIPO CLIENTE
+                NombreCompleto
             </th>
             <th>
-                TELEFONO
+                TipoCliente
             </th>
             <th>
-                CORREO
+                Telefono
             </th>
             <th>
-                DIRECCION
+                Correo
             </th>
             <th>
-                ESTADO CLIENTE
+                Direccion
             </th>
             <th>
-                ACCIONES
+                EstadoCliente
+            </th>
+            <th>
+                Acciones
             </th>
         </tr>
     </thead>
     <tbody class="text-center">
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td class="cliente-id" style="display: none;">@Html.DisplayFor(modelItem => item.ClienteId)</td>
-                <td class="identificacion">@Html.DisplayFor(modelItem => item.Identificacion)</td>
-                <td class="nombre-entidad">@Html.DisplayFor(modelItem => item.NombreEntidad)</td>
-                <td class="nombre-completo">@Html.DisplayFor(modelItem => item.NombreCompleto)</td>
-                <td class="tipo-cliente">@Html.DisplayFor(modelItem => item.TipoCliente)</td>
-                <td class="telefono">@Html.DisplayFor(modelItem => item.Telefono)</td>
-                <td class="correo">@Html.DisplayFor(modelItem => item.Correo)</td>
-                <td class="correo">@Html.DisplayFor(modelItem => item.Direccion)</td>
-                <td class="text-center align-middle">
+        @{
+            int contador = ViewBag.Contador ?? 1;
+        }
+
+        @foreach (var item in Model) {
+            <tr class="clientesPaginado">
+                <td>
+                    @contador
+                    @{
+                        contador++;
+                    }
+                </td>
+            <td class="d-none cliente-id">
+                @Html.DisplayFor(modelItem => item.ClienteId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Identificacion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NombreEntidad)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NombreCompleto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TipoCliente)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Telefono)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Correo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Direccion)
+            </td>
+                <td class="text-center align-middle contenedorEstadoTabla">
                     <label class="switch">
-                        <input type="checkbox" @(item.EstadoCliente != 0 ? "checked" : "") onchange="actualizarEstadoCliente('@item.ClienteId',this.checked)">
+                        <input type="checkbox" @(item.EstadoCliente != 0 ? "checked" : "") onchange="actualizarEstadoCliente('@item.ClienteId', this.checked)">
                         <span class="slider"></span>
                     </label>
-                    @Html.DisplayFor(modelItem => item.EstadoCliente)
                 </td>
-                <td>
+       
+                <td class="contenedorBotonesTabla">
+                    <button class="btn botonEditarCategoria" id="btnEdit" data-cliente-id="@item.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
+                    <a asp-action="Details" asp-route-id="@item.ClienteId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
+                    <form style="display:inline-block;" asp-controller="Clientes" asp-action="Delete" method="post" class="delete-form">
+                        <!-- Agrega un campo oculto con el ID del cliente -->
+                        <input type="hidden" name="id" value="@item.ClienteId" />
+                        <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
+                        <button type="button" onclick="confirmarEliminacion()" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                    </form>
                 </td>
+           
+        </tr>
+    }
+        @{
+            var clientes = ViewData["Clientes"] as List<Cliente>;
+            if (clientes != null)
+            {
+                foreach (var cliente in clientes)
+                {
+                    <tr class="Clientes" style="display:none;">
+                        <td>@cliente.ClienteId</td>
+                        <td>@cliente.Identificacion</td>
+                        <td>@cliente.NombreEntidad</td>
+                        <td>@cliente.NombreCompleto</td>
+                        <td>@cliente.TipoCliente</td>
+                        <td>@cliente.Telefono</td>
+                        <td>@cliente.Correo</td>
+                        <td>@cliente.Direccion</td>
 
-                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
-                <td>
-                    <button class="btn btn-danger" onclick="eliminarCliente('@item.ClienteId')">Eliminar</button>
-                    <button class="btn" id="btnEdit" data-cliente-id="@item.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
+                        <td class="text-center align-middle contenedorEstadoTabla">
+                            <label class="switch">
+                                <input type="checkbox" @(cliente.EstadoCliente != 0 ? "checked" : "") onchange="actualizarEstadoCliente('@cliente.ClienteId', this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </td>
 
-                </td>
-            </tr>
+                        <td class="text-center align-middle">
+                            <div class="btn-group" role="group">
+                                <button class="btn botonEditarCategoria" id="btnEdit" data-cliente-id="@cliente.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
+                                <a asp-action="Details" asp-route-id="@cliente.ClienteId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
+                                <form style="display:inline-block;" asp-controller="Clientes" asp-action="Delete" method="post" class="delete-form">
+                                    <input type="hidden" name="id" value="@cliente.ClienteId" />
+                                    <button type="button" onclick="confirmarEliminacion()" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                </form>
+                            </div>
+                        </td>
+
+                        
+                    </tr>
+                }
+            }
         }
     </tbody>
 </table>
@@ -298,10 +487,6 @@
     }
 </div>
 
-
-<script src="~/js/clientes.js"></script>
-
-
 @if (!string.IsNullOrEmpty(TempData["Mensaje"]?.ToString()))
 {
     <div class="alert alert-success" role="alert">
@@ -314,7 +499,7 @@
         Swal.fire({
             position: "center",
             icon: "success",
-            title: "Se ha registrado el cliente exitosamente",
+            title: "Se ha registrado la marca exitosamente",
             showConfirmButton: false,
             timer: 1500
         }).then((result) => {
@@ -323,6 +508,8 @@
         });
     </script>
 }
+
+
 
 
 @if (TempData["SweetAlertMessage"] != null)
@@ -335,7 +522,11 @@
             text: "@TempData["SweetAlertMessage"]",
             showConfirmButton: false, // Mostrar botón de confirmación
             timer: 3000
-        })
+        }).then((result) => {
+            if (result.isConfirmed) { // Si el usuario confirmó la acción
+                window.location.href = "@Url.Action("Index", "Clientes")"; // Redireccionar a la página de índice de marcas
+            }
+        });
     </script>
 }
 
@@ -364,5 +555,7 @@
 
 
 
+
 </script>
 
+<script src="~/js/clientes.js"></script>

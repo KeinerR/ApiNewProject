@@ -138,7 +138,7 @@
                 </td>
                 <td class="text-center align-middle contenedorEstadoTabla">
                     <label class="switch">
-                        <input type="checkbox" @(item.EstadoMarca != 0 ? "checked" : "") onchange="mostraralerta('@item.MarcaId')">
+                        <input type="checkbox" @(item.EstadoMarca != 0 ? "checked" : "") onchange="actualizarEstadoMarca('@item.MarcaId', this.checked)">
                         <span class="slider"></span>
                     </label>
                 </td>
@@ -233,6 +233,7 @@
 
 <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="~/js/marcas.js"></script>
+
 @if (!string.IsNullOrEmpty(TempData["Mensaje"]?.ToString()))
 {
     <div class="alert alert-success" role="alert">

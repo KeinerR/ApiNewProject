@@ -58,7 +58,7 @@
 
 
                         <input type="hidden" id="MarcaIdHidden" name="marcaIdHidden">
-                   
+
                     </div>
                     <div class="form-group">
                         <label for="CategoriaId" class="control-label">Categoria Id</label>
@@ -67,15 +67,15 @@
                         <datalist id="categorias">
                             @foreach (var item in ViewBag.Categorias)
                             {
-                                @if(item.EstadoCategoria != 0)
+                                @if (item.EstadoCategoria != 0)
                                 {
                                     <option value="@item.CategoriaId">@item.NombreCategoria</option>
                                 }
-                                
+
                             }
 
 
-                     
+
 
                         </datalist>
                         <input type="hidden" id="CategoriaIdHidden" name="categoriaIdHidden">
@@ -94,7 +94,7 @@
                                 {
                                     <option value="@item.PresentacionId">@($"{item.NombrePresentacion} x {item.Contenido}")</option>
                                 }
-                               
+
                             }
 
 
@@ -157,7 +157,7 @@
                 NOMBREPRODUCTO
             </th>
             <th>
-                CANTIDAD 
+                CANTIDAD
                 TOTALPORUNIDAD
             </th>
             <th>
@@ -199,7 +199,7 @@
                     {
                         @if (presentacion.PresentacionId == item.PresentacionId) // Verifica si el ID del rol coincide con el ID del rol del usuario
                         {
-                            <span>@(presentacion.NombrePresentacion+"x"+ presentacion.Contenido)</span> <!-- Muestra el nombre del rol si coincide -->
+                            <span>@(presentacion.NombrePresentacion + "x" + presentacion.Contenido)</span> <!-- Muestra el nombre del rol si coincide -->
                         }
                     }
                 </td>

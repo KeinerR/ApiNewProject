@@ -12,6 +12,6 @@
         public string? Direccion { get; set; }
         public ulong? EstadoCliente { get; set; }
         
-        public virtual ICollection<Pedido> Pedidos { get; set; }
+        public virtual ICollection<Pedido>? Pedidos { get; set; }
     }
 }
