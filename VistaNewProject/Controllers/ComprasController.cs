@@ -11,14 +11,15 @@ namespace VistaNewProject.Controllers
         {
             _client = client;
         }
-        public async Task<IActionResult> Index(int ? page)
+        public async Task<IActionResult> Index(int? page)
         {
-            int pageSize = 5; 
+            int pageSize = 5;
             int pageNumber = page ?? 1;
 
             var compras = await _client.GetCompraAsync();
             var proveedores = await _client.GetProveedorAsync();
             var unidades = await _client.GetUnidadAsync();
+            var marcas = await _client.GetMarcaAsync();
             var productos = await _client.GetProductoAsync();
             var presentaciones = await _client.GetPresentacionAsync();
 
@@ -37,11 +38,13 @@ namespace VistaNewProject.Controllers
 
             ViewBag.Contador = contador;
             ViewBag.Proveedores = proveedores;
+            ViewBag.Marcas = marcas;
             ViewBag.Unidades = unidades;
             ViewBag.Productos = productos;
             ViewBag.Presentaciones = presentaciones;
-            return View(pageCompra); 
+            return View(pageCompra);
         }
+
         public async Task<IActionResult> Details(int? id, int? page)
         {
             int pageSize = 1; // Número máximo de elementos por página

@@ -1,4 +1,26 @@
 ﻿
+#actualizarCompra {
+    margin-top: -36px;
+    height: 40px;
+}
+
+    #actualizarCompra .btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #actualizarCompra #reducir {
+        height: 36px;
+    }
+
+    #actualizarCompra #btnActualizarCompra {
+        height: 36px;
+        border-radius: 20px;
+    }
+
+
+
 .contenedorFooter {
     display: flex;
     justify-content: flex-end;
@@ -6,11 +28,16 @@
     padding: 0px;
 }
 
+#CompraVista {
+    margin: auto;
+    margin-top: 10px;
+}
+
 
 #agregarDetalle {
     display: block;
     justify-content: flex-end;
-    margin-top: 10px;
+    margin-top: 20px;
     padding: 0px;
 }
 
@@ -27,27 +54,63 @@
 .noVisualizar {
     display: none;
 }
+
 /*El contenido sigue presenta pero no se puede ver */
 .noVer {
     visibility: hidden;
     display: none;
 }
+
 .noSee {
     visibility: hidden;
-    display:none;
-}
-#reducir {
-    margin-right: 10px;
+    display: none;
 }
 
-#expandir {
-    margin-right: 10px;
+#verCompra {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px; /* Ajusta el espacio interno según sea necesario */
 }
+
+    #verCompra .ml-auto {
+        display: inline-block;
+        gap: 10px; /* Ajusta el espacio entre los botones */
+    }
+
+    #verCompra .mr-auto {
+        display: inline-block;
+        margin-left: auto; /* Hace que se vaya a la esquina izquierda */
+    }
+
 
 #agregarDetalleIcono {
     font-size: 20px;
     margin-right: 10px;
 }
+
+.Mensaje {
+    color: red; /* Color del texto rojo */
+    width: 10px; /* Ancho del span */
+    height: 12px; /* Altura del span */
+    background: none;
+    font-size: 25px; /* Tamaño de fuente 25px */
+    margin: 0; /* Sin márgenes */
+    display: inline-flex; /* Establecer como flexbox inline */
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+    position: relative; /* Posicionamiento relativo */
+    top: 8px;
+}
+
+    .Mensaje:hover {
+        color: blue;
+        transform: translateY(-1px); /* Mover el elemento hacia arriba 1px al colocar el cursor sobre él */
+        cursor: pointer;
+    }
+
+
+
 
 #btnMas, #btnMenos {
     display: inline-block;
@@ -109,7 +172,7 @@
 }
 
 .EspacioForm {
-    height: 25px;
+    height: 10px;
 }
 
 
@@ -150,8 +213,9 @@
     padding: 0px;
     width: 200px;
 }
+
 #ValorTotalTitulo {
-    padding-bottom:0px;
-    margin:0px; 
-    margin-right:20px;
+    padding-bottom: 0px;
+    margin: 0px;
+    margin-right: 20px;
 }

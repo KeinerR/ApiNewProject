@@ -437,6 +437,7 @@ input:checked + .slider:before {
 }
 
 
+
 /*Estilo de Detalle de compra*/
 
 .detalle-compra {
@@ -497,3 +498,6 @@ input:checked + .slider:before {
             pointer-events: none;
             opacity: 0.6;
         }
+
+
+
