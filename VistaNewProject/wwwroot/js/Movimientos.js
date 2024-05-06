@@ -148,3 +148,60 @@ function limpiarFormulario() {
     document.getElementById('btnGuardar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
     document.getElementById('btnEditar').style.display = 'none';
 }
+
+document.getElementById('buscarMovimiento').addEventListener('input', function () {
+    var input = this.value.trim().toLowerCase();
+    var rows = document.querySelectorAll('.movimientosPaginado');
+
+    if (input === "") {
+        rows.forEach(function (row) {
+            row.style.display = '';
+        });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-search';
+        icon.style.color = 'gray';
+    } else {
+        rows.forEach(function (row) {
+            row.style.display = 'none';
+        });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-times';
+        icon.style.color = 'gray';
+    }
+    var rowsTodos = document.querySelectorAll('.Movimientos');
+
+    rowsTodos.forEach(function (row) {
+        if (input === "") {
+            row.style.display = 'none';
+        } else {
+            var movimientoId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
+            var productoId = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var tipoA = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+            var tipoM = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
+            var cantidadM = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
+            var descripcion = row.querySelector('td:nth-child(6)').textContent.trim().toLowerCase();
+            var fechaM = row.querySelector('td:nth-child(7)').textContent.trim().toLowerCase();
+
+            row.style.display = (movimientoId.includes(input) || productoId.includes(input) || tipoA.includes(input) || tipoM.includes(input) || cantidadM.includes(input) || descripcion.includes(input) || fechaM.includes(input)) ? 'table-row' : 'none';
+        }
+    });
+});
+
+function vaciarInput() {
+    document.getElementById('buscarMovimiento').value = "";
+    var icon = document.querySelector('#btnNavbarSearch i');
+    icon.className = 'fas fa-search';
+    icon.style.color = 'gray';
+
+    var rows = document.querySelectorAll('.movimientosPaginado');
+    rows.forEach(function (row) {
+        row.style.display = 'table-row';
+    });
+
+    var rowsTodos = document.querySelectorAll('.Movimientos');
+
+    rowsTodos.forEach(function (row) {
+        row.style.display = 'none';
+    });
+}
+
