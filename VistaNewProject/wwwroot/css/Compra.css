@@ -1,4 +1,10 @@
-﻿
+﻿/*DIV ventana modal*/
+#CompraVista {
+    margin: auto;
+    margin-top: 10px;
+}
+
+/*DIV Botones de actualizar compra*/
 #actualizarCompra {
     margin-top: -36px;
     height: 40px;
@@ -16,11 +22,12 @@
 
     #actualizarCompra #btnActualizarCompra {
         height: 36px;
+        margin-left:10px;
         border-radius: 20px;
     }
 
 
-
+/*DIV Boton de agregar detalle(Producto) a la compra */
 .contenedorFooter {
     display: flex;
     justify-content: flex-end;
@@ -28,10 +35,6 @@
     padding: 0px;
 }
 
-#CompraVista {
-    margin: auto;
-    margin-top: 10px;
-}
 
 
 #agregarDetalle {
@@ -88,29 +91,6 @@
     font-size: 20px;
     margin-right: 10px;
 }
-
-.Mensaje {
-    color: red; /* Color del texto rojo */
-    width: 10px; /* Ancho del span */
-    height: 12px; /* Altura del span */
-    background: none;
-    font-size: 25px; /* Tamaño de fuente 25px */
-    margin: 0; /* Sin márgenes */
-    display: inline-flex; /* Establecer como flexbox inline */
-    justify-content: center; /* Centrar horizontalmente */
-    align-items: center; /* Centrar verticalmente */
-    position: relative; /* Posicionamiento relativo */
-    top: 8px;
-}
-
-    .Mensaje:hover {
-        color: blue;
-        transform: translateY(-1px); /* Mover el elemento hacia arriba 1px al colocar el cursor sobre él */
-        cursor: pointer;
-    }
-
-
-
 
 #btnMas, #btnMenos {
     display: inline-block;
@@ -174,6 +154,34 @@
 .EspacioForm {
     height: 10px;
 }
+
+
+label {
+    height:20px;
+    display: inline-flex; /* Mantener el display flex para centrar verticalmente */
+    align-items: center; /* Centrar verticalmente */
+    width: 200px; /* Ancho fijo del label */
+}
+
+.Mensaje {
+    color: red;
+    font-size: 25px;
+    margin-top: 8px;
+    margin-left:5px;
+    white-space: nowrap; /* Evitar que el texto se desborde a la siguiente línea */
+    line-height: 1; /* Evitar que el span afecte el tamaño del label */
+    display: flex; /* Hacer el span un contenedor flex */
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+}
+
+
+
+    .Mensaje:hover {
+        color: blue;
+        transform: translateY(-1px); /* Mover el elemento hacia arriba 1px al colocar el cursor sobre él */
+        cursor: pointer;
+    }
 
 
 /* Media query para zoom del 500% */

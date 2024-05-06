@@ -5,7 +5,7 @@
         numeroFactura: 0,
         fechaCompra: new Date().toISOString(), // Obtener la fecha actual en formato ISO
         valorTotalCompra: 0,
-        estadoCompra: 0,
+        estadoCompra: 1,
         detallecompras: []
     };
 
@@ -215,32 +215,25 @@ function RegistrarBuy() {
 };
 
   
-    //Funcion para asignar la hora actual al campo  
-    function setHoraActual() {
-        // Obtener la hora actual con Moment.js
-        var fechaHoraActual = moment().format('YYYY-MM-DDTHH:mm');
+//Funcion para asignar la hora actual al campo  
+function setHoraActual() {
+    // Obtener la hora actual con Moment.js
+    var fechaHoraActual = moment().format('YYYY-MM-DDTHH:mm');
 
-        // Asignar la fecha y hora actual al campo datetime-local
-        document.getElementById('FechaCompra').value = fechaHoraActual;
-    }   
+    // Asignar la fecha y hora actual al campo datetime-local
+    document.getElementById('FechaCompra').value = fechaHoraActual;
+}   
 
 //Funcion para validar campos vacios
-function validarCampos(input) {
+function validarCampos(input, campo) {
     var valor = input.val().trim();
     var spanError = input.next('.text-danger');
-    var spanVacio = input.prev('.Mensaje');
-    var spanVacioPorcentaje = $('#PorcentajeGanancia').closest('.col-3').find('.Mensaje');
-    var spanVacioFechaVencimiento = $('#FechaVencimiento').closest('.col-4').find('.Mensaje');
-    var spanVacioPrecio = $('#PrecioDeVentaUnitario').closest('.col-4').find('.Mensaje');
-  
-
-
-  
-
-    var MensajaInicial = $('#MensajeInicial');
+    var labelForCampo = $('label[for="' + campo + '"]'); // Buscar el label correspondiente al campo input
+    var spanVacio = labelForCampo.find('.Mensaje'); // Buscar el span .Mensaje dentro del label
 
     spanError.text('');
     spanVacio.text('');
+
     if (valor != '') {
         spanVacio.text('');
         input.removeClass('is-invalid');
@@ -249,43 +242,43 @@ function validarCampos(input) {
         spanVacio.text('*');
     }
     if (input.is('#ProveedorId')) {
+        if (valor != '') {
+            spanVacio.text('');
+            input.removeClass('is-invalid');
+            operacionRealizada = true; // Marcar la operación como realizada
+        } else {
+            input.addClass('is-invalid');
+            spanVacio.text('*');
+            operacionRealizada = true; // Marcar la operación como realizada
+        }
         if (valor === '') {
             $('#ProveedorIdHidden').val(''); // Limpiar el valor del campo #ProveedorIdHidden
         }
     }
     if (input.is('#PorcentajeGanancia')) {
         if (valor != '') {
-            spanVacioPorcentaje.text(''); 
+            spanVacio.text('');
             input.removeClass('is-invalid');
         } else {
             input.addClass('is-invalid');
-            spanVacioPorcentaje.text(valor === '' ? '*' : '');
+            spanVacio.text(valor === '' ? '*' : '');
         }
-        
     }
     if (input.is('#FechaVencimiento')) {
         input.addClass('is-invalid');
     }
-    if (input.is('#ProveedorId') || input.is('#NumeroFactura')) {
-        if ($('#ProveedorId').val() !== '' && $('#NumeroFactura').val() !== '') {
-            $('#MensajeInicial').css('display', 'block');
-            MensajaInicial.text(''); // Use jQuery's text() method
-        }
-    }
-
     if (input.is('#PrecioDeVentaUnitario')) {
         spanVacioPrecio.text(valor === '' ? '*' : '');
     }
- 
-   
-
-    
 }
 
 // Controlador de eventos para campos de entrada
-$('#NumeroFactura, #ProveedorId, #FechaCompra,#ProductoId, #FechaVencimiento, #NumeroLote, #UnidadId, #PrecioDeCompra, #PorcentajeGanancia, #PrecioDeVentaPorUnidad').on('input', function () {
-    validarCampos($(this));
+$('#NumeroFactura, #ProveedorId, #FechaCompra, #ProductoId, #FechaVencimiento, #NumeroLote, #UnidadId, #PrecioDeCompra, #PorcentajeGanancia, #PrecioDeVentaPorUnidad, #PrecioDeVentaxUnidadPresentacion, #PrecioDeVentaUnitario'  ).on('input', function () {
+    var input = $(this);
+    var campo = input.attr('id'); // Obtener el id del input actual como nombre de campo
+    validarCampos(input, campo);
 });
+
 // Función para agregar productos a la compra
     function agregarProductos() {
         // Obtener los valores de los campos del formulario
@@ -571,7 +564,7 @@ function agregarDetalleCompra() {
             // Agregar puntos de mil al valor de perdida
             let gananciaConPuntos = ganancia.toLocaleString('es-ES');
 
-            mensajeAlerta += `<li>Precio de venta x Unidad ${gananciaConPuntos}</li>`;
+            mensajeAlerta += `<li>x Unidad ${gananciaConPuntos}</li>`;
         }
         if (precioVentaxPresentacion > precioCompraPorProducto) {
             let diferencia = precioVentaxPresentacion - precioCompraPorProducto;
@@ -579,14 +572,14 @@ function agregarDetalleCompra() {
 
             // Agregar puntos de mil al valor de perdida
             let gananciaConPuntos = ganancia.toLocaleString('es-ES');
-            mensajeAlerta += `<li>Precio de venta x Producto: ${gananciaConPuntos}</li>`;
+            mensajeAlerta += `<li>x Producto: ${gananciaConPuntos}</li>`;
         }
         if (precioVentaxUnidadPresentacion > PrecioDeCompraUnitario) {
             let diferencia = precioVentaxUnidadPresentacion - PrecioDeCompraUnitario;
             let ganancia = Math.abs(diferencia);
             // Agregar puntos de mil al valor de perdida
             let gananciaConPuntos = ganancia.toLocaleString('es-ES');
-            mensajeAlerta += `<li>Precio de venta x Unidad de Producto: ${gananciaConPuntos}</li>`;
+            mensajeAlerta += `<li>x Unidad de Producto: ${gananciaConPuntos}</li>`;
         }
 
         mensajeAlerta += "</ul></div>";
@@ -754,10 +747,13 @@ function actualizarCompra() {
     var fechaCompra = document.getElementById('FechaCompra').value;
     var MensajaInicial = document.getElementById('MensajeInicial');
 
-    if (!proveedorId || !numeroFactura || !fechaCompra ) {
+    if (proveedorId != '' || numeroFactura != '' || fechaCompra != '' ) {
         MensajaInicial.innerText = 'Completa los campos con *'; 
         MensajaInicial.style.display = 'block';
         return;
+    } else {
+        MensajaInicial.style.display = 'none';
+        
     }
 
     // Actualizar los valores de la compra
@@ -1055,21 +1051,21 @@ document.addEventListener   ("DOMContentLoaded", function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
             seleccionarOpcion(this, document.getElementById('proveedores'), document.getElementById('ProveedorIdHidden'));
-        }, 400); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
+        }, 500); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
     });
 
     document.getElementById('ProductoId').addEventListener('input', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
             seleccionarOpcion(this, document.getElementById('productos'), document.getElementById('ProductoIdHidden'));
-        }, 400); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
+        }, 500); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
     });
 
     document.getElementById('UnidadId').addEventListener('input', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
              seleccionarOpcion(this, document.getElementById('unidades'), document.getElementById('UnidadIdHidden'));
-        }, 400); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
+        }, 500); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
     });
 
     

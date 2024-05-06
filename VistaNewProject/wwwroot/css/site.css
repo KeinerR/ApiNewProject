@@ -464,6 +464,7 @@ input:checked + .slider:before {
     .detalle-compra .info-label {
         margin-left: 10px;
     }
+    
 
     .detalle-compra .info-value {
         display: inline-block;
