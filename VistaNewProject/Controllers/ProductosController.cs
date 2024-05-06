@@ -30,19 +30,40 @@ namespace VistaNewProject.Controllers
                 return NotFound("error");
             }
 
-            var pagedProductos = await productos.ToPagedListAsync(pageNumber, pageSize);
-
-            // Verifica si la página actual está vacía y redirige a la última página que contiene registros
-            if (!pagedProductos.Any() && pagedProductos.PageNumber > 1)
+            var pageProducto = await productos.ToPagedListAsync(pageNumber, pageSize);
+            if (!pageProducto.Any() && pageProducto.PageNumber > 1)
             {
-                pagedProductos = await productos.ToPagedListAsync(pagedProductos.PageCount, pageSize);
+                pageProducto = await productos.ToPagedListAsync(pageProducto.PageCount, pageSize);
             }
+
+            int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
+
+
 
             ViewBag.Presentaciones = presentacion;
             ViewBag.Categorias = categoria;
             ViewBag.Unidades = unidad;
             ViewBag.Marcas = marca;
-            return View(pagedProductos);
+
+            // Código del método Index que querías integrar
+            string mensaje = HttpContext.Session.GetString("Message");
+            TempData["Message"] = mensaje;
+
+            try
+            {
+                ViewData["Productos"] = productos;
+                return View(pageProducto);
+            }
+            catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
+            {
+                HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
+                return RedirectToAction("Index", "Home");
+            }
+            catch
+            {
+                HttpContext.Session.SetString("Message", "Error en el aplicativo");
+                return RedirectToAction("LogOut", "Accesos");
+            }
         }
 
 

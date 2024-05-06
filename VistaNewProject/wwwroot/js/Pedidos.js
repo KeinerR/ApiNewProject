@@ -1,4 +1,39 @@
 ﻿
+function inicializarEventos() {
+    // Botón para abrir el modal de agregar cliente
+    $('#clienteModal').on('show.bs.modal', function (event) {
+        // Llama a la función para obtener los datos de los clientes
+        obtenerDatosUsuarios();
+    });
+}
+
+// Función para obtener los datos de los clientes
+function obtenerDatosUsuarios() {
+    fetch('https://localhost:7013/api/Clientes/GetClientes')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al obtener los Clientes.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            cliente = data; // Asignamos el resultado de la petición a la variable usuarios
+            console.log('Clientes obtenidos:', cliente);
+            // Una vez que hayas obtenido los datos, puedes hacer lo que necesites con ellos,
+            // como llenar un formulario en el modal.
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+$(document).ready(function () {
+    inicializarEventos();
+});
+
+
+
+
 
 var fechaActual = new Date();
 var fechaFormateada = fechaActual.toISOString().slice(0, 16);
@@ -75,6 +110,7 @@ document.getElementById("btnAgregardetalle").onclick = function () {
         // Si hay un índice de edición establecido, actualiza el detalle existente en lugar de agregar uno nuevo
         detallespedido[indiceEdicion] = {
             ProductoId: document.getElementById("ProductoId2").value,
+            UnidadId: document.getElementById("UnidadId").value,
             Cantidad: document.getElementById("Cantidad2").value,
             PrecioUnitario: document.getElementById("PrecioUnitario2").value
         };
@@ -84,6 +120,7 @@ document.getElementById("btnAgregardetalle").onclick = function () {
         // Si no hay un índice de edición, agrega un nuevo detalle
         var detallePedido = {
             ProductoId: document.getElementById("ProductoId2").value,
+            UnidadId: document.getElementById("UnidadId").value,
             Cantidad: document.getElementById("Cantidad2").value,
             PrecioUnitario: document.getElementById("PrecioUnitario2").value
         };
@@ -108,6 +145,8 @@ function editarDetalle(index) {
 
     // Rellenar los campos del formulario de edición con los datos del detalle del pedido
     document.getElementById("ProductoId2").value = detallePedido.ProductoId;
+    document.getElementById("UnidadId").value = detallePedido.UnidadId,
+
     document.getElementById("Cantidad2").value = detallePedido.Cantidad;
     document.getElementById("PrecioUnitario2").value = detallePedido.PrecioUnitario;
 
@@ -131,23 +170,25 @@ function actualizarTablaDetalle() {
         var cell2 = row.insertCell(1);
         var cell3 = row.insertCell(2);
         var cell4 = row.insertCell(3);
+        var cell5 = row.insertCell(4);
 
         cell1.textContent = detallePedido.ProductoId;
-        cell2.textContent = detallePedido.Cantidad;
-        cell3.textContent = detallePedido.PrecioUnitario;
+        cell2.textContent = detallePedido.UnidadId;
+        cell3.textContent = detallePedido.Cantidad;
+        cell4.textContent = detallePedido.PrecioUnitario;
 
         var editButton = document.createElement("button");
         editButton.innerHTML = '<i class="fas fa-edit"></i>'; // Corrección de la sintaxis
         editButton.classList.add("btn", "btn-warning", "btn-editar-detalle");
         editButton.dataset.index = index;
-        cell4.appendChild(editButton);
+        cell5.appendChild(editButton);
 
         // Agregar botón de eliminar con emoji
         var deleteButton = document.createElement("button");
         deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
         deleteButton.classList.add("btn", "btn-danger", "btn-eliminar-detalle");
         deleteButton.dataset.index = index;
-        cell4.appendChild(deleteButton);
+        cell5.appendChild(deleteButton);
     });
 
     // Agregar eventos de clic a los botones de "Editar"

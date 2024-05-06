@@ -10,15 +10,15 @@
 <div class="d-flex justify-content-between">
     <!-- Formulario de búsqueda a la izquierda -->
     <div class="mr-auto">
-        <form class="d-none d-md-inline-block form-inline my-2 my-md-0">
+        <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
             <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" id="searchInput" />
-                <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
-                <!-- Botón para limpiar la búsqueda -->
-                <button class="btn btn-danger" id="btnClearSearch" type="button"><i class="fas fa-times"></i></button>
+                <input id="buscarUsuario" type="text" class="form-control" placeholder="Buscar usuario" aria-label="Search" aria-describedby="button-addon2">
+                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
             </div>
         </form>
     </div>
+
+
 
     <!-- Botón para abrir el modal -->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#usuarioModal">
@@ -233,6 +233,9 @@
             <th>
                 #
             </th>
+            <th class="d-none">
+                usuario Id
+            </th>
             <th>
                 ROL
             </th>
@@ -262,7 +265,7 @@
         }
         @foreach (var item in Model)
         {
-            <tr>
+            <tr class="usuariosPaginado">
                 <td>
                     @contador <!-- Muestra el valor del contador -->
                     @{
@@ -302,6 +305,52 @@
                     </form>
                 </td>
             </tr>
+        }
+        @{
+            var usuarios = ViewData["Usuarios"] as List<Usuario>;
+            if (usuarios != null)
+            {
+                int contadorNew= 1;
+                foreach (var usuario in usuarios)
+                {
+                    <tr class="Usuarios" style="display:none;">
+                    <td>@contadorNew</td>
+                        <td class="rol-id">
+                            @foreach (var rol in ViewBag.Roles)
+                            {
+                                @if (rol.RolId == usuario.RolId) // Verifica si el ID del rol coincide con el ID del rol del usuario
+                                {
+                                    <span>@rol.NombreRol</span> <!-- Muestra el nombre del rol si coincide -->
+                                }
+                            }
+                        </td>
+                        <td>@usuario.Nombre</td>
+                        <td>@usuario.Apellido</td>
+                        <td>@usuario.Telefono</td>
+                        <td>@usuario.Correo</td>
+
+                        <td class="text-center align-middle">
+                            <label class="switch">
+                                <input type="checkbox" @(usuario.EstadoUsuario != 0 ? "checked" : "") onchange="actualizarEstadoUsuario('@usuario.UsuarioId ',this.checked) ">
+                                <span class="slider"></span>
+                            </label>
+                            @Html.DisplayFor(modelItem => usuario.EstadoUsuario)
+                        </td>
+
+                        <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                        <td>
+                            <button class="btn" id="btnEdit" data-usuario-id="@usuario.UsuarioId" data-bs-toggle="modal" data-bs-target="#usuarioModal"><i class="fas fa-edit"></i></button>
+                            <a asp-action="Details" asp-route-id="@usuario.UsuarioId" class="btn" id="btnDetail"><i class="fas fa-file"></i></a>
+                            <form style="display:inline-block;" asp-controller="Usuarios" asp-action="Delete" method="post" class="delete-form">
+                                @Html.Hidden("id", usuario.UsuarioId)
+                                <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
+                                <button type="button" onclick="confirmarEliminacion()" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    contadorNew++;
+                }
+            }
         }
     </tbody>
 </table>
@@ -352,6 +401,8 @@
             </nav>
         </div>
     }
+</div>
+
 </div>
 
 <script src="~/js/usuarios.js"></script>

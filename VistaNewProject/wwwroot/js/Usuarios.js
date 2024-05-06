@@ -590,72 +590,60 @@ function eliminarUsuario(usuarioId) {
 
 
 
-function buscarUsuarios() {
-    var searchTerm = $('#searchInput').val().toLowerCase();
+document.getElementById('buscarUsuario').addEventListener('input', function () {
+    var input = this.value.trim().toLowerCase();
+    var rows = document.querySelectorAll('.usuariosPaginado');
 
-    // Filtra las filas de la tabla basándose en el término de búsqueda
-    $('tbody tr').each(function () {
-        var filaVisible = false;
-
-        // Itera sobre cada campo de la fila en la tabla de usuarios
-        $(this).find('.nombre, .apellido, .telefono, .correo, .usuario-id').each(function () {
-            var textoCampo = $(this).text().toLowerCase();
-
-            // Comprueba si el término de búsqueda está presente en el campo
-            if (textoCampo.indexOf(searchTerm) !== -1) {
-                filaVisible = true;
-                return false; // Rompe el bucle si se encuentra una coincidencia en la fila
-            }
+    if (input === "") {
+        rows.forEach(function (row) {
+            row.style.display = '';
         });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-search';
+        icon.style.color = 'gray';
+    } else {
+        rows.forEach(function (row) {
+            row.style.display = 'none';
+        });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-times';
+        icon.style.color = 'gray';
+    }
+    var rowsTodos = document.querySelectorAll('.Usuarios');
 
-        // Muestra u oculta la fila según si se encontró una coincidencia
-        if (filaVisible) {
-            $(this).show();
+    rowsTodos.forEach(function (row) {
+        if (input === "") {
+            row.style.display = 'none';
         } else {
-            $(this).hide();
+            var nombreR = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
+            var usuarioId = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var nombre = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+            var apellido = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
+            var telefono = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
+            var correo = row.querySelector('td:nth-child(6)').textContent.trim().toLowerCase();
+
+            row.style.display = (nombreR.includes(input) || usuarioId.includes(input) || nombre.includes(input) || apellido.includes(input) || telefono.includes(input) || correo.includes(input)) ? 'table-row' : 'none';
         }
     });
+});
 
-    // Mostrar u ocultar el botón de limpiar búsqueda según si hay texto en el campo de búsqueda
-    if (searchTerm !== '') {
-        $('#btnClearSearch').show();
-    } else {
-        $('#btnClearSearch').hide();
-    }
+function vaciarInput() {
+    document.getElementById('buscarUsuario').value = "";
+    var icon = document.querySelector('#btnNavbarSearch i');
+    icon.className = 'fas fa-search';
+    icon.style.color = 'gray';
+
+    var rows = document.querySelectorAll('.usuariosPaginado');
+    rows.forEach(function (row) {
+        row.style.display = 'table-row';
+    });
+
+    var rowsTodos = document.querySelectorAll('.Usuarios');
+
+    rowsTodos.forEach(function (row) {
+        row.style.display = 'none';
+    });
 }
-
-// Ocultar el botón de limpiar búsqueda al principio
-$(document).ready(function () {
-    $('#btnClearSearch').hide(); // Ocultar el botón de limpiar búsqueda al cargar la página
-});
-
-// Evento de clic en el botón de búsqueda
-$('#btnNavbarSearch').on('click', function () {
-    buscarUsuarios();
-});
-
-// Evento de clic en el icono de búsqueda
-$('#btnNavbarSearch i').on('click', function () {
-    buscarUsuarios();
-});
-
-// Evento de presionar Enter en el campo de búsqueda
-$('#searchInput').on('keypress', function (e) {
-    if (e.which === 13) { // Verificar si se presionó la tecla Enter
-        buscarUsuarios();
-        e.preventDefault(); // Evitar la acción por defecto del Enter (puede ser un envío de formulario)
-    }
-});
-
-// Evento de clic en el botón para limpiar la búsqueda
-$('#btnClearSearch').on('click', function () {
-    // Limpiar el campo de búsqueda
-    $('#searchInput').val('');
-    // Mostrar todos los registros ocultados previamente
-    $('tbody tr').show();
-    // Ocultar el botón de limpiar búsqueda al limpiar la búsqueda
-    $(this).hide();
-});
 
 
 
