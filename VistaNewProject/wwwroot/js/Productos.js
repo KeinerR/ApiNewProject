@@ -378,6 +378,61 @@ function actualizarEstadoProducto(ProductoId, Estado) {
 }
 
 
+document.getElementById('buscarProducto').addEventListener('input', function () {
+    var input = this.value.trim().toLowerCase();
+    var rows = document.querySelectorAll('.productosPaginado');
+
+    if (input === "") {
+        rows.forEach(function (row) {
+            row.style.display = '';
+        });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-search';
+        icon.style.color = 'gray';
+    } else {
+        rows.forEach(function (row) {
+            row.style.display = 'none';
+        });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-times';
+        icon.style.color = 'gray';
+    }
+    var rowsTodos = document.querySelectorAll('.Productos');
+
+    rowsTodos.forEach(function (row) {
+        if (input === "") {
+            row.style.display = 'none';
+        } else {
+            var productoId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
+            var nombreM = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var nombreC = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+            var nombreP = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
+            var nombrePr = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
+            var cantidadT = row.querySelector('td:nth-child(6)').textContent.trim().toLowerCase();
+
+            row.style.display = (productoId.includes(input) || nombreM.includes(input) || nombreC.includes(input) || nombreP.includes(input) || nombrePr.includes(input) || cantidadT.includes(input)) ? 'table-row' : 'none';
+        }
+    });
+});
+
+function vaciarInput() {
+    document.getElementById('buscarProducto').value = "";
+    var icon = document.querySelector('#btnNavbarSearch i');
+    icon.className = 'fas fa-search';
+    icon.style.color = 'gray';
+
+    var rows = document.querySelectorAll('.productosPaginado');
+    rows.forEach(function (row) {
+        row.style.display = 'table-row';
+    });
+
+    var rowsTodos = document.querySelectorAll('.Productos');
+
+    rowsTodos.forEach(function (row) {
+        row.style.display = 'none';
+    });
+}
+
 
 
 

@@ -24,6 +24,7 @@ namespace VistaNewProject.Controllers
         {
             int pageSize = 5; // Número máximo de elementos por página
             int pageNumber = page ?? 1;
+
             var roles = await _client.GetRolAsync();
 
             var usuarios = await _client.GetUsuarioAsync();
@@ -32,28 +33,40 @@ namespace VistaNewProject.Controllers
             {
                 return NotFound("error");
             }
-            var pageUsuarios = await usuarios.ToPagedListAsync(pageNumber, pageSize);
 
-            // Verifica si la página actual está vacía y redirige a la última página que contiene registros
-            if (!pageUsuarios.Any() && pageUsuarios.PageNumber > 1)
+            var pageUsuario = await usuarios.ToPagedListAsync(pageNumber, pageSize);
+            if (!pageUsuario.Any() && pageUsuario.PageNumber > 1)
             {
-                pageUsuarios = await usuarios.ToPagedListAsync(pageUsuarios.PageCount, pageSize);
-            }
-            int contador = 1;
-            if (page.HasValue && page > 1)
-            {
-                // Obtener el valor actual del contador de la sesión si estamos en una página diferente a la primera
-                contador = HttpContext.Session.GetInt32("Contador") ?? 1;
+                pageUsuario = await usuarios.ToPagedListAsync(pageUsuario.PageCount, pageSize);
             }
 
-            // Establecer el valor del contador en la sesión para su uso en la siguiente página
-            HttpContext.Session.SetInt32("Contador", contador + pageUsuarios.Count);
+            int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
+
 
             ViewBag.Contador = contador;
-            ViewBag.roles = roles;
-            return View(pageUsuarios);
+            ViewBag.Roles = roles;
 
+            // Código del método Index que querías integrar
+            string mensaje = HttpContext.Session.GetString("Message");
+            TempData["Message"] = mensaje;
+
+            try
+            {
+                ViewData["Usuarios"] = usuarios;
+                return View(pageUsuario);
+            }
+            catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
+            {
+                HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
+                return RedirectToAction("Index", "Home");
+            }
+            catch
+            {
+                HttpContext.Session.SetString("Message", "Error en el aplicativo");
+                return RedirectToAction("LogOut", "Accesos");
+            }
         }
+
         public async Task<IActionResult> Details(int? id)
         {
             var usuarios = await _client.GetUsuarioAsync();

@@ -120,7 +120,7 @@ function valoresPorDefaultSinConexion() {
 
         // Validar el campo y mostrar mensaje de error si es necesario
         if (valor === '') {
-            spanVacio.text(' *obligatorio');
+            spanVacio.text(' *');
             spanError.text('');
         } else if (input.is('#NombreMarca')) {
             if (valor.length < 3) {

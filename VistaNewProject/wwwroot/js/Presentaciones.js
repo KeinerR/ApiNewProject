@@ -174,7 +174,7 @@ function vaciarInput() {
 
 function limpiarFormulario() {
     // Limpiar los valores de los campos del formulario
-    $('#PresentacionIdId, #NombrePresentacion, #Contenido, #CantidadPorPresentacion,#DescripcionPorPresentacion,#EstadoPresentacion, #PresentacionIdIdAct, #NombrePresentacionAct, #ContenidoAct, #CantidadPorPresentacionAct,#DescripcionPorPresentacionAct,#EstadoPresentacionAct').val('');
+    $('#PresentacionIdId, #NombrePresentacion, #Contenido, #CantidadPorPresentacion,#DescripcionPresentacion,#EstadoPresentacion, #PresentacionIdIdAct, #NombrePresentacionAct, #ContenidoAct, #CantidadPorPresentacionAct,#DescripcionPorPresentacionAct,#EstadoPresentacionAct').val('');
 
     // Restaurar mensajes de error
     $('.Mensaje, .MensajeAct').text(' *');
