@@ -263,29 +263,63 @@ function validarCampos(input, campo) {
     spanVacio.text('');
 
     if (valor != '') {
-        spanVacio.text('');
-        input.removeClass('is-invalid');
         spanError.text(''); // Se corrigió aquí para limpiar el texto de error
+        input.removeClass('is-invalid');
     } else {
         input.addClass('is-invalid');
         spanVacio.text('*');
     }
     if (input.is('#ProveedorId')) {
-        if (valor === '') {
-            spanDanger.text('');
+        if (valor === "") {
+            console.log('PENDIENTE POR REVISION LINEA 274 LIMPIAR HIDDEN IGUALMENTE CON UNIDAD Y CON PRODUCTO');
+        }
+    }
+    
+    if (input.is('#FechaCompra')) {
+        var fechaCompra = new Date(valor);
+        var ahora = new Date(); // Fecha actual con hora
+        var hoy = new Date();
+        hoy.setHours(0, 0, 0, 0); // Establecer la hora de hoy a las 00:00:00
+        var dosDiasAntes = new Date();
+        dosDiasAntes.setDate(hoy.getDate() - 20); // Restar 20 días a la fecha de hoy
+        dosDiasAntes.setHours(0, 0, 0, 0); // Establecer la hora de dos días antes a las 00:00:00
+
+        if (fechaCompra.getTime() === ahora.getTime()) {
+            // La fecha de compra es exactamente igual a la fecha y hora actual
+            // No se realiza ninguna acción, ya que no se permite este caso según tu descripción
+        } else if (fechaCompra > ahora) {
+            // La fecha de compra es mayor que la fecha y hora actual
+            input.addClass('is-invalid');
+            spanError.text('La fecha de compra no puede ser mayor que la fecha y hora actual.');
+            console.log(fechaCompra + " " + ahora);
+        } else if (fechaCompra < dosDiasAntes) {
+            // La fecha de compra es menor que 20 días antes de la fecha de hoy
+            input.addClass('is-invalid');
+            spanError.text('La fecha de compra no puede ser más de 20 días antes de la fecha actual.');
+            console.log(fechaCompra + " " + dosDiasAntes);
+        } else if (fechaCompra.getFullYear().toString().length !== 4) {
+            spanError.text('El año no debe tener mas de 4 caracteres.');
+            input.addClass('is-invalid');
         } else {
-            spanError.text('hello');
+            // La fecha de compra es válida
+        }
+    }   
+    if (input.is('#NumeroFactura')) {
+        if (valor.length < 2) {
+            input.addClass('is-invalid');
+            spanError.text('El número de factura debe tener al menos 2 caracteres.');
         }
     }
     if (input.is('#FechaVencimiento')) {
         input.addClass('is-invalid');
     }
 
+
     if (input.is('#PrecioDeVentaUnitario')) {
         if (valor != '') {
             spanDanger.text('');
         } else {
-            spanDanger.text('hello');
+            spanDanger.text('Validar campo no vacio');
         }
        
     }
@@ -1010,22 +1044,41 @@ document.addEventListener   ("DOMContentLoaded", function () {
 
 
 
-    function seleccionarOpcion(input, dataList, hiddenInput) {
+    function seleccionarOpcion(input, dataList, hiddenInput, campo) {
         var selectedValue = input.value.trim();
 
-        // Busca la opción correspondiente al ID ingresado en el datalist
-        var selectedOptionById = Array.from(dataList.options).find(function (option) {
-            return option.getAttribute('data-id') === selectedValue;
-        });
+        // Verifica si selectedValue es un número válido usando parseFloat()
+        if (!isNaN(parseFloat(selectedValue))) {
+            // Si es un número válido, busca la opción correspondiente al ID ingresado en el datalist
+            var selectedOptionById = Array.from(dataList.options).find(function (option) {
+                return option.getAttribute('data-id') === selectedValue;
+            });
+            if (!selectedOptionById) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: `No se encontró ningún resultado con este ID de ${campo}`,
+                    showConfirmButton: false,
+                    timer: 1800 // Duración rápida en milisegundos (1.5 segundos)
+                });
+                input.value = '';
+                input.dispatchEvent(new Event('input'));
+            }
+        } else {
+            var selectedOptionByName = Array.from(dataList.options).find(function (option) {
+                return option.value === selectedValue;
+            });
+        }
+
+      
+
         // Busca la opción correspondiente al nombre seleccionado en el datalist
-        var selectedOptionByName = Array.from(dataList.options).find(function (option) {
-            return option.value === selectedValue;
-        });
+       
 
         if (selectedOptionByName) {
             // Si se seleccionó un nombre del datalist, mostrar el nombre y enviar el data-id al input hidden
             input.value = selectedOptionByName.value;
             hiddenInput.value = selectedOptionByName.getAttribute('data-id');
+
             // Verificar si es el campo ProductoId
             if (input.id === 'ProductoId') {
                 document.getElementById('ProductoId').value = selectedOptionByName.value;
@@ -1036,54 +1089,45 @@ document.addEventListener   ("DOMContentLoaded", function () {
                 document.getElementById('CantidadPorUnidad').value = selectedOptionByName.getAttribute('data-cantidad') || '';
             }
         } else if (selectedOptionById) {
-                // Si se ingresó un ID en el campo de entrada, mostrar el nombre correspondiente y enviar el ID al input hidden
-                input.value = selectedOptionById.value;
-                hiddenInput.value = selectedOptionById.getAttribute('data-id');
+            // Si se ingresó un ID en el campo de entrada, mostrar el nombre correspondiente y enviar el ID al input hidden
+            input.value = selectedOptionById.value;
+            hiddenInput.value = selectedOptionById.getAttribute('data-id');
 
-                // Verificar si es el campo ProductoId
-                if (input.id === 'ProductoId') {
-                    document.getElementById('ProductoId').value = selectedOptionById.value;
-                    document.getElementById('CantidadPorPresentacionHidden').value = selectedOptionById.getAttribute('data-cantidad') || '';
-                }
-                // Verificar si es el campo UnidadId
-                if (input.id === 'UnidadId') {
-                    document.getElementById('CantidadPorUnidad').value = selectedOptionById.getAttribute('data-cantidad') || '';
-                }
-            } else if (!selectedValue) {
-            // Mantener el valor actual si el campo de entrada está vacío
-            input.value = '';
-            hiddenInput.value = ''; // Limpiar el campo oculto si no hay valor seleccionado
+            // Verificar si es el campo ProductoId
             if (input.id === 'ProductoId') {
-                document.getElementById('CantidadPorPresentacionHidden').value = ''; // Limpiar el campo oculto
+                document.getElementById('ProductoId').value = selectedOptionById.value;
+                document.getElementById('CantidadPorPresentacionHidden').value = selectedOptionById.getAttribute('data-cantidad') || '';
             }
+            // Verificar si es el campo UnidadId
             if (input.id === 'UnidadId') {
-                document.getElementById('CantidadPorUnidad').value = ''; // Limpiar el campo oculto
+                document.getElementById('CantidadPorUnidad').value = selectedOptionById.getAttribute('data-cantidad') || '';
             }
         }
 
-
-        
+      
     }
+
+
 
     // Asignar función de selección a los campos ProveedorId, ProductoId y UnidadId
     document.getElementById('ProveedorId').addEventListener('input', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
-            seleccionarOpcion(this, document.getElementById('proveedores'), document.getElementById('ProveedorIdHidden'));
-        }, 500); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
+            seleccionarOpcion(this, document.getElementById('proveedores'), document.getElementById('ProveedorIdHidden'), 'proveedor');
+         }, 500); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
     });
 
     document.getElementById('ProductoId').addEventListener('input', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
-            seleccionarOpcion(this, document.getElementById('productos'), document.getElementById('ProductoIdHidden'));
+            seleccionarOpcion(this, document.getElementById('productos'), document.getElementById('ProductoIdHidden'), 'Producto');
         }, 500); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
     });
 
     document.getElementById('UnidadId').addEventListener('input', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
-             seleccionarOpcion(this, document.getElementById('unidades'), document.getElementById('UnidadIdHidden'));
+            seleccionarOpcion(this, document.getElementById('unidades'), document.getElementById('UnidadIdHidden'), 'Unidad');
         }, 500); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
     });
 
