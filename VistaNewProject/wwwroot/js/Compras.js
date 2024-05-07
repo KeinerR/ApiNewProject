@@ -224,12 +224,40 @@ function setHoraActual() {
     document.getElementById('FechaCompra').value = fechaHoraActual;
 }   
 
+function mostrarAlerta(campo) {
+    Swal.fire({
+        position: "center",
+        icon: 'warning',
+        title: '¡Atención!',
+        html: `<p>Completa el campo: ${campo}.</p>`,
+        showConfirmButton: false,
+        timer: 6000
+    });
+}
+function mostrarAlertaDataList(campo) {
+    Swal.fire({
+        position: "center",
+        icon: 'warning',
+        title: '¡Atencion!',
+        html: `<p style="margin: 0;">Recuerda que debes seleccionar el ${campo} dando click en la opción que deseas</p>
+            <div class="text-center" style="margin: 0; padding: 0;">
+            <p style="margin: 0;">O</p>
+            </div>
+            <p style="margin: 0;">En su defecto, escribir el ID del ${campo} o nombre exactamente igual.</p>`,
+
+        showConfirmButton: false, // Mostrar botón de confirmación
+        timer: 6000
+
+    });
+}
+
 //Funcion para validar campos vacios
 function validarCampos(input, campo) {
     var valor = input.val().trim();
     var spanError = input.next('.text-danger');
-    var labelForCampo = $('label[for="' + campo + '"]'); // Buscar el label correspondiente al campo input
-    var spanVacio = labelForCampo.find('.Mensaje'); // Buscar el span .Mensaje dentro del label
+    var labelForCampo = $('label[for="' + campo + '"]');
+    var spanVacio = labelForCampo.find('.Mensaje');
+    var spanDanger = input.closest('.col-4').find('span#spanErmitanio.text-danger');
 
     spanError.text('');
     spanVacio.text('');
@@ -237,38 +265,29 @@ function validarCampos(input, campo) {
     if (valor != '') {
         spanVacio.text('');
         input.removeClass('is-invalid');
+        spanError.text(''); // Se corrigió aquí para limpiar el texto de error
     } else {
         input.addClass('is-invalid');
         spanVacio.text('*');
     }
     if (input.is('#ProveedorId')) {
-        if (valor != '') {
-            spanVacio.text('');
-            input.removeClass('is-invalid');
-            operacionRealizada = true; // Marcar la operación como realizada
-        } else {
-            input.addClass('is-invalid');
-            spanVacio.text('*');
-            operacionRealizada = true; // Marcar la operación como realizada
-        }
         if (valor === '') {
-            $('#ProveedorIdHidden').val(''); // Limpiar el valor del campo #ProveedorIdHidden
-        }
-    }
-    if (input.is('#PorcentajeGanancia')) {
-        if (valor != '') {
-            spanVacio.text('');
-            input.removeClass('is-invalid');
+            spanDanger.text('');
         } else {
-            input.addClass('is-invalid');
-            spanVacio.text(valor === '' ? '*' : '');
+            spanError.text('hello');
         }
     }
     if (input.is('#FechaVencimiento')) {
         input.addClass('is-invalid');
     }
+
     if (input.is('#PrecioDeVentaUnitario')) {
-        spanVacioPrecio.text(valor === '' ? '*' : '');
+        if (valor != '') {
+            spanDanger.text('');
+        } else {
+            spanDanger.text('hello');
+        }
+       
     }
 }
 
@@ -307,21 +326,9 @@ $('#NumeroFactura, #ProveedorId, #FechaCompra, #ProductoId, #FechaVencimiento, #
                 MensajaInicial.style.display = 'block';
                 return; // Terminar la función si hay algún campo inválido
             } else if(proveedorId === '') {
-                Swal.fire({
-                    position: "center",
-                    icon: 'warning',
-                    title: '¡Atencion!',
-                    html: '<p style="margin: 0;">Recuerda que debes seleccionar el proveedor dando click en la opción que deseas</p>' +
-                        '<div class="text-center" style="margin: 0; padding: 0;">' +
-                        '<p style="margin: 0;">O</p>' +
-                        '</div>' +
-                        '<p style="margin: 0;">En su defecto, escribir el ID del proveedor</p>',
-
-                    showConfirmButton: false, // Mostrar botón de confirmación
-                    timer: 6000
-
-                });
-                return; // Terminar la función si hay campos vacíos
+                $('#ProveedorIdHidden').val(''); // Limpiar el valor del campo ProveedorIdHidden
+                mostrarAlertaDataList('Proveedor');
+                return;
 
             } 
         }
@@ -417,8 +424,7 @@ function agregarDetalleCompra() {
         noVerDetalle();
         return;
     }
-
-
+   
     // Validar si se están vendiendo a un valor menor que al comprado
     if (precioVentaxUnidad < precioCompraUnidad || precioVentaxPresentacion < precioCompraPorProducto || precioVentaxUnidadPresentacion < PrecioDeCompraUnitario) {
         let cantidadMenores = 0; // Variable para contar cuántos son menores
@@ -439,30 +445,40 @@ function agregarDetalleCompra() {
 
         if (cantidadMenores >= 0) {
             if (cantidadMenores > 1) {
-                confirmaMensajeAlerta = `<div><strong>¿Seguro que Deseas Continuar</strong><ul>`;
-                mensajeAlerta = `<div><strong>Estás vendiendo a un valor menor al que compraste en los siguientes campos:</strong><ul>`;
+                confirmaMensajeAlerta = `<div id="divAlertaConfirmar"><ul>`;
+                mensajeAlerta = `<div id="divAlerta"><strong>Estás vendiendo a un valor menor al que compraste en los siguientes campos:</strong><ul>`;
             } else {
-                confirmaMensajeAlerta = `<div><strong>¿Seguro que Deseas Continuar</strong>`;
-                mensajeAlerta = `<div><strong>Estás vendiendo a un valor menor al que compraste en el siguiente campo:</strong><ul>`;
+                confirmaMensajeAlerta = `<div id="divAlertaConfirmar">`;
+                mensajeAlerta = `<div id="divAlerta"><strong>Estás vendiendo a un valor menor al que compraste en el siguiente campo:</strong><ul>`;
             }
 
             if (precioVentaxUnidad < precioCompraUnidad) {
                 let diferencia = precioVentaxUnidad - precioCompraUnidad;
                 let perdida = Math.abs(diferencia);
-                confirmaMensajeAlerta += `<p>Precio de venta x Unidad: Estás perdiendo ${perdida}</p>`;
-                mensajeAlerta += `<li>Precio de venta x Unidad: Estás perdiendo ${perdida}</li>`;
+                // Calcular el porcentaje de pérdida
+                var porcentajePerdida = Math.round((perdida / precioCompraUnidad) * 100);
+                perdida = Math.abs(perdida).toLocaleString();
+                confirmaMensajeAlerta += `<p class="textoAlerta">Precio de venta x Unidad:<br/><span class="textoAlerta">Estás perdiendo ${porcentajePerdida}% de lo invertido.</span></p>`;
+                mensajeAlerta += `<li class="textoAlerta">Precio de venta x Unidad:<br/><span class="textoAlerta">Estás perdiendo ${perdida}</span></li>`;
             }
             if (precioVentaxPresentacion < precioCompraPorProducto) {
                 let diferencia = precioVentaxPresentacion - precioCompraPorProducto;
                 let perdida = Math.abs(diferencia);
-                confirmaMensajeAlerta += `<p>Precio de venta x Producto: Estás perdiendo ${perdida}</p>`;
-                mensajeAlerta += `<li>Precio de venta x Producto: Estás perdiendo ${perdida}</li>`;
+                // Calcular el porcentaje de pérdida
+                var porcentajePerdida = Math.round((perdida / precioCompraPorProducto) * 100);
+                perdida = Math.abs(perdida).toLocaleString();
+                confirmaMensajeAlerta += `<p class="textoAlerta">Precio de venta x Producto:<br/><span class="textoAlerta">Estás perdiendo ${porcentajePerdida}% de lo invertido.</p>`;
+                mensajeAlerta += `<li class="textoAlerta">Precio de venta x Producto:<br/><span class="textoAlerta">Estás perdiendo ${perdida}<span></li>`;
+
             }
             if (precioVentaxUnidadPresentacion < PrecioDeCompraUnitario) {
                 let diferencia = precioVentaxUnidadPresentacion - PrecioDeCompraUnitario;
                 let perdida = Math.abs(diferencia);
-                confirmaMensajeAlerta += `<p>Precio de venta x Unidad de Producto: Estás perdiendo ${perdida}</p>`;
-                mensajeAlerta += `<li>Precio de venta x Unidad de Producto: Estás perdiendo ${perdida}</li>`;
+                // Calcular el porcentaje de pérdida
+                var porcentajePerdida = Math.round((perdida / PrecioDeCompraUnitario) * 100);
+                perdida = Math.abs(perdida).toLocaleString();
+                confirmaMensajeAlerta += `<p class="textoAlerta">Precio de venta x Unidad de Producto:<br/><span>Estás perdiendo ${porcentajePerdida}% de lo invertido.</span> </p>`;
+                mensajeAlerta += `<li class="textoAlerta">Precio de venta x Unidad de Producto:<br/><span>Estás perdiendo ${perdida}</span></li>`;
             }
 
             mensajeAlerta += "</ul></div>";
@@ -471,19 +487,19 @@ function agregarDetalleCompra() {
             // Mostrar la alerta con SweetAlert para confirmar la decisión del usuario
             Swal.fire({
                 title: "Advertencia",
-                html: mensajeAlerta + "\n¿Deseas Continuar?",
+                html: mensajeAlerta,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonText: "Continuar",
-                cancelButtonText: "Actualizar",
+                cancelButtonText: "Actualizar"
             }).then((result) => {
                 if (!result.isConfirmed) {
                     return;
                 } else {
                     // Mostrar la alerta de confirmación final
                     Swal.fire({
-                        title: "Advertencia",
-                        html: confirmaMensajeAlerta + "\n¿Continuar?",
+                        title: "¿Seguro que deseas continuar?",
+                        html: confirmaMensajeAlerta + "\n<strong>¿Continuar?</strong> ",
                         icon: "warning",
                         showCancelButton: true,
                         confirmButtonText: "Continuar",
@@ -552,34 +568,37 @@ function agregarDetalleCompra() {
             }
         });
     } else if (todolleno) {
-        let mensajeAlerta = ``; // Inicializar la variable mensajeAlerta fuera del bloque if
-
-        mensajeAlerta = `<div><strong>Estás esperando ganancias por:</strong><ul>`;
-
+        let mensajeAlerta = `<div id="divAlerta"><strong>Estás esperando ganancias por:</strong><ul>`;
 
         if (precioVentaxUnidad > precioCompraUnidad) {
-            let diferencia = precioVentaxUnidad - precioCompraUnidad;
-            let ganancia = Math.abs(diferencia);
-
-            // Agregar puntos de mil al valor de perdida
-            let gananciaConPuntos = ganancia.toLocaleString('es-ES');
-
-            mensajeAlerta += `<li>x Unidad ${gananciaConPuntos}</li>`;
+            let diferenciaUnidad = precioVentaxUnidad - precioCompraUnidad;
+            let gananciaUnidad = Math.abs(diferenciaUnidad);
+            let gananciaUnidadConPuntos = gananciaUnidad.toLocaleString('es-ES');
+            let porcentajeGanancia = Math.round((gananciaUnidad / precioCompraUnidad) * 100);
+            mensajeAlerta += `<li>x Unidad: <br/> ${gananciaUnidadConPuntos} o ${porcentajeGanancia}%</li>`;
         }
-        if (precioVentaxPresentacion > precioCompraPorProducto) {
-            let diferencia = precioVentaxPresentacion - precioCompraPorProducto;
-            let ganancia = Math.abs(diferencia);
+        if (precioVentaxPresentacion !== precioVentaxUnidadPresentacion) {
+            if (precioVentaxPresentacion > precioCompraPorProducto) {
+                let diferenciaProducto = precioVentaxPresentacion - precioCompraPorProducto;
+                let gananciaProducto = Math.abs(diferenciaProducto);
+                let gananciaProductoConPuntos = gananciaProducto.toLocaleString('es-ES');
+                let porcentajeGanancia = Math.round((gananciaProducto / precioCompraPorProducto) * 100);
+                mensajeAlerta += `<li>x Producto: <br/> ${gananciaProductoConPuntos} o ${porcentajeGanancia}%</li>`;
+            }
 
-            // Agregar puntos de mil al valor de perdida
-            let gananciaConPuntos = ganancia.toLocaleString('es-ES');
-            mensajeAlerta += `<li>x Producto: ${gananciaConPuntos}</li>`;
-        }
-        if (precioVentaxUnidadPresentacion > PrecioDeCompraUnitario) {
-            let diferencia = precioVentaxUnidadPresentacion - PrecioDeCompraUnitario;
-            let ganancia = Math.abs(diferencia);
-            // Agregar puntos de mil al valor de perdida
-            let gananciaConPuntos = ganancia.toLocaleString('es-ES');
-            mensajeAlerta += `<li>x Unidad de Producto: ${gananciaConPuntos}</li>`;
+            if (precioVentaxUnidadPresentacion > PrecioDeCompraUnitario) {
+                let diferenciaUnidad = precioVentaxUnidadPresentacion - PrecioDeCompraUnitario;
+                let gananciaUnidad = Math.abs(diferenciaUnidad);
+                let gananciaUnidadConPuntos = gananciaUnidad.toLocaleString('es-ES');
+                let porcentajeGanancia = Math.round((gananciaUnidad / PrecioDeCompraUnitario) * 100);
+                mensajeAlerta += `<li>x Unidad de Producto: <br/> ${gananciaUnidadConPuntos} o ${porcentajeGanancia}%</li>`;
+            }
+        } else {
+            let diferenciaProducto = precioVentaxPresentacion - precioCompraPorProducto;
+            let gananciaProducto = Math.abs(diferenciaProducto);
+            let gananciaProductoConPuntos = gananciaProducto.toLocaleString('es-ES');
+            let porcentajeGanancia = Math.round((gananciaProducto / precioCompraPorProducto) * 100);
+            mensajeAlerta += `<li>x Producto: <br/> ${gananciaProductoConPuntos} o ${porcentajeGanancia}%  </li>`;
         }
 
         mensajeAlerta += "</ul></div>";
@@ -741,28 +760,28 @@ function agregarLoteAlDetalle(detalleIndex, lote) {
     }
 }
 
+
 function actualizarCompra() {
     var proveedorId = document.getElementById('ProveedorIdHidden').value;
     var numeroFactura = document.getElementById('NumeroFactura').value;
     var fechaCompra = document.getElementById('FechaCompra').value;
-    var MensajaInicial = document.getElementById('MensajeInicial');
+   
 
-    if (proveedorId != '' || numeroFactura != '' || fechaCompra != '' ) {
-        MensajaInicial.innerText = 'Completa los campos con *'; 
-        MensajaInicial.style.display = 'block';
+    if (numeroFactura === '' || fechaCompra === '') {
+        mostrarAlerta(numeroFactura === '' ? 'numeroFactura' : 'fechaCompra');
         return;
+    } else if (proveedorId === '') { // Corregido a "!=="
+        mostrarAlertaDataList('Proveedor');
+        return; 
     } else {
-        MensajaInicial.style.display = 'none';
-        
+        // Actualizar los valores de la compra
+        compra.proveedorId = proveedorId;
+        compra.numeroFactura = numeroFactura;
+        compra.fechaCompra = fechaCompra;
+
+        alert('Compra actualizada');
+        noVerCompra();
     }
-
-    // Actualizar los valores de la compra
-    compra.proveedorId = proveedorId;
-    compra.numeroFactura = numeroFactura;
-    compra.fechaCompra = fechaCompra;
-
-    alert('Compra actualizada');
-    noVerCompra();
 }
 
 function verTodo() {

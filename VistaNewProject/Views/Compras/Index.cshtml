@@ -41,6 +41,7 @@
                         <div class="col-6">
                             <label for="ProveedorId" class="control-label">Proveedor<span class="Mensaje">*</span></label>
                             <input list="proveedores" id="ProveedorId" name="ProveedorId" class="form-control inputs" placeholder="Escribe y/o Selecciona" autocomplete="off">
+                            <span class="text-danger"></span>
                             <datalist id="proveedores">
                                 @foreach (var proveedor in ViewBag.Proveedores)
                                 {
@@ -49,7 +50,7 @@
                             </datalist>
 
                             <input type="hidden" id="ProveedorIdHidden" name="proveedorIdHidden">
-                            <span class="text-danger"></span>
+                        
                         </div>
 
                         <div class="col-6">
@@ -89,7 +90,7 @@
                     <div class="row" id="DatosProducto">
                         <div class="col-5">
                             <label for="ProductoId" class="control-label">Producto<span class="Mensaje">*</span></label>
-                            <input list="productos" id="ProductoId" name="productoId" class="form-control" placeholder="Escribe y/o selecciona el producto ..." autocomplete="off">
+                            <input list="productos" id="ProductoId" name="productoId" class="form-control" placeholder="Escribe y/o selecciona el producto ..." autocomplete="off"/>
                             <datalist id="productos">
                                 @foreach (var producto in ViewBag.Productos)
                                 {
@@ -119,11 +120,9 @@
                                         <option value="@nombreCompletoProducto" data-cantidad="@cantidad" data-id="@producto.ProductoId"></option>
                                     }
                                 }
-
-
                             </datalist>
-                            <input  type="hidden" id="ProductoIdHidden" name="productoIdHidden">
-                            <input  type="hidden" id="CantidadPorPresentacionHidden" name="cantidadPorPresentacionHidden">
+                            <input type="hidden" id="ProductoIdHidden" name="productoIdHidden"/>
+                            <input type="hidden" id="CantidadPorPresentacionHidden" name="cantidadPorPresentacionHidden"/>
                             
 
                         </div>
@@ -132,6 +131,7 @@
                                 <label for="FechaVencimiento" class="control-label">Fecha Vencimiento<span class="Mensaje">*</span></label>
                             </div>
                             <input type="datetime-local" id="FechaVencimiento" name="fechaVencimiento" class="form-control" />
+                            <span class="text-danger"></span>
                             <input type="text" class="noVisualizar form-control" id="FechaVencimientoNunca" name="fechaVencimientoNunca" value="Producto no perecedero" readonly />
                             <label for="checkboxNoVencimiento" id="Vencimiento" class="control-label">No aplica clic:</label>
                             <input type="checkbox" id="checkboxNoVencimiento" />
@@ -139,13 +139,15 @@
                         <div class="col-3">
                             <label for="NumeroLote" class="control-label">Numero Lote<span class="Mensaje">*</span></label>
                             <input type="text" id="NumeroLote" name="numeroLote" class="form-control" />
+                            <span class="text-danger"></span>
                         </div>
                     </div>
                     <div class="EspacioForm"></div>
                     <div class="row">
                         <div class="col-3">
-                            <label for="UnidadId" class="control-label">Unidad<span class="Mensaje">*</span></label>
+                            <label for="UnidadId" class="control-label"> Unidad<span class="Mensaje">*</span></label>
                             <input list="unidades" id="UnidadId" name="unidadId" class="form-control" placeholder="Escribe y / o selecciona la unidad ..." autocomplete="off">
+                            <span class="text-danger"></span>
                             <datalist id="unidades">
                                 @foreach (var unidad in ViewBag.Unidades)
                                 {
@@ -159,6 +161,7 @@
                             <label for="Cantidad" class="control-label">Cantidad</label>
                             <div class="input-group" id="CampoCantidad">
                                 <input type="number" id="Cantidad" name="cantidad" class="form-control" value="1" min="1">
+                                <span class="text-danger"></span>
                                 <button type="button" class="btn btn-default btn-number input-group-prepend" id="btnMenos">
                                     <i class="fas fa-minus"></i>
                                 </button>
@@ -170,6 +173,7 @@
                             <div class="col-3">
                             <label for="PrecioDeCompra" class="labelForm control-label" id="PC">Precio de Compra<span class="Mensaje">*</span></label>
                                 <input type="text" id="PrecioDeCompra" name="precioDeCompra" class="form-control"/>
+                                <span class="text-danger"></span>
                             </div>
                         <div class="col-3">
                             <label for="PorcentajeGanancia" class="">% A Ganar<span class="Mensaje">*</span></label>
@@ -200,6 +204,7 @@
                         <div class="col-4">
                             <label for="PrecioDeVentaPorUnidad" class="control-label">x Unidad<span class="Mensaje">*</span></label>
                             <input type="text" id="PrecioDeVentaPorUnidad" name="precioDeVentaPorUnidad" class="form-control"/>
+                            <span class="text-danger"></span>
                         </div>
                         <div class="col-4" >
                             <label for="PrecioDeVentaUnitario" class="control-label">x Producto<span class="Mensaje">*</span></label>
@@ -207,10 +212,12 @@
                                 <input type="text" id="PrecioDeVentaUnitario" name="precioDeVentaUnitario" class="form-control" />
                                 <button class="btn-calculo" id="btnCalcularVenta" title="Calcular precio por unidad"><i class="fas fa-calculator"></i></button>
                             </div>
+                            <span id="spanErmitanio" class="text-danger"></span>
                         </div>
                         <div class="col-4">
                             <label for="PrecioDeVentaxUnidadPresentacion" class="control-label">x Unidad de producto<span class="Mensaje">*</span></label>
                             <input type="text" id="PrecioDeVentaxUnidadPresentacion" name="precioDeVentaxUnidadPresentacion" class="form-control" />
+                            <span class="text-danger"></span>
                         </div>
                         <div  class="contenedorFooter">
                             <button class="btn btn-primary" id="btnAgregarDetalleCompra" onclick="agregarDetalleCompra()"><i id="agregarDetalleIcono" class="fas fa-plus-circle"></i>Agregar Producto</button>
@@ -303,13 +310,13 @@
                     @Html.DisplayFor(modelItem => item.CompraId)
                 </td>
                 <td>
-                    @foreach (var proveedor in ViewBag.Proveedores)
-                    {
-                        @if (proveedor.ProveedorId == item.ProveedorId) 
-                        {
-                            <span>@proveedor.NombreEmpresa</span>
-                        }
-                    }
+            @foreach (var proveedor in ViewBag.Proveedores)
+            {
+                @if (proveedor.ProveedorId == item.ProveedorId) 
+                {
+                    <span>@proveedor.NombreEmpresa</span>
+                }
+            }
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.NumeroFactura)
@@ -325,11 +332,12 @@
                 </td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.CompraId" value="" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
-                    <form style="display:inline-block;" asp-controller="Compras" asp-action="Delete" method="post" class="delete-form">
-                        @Html.Hidden("id", item.CompraId)
+                    <form style="display: inline-block;" asp-controller="Compras" asp-action="Delete" method="post" class="delete-form">
+                        <input type="hidden" name="id" value="@item.CompraId" />
                         <button type="submit" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
                     </form>
                 </td>
+
             </tr>
         }
     </tbody>

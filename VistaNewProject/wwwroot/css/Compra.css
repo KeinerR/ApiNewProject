@@ -156,7 +156,7 @@
 }
 
 
-label {
+#CompraVista label {
     height:20px;
     display: inline-flex; /* Mantener el display flex para centrar verticalmente */
     align-items: center; /* Centrar verticalmente */
@@ -226,4 +226,30 @@ label {
     padding-bottom: 0px;
     margin: 0px;
     margin-right: 20px;
+}
+
+#divAlertaConfirmar p {
+    border: solid black 1px;
+    border-radius: 20px;
+    margin: 10px 0; /* Agrega margen superior e inferior para separar los párrafos */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Sombra */
+    font-size:18px;
+}
+
+#divAlerta ul {
+    list-style-type: none;
+    margin-top: 20px;
+    padding:0;
+    width: 400PX;
+    border-bottom:solid 1px black;
+}
+#divAlerta li {
+    list-style-type: none;
+    border-top: solid 1px black;
+    margin-bottom:7px;
+    width:400px; 
+}
+.textoAlerta {
+    color: black;
+    font-size: 18px;
 }
