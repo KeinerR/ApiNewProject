@@ -23,7 +23,9 @@ namespace VistaNewProject.Controllers
 
             var pedidos = await _client.GetPedidoAsync();
             var clientes = await _client.GetClientesAsync();
-            var producto =await _client.GetProductoAsync();
+            var producto = await _client.GetProductoAsync();
+            var unidad=await _client.GetUnidadAsync();
+            var usuario=await _client.GetUsuarioAsync();
 
             if (pedidos == null || clientes == null || producto== null)
             {
@@ -35,7 +37,9 @@ namespace VistaNewProject.Controllers
                 pagesPedidos=await pedidos.ToPagedListAsync(pagesPedidos.PageCount, pagenSize);
             }
             ViewBag.Clientes = clientes;
-            ViewBag.Productos = producto;// Pasar los clientes a través de ViewBag
+            ViewBag.Productos = producto;
+            ViewBag.Unidad = unidad;
+            ViewBag.Usuario = usuario;
 
             return View(pagesPedidos);
         }
