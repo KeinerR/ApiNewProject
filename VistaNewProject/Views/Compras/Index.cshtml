@@ -1,4 +1,7 @@
-﻿@using X.PagedList
+﻿
+
+
+@using X.PagedList
 @model X.PagedList.IPagedList<VistaNewProject.Models.Compra>
 @{
     ViewData["Title"] = "Index";
@@ -28,7 +31,7 @@
 <!-- Modal -->
 <div class="modal fade" id="CompraModal" tabindex="-1" aria-labelledby="titulomodal" aria-hidden="true">
     <div class="modal-dialog modal-lg" id="CompraVista">
-        <div class="modal-content modal-lg">
+        <div class="modal-content modal-lg">    
             <div class="modal-header">
                 <h2 class="modal-title" id="tituloModal">Agregar Compra</h2>
                 <h3 class="modal-title noVisualizar" id="subTituloModal">Agregar productos a la compra</h3>
@@ -122,7 +125,7 @@
                                 }
                             </datalist>
                             <input type="hidden" id="ProductoIdHidden" name="productoIdHidden"/>
-                            <input type="hidden" id="CantidadPorPresentacionHidden" name="cantidadPorPresentacionHidden"/>
+                            <input type="hidden" id="CantidadPorPresentacionHidden" name="cantidadPorPresentacionHidden" />
                             
 
                         </div>
@@ -131,7 +134,7 @@
                                 <label for="FechaVencimiento" class="control-label">Fecha Vencimiento<span class="Mensaje">*</span></label>
                             </div>
                             <input type="datetime-local" id="FechaVencimiento" name="fechaVencimiento" class="form-control" />
-                            <span class="text-danger"></span>
+                            <span class="text-danger" id="spanFechaVencimiento"></span>
                             <input type="text" class="noVisualizar form-control" id="FechaVencimientoNunca" name="fechaVencimientoNunca" value="Producto no perecedero" readonly />
                             <label for="checkboxNoVencimiento" id="Vencimiento" class="control-label">No aplica clic:</label>
                             <input type="checkbox" id="checkboxNoVencimiento" />
