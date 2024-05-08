@@ -18,8 +18,11 @@ namespace ApiNewProject.Entities
         public DateTime? FechaPedido { get; set; }
         public decimal? ValorTotalPedido { get; set; }
         public string? EstadoPedido { get; set; }
+        [JsonIgnore]
         public virtual Cliente? Cliente { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Detallepedido> Detallepedidos { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Domicilio> Domicilios { get; set; }
     }
 }

@@ -45,110 +45,132 @@ namespace ApiNewProject.Controllers
         }
 
 
+        //[HttpPost("InsertPedidos")]
+        //public async Task<IActionResult> InsertPedidos(Pedido pedido)
+        //{
+        //    Console.WriteLine(pedido.TipoServicio);
+        //    try
+        //    {
+        //        var vlPedido = new Pedido
+        //        {
+        //            ClienteId = pedido.ClienteId,
+        //            TipoServicio = pedido.TipoServicio,
+        //            FechaPedido = pedido.FechaPedido,
+        //            EstadoPedido = pedido.EstadoPedido,
+        //            Domicilios = new List<Domicilio>() // Solo inicializamos los domicilios
+        //        };
+
+        //        if (pedido.TipoServicio == "Domicilio")
+        //        {
+        //            foreach (var item in pedido.Domicilios)
+        //            {
+        //                vlPedido.Domicilios.Add(new Domicilio
+        //                {
+        //                    PedidoId = vlPedido.PedidoId,
+        //                    UsuarioId = item.UsuarioId,
+        //                    Observacion = item.Observacion,
+        //                    FechaEntrega = item.FechaEntrega,
+        //                    DireccionDomiciliario = item.DireccionDomiciliario,
+        //                    EstadoDomicilio = item.EstadoDomicilio
+        //                });
+        //            }
+        //        }
+
+        //        foreach (var item in pedido.Detallepedidos)
+        //        {
+        //            if (!item.Cantidad.HasValue || !item.PrecioUnitario.HasValue)
+        //            {
+        //                return BadRequest("Cantidad y PrecioUnitario son requeridos.");
+        //            }
+
+        //            // Restar la cantidad del producto
+        //            var producto = await _context.Productos.FindAsync(item.ProductoId);
+        //            if (producto != null)
+        //            {
+        //                producto.CantidadTotal -= item.Cantidad.Value;
+
+        //                // Guardar los cambios en el producto
+        //                _context.Productos.Update(producto);
+        //                await _context.SaveChangesAsync();
+
+        //                // Restar la cantidad del lote más próximo a vencer
+        //                var lote = await _context.Lotes
+        //                    .Where(l => l.ProductoId == item.ProductoId && l.Cantidad > 0)
+        //                    .OrderBy(l => l.FechaVencimiento)
+        //                    .FirstOrDefaultAsync();
+
+        //                if (lote != null)
+        //                {
+        //                    if (lote.Cantidad >= item.Cantidad)
+        //                    {
+        //                        lote.Cantidad -= item.Cantidad.Value;
+        //                    }
+        //                    else
+        //                    {
+        //                        // Restar la cantidad del siguiente lote más viejo
+        //                        var siguienteLote = await _context.Lotes
+        //                            .Where(l => l.ProductoId == item.ProductoId && l.Cantidad > 0 && l.FechaVencimiento > lote.FechaVencimiento)
+        //                            .OrderBy(l => l.FechaVencimiento)
+        //                            .FirstOrDefaultAsync();
+
+        //                        if (siguienteLote != null && siguienteLote.Cantidad >= item.Cantidad)
+        //                        {
+        //                            siguienteLote.Cantidad -= item.Cantidad.Value;
+        //                        }
+        //                        else
+        //                        {
+        //                            throw new InvalidOperationException("No hay suficiente cantidad en los lotes disponibles para el producto.");
+        //                        }
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    throw new InvalidOperationException("No hay lotes disponibles para el producto.");
+        //                }
+        //            }
+        //            else
+        //            {
+        //                throw new InvalidOperationException("El producto no existe.");
+        //            }
+
+        //            vlPedido.Detallepedidos.Add(new Detallepedido
+        //            {
+        //                PedidoId = vlPedido.PedidoId,
+        //                ProductoId = item.ProductoId,
+        //                Cantidad = item.Cantidad.Value,
+        //                PrecioUnitario = item.PrecioUnitario.Value
+        //            });
+        //        }
+
+        //        _context.Pedidos.Add(vlPedido);
+        //        await _context.SaveChangesAsync();
+        //        return Ok();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest("Error al insertar el pedido: " + ex.Message);
+        //    }
+        //}
+
+
         [HttpPost("InsertPedidos")]
-        public async Task<IActionResult> InsertPedidos(Pedido pedido)
+        public async Task<ActionResult<Pedido>> InsertPedidos(Pedido pedido)
         {
-            Console.WriteLine(pedido.TipoServicio);
             try
             {
-                var vlPedido = new Pedido
+                if (pedido == null)
                 {
-                    ClienteId = pedido.ClienteId,
-                    TipoServicio = pedido.TipoServicio,
-                    FechaPedido = pedido.FechaPedido,
-                    EstadoPedido = pedido.EstadoPedido,
-                    Domicilios = new List<Domicilio>() // Solo inicializamos los domicilios
-                };
-
-                if (pedido.TipoServicio == "Domicilio")
-                {
-                    foreach (var item in pedido.Domicilios)
-                    {
-                        vlPedido.Domicilios.Add(new Domicilio
-                        {
-                            PedidoId = vlPedido.PedidoId,
-                            UsuarioId = item.UsuarioId,
-                            Observacion = item.Observacion,
-                            FechaEntrega = item.FechaEntrega,
-                            DireccionDomiciliario = item.DireccionDomiciliario,
-                            EstadoDomicilio = item.EstadoDomicilio
-                        });
-                    }
+                    return BadRequest("Los datos del detallepedido no pueden ser nulos.");
                 }
 
-                foreach (var item in pedido.Detallepedidos)
-                {
-                    if (!item.Cantidad.HasValue || !item.PrecioUnitario.HasValue)
-                    {
-                        return BadRequest("Cantidad y PrecioUnitario son requeridos.");
-                    }
-
-                    // Restar la cantidad del producto
-                    var producto = await _context.Productos.FindAsync(item.ProductoId);
-                    if (producto != null)
-                    {
-                        producto.CantidadTotal -= item.Cantidad.Value;
-
-                        // Guardar los cambios en el producto
-                        _context.Productos.Update(producto);
-                        await _context.SaveChangesAsync();
-
-                        // Restar la cantidad del lote más próximo a vencer
-                        var lote = await _context.Lotes
-                            .Where(l => l.ProductoId == item.ProductoId && l.Cantidad > 0)
-                            .OrderBy(l => l.FechaVencimiento)
-                            .FirstOrDefaultAsync();
-
-                        if (lote != null)
-                        {
-                            if (lote.Cantidad >= item.Cantidad)
-                            {
-                                lote.Cantidad -= item.Cantidad.Value;
-                            }
-                            else
-                            {
-                                // Restar la cantidad del siguiente lote más viejo
-                                var siguienteLote = await _context.Lotes
-                                    .Where(l => l.ProductoId == item.ProductoId && l.Cantidad > 0 && l.FechaVencimiento > lote.FechaVencimiento)
-                                    .OrderBy(l => l.FechaVencimiento)
-                                    .FirstOrDefaultAsync();
-
-                                if (siguienteLote != null && siguienteLote.Cantidad >= item.Cantidad)
-                                {
-                                    siguienteLote.Cantidad -= item.Cantidad.Value;
-                                }
-                                else
-                                {
-                                    throw new InvalidOperationException("No hay suficiente cantidad en los lotes disponibles para el producto.");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            throw new InvalidOperationException("No hay lotes disponibles para el producto.");
-                        }
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("El producto no existe.");
-                    }
-
-                    vlPedido.Detallepedidos.Add(new Detallepedido
-                    {
-                        PedidoId = vlPedido.PedidoId,
-                        ProductoId = item.ProductoId,
-                        Cantidad = item.Cantidad.Value,
-                        PrecioUnitario = item.PrecioUnitario.Value
-                    });
-                }
-
-                _context.Pedidos.Add(vlPedido);
+                _context.Pedidos.Add(pedido);
                 await _context.SaveChangesAsync();
-                return Ok();
+
+                return CreatedAtAction(nameof(GetPedidos), new { id = pedido.PedidoId }, pedido);
             }
             catch (Exception ex)
             {
-                return BadRequest("Error al insertar el pedido: " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar el detallepedido en la base de datos: " + ex.Message);
             }
         }
 
