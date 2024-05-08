@@ -1,5 +1,6 @@
 using ApiNewProject.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using MySql.EntityFrameworkCore.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,8 +13,15 @@ builder.Services.AddEntityFrameworkMySQL()
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "APIOPTIMUS",
+        Version = "v1"
+    });
+});
 var app = builder.Build();
 
 // Habilitar CORS

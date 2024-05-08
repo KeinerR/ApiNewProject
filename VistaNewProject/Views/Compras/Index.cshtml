@@ -21,7 +21,7 @@
     </div>
 
     <!-- Botón para abrir el modal -->
-    <button type="button" id="btnModal" class="btn btn-primary" onclick="setHoraActual();" data-bs-toggle="modal" data-bs-target="#CompraModal">
+    <button type="button" id="btnModal" class="btn btn-primary" onclick="setHoraActual('FechaCompra');" data-bs-toggle="modal" data-bs-target="#CompraModal">
         <i class="fas fa-plus-circle"></i>  Agregar Compra
     </button>
 
@@ -130,15 +130,21 @@
 
                         </div>
                         <div class="col-4">
-                            <div>
-                                <label for="FechaVencimiento" class="control-label">Fecha Vencimiento<span class="Mensaje">*</span></label>
+                            <div class="d-flex align-items-center">
+                                <!-- Utilizamos flexbox para alinear verticalmente los elementos -->
+                                <label for="FechaVencimiento" class="control-label mb-0 me-2">Fecha Vencimiento<span class="Mensaje">*</span></label>
+                                <span class="text-danger" id="spanFechaVencimiento"></span>
                             </div>
                             <input type="datetime-local" id="FechaVencimiento" name="fechaVencimiento" class="form-control" />
-                            <span class="text-danger" id="spanFechaVencimiento"></span>
                             <input type="text" class="noVisualizar form-control" id="FechaVencimientoNunca" name="fechaVencimientoNunca" value="Producto no perecedero" readonly />
-                            <label for="checkboxNoVencimiento" id="Vencimiento" class="control-label">No aplica clic:</label>
-                            <input type="checkbox" id="checkboxNoVencimiento" />
+                            <div class="form-check">
+                                <!-- Utilizamos una form-check para el checkbox y su label -->
+                                <input type="checkbox" class="form-check-input" id="checkboxNoVencimiento">
+                                <label class="form-check-label" for="checkboxNoVencimiento" id="Vencimiento">No aplica clic</label>
+                         
+                            </div>
                         </div>
+
                         <div class="col-3">
                             <label for="NumeroLote" class="control-label">Numero Lote<span class="Mensaje">*</span></label>
                             <input type="text" id="NumeroLote" name="numeroLote" class="form-control" />
@@ -248,19 +254,31 @@
 
                 </div>
                 <div class="noVisualizar" id="TablaDetalles">
-                    <table id="detalleTable" class="table table-custom text-center">
-                        <thead>
-                            <tr>
-                                <th>ProductoId</th>
-                                <th>Cantidad</th>
-                                <th>PrecioUnitario</th>
-                                <th>Subtotal</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="detalleTableBody">       
-                        </tbody>
-                    </table>
+                    <div class="row">
+                        <div class="col">
+                            <!-- Botones de navegación de paginación -->
+                            <div class="d-flex justify-content-center mb-3">
+                                <button class="btn btn-primary me-1" onclick="cambiarPagina(-1)">Anterior</button>
+                                <button class="btn btn-primary me-1" onclick="cambiarPagina(1)">Siguiente</button>
+                            </div>
+
+                            <!-- Tabla de detalles -->
+                            <table id="detalleTable" class="table table-striped table-custom text-center">
+                                <thead>
+                                    <tr>
+                                        <th>ProductoId</th>
+                                        <th>Cantidad</th>
+                                        <th>PrecioUnitario</th>
+                                        <th>Subtotal</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detalleTableBody">
+                                    <!-- Filas de la tabla se agregarán dinámicamente aquí -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -19,6 +19,7 @@ var ganancia = "";
 //Se usa para dar un tiempo antes de la signacion del id al nombre especifico en los datalist
 let timeout = null;
 
+var cantidadPorUnidad = "";
     // Función para limpiar el formulario
 function LimpiarFormulario() {
     // Limpiar los valores de los campos del formulario
@@ -215,15 +216,6 @@ function RegistrarBuy() {
     });
 };
 
-  
-//Funcion para asignar la hora actual al campo  
-function setHoraActual() {
-    // Obtener la hora actual con Moment.js
-    var fechaHoraActual = moment().format('YYYY-MM-DDTHH:mm');
-
-    // Asignar la fecha y hora actual al campo datetime-local
-    document.getElementById('FechaCompra').value = fechaHoraActual;
-}   
 
 //Funciones para mostrar alerta
 function mostrarAlerta(campo) {
@@ -425,6 +417,8 @@ function agregarDetalleCompra() {
     var productoId = document.getElementById('ProductoIdHidden').value;
     var cantidad = document.getElementById('Cantidad').value;
     var porcentajeAGanar = document.getElementById('PorcentajeGanancia').value;
+    cantidadPorUnidad = document.getElementById('CantidadPorUnidad').value;
+    
 
     // Validar los campos obligatorios y las condiciones necesarias antes de agregar el detalle de compra
     if (productoId != verificarProducto) {
@@ -898,7 +892,10 @@ function actualizarValorTotal() {
     document.getElementById('ValorTotal').value = total;
 }
 
-// Función para agregar una fila de detalle a la tabla
+
+
+var paginaActual = 0; // Declarar la variable paginaActual fuera de las funciones para que sea global
+
 function agregarFilaDetalle(detalleCompra) {
     // Obtener el cuerpo de la tabla
     var detalleTableBody = document.getElementById('detalleTableBody');
@@ -918,15 +915,72 @@ function agregarFilaDetalle(detalleCompra) {
 
     // Asignar los valores del detalle a las celdas
     cellProducto.innerHTML = detalleCompra.productoId;
-    cellCantidad.innerHTML = detalleCompra.cantidad;
-    cellPrecioUnitario.innerHTML = ultimoLote.precioCompra;
-    cellSubtotal.innerHTML = detalleCompra.cantidad * ultimoLote.precioCompra;
+    cellCantidad.innerHTML = detalleCompra.cantidad * cantidadPorUnidad;
+    cellPrecioUnitario.innerHTML = ultimoLote.precioCompra / (detalleCompra.cantidad * cantidadPorUnidad);
+    cellSubtotal.innerHTML = ultimoLote.precioCompra;
     cellAcciones.innerHTML = '<button onclick="eliminarFilaDetalle(this)">Eliminar</button>';
 
     // Actualizar el valor total
     actualizarValorTotal();
+
+    // Calcular el número de página actual después de insertar la nueva fila
+    var totalFilas = detalleTableBody.rows.length;
+    var filasPorPagina = 3; // Cambia el número de filas por página según tus necesidades
+    paginaActual = Math.floor(totalFilas / filasPorPagina);
+    if (totalFilas % filasPorPagina !== 0) {
+        paginaActual++; // Añadir una página adicional si hay filas restantes
+    }
+    
+    cambiarPagina(1); // Dirección 1 para siguiente página
 }
 
+function cambiarPagina(direccion) {
+    console.log('Uno');
+    var filasPorPagina = 3; // Cambia el número de filas por página según tus necesidades
+    var filas = document.getElementById('detalleTableBody').rows;
+    var inicio = paginaActual * filasPorPagina;
+    var fin = inicio + filasPorPagina;
+    console.log(filasPorPagina, inicio);
+
+    if (direccion === -1) { // Anterior
+        paginaActual = Math.max(paginaActual - 1, 0);
+    } else { // Siguiente
+        paginaActual = Math.min(paginaActual + 1, Math.ceil(filas.length / filasPorPagina) - 1);
+    }
+
+    for (var i = 0; i < filas.length; i++) {
+        if (i >= inicio && i < fin) {
+            filas[i].style.display = ''; // Mostrar las filas de la página actual
+        } else {
+            filas[i].style.display = 'none'; // Ocultar las filas de otras páginas
+        }
+    }
+}
+
+
+function cambiarPagina(direccion) {
+    console.log('Uno');
+    var filasPorPagina = 3; // Cambia el número de filas por página según tus necesidades
+    var filas = document.getElementById('detalleTableBody').rows;
+    var inicio = paginaActual * filasPorPagina;
+    var fin = inicio + filasPorPagina;
+
+    if (direccion === -1) { // Anterior
+        paginaActual = Math.max(paginaActual - 1, 0);
+    } else { // Siguiente
+        paginaActual = Math.min(paginaActual + 1, Math.ceil(filas.length / filasPorPagina) - 1);
+    }
+
+    for (var i = 0; i < filas.length; i++) {
+        if (i >= inicio && i < fin) {
+            filas[i].style.display = ''; // Mostrar las filas de la página actual
+        } else {
+            filas[i].style.display = 'none'; // Ocultar las filas de otras páginas
+        }
+    }
+}
+
+// Funcion para eliminar un solo detalle al que se presione el boton
 // Funcion para eliminar un solo detalle al que se presione el boton
 function eliminarFilaDetalle(button) {
     var row = button.parentNode.parentNode; // Obtener la fila de la tabla
@@ -951,7 +1005,16 @@ function eliminarFilaDetalle(button) {
     // Actualizar los índices de las filas restantes en la tabla
     actualizarIndicesTabla();
     actualizarValorTotal();
+
+    // Cambiar automáticamente a la página anterior si no hay más filas en la página actual
+    var filasPorPagina = 1; // Cambia el número de filas por página según tus necesidades
+    var filas = document.getElementById('detalleTableBody').rows;
+    var paginaActual = Math.floor(filas.length / filasPorPagina);
+    if (filas.length % filasPorPagina === 0 && paginaActual > 0) {
+        cambiarPagina(1); // Dirección -1 para página anterior
+    }
 }
+
 // Funcion para eliminar un solo detalle al que se presione el boton
 function actualizarIndicesTabla() {
     // Obtener todas las filas de la tabla
@@ -973,7 +1036,7 @@ function actualizarFilaDetalle(detalleCompra, indice) {
     row.cells[0].innerHTML = detalleCompra.productoId;
     row.cells[1].innerHTML = detalleCompra.cantidad;
     row.cells[2].innerHTML = ultimoLote.precioCompra;
-    row.cells[3].innerHTML = detalleCompra.cantidad * ultimoLote.precioCompra;
+    row.cells[3].innerHTML = detalleCompra.cantidad * ultimoLote.precioCompraPorProducto;
 }
 
 
@@ -1110,7 +1173,7 @@ function cambioFechaVencimiento() {
         if (checkboxNoVencimiento.checked) {
             fechaVencimiento.style.display = 'none'; // Ocultar la fecha de vencimiento
             fechaVencimientoNunca.style.display = 'block'; // Mostrar el texto "Producto no perecedero"
-            labelFechaVencimiento.textContent = 'Fecha Vencimiento clic:';
+            labelFechaVencimiento.textContent = 'Fecha Vencimiento click';
             fechaVencimiento.value = ''; // Asignar un valor vacío por defecto
             spanMensajeNoFecha.textContent = ''; // Cambia el contenido del span a vacío
             spanText.style.display = 'none'; 
@@ -1118,7 +1181,7 @@ function cambioFechaVencimiento() {
 
         } else {
             fechaVencimiento.style.display = 'block'; // Mostrar la fecha de vencimiento
-            labelFechaVencimiento.textContent = 'No Aplica:';
+            labelFechaVencimiento.textContent = 'No aplica click';
             fechaVencimientoNunca.style.display = 'none'; // Ocultar el texto "Producto no perecedero"
             spanMensajeNoFecha.textContent = '*';
             spanText.style.display = 'block'; 
@@ -1353,15 +1416,7 @@ document.addEventListener   ("DOMContentLoaded", function () {
 
         // Verificar si los campos requeridos están completos
         if (precioCompraConPuntos === '' || producto === '' || unidadId === '' || porcentajeAGanarConPuntos === '') {
-            Swal.fire({
-                position: "center",
-                icon: 'warning',
-                title: '¡Atencion!',
-                html: '<p>Completa los campos: Producto, Unidad, Precio de Compra y % A Ganar.</p><p>Para poder realizar el calculo</p>',
-                showConfirmButton: false, // Mostrar botón de confirmación
-                timer: 6000
-
-            });
+            mostrarAlerta(producto === '' ? 'Producto' : (unidadId === '' ? 'Unidad' : '% A Ganar'));
             return;
         } else if (productoId === '') {
             Swal.fire({

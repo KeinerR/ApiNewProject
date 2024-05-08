@@ -61,4 +61,23 @@ $(function () {
     }
     
 });
+/**/
+function setHoraActual(campo) {
+    // Crear un nuevo objeto Date que representa la fecha y hora actual
+    var fechaHoraActual = new Date();
+
+    // Formatear la fecha y hora en el formato necesario ('YYYY-MM-DDTHH:mm')
+    var anio = fechaHoraActual.getFullYear();
+    var mes = String(fechaHoraActual.getMonth() + 1).padStart(2, '0');
+    var dia = String(fechaHoraActual.getDate()).padStart(2, '0');
+    var hora = String(fechaHoraActual.getHours()).padStart(2, '0');
+    var minutos = String(fechaHoraActual.getMinutes()).padStart(2, '0');
+
+    var fechaHoraFormateada = `${anio}-${mes}-${dia}T${hora}:${minutos}`;
+    var x = campo; 
+    // Asignar la fecha y hora formateada al campo datetime-local
+    document.getElementById(x).value = fechaHoraFormateada;
+}
+
+
 
