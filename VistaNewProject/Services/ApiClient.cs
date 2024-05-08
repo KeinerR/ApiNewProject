@@ -640,7 +640,16 @@ namespace VistaNewProject.Services
                 throw new Exception("No se encontró domicilios con el ID especificado.");
             }
             return response;
+
+            
         }
+
+        public async Task<HttpResponseMessage> CreateDetallesPedidosAsync(Detallepedido detallepedido)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Detallepedidos/InsertarDetallepedido", detallepedido);
+            return response;
+        }
+
 
 
         //permiso

@@ -124,8 +124,10 @@ namespace VistaNewProject.Services
         // detallepedido
 
         Task<IEnumerable<Detallepedido>> GetDetallepedidoAsync();
+        Task<HttpResponseMessage> CreateDetallesPedidosAsync(Detallepedido detallepedido);
 
-       
+
+
 
         // detallecompra
 

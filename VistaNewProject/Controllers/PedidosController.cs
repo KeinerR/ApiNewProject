@@ -23,7 +23,7 @@ namespace VistaNewProject.Controllers
             return View(pedido);
         }
 
-
+        [HttpGet]
         public async Task<IActionResult> Create()
         {
             var cliente= await _client.GetClientesAsync();
@@ -64,7 +64,7 @@ namespace VistaNewProject.Controllers
                 Console.WriteLine(pedidoIdAgregado);
 
                 // Redirigir al usuario a la vista "Create" del controlador "DetallesPedido" con el último PedidoId agregado
-                return RedirectToAction("Create", "DetallePedidos", new { id = pedidoIdAgregado });
+                return RedirectToAction("Create", "DetallePedidos", new { pedidoId = pedidoIdAgregado });
             }
             else
                 {

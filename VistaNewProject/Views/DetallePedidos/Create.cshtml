@@ -10,9 +10,14 @@
 <hr />
 
    
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+    <div class="d-none">
+        <label asp-for="PedidoId" class="control-label"></label>
+        <input asp-for="PedidoId" class="form-control" hidden />
+        <span asp-validation-for="PedidoId" class="text-danger"></span>
+    </div>
     <div class="row">
            
 
@@ -38,11 +43,14 @@
                 <span asp-validation-for="PrecioUnitario" class="text-danger"></span>
             </div>
 
-        <div class="col-4 mt-4 ">
+        <div class="col-4 mt-4">
             <div class="col-4 mt-4">
-                <input type="button" value="Agregar" class="btn btn-primary p-2" style="margin-left: 300px" onclick="agregarDetalle()" />
+                <button type="button" class="btn btn-primary p-2" style="margin-left: 300px" onclick="agregarDetalle('@Url.Action("Create", "DetallePedidos")')">Agregar</button>
             </div>
+
+
         </div>
+
 
 
     </div>
@@ -53,18 +61,32 @@
         </div>
 
         <div class="col-4 mt-5">
-            <input type="submit" value="Guardar" class="btn btn-primary p-2" style="margin-left: 200px;" />
+            <button type="submit" id="guardarButton" class="btn btn-primary p-2" style="margin-left: 200px; ">Guardar</button>
         </div>
 
     </div>
 
-   
-            
-        </form>
 
-<div id="listaDetallesPedido">
-    <!-- Aquí se mostrarán los detalles de pedido agregados -->
+
+</form>
+
+<div class=" mt-4" id="listaDetallesPedido">
+    <!-- Aquí se mostrarán los detalles de pedido agregados en una tabla -->
+    <table class="table table-custom text-center">
+        <thead>
+            <tr>
+                <th>PedidoId</th>
+                <th>ProductoId</th>
+                <th>Cantidad</th>
+                <th>PrecioUnitario</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Los detalles del pedido se mostrarán aquí -->
+        </tbody>
+    </table>
 </div>
+
 
 
 
@@ -72,32 +94,5 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-<script>
-    var detallesPedido = [];
+<script src="~/js/detallespedidos/detallespedidos.js"></script>
 
-    function agregarDetalle() {
-        var detalle = {
-            ProductoId: document.getElementById("ProductoId").value,
-            Cantidad: document.getElementById("Cantidad").value,
-            PrecioUnitario: document.getElementById("PrecioUnitario").value
-        };
-
-        detallesPedido.push(detalle);
-
-        mostrarDetallesPedido();
-
-        console.log(detallesPedido)
-    }
-
-    function mostrarDetallesPedido() {
-        var listaDetallesHtml = "";
-        detallesPedido.forEach(function (detalle) {
-            listaDetallesHtml += "<p>ProductoId: " + detalle.ProductoId + ", Cantidad: " + detalle.Cantidad + ", PrecioUnitario: " + detalle.PrecioUnitario + "</p>";
-        });
-
-        document.getElementById("listaDetallesPedido").innerHTML = listaDetallesHtml;
-
-        console.log(detallesPedido)
-    }
-   
-</script>

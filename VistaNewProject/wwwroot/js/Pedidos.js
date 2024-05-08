@@ -7,6 +7,12 @@
 //    });
 //}
 
+//const { data } = require("jquery");
+
+//const { data } = require("jquery");
+
+/*const { data } = require("jquery");*/
+
 //// Función para obtener los datos de los clientes
 //function obtenerDatosUsuarios() {
 //    fetch('https://localhost:7013/api/Clientes/GetClientes')
