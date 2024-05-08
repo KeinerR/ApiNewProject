@@ -893,8 +893,48 @@ function actualizarValorTotal() {
 }
 
 
+var paginaActual = 0; // Debes inicializar paginaActual en algún lugar fuera de la función cambiarPagina
 
-var paginaActual = 0; // Declarar la variable paginaActual fuera de las funciones para que sea global
+function cambiarPagina(direccion) {
+    var detalleTableBody = document.getElementById('detalleTableBody');
+    var totalFilas = detalleTableBody.rows.length;
+    var filasPorPagina = 1; // Cambia el número de filas por página según tus necesidades
+    var filas = detalleTableBody.rows;
+    var inicio = paginaActual * filasPorPagina;
+    var fin = inicio + filasPorPagina;
+
+    // Calcular el número de página actual después de insertar la nueva fila
+    paginaActual = Math.floor(totalFilas / filasPorPagina);
+
+    if (direccion === 2) {
+        if (totalFilas > filasPorPagina) { // Solo avanzar si hay más de una página
+            console.log(totalFilas + " " + filasPorPagina + " " + inicio + " " +fin)
+            paginaActual = Math.min(paginaActual + 1, Math.ceil(totalFilas / filasPorPagina) - 1);
+        } else {
+            return;
+        }
+    }
+
+    if (direccion === -1) { // Anterior
+        console.log(paginaActual + " " + totalFilas + " " + filasPorPagina + " " + inicio + " " + fin)
+        if (totalFilas < filasPorPagina) { // Solo avanzar si hay más de una página
+            paginaActual = Math.max(paginaActual - 1, 0);
+        }
+    } else { // Siguiente
+        console.log(paginaActual + " " + totalFilas + " " + filasPorPagina + " " + inicio + " " + fin)
+        if (totalFilas > filasPorPagina) { // Solo avanzar si hay más de una página
+            paginaActual = Math.min(paginaActual + 1, Math.ceil(totalFilas / filasPorPagina) - 1);
+        }
+    }
+
+    for (var i = 0; i < filas.length; i++) {
+        if (i >= inicio && i < fin) {
+            filas[i].style.display = ''; // Mostrar las filas de la página actual
+        } else {
+            filas[i].style.display = 'none'; // Ocultar las filas de otras páginas
+        }
+    }
+}
 
 function agregarFilaDetalle(detalleCompra) {
     // Obtener el cuerpo de la tabla
@@ -922,65 +962,11 @@ function agregarFilaDetalle(detalleCompra) {
 
     // Actualizar el valor total
     actualizarValorTotal();
-
-    // Calcular el número de página actual después de insertar la nueva fila
-    var totalFilas = detalleTableBody.rows.length;
-    var filasPorPagina = 3; // Cambia el número de filas por página según tus necesidades
-    paginaActual = Math.floor(totalFilas / filasPorPagina);
-    if (totalFilas % filasPorPagina !== 0) {
-        paginaActual++; // Añadir una página adicional si hay filas restantes
-    }
-    
-    cambiarPagina(1); // Dirección 1 para siguiente página
-}
-
-function cambiarPagina(direccion) {
-    console.log('Uno');
-    var filasPorPagina = 3; // Cambia el número de filas por página según tus necesidades
-    var filas = document.getElementById('detalleTableBody').rows;
-    var inicio = paginaActual * filasPorPagina;
-    var fin = inicio + filasPorPagina;
-    console.log(filasPorPagina, inicio);
-
-    if (direccion === -1) { // Anterior
-        paginaActual = Math.max(paginaActual - 1, 0);
-    } else { // Siguiente
-        paginaActual = Math.min(paginaActual + 1, Math.ceil(filas.length / filasPorPagina) - 1);
-    }
-
-    for (var i = 0; i < filas.length; i++) {
-        if (i >= inicio && i < fin) {
-            filas[i].style.display = ''; // Mostrar las filas de la página actual
-        } else {
-            filas[i].style.display = 'none'; // Ocultar las filas de otras páginas
-        }
-    }
+    cambiarPagina(2);
 }
 
 
-function cambiarPagina(direccion) {
-    console.log('Uno');
-    var filasPorPagina = 3; // Cambia el número de filas por página según tus necesidades
-    var filas = document.getElementById('detalleTableBody').rows;
-    var inicio = paginaActual * filasPorPagina;
-    var fin = inicio + filasPorPagina;
 
-    if (direccion === -1) { // Anterior
-        paginaActual = Math.max(paginaActual - 1, 0);
-    } else { // Siguiente
-        paginaActual = Math.min(paginaActual + 1, Math.ceil(filas.length / filasPorPagina) - 1);
-    }
-
-    for (var i = 0; i < filas.length; i++) {
-        if (i >= inicio && i < fin) {
-            filas[i].style.display = ''; // Mostrar las filas de la página actual
-        } else {
-            filas[i].style.display = 'none'; // Ocultar las filas de otras páginas
-        }
-    }
-}
-
-// Funcion para eliminar un solo detalle al que se presione el boton
 // Funcion para eliminar un solo detalle al que se presione el boton
 function eliminarFilaDetalle(button) {
     var row = button.parentNode.parentNode; // Obtener la fila de la tabla
@@ -1006,13 +992,8 @@ function eliminarFilaDetalle(button) {
     actualizarIndicesTabla();
     actualizarValorTotal();
 
-    // Cambiar automáticamente a la página anterior si no hay más filas en la página actual
-    var filasPorPagina = 1; // Cambia el número de filas por página según tus necesidades
-    var filas = document.getElementById('detalleTableBody').rows;
-    var paginaActual = Math.floor(filas.length / filasPorPagina);
-    if (filas.length % filasPorPagina === 0 && paginaActual > 0) {
-        cambiarPagina(1); // Dirección -1 para página anterior
-    }
+    
+        cambiarPagina(-1); // Dirección -1 para página anterior
 }
 
 // Funcion para eliminar un solo detalle al que se presione el boton
