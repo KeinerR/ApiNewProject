@@ -34,32 +34,42 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.PedidoId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ClienteId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TipoServicio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaPedido)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ValorTotalPedido)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EstadoPedido)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            if (item != null)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PedidoId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ClienteId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TipoServicio)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FechaPedido)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ValorTotalPedido)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EstadoPedido)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.PedidoId }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.PedidoId }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.PedidoId })
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6">¡El objeto Pedido es nulo!</td>
+                </tr>
+            }
+        }
     </tbody>
 </table>

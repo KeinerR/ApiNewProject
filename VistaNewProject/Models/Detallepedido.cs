@@ -10,5 +10,8 @@
 
         public virtual Pedido? Pedido { get; set; }
         public virtual Producto? Producto { get; set; }
+
+        public List<Detallepedido>? Detalles { get; set; }
+
     }
 }

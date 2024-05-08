@@ -1,0 +1,103 @@
+﻿@model VistaNewProject.Models.Detallepedido
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Detallepedido</h4>
+<hr />
+
+   
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="row">
+           
+
+        <div class="col-6">
+            <label asp-for="ProductoId" class="control-label"></label>
+            <input asp-for="ProductoId" name="ProductoId" class="form-control" list="ProductosList" />
+            <datalist id="ProductosList">
+                @foreach (var productos in ViewBag.Producto)
+                {
+                    <option value="@productos.ProductoId">@productos.NombreProducto</option>
+                }
+            </datalist>
+            <span asp-validation-for="ProductoId" class="text-danger"></span>
+        </div>
+            <div class="col-6">
+                <label asp-for="Cantidad" class="control-label"></label>
+                <input asp-for="Cantidad" class="form-control" />
+                <span asp-validation-for="Cantidad" class="text-danger"></span>
+            </div>
+            <div class="col-4">
+                <label asp-for="PrecioUnitario" class="control-label"></label>
+                <input asp-for="PrecioUnitario" class="form-control" />
+                <span asp-validation-for="PrecioUnitario" class="text-danger"></span>
+            </div>
+
+        <div class="col-4 mt-4 ">
+            <div class="col-4 mt-4">
+                <input type="button" value="Agregar" class="btn btn-primary p-2" style="margin-left: 300px" onclick="agregarDetalle()" />
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-4 mt-5 ">
+            <input type="button" value="Cancelar" class="btn btn-primary  p-2" style="margin-left: 300px;" />
+        </div>
+
+        <div class="col-4 mt-5">
+            <input type="submit" value="Guardar" class="btn btn-primary p-2" style="margin-left: 200px;" />
+        </div>
+
+    </div>
+
+   
+            
+        </form>
+
+<div id="listaDetallesPedido">
+    <!-- Aquí se mostrarán los detalles de pedido agregados -->
+</div>
+
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<script>
+    var detallesPedido = [];
+
+    function agregarDetalle() {
+        var detalle = {
+            ProductoId: document.getElementById("ProductoId").value,
+            Cantidad: document.getElementById("Cantidad").value,
+            PrecioUnitario: document.getElementById("PrecioUnitario").value
+        };
+
+        detallesPedido.push(detalle);
+
+        mostrarDetallesPedido();
+
+        console.log(detallesPedido)
+    }
+
+    function mostrarDetallesPedido() {
+        var listaDetallesHtml = "";
+        detallesPedido.forEach(function (detalle) {
+            listaDetallesHtml += "<p>ProductoId: " + detalle.ProductoId + ", Cantidad: " + detalle.Cantidad + ", PrecioUnitario: " + detalle.PrecioUnitario + "</p>";
+        });
+
+        document.getElementById("listaDetallesPedido").innerHTML = listaDetallesHtml;
+
+        console.log(detallesPedido)
+    }
+   
+</script>

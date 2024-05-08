@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using VistaNewProject.Models;
 using VistaNewProject.Services;
 
 namespace VistaNewProject.Controllers
@@ -25,5 +26,27 @@ namespace VistaNewProject.Controllers
 
             return View(detallepedido);
         }
+
+        public async Task<IActionResult> Create()
+        {
+            var producto = await _client.GetProductoAsync();
+
+            ViewBag.Producto = producto;    
+
+            return View();
+        }
+
+
+    
+        [HttpPost]
+        public IActionResult Create(List<Detallepedido> detallesPedido)
+        {
+            // Guarda la lista de detalles en la base de datos o realiza cualquier otra lógica necesaria
+            // ...
+
+            return RedirectToAction("Index");
+        }
+
+
     }
 }

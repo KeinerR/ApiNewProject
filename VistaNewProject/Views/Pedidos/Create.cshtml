@@ -1,0 +1,65 @@
+﻿@model VistaNewProject.Models.Pedido
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Pedido</h4>
+<hr />
+
+  
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col-6">
+            <label asp-for="ClienteId" class="control-label"></label>
+            <input asp-for="ClienteId" name="ClienteId" class="form-control" list="clientesList" />
+            <datalist id="clientesList">
+                @foreach (var cliente in ViewBag.Cliente)
+                {
+                    <option value="@cliente.ClienteId">@cliente.NombreEntidad</option>
+                }
+            </datalist>
+            <span asp-validation-for="ClienteId" class="text-danger"></span>
+        </div>
+
+            <div class="col-6">
+                <label asp-for="TipoServicio" class="control-label"></label>
+            <select asp-for="TipoServicio" name="TipoServicio" class="form-control">
+                <option value="Caja">Caja</option>
+                      <option value="Domicilio">Domicilio</option>
+            </select>
+                <span asp-validation-for="TipoServicio" class="text-danger"></span>
+            </div>
+            <div class="col-6">
+                <label asp-for="FechaPedido" class="control-label"></label>
+            <input asp-for="FechaPedido" name="FechaPedido" class="form-control" />
+                <span asp-validation-for="FechaPedido" class="text-danger"></span>
+            </div>
+          
+            <div class="col-6">
+                <label asp-for="EstadoPedido" class="control-label"></label>
+            <select asp-for="EstadoPedido" name="EstadoPedido" class="form-control" >
+                <option value="Pendiente">Pendiente</option>
+                 <option value="Realizado">Realizado</option>
+                  <option value="Cancelado">Cancelado</option>
+             </select>
+                <span asp-validation-for="EstadoPedido" class="text-danger"></span>
+            </div>
+    </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+   
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
