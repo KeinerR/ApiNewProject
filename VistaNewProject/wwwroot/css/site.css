@@ -32,7 +32,7 @@ html, body {
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    background-color: #2574A8;
+    background-color: #213b68;
     color: #fff;
     width: 100%;
 }
@@ -58,8 +58,8 @@ html, body {
 
 .sidebar {
     height: auto;
-    width: auto;
-    background-color: #2574A8;
+    width: 240px; /* Ancho ajustado */
+    background-color: #213b68;
     padding: 8px;
 }
 
@@ -67,31 +67,36 @@ html, body {
     .sidebar a {
         text-decoration: none;
         color: black;
+        display: block;
+        padding: 8px 10px;
+        background-color: #213b68;
+        transition: background-color 0.3s ease-in-out;
+        border-radius: 4px;
+        margin-bottom: 4px;
     }
 
     .sidebar button,
-    .sidebar-label {
-        width: 120px;
+    .sidebar label {
+        width: auto; /* Ancho automático para que se ajuste al contenido */
         line-height: 35px;
-        text-align: center;
-        align-items: center;
-        border-radius: 25px;
-        background: #ebf0af;
+        text-align: left; /* Alineación a la izquierda */
+        border-radius: 0; /* Sin borde redondeado */
+        background: transparent; /* Fondo transparente */
         cursor: pointer;
         display: block;
         margin-bottom: 4px;
-        border: solid black 1px;
-        
+        border: none; /* Sin borde */
+        padding-left: 10px; /* Espaciado a la izquierda */
     }
 
     /*Diseño cuando el coursor esta sobre la etiqueta*/
-        .sidebar button:hover,
-        .sidebar label:hover,
-        .sidebar a:hover{
-            background-color: #E2EE79;
-            color: black;
-            user-select: none;
-        }
+    .sidebar a:hover,
+    .sub-menu a:hover {
+        background-color: #6bc7c8;
+        color: black;
+        user-select: none;
+    }
+
 /*Desaparece el diseño de los input para que estos puedan usar el del label*/
 #opcion1,
 #opcion2,
@@ -100,23 +105,39 @@ html, body {
 }
 
 /* SUBMENU */
-/*Hace aparecer y desaparecer los sub-menus*/
+/* Hace aparecer y desaparecer los sub-menus */
 .sub-menu {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease-in-out;
 }
 
+    /* Estilo de las opciones del sub-menú */
     .sub-menu a {
-        text-align: center;
+        text-align: left;
+        display: block;
+        padding: 8px 10px;
+        color: white;
+        text-decoration: none;
+        background-color: #aaaaaa;
+        transition: background-color 0.3s ease-in-out;
+        border-radius: 4px;
+        margin-top: 2px;
     }
-    .sub-menu .submenu {
-        background: #aaaaaa;
+
+/* Al desplegar el sub-menú */
+input[type="checkbox"]:checked + .sub-menu {
+    max-height: 500px; /* Ajusta según necesites */
+}
+
+    input[type="checkbox"]:checked + .sub-menu a {
+        margin-left: 10px; /* Margen izquierdo al desplegar el sub-menú */
     }
-        .sub-menu .submenu:hover {
-            background: #E2EE79;
-            color: black;
-        }
+
+.sub-menu a:hover {
+    background-color: #6bc7c8;
+}
+
     /*Al sel*/
 /* Al seleccionar un checkbox y estar marcado, aumenta la altura máxima del siguiente elemento con la clase .sub-menu a 500px */
 input[type="checkbox"]:checked + .sub-menu {
@@ -218,10 +239,9 @@ input:checked + .slider:before {
 #perfilVentanaEmergente {
     display: none;
     position: absolute;
-    top: 40px;
+    top: 50px;
     right: 30px;
-    background-color: #2574A8;
-    border: 1px solid white;
+    background-color: #213b68;
     color: white;
     border-radius: 10px;
 }
@@ -230,7 +250,6 @@ input:checked + .slider:before {
     color: white;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
-    border: solid 1px #2574A8;
     display: block;
     width: 100%;
     height: 100%;
@@ -248,7 +267,6 @@ input:checked + .slider:before {
     color: white;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
-    border: solid 1px #2574A8;
     display: block;
     width: 100%;
     height: 100%;
@@ -256,7 +274,7 @@ input:checked + .slider:before {
     padding-top: 2.5px;
     padding-bottom: 2.5px;
     text-align: center;
-    cursor:pointer;
+    cursor: pointer;
 }
     #exit:hover {
         color: #2574A8;
