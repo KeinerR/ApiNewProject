@@ -10,6 +10,7 @@
         public string? Descripcion { get; set; }
         public DateTime? FechaMovimiento { get; set; }
 
+        public virtual Lote? NumeroLote { get; set; }
         public virtual Producto? Producto { get; set; }
     }
 }

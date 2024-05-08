@@ -44,13 +44,21 @@
                         <label for="ProductoId" class="control-label">Producto Id</label>
                         <input type="text" id="ProductoId" name="productoId" class="form-control" />
                     </div>
-                      <div class="form-group">
-                        <label for="TipoAccion" class="control-label">Tipo Accion</label>
-                        <input type="text" id="TipoAccion" name="tipoAccion" class="form-control" />
-                    </div>
-                      <div class="form-group">
+                    <div class="form-group">
                         <label for="TipoMovimiento" class="control-label">Tipo Movimiento</label>
-                        <input type="text" id="TipoMovimiento" name="tipoMovimiento" class="form-control" />
+                        <select id="TipoMovimiento" name="tipoMovimiento" class="form-control">
+                            <option value="">Selecciona una opción</option>
+                            <option value="Compra">Compra</option>
+                            <option value="Venta">Venta</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="TipoAccion" class="control-label">Tipo Acción</label>
+                        <select id="TipoAccion" name="tipoAccion" class="form-control">
+                            <option value="">Selecciona una opción</option>
+                            <option value="Entrada">Entrada</option>
+                            <option value="Salida">Salida</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="CantidadMovimiento" class="control-label">Cantidad movimiento</label>
