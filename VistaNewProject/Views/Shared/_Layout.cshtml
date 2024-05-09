@@ -48,7 +48,7 @@
     </div>
     <div id="Cuerpo">
         <div id="Menu" class="sidebar">
-            <a class="sidebar-label Texto" asp-area="" asp-controller="Usuarios" asp-action="Index">
+            <a class="sidebar-label TextoBlanco" asp-area="" asp-controller="Usuarios" asp-action="Index">
                 <i class="fa-solid fa-users" style="color: white;"></i>  Usuarios
             </a>
             <label for="opcion1" class="sidebar-label Texto">
@@ -68,7 +68,7 @@
                 <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Compras" asp-action="Index">
                     <i class="fa-solid fa-cart-shopping" style="color:white;"></i> Compras
                 </a>
-                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="DetalleCompras" asp-action="Index">DetalleCompras</a>
+                <a class="sidebar-label  Texto submenu" asp-area="" asp-controller="DetalleCompras" asp-action="Index" style="display: none;">DetalleCompras</a>
                 <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Productos" asp-action="Index">
                     <i class="fa-solid fa-bag-shopping" style="color: white;"></i> Productos
                 </a>
@@ -82,7 +82,7 @@
                     <i class="fa-solid fa-truck-field" style="color: white;"></i>Proveedores
                 </a>
             </div>
-            <a class="sidebar-label Texto" asp-area="" asp-controller="Movimientos" asp-action="Index">
+            <a class="sidebar-label TextoBlanco" asp-area="" asp-controller="Movimientos" asp-action="Index">
                 <i class="fa-solid fa-arrows-turn-to-dots" style="color:white;"></i> Movimientos
             </a>
             <label for="opcion3" class="sidebar-label Texto">
@@ -90,13 +90,19 @@
             </label>
             <input type="checkbox" id="opcion3">
             <div class="sub-menu">
-                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Pedidos" asp-action="Index">Pedidos</a>
-                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="DetallePedidos" asp-action="Index">Detalle Pedidos</a>
-                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Domicilios" asp-action="Index">Domicilios</a>
-                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Clientes" asp-action="Index">Clientes</a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Pedidos" asp-action="Index">
+                    <i class="fa-solid fa-sack-dollar" style="color: white;"></i> Pedidos
+                </a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="DetallePedidos" asp-action="Index" style="display: none;">Detalle Pedidos</a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Domicilios" asp-action="Index">
+                    <i class="fa-solid fa-motorcycle" style="color: white;"></i> Domicilios
+                </a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Clientes" asp-action="Index">
+                    <i class="fa-solid fa-people-group fa-2xl"></i> Clientes
+                </a>
                 
             </div>
-            <a class="sidebar-label Texto" asp-area="" asp-controller="Lotes" asp-action="Index">
+            <a class="sidebar-label TextoBlanco" asp-area="" asp-controller="Lotes" asp-action="Index">
                 <i class="fa-brands fa-stack-overflow" style="color: white;"></i> Lotes
             </a>
         </div>
