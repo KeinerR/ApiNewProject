@@ -896,7 +896,7 @@ function actualizarValorTotal() {
 let paginaActual = 0; // Debes inicializar paginaActual en algún lugar fuera de la función cambiarPagina
 
 function cambiarPagina(direccion) {
-    const filasPorPagina = 1; // Cambia el número de filas por página según tus necesidades
+    const filasPorPagina = 3; // Cambia el número de filas por página según tus necesidades
     const filas = Array.from(document.getElementById('detalleTableBody').rows);
     let paginasTotales = Math.ceil(filas.length / filasPorPagina);
 
