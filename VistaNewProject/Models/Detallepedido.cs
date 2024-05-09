@@ -1,4 +1,6 @@
-﻿namespace VistaNewProject.Models
+﻿using System.Text.Json.Serialization;
+
+namespace VistaNewProject.Models
 {
     public class Detallepedido
     {
@@ -8,10 +10,12 @@
         public int? Cantidad { get; set; }
         public decimal? PrecioUnitario { get; set; }
 
+
+        [JsonIgnore]
         public virtual Pedido? Pedido { get; set; }
+        [JsonIgnore]
         public virtual Producto? Producto { get; set; }
 
-        public List<Detallepedido>? Detalles { get; set; }
 
     }
 }

@@ -2,8 +2,21 @@
 
 @{
     ViewData["Title"] = "Index";
+    var validationMessage = TempData["Validacion"] as string;
 }
 
+@if (!string.IsNullOrEmpty(validationMessage))
+{
+    <script>
+        // Mostrar SweetAlert con el mensaje TempData
+        Swal.fire({
+            title: '¡Pedido creado!',
+            text: '@validationMessage',
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+        });
+    </script>
+}
 <h1>Index</h1>
 
 <p>

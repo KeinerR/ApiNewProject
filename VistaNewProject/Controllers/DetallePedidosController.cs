@@ -7,12 +7,17 @@ namespace VistaNewProject.Controllers
     public class DetallePedidosController : Controller
     {
         private readonly IApiClient _client;
+        private static List<Detallepedido> listaGlobalDetalles = new List<Detallepedido>();
 
 
         public DetallePedidosController(IApiClient client)
         {
             _client = client;
         }
+
+       
+
+
 
 
         public async Task<ActionResult> Index()
@@ -27,11 +32,25 @@ namespace VistaNewProject.Controllers
             return View(detallepedido);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Create()
         {
             var producto = await _client.GetProductoAsync();
+            var pedidos = await _client.GetPedidoAsync();
+            var ultimoPedido = pedidos.OrderByDescending(p => p.PedidoId).FirstOrDefault();
 
-            ViewBag.Producto = producto;    
+            ViewBag.UltimoPedidoId = ultimoPedido?.PedidoId ?? 0;
+
+
+           
+            
+                var lotes = await _client.GetLoteAsync();
+
+            
+                
+            
+
+            ViewBag.Producto = producto;
 
             return View();
         }
@@ -41,43 +60,104 @@ namespace VistaNewProject.Controllers
 
 
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] List<Detallepedido> detallesPedido)
-        {
-            // Verifica si la lista de detalles no está vacía
-            if (detallesPedido != null && detallesPedido.Any())
-            {
-                try
-                {
-                    // Itera sobre la lista de detalles y guárdalos en la base de datos
-                    foreach (var detalle in detallesPedido)
-                    {
-                        // Guarda cada detalle utilizando el método asincrónico
-                        var response = await _client.CreateDetallesPedidosAsync(detalle);
-                        if (!response.IsSuccessStatusCode)
-                        {
-                            // Si no se pudo crear el detalle, manejar el error adecuadamente
-                            // Puedes lanzar una excepción, registrar el error, etc.
-                            return StatusCode((int)response.StatusCode, "Error al crear el detalle del pedido");
-                        }
-                    }
 
-                    // Redirigir al usuario a la vista de creación de pedidos
-                    return RedirectToAction("Create", "Pedidos");
-                }
-                catch (Exception ex)
-                {
-                    // Manejar cualquier excepción que ocurra durante el proceso de guardar en la base de datos
-                    // Puedes registrar el error, enviar una respuesta de error específica, etc.
-                    return StatusCode(500, $"Error al guardar los detalles del pedido: {ex.Message}");
-                }
-            }
-            else
-            {
-                // Si la lista de detalles está vacía, retorna un BadRequest indicando que no se proporcionaron detalles válidos
-                return BadRequest("La lista de detalles del pedido está vacía o no es válida");
-            }
+    
+
+        public async Task<IActionResult> CrearDetalles([FromBody] Detallepedido detallePedido)
+        {
+            // Agrega el detalle recibido a la lista global
+            Console.WriteLine(detallePedido);
+
+            listaGlobalDetalles.Add(detallePedido);
+
+            // Imprimir los valores de las propiedades del detalle recibido en la consola
+            Console.WriteLine("Detalle recibido:");
+            Console.WriteLine("PedidoId: " + detallePedido.PedidoId);
+            Console.WriteLine("ProductoId: " + detallePedido.ProductoId);
+            Console.WriteLine("Cantidad: " + detallePedido.Cantidad);
+
+            Console.WriteLine("PrecioUnitario: " + detallePedido.PrecioUnitario);
+
+
+            Console.WriteLine("sI SE AEOGO " + listaGlobalDetalles[0].PedidoId);
+
+            // Devuelve un mensaje de confirmación en forma de objeto JSON
+            return Ok(new { message = "Detalle del pedido recibido correctamente" });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreatePost()
+        {
+            // Verificar si hay detalles en la lista global
+            if (listaGlobalDetalles.Count == 0)
+            {
+                // No hay detalles para guardar
+                TempData["ErrorMessage"] = "Por favor agregue los productos para guardar el pedido correctamente.";
+
+                // Devolver un mensaje de éxito
+                return RedirectToAction("Create", "DetallePedidos");
+            }
+
+            // Iterar sobre cada detalle en la lista global y guardarlos
+            foreach (var detalle in listaGlobalDetalles)
+            {
+                var response = await _client.CreateDetallesPedidosAsync(detalle);
+                if (!response.IsSuccessStatusCode)
+                {
+                    // Manejar errores si la creación del detalle de pedido falla
+                    Console.WriteLine($"Error al guardar el detalle del pedido: {response.ReasonPhrase}");
+                    return View("Error");
+                }
+            }
+
+            // Limpiar la lista global después de guardar los detalles
+            TempData["Validacion"] = "Pedido Guardado Correctamente.";
+            listaGlobalDetalles.Clear();
+
+            // Devolver un mensaje de éxito
+            return RedirectToAction("Index", "Pedidos");
+        }
+
+
+
+        public async Task<IActionResult> Cancelar()
+        {
+            // Verificar si hay detalles en la lista global
+            if (listaGlobalDetalles.Count > 0)
+            {
+                // Limpiar la lista global de detalles agregados
+                listaGlobalDetalles.Clear();
+            }
+
+            // Obtener la lista de pedidos
+            var pedidos = await _client.GetPedidoAsync();
+
+            // Imprimir la lista de pedidos en la consola
+            
+            // Obtener el PedidoId más alto de la lista de pedidos
+            var pedidosApi = pedidos.Max(p => p.PedidoId);
+
+            Console.WriteLine(pedidosApi);
+            var response= await _client.DeletePedidoAsync(pedidosApi);
+
+      
+            if (!response.IsSuccessStatusCode)
+            {
+                return NotFound("Error  en ela eliminacion");
+
+            }
+
+            // Resto del código para cancelar el último pedido...
+
+            return RedirectToAction("Index", "Pedidos");
+        }
+
+
+
+
+
+
+
 
 
     }

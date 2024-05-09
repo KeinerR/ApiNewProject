@@ -77,7 +77,18 @@ namespace VistaNewProject.Services
         {
             var response = await _httpClient.PostAsJsonAsync("Pedidos/InsertPedidos", pedido);
             return response;
+
+            
         }
+       
+
+
+         public async Task<HttpResponseMessage> DeletePedidoAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($" Pedidos/DeletePedido/{id}");
+            return response;
+        }
+
 
 
 

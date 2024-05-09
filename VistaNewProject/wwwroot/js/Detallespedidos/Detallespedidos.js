@@ -1,14 +1,8 @@
-﻿
-var detallesdepedidp = [];
-
-
-var detallesdepedidp = [];
+﻿var detallesdepedidp = [];
 
 function agregarDetalle(url) {
-    var pedidoIdJson = new URLSearchParams(window.location.search).get('pedidoId');
-    var pedidoId = JSON.parse(pedidoIdJson).pedidoId;
     var detalle = {
-        PedidoId: pedidoId,
+        PedidoId: document.getElementById("pedidoId").value,
         ProductoId: document.getElementById("ProductoId").value,
         Cantidad: document.getElementById("Cantidad").value,
         PrecioUnitario: document.getElementById("PrecioUnitario").value
@@ -16,40 +10,38 @@ function agregarDetalle(url) {
 
     detallesdepedidp.push(detalle);
     mostrarDetallesPedido();
-    enviarDetallesPedido(url); // Llamar a enviarDetallesPedido después de agregar el detalle
+    enviarDetallePedido(detalle, url); // Llamar a enviarDetallePedido con el detalle recién agregado
 }
 
-function enviarDetallesPedido(url) {
-    var data = detallesdepedidp;
-    console.log(data);
-    console.log(url);
-
-    fetch(url, {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-            "Content-Type": "application/json"
+function enviarDetallePedido(detalle, url) {
+   fetch(url, {
+    method: "POST",
+    body: JSON.stringify(detalle),
+    headers: {
+        "Content-Type": "application/json"
+    }
+})
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error("Error al enviar el detalle del pedido al servidor");
         }
+        // Procesar la respuesta JSON recibida
+        return response.json();
     })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Error al enviar los detalles del pedido al servidor");
-            }
-            return response.json(); // Procesar la respuesta si es necesario
-        })
-        .then((data) => {
-            console.log("Detalles del pedido enviados correctamente:", data);
-            // Limpiar los campos después de agregar el detalle
-            document.getElementById("ProductoId").value = "";
-            document.getElementById("Cantidad").value = "";
-            document.getElementById("PrecioUnitario").value = "";
-            detallesdepedidp = []; // Limpiar la lista de detalles después de enviarlos
-            mostrarDetallesPedido(); // Actualizar la tabla de detalles después de limpiar
-        })
-        .catch((error) => {
-            console.error("Error al enviar los detalles del pedido al servidor:", error);
-        });
+    .then((data) => {
+        console.log("Detalle del pedido enviado correctamente:", data.message);
+        // Limpiar los campos después de agregar el detalle
+        document.getElementById("ProductoId").value = "";
+        document.getElementById("Cantidad").value = "";
+        document.getElementById("PrecioUnitario").value = "";
+        mostrarDetallesPedido(); // Actualizar la tabla de detalles
+    })
+    .catch((error) => {
+        console.error("Error al enviar el detalle del pedido al servidor:", error);
+    });
+
 }
+
 
 function mostrarDetallesPedido() {
     var tablaDetalles = document.getElementById("listaDetallesPedido").getElementsByTagName("tbody")[0];
@@ -63,4 +55,43 @@ function mostrarDetallesPedido() {
         fila.insertCell(3).innerHTML = detalle.PrecioUnitario;
     });
 }
+
+
+
+
+
+
+
+// Obtener el precio unitario del producto seleccionado
+$(document).ready(function () {
+    $('#ProductoId').change(function () {
+        var productId = $(this).val();
+        console.log('ProductoId seleccionado:', productId); 
+        fetch(`https://localhost:7013/api/Lotes/GetLotes`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener los lotes del producto');
+                }
+                return response.json();
+            })
+            .then(data => {
+
+                const keiner = data
+                console.log(keiner);
+                // Filtrar los lotes para encontrar el que coincida con el productoId
+                const lote = keiner.find(keiner => keiner.PrecioUnitario === productId);
+                if (!lote) {
+                    throw new Error('No se encontró un lote para el producto seleccionado');
+                }
+                // Suponiendo que los datos devueltos tienen la estructura { productoId, precio }
+                // Ajusta esta parte según la estructura real de tus datos
+                const precio = lote.precio;
+                $('#precioUnitario').val(precio);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al obtener el precio del producto');
+            });
+    });
+});
 

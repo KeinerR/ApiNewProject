@@ -16,6 +16,8 @@ namespace VistaNewProject.Services
 
         Task<IEnumerable<Pedido>> GetPedidoAsync();
         Task<HttpResponseMessage> CreatePedidoAsync(Pedido pedido);
+        Task<HttpResponseMessage> DeletePedidoAsync(int id);
+
 
 
 

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ApiNewProject.Controllers
@@ -196,38 +197,17 @@ namespace ApiNewProject.Controllers
             }
         }
 
-        [HttpDelete("DeletePedido")]
-        public async Task<IActionResult> DeletePedido(int id)
+        [HttpDelete("DeletePedido/{Id}")]
+        public async Task<HttpStatusCode> DeletePedido(int Id)
         {
-            try
+            var pedido = new Pedido()
             {
-                var eliminarPedido = await _context.Pedidos.FindAsync(id);
-                if (eliminarPedido == null)
-                {
-                    return NotFound();
-
-                }
-                var tienedetalles = await _context.Detallepedidos.AnyAsync(d => d.PedidoId == id);
-
-                var tienedomicilio = await _context.Domicilios.AnyAsync(d => d.PedidoId == id);
-
-                if (tienedetalles || tienedomicilio)
-                {
-                    return BadRequest("no se puede eliminar el pedido por que tiene datos asociados");
-                }
-                _context.Remove(eliminarPedido);
-                await _context.SaveChangesAsync();
-                return Ok();
-            }
-            catch (DbUpdateException ex)
-            {
-                return BadRequest("error en eliminar el pedido" + ex.Message);
-
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "error en el servidor " + ex.Message);
-            }
+                PedidoId = Id
+            };
+            _context.Pedidos.Attach(pedido);
+            _context.Pedidos.Remove(pedido);
+            await _context.SaveChangesAsync();
+            return HttpStatusCode.OK;
         }
         [HttpPut("UpdatePedido")]
         public async Task<IActionResult> UpdatePedido(int id, Pedido pedido)

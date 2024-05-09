@@ -2,20 +2,37 @@
 
 @{
     ViewData["Title"] = "Create";
+   
 }
+
+@if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
+{
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: '@TempData["ErrorMessage"]',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    </script>
+}
+
+
+
 
 <h1>Create</h1>
 
 <h4>Detallepedido</h4>
 <hr />
 
-   
-        <form asp-action="Create" method="post">
+
+<form asp-action="CreatePost" method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="d-none">
         <label asp-for="PedidoId" class="control-label"></label>
-        <input asp-for="PedidoId" class="form-control" hidden />
+        <input type="hidden" id="pedidoId" name="pedidoId" value="@ViewBag.UltimoPedidoId" />
         <span asp-validation-for="PedidoId" class="text-danger"></span>
     </div>
     <div class="row">
@@ -45,30 +62,43 @@
 
         <div class="col-4 mt-4">
             <div class="col-4 mt-4">
-                <button type="button" class="btn btn-primary p-2" style="margin-left: 300px" onclick="agregarDetalle('@Url.Action("Create", "DetallePedidos")')">Agregar</button>
+                <button type="button" class="btn btn-primary p-2" style="margin-left: 300px" onclick="agregarDetalle('@Url.Action("CrearDetalles", "DetallePedidos")')">Agregar</button>
             </div>
 
 
         </div>
 
 
+        <div class="row mt-5">
+          
+
+            <div class="col-4 mt-5">
+                <button type="submit" id="guardarButton" class="btn btn-primary p-2" style="margin-left: 200px; ">Guardar</button>
+            </div>
+
+        </div>
+
 
     </div>
 
-    <div class="row mt-5">
-        <div class="col-4 mt-5 ">
-            <input type="button" value="Cancelar" class="btn btn-primary  p-2" style="margin-left: 300px;" />
-        </div>
-
-        <div class="col-4 mt-5">
-            <button type="submit" id="guardarButton" class="btn btn-primary p-2" style="margin-left: 200px; ">Guardar</button>
-        </div>
-
-    </div>
+   
 
 
 
 </form>
+
+<div class="row mt-5">
+    <form asp-action="Cancelar" method="post">
+        <div class="col-4 mt-5 ">
+            <button type="submit" class="btn btn-primary p-2" style="margin-left: 300px;">Cancelar</button>
+        </div>
+    </form>
+
+  
+
+</div>
+
+
 
 <div class=" mt-4" id="listaDetallesPedido">
     <!-- Aquí se mostrarán los detalles de pedido agregados en una tabla -->
