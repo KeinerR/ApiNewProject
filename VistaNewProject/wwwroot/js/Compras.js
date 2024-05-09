@@ -13,13 +13,16 @@
     //Se Usa Para verificar que el cliente no cambie el producto antes de agregar el detalle  
 var verificarProducto = "";
 
-
+/**/
 var ganancia = ""; 
 
 //Se usa para dar un tiempo antes de la signacion del id al nombre especifico en los datalist
 let timeout = null;
 
 var cantidadPorUnidad = "";
+
+
+
     // Función para limpiar el formulario
 function LimpiarFormulario() {
     // Limpiar los valores de los campos del formulario
@@ -892,9 +895,7 @@ function actualizarValorTotal() {
     document.getElementById('ValorTotal').value = total;
 }
 
-
-let paginaActual = 0; // Debes inicializar paginaActual en algún lugar fuera de la función cambiarPagina
-
+//Paginado
 function cambiarPagina(direccion) {
     const filasPorPagina = 3; // Cambia el número de filas por página según tus necesidades
     const filas = Array.from(document.getElementById('detalleTableBody').rows);
@@ -904,6 +905,7 @@ function cambiarPagina(direccion) {
         paginaActual = paginasTotales - 1;
     } else if (direccion === 1) {
         paginaActual = Math.min(paginaActual + 1, paginasTotales - 1);
+       
     } else if (direccion === -1) {
         paginaActual = Math.max(paginaActual - 1, 0);
     } else {
@@ -916,6 +918,10 @@ function cambiarPagina(direccion) {
             paginaActual = Math.max(paginaActual - 1, 0);
         }
     }
+    // Establecer la visibilidad de los botones "Anterior" y "Siguiente"
+    document.getElementById('btnAnterior').style.display = (paginaActual > 0) ? 'block' : 'none';
+    document.getElementById('btnSiguiente').style.display = (paginaActual < paginasTotales - 1) ? 'block' : 'none';
+
 
     filas.forEach((fila, indice) => {
         const inicio = paginaActual * filasPorPagina;
@@ -923,6 +929,22 @@ function cambiarPagina(direccion) {
 
         fila.style.display = (indice >= inicio && indice < fin) ? '' : 'none';
     });
+}
+//verificar si es necesario mostrar uno el paginado
+function verificarPaginado() {
+    // Verificar si hay más de una página después de agregar la fila
+    const filasPorPagina = 3; // Cambia este valor según tus necesidades
+    const filas = Array.from(detalleTableBody.rows);
+    let paginasTotales = Math.ceil(filas.length / filasPorPagina);
+    if (paginasTotales > 1) {
+        document.getElementById('contenedorTablaDetallesBotones').style.display = 'block';
+        document.getElementById('contenedorTablaDetallesBotones').style.visibility = 'visible';
+        console.log('Here');
+    } else {
+        document.getElementById('contenedorTablaDetallesBotones').style.display = 'none';
+        document.getElementById('contenedorTablaDetallesBotones').style.visibility = 'hidden';
+        console.log('Heres');
+    }
 }
 
 function agregarFilaDetalle(detalleCompra) {
@@ -949,11 +971,14 @@ function agregarFilaDetalle(detalleCompra) {
     cellSubtotal.innerHTML = ultimoLote.precioCompra;
     cellAcciones.innerHTML = '<button onclick="eliminarFilaDetalle(this)">Eliminar</button>';
 
+
+    //verifica si es necesario que se vea u no el paginado
+    verificarPaginado() 
     // Actualizar el valor total
     actualizarValorTotal();
     cambiarPagina(2);
-}
 
+}
 
 
 // Funcion para eliminar un solo detalle al que se presione el boton
@@ -977,10 +1002,13 @@ function eliminarFilaDetalle(button) {
     // Eliminar la fila de la tabla
     row.remove();
 
+    //verifica si es necesario que se vea u no el paginado
+    verificarPaginado() 
     // Actualizar los índices de las filas restantes en la tabla
     actualizarIndicesTabla();
     actualizarValorTotal();
     cambiarPagina(-2); // Dirección -1 para página anterior
+   
 }
 
 // Funcion para eliminar un solo detalle al que se presione el boton
