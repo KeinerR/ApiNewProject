@@ -893,47 +893,36 @@ function actualizarValorTotal() {
 }
 
 
-var paginaActual = 0; // Debes inicializar paginaActual en algún lugar fuera de la función cambiarPagina
+let paginaActual = 0; // Debes inicializar paginaActual en algún lugar fuera de la función cambiarPagina
 
 function cambiarPagina(direccion) {
-    var detalleTableBody = document.getElementById('detalleTableBody');
-    var totalFilas = detalleTableBody.rows.length;
-    var filasPorPagina = 1; // Cambia el número de filas por página según tus necesidades
-    var filas = detalleTableBody.rows;
-    var inicio = paginaActual * filasPorPagina;
-    var fin = inicio + filasPorPagina;
-
-    // Calcular el número de página actual después de insertar la nueva fila
-    paginaActual = Math.floor(totalFilas / filasPorPagina);
+    const filasPorPagina = 1; // Cambia el número de filas por página según tus necesidades
+    const filas = Array.from(document.getElementById('detalleTableBody').rows);
+    let paginasTotales = Math.ceil(filas.length / filasPorPagina);
 
     if (direccion === 2) {
-        if (totalFilas > filasPorPagina) { // Solo avanzar si hay más de una página
-            console.log(totalFilas + " " + filasPorPagina + " " + inicio + " " +fin)
-            paginaActual = Math.min(paginaActual + 1, Math.ceil(totalFilas / filasPorPagina) - 1);
-        } else {
-            return;
-        }
-    }
+        paginaActual = paginasTotales - 1;
+    } else if (direccion === 1) {
+        paginaActual = Math.min(paginaActual + 1, paginasTotales - 1);
+    } else if (direccion === -1) {
+        paginaActual = Math.max(paginaActual - 1, 0);
+    } else {
+        // Verificar si hay suficientes registros en la página actual después de eliminar un registro
+        const inicio = paginaActual * filasPorPagina;
+        const fin = inicio + filasPorPagina;
 
-    if (direccion === -1) { // Anterior
-        console.log(paginaActual + " " + totalFilas + " " + filasPorPagina + " " + inicio + " " + fin)
-        if (totalFilas < filasPorPagina) { // Solo avanzar si hay más de una página
+        if (inicio >= filas.length) {
+            // Si no hay suficientes registros en la página actual, eliminar la página actual y retroceder
             paginaActual = Math.max(paginaActual - 1, 0);
         }
-    } else { // Siguiente
-        console.log(paginaActual + " " + totalFilas + " " + filasPorPagina + " " + inicio + " " + fin)
-        if (totalFilas > filasPorPagina) { // Solo avanzar si hay más de una página
-            paginaActual = Math.min(paginaActual + 1, Math.ceil(totalFilas / filasPorPagina) - 1);
-        }
     }
 
-    for (var i = 0; i < filas.length; i++) {
-        if (i >= inicio && i < fin) {
-            filas[i].style.display = ''; // Mostrar las filas de la página actual
-        } else {
-            filas[i].style.display = 'none'; // Ocultar las filas de otras páginas
-        }
-    }
+    filas.forEach((fila, indice) => {
+        const inicio = paginaActual * filasPorPagina;
+        const fin = inicio + filasPorPagina;
+
+        fila.style.display = (indice >= inicio && indice < fin) ? '' : 'none';
+    });
 }
 
 function agregarFilaDetalle(detalleCompra) {
@@ -991,9 +980,7 @@ function eliminarFilaDetalle(button) {
     // Actualizar los índices de las filas restantes en la tabla
     actualizarIndicesTabla();
     actualizarValorTotal();
-
-    
-        cambiarPagina(-1); // Dirección -1 para página anterior
+    cambiarPagina(-2); // Dirección -1 para página anterior
 }
 
 // Funcion para eliminar un solo detalle al que se presione el boton
