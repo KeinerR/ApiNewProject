@@ -6,7 +6,7 @@
         public int? ProveedorId { get; set; }
         public string? NumeroFactura { get; set; }
         public DateTime? FechaCompra { get; set; }
-        public decimal? ValorTotal { get; set; }
+        public decimal? ValorTotalCompra { get; set; }
         public ulong? EstadoCompra { get; set; }
 
         public virtual Proveedor? Proveedor { get; set; }

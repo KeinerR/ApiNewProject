@@ -18,12 +18,21 @@
 </head>
 <body>
       <div id="Cabecera">
-        <div>
-            <button id="menu-toggle" class="btn btn-link">
-                <i class="fas fa-bars" style="color: white; font-size: 20px;"></i>
-            </button>
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="color:white;">OPTIMUS </a>
+        <div id="Cabecera" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center;">
+                <button id="menu-toggle" class="btn btn-link">
+                    <i class="fas fa-bars" style="color: white; font-size: 20px;"></i>
+                </button>
+                <div class="logo-container">
+                    <!-- Contenedor del logo -->
+                    <div class="circle">
+                        <img src="/image/[removal.ai]_2c3f736f-e6fc-4f13-9fbe-6549b514d696"/>
+                    </div>
+                </div>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="color:white;">OPTIMUS</a>
+            </div>
         </div>
+
         @if (User.Identity.IsAuthenticated)
         {
             <div style="margin-left: auto;">
@@ -73,7 +82,7 @@
                     <i class="fa-solid fa-bag-shopping" style="color: white;"></i> Productos
                 </a>
                 <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Presentaciones" asp-action="Index">
-                    <i class="fa-solid fa-lemon" style="color: white;"></i> Presentaciones
+                    <i class="fa-solid fa-folder-open" style="color: white;"></i> Presentaciones
                 </a>
                 <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Marcas" asp-action="Index">Marcas</a>
                 <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Categorias" asp-action="Index">Categorias</a>
@@ -129,3 +138,4 @@
 
 </body>
 </html>
+

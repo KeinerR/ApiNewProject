@@ -103,145 +103,138 @@
                 <canvas width="1200" height="250" id="productosChart"></canvas>
             </div>
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <canvas id="productosChart" width="400" height="400"></canvas>
-
-    <script>
+        <canvas id="productosChart" width="400" height="400"></canvas>
 
 
-        // Productos Chart
-        const ctxProducto = document.getElementById('productosChart').getContext('2d');
+        <script>
 
-        var productos = [
-        @foreach (var producto in Model.Productos)
-        {
-            @: '@producto.NombreProducto',
-        }
-                    ];
 
-        var cantidad = [
-        @foreach (var producto in Model.Productos)
-        {
-            @: '@producto.CantidadTotal',
-        }
-                    ];
+            // Productos Chart
+            const ctxProducto = document.getElementById('productosChart').getContext('2d');
 
-        new Chart(ctxProducto, {
-            type: 'bar',
-            data: {
-                labels: productos,
-                datasets: [{
-                    label: 'Cantidad Total de Productos',
-                    data: cantidad,
-                    backgroundColor: '#a8adb5',
-                    borderColor: '#000000',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
+            var productos = [
+            @foreach (var producto in Model.Productos)
+            {
+                @: '@producto.NombreProducto',
             }
-        });
+                    ];
 
+            var cantidad = [
+            @foreach (var producto in Model.Productos)
+            {
+                @: '@producto.CantidadTotal',
+            }
+                    ];
 
-        // Compras Chart
-        const ctxCompras = document.getElementById('comprasChart').getContext('2d');
-
-        // Obtener los datos de las compras del modelo
-        var compras = [
-        @foreach (var compra in Model.Compras)
-        {
-            @: '@compra.CompraId',
-        }
-                        ];
-
-        var valoresTotales = [
-        @foreach (var compra in Model.Compras)
-        {
-            @: '@compra.ValorTotal',
-        }
-                        ];
-
-        // Crear el gráfico de barras
-        new Chart(ctxCompras, {
-            type: 'bar',
-            data: {
-                labels: compras,
-                datasets: [{
-                    label: 'Valor Total de las Compras',
-                    data: valoresTotales,
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
+            new Chart(ctxProducto, {
+                type: 'bar',
+                data: {
+                    labels: productos,
+                    datasets: [{
+                        label: 'Cantidad Total de Productos',
+                        data: cantidad,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
                             beginAtZero: true
                         }
-                    }]
-                }
-            }
-        });
-
-
-        // Pedidos Chart
-        const ctxPedido = document.getElementById('pedidosChart');
-
-        var fechasPedido = [
-        @foreach (var pedido in Model.Pedidos)
-        {
-            @: '@pedido.PedidoId | @(pedido.Cliente != null ? pedido.Cliente.NombreCompleto : "Cliente no disponible")',
-        }
-                ];
-
-        var preciosPedido = [
-        @foreach (var pedido in Model.Pedidos)
-        {
-            @: '@(pedido.ValorTotalPedido.HasValue ? pedido.ValorTotalPedido.Value.ToString() : "Precio no disponible")',
-        }
-                ];
-
-        new Chart(ctxPedido, {
-            type: 'bar',
-            data: {
-                labels: fechasPedido,
-                datasets: [{
-                    label: 'Total del pedido',
-                    data: preciosPedido,
-                    borderWidth: 1,
-                    backgroundColor: '#a8adb5',
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
                     }
                 }
+            });
+
+
+            // Compras Chart
+            const ctxCompras = document.getElementById('comprasChart').getContext('2d');
+
+            // Obtener los datos de las compras del modelo
+            var compras = [
+            @foreach (var compra in Model.Compras)
+            {
+                @: '@compra.CompraId',
             }
-        });
+                        ];
 
-    </script>
-}else
-{
-        <div class="text-center">
-        <h1 class="display-4">
-                <span>Bienvenido, @User.Identity.Name</span>
-        </h1>
-        <br />
-        <img class="" src="/image/Lec7Hr6LReORF-s90iWjvQ.png" alt="No se pudo cargar la imagen cuidado">
-        <p> Esteban Grajales Torres, Juan Jose Florez Osorio, keiner Rivas Mendoza,  Oscar Alejandro Rincon Lopez <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+            var valoresTotales = [
+            @foreach (var compra in Model.Compras)
+            {
+                @: parseFloat('@compra.ValorTotalCompra'),
+            }
+                        ];
+            console.log(valoresTotales)
+
+            // Crear el gráfico de barras
+            new Chart(ctxCompras, {
+                type: 'bar',
+                data: {
+                    labels: compras,
+                    datasets: [{
+                        label: 'Valor Total de las Compras',
+                        data: valoresTotales,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+
+            // Pedidos Chart
+            const ctxPedido = document.getElementById('pedidosChart');
+
+            var fechasPedido = [
+            @foreach (var pedido in Model.Pedidos)
+            {
+                @: '@pedido.PedidoId',
+            }
+                ];
+
+            var preciosPedido = [
+            @foreach (var pedido in Model.Pedidos)
+            {
+                @: parseFloat('@pedido.ValorTotalPedido'), 
+            }
+                ];
+
+            new Chart(ctxPedido, {
+                type: 'bar',
+                data: {
+                    labels: fechasPedido,
+                    datasets: [{
+                        label: 'Total del pedido',
+                        data: preciosPedido,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1,
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+        </script>
     </div>
+
+
 }
-
-

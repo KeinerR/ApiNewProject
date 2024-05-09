@@ -34,7 +34,7 @@ namespace ApiNewProject.Controllers
                     TipoServicio = s.TipoServicio,
                     FechaPedido = s.FechaPedido,
                     EstadoPedido = s.EstadoPedido,
-
+                    ValorTotalPedido = s.ValorTotalPedido,
                 }
             ).ToListAsync();
 
