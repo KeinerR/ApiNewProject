@@ -41,14 +41,14 @@ namespace VistaNewProject.Controllers
             var fechaFinCompras = DateTime.Now;
 
             var registroCompras = comprasApi.Where(r => r.FechaCompra >= fechaInicioCompras && r.FechaCompra < fechaFinCompras && r.EstadoCompra != 0)
-                .OrderByDescending(r => r.ValorTotal)
+                .OrderByDescending(r => r.ValorTotalCompra)
                 .Take(7).ToList();
 
             decimal totalCompras = 0;
             foreach (var compra in registroCompras)
             {
                 // Verificar si el ValorTotal de la compra es nulo y asignar un valor predeterminado en ese caso
-                decimal valorTotal = compra.ValorTotal ?? 1;
+                decimal valorTotal = compra.ValorTotalCompra ?? 1;
                 totalCompras += valorTotal;
             }
             TempData["TotalCompras"] = totalCompras.ToString("$ #,##0");
@@ -60,7 +60,7 @@ namespace VistaNewProject.Controllers
             var fechaFinPedidos = DateTime.Now;
 
             var registroPedidos = pedidosApi.Where(r => r.FechaPedido >= fechaInicioPedidos && r.FechaPedido < fechaFinPedidos && r.EstadoPedido != null)
-                .OrderByDescending(r => r.PedidoId) // Modifica aquí el ordenamiento según tus necesidades
+                .OrderByDescending(r => r.ValorTotalPedido) // Modifica aquí el ordenamiento según tus necesidades
                 .Take(7).ToList();
 
             decimal totalPedidos = 0;
