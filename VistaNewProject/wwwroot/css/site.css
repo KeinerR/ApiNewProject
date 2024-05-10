@@ -611,3 +611,10 @@ input:checked + .slider:before {
     border-color: #213b68; /* Cambia el color del borde del enlace activo */
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 6); /* Sombra negra */
 }
+
+/* Estilo para el icono de cierre (la "X") dentro de un botón con clase btn-close */
+.btn-close::before {
+    color: red; /* Cambia el color a rojo (o el color que desees) */
+}
+
+
