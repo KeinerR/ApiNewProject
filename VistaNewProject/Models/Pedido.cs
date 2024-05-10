@@ -12,6 +12,8 @@
 
         public virtual Cliente? Cliente { get; set; }
         public virtual ICollection<Domicilio> Domicilios { get; set; }
+        public List<Detallepedido> Detalles { get; set; }
+
 
     }
 }

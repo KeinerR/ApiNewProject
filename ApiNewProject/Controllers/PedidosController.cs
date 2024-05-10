@@ -153,7 +153,10 @@ namespace ApiNewProject.Controllers
         //    }
         //}
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
         [HttpPost("InsertPedidos")]
         public async Task<ActionResult<Pedido>> InsertPedidos(Pedido pedido)
         {
@@ -174,6 +177,7 @@ namespace ApiNewProject.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar el detallepedido en la base de datos: " + ex.Message);
             }
         }
+
 
 
 

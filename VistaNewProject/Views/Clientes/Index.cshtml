@@ -30,7 +30,7 @@
         <div class="modal-content" id="agregarDetalleCliente">
             <div class="modal-header">
                 <h5 class="" id="TituloModal" style="text-align:center">Agregar Cliente</h5>
-                <button type="button" onclick="limpiarFormularioAct() " class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" onclick="limpiarFormulario() " class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
             </div>
             <form asp-controller="Clientes" asp-action="Create" method="post" onsubmit="return validarFormulario()">
@@ -41,12 +41,12 @@
                     </div>
                     <div style=" form-group">
                         <div class="row">
+                           
                             <div class="col-5">
                                 <div class="form-group">
-                                    <label for="Identificacion" class="control-label">Identificacion</label>
-                                    <input type="text" id="Identificacion" name="identificacion" class="form-control" style="border-radius: 50px;" />
-                                    <span id="MensajeIdentificacion" class="text-danger"></span>
-                                    <!-- Use un ID más descriptivo como "MensajeIdentificacion" -->
+                                    <label for="Identificacion" class="control-label">Identificación</label> 
+                                    <input type="text" id="Identificacion" maxlength="26" name="identificacion" class="form-control" style="border-radius: 50px;" />
+                                    <span id="MensajeIdentificacion" class="error"></span>
                                 </div>
                             </div>
 
@@ -165,7 +165,7 @@
         <div class="modal-content" id="FormActualizarCliente" style="display:none;">
             <div class="modal-header">
                 <h5 class="modal-title" id="TituloModalUsuarios">Actualizar Usuarios</h5>
-                <button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" onclick="limpiarFormulario()" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div id="MensajeInicialUsuario"></div>
             <form asp-controller="Clientes" asp-action="Update" method="post" onsubmit="return validarFormularioAct()">

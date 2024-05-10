@@ -32,6 +32,7 @@ namespace VistaNewProject.Controllers
             return View(detallepedido);
         }
 
+<<<<<<< Updated upstream
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -160,5 +161,12 @@ namespace VistaNewProject.Controllers
 
 
 
+=======
+        public async Task<IActionResult> Create()
+        {
+
+            return View();
+        }
+>>>>>>> Stashed changes
     }
 }

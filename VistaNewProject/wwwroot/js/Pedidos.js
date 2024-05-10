@@ -7,6 +7,7 @@
 //    });
 //}
 
+<<<<<<< Updated upstream
 //const { data } = require("jquery");
 
 //const { data } = require("jquery");
@@ -36,10 +37,21 @@
 //$(document).ready(function () {
 //    inicializarEventos();
 //});
+=======
+//var fechaActual = new Date();
+//var fechaFormateada = fechaActual.toISOString().slice(0, 16);
+//document.getElementById("FechaPedido1").value = fechaFormateada;
+
+//var fechaFormateada1 = fechaActual.toISOString().slice(0, 16);
+
+//// Asignar la fecha formateada al campo de entrada
+//document.getElementById("FechaEntrega3").value = fechaFormateada1;
+>>>>>>> Stashed changes
 
 
 
 
+<<<<<<< Updated upstream
 
 //var fechaActual = new Date();
 //var fechaFormateada = fechaActual.toISOString().slice(0, 16);
@@ -77,6 +89,32 @@
 //        };
 //    }
 
+=======
+//document.getElementById("btnGuardarPedido").onclick = function () {
+
+//    var tipoServicio = document.getElementById("TipoServicio1").value;
+//    var EstadoPedido = document.getElementById("EstadoPedido1").value;
+
+//    if (tipoServicio === "Domicilio") {
+//        pedido = {
+//            ClienteId: document.getElementById("ClienteId1").value,
+//            TipoServicio: tipoServicio,
+//            FechaPedido: document.getElementById("FechaPedido1").value,
+//            EstadoPedido: EstadoPedido,
+//            Detallepedidos: detallespedido,
+//            Domicilios: domicilios
+//        };
+//    } else {
+//        pedido = {
+//            ClienteId: document.getElementById("ClienteId1").value,
+//            TipoServicio: tipoServicio,
+//            FechaPedido: document.getElementById("FechaPedido1").value,
+//            EstadoPedido: EstadoPedido,
+//            Detallepedidos: detallespedido
+//        };
+//    }
+
+>>>>>>> Stashed changes
 //    console.log('Pedido guardado:', pedido.Detallepedidos);
 //    console.log('Pedido guardado:', pedido.Domicilios);
 //    confirm(" real mente desea envial los datos");    // Enviar la solicitud POST al servidor utilizando la Fetch API
@@ -116,7 +154,10 @@
 //        // Si hay un índice de edición establecido, actualiza el detalle existente en lugar de agregar uno nuevo
 //        detallespedido[indiceEdicion] = {
 //            ProductoId: document.getElementById("ProductoId2").value,
+<<<<<<< Updated upstream
 //            UnidadId: document.getElementById("UnidadId").value,
+=======
+>>>>>>> Stashed changes
 //            Cantidad: document.getElementById("Cantidad2").value,
 //            PrecioUnitario: document.getElementById("PrecioUnitario2").value
 //        };
@@ -126,7 +167,10 @@
 //        // Si no hay un índice de edición, agrega un nuevo detalle
 //        var detallePedido = {
 //            ProductoId: document.getElementById("ProductoId2").value,
+<<<<<<< Updated upstream
 //            UnidadId: document.getElementById("UnidadId").value,
+=======
+>>>>>>> Stashed changes
 //            Cantidad: document.getElementById("Cantidad2").value,
 //            PrecioUnitario: document.getElementById("PrecioUnitario2").value
 //        };
@@ -151,8 +195,11 @@
 
 //    // Rellenar los campos del formulario de edición con los datos del detalle del pedido
 //    document.getElementById("ProductoId2").value = detallePedido.ProductoId;
+<<<<<<< Updated upstream
 //    document.getElementById("UnidadId").value = detallePedido.UnidadId,
 
+=======
+>>>>>>> Stashed changes
 //    document.getElementById("Cantidad2").value = detallePedido.Cantidad;
 //    document.getElementById("PrecioUnitario2").value = detallePedido.PrecioUnitario;
 
@@ -162,6 +209,7 @@
 //    // Mostrar el datalist nuevamente
 //    document.getElementById("productoList").hidden = false;
 //}
+<<<<<<< Updated upstream
 
 
 
@@ -377,3 +425,253 @@
 //    }
 //};
 
+=======
+
+
+
+
+//function actualizarTablaDetalle() {
+//    var detalleTableBody = document.getElementById("detalleTableBody");
+//    detalleTableBody.innerHTML = "";
+
+//    detallespedido.forEach(function (detallePedido, index) {
+//        var row = detalleTableBody.insertRow();
+//        var cell1 = row.insertCell(0);
+//        var cell2 = row.insertCell(1);
+//        var cell3 = row.insertCell(2);
+//        var cell4 = row.insertCell(3);
+
+//        cell1.textContent = detallePedido.ProductoId;
+//        cell2.textContent = detallePedido.Cantidad;
+//        cell3.textContent = detallePedido.PrecioUnitario;
+
+//        var editButton = document.createElement("button");
+//        editButton.innerHTML = '<i class="fas fa-edit"></i>'; // Corrección de la sintaxis
+//        editButton.classList.add("btn", "btn-warning", "btn-editar-detalle");
+//        editButton.dataset.index = index;
+//        cell4.appendChild(editButton);
+
+//        // Agregar botón de eliminar con emoji
+//        var deleteButton = document.createElement("button");
+//        deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+//        deleteButton.classList.add("btn", "btn-danger", "btn-eliminar-detalle");
+//        deleteButton.dataset.index = index;
+//        cell4.appendChild(deleteButton);
+//    });
+
+//    // Agregar eventos de clic a los botones de "Editar"
+//    agregarEventoEditar();
+//    agregarEventoEliminar();
+//}
+
+//// Función para agregar eventos de clic a los botones de "Editar"
+//function agregarEventoEditar() {
+//    var botonesEditar = document.querySelectorAll(".btn-editar-detalle");
+//    botonesEditar.forEach(function (boton) {
+//        boton.addEventListener("click", function () {
+//            var index = this.dataset.index;
+//            editarDetalle(index);
+//        });
+//    });
+//}
+//function agregarEventoEliminar() {
+//    var botonesEliminar = document.querySelectorAll(".btn-eliminar-detalle");
+//    botonesEliminar.forEach(function (boton) {
+//        boton.addEventListener("click", function () {
+//            var index = this.dataset.index;
+//            eliminarDetalle(index);
+//        });
+//    });
+//}
+
+//// Función para eliminar un detalle del pedido
+//function eliminarDetalle(index) {
+//    detallespedido.splice(index, 1); // Eliminar el detalle del pedido de la lista de detalles
+//    actualizarTablaDetalle(); // Actualizar la tabla de detalles del pedido después de eliminar un detalle
+//}
+//// Función para editar un detalle del pedido
+
+
+//var domicilios = [];
+//var indiceEdicionDomicilio = null; // Variable global para almacenar el índice del domicilio que se está editando
+
+//document.getElementById("btnAgregarDomicilio").onclick = function () {
+//    if (indiceEdicionDomicilio !== null) {
+//        // Si hay un índice de edición establecido, actualiza el domicilio existente en lugar de agregar uno nuevo
+//        domicilios[indiceEdicionDomicilio] = {
+//            UsuarioId: document.getElementById("UsuarioId3").value,
+//            Observacion: document.getElementById("Observacion3").value,
+//            FechaEntrega: document.getElementById("FechaEntrega3").value,
+//            DireccionDomiciliario: document.getElementById("DireccionDomiciliario3").value
+//        };
+//        // Restablece el índice de edición a null después de editar
+//        indiceEdicionDomicilio = null;
+//    } else {
+//        // Si no hay un índice de edición, agrega un nuevo domicilio
+//        var domicilio = {
+//            UsuarioId: document.getElementById("UsuarioId3").value,
+//            Observacion: document.getElementById("Observacion3").value,
+//            FechaEntrega: document.getElementById("FechaEntrega3").value,
+//            DireccionDomiciliario: document.getElementById("DireccionDomiciliario3").value
+//        };
+//        domicilios.push(domicilio);
+//    }
+
+//    alert('Domicilio agregado:', domicilio);
+//    console.log(domicilios);
+
+//    // Reiniciar el formulario de domicilio
+//    document.getElementById("formDomicilio").reset();
+
+//    // Actualizar la tabla de domicilios después de agregar o editar un domicilio
+//    actualizarTablaDomicilio();
+//};
+
+//// Función para editar un domicilio
+//function editarDomicilio(index) {
+//    // Establecer el índice de edición al índice seleccionado
+//    indiceEdicionDomicilio = index;
+
+//    var domicilio = domicilios[index];
+
+//    // Rellenar los campos del formulario de edición con los datos del domicilio
+//    document.getElementById("UsuarioId3").value = domicilio.UsuarioId;
+//    document.getElementById("Observacion3").value = domicilio.Observacion;
+//    document.getElementById("FechaEntrega3").value = domicilio.FechaEntrega;
+//    document.getElementById("DireccionDomiciliario3").value = domicilio.DireccionDomiciliario;
+
+//    // Mostrar el formulario de edición de domicilio
+//    document.getElementById("formDomicilioContainer").classList.remove("d-none");
+//}
+
+//// Función para actualizar la tabla de domicilios
+//function actualizarTablaDomicilio() {
+//    var domicilioTableBody = document.getElementById("domicilioTableBody");
+//    domicilioTableBody.innerHTML = "";
+
+//    domicilios.forEach(function (domicilio, index) {
+//        var row = domicilioTableBody.insertRow();
+//        var cell1 = row.insertCell(0);
+//        var cell2 = row.insertCell(1);
+//        var cell3 = row.insertCell(2);
+//        var cell4 = row.insertCell(3);
+//        var cell5 = row.insertCell(4);
+
+//        cell1.textContent = domicilio.UsuarioId;
+//        cell2.textContent = domicilio.Observacion;
+//        cell3.textContent = domicilio.FechaEntrega;
+//        cell4.textContent = domicilio.DireccionDomiciliario;
+
+//        var editButton = document.createElement("button");
+//        editButton.innerHTML = '<i class="fas fa-edit"></i>'; // Corrección de la sintaxis
+//        editButton.classList.add("btn", "btn-warning", "btn-editar-domicilio");
+//        editButton.dataset.index = index;
+//        cell5.appendChild(editButton);
+
+
+//        // Agregar botón de eliminar con emoji
+//        var deleteButton = document.createElement("button");
+//        deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+//        deleteButton.classList.add("btn", "btn-danger", "btn-eliminar-domicilio");
+//        deleteButton.dataset.index = index;
+//        cell5.appendChild(deleteButton);
+//    });
+
+//    // Agregar eventos de clic a los botones de "Editar"
+//    agregarEventoEditarDomicilio();
+//    agregarEventoEliminarDomicilio();
+//}
+
+//// Función para agregar eventos de clic a los botones de "Editar" en la tabla de domicilios
+//function agregarEventoEditarDomicilio() {
+//    var botonesEditar = document.querySelectorAll(".btn-editar-domicilio");
+//    botonesEditar.forEach(function (boton) {
+//        boton.addEventListener("click", function () {
+//            var index = this.dataset.index;
+//            editarDomicilio(index);
+//        });
+//    });
+//}
+
+//// Función para agregar eventos de clic a los botones de "Eliminar" en la tabla de domicilios
+//function agregarEventoEliminarDomicilio() {
+//    var botonesEliminar = document.querySelectorAll(".btn-eliminar-domicilio");
+//    botonesEliminar.forEach(function (boton) {
+//        boton.addEventListener("click", function () {
+//            var index = this.dataset.index;
+//            eliminarDomicilio(index);
+//        });
+//    });
+//}
+
+//// Función para eliminar un domicilio de la lista
+//function eliminarDomicilio(index) {
+//    domicilios.splice(index, 1); // Eliminar el domicilio de la lista
+//    actualizarTablaDomicilio(); // Actualizar la tabla de domicilios después de eliminar un domicilio
+//}
+
+//document.getElementById("TipoServicio1").addEventListener("change", function () {
+//    var tipoServicio = this.value;
+//    var domicilioFormContainer = document.getElementById("formDomicilioContainer");
+//    if (tipoServicio === "Domicilio") {
+//        domicilioFormContainer.classList.remove("d-none");
+//    } else {
+//        domicilioFormContainer.classList.add("d-none");
+//    }
+//});
+
+
+
+//document.getElementById("TipoServicio1").addEventListener("change", function () {
+//    var tipoServicio = this.value;
+//    var domicilioFormContainer = document.getElementById("domiciliotable");
+//    if (tipoServicio === "Domicilio") {
+//        domicilioFormContainer.classList.remove("d-none");
+//    } else {
+//        domicilioFormContainer.classList.add("d-none");
+//    }
+//});
+
+//document.getElementById("cerradomicilio").onclick = function () {
+//    var domicilioContainer = document.getElementById("formDomicilioContainer");
+//    if (!domicilioContainer.classList.contains("d-none")) {
+//        domicilioContainer.classList.add("d-none");
+//    }
+//};
+
+// Manejar clic en el botón "Agregar Detalle"
+document.getElementById("btnAgregarDetalle").addEventListener("click", function () {
+    // Obtener los valores del formulario de detalle
+    var productoId2 = document.getElementById("productoId2").value;
+    var cantidad = document.getElementById("Cantidad").value;
+    var precioUnitario = document.getElementById("PrecioUnitario").value;
+
+    // Enviar los datos al servidor
+    fetch('/Pedidos/CreateDetalle', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            productoId2: productoId2,
+            cantidad: cantidad,
+            precioUnitario: precioUnitario
+        })
+    })
+        .then(response => {
+            if (response.ok) {
+                // Mostrar mensaje de éxito
+                Swal.fire('Detalle agregado correctamente');
+            } else {
+                // Mostrar mensaje de error
+                Swal.fire('Error al agregar el detalle');
+            }
+        })
+        .catch(error => {
+            // Mostrar mensaje de error
+            Swal.fire('Error al agregar el detalle');
+        });
+});
+
+
+>>>>>>> Stashed changes

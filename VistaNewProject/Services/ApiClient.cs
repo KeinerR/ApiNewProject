@@ -70,8 +70,18 @@ namespace VistaNewProject.Services
                 throw new Exception("No se encontró la unidad con el ID especificado.");
             }
             return response;
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
             
         }
+        public async Task<HttpResponseMessage> CreatePediiosAsync(Pedido pedido)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Pedidos/InsertPedidos", pedido);
+            return response;
+        }
+
 
         public async Task<HttpResponseMessage> CreatePedidoAsync(Pedido pedido)
         {

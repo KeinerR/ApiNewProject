@@ -89,7 +89,7 @@ function validarIdentificacion(identificacion) {
         return false;
     }
 
-    if (identificacion.trim().length < 5) {
+    if (identificacion.trim().length < 4) {
         mostrarOcultarError("#MensajeIdentificacion", "El campo tiene menos de 5 caracteres.");
         return false;
     }
@@ -330,7 +330,7 @@ function validarIdentificacionAct(identificacionAct) {
         mostrarOcultarError("#MensajeIdentificacionAct", "El campo tiene más de 25 caracteres.");
         return false;
     }
-    if (identificacionAct.length < 5) {
+    if (identificacionAct.length < 4) {
         mostrarOcultarError("#MensajeIdentificacionAct", "El campo tiene menos de 5 caracteres.");
         return false;
     }
@@ -501,7 +501,7 @@ function validarCorreoAct(correoAct) {
 
 function limpiarFormulario() {
     // Limpiar los valores de los campos del formulario
-    $('#Identificacion, #NombreEntidad, #Telefono,#Correo,#Direccion, #IdentificacionAct').val('');
+    $('#Identificacion, #NombreEntidad, #Telefono,#Correo,#Direccion,#TipoCliente,#ClienteIdAct, #IdentificacionAct,#NombreCompletoAct,#NombreEntidadAct,#TelefonoAct,#CorreoAct,#DireccionAct,#TipoClienteAct,#EstadoClienteAct').val('');
 
     // Restaurar mensajes de error
     $('.Mensaje, .MensajeAct').text(' *');
@@ -512,39 +512,50 @@ function limpiarFormulario() {
     document.getElementById('FormActualizarCliente').style.display = 'none';
   
 }
+
+// Bandera para controlar si se ha ingresado texto en el campo
+var textoIngresado = false;
+
+// Función para mostrar u ocultar el mensaje de error y aplicar estilos
 function mostrarOcultarError(spanId, mensaje) {
-    if (mensaje) {
-        // Si hay un mensaje de error, mostrarlo y agregar la clase de error
+    var campoTexto = $(spanId).prev();
+
+    if (mensaje && campoTexto.val().trim()) {
+        // Si hay un mensaje de error y el campo no está vacío, mostrar el mensaje de error y agregar la clase de error
         $(spanId).text(mensaje);
         $(spanId).addClass('text-danger'); // Agregar clase para mostrar en rojo
-        $(spanId).prev().addClass('is-invalid'); // Dar estilo al cuadro de texto
+        campoTexto.addClass('is-invalid'); // Dar estilo al cuadro de texto
     } else {
-        // Si no hay mensaje de error, limpiarlo y quitar la clase de error
+        // Si no hay mensaje de error o el campo está vacío, limpiar el mensaje de error y quitar la clase de error
         $(spanId).text('');
         $(spanId).removeClass('text-danger'); // Eliminar clase de error
-        $(spanId).prev().removeClass('is-invalid'); // Quitar estilo del cuadro de texto
+        campoTexto.removeClass('is-invalid'); // Quitar estilo del cuadro de texto
+
+        // Verificar si el campo está vacío después de eliminar el mensaje de error
+        if (!campoTexto.val().trim()) {
+            if (textoIngresado) {
+                // Si se ha ingresado texto previamente y se ha borrado, marcar el campo como válido
+                campoTexto.addClass('is-valid');
+            } else {
+                // Si es la primera vez que el campo está vacío, marcar el campo como inválido
+                campoTexto.addClass('is-invalid');
+            }
+        } else {
+            // Si el campo no está vacío, verificar si cumple con las condiciones de validación
+            var isValid = false;
+            // Lógica de validación aquí, establece isValid en true si el campo es válido
+            if (isValid) {
+                campoTexto.addClass('is-valid'); // Marcar el campo como válido si cumple con las condiciones de validación
+            }
+        }
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Evento para capturar cuando se comienza a escribir en el campo
+$("#campoTexto").on("input", function () {
+    // Cuando se empieza a escribir, establecer la bandera textoIngresado a true
+    textoIngresado = true;
+});
 
 
 
@@ -600,6 +611,14 @@ document.querySelectorAll('#btnEdit').forEach(button => {
     });
 });
 
+// Agregar un evento de clic fuera del modal para limpiar el formulario
+$(document).mouseup(function (e) {
+    var modal = $("#clienteModal");
+    // Si el clic no está dentro del modal ni dentro de sus descendientes, limpiar el formulario
+    if (!modal.is(e.target) && modal.has(e.target).length === 0) {
+        limpiarFormulario();
+    }
+});
 
 function actualizarEstadoCliente(clienteId, estadoCliente) {
     fetch(`https://localhost:7013/api/Clientes/UpdateEstadoCliente/${clienteId}`, {
