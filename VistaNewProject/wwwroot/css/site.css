@@ -26,7 +26,10 @@ html, body {
     }
 }
 
-
+header {
+    /*height: 10vh;*/ /* El 20% de la altura de la ventana */
+/*    border:solid black 1px;*/
+}
 /* Estilos de la cabecera */
 #Cabecera {
     display: flex;
@@ -83,7 +86,6 @@ html, body {
 
 /*Estilos para mi perfil*/
 .cabeceraSalir .Perfil {
-    border:solid red blue;
     border-radius: 10px;
     transition: box-shadow 0.3s ease-in-out;
 }
@@ -93,19 +95,13 @@ html, body {
 }
 
 
-
-
-.navbar-brand {
-
-    border:solid red 2px;
-}
-
-
 /* Estilos del cuerpo y sidebar */
 #Cuerpo {
+    /*border:solid red 2px;*/
     display: flex;
     width: auto;
-    height: auto; /* El 80% de la altura de la ventana (viewport height) */
+    height: auto;
+    min-height:70vh; /* El 80% de la altura de la ventana (viewport height) */
     margin-top: 0.3px;
 }
 
@@ -217,7 +213,8 @@ input[type="checkbox"]:checked + .sub-menu {
 }
 
 .PIE {
-    height:30px;
+ /*   height: 10vh; */
+   /* border:solid green 2px;*/
 }
 .iframe-optimus {
     height:auto;
