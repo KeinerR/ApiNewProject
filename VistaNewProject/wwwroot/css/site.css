@@ -38,8 +38,32 @@ html, body {
 
 }
 
+#primero {
+    display: flex;
+    align-items: center; /* Centra verticalmente los elementos dentro de #primero */
+}
+
+.circle {
+    width: 30px; /* Ancho del círculo */
+    height: 30px; /* Altura del círculo */
+    border-radius: 50%; /* Hace que sea un círculo */
+    overflow: hidden; /* Oculta el exceso de la imagen */
+    display: flex; /* Utiliza flexbox para centrar horizontalmente */
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+}
+.navbar-brand {
+
+    border:solid red 2px;
+}
+.circle img {
+    width: 100%; /* Ajusta el ancho de la imagen al 100% del círculo */
+    height: 100%; /* Ajusta la altura de la imagen al 100% del círculo */
+    object-fit: cover; /* Ajusta la imagen para cubrir el círculo sin deformaciones */
+}
+/*Estilos para mi perfil*/
 #Perfil {
-    margin-right: 20px;
+    margin-right: 20px; 
     border-radius: 10px;
     transition: box-shadow 0.3s ease-in-out;
 }
@@ -548,20 +572,12 @@ input:checked + .slider:before {
         }
 
 
-.logo-container {
-    margin-left: 10px; /* Espacio entre el botón de menú y el logo */
-}
 
 #iconoDePaginado {
-    width: 70px; height: 70px; border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
 }
-.circle {
-    width: 40px; /* Ancho del círculo */
-    height: 40px; /* Altura del círculo */
-    border-radius: 50%; /* Hace que sea un círculo */
-    overflow: hidden; /* Oculta el exceso de la imagen */
-}
-
 /*paginacion color*/
 .pagination-container .page-item.active .page-link {
     background-color: #213b68; /* Cambia el color de fondo del enlace activo */

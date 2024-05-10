@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>@ViewData["Title"] - VistaNewProject</title>
+    <link rel="icon" href="./favicon.png" type="image/x-icon" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/compra.css" asp-append-version="true" />
@@ -17,44 +18,43 @@
   
 </head>
 <body>
-      <div id="Cabecera">
         <div id="Cabecera" style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="display: flex; align-items: center;">
+            <div id="primero">
                 <button id="menu-toggle" class="btn btn-link">
                     <i class="fas fa-bars" style="color: white; font-size: 20px;"></i>
                 </button>
-                <div class="logo-container">
-                    <!-- Contenedor del logo -->
-                    <div class="circle">
-                        <img src="/image/[removal.ai]_2c3f736f-e6fc-4f13-9fbe-6549b514d696"/>
-                    </div>
+                <div class="circle">
+                     <a asp-area="" asp-controller="Home" asp-action="Index">
+                        <img src="./favicon.png" />
+                      </a>
                 </div>
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="color:white;">OPTIMUS</a>
             </div>
+             <div id="tercero">
+              <span>OPTIMUS</span> 
+            </div> 
+            @if (User.Identity.IsAuthenticated)
+            {
+            <div class="cuarto">
+                    <a id="Perfil" style="text-decoration: none; color: inherit;" class="nav-link dropdown-toggle" onclick="opcionesDePerfil();">
+                        <i style="color:white; font-size:20px;" class="fas fa-user fa-fw"></i>
+                        <span style="user-select:none;">@User.Identity.Name </span>
+                    </a>
+                </div>
+            }
+            else
+            {
+            <div class="cuarto">
+                    <a id="Perfil" style="text-decoration: none; color: inherit;" href="Login" class="nav-link dropdown-toggle">
+                        <i style="color:white; font-size:20px;" class="fas fa-user fa-fw"></i>
+                        <span>Inicia sesión</span>
+                    </a>
+                </div>
+
+
+            }
         </div>
 
-        @if (User.Identity.IsAuthenticated)
-        {
-            <div style="margin-left: auto;">
-                <a id="Perfil" style="text-decoration: none; color: inherit;" class="nav-link dropdown-toggle" onclick="opcionesDePerfil();">
-                    <i style="color:white; font-size:20px;" class="fas fa-user fa-fw"></i>
-                        <span style="user-select:none;">@User.Identity.Name </span>
-                </a>
-            </div>
-        }
-        else
-        {
-            <div style="margin-left: auto;">
-                <a id="Perfil" style="text-decoration: none; color: inherit;" href="Login" class="nav-link dropdown-toggle">
-                    <i style="color:white; font-size:20px;" class="fas fa-user fa-fw"></i>
-                    <span>Inicia sesión</span>
-                </a>
-            </div>
-
-            
-        }
-
-    </div>
+    
     <div id="Cuerpo">
         <div id="Menu" class="sidebar">
             <a class="sidebar-label TextoBlanco" asp-area="" asp-controller="Usuarios" asp-action="Index">
