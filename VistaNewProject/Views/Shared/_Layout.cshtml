@@ -18,24 +18,22 @@
   
 </head>
 <body>
-        <div id="Cabecera" style="display: flex; justify-content: space-between; align-items: center;">
-            <div id="primero">
+    <header>
+        <div id="Cabecera">
+            <div id="cabeceraMenu">
                 <button id="menu-toggle" class="btn btn-link">
-                    <i class="fas fa-bars" style="color: white; font-size: 20px;"></i>
+                    <i class="fas fa-bars"></i>
                 </button>
                 <div class="circle">
-                     <a asp-area="" asp-controller="Home" asp-action="Index">
+                    <a asp-area="" asp-controller="Home" asp-action="Index">
                         <img src="./favicon.png" />
-                      </a>
+                    </a>
                 </div>
             </div>
-             <div id="tercero">
-              <span>OPTIMUS</span> 
-            </div> 
             @if (User.Identity.IsAuthenticated)
             {
-            <div class="cuarto">
-                    <a id="Perfil" style="text-decoration: none; color: inherit;" class="nav-link dropdown-toggle" onclick="opcionesDePerfil();">
+                <div class="cabeceraSalir">
+                    <a class="nav-link dropdown-toggle Perfil" style="text-decoration: none; color: inherit;" onclick="opcionesDePerfil();">
                         <i style="color:white; font-size:20px;" class="fas fa-user fa-fw"></i>
                         <span style="user-select:none;">@User.Identity.Name </span>
                     </a>
@@ -43,8 +41,8 @@
             }
             else
             {
-            <div class="cuarto">
-                    <a id="Perfil" style="text-decoration: none; color: inherit;" href="Login" class="nav-link dropdown-toggle">
+                <div class="cabeceraSalir">
+                    <a class="nav-link dropdown-toggle Perfil" style="text-decoration: none; color: inherit;" href="Login">
                         <i style="color:white; font-size:20px;" class="fas fa-user fa-fw"></i>
                         <span>Inicia sesión</span>
                     </a>
@@ -53,8 +51,14 @@
 
             }
         </div>
+        <div id="cabeceraTitulo">
+            <span>OPTIMUS</span> <!-- Ajusta el margen superior según sea necesario -->
+        </div>
+    </header>
 
-    
+  
+
+
     <div id="Cuerpo">
         <div id="Menu" class="sidebar">
             <a class="sidebar-label TextoBlanco" asp-area="" asp-controller="Usuarios" asp-action="Index">
