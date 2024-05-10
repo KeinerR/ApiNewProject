@@ -381,17 +381,20 @@
                         <span class="slider"></span>
                     </label>
                 </td>
-       
+
                 <td class="contenedorBotonesTabla">
-                    <button class="btn botonEditarCategoria" id="btnEdit" data-cliente-id="@item.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
-                    <a asp-action="Details" asp-route-id="@item.ClienteId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
-                    <form style="display:inline-block;" asp-controller="Clientes" asp-action="Delete" method="post" class="delete-form">
-                        <!-- Agrega un campo oculto con el ID del cliente -->
-                        <input type="hidden" name="id" value="@item.ClienteId" />
-                        <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
-                        <button type="button" onclick="confirmarEliminacion()" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
-                    </form>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn botonEditarCategoria" id="btnEdit" data-cliente-id="@item.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
+                        <a asp-action="Details" asp-route-id="@item.ClienteId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
+                        <form style="display:inline-block;" asp-controller="Clientes" asp-action="Delete" method="post" class="delete-form">
+                            <!-- Agrega un campo oculto con el ID del cliente -->
+                            <input type="hidden" name="id" value="@item.ClienteId" />
+                            <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
+                            <button type="button" onclick="confirmarEliminacion()" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                        </form>
+                    </div>
                 </td>
+
            
         </tr>
     }
@@ -442,7 +445,7 @@
     @if (Model != null && Model.PageCount > 1)
     {
         <div class="d-flex justify-content-center mb-5">
-            <nav aria-label="Page navigation" class="shadow p-3 mb-5 bg-white rounded">
+            <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-center">
                     <!-- Botón para ir a la primera página -->
                     @if (Model.PageNumber > 1)
@@ -486,6 +489,7 @@
         </div>
     }
 </div>
+
 
 @if (!string.IsNullOrEmpty(TempData["Mensaje"]?.ToString()))
 {
