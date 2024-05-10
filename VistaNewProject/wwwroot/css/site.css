@@ -14,8 +14,8 @@ html, body {
     min-height: 100vh;
 }
 
-/* Estilos del contenedor */
-.container {
+/* Estilos del contenedor el iframe donde se ven los modulos al seleccionarlos*/
+.container   {
     min-height: 520px;
     box-sizing: border-box;
 }
@@ -26,6 +26,7 @@ html, body {
     }
 }
 
+
 /* Estilos de la cabecera */
 #Cabecera {
     display: flex;
@@ -34,16 +35,15 @@ html, body {
     padding: 10px;
     background-color: #213b68;
     color: #fff;
+    height:60px;
     width: 100%;
-
 }
 
-#primero {
+#cabeceraMenu {
     display: flex;
     align-items: center; /* Centra verticalmente los elementos dentro de #primero */
 }
-
-.circle {
+#cabeceraMenu .circle {
     width: 30px; /* Ancho del círculo */
     height: 30px; /* Altura del círculo */
     border-radius: 50%; /* Hace que sea un círculo */
@@ -52,25 +52,54 @@ html, body {
     justify-content: center; /* Centra horizontalmente */
     align-items: center; /* Centra verticalmente */
 }
-.navbar-brand {
-
-    border:solid red 2px;
-}
-.circle img {
+#cabeceraMenu .circle img {
     width: 100%; /* Ajusta el ancho de la imagen al 100% del círculo */
     height: 100%; /* Ajusta la altura de la imagen al 100% del círculo */
     object-fit: cover; /* Ajusta la imagen para cubrir el círculo sin deformaciones */
 }
+
+#cabeceraTitulo {
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    height: 60px;
+    margin-top:-60px;
+}   
+
+    #cabeceraTitulo span {
+        color:white;
+        margin: 0; /* Elimina el margen para evitar desplazamientos inesperados */
+    }
+
+#cabeceraTitulo span {   
+    font-size: 30px;
+    text-shadow: 1px 1px 1px white;
+}
+
+#cabeceraMenu i {
+    color: white; 
+    font-size:20px;
+}
+
 /*Estilos para mi perfil*/
-#Perfil {
-    margin-right: 20px; 
+.cabeceraSalir .Perfil {
+    border:solid red blue;
     border-radius: 10px;
     transition: box-shadow 0.3s ease-in-out;
 }
 
-    #Perfil:hover {
-        box-shadow: 0 0 3px white;
-    }
+.Perfil:hover {
+    box-shadow: 0 0 3px white;
+}
+
+
+
+
+.navbar-brand {
+
+    border:solid red 2px;
+}
+
 
 /* Estilos del cuerpo y sidebar */
 #Cuerpo {
