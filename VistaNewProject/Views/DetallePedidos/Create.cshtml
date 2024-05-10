@@ -1,0 +1,144 @@
+﻿@model VistaNewProject.Models.Detallepedido
+
+@{
+    ViewData["Title"] = "Create";
+   
+}
+
+@if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
+{
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: '@TempData["ErrorMessage"]',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    </script>
+}
+
+
+
+
+<h1>Create</h1>
+
+<h4>Detallepedido</h4>
+<hr />
+
+
+<form asp-action="CreatePost" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="d-none">
+        <label asp-for="PedidoId" class="control-label"></label>
+        <input type="text" id="pedidoId" name="pedidoId" value="@ViewBag.UltimoPedidoId" />
+        <span asp-validation-for="PedidoId" class="text-danger"></span>
+    </div>
+    <div class="row">
+           
+
+        <div class="col-6">
+            <label asp-for="ProductoId" class="control-label"></label>
+            <input asp-for="ProductoId" name="ProductoId" class="form-control" list="ProductosList" />
+            <datalist id="ProductosList">
+                @foreach (var productos in ViewBag.Producto)
+                {
+                    <option value="@productos.ProductoId">@productos.NombreProducto</option>
+                }
+            </datalist>
+            <span asp-validation-for="ProductoId" class="text-danger"></span>
+        </div>
+            <div class="col-6">
+                <label asp-for="Cantidad" class="control-label"></label>
+                <input asp-for="Cantidad" class="form-control" />
+                <span asp-validation-for="Cantidad" class="text-danger"></span>
+            </div>
+            <div class="col-4">
+                <label asp-for="PrecioUnitario" class="control-label"></label>
+            <input asp-for="PrecioUnitario" id="PrecioUnitario" class="form-control" readonly/>
+                <span asp-validation-for="PrecioUnitario" class="text-danger"></span>
+            </div>
+
+        <div class="col-4">
+            <label asp-for="UnidadId" class="control-label"></label>
+            <input asp-for="UnidadId" name="UnidadId" id="UnidadId" class="form-control" list="UnidadIdList" />
+            <datalist id="UnidadIdList">
+                @foreach (var unidad in ViewBag.Unidad)
+                {
+                    <option value="@unidad.UnidadId">@unidad.NombreUnidad</option>
+                }
+            </datalist>
+            <span asp-validation-for="UnidadId" class="text-danger"></span>
+        </div>
+
+        <div class="col-2 mt-4">
+            <div class="col-4 mb-2">
+                <button type="button" class="btn btn-primary p-2"  onclick="agregarDetalle('@Url.Action("CrearDetalles", "DetallePedidos")')">Agregar</button>
+            </div>
+
+
+        </div>
+
+
+        <div class="row mt-5">
+          
+
+            <div class="col-4 mt-5">
+                <button type="submit" id="guardarButton" class="btn btn-primary p-2" style="margin-left: 200px; ">Guardar</button>
+            </div>
+
+        </div>
+
+
+    </div>
+
+   
+
+
+
+</form>
+
+<div class="row mt-5">
+    <form asp-action="Cancelar" method="post">
+        <div class="col-4 mt-5 ">
+            <button type="submit" class="btn btn-primary p-2" style="margin-left: 300px;">Cancelar</button>
+        </div>
+    </form>
+
+  
+
+</div>
+
+
+
+<div class=" mt-4" id="listaDetallesPedido">
+    <!-- Aquí se mostrarán los detalles de pedido agregados en una tabla -->
+    <table class="table table-custom text-center">
+        <thead>
+            <tr>
+                <th>PedidoId</th>
+                <th>ProductoId</th>
+                <th>Cantidad</th>
+                <th>PrecioUnitario</th>
+                <th>Unidad</th>
+                <th>Subtotal</th>
+                <th>Acciones</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Los detalles del pedido se mostrarán aquí -->
+        </tbody>
+    </table>
+</div>
+
+
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<script src="~/js/detallespedidos/detallespedidos.js"></script>
+

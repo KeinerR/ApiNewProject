@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography.X509Certificates;
 using VistaNewProject.Services;
 using X.PagedList;
 
@@ -58,6 +59,19 @@ namespace VistaNewProject.Controllers
             }
 
 
+
+        }
+
+        [HttpGet]
+
+        public async Task<IActionResult> Create()
+        {
+
+            var usuario= await _client.GetDomicilioAsync();
+
+         ViewBag.Usuario = usuario;
+
+            return View();
         }
     }
 }
