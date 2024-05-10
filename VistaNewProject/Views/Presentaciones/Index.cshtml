@@ -1,0 +1,357 @@
+﻿@using X.PagedList
+@model X.PagedList.IPagedList<VistaNewProject.Models.Presentacion>
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<br />
+
+<div class="d-flex justify-content-between">
+   <!-- Formulario de búsqueda a la izquierda -->
+    <div class="mr-auto">
+        <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
+            <div class="input-group">
+                <input id="buscarPresentacion" type="text" class="form-control" placeholder="Buscar presentacion" aria-label="Search" aria-describedby="button-addon2">
+                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Botón para abrir el modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#PresentacionModal">
+        <i class="fas fa-plus-circle"></i>  Agregar Presentacion
+    </button>
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="PresentacionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="btnModalAgregarPresentacion">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModal">Agregar Presentacion</h5>
+                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <div id="MensajeInicial"></div>
+            <form asp-controller="Presentaciones" asp-action="Create" method="post">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <input type="hidden" id="PresentacionId" name="presentacionId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NombrePresentacion" class="control-label">Tipo de presentacion</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="NombrePresentacion" name="nombrePresentacion" class="form-control" />
+                        <span  class="text-danger"></span>
+                    </div>
+                     <div class="form-group">
+                        <label for="Contenido" class="control-label">Contenido</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="Contenido" name="contenido" class="form-control" />
+                        <span  class="text-danger"></span>
+                    </div>
+                     <div class="form-group">
+                        <label for="CantidadPorPresentacion" class="control-label">Cantidad de productos por unidad de presentacion</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="CantidadPorPresentacion" name="cantidadPorPresentacion" class="form-control" />
+                        <span  class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="DescripcionPresentacion" class="control-label">Descripcion Presentacion</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="DescripcionPresentacion" name="descripcionPresentacion" placeholder="" class="form-control" />
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-group" id="estadoPresentacion" style="display:none">
+                        <label for="EstadoPresentacion" class="control-label">Estado</label>
+                        <select id="EstadoPresentacion" name="estadoPresentacion" class="form-control">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                   
+                    <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                 
+                </div>
+
+
+
+            </form>
+
+        </div>
+
+        <div class="modal-content" id="FormActualizarPresentacion" style="display:none;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModalPresentacion">Actualizar Presentacion</h5>
+                <button type="button" class="btn-close" onclick="limpiarFormulario()" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="MensajeInicialActPresentacion"></div>
+            <form asp-controller="Presentaciones" asp-action="Update" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input id="PresentacionIdAct" name="presentacionIdAct" class="form-control" type="hidden" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NombrePresntacionAct" class="control-label">Nombre Presntacion</label>
+                        <input type="text" id="NombrePresntacionAct" name="nombrepresentacionAct" class="form-control" autocomplete="off" />
+                        <span class="text-danger" id="mensajeNombrePresentacionAct"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ContenidoAct" class="control-label">Contenido</label>
+                        <input type="text" id="ContenidoAct" name="contenidoAct" class="form-control" autocomplete="off" />
+                        <span class="text-danger" id="mensajeContenidoAct"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="CantidadPorPresentacionAct" class="control-label">Cantidad de productos de la  presentacion</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="CantidadPorPresentacionAct" name="cantidadPorPresentacionAct" class="form-control" />
+                        <span class="text-danger" id="mensajeCantidadpresentacionAct"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="DescripcionPresentacionAct" class="control-label">Descripcion Presentacion</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="DescripcionPresentacionAct" name="descripcionPresentacionAct" placeholder="" class="form-control" />
+                        <span class="text-danger" id="mensajeDescripcionPresentacionAct"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="EstadoPresentacionAct" class="control-label">Estado</label>
+                        <select id="EstadoPresentacionAct" name="estadoPresentacionAct" class="form-control">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                        <span class="text-danger" id="mensajeEstadoCategoriaAct"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="btnEditarPresntacion">Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr>
+
+<table class="table table-custom text-center">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>NOMBRE PRESENTACION</th>
+            <th>CONTENIDO</th>
+            <th>CANTIDAD X PRESENTACION</th>
+            <th>ESTADO</th>
+            <th>DESCRIPCION PRESENTACION</th>
+            <th>ACCIONES</th>
+        </tr>
+    </thead>
+    <tbody class="text-center">
+        @{
+            int contador = ViewBag.Contador; // Obtener el valor del contador desde la ViewBag
+        }
+        @foreach (var item in Model)
+        {
+            <tr class="presentacionesPaginado">
+                <td>
+                    @contador <!-- Muestra el valor del contador -->
+                    @{
+                        contador++; // Incrementa el contador para la próxima iteración
+                    }
+                </td>
+                <td class="presentacion-id" style="display: none;">@Html.DisplayFor(modelItem => item.PresentacionId)</td>
+                <td class="nombre-presentacion">@Html.DisplayFor(modelItem => item.NombrePresentacion)</td>
+                <td class="contenido-empaque">@Html.DisplayFor(modelItem => item.Contenido)</td>
+                <td class="contenido-empaque">@Html.DisplayFor(modelItem => item.CantidadPorPresentacion)</td>
+                <td class="text-center align-middle">
+                    <label class="switch">
+                        <input type="checkbox" @(item.EstadoPresentacion != 0 ? "checked" : "") onchange="actualizarEstadoPresentacion('@item.PresentacionId', this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </td>
+
+                <td class="descripcion-presentacion">@Html.DisplayFor(modelItem => item.DescripcionPresentacion)</td>
+
+                <td class="contenedorBotonesTabla">
+                    <button class="btn" id="btnEdit" data-presentacion-id="@item.PresentacionId" data-bs-toggle="modal" data-bs-target="#PresentacionModal">
+                        <i class="fas fa-edit"></i> <!-- Icono de edición -->
+                    </button>
+                    <a asp-action="Details" asp-route-id="@item.PresentacionId" id="btnDetail" class="btn"><i class="fa-solid fa-file"></i></a>
+                  
+
+                    <form style="display:inline-block;" asp-controller="Presentaciones" asp-action="Delete" method="post" class="delete-form">
+                        @Html.Hidden("id", item.PresentacionId)
+                        <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
+                        <button type="button" onclick="confirmarEliminacion()" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                    </form>
+                </td>
+            </tr>
+        }
+        @{
+            var presentaciones = ViewData["Presentaciones"] as List<Presentacion>;
+            if (presentaciones != null)
+            {
+                foreach (var presentacion in presentaciones)
+                {
+                    <tr class="Presentacion" style="display:none;">
+                        <td>@presentacion.PresentacionId</td>
+                        <td>@presentacion.NombrePresentacion</td>
+                        <td>@presentacion.Contenido</td>
+                        <td>@presentacion.CantidadPorPresentacion</td>
+                        <td class="text-center align-middle">
+                            <label class="switch">
+                                <input type="checkbox" @(presentacion.EstadoPresentacion != 0 ? "checked" : "") onchange="actualizarEstadoPresentacion('@presentacion.PresentacionId', this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </td>
+
+
+                        <td>@presentacion.DescripcionPresentacion</td>
+
+                        <td class="contenedorBotonesTabla">
+                            <button class="btn" id="btnEdit" data-presentacion-id="@presentacion.PresentacionId" data-bs-toggle="modal" data-bs-target="#PresentacionModal">
+                                <i class="fas fa-edit"></i> <!-- Icono de edición -->
+                            </button>
+                            <a asp-action="Details" asp-route-id="@presentacion.PresentacionId" id="btnDetail" class="btn"><i class="fa-solid fa-file"></i></a>
+
+
+                            <form style="display:inline-block;" asp-controller="Presentaciones" asp-action="Delete" method="post" class="delete-form">
+                                @Html.Hidden("id", presentacion.PresentacionId)
+                                <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
+                                <button type="button" onclick="confirmarEliminacion()" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+
+<div class="pagination-container mt-2">
+    @if (Model != null && Model.PageCount > 1)
+    {
+        <div class="d-flex justify-content-center mb-5">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <!-- Botón para ir a la primera página -->
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="First">
+                                <span aria-hidden="true">Primero</span>
+                            </a>
+                        </li>
+                    }
+                    <!-- Botón para la página anterior (oculto en la página 1) -->
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                        </a>
+                    </li>
+                    <!-- Iterar sobre las páginas disponibles -->
+                    @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                            <a class="page-link" href="?page=@i">@i</a>
+                        </li>
+                    }
+                    <!-- Botón para la página siguiente (oculto en la última página) -->
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                        </a>
+                    </li>
+                    <!-- Botón para ir a la última página -->
+                    @if (Model.PageNumber < Model.PageCount)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@Model.PageCount" aria-label="Last">
+                                <span aria-hidden="true">Último</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    }
+</div>
+
+<script src="~/js/presentaciones.js"></script>
+@if (!string.IsNullOrEmpty(TempData["Mensaje"]?.ToString()))
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["Mensaje"]
+    </div>
+
+
+    <script>
+        // Mostrar SweetAlert cuando haya un mensaje en TempData["Mensaje"]
+        Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Se ha registrado la presentacion exitosamente",
+            showConfirmButton: false,
+            timer: 1500
+        }).then((result) => {
+            // Después de cerrar el SweetAlert, abrimos el modal nuevamente
+            $('#PresentacionModal').modal('show');
+        });
+
+
+
+
+
+
+
+    </script>
+}
+
+<script>
+
+
+    // Función para mostrar el modal de confirmación antes de eliminar
+    function confirmarEliminacion() {
+        // Mostrar modal de confirmación
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminarlo!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, enviar el formulario de eliminación
+                $(".delete-form").submit();
+            }
+        });
+    }
+
+
+
+</script>
+
+@if (TempData["SweetAlertMessage"] != null)
+{
+    <script>
+        Swal.fire({
+            position: "center",
+            icon: "@TempData["SweetAlertIcon"]",
+            title: "@TempData["SweetAlertTitle"]",
+            text: "@TempData["SweetAlertMessage"]",
+            showConfirmButton: false, // Mostrar botón de confirmación
+            timer: 3000
+        })
+    </script>
+}

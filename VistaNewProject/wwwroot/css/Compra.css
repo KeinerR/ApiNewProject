@@ -1,0 +1,289 @@
+﻿/*DIV ventana modal contenedor de ventana modal y todos sus posibles div*/
+#CompraVista {
+    margin: auto;
+    margin-top: 10px;
+}
+
+/*DIV con los input para agregar la compra incluido botones */
+#PrincipalCompra {
+    padding-top: 2px;
+    padding-bottom: 10px;
+    width:auto;
+    min-width:100%;
+}
+
+/*DIV Boton de agregar productos*/
+#agregarDetalle {
+    display: block;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding: 0px;
+}
+
+#agregarDetalleIcono {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+/*DIV Botones de actualizar compra*/
+#actualizarCompra {
+    margin-top: -36px;
+    height: 40px;
+}
+
+    #actualizarCompra .btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #actualizarCompra #reducir {
+        height: 36px;
+    }
+
+    #actualizarCompra #btnActualizarCompra {
+        height: 36px;
+        margin-left: 10px;
+        border-radius: 20px;
+    }
+
+
+/*DIV para generar un espacio*/
+.EspacioForm {
+    height: 20px;
+}
+/*estilos para los footer en la ventana modal*/
+.contenedorFooter {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    padding: 0px;
+}
+
+/*Div para agregar detalles a la compra desde el producto hasta la tabla donde se pueden ver dichos productos*/
+#DetallesCompra {
+    padding-top: 2px;
+    border: solid red 2px;
+}
+
+/**Div que contiene los botones de para registrar la compra expandirla, reducirla y limpiarla de ser necesario*/
+#verCompra {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px; /* Ajusta el espacio interno según sea necesario */
+    border: solid red 2px;
+}
+
+    #verCompra .ml-auto {
+        display: inline-block;
+        gap: 10px; /* Ajusta el espacio entre los botones */
+    }
+
+    #verCompra .mr-auto {
+        display: inline-block;
+        margin-left: auto; /* Hace que se vaya a la esquina izquierda */
+    }
+
+/*Diseño input de valor total*/
+#ValorTotal {
+    pointer-events: none;
+    user-select: none; /* Evita la selección de texto */
+    font-size: 20px;
+    border-radius: 20px;
+    border: solid red 2px;
+    padding: 0px;
+    width: 200px;
+}
+
+    #ValorTotal::selection {
+        background-color: transparent;
+    }
+
+#ValorTotalTitulo {
+    padding-bottom: 0px;
+    margin: 0px;
+    margin-right: 20px;
+}
+
+
+/*Diseños tabla de detalles producto*/
+
+/*Div que contiene todos los elemetos menos el titulo de la modal*/
+#TablaDetalles {
+ 
+}
+/*Div que contiene la tabla y los botones de paginacion*/
+#contenedorTablaDetalles {
+    min-width: 100%;
+    max-width: 100%;
+}
+
+#contenedorTablaDetallesBotones {
+    width:100%;
+}
+.paginacion-btn {
+    height:30px;
+    border-radius: 20px; /* Elimina la esquina redondeada */
+    font-size: 15px; /* Ajusta el tamaño de la fuente */
+    background:none;
+    border:1px solid black;
+}
+    .paginacion-btn:hover {
+        background-color: #0069d9; /* Cambia el color de fondo al pasar el mouse */
+        border-color: #0062cc; /* Cambia el color del borde al pasar el mouse */
+    }
+
+    .paginacion-btn:focus {
+        box-shadow: none; /* Elimina la sombra al enfocar */
+    }
+
+
+
+/*Estilos para que se vean o no los elemtos al momento de cargar la pagina*/
+
+/*Hace que el elemnto desaparezca con todo su contenido*/
+.noVisualizar {
+    display: none;
+}
+
+/*El contenido sigue presenta pero no se puede ver */
+.noVer {
+    visibility: hidden;
+    display: none;
+}
+
+.noSee {
+    visibility: hidden;
+    display: none;
+}
+
+
+/*Input cantidad*/
+#CampoCantidad input {
+    height: 40px;
+    border-radius: 20px;
+    max-width: 85px;
+    min-width: 50px;
+}
+    #CampoCantidad input:hover {
+        border: 1px solid #3EAE3E;
+    }
+
+/*Botones mas y menos que acompañan al input de cantidad*/
+#btnMas, #btnMenos {
+    display: inline-block;
+    width: 25px;
+    height: 35px;
+    margin-left: 2px;
+    padding: 5px;
+}
+
+    #btnMas:hover, #btnMenos:hover {
+        background: #ADD8E6;
+    }
+
+
+
+ 
+/*Div que contiene el input de precio de compra y precio de venta por producto y el bton de calcular*/
+.contenedorCalculo {
+    display: flex;
+    align-items: center; /* Alinea los elementos verticalmente */
+ 
+}
+    
+    .contenedorCalculo input {
+        margin-right: -30px; /* Espacio entre el input y el botón */
+    }
+
+.btn-calculo {
+    margin-left: auto;
+    border: none;
+    border-radius: 0 10px 10px 0;
+    width: 40px;
+    height: 38px;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    outline: none; /* Quita el borde de enfoque */
+}
+
+    .btn-calculo:hover {
+        background-color: #0056b3;
+        transform: translateY(-1px);
+    }
+
+/*Diseño para etiqueta label de todos los input*/
+#CompraVista label {
+    display: inline-flex; /* Mantener el display flex para centrar verticalmente */
+    align-items: center; /* Centrar verticalmente */
+}
+/*Asterisco de campo vacio*/
+.Mensaje {
+    color: red;
+    height:10px;
+    font-size: 25px;
+    margin-top: 6px;
+    margin-left:5px;
+    white-space: nowrap; /* Evitar que el texto se desborde a la siguiente línea */
+    line-height: 1; /* Evitar que el span afecte el tamaño del label */
+    display: flex; /* Hacer el span un contenedor flex */
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+}
+    .Mensaje:hover {
+        color: blue;
+        transform: translateY(-1px); /* Mover el elemento hacia arriba 1px al colocar el cursor sobre él */
+        cursor: pointer;
+    }
+
+
+/*Estilos de SWEET ALERT que se muestra al momento de agregar el detalle*/
+#divAlertaConfirmar p {
+    border: solid black 1px;
+    border-radius: 20px;
+    margin: 10px 0; /* Agrega margen superior e inferior para separar los párrafos */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Sombra */
+    font-size:18px;
+}
+
+#divAlerta ul {
+    list-style-type: none;
+    margin-top: 20px;
+    padding:0;
+    width: 400PX;
+    border-bottom:solid 1px black;
+}
+#divAlerta li {
+    list-style-type: none;
+    border-top: solid 1px black;
+    margin-bottom:7px;
+    width:400px; 
+}
+.textoAlerta {
+    color: black;
+    font-size: 18px;
+}
+
+
+
+
+/* Media query para un tamaño de ventana máximo de 960px (zoom 200%) */
+@media (max-width: 911px) {
+    .col-3 #btnMas,
+    .col-3 #btnMenos {
+        display: none;
+    }
+
+    .btn-calculo {
+        border-radius: 10px;
+        width: 32px;
+        height: 33px;
+    }
+}
+
+

@@ -1,0 +1,69 @@
+﻿@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<VistaNewProject.Models.Producto>
+
+@{
+    ViewData["Title"] = "Detalles de Categoria";
+}
+
+<h1>Detalles de Categoria</h1>
+<a asp-action="Index" class="btn btn-primary btn-sm">
+    <i class="fas fa-arrow-left"></i> Volver
+</a>
+<!-- Agrega esto en tu enlace de "Editar" en Details.cshtml -->
+@if (ViewBag.Categoria != null && ViewBag.Categoria.CategoriaId != null)
+{
+    <a href="#" onclick="redireccionarYEditar('@ViewBag.Categoria.CategoriaId', 'Categorias','marca')" class="btn btn-warning"><i class="fa-solid fa-pen"></i> Editar</a>
+}
+else
+{
+    <p>El objeto ViewBag.Categoria es nulo o su propiedad CategoriaId es nula.</p>
+}
+
+
+<div>
+    <h3>Categoria ID:</h3> <p>@ViewBag.Categoria.CategoriaId</p>
+    <h3>Nombre de la Categoria:</h3><p>@ViewBag.Categoria.NombreCategoria</p>
+</div>
+
+<h4>Productos asociados:</h4>
+
+@if (Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Cantidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var producto in Model)
+            {
+                <tr>
+                    <td>@producto.ProductoId</td>
+                    <td>@producto.NombreProducto</td>
+                    <td>@producto.CantidadTotal</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="pagination-detail">
+        @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Categoria.CategoriaId, page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 }) + "' class='prev-next " + (Model.HasPreviousPage ? "" : "disabled") + "'>Anterior</a>")
+
+        @for (int i = 1; i <= Model.PageCount; i++)
+        {
+            <a href="@Url.Action("Details", new { id = ViewBag.Categoria.CategoriaId, page = i })" class="@(i == Model.PageNumber ? "active" : "")">@i</a>
+        }
+
+        @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Categoria.CategoriaId, page = Model.HasNextPage ? Model.PageNumber + 1 : Model.PageCount }) + "' class='prev-next " + (Model.HasNextPage ? "" : "disabled") + "'>Siguiente</a>")
+    </div>
+
+
+}
+else
+{
+    <p>No se encontraron productos asociados a esta categoria.</p>
+}
+
+<script src="~/js/Detalle.js"></script>

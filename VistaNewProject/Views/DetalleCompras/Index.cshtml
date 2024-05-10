@@ -1,0 +1,105 @@
+﻿@model IEnumerable<VistaNewProject.Models.Detallecompra>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<!-- Botón para abrir el modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#DetalleCompraModal">
+    Agregar DetalleCompra
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="DetalleCompraModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModal">Agregar DetalleCompra</h5>
+                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <form asp-controller="DetalleCompras" asp-action="" method="post">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <input type="hidden" id="DetalleCompraId" name="detalleCompraId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="CompraId" class="control-label">Compra Id</label>
+                        <input type="text" id="CompraId" name="compraId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="ProductoId" class="control-label">Producto Id</label>
+                        <input type="text" id="ProductoId" name="productoId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Cantidad" class="control-label">Cantidad</label>
+                        <input type="text" id="Cantidad" name="cantidad" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
+                    <button type="button" onclick="agregarDetalleCompra()" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" onclick="ActualizarDetalleCompra()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar DetalleCompra</button>
+                </div>
+
+
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                DetalleCompra Id
+            </th>
+            <th>
+                Compra Id
+            </th>
+            <th>
+                Producto Id
+            </th>
+              <th>
+                Unidad Id
+            </th>
+            <th>
+                Cantidad
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DetalleCompraId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CompraId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductoId)
+                </td>
+                   <td>
+                    @Html.DisplayFor(modelItem => item.UnidadId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cantidad)
+                </td>
+                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                <td>
+                    <button class="btn btn-warning" onclick="obtenerDatosDetalleCompra('@item.DetalleCompraId')" data-cliente-id="@item.DetalleCompraId" data-bs-toggle="modal" data-bs-target="#DetalleCompraModal">Editar</button>
+                    <button class="btn btn-danger" onclick="eliminarDetalleCompra('@item.DetalleCompraId')">Eliminar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="~/js/detalleCompras.js"></script>

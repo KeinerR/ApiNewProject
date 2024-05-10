@@ -1,0 +1,338 @@
+﻿@using X.PagedList
+@model X.PagedList.IPagedList<VistaNewProject.Models.Categoria>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br />
+
+<div class="d-flex justify-content-between">
+    <!-- Formulario de búsqueda a la izquierda -->
+    <div class="mr-auto">
+        <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
+            <div class="input-group">
+                <input id="buscarCategoria" type="text" class="form-control" placeholder="Buscar categoria" aria-label="Search" aria-describedby="button-addon2">
+                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Botón para abrir el modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CategoriaModal">
+        <i class="fas fa-plus-circle"></i> Agregar Categoria
+    </button>
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="CategoriaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="CategoriaAgregar">
+            <div class="modal-header" style="background-color:#878AB3">
+                <h5 class="modal-title" id="TituloModal" style="color: white ">Agregar Categoria</h5>
+                <button type="button" onclick="limpiarFormulario()" data-bs-dismiss="modal" aria-label="Close" class="btnclose " style="border-radius: 5px; border: 3px solid #DB5461;  background-color: #DB5461; ;">
+                    <i class="fa-solid fa-xmark" style="color: white;"></i>
+                </button>
+
+
+            </div>
+            <div id="MensajeInicial"></div>
+            <form asp-controller="Categorias" asp-action="Create" method="post">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <input type="hidden" id="CategoriaId" name="categoriaId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NombreCategoria" class="control-label">Nombre Categoria</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="NombreCategoria" name="nombreCategoria" class="form-control" />
+                        <span id="NombreMarca" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" id="Estadocategoria" style="display:none">
+                        <label for="EstadoCategoria" class="control-label">Estado Categoria</label>
+                        <select id="EstadoCategoria" name="estadoCategoria" class="form-control">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                        <span id="MensajeEstadoCategoria" class="text-danger"></span>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                </div>
+
+
+
+            </form>
+
+        </div>
+
+        <div class="modal-dialog">
+        <div class="modal-content" id="FormActualizarCategoria" style="display:none;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModalCategoria">Actualizar Categoría</h5>
+                <button type="button" class="btn-close" onclick="limpiarFormularioCategoria()" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="MensajeInicialActCategoria"></div>
+            <form asp-controller="Categorias" asp-action="Update" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input id="CategoriaIdAct" name="categoriaIdAct" class="form-control" type="hidden" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NombreCategoriaAct" class="control-label">Nombre categoría</label>
+                        <input type="text" id="NombreCategoriaAct" name="nombreCategoriaAct" class="form-control" autocomplete="off" />
+                        <span class="text-danger" id="mensajeNombreCategoriaAct"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="EstadoCategoriaAct" class="control-label">Estado</label>
+                        <select id="EstadoCategoriaAct" name="estadoCategoriaAct" class="form-control">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                        <span class="text-danger" id="mensajeEstadoCategoriaAct"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="btnEditarCategoria">Actualizar</button>
+                </div>
+            </form>
+        </div>
+        </div>
+
+    </div>
+</div>
+
+
+<br />
+<hr>
+
+<table class="table table-custom text-center">
+    <thead>
+        <tr>
+            <th>
+                #
+            </th>
+            <th class="d-none">
+                categoria Id
+            </th>
+            <th>
+                NOMBRE CATEGORIA
+            </th>
+            <th>
+                ESTADO
+            </th>
+            <th>
+                ACCIONES
+            </th>
+        </tr>
+    </thead>
+    <tbody class="text-center">
+        @{
+            int contador = ViewBag.Contador; // Obtener el valor del contador desde la ViewBag
+        }
+        @foreach (var item in Model)
+        {
+            <tr class="categoriasPaginado">
+                <td>
+                    @contador <!-- Muestra el valor del contador -->
+                    @{
+                        contador++; // Incrementa el contador para la próxima iteración
+                    }
+                </td>
+                <td class="d-none categoria-id">
+                    @Html.DisplayFor(modelItem => item.CategoriaId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NombreCategoria)
+                </td>
+                <td class="text-center align-middle">
+                    <label class="switch">
+                        <input type="checkbox" @(item.EstadoCategoria != 0 ? "checked" : "") onchange="actualizarEstadoCategoria('@item.CategoriaId',this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                    @Html.DisplayFor(modelItem => item.EstadoCategoria)
+                </td>
+                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                <td class="contenedorBotonesTabla" >
+                    <button class="btn botonEditarCategoria" id="btnEdit" data-categoria-id="@item.CategoriaId" data-bs-toggle="modal" data-bs-target="#CategoriaModal"><i class="fas fa-edit"></i></button>
+                    <a asp-action="Details botonDetalleCategoria" asp-route-id="@item.CategoriaId" id="btnDetail" class="btn"><i class="fa-solid fa-file"></i></a>
+                    <!-- Dentro del bucle foreach en tu vista Razor -->
+                    <form style="display:inline-block;" asp-controller="Categorias" asp-action="Delete" method="post" class="delete-form">
+                        @Html.Hidden("id", item.CategoriaId)
+                        <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
+                        <button type="button" onclick="confirmarEliminacion()" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                    </form>
+
+                </td>
+            </tr>
+        }
+        @{
+            var categorias = ViewData["Categorias"] as List<Categoria>;
+            if (categorias != null)
+            {
+                foreach (var categoria in categorias)
+                {
+                    <tr class="Categorias" style="display:none;">
+                        <td>@categoria.CategoriaId</td>
+                        <td>@categoria.NombreCategoria</td>
+
+                        <td class="text-center align-middle">
+                            <label class="switch">
+                                <input type="checkbox" @(categoria.EstadoCategoria != 0 ? "checked" : "") onchange="actualizarEstadoCategoria('@categoria.CategoriaId',this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                            @Html.DisplayFor(modelItem => categoria.EstadoCategoria)
+                        </td>
+                        <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                        <td class="contenedorBotonesTabla">
+                            <button class="btn botonEditarCategoria" id="btnEdit" data-categoria-id="@categoria.CategoriaId" data-bs-toggle="modal" data-bs-target="#CategoriaModal"><i class="fas fa-edit"></i></button>
+                            <a asp-action="Details botonDetalleCategoria" asp-route-id="@categoria.CategoriaId" id="btnDetail" class="btn"><i class="fa-solid fa-file"></i></a>
+                            <!-- Dentro del bucle foreach en tu vista Razor -->
+                            <form style="display:inline-block;" asp-controller="Categorias" asp-action="Delete" method="post" class="delete-form">
+                                @Html.Hidden("id", categoria.CategoriaId)
+                                <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
+                                <button type="button" onclick="confirmarEliminacion()" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+<div class="pagination-container mt-2">
+    @if (Model != null && Model.PageCount > 1)
+    {
+        <div class="d-flex justify-content-center mb-5">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <!-- Botón para ir a la primera página -->
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="First">
+                                <span aria-hidden="true">Primero</span>
+                            </a>
+                        </li>
+                    }
+                    <!-- Botón para la página anterior (oculto en la página 1) -->
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                        </a>
+                    </li>
+                    <!-- Iterar sobre las páginas disponibles -->
+                    @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                            <a class="page-link" href="?page=@i">@i</a>
+                        </li>
+                    }
+                    <!-- Botón para la página siguiente (oculto en la última página) -->
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                        </a>
+                    </li>
+                    <!-- Botón para ir a la última página -->
+                    @if (Model.PageNumber < Model.PageCount)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@Model.PageCount" aria-label="Last">
+                                <span aria-hidden="true">Último</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    }
+</div>
+
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="~/js/categorias.js"></script>
+
+@if (!string.IsNullOrEmpty(TempData["Mensaje"]?.ToString()))
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["Mensaje"]
+    </div>
+
+
+    <script>
+        // Mostrar SweetAlert cuando haya un mensaje en TempData["Mensaje"]
+        Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Se ha registrado la marca exitosamente",
+            showConfirmButton: false,
+            timer: 1500
+        }).then((result) => {
+            // Después de cerrar el SweetAlert, abrimos el modal nuevamente
+            $('#CategoriaModal').modal('show');
+        });
+
+
+
+
+
+
+
+    </script>
+}
+
+@if (TempData["SweetAlertMessage"] != null)
+{
+    <script>
+        Swal.fire({
+            position: "center",
+            icon: "@TempData["SweetAlertIcon"]",
+            title: "@TempData["SweetAlertTitle"]",
+            text: "@TempData["SweetAlertMessage"]",
+            showConfirmButton: false, // Mostrar botón de confirmación
+            timer: 3000
+        })
+    </script>
+}
+
+
+<script>
+
+    // categorias.js
+
+    // Función para mostrar el modal de confirmación antes de eliminar
+    function confirmarEliminacion() {
+        // Mostrar modal de confirmación
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminarlo!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, enviar el formulario de eliminación
+                $(".delete-form").submit();
+            }
+        });
+    }
+
+
+
+</script>
+
+
+
+
+
+

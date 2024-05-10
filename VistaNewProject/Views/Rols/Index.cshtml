@@ -1,0 +1,177 @@
+﻿@using X.PagedList
+@model X.PagedList.IPagedList<VistaNewProject.Models.Rol>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br />
+
+<div class="d-flex justify-content-between">
+    <!-- Formulario de búsqueda a la izquierda -->
+    <div class="mr-auto">
+        <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
+            <div class="input-group">
+                <input id="buscarRol" type="text" class="form-control" placeholder="Buscar rol" aria-label="Search" aria-describedby="button-addon2">
+                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
+            </div>
+        </form>
+    </div>
+
+
+    <!-- Botón para abrir el modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#RolModal">
+        <i class="fas fa-plus-circle"></i>  Agregar Rol
+    </button>
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="RolModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModal">Agregar Rol</h5>
+                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <form asp-controller="Usuarios" asp-action="" method="post">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <input type="hidden" id="RolId" name="rolId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NombreRol" class="control-label">Nombre</label>
+                        <input type="text" id="NombreRol" name="nombreRol" class="form-control" />
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
+                    <button type="button" onclick="agregarRol()" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" onclick="ActualizarRol()" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Rol</button>
+                </div>
+
+
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<br />
+<hr>
+
+<table class="table table-custom text-center">
+    <thead>
+        <tr>
+            <th> #</th>
+            <th class="d-none">
+                Rol Id
+            </th>
+            <th>
+                NOMBRE
+            </th>
+            <th>
+                ACCIONES
+            </th>
+        </tr>
+    </thead>
+    <tbody class="text-center">
+        @{
+            int contador = ViewBag.Contador ?? 1;
+        }
+
+        @foreach (var item in Model)
+        {
+            <tr class="rolesPaginado">
+                <td>
+                    @contador
+                    @{
+                        contador++;
+                    }
+                </td>
+                <td class="rol-id" style="display: none;">@Html.DisplayFor(modelItem => item.RolId)</td>
+                <td class="nombre-rol">@Html.DisplayFor(modelItem => item.NombreRol)</td>
+                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                <td>
+                    <button class="btn btn-warning" onclick="ActualizarRol()" data-cliente-id="@item.RolId" data-bs-toggle="modal" data-bs-target="#RolModal"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-danger" onclick="eliminarRol('@item.RolId')"><i class="fas fa-trash-alt"></i></button>
+                </td>
+            </tr>
+        }
+        @{
+            var roles = ViewData["Roles"] as List<Rol>;
+            if (roles != null)
+            {
+                foreach (var rol in roles)
+                {
+                    <tr class="Roles" style="display:none;">
+                        <td>@rol.RolId</td>
+                        <td>@rol.NombreRol</td>
+
+                        <td>
+                            <button class="btn btn-warning" onclick="ActualizarRol()" data-cliente-id="@rol.RolId" data-bs-toggle="modal" data-bs-target="#RolModal"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-danger" onclick="eliminarRol('@rol.RolId')"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+
+<div class="pagination-container mt-2">
+    @if (Model != null && Model.PageCount > 1)
+    {
+        <div class="d-flex justify-content-center mb-5">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <!-- Botón para ir a la primera página -->
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="First">
+                                <span aria-hidden="true">Primero</span>
+                            </a>
+                        </li>
+                    }
+                    <!-- Botón para la página anterior (oculto en la página 1) -->
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                        </a>
+                    </li>
+                    <!-- Iterar sobre las páginas disponibles -->
+                    @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                            <a class="page-link" href="?page=@i">@i</a>
+                        </li>
+                    }
+                    <!-- Botón para la página siguiente (oculto en la última página) -->
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                        </a>
+                    </li>
+                    <!-- Botón para ir a la última página -->
+                    @if (Model.PageNumber < Model.PageCount)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@Model.PageCount" aria-label="Last">
+                                <span aria-hidden="true">Último</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    }
+</div>
+
+
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="~/js/rols.js"></script>

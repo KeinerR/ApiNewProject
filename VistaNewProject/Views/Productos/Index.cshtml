@@ -1,0 +1,386 @@
+﻿@using X.PagedList
+@model X.PagedList.IPagedList<VistaNewProject.Models.Producto>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br />
+
+<div class="d-flex justify-content-between">
+    <!-- Formulario de búsqueda a la izquierda -->
+    <div class="mr-auto">
+        <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
+            <div class="input-group">
+                <input id="buscarProducto" type="text" class="form-control" placeholder="Buscar producto" aria-label="Search" aria-describedby="button-addon2">
+                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
+            </div>
+        </form>
+    </div>
+
+
+    <!-- Botón para abrir el modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ProductoModal">
+       <i class="fas fa-plus-circle"></i>  Agregar Producto
+    </button>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="ProductoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModal">Agregar Producto</h5>
+                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <div id="MensajeInicial"></div>
+            <form asp-controller="Productoes" asp-action="" method="post">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <input type="hidden" id="ProductoId" name="productoId" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="MarcaId" class="control-label">Marca</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input list="marcas" id="MarcaId" name="marcaId" class="form-control" placeholder="Selecciona una marca..." onclick="showNoMarcasAlert()">
+                        <datalist id="marcas">
+                            @foreach (var item in ViewBag.Marcas)
+                            {
+                                @if (item.EstadoMarca != 0) // Solo mostramos las marcas que tienen estado diferente de 0
+                                {
+                                    <option value="@item.MarcaId">@item.NombreMarca</option>
+                                }
+                            }
+                        </datalist>
+
+
+                        <input type="hidden" id="MarcaIdHidden" name="marcaIdHidden">
+
+                    </div>
+                    <div class="form-group">
+                        <label for="CategoriaId" class="control-label">Categoria Id</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input list="categorias" id="CategoriaId" name="categoriaId" class="form-control" placeholder="Selecciona una categoria..." onclick="showCategorias()">
+                        <datalist id="categorias">
+                            @foreach (var item in ViewBag.Categorias)
+                            {
+                                @if (item.EstadoCategoria != 0)
+                                {
+                                    <option value="@item.CategoriaId">@item.NombreCategoria</option>
+                                }
+
+                            }
+
+
+
+
+                        </datalist>
+                        <input type="hidden" id="CategoriaIdHidden" name="categoriaIdHidden">
+                        <span class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="PresentacionId" class="control-label">Presentacion</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input list="presentaciones" id="PresentacionId" name="presentacionId" class="form-control" placeholder="Selecciona una presentación..." onclick="showNoPresentacionesAlert()">
+                        <datalist id="presentaciones">
+                            @foreach (var item in ViewBag.Presentaciones)
+                            {
+
+                                @if (item.EstadoPresentacion != 0)
+                                {
+                                    <option value="@item.PresentacionId">@($"{item.NombrePresentacion} x {item.Contenido}")</option>
+                                }
+
+                            }
+
+
+                        </datalist>
+                        <input type="hidden" id="PresentacionIdHidden" name="presentacionIdHidden">
+                        <span class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="NombreProducto" class="control-label">Nombre Producto</label>
+                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                        <input type="text" id="NombreProducto" name="nombreProducto" class="form-control" />
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-group d-none">
+                        <label for="CantidadTotal" class="control-label">Cantidad Total</label>
+                        <input type="text" id="CantidadTotal" name="cantidadTotal" class="form-control" />
+                    </div>
+                    <div class="form-group" id="Estado" style="display:none">
+                        <label for="EstadoProducto" class="control-label">Estado producto</label>
+                        <select id="EstadoProducto" name="estadoProduco" class="form-control">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Producto</button>
+                </div>
+
+
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<br />
+<hr>
+
+<table class="table table-custom text-center">
+    <thead>
+        <tr>
+            <th>
+                #
+            </th>
+            <th class="d-none">
+                producto Id
+            </th>
+            <th>
+                MARCA
+            </th>
+            <th>
+                CATEGORIA
+            </th>
+            <th>
+                PRESENTACION
+            </th>
+            <th>
+                NOMBREPRODUCTO
+            </th>
+            <th>
+                CANTIDAD
+                TOTALPORUNIDAD
+            </th>
+            <th>
+                ESTADOPRODUCTO
+            </th>
+            <th>
+                ACCIONES
+            </th>
+        </tr>
+    </thead>
+    <tbody class="text-center">
+        @foreach (var item in Model)
+        {
+            <tr class="productosPaginado">
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductoId)
+                </td>
+                <td>
+                    @foreach (var marca in ViewBag.Marcas)
+                    {
+                        @if (marca.MarcaId == item.MarcaId) // Verifica si el ID del rol coincide con el ID del rol del usuario
+                        {
+                            <span>@marca.NombreMarca</span> <!-- Muestra el nombre del rol si coincide -->
+                        }
+                    }
+                </td>
+                <td>
+                    @foreach (var categoria in ViewBag.Categorias)
+                    {
+                        @if (categoria.CategoriaId == item.CategoriaId) // Verifica si el ID del rol coincide con el ID del rol del usuario
+                        {
+                            <span>@categoria.NombreCategoria</span> <!-- Muestra el nombre del rol si coincide -->
+                        }
+                    }
+                </td>
+
+                <td>
+                    @foreach (var presentacion in ViewBag.Presentaciones)
+                    {
+                        @if (presentacion.PresentacionId == item.PresentacionId) // Verifica si el ID del rol coincide con el ID del rol del usuario
+                        {
+                            <span>@(presentacion.NombrePresentacion + "x" + presentacion.Contenido)</span> <!-- Muestra el nombre del rol si coincide -->
+                        }
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NombreProducto)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CantidadTotal)
+                </td>
+                <td class="text-center align-middle contenedorEstadoTabla">
+                    <label class="switch">
+                        <input type="checkbox" @(item.Estado != 0 ? "checked" : "") onchange="actualizarEstadoProducto('@item.ProductoId', this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </td>
+
+                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                <td>
+                    <button class="btn" id="btnEdit" data-presentacion-id="@item.ProductoId" data-bs-toggle="modal" data-bs-target="#ProductoModal"><i class="fas fa-edit"></i></button>
+                    <a asp-action="Details" asp-route-id="@item.ProductoId" class="btn" id="btnDetail"><i class="fas fa-file"></i></a>
+                    <button class="btn" id="btnDelete" data-presentacion-id="@item.ProductoId"><i class="fas fa-trash-alt"></i></button>
+                </td>
+            </tr>
+        }@{
+            var productos = ViewData["Productos"] as List<Producto>;
+            if (productos != null)
+            {
+                foreach (var producto in productos)
+                {
+                    <tr class="Productos" style="display:none;">
+                        <td>@producto.ProductoId</td>
+                        <td>
+                            @foreach (var marca in ViewBag.Marcas)
+                            {
+                                @if (marca.MarcaId == producto.MarcaId) // Verifica si el ID del rol coincide con el ID del rol del usuario
+                                {
+                                    <span>@marca.NombreMarca</span> <!-- Muestra el nombre del rol si coincide -->
+                                }
+                            }
+                        </td>
+                        <td>
+                            @foreach (var categoria in ViewBag.Categorias)
+                            {
+                                @if (categoria.CategoriaId == producto.CategoriaId) // Verifica si el ID del rol coincide con el ID del rol del usuario
+                                {
+                                    <span>@categoria.NombreCategoria</span> <!-- Muestra el nombre del rol si coincide -->
+                                }
+                            }
+                        </td>
+
+                        <td>
+                            @foreach (var presentacion in ViewBag.Presentaciones)
+                            {
+                                @if (presentacion.PresentacionId == producto.PresentacionId) // Verifica si el ID del rol coincide con el ID del rol del usuario
+                                {
+                                    <span>@(presentacion.NombrePresentacion + "x" + presentacion.Contenido)</span> <!-- Muestra el nombre del rol si coincide -->
+                                }
+                            }
+                        </td>
+
+                        <td>@producto.NombreProducto</td>
+                        <td>@producto.CantidadTotal</td>
+
+                        <td class="text-center align-middle contenedorEstadoTabla">
+                            <label class="switch">
+                                <input type="checkbox" @(producto.Estado != 0 ? "checked" : "") onchange="actualizarEstadoProducto('@producto.ProductoId', this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </td>
+
+                        <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                        <td>
+                            <button class="btn" id="btnEdit" data-presentacion-id="@producto.ProductoId" data-bs-toggle="modal" data-bs-target="#ProductoModal"><i class="fas fa-edit"></i></button>
+                            <a asp-action="Details" asp-route-id="@producto.ProductoId" class="btn" id="btnDetail"><i class="fas fa-file"></i></a>
+                            <button class="btn" id="btnDelete" data-presentacion-id="@producto.ProductoId"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+
+<div class="pagination-container mt-2">
+    @if (Model != null && Model.PageCount > 1)
+    {
+        <div class="d-flex justify-content-center mb-5">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <!-- Botón para ir a la primera página -->
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="First">
+                                <span aria-hidden="true">Primero</span>
+                            </a>
+                        </li>
+                    }
+                    <!-- Botón para la página anterior (oculto en la página 1) -->
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                        </a>
+                    </li>
+                    <!-- Iterar sobre las páginas disponibles -->
+                    @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                            <a class="page-link" href="?page=@i">@i</a>
+                        </li>
+                    }
+                    <!-- Botón para la página siguiente (oculto en la última página) -->
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                        </a>
+                    </li>
+                    <!-- Botón para ir a la última página -->
+                    @if (Model.PageNumber < Model.PageCount)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@Model.PageCount" aria-label="Last">
+                                <span aria-hidden="true">Último</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    }
+</div>
+
+
+<script src="~/js/productos.js"></script>
+<script>
+    // Función para mostrar el Sweet Alert si no hay marcas disponibles
+    function showNoMarcasAlert() {
+        var marcas = document.getElementById("marcas").getElementsByTagName("option");
+        if (marcas.length === 0) {
+            Swal.fire({
+                icon: 'info',
+                title: 'No hay marcas activas',
+                text: 'No hay marcas disponibles en este momento.',
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+    }
+
+    function showNoPresentacionesAlert() {
+        var Presenion = document.getElementById("presentaciones").getElementsByTagName("option");
+        if (Presenion.length === 0) {
+            Swal.fire({
+                icon: 'info',
+                title: 'No hay presentaciones activas',
+                text: 'No hay presentaciones disponibles en este momento.',
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+    }
+
+
+    function showCategorias() {
+        var categoria = document.getElementById("categorias").getElementsByTagName("option");
+        if (categoria.length === 0) {
+            Swal.fire({
+                icon: 'info',
+                title: 'No hay categorias activas',
+                text: 'No hay categorias disponibles en este momento.',
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+    }
+
+
+
+
+
+</script>

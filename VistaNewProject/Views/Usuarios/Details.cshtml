@@ -1,0 +1,125 @@
+﻿@model VistaNewProject.Models.Usuario
+@{
+    ViewData["Title"] = "Detalle";
+}
+
+<div>
+    <h4 class="title text-center">Detalle de datos de usuario</h4>
+    <div>
+        <a asp-action="Index" class="btn btn-primary btn-sm">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+        <!-- Agrega esto en tu enlace de "Editar" en Details.cshtml -->
+        <a href="#" onclick="redireccionarYEditar('@Model.UsuarioId', 'Usuarios','usuario')" class="btn btn-warning"><i class="fa-solid fa-pen"></i> Editare</a>
+
+
+
+
+    </div>
+    <hr />
+
+    <div class="table-responsive">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th scope="row" class="col-sm-2">
+                        Usuario ID
+                    </th>
+                    <td class="col-sm-10">
+                        @Html.DisplayFor(model => model.UsuarioId)
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-sm-2">
+                        Rol
+                    </th>
+                    <td class="col-sm-10">
+                        @if (ViewBag.roles != null)
+                        {
+                            var roles = ViewBag.roles as IEnumerable<Rol>;
+                            if (roles != null)
+                            {
+                                var nombreRol = roles.FirstOrDefault(r => r.RolId == Model.RolId)?.NombreRol;
+                                <span>@nombreRol</span>
+                            }
+                            else
+                            {
+                                <span>No hay roles disponibles</span>
+                            }
+                        }
+                        else
+                        {
+                            <span>No se ha proporcionado ningún rol</span>
+                        }
+                    </td>
+
+                </tr>
+                <tr>
+                    <th scope="row" class="col-sm-2">
+                        Nombre
+                    </th>
+                    <td class="col-sm-10">
+                        @Html.DisplayFor(model => model.Nombre)
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-sm-2">
+                        Apellido
+                    </th>
+                    <td class="col-sm-10">
+                        @Html.DisplayFor(model => model.Apellido)
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-sm-2">
+                        Nombre de Usuario
+                    </th>
+                    <td class="col-sm-10">
+                        @Html.DisplayFor(model => model.Usuario1)
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-sm-2">
+                        Contraseña
+                    </th>
+                    <td class="col-sm-10">
+                        @Html.DisplayFor(model => model.Contraseña)
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-sm-2">
+                        Teléfono
+                    </th>
+                    <td class="col-sm-10">
+                        @Html.DisplayFor(model => model.Telefono)
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-sm-2">
+                        Correo
+                    </th>
+                    <td class="col-sm-10">
+                        @Html.DisplayFor(model => model.Correo)
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-sm-2">
+                        Estado Usuario
+                    </th>
+                    <td class="col-sm-10">
+                        @{
+                            string estado = Model.EstadoUsuario == 1 ? "Activo" : "Inactivo";
+                        }
+                        @estado
+                    </td>
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="~/js/Detalle.js"></script>
+
+
+
+

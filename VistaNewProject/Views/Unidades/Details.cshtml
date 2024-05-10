@@ -1,0 +1,69 @@
+﻿@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<VistaNewProject.Models.Producto>
+
+@{
+    ViewData["Title"] = "Detalles de unidad";
+}
+
+<h1>Detalles de Unidad</h1>
+<a asp-action="Index" class="btn btn-primary btn-sm">
+    <i class="fas fa-arrow-left"></i> Volver
+</a>
+<!-- Agrega esto en tu enlace de "Editar" en Details.cshtml -->
+@if (ViewBag.Unidad != null && ViewBag.Unidad.UnidadId!= null)
+{
+    <a href="#" onclick="redireccionarYEditar('@ViewBag.Unidad.UnidadId', 'Unidades','unidad')" class="btn btn-warning"><i class="fa-solid fa-pen"></i> Editar</a>
+}
+else
+{
+    <p>El objeto ViewBag.Unidad es nulo o su propiedad MarcaId es nula.</p>
+}
+
+
+<div>
+    <h3>Unidad ID:</h3> <p>@ViewBag.Unidad.UnidadId</p>
+    <h3>Descripcion de la unidad:</h3><p>@ViewBag.Unidad.DescripcionUnidad</p>
+</div>
+
+<h4>Productos asociados:</h4>
+
+@if (Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Cantidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var producto in Model)
+            {
+                <tr>
+                    <td>@producto.ProductoId</td>
+                    <td>@producto.NombreProducto</td>
+                    <td>@producto.CantidadTotal</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="pagination-detail">
+        @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Unidad.UnidadId, page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 }) + "' class='prev-next " + (Model.HasPreviousPage ? "" : "disabled") + "'>Anterior</a>")
+
+        @for (int i = 1; i <= Model.PageCount; i++)
+        {
+            <a href="@Url.Action("Details", new { id = ViewBag.Unidad.UnidadId, page = i })" class="@(i == Model.PageNumber ? "active" : "")">@i</a>
+        }
+
+        @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Unidad.UnidadId, page = Model.HasNextPage ? Model.PageNumber + 1 : Model.PageCount }) + "' class='prev-next " + (Model.HasNextPage ? "" : "disabled") + "'>Siguiente</a>")
+    </div>
+
+
+}
+else
+{
+    <p>No se encontraron productos asociados a esta unidad.</p>
+}
+
+<script src="~/js/Detalle.js"></script>

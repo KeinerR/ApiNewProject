@@ -1,0 +1,39 @@
+﻿@model Usuario
+@{
+    ViewData["Title"] = "Editar datos";
+}
+<h4 class="volver">Editar contraseña</h4>
+<div>
+    <a asp-action="Index" class="btn btn-primary btn-sm">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+</div>
+<hr />
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="" id="editC" class="password-form">
+                <input  asp-for="UsuarioId" id="UsuarioId" type="hidden" />
+                <div class="form-group">
+                    <label for="currentPassword">Contraseña actual</label>
+                    <input type="password" class="form-control" id="currentPassword" name="Contraseña">
+                    <span id="currentPasswordError" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Nueva contraseña</label>
+                    <input type="password" class="form-control" id="newPassword" name="newPassword">
+                    <span id="newPasswordError" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label for="verifyPassword">Verificar contraseña</label>
+                    <input type="password" class="form-control" id="verifyPassword" name="verifyPassword">
+                    <span id="verifyPasswordError" class="text-danger"></span>
+                </div>
+                <br />
+                <button type="button" id="btnPassword" class="btn btn-primary">Cambiar contraseña</button>
+            </form>
+        </div>
+    </div>
+@section Scripts {
+    <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="~/js/MiPerfilPassword.js"></script>
+}
