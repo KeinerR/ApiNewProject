@@ -16,33 +16,32 @@
         <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
     </head>
     <body>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-6 login-section-wrapper">
-                    <div class="login-wrapper my-auto">
-                        <h1 class="login-title">OPTIMUS</h1>
-                        <div class="text-center">
-                            <form asp-controller="Login" asp-action="Login" method="post">
-                                <div class="form-group">
-                                    <label for="Usuario1">Usuario</label>
-                                    <input asp-for="Usuario1" id="Usuario1" class="form-control" placeholder="Usuario" />
-                                </div>
-                                <div class="form-group mb-4">
-                                    <label for="Contraseña">Contraseña</label>
-                                    <input asp-for="Contraseña" id="Contraseña" class="form-control" placeholder="Contraseña" type="password" />
-                                </div>
-                                <button type="submit" class="btn btn-block login-btn">Ingresar</button>
-                            </form>
-                        </div>
-                        <a asp-controller="Login" asp-action="RecuperarContraseña" class="forgot-password-link">¿Recuperar contraseña?</a>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6 px-0 d-none d-sm-block">
+                <img src="/image/LOGO.png" alt="login image" class="login-img">
+            </div>
+            <div class="col-sm-6 login-section-wrapper">
+                <div class="login-wrapper my-auto">
+                    <h1 class="login-title">Iniciar sesión</h1>
+                    <div class="text-center">
+                        <form asp-controller="Login" asp-action="Login" method="post">
+                            <div class="form-group">
+                                <label for="Usuario1">Usuario</label>
+                                <input asp-for="Usuario1" id="Usuario1" class="form-control" placeholder="Usuario" />
+                            </div>
+                            <div class="form-group mb-4">
+                                <label for="Contraseña">Contraseña</label>
+                                <input asp-for="Contraseña" id="Contraseña" class="form-control" placeholder="Contraseña" type="password" />
+                            </div>
+                            <button type="submit" class="btn btn-block login-btn">Ingresar</button>
+                        </form>
                     </div>
-                </div>
-                <div class="col-sm-6 px-0 d-none d-sm-block">
-                <img src="https://ideogram.ai/api/images/direct/izVOWuDCQyG0-clB0Yw6uA.png" alt="login image" class="login-img">
-
+                    <a asp-controller="Login" asp-action="RecuperarContraseña" class="forgot-password-link">¿Recuperar contraseña?</a>
                 </div>
             </div>
         </div>
+    </div>
 
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

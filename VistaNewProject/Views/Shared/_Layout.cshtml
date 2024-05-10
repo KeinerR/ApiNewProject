@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>@ViewData["Title"] - VistaNewProject</title>
+    <link rel="icon" href="./favicon.png" type="image/x-icon" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/compra.css" asp-append-version="true" />
@@ -14,69 +15,110 @@
     <script src="https://kit.fontawesome.com/822fe3c749.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
   
 </head>
 <body>
-      <div id="Cabecera">
-        <div>
-            <button id="menu-toggle" class="btn btn-link">
-                <i class="fas fa-bars" style="color: white; font-size: 20px;"></i>
-            </button>
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="color:white;">OPTIMUS </a>
-        </div>
-        @if (User.Identity.IsAuthenticated)
-        {
-            <div style="margin-left: auto;">
-                <a id="Perfil" style="text-decoration: none; color: inherit;" class="nav-link dropdown-toggle" onclick="opcionesDePerfil();">
-                    <i style="color:white; font-size:20px;" class="fas fa-user fa-fw"></i>
+    <header>
+        <div id="Cabecera">
+            <div id="cabeceraMenu">
+                <button id="menu-toggle" class="btn btn-link">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="circle">
+                    <a asp-area="" asp-controller="Home" asp-action="Index">
+                        <img src="./favicon.png" />
+                    </a>
+                </div>
+            </div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="cabeceraSalir">
+                    <a class="nav-link dropdown-toggle Perfil" style="text-decoration: none; color: inherit;" onclick="opcionesDePerfil();">
+                        <i style="color:white; font-size:20px;" class="fas fa-user fa-fw"></i>
                         <span style="user-select:none;">@User.Identity.Name </span>
-                </a>
-            </div>
-        }
-        else
-        {
-            <div style="margin-left: auto;">
-                <a id="Perfil" style="text-decoration: none; color: inherit;" href="Login" class="nav-link dropdown-toggle">
-                    <i style="color:white; font-size:20px;" class="fas fa-user fa-fw"></i>
-                    <span>Inicia sesión</span>
-                </a>
-            </div>
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="cabeceraSalir">
+                    <a class="nav-link dropdown-toggle Perfil" style="text-decoration: none; color: inherit;" href="Login">
+                        <i style="color:white; font-size:20px;" class="fas fa-user fa-fw"></i>
+                        <span>Inicia sesión</span>
+                    </a>
+                </div>
 
-            
-        }
 
-    </div>
+            }
+        </div>
+        <div id="cabeceraTitulo">
+            <span>OPTIMUS</span> <!-- Ajusta el margen superior según sea necesario -->
+        </div>
+    </header>
+
+  
+
+
     <div id="Cuerpo">
         <div id="Menu" class="sidebar">
-            <a class="sidebar-label Texto"  asp-area="" asp-controller="Usuarios" asp-action="Index">Usuarios</a>
-            <label for="opcion1" class="sidebar-label Texto">Configuración</label>
+            <a class="sidebar-label TextoBlanco" asp-area="" asp-controller="Usuarios" asp-action="Index">
+                <i class="fa-solid fa-users" style="color: white;"></i>  Usuarios
+            </a>
+            <label for="opcion1" class="sidebar-label Texto">
+                <i class="fa-solid fa-gears" style="color: white;"></i> Configuración
+            </label>
             <input type="checkbox" id="opcion1" >
             <div class="sub-menu">
-                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Rols" asp-action="Index">Roles</a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Rols" asp-action="Index">
+                    <i class="fa-solid fa-users-gear" style="color: white;"></i> Roles
+                </a>
             </div>
-            <label for="opcion2" class="sidebar-label Texto">Compras</label>
+            <label for="opcion2" class="sidebar-label Texto">
+                <i class="fa-solid fa-cart-shopping" style="color:white;"></i> Compras
+            </label>
             <input type="checkbox" id="opcion2" >
             <div class="sub-menu">
-                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Compras" asp-action="Index">Compras</a>
-                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="DetalleCompras" asp-action="Index">DetalleCompras</a>
-                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Productos" asp-action="Index">Productos</a>
-                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Presentaciones" asp-action="Index">Presentaciones</a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Compras" asp-action="Index">
+                    <i class="fa-solid fa-cart-shopping" style="color:white;"></i> Compras
+                </a>
+                <a class="sidebar-label  Texto submenu" asp-area="" asp-controller="DetalleCompras" asp-action="Index" style="display: none;">DetalleCompras</a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Productos" asp-action="Index">
+                    <i class="fa-solid fa-bag-shopping" style="color: white;"></i> Productos
+                </a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Presentaciones" asp-action="Index">
+                    <i class="fa-solid fa-folder-open" style="color: white;"></i> Presentaciones
+                </a>
                 <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Marcas" asp-action="Index">Marcas</a>
                 <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Categorias" asp-action="Index">Categorias</a>
                 <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Unidades" asp-action="Index">Unidades</a>
-                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Proveedores" asp-action="Index">Proveedores</a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Proveedores" asp-action="Index">
+                    <i class="fa-solid fa-truck-field" style="color: white;"></i>Proveedores
+                </a>
             </div>
-            <a class="sidebar-label Texto" asp-area="" asp-controller="Movimientos" asp-action="Index">Movimientos</a>
-            <label for="opcion3" class="sidebar-label Texto">Pedidos</label>
+            <a class="sidebar-label TextoBlanco" asp-area="" asp-controller="Movimientos" asp-action="Index">
+                <i class="fa-solid fa-arrows-turn-to-dots" style="color:white;"></i> Movimientos
+            </a>
+            <label for="opcion3" class="sidebar-label Texto">
+                <i class="fa-solid fa-sack-dollar" style="color: white;"></i> Pedidos
+            </label>
             <input type="checkbox" id="opcion3">
             <div class="sub-menu">
-                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Pedidos" asp-action="Index">Pedidos</a>
-                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="DetallePedidos" asp-action="Index">Detalle Pedidos</a>
-                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Domicilios" asp-action="Index">Domicilios</a>
-                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Clientes" asp-action="Index">Clientes</a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Pedidos" asp-action="Index">
+                    <i class="fa-solid fa-sack-dollar" style="color: white;"></i> Pedidos
+                </a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="DetallePedidos" asp-action="Index" style="display: none;">Detalle Pedidos</a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Domicilios" asp-action="Index">
+                    <i class="fa-solid fa-motorcycle" style="color: white;"></i> Domicilios
+                </a>
+                <a class="sidebar-label Texto submenu" asp-area="" asp-controller="Clientes" asp-action="Index">
+                    <i class="fa-solid fa-people-group fa-2xl"></i> Clientes
+                </a>
                 
             </div>
-            <a class="sidebar-label Texto" asp-area="" asp-controller="Lotes" asp-action="Index">Lotes</a>
+            <a class="sidebar-label TextoBlanco" asp-area="" asp-controller="Lotes" asp-action="Index">
+                <i class="fa-brands fa-stack-overflow" style="color: white;"></i> Lotes
+            </a>
         </div>
         <div class="container">
             <main role="main" class="iframe-optimus">
@@ -101,3 +143,4 @@
 
 </body>
 </html>
+

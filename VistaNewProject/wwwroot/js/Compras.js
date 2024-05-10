@@ -13,13 +13,16 @@
     //Se Usa Para verificar que el cliente no cambie el producto antes de agregar el detalle  
 var verificarProducto = "";
 
-
+/**/
 var ganancia = ""; 
 
 //Se usa para dar un tiempo antes de la signacion del id al nombre especifico en los datalist
 let timeout = null;
 
 var cantidadPorUnidad = "";
+
+
+
     // Función para limpiar el formulario
 function LimpiarFormulario() {
     // Limpiar los valores de los campos del formulario
@@ -892,9 +895,57 @@ function actualizarValorTotal() {
     document.getElementById('ValorTotal').value = total;
 }
 
+//Paginado
+function cambiarPagina(direccion) {
+    const filasPorPagina = 3; // Cambia el número de filas por página según tus necesidades
+    const filas = Array.from(document.getElementById('detalleTableBody').rows);
+    let paginasTotales = Math.ceil(filas.length / filasPorPagina);
+
+    if (direccion === 2) {
+        paginaActual = paginasTotales - 1;
+    } else if (direccion === 1) {
+        paginaActual = Math.min(paginaActual + 1, paginasTotales - 1);
+       
+    } else if (direccion === -1) {
+        paginaActual = Math.max(paginaActual - 1, 0);
+    } else {
+        // Verificar si hay suficientes registros en la página actual después de eliminar un registro
+        const inicio = paginaActual * filasPorPagina;
+        const fin = inicio + filasPorPagina;
+
+        if (inicio >= filas.length) {
+            // Si no hay suficientes registros en la página actual, eliminar la página actual y retroceder
+            paginaActual = Math.max(paginaActual - 1, 0);
+        }
+    }
+    // Establecer la visibilidad de los botones "Anterior" y "Siguiente"
+    document.getElementById('btnAnterior').style.display = (paginaActual > 0) ? 'block' : 'none';
+    document.getElementById('btnSiguiente').style.display = (paginaActual < paginasTotales - 1) ? 'block' : 'none';
 
 
-var paginaActual = 0; // Declarar la variable paginaActual fuera de las funciones para que sea global
+    filas.forEach((fila, indice) => {
+        const inicio = paginaActual * filasPorPagina;
+        const fin = inicio + filasPorPagina;
+
+        fila.style.display = (indice >= inicio && indice < fin) ? '' : 'none';
+    });
+}
+//verificar si es necesario mostrar uno el paginado
+function verificarPaginado() {
+    // Verificar si hay más de una página después de agregar la fila
+    const filasPorPagina = 3; // Cambia este valor según tus necesidades
+    const filas = Array.from(detalleTableBody.rows);
+    let paginasTotales = Math.ceil(filas.length / filasPorPagina);
+    if (paginasTotales > 1) {
+        document.getElementById('contenedorTablaDetallesBotones').style.display = 'block';
+        document.getElementById('contenedorTablaDetallesBotones').style.visibility = 'visible';
+        console.log('Here');
+    } else {
+        document.getElementById('contenedorTablaDetallesBotones').style.display = 'none';
+        document.getElementById('contenedorTablaDetallesBotones').style.visibility = 'hidden';
+        console.log('Heres');
+    }
+}
 
 function agregarFilaDetalle(detalleCompra) {
     // Obtener el cuerpo de la tabla
@@ -920,67 +971,16 @@ function agregarFilaDetalle(detalleCompra) {
     cellSubtotal.innerHTML = ultimoLote.precioCompra;
     cellAcciones.innerHTML = '<button onclick="eliminarFilaDetalle(this)">Eliminar</button>';
 
+
+    //verifica si es necesario que se vea u no el paginado
+    verificarPaginado() 
     // Actualizar el valor total
     actualizarValorTotal();
+    cambiarPagina(2);
 
-    // Calcular el número de página actual después de insertar la nueva fila
-    var totalFilas = detalleTableBody.rows.length;
-    var filasPorPagina = 3; // Cambia el número de filas por página según tus necesidades
-    paginaActual = Math.floor(totalFilas / filasPorPagina);
-    if (totalFilas % filasPorPagina !== 0) {
-        paginaActual++; // Añadir una página adicional si hay filas restantes
-    }
-    
-    cambiarPagina(1); // Dirección 1 para siguiente página
-}
-
-function cambiarPagina(direccion) {
-    console.log('Uno');
-    var filasPorPagina = 3; // Cambia el número de filas por página según tus necesidades
-    var filas = document.getElementById('detalleTableBody').rows;
-    var inicio = paginaActual * filasPorPagina;
-    var fin = inicio + filasPorPagina;
-    console.log(filasPorPagina, inicio);
-
-    if (direccion === -1) { // Anterior
-        paginaActual = Math.max(paginaActual - 1, 0);
-    } else { // Siguiente
-        paginaActual = Math.min(paginaActual + 1, Math.ceil(filas.length / filasPorPagina) - 1);
-    }
-
-    for (var i = 0; i < filas.length; i++) {
-        if (i >= inicio && i < fin) {
-            filas[i].style.display = ''; // Mostrar las filas de la página actual
-        } else {
-            filas[i].style.display = 'none'; // Ocultar las filas de otras páginas
-        }
-    }
 }
 
 
-function cambiarPagina(direccion) {
-    console.log('Uno');
-    var filasPorPagina = 3; // Cambia el número de filas por página según tus necesidades
-    var filas = document.getElementById('detalleTableBody').rows;
-    var inicio = paginaActual * filasPorPagina;
-    var fin = inicio + filasPorPagina;
-
-    if (direccion === -1) { // Anterior
-        paginaActual = Math.max(paginaActual - 1, 0);
-    } else { // Siguiente
-        paginaActual = Math.min(paginaActual + 1, Math.ceil(filas.length / filasPorPagina) - 1);
-    }
-
-    for (var i = 0; i < filas.length; i++) {
-        if (i >= inicio && i < fin) {
-            filas[i].style.display = ''; // Mostrar las filas de la página actual
-        } else {
-            filas[i].style.display = 'none'; // Ocultar las filas de otras páginas
-        }
-    }
-}
-
-// Funcion para eliminar un solo detalle al que se presione el boton
 // Funcion para eliminar un solo detalle al que se presione el boton
 function eliminarFilaDetalle(button) {
     var row = button.parentNode.parentNode; // Obtener la fila de la tabla
@@ -1002,17 +1002,13 @@ function eliminarFilaDetalle(button) {
     // Eliminar la fila de la tabla
     row.remove();
 
+    //verifica si es necesario que se vea u no el paginado
+    verificarPaginado() 
     // Actualizar los índices de las filas restantes en la tabla
     actualizarIndicesTabla();
     actualizarValorTotal();
-
-    // Cambiar automáticamente a la página anterior si no hay más filas en la página actual
-    var filasPorPagina = 1; // Cambia el número de filas por página según tus necesidades
-    var filas = document.getElementById('detalleTableBody').rows;
-    var paginaActual = Math.floor(filas.length / filasPorPagina);
-    if (filas.length % filasPorPagina === 0 && paginaActual > 0) {
-        cambiarPagina(1); // Dirección -1 para página anterior
-    }
+    cambiarPagina(-2); // Dirección -1 para página anterior
+   
 }
 
 // Funcion para eliminar un solo detalle al que se presione el boton
