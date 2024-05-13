@@ -1,21 +1,41 @@
-﻿/*DIV ventana modal contenedor de ventana modal y todos sus posibles div*/
-#CompraVista {
-    margin: auto;
-    margin-top: 10px;
+﻿/*----------------------------------------DIV PADRE --------------------------------------------------------------------*/
+/* Establecer la modal para que ocupe el 100% del ancho de la pantalla */
+#CompraModal {
+    margin:0;
+    padding:0;
+    border:solid yellow 2px;
 }
+
+
+/* Estilo para el contenido de la modal */
+#CompraVista {
+    margin-top: 10px;
+    border: solid black 2px;
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+}
+
+
+.modal-header {
+   text-justify:inter-character;
+}
+.modal-title {
+    text-align:center;
+}
+
+
+
+/*----------------------------------------PrimerFormulario datos de compra---------------------------------*/
 
 /*DIV con los input para agregar la compra incluido botones */
 #PrincipalCompra {
     padding-top: 2px;
     padding-bottom: 10px;
-    width:auto;
-    min-width:100%;
+    border: solid blue 2px;
 }
 
 /*DIV Boton de agregar productos*/
 #agregarDetalle {
-    display: block;
-    justify-content: flex-end;
     margin-top: 20px;
     padding: 0px;
 }
@@ -225,10 +245,10 @@
 /*Asterisco de campo vacio*/
 .Mensaje {
     color: red;
-    height:10px;
+    height: 10px;
     font-size: 25px;
-    margin-top: 6px;
-    margin-left:5px;
+    margin-left: 5px;
+    margin-top:7px; 
     white-space: nowrap; /* Evitar que el texto se desborde a la siguiente línea */
     line-height: 1; /* Evitar que el span afecte el tamaño del label */
     display: flex; /* Hacer el span un contenedor flex */

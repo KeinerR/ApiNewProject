@@ -52,10 +52,11 @@ function LimpiarFormulario() {
     spanMensajeNoFecha.textContent = '*';
     
     var mensajes = document.querySelectorAll('.Mensaje');
-    // Iterar sobre los mensajes, omitiendo los primeros 2 y los últimos 2
+    // Iterar sobre los mensajes, omitiendo los primeros 3 y los últimos 3
     for (var i = 3; i < mensajes.length - 3; i++) {
-        var mensaje = mensajes[i];
-        mensaje.textContent = '*'; // Restaurar mensajes de error
+            var mensaje = mensajes[i];
+            mensaje.textContent = '*'; // Restaurar mensajes de error
+            mensaje.style.display = 'flex'; // Establecer estilo si es necesario
     }
     const mensajesError = document.querySelectorAll('.text-danger');
     mensajesError.forEach(span => {
@@ -132,8 +133,8 @@ function limpiarFormularioTotalmente() {
     // Iterar sobre los mensajes, omitiendo los primeros 2 y los últimos 2
     for (var i = 0; i < mensajes.length - 3; i++) {
         var mensaje = mensajes[i];
-        mensaje.textContent = ' *'; // Restaurar mensajes de error
-        mensaje.style.display = 'inline-block'; // Establecer estilo si es necesario
+        mensaje.textContent = '*'; // Restaurar mensajes de error
+        mensaje.style.display = 'flex'; // Establecer estilo si es necesario
     }
     const mensajesError = document.querySelectorAll('.text-danger');
     mensajesError.forEach(span => {
@@ -360,7 +361,7 @@ $('#NumeroFactura, #ProveedorId, #FechaCompra, #ProductoId, #FechaVencimiento, #
     validarCampos(input, campo);
 });
 
-// Función para agregar productos a la compra
+// Función para llenar correcgtamente la compra antes agregar productos a la compra
     function agregarProductos() {
         // Obtener los valores de los campos del formulario
         var proveedorId = document.getElementById('ProveedorIdHidden').value;
@@ -416,19 +417,24 @@ $('#NumeroFactura, #ProveedorId, #FechaCompra, #ProductoId, #FechaVencimiento, #
 
     // Función para agregar un detalle de compra al objeto principal
 function agregarDetalleCompra() {
+    // Obtener valores de los campos
     var unidad = document.getElementById('UnidadIdHidden').value;
     var productoId = document.getElementById('ProductoIdHidden').value;
     var cantidad = document.getElementById('Cantidad').value;
     var porcentajeAGanar = document.getElementById('PorcentajeGanancia').value;
     cantidadPorUnidad = document.getElementById('CantidadPorUnidad').value;
-    
 
+    if (cantidad === '' || porcentajeAGanar === ' ) {
+        mostrarAlerta(cantidad === '' ? 'Cantidad' : (unidadId === '' ? 'Unidad' : '% A Ganar'));
+        return;
+    }
     // Validar los campos obligatorios y las condiciones necesarias antes de agregar el detalle de compra
     if (productoId != verificarProducto) {
         alert('¡Atención! Parece que has modificado el campo de producto. Por favor, asegúrate de realizar de nuevo el cálculo.');
         noVerDetalle();
         return;
     }
+    // Validar campos obligatorios y condiciones
 
     // Crear un nuevo objeto detalleCompra en cada llamada para evitar referencias compartidas
     var detalleCompra = {
@@ -459,17 +465,7 @@ function agregarDetalleCompra() {
     }).length === 0;
 
     // Validar si los campos están llenos
-    if (!todolleno) {
-        Swal.fire({
-            position: "center",
-            icon: 'warning',
-            title: '¡Atención!',
-            html: '<p>Completa los campos con * para poder agregar el producto a la compra.</p>',
-            showConfirmButton: false,
-            timer: 5000
-        });
-        return;
-    }
+  
 
     // Validar la fecha de vencimiento
     if (!fechaVencimiento || isNaN(new Date(fechaVencimiento))) {
@@ -1114,9 +1110,10 @@ function volverARegistrarCompra()    {
     // Iterar sobre los mensajes, omitiendo los primeros 2 y los últimos 2
     for (var i = 0; i < mensajes.length - 3; i++) {
         var mensaje = mensajes[i];
-        mensaje.textContent = ' *'; // Restaurar mensajes de error
-        mensaje.style.display = 'inline-block'; // Establecer estilo si es necesario
+        mensaje.textContent = '*'; // Restaurar mensajes de error
+        mensaje.style.display = 'flex'; // Establecer estilo si es necesario
     }
+    console.log('Here');
 
     setHoraActual();
 }

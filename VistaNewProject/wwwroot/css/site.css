@@ -1,173 +1,243 @@
-/* Estilos generales */
-html {
-    font-size: 14px;
-}
-
-@media (min-width: 768px) {
-    html {
-        font-size: 16px;
-    }
-}
 
 html, body {
     position: relative;
-    min-height: 100vh;
+    margin:0;
+    padding:0;
+    min-height: 90vh;
+}
+input, span, a,button{
+    padding:0;
+    margin:0;
+    border:none;
 }
 
-/* Estilos del contenedor el iframe donde se ven los modulos al seleccionarlos*/
-.container   {
-    min-height: 520px;
-    box-sizing: border-box;
-}
-
-@media (max-width: 768px) {
-    .container {
-        min-height: auto;
-    }
-}
-
+/*----------------------------------------------------------------------------------------------------------------------*/
+/*Estilos del contenedor header*/
 header {
-    /*height: 10vh;*/ /* El 20% de la altura de la ventana */
-/*    border:solid black 1px;*/
+    background-color: #213b68; /*Color del header*/
+    color: white; /*Color de la letra del encabezado*/
+    height: auto;
 }
-/* Estilos de la cabecera */
+    header .iconoHeaderMenu {
+        color: white;
+    }
+
+/* Estilos del contenedor de la cabecera*/
 #Cabecera {
+    height:auto; /* Ajuste automático de altura */
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; 
     align-items: center;
-    padding: 10px;
-    background-color: #213b68;
-    color: #fff;
-    height:60px;
-    width: 100%;
+    position: relative; /* Añadir posición relativa al div #Cabecera */
 }
 
+/*Estilos header menu and logo*/
 #cabeceraMenu {
+    padding-left: 20px;
     display: flex;
+    user-select: none;
+    min-width: 100px;
+    height: auto;
     align-items: center; /* Centra verticalmente los elementos dentro de #primero */
 }
-#cabeceraMenu .circle {
-    width: 30px; /* Ancho del círculo */
-    height: 30px; /* Altura del círculo */
+
+    #cabeceraMenu button     {
+        user-select: none;
+        border: none; /* Quita el borde por defecto */
+        border-radius: 2px; /* Quita el borde por defecto */
+        background-color: transparent; /* Fondo transparente por defecto */
+        transition: background-color 0.3s ease; /* Transición suave */
+        margin-right:20px;
+    }
+
+        #cabeceraMenu button:active {
+            background-color: black; /* Cambia el color de fondo al hacer clic */
+            color: black; /* Cambia el color de texto al hacer clic */
+        }
+
+.circle {   
     border-radius: 50%; /* Hace que sea un círculo */
     overflow: hidden; /* Oculta el exceso de la imagen */
     display: flex; /* Utiliza flexbox para centrar horizontalmente */
     justify-content: center; /* Centra horizontalmente */
     align-items: center; /* Centra verticalmente */
 }
-#cabeceraMenu .circle img {
+
+.circle img {
     width: 100%; /* Ajusta el ancho de la imagen al 100% del círculo */
     height: 100%; /* Ajusta la altura de la imagen al 100% del círculo */
     object-fit: cover; /* Ajusta la imagen para cubrir el círculo sin deformaciones */
 }
 
+/* Estilos del contenedor de la cabecera titulo*/
 #cabeceraTitulo {
     display: flex;
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center; /* Centra verticalmente */
-    height: 60px;
-    margin-top:-60px;
-}   
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    width: 100%;
+    position: absolute; /* Añadir posición absoluta para centrar el div */
+    left: 48.5%; /* Centrar horizontalmente en la mitad */
+    top:0;
+    transform: translateX(-48.5%); /* Ajustar el centrado con transform */
+    pointer-events: none; /* Hace que el div sea "transparente" al clic */
+}
 
-    #cabeceraTitulo span {
-        color:white;
-        margin: 0; /* Elimina el margen para evitar desplazamientos inesperados */
-    }
+#cabeceraCircle {
+    display: flex;
+    user-select: none;
+    min-width: 100px;
+    height: auto;
+    align-items: center; /* Centra verticalmente los elementos dentro de #primero */
+}
 
-#cabeceraTitulo span {   
-    font-size: 30px;
+#cabeceraCircle .circle {
+    visibility:hidden;    
+}
+
+#cabeceraCircle .tituloHeader {
+    visibility: hidden;
+    color: white;
+}
+.tituloHeader {
+    height: auto;
+    visibility: visible;
     text-shadow: 1px 1px 1px white;
 }
 
-#cabeceraMenu i {
-    color: white; 
-    font-size:20px;
+/*Estilos para el div de mi perfil u iniciar sesion*/
+.cabeceraSalir {
+    margin-right:10px;  
 }
-
 /*Estilos para mi perfil*/
 .cabeceraSalir .Perfil {
     border-radius: 10px;
+    max-width: 200px;
     transition: box-shadow 0.3s ease-in-out;
 }
 
+
+/*Diseños de ventana emergente Perfil */
+#perfilVentanaEmergente {
+    position: absolute;
+    right: 10px;
+    background-color: #213b68;
+    color: white;
+    border-radius: 10px;
+    border: 1px solid black; /* Borde sólido de 1px color negro */
+}
 .Perfil:hover {
     box-shadow: 0 0 3px white;
 }
 
+.opcionesVentanaEmergente {
+    text-decoration: none;
+    color: white;
+    display: block;
+    width: auto;
+    height: 100%;
+    box-sizing: border-box; /* para incluir el borde en el ancho y alto total */
+    padding-top: 2.5px;
+    padding-bottom: 2.5px;
+    text-align: center;
+}
+    /*Opciones cuando se posa sobre los elemntos de mi perfil*/
+    .opcionesVentanaEmergente:hover {
+        color: black;
+        font-weight:500;
+        background-color: #6bc7c8;
+    }
+    .opcionesVentanaEmergente:first-child {
+        border-radius: 10px 10px 0px 0px;
+        border-bottom:solid black 1px;
+    }
+    .opcionesVentanaEmergente:nth-child(2) {
+        border-radius: 0px 0px 10px 10px;
+    }  
+    .opcionesVentanaEmergente:nth-child(2):hover{
+        border-radius: 0px 0px 10px 10px;  
+    }
 
-/* Estilos del cuerpo y sidebar */
+
+
+/*----------------------------- Estilos del cuerpo -----------------------------------------------------------------------------------------*/
+
+
 #Cuerpo {
-    /*border:solid red 2px;*/
     display: flex;
     width: auto;
     height: auto;
     min-height:70vh; /* El 80% de la altura de la ventana (viewport height) */
-    margin-top: 0.3px;
+    margin-top:0px; /*Margen entre el header y el menu de navegacio*/
 }
 
+/*------------------------------ Estilo para elmenu de navegacion----------------------------------------------------------------------------------------*/
 
-.sidebar {
+
+#Menu {
     height: auto;
-    width: 240px; /* Ancho ajustado */
+    min-height: 80vh;
+    min-width: 190px; /* Ancho ajustado */
     background-color: #213b68;
-    padding: 8px;
-
+    padding: 5px;
 }
 
-    /* Otros estilos */
-    .sidebar a {
-        text-decoration: none;
-        color: white;
-        display: block;
-        padding: 8px 10px;
-        background-color: #213b68;
-        transition: background-color 0.3s ease-in-out;
-        border-radius: 4px;
-        margin-bottom: 4px;
-    }
-
-    .sidebar button,
-    .sidebar label {
-        width: auto; /* Ancho automático para que se ajuste al contenido */
-        line-height: 35px;
-        text-align: left; /* Alineación a la izquierda */
-        border-radius: 0; /* Sin borde redondeado */
-        background: transparent; /* Fondo transparente */
-        cursor: pointer;
-        display: block;
-        margin-bottom: 4px;
-        border: none; /* Sin borde */
-        padding-left: 10px; /* Espaciado a la izquierda */
-    }
-
-    /*Diseño cuando el coursor esta sobre la etiqueta*/
-    /* Estilo para las opciones del menú principal */
-    .sidebar a:hover {
-        background-color: #6bc7c8; /* Color de fondo azul al pasar el mouse */
-        color: black; /* Color del texto al pasar el mouse */
-    }
-
-
-
-/* Estilo para los elementos que contienen iconos */
-.sidebar-label {
-    display: flex;
-    align-items: center; /* Alinea verticalmente el texto e icono */
+/*Estilo del texto*/
+.TextoMenu {
+    color: white;
+    font-family: 'Abel', sans-serif;
+    padding-left: 20px;
+    color: white;
 }
 
-    /* Estilo para los iconos dentro de los elementos sidebar-label */
-    .sidebar-label i {
-        font-size: 1.2em; /* Tamaño de fuente más grande que el texto */
-        margin-right: 8px; /* Espacio a la derecha del icono */
+
+/*Tamaño de los iconos del menu*/
+#Menu .icononosMenu {
+    justify-content: center;
+    font-size: 1.5em;
+    color: white;
+}
+/*Se usa con el JS para darle el efecto de aprecer y desaparecer al menu*/
+.sidebar.menu-hidden {
+    display: none;
+}
+
+#Menu .sidebar-label {
+    text-decoration: none;
+    background-color: transparent;
+    transition: background-color 0.3s ease-in-out;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    padding: 8px 10px;
+    width: auto; /* Ancho automático para que se ajuste al contenido */
+    text-align: initial; /* Alineación a la izquierda */
+    cursor: pointer;
+    display: block; /* Para que los elementos ocupen toda la anchura del contenedor */
+}
+
+    /* Efecto al pasar el ratón sobre las opciones del menú */
+    #Menu .sidebar-label:hover {
+        background-color: #6bc7c8;
     }
+        /* Efecto al pasar el ratón sobre las opciones del menú */
+
+        #Menu .sidebar-label:hover > i {
+            color: black;
+        }
+
+        #Menu .sidebar-label:hover > span {
+            color: black;
+            font-weight: 550;
+        }
+
 
 /*Desaparece el diseño de los input para que estos puedan usar el del label*/
 #opcion1,
 #opcion2,
-#opcion3{
+#opcion3 {
     display: none;
 }
-    
+
 
 /* SUBMENU */
 /* Hace aparecer y desaparecer los sub-menus */
@@ -175,23 +245,9 @@ header {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease-in-out;
+    padding: 0;
+    margin: 0;
 }
-
-    .sub-menu a {
-        text-align: left;
-        display: block;
-        padding: 8px 10px;
-        color: white;
-        text-decoration: none;
-        background-color: transparent; /* Eliminar el color de fondo por defecto */
-        transition: background-color 0.3s ease-in-out;
-        border-radius: 4px;
-        margin-top: 2px;
-    }
-
-        .sub-menu a:hover {
-            background-color: #6bc7c8;
-        }
 
 /* Al desplegar el sub-menú */
 input[type="checkbox"]:checked + .sub-menu {
@@ -199,30 +255,113 @@ input[type="checkbox"]:checked + .sub-menu {
 }
 
     input[type="checkbox"]:checked + .sub-menu a {
-        margin-left: 10px; /* Margen izquierdo al desplegar el sub-menú */
+        margin-left: 20px; /* Margen izquierdo al desplegar el sub-menú */
     }
 
-.sub-menu a:hover {
-    background-color: #6bc7c8;
-}
 
-    /*Al sel*/
 /* Al seleccionar un checkbox y estar marcado, aumenta la altura máxima del siguiente elemento con la clase .sub-menu a 500px */
 input[type="checkbox"]:checked + .sub-menu {
     max-height: 500px;
 }
 
+
+
+
+/*----------------------------------------FOOTER------------------------------------------------------------------------------*/
+
 .PIE {
- /*   height: 10vh; */
-   /* border:solid green 2px;*/
+    height: auto;
+    min-height: 30px;
+    border: solid green 2px;
 }
-.iframe-optimus {
-    height:auto;
+/*.PIE {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto;*/ /* Opcional: puedes especificar una altura fija si lo deseas */
+/*min-height: 20px;
+    background-color: #f0f0f0;*/ /* Cambia el color de fondo según tu diseño */
+/*border: solid green 2px;
+}*/
+
+
+/*-------------------------------------------ESTILOS PARA LAS VSTAS------------------------------------------------------------------------------------*/
+/*------------------------------------------ Estilos para el buscador y el botón agregar ----------------------------------------------------------------------------*/
+
+
+
+/*div que contiene todos los elementos*/
+.input-group {
+    position: relative;
+    border-radius: 20px; /* Borde redondeado para el grupo de entrada */
 }
-.pagination-container {
-    height:45px;
+/*Input del buscador*/
+#searchInput {
+    border-radius: 20px 0 0 20px; /* Borde redondeado solo en el lado izquierdo */
+    padding-right: 38px; /* Espacio para el botón */
 }
-/*Switch*/
+
+#btnNavbarSearch {
+    border: none; /* Elimina cualquier borde */
+    padding: 8px 12px; /* Reducir el espaciado del botón */
+    margin-left: -1px; /* Ajuste para el borde del botón */
+    position: relative; /* Ajuste de la posición */
+    border-radius: 0; /* Sin bordes redondeados */
+}
+
+    #btnNavbarSearch:hover {
+        height: 41px;
+        width: 41px;
+    }
+
+/*----------------------------------------- Estilos base para la table -----------------------------------------------------------------------------*/
+
+
+.table-custom {
+    border-collapse: collapse;
+}
+    .table-custom td {
+        position: relative; /* Asegura que el td tenga posición relativa */
+        padding: 0; /* Elimina cualquier relleno interno del td */
+    }
+
+        .table-custom td > div {
+            width: 100%; /* El div ocupa todo el ancho del td */
+            height: 100%; /* El div ocupa todo el alto del td */
+            display: flex; /* Usa flexbox para alinear elementos dentro del div */
+            align-items: center; /* Centra verticalmente los elementos dentro del div */
+            justify-content: center; /* Centra horizontalmente los elementos dentro del div */
+        }
+
+
+    .table-custom thead th {
+        background-color: #213b68; /* Color de fondo */
+        color: white; /* Color del texto */
+    }
+
+    .table-custom tbody tr:hover {
+        background-color: #f2f2f2; /* Color de fondo al pasar el cursor sobre la fila */
+    }
+
+    .table-custom tbody tr {
+        transition: all 0.3s ease; /* Transición suave */
+     
+    }
+
+        .table-custom tbody tr:hover {
+            transform: translateY(-1px); /* Levantar 3px al pasar el cursor */
+           
+        }
+
+  
+    .table-custom tbody td {
+        justify-content:center;
+        align-content:center;
+        padding:4px;
+    }
+
+/*Switch*/   /*Checkbox de estado en everyviews*/
 .switch {
     position: relative;
     display: inline-block;
@@ -244,7 +383,7 @@ input[type="checkbox"]:checked + .sub-menu {
     bottom: 0;
     background-color: #DB5461;
     -webkit-transition: .4s;
-    transition: .4s;
+    transition: .2s;
     border: solid 1px black;
     border-radius: 30px;
     width: 40px;
@@ -261,7 +400,7 @@ input[type="checkbox"]:checked + .sub-menu {
         background-color: white;
         border: 1px solid black;
         -webkit-transition: .4s;
-        transition: .4s;
+        transition: .2s;
         border-radius: 30px;
     }
 
@@ -277,208 +416,24 @@ input:focus + .slider {
     border-radius: 30px;
 }
 
+
 input:checked + .slider:before {
     -webkit-transform: translateX(70%);
     -ms-transform: translateX(70%);
     transform: translateX(70%);
 }
 
+/*------Paginacion ---------------*/
 
-/*Diseño de elemntos del container*/
-.volver {
-    margin-top: 20px;
-    text-align:center;
-    width:100%;
-}
-
-.edit {
-    margin-top: 30px;
-    width:100%;
-    text-align:center;
-}
-
-.container.menu-hidden {
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Ajusta los valores según tu preferencia */
-}
-
-.sidebar.menu-hidden {
-    display:none;
-}
-
-/*Diseños de ventana emergente Perfil */
-#perfilVentanaEmergente {
-    display: none;
-    position: absolute;
-    top: 60px;
-    right: 30px;
-    background-color: #213b68;
-    color: white;
-    border-radius: 10px;
-    border: 1px solid black; /* Borde sólido de 1px color negro */
-}
-.opcionesVentanaEmergente {
-    text-decoration: none;
-    color: white;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    display: block;
-    width: 100%;
+.pagination-container {
     height: 100%;
-    box-sizing: border-box; /* para incluir el borde en el ancho y alto total */
-    padding-top: 2.5px;
-    padding-bottom: 2.5px;
-    text-align: center;
-}
-    .opcionesVentanaEmergente:hover {
-        color: #2574A8;
-        background-color: #6bc7c8;
-    }
-#exit {
-    text-decoration: none;
-    color: white;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-    display: block;
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box; /* para incluir el borde en el ancho y alto total */
-    padding-top: 2.5px;
-    padding-bottom: 2.5px;
-    text-align: center;
-    cursor: pointer;
-}
-    #exit:hover {
-        color: #2574A8;
-        background-color: #6bc7c8;
-    }
-
-
-/*Estilo del texto*/
-.Texto {
-    color: white;
-    font-size: 16px;
-    font-family: 'Abel', sans-serif;
-
-}
-
-/*Diseño de paginacion de detalle Nota:el del index es otro*/
-/* Contenedor del paginado */
-.pagination-detail {
-    display: flex;
     justify-content: center;
-    margin-top: 20px;
-}
-
-    /* Estilos de los enlaces de paginación */
-    .pagination-detail a {
-        color: #007bff;
-        text-decoration: none;
-        padding: 5px 10px;
-        margin: 0 5px;
-        border: 1px solid #007bff;
-        border-radius: 5px;
-    }
-
-    /* Estilo del enlace activo */
-    .pagination-detail .active {
-        background-color: #007bff;
-        color: #fff;
-        border-color: #007bff;
-    }
-
-    /* Estilo para el botón de página anterior y siguiente */
-    .pagination-detail .prev-next {
-        font-weight: bold;
-    }
-
-
-
-/* Estilos base para la tabla */
-.table-custom {
-    width: 100%;
-    border-collapse: collapse;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    
-}
-
-    .table-custom thead th {
-        background-color: #213b68; /* Color de fondo */
-        color: white; /* Color del texto */
-        padding: 10px; /* Espaciado interno */
-     
-    }
-
-    .table-custom tbody tr:hover {
-        background-color: #f2f2f2; /* Color de fondo al pasar el cursor sobre la fila */
-       
-    }
-
-    .table-custom tbody tr {
-        transition: all 0.3s ease; /* Transición suave */
-     
-    }
-
-        .table-custom tbody tr:hover {
-            transform: translateY(-1px); /* Levantar 3px al pasar el cursor */
-           
-        }
-
-    .table-custom td, .table-custom th {
-        border: 1px solid #ddd; /* Borde */
-        text-align: center; /* Alineación del texto */
-       
-    }
-
-
-/* Estilos para los botones */
-.btn {
-    padding: 8px 12px; /* Espaciado del botón */
-    border-radius: 4px; /* Borde redondeado */
-    cursor: pointer; /* Cursor al pasar el ratón */
-}
-
-.contenedorBotonesTabla {
-    width: 200px; 
-}
-.contenedorEstadoTabla {
-    width: 100px;
 }
 
 
 
-/* Media queries para hacer la tabla responsive */
-@media screen and (max-width: 768px) {
-    .table-custom tbody tr {
-        display: block;
-        margin-bottom: 20px;
-    }
+/*----------------------------------------------------------------------------------------------------------------------*/
 
-    .table-custom td, .table-custom th {
-        display: block;
-        text-align: left;
-        height:40px;
-    }
-
-    .table-custom tbody td, .table-custom tbody th {
-        padding: 10px;
-        border: none;
-    }
-
-        .table-custom tbody td:last-child {
-            padding-bottom: 20px; /* Ajuste de espacio inferior para el último elemento */
-        }
-
-    .btn {
-        margin-bottom: 10px; /* Ajuste de espacio entre botones */
-    }
-
-}
-/*searh y agregar*/
-/* Estilos para el buscador y el botón agregar */
-.input-group {
-    position: relative;
-    border-radius: 20px; /* Borde redondeado para el grupo de entrada */
-}
 
 
 /*Si lo necesita agreguele un id en esecifico BY:Esteban*/
@@ -487,18 +442,9 @@ input:checked + .slider:before {
     /*padding-right: 38px;*/ /* Espacio para el botón */
 /*}*/
 
-#searchInput {
-    border-radius: 20px 0 0 20px; /* Borde redondeado solo en el lado izquierdo */
-    padding-right: 38px; /* Espacio para el botón */
-}
 
-#btnNavbarSearch {
-    border: none; /* Elimina cualquier borde */
-    padding: 8px 12px; /* Reducir el espaciado del botón */
-    margin-left: -1px; /* Ajuste para el borde del botón */
-    position: relative; /* Ajuste de la posición */
-    border-radius: 0; /* Sin bordes redondeados */
-}
+
+
 
 .btn-primary {
     border-radius: 30px; /* Sin bordes redondeados */
@@ -528,9 +474,24 @@ input:checked + .slider:before {
     color: black;
 }
 
+#botonEliminar {
+    background: #DB5461;
+    color:black;
+}
+
+#botonEditar {
+    background: #F8D552;
+    color: black;
+}
+
+#botonDetalle {
+    background: #7ACBC4;
+    color: black;
+    margin-right:10px;
+}
+
 .select-input {
     background: #61AFFE;
-    border:solid 12px blue;
 }
 
 
@@ -573,10 +534,14 @@ input:checked + .slider:before {
     flex-grow: 1;
 }
 
+/* Estilos para el contenedor de paginación */
 .pagination-detail {
+    display: flex;
+    justify-content: center;
     margin-top: 20px;
 }
 
+    /* Estilos para los enlaces de paginación */
     .pagination-detail a {
         display: inline-block;
         padding: 5px 10px;
@@ -586,31 +551,39 @@ input:checked + .slider:before {
         color: #333;
     }
 
+        /* Estilo del enlace activo */
         .pagination-detail a.active {
             background-color: #007bff;
             color: #fff;
             border-color: #007bff;
         }
 
-        .pagination-detail a.disabled {
-            pointer-events: none;
-            opacity: 0.6;
-        }
+    /* Estilo para el botón de página anterior y siguiente */
+    .pagination-detail .prev-next {
+        font-weight: bold;
+    }
 
-
-
+/* Estilos para el ícono de paginado */
 #iconoDePaginado {
     width: 70px;
     height: 70px;
     border-radius: 50%;
 }
-/*paginacion color*/
+
+/* Estilos para la paginación de color */
 .pagination-container .page-item.active .page-link {
     background-color: #213b68; /* Cambia el color de fondo del enlace activo */
     color: white; /* Cambia el color del texto del enlace activo */
     border-color: #213b68; /* Cambia el color del borde del enlace activo */
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 6); /* Sombra negra */
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6); /* Sombra negra */
 }
+
+/* Estilos para enlaces de paginación deshabilitados */
+.pagination-detail a.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
 
 /* Estilo para el icono de cierre (la "X") dentro de un botón con clase btn-close */
 .btn-close::before {
@@ -618,3 +591,289 @@ input:checked + .slider:before {
 }
 
 
+/*Mas pequeño que el maximo zoom de pantalla*/
+@media (min-width: 100px) and (max-width: 150px) {
+    html {
+        font-size: 16px;
+    }
+
+    .container {
+        min-width: auto;
+        border: solid red 2px;
+    }
+
+    header .iconoHeaderMenu {
+  
+    }
+
+    #cabeceraMenu .circle {
+        display: none; /* Ocultar el círculo */
+    }
+
+    .circle {
+        width: 35px; /* Ancho del círculo */
+        height: 35px; /* Altura del círculo */
+    }
+
+    .tituloHeader {
+        font-size: 1.5em;
+        visibility: hidden; /* Ocultar el texto */
+    }
+
+    .cabeceraSalir {
+        display: none; /*Hace desparecer el span del nombre en el perfil al acercar mucho la pantalla*/
+    }
+}
+/*Maximo zoom de pantalla*/
+@media (min-width: 151px) and (max-width: 300px) {
+    /*---------------------------------------------------------------------*/
+    html {
+        font-size: 16px;
+    }
+    /*---------------------------------------------------------------------*/
+    .container {
+        min-width: auto;
+        border: solid blue 2px;
+    }
+    /*---------------------------------------------------------------------*/
+
+    header .iconoHeaderMenu {
+        font-size: 1.5em;
+    }
+
+    .circle {
+        width: 35px; /* Ancho del círculo */
+        height: 35px; /* Altura del círculo */
+    }
+    #cabeceraCircle .circle {
+        visibility: visible;
+    }
+    #cabeceraMenu .circle {
+       visibility:hidden;
+    }
+
+    .tituloHeader {
+        font-size: 2em;
+    }
+    #cabeceraTitulo .tituloHeader {
+        visibility:hidden;
+    }
+
+    .cabeceraSalir {
+       margin-left:-50px;
+    }
+    .cabeceraSalir span {
+       display:none;
+    }
+    /*---------------------------------------------------------------------*/
+
+}
+/*Medidad regular y para telefonos moviles*/
+@media (min-width: 301px) and (max-width: 649px) {
+    /*---------------------------------------------------------------------*/
+    html {
+        font-size: 16px;
+    }
+    /*---------------------------------------------------------------------*/
+    .container {
+        min-width: auto;
+        border: solid purple 2px;
+        overflow: auto; /* Habilita el scroll automático cuando el contenido excede el tamaño del contenedor */
+    }
+    /*---------------------------------------------------------------------*/
+    header .iconoHeaderMenu {
+        font-size: 1.5em;
+    }
+    
+    .circle {
+        width: 35px; /* Ancho del círculo */
+        height: 35px; /* Altura del círculo */
+    }
+    
+    .tituloHeader {
+        font-size: 2em;
+    }
+    .cabeceraSalir .Perfil span {
+        display: none;
+    }
+    /*---------------------------------------------------------------------*/
+    /*Botones tabla detalle*/
+    .botonesTabla {
+        width: 45px;
+        height: 45px;
+    }
+
+    
+
+}
+/*Medida promedio comun*/
+@media (min-width: 650px) and (max-width: 1518px) {
+    /*---------------------------------------------------------------------*/
+    html {
+        font-size: 16px;
+    }
+    /*---------------------------------------------------------------------*/
+    .container {
+        min-width: auto;
+        border: solid brown 2px;
+    }
+    /*---------------------------------------------------------------------*/
+    header .iconoHeaderMenu {
+        font-size: 2em;
+    }
+
+    .circle {
+        width: 35px; /* Ancho del círculo */
+        height: 35px; /* Altura del círculo */
+    }
+    .tituloHeader {
+        font-size: 2em;
+    }
+    .cabeceraSalir .Perfil span {
+        font-size: 1em;
+    }
+    /*---------------------------------------------------------------------*/
+    .table-custom thead th:last-child {
+        width: 150px;
+    }
+  
+    .pagination-container {
+        max-height: 50px; /* Altura máxima del paginado */ 
+    }
+        .pagination-container .pagination {
+            font-size: 15px; /* Tamaño de fuente reducido */
+        }
+
+        .pagination-container .page-item {
+            margin-right: 2px; /* Reducción del espaciado entre elementos */
+        }
+
+        .pagination-container .fa-solid {
+            font-size: 17px; /* Tamaño reducido de los íconos */
+        }
+    /*---------------------------------------------------------------------*/
+ 
+  
+ 
+
+}
+/*Medida mas grande que el promedio*/
+@media (min-width: 1519px) and (max-width: 2732px) {
+    /*---------------------------------------------------------------------*/
+    html {
+        font-size: 16px;
+    }
+    /*---------------------------------------------------------------------*/
+    .container {
+        min-width: auto;
+        border: solid black 2px;
+    }
+    /*---------------------------------------------------------------------*/
+    header .iconoHeaderMenu {
+
+        font-size: 2em;
+    }
+
+    .circle {
+        width: 35px; /* Ancho del círculo */
+        height: 35px; /* Altura del círculo */
+    }
+
+    .tituloHeader {
+        font-size: 2em;
+    }
+
+    .cabeceraSalir .Perfil span {
+        font-size: 1em;
+    }
+    /*---------------------------------------------------------------------*/
+}
+/*Medida maxima*/
+@media (min-width: 2733px) and (max-width: 5464px) {
+    /*---------------------------------------------------------------------*/
+    html {
+        font-size: 16px;
+    }
+    /*---------------------------------------------------------------------*/
+    .container {
+        min-width: auto;
+        border: solid yellow 2px;
+    }
+    /*---------------------------------------------------------------------*/
+    header .iconoHeaderMenu {
+
+        font-size: 2em;
+    }
+
+    .circle {
+        width: 35px; /* Ancho del círculo */
+        height: 35px; /* Altura del círculo */
+    }
+
+    #cabeceraCircle .tituloHeader {
+        font-size: 2em;
+    }
+
+    .tituloHeader {
+        font-size: 2em;
+    }
+    .cabeceraSalir .Perfil span {
+        font-size: 1em;
+    }
+    /*---------------------------------------------------------------------*/
+}
+
+
+
+
+@media screen and (max-width: 400px) {
+    /*---------------------------------------------------------------------*/
+    .table-custom tbody tr {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+        margin-bottom: 30px;
+        color: black;
+        height: auto;
+    }
+
+    .table-custom td, .table-custom th {
+        display: block;
+        text-align: left;
+        height: auto;
+    }
+
+    .table-custom tbody td, .table-custom tbody th {
+        padding: 10px;
+        border: none;
+    }
+    /*---------------------------------------------------------------------*/
+
+}
+
+/* Media queries para hacer la tabla responsive */
+@media screen and (max-width: 400px) {
+    .table-custom tbody tr {
+        display: block;
+        margin-bottom: 20px;
+    }
+
+    .table-custom td, .table-custom th {
+        display: block;
+        text-align: left;
+        height: 40px;
+    }
+
+    .table-custom tbody td, .table-custom tbody th {
+        padding: 10px;
+        border: none;
+    }
+
+        .table-custom tbody td:last-child {
+            padding-bottom: 20px; /* Ajuste de espacio inferior para el último elemento */
+        }
+
+    .btn {
+        margin-bottom: 10px; /* Ajuste de espacio entre botones */
+    }
+}
