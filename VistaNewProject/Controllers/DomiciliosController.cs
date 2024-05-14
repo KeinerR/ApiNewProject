@@ -59,5 +59,15 @@ namespace VistaNewProject.Controllers
 
 
         }
+
+        public async Task<IActionResult> Create()
+        {
+
+            var usuario= await _client.GetUsuarioAsync();
+
+
+            ViewBag.Usuarios = usuario;
+            return View();  
+        }
     }
 }

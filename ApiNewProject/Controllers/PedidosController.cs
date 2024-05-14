@@ -153,10 +153,7 @@ namespace ApiNewProject.Controllers
         //    }
         //}
 
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
         [HttpPost("InsertPedidos")]
         public async Task<ActionResult<Pedido>> InsertPedidos(Pedido pedido)
         {
@@ -213,7 +210,7 @@ namespace ApiNewProject.Controllers
             await _context.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
-        [HttpPut("UpdatePedido")]
+        [HttpPut("UpdatePedido/{id}")]
         public async Task<IActionResult> UpdatePedido(int id, Pedido pedido)
         {
             try
@@ -230,9 +227,10 @@ namespace ApiNewProject.Controllers
                 pedidoExistente.TipoServicio = pedido.TipoServicio;
                 pedidoExistente.FechaPedido = pedido.FechaPedido;
                 pedidoExistente.EstadoPedido = pedido.EstadoPedido;
-          
+                pedidoExistente.ValorTotalPedido = pedido.ValorTotalPedido;
 
-              
+
+
                 // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
 

@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Index";
-<<<<<<< Updated upstream
     var validationMessage = TempData["Validacion"] as string;
 }
 
@@ -12,16 +11,14 @@
         // Mostrar SweetAlert con el mensaje TempData
         Swal.fire({
             title: '¡Pedido creado!',
-            text: '@validationMessage',
+            text: '@validationMessage',S
             icon: 'success',
             confirmButtonText: 'Aceptar'
         });
     </script>
 }
-=======
-}
 
->>>>>>> Stashed changes
+
 <h1>Index</h1>
 
 <p>
@@ -52,7 +49,6 @@
         </tr>
     </thead>
     <tbody>
-<<<<<<< Updated upstream
         @foreach (var item in Model)
         {
             if (item != null)
@@ -90,7 +86,6 @@
                 </tr>
             }
         }
-=======
 @foreach (var item in Model) {
         <tr>
           
@@ -116,6 +111,5 @@
             </td>
         </tr>
 }
->>>>>>> Stashed changes
     </tbody>
 </table>

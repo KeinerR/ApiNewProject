@@ -15,13 +15,12 @@ namespace VistaNewProject.Services
         // pedido
 
         Task<IEnumerable<Pedido>> GetPedidoAsync();
-<<<<<<< Updated upstream
         Task<HttpResponseMessage> CreatePedidoAsync(Pedido pedido);
         Task<HttpResponseMessage> DeletePedidoAsync(int id);
 
-=======
+        Task<HttpResponseMessage> UpdatePedidoAsync(Pedido pedido);
+
         Task<HttpResponseMessage> CreatePediiosAsync(Pedido pedido);
->>>>>>> Stashed changes
 
 
 

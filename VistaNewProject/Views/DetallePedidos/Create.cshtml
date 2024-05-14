@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Create";
-   
+
 }
 
 @if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
@@ -32,11 +32,11 @@
 
     <div class="d-none">
         <label asp-for="PedidoId" class="control-label"></label>
-        <input type="hidden" id="pedidoId" name="pedidoId" value="@ViewBag.UltimoPedidoId" />
+        <input type="text" id="pedidoId" name="pedidoId" value="@ViewBag.UltimoPedidoId" />
         <span asp-validation-for="PedidoId" class="text-danger"></span>
     </div>
     <div class="row">
-           
+
 
         <div class="col-6">
             <label asp-for="ProductoId" class="control-label"></label>
@@ -49,20 +49,32 @@
             </datalist>
             <span asp-validation-for="ProductoId" class="text-danger"></span>
         </div>
-            <div class="col-6">
-                <label asp-for="Cantidad" class="control-label"></label>
-                <input asp-for="Cantidad" class="form-control" />
-                <span asp-validation-for="Cantidad" class="text-danger"></span>
-            </div>
-            <div class="col-4">
-                <label asp-for="PrecioUnitario" class="control-label"></label>
-                <input asp-for="PrecioUnitario" class="form-control" />
-                <span asp-validation-for="PrecioUnitario" class="text-danger"></span>
-            </div>
+        <div class="col-6">
+            <label asp-for="Cantidad" class="control-label"></label>
+            <input asp-for="Cantidad" class="form-control" />
+            <span asp-validation-for="Cantidad" class="text-danger"></span>
+        </div>
+        <div class="col-4">
+            <label asp-for="PrecioUnitario" class="control-label"></label>
+            <input asp-for="PrecioUnitario" id="PrecioUnitario" class="form-control" readonly />
+            <span asp-validation-for="PrecioUnitario" class="text-danger"></span>
+        </div>
 
-        <div class="col-4 mt-4">
-            <div class="col-4 mt-4">
-                <button type="button" class="btn btn-primary p-2" style="margin-left: 300px" onclick="agregarDetalle('@Url.Action("CrearDetalles", "DetallePedidos")')">Agregar</button>
+        <div class="col-4">
+            <label asp-for="UnidadId" class="control-label"></label>
+            <input asp-for="UnidadId" name="UnidadId" id="UnidadId" class="form-control" list="UnidadIdList" />
+            <datalist id="UnidadIdList">
+                @foreach (var unidad in ViewBag.Unidad)
+                {
+                    <option value="@unidad.UnidadId">@unidad.NombreUnidad</option>
+                }
+            </datalist>
+            <span asp-validation-for="UnidadId" class="text-danger"></span>
+        </div>
+
+        <div class="col-2 mt-4">
+            <div class="col-4 mb-2">
+                <button type="button" class="btn btn-primary p-2" onclick="agregarDetalle('@Url.Action("CrearDetalles", "DetallePedidos")')">Agregar</button>
             </div>
 
 
@@ -70,7 +82,7 @@
 
 
         <div class="row mt-5">
-          
+
 
             <div class="col-4 mt-5">
                 <button type="submit" id="guardarButton" class="btn btn-primary p-2" style="margin-left: 200px; ">Guardar</button>
@@ -81,7 +93,7 @@
 
     </div>
 
-   
+
 
 
 
@@ -94,7 +106,7 @@
         </div>
     </form>
 
-  
+
 
 </div>
 
@@ -109,6 +121,10 @@
                 <th>ProductoId</th>
                 <th>Cantidad</th>
                 <th>PrecioUnitario</th>
+                <th>Unidad</th>
+                <th>Subtotal</th>
+                <th>Acciones</th>
+
             </tr>
         </thead>
         <tbody>

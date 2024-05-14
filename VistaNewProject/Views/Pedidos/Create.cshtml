@@ -18,7 +18,7 @@
             <label asp-for="ClienteId" class="control-label"></label>
             <input asp-for="ClienteId" name="ClienteId" class="form-control" list="clientesList" />
             <datalist id="clientesList">
-                @foreach (var cliente in ViewBag.Cliente)
+                @foreach (var cliente in ViewBag.Clientes)
                 {
                     <option value="@cliente.ClienteId">@cliente.NombreEntidad</option>
                 }
