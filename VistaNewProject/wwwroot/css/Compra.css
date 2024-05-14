@@ -6,14 +6,13 @@
 /* Estilo para la posicion de la modal*/
 #CompraVista {
    margin-top:0px;
-   border:solid red;
 }
 /*Estilo pars el contenedor de los distintos titulos que puede haber*/
 .modal-content {
-    background: #dede;
+  
 }
 
-.close {
+.close { 
     background-color: rgba(0, 0, 0, 0.1); /* Color de fondo semi-transparente */
     border: none;
     cursor: pointer;
@@ -24,24 +23,21 @@
 }
 
 .modal-header {
-    display: block;
+    display: flex;
+    justify-content:space-between;
     padding: 0px;
-    border: solid purple 2px;
 }
 
-.modal-header-view {
-    align-items:center;
-    min-width:100%;
+.modal-header-view {    
     user-select:none;
 }
 
 #modal-header-boton {
-    background: red;
     height:20px;
 }
 
 #modal-header-icono-boton {
-    color: blue;
+    
 }
 
 .tituloCompra {
@@ -51,7 +47,9 @@
 
 .subtituloCompra {
     display: flex;
-    color: red;
+}
+
+#joker {
 }
 
 

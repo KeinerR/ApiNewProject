@@ -29,20 +29,25 @@
         <div class="modal-dialog modal-lg" id="CompraVista">
             <div class="modal-content modal-lg">
                 <div class="modal-header">
-                    <div class="modal-header-view">
-                        <h2 class="modal-title tituloCompra">Agregar Compra</h2>
-                        <button type="button" class="close" onclick="reiniciarCompra()" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <div id="joker">
+                        <span></span>
                     </div>
-                    <div class="modal-header-view">
-                        <h3 class="modal-title subtituloCompra">Agregar productos a la compra noVer</h3>
-                        <button type="button" class="close" onclick="reiniciarCompra()" aria-label="Close"><span aria-hidden="true">×</span></button>
-                    </div>
-                    <div class="modal-header-view">
+                    <div class="modal-header-view noVer" id="modal-header-divValorTotal">
                         <div id="modal-header-valorTotal">
                             <h5 class="ValorTotal">Valor Total:</h5>
                             <input type="text" id="ValorTotal" readonly />
                         </div>
+                    </div>
+                    <div class="modal-header-view" id="tituloCompra">
+                        <h2 class="modal-title tituloCompra">Agregar Compra</h2>
+                    </div>       
+                    <div class="modal-header-view noVer" id="botonAgregarDetalle">
                         <button id="modal-header-boton" onclick="agregarDetalleCompra()"><i id="modal-header-icono-boton" class="fas fa-plus-circle"></i></button>
+                    </div>
+                    <div class="modal-header-view noVer" id="subtituloCompra">
+                        <h3 class="modal-title subtituloCompra">Agregar productos a la compra</h3>
+                    </div>
+                    <div class="modal-header-view">
                         <button type="button" class="close" onclick="reiniciarCompra()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     </div>
                     </div>

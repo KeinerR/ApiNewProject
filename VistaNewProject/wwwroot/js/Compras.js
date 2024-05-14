@@ -402,11 +402,17 @@ $('#NumeroFactura, #ProveedorId, #FechaCompra, #ProductoId, #FechaVencimiento, #
         document.getElementById('verCompra').style.display = 'block';
         document.getElementById('MensajeInicial').style.display = 'none';
         document.getElementById('PrincipalCompra').style.display = 'none';
-        document.getElementById('tituloModal').style.display = 'none';
-        document.getElementById('subTituloModal').style.display = 'block';
         document.getElementById('agregarDetalle').style.display = 'none';
         document.getElementById('expandir').style.display = 'inline-block';
         document.getElementById('expandir').style.visibility = 'visible';
+
+        document.getElementById('tituloCompra').style.visibility = 'hidden';
+        document.getElementById('subtituloCompra').style.visibility = 'visible';
+        document.getElementById('tituloCompra').style.display = 'none';
+        document.getElementById('subtituloCompra').style.display = 'block';
+        
+
+
    
     }
 
@@ -1403,6 +1409,17 @@ document.addEventListener   ("DOMContentLoaded", function () {
      
         const producto = document.getElementById('ProductoId').value;
         const unidadId = document.getElementById('UnidadId').value;
+        document.getElementById('tituloCompra').style.visibility = 'hidden';
+        document.getElementById('subtituloCompra').style.visibility = 'hidden';
+        document.getElementById('tituloCompra').style.display = 'none';
+        document.getElementById('subtituloCompra').style.display = 'none';
+        document.getElementById('joker').style.display = 'block';
+
+        document.getElementById('modal-header-valorTotal').style.display = 'block';
+        document.getElementById('modal-header-valorTotal').style.visibility = 'visible';
+        document.getElementById('botonAgregarDetalle').style.display = 'block';
+        document.getElementById('botonAgregarDetalle').style.visibility = 'visible';
+
 
         // Verificar si los campos requeridos están completos
         if (precioCompraConPuntos === '' || producto === '' || unidadId === '' || porcentajeAGanarConPuntos === '' || unidad === '' || cantidad === '' || productoId === '' || cantidadPorPresentacion === '') {
@@ -1443,6 +1460,7 @@ document.addEventListener   ("DOMContentLoaded", function () {
 
             });
             return;
+
         }
       
 
@@ -1493,6 +1511,7 @@ document.addEventListener   ("DOMContentLoaded", function () {
         document.getElementById('PrecioDeVentaPorUnidad').value = precioVentaPorUnidad;   
         document.getElementById('PrecioDeVentaUnitario').value = precioVentaPorProducto;       
         document.getElementById('PrecioDeVentaxUnidadPresentacion').value = precioVentaIndividualUnitario;
+
 
         var mensajes = document.querySelectorAll('.Mensaje');
 
