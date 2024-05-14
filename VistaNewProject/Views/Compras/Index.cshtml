@@ -28,10 +28,24 @@
     <div class="modal fade" id="CompraModal" tabindex="-1" aria-labelledby="titulomodal" aria-hidden="true">
         <div class="modal-dialog modal-lg" id="CompraVista">
             <div class="modal-content modal-lg">
-                <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
-                    <h2 class="modal-title" id="tituloModal" style="width: 100%;">Agregar Compra</h2>
-                    <h3 class="modal-title noVisualizar" id="subTituloModal" style="width: 100%;">Agregar productos a la compra</h3>
-                    <button type="button" class="btn-close" onclick="reiniciarCompra()" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header">
+                    <div class="modal-header-view">
+                        <h2 class="modal-title tituloCompra">Agregar Compra</h2>
+                                                <button type="button" class="close" onclick="reiniciarCompra()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-header-view">
+                        <h3 class="modal-title subtituloCompra">Agregar productos a la compra noVer</h3>
+                                                <button type="button" class="close" onclick="reiniciarCompra()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                    </div>
+                    <div class="modal-header-view">
+                        <div id="modal-header-valorTotal">
+                            <h5 class="ValorTotal">Valor Total Compra:</h5>
+                            <input type="text" class="ValorTotal" readonly />
+                        </div>
+                        <button id="modal-header-boton" onclick="agregarDetalleCompra()"><i id="modal-header-icono-boton" class="fas fa-plus-circle"></i></button>
+                        <button type="button" class="close" onclick="reiniciarCompra()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
                 </div>
 
             <div id="PrincipalCompra" class="modal-body">
@@ -177,12 +191,12 @@
             </div>
             </div>
             <div class="col-3">
-            <label for="PrecioDeCompra" class="labelForm control-label" id="PC">Precio de Compra<span class="Mensaje">*</span></label>
+            <label for="PrecioDeCompra" class="control-label" id="PC">Precio de Compra<span class="Mensaje">*</span></label>
             <input type="text" id="PrecioDeCompra" name="precioDeCompra" class="form-control"/>
             <span class="text-danger"></span>
             </div>
             <div class="col-3">
-            <label for="PorcentajeGanancia" class="">% A Ganar<span class="Mensaje">*</span></label>
+            <label for="PorcentajeGanancia" class="control-label">% A Ganar<span class="Mensaje">*</span></label>
             <div class="contenedorCalculo">
             <input type="text" id="PorcentajeGanancia" name="porcentajeGanancia" class="form-control"/>
             <button class="btn-calculo" id="btnCalcular" title="Calcular"><i class="fas fa-calculator"></i></button>
@@ -205,35 +219,36 @@
             <input type="text" id="PrecioDeCompraUnitario" name="precioDeCompraUnitario" class="form-control" readonly />
             </div>
             </div>
-            <div class="row noVisualizar form-group" id="PrecioBougth">
+            <div class="row noVisualizar" id="PrecioBougth">
             <h5>Precio de venta</h5>
             <div class="col-4">
-            <label for="PrecioDeVentaPorUnidad" class="control-label">x Unidad<span class="Mensaje">*</span></label>
-            <input type="text" id="PrecioDeVentaPorUnidad" name="precioDeVentaPorUnidad" class="form-control"/>
-            <span class="text-danger"></span>
+                <label for="PrecioDeVentaPorUnidad" class="control-label">x Unidad<span class="Mensaje">*</span></label>
+                <input type="text" id="PrecioDeVentaPorUnidad" name="precioDeVentaPorUnidad" class="form-control"/>
+                <span class="text-danger"></span>
             </div>
             <div class="col-4" >
-            <label for="PrecioDeVentaUnitario" class="control-label">x Producto<span class="Mensaje">*</span></label>
-            <div class="contenedorCalculo">
-            <input type="text" id="PrecioDeVentaUnitario" name="precioDeVentaUnitario" class="form-control" />
-            <button class="btn-calculo" id="btnCalcularVenta" title="Calcular precio por unidad"><i class="fas fa-calculator"></i></button>
-            </div>
-            <span id="spanErmitanio" class="text-danger"></span>
+                <label for="PrecioDeVentaUnitario" class="control-label">x Producto<span class="Mensaje">*</span></label>
+                <div class="contenedorCalculo">
+                <input type="text" id="PrecioDeVentaUnitario" name="precioDeVentaUnitario" class="form-control" />
+                <button class="btn-calculo" id="btnCalcularVenta" title="Calcular precio por unidad"><i class="fas fa-calculator"></i></button>
+                </div>
+                <span id="spanErmitanio" class="text-danger"></span>
             </div>
             <div class="col-4">
-            <label for="PrecioDeVentaxUnidadPresentacion" class="control-label">x Unidad de producto<span class="Mensaje">*</span></label>
-            <input type="text" id="PrecioDeVentaxUnidadPresentacion" name="precioDeVentaxUnidadPresentacion" class="form-control" />
-            <span class="text-danger"></span>
+                <label for="PrecioDeVentaxUnidadPresentacion" class="control-label">x Unidad de producto<span class="Mensaje">*</span></label>
+                <input type="text" id="PrecioDeVentaxUnidadPresentacion" name="precioDeVentaxUnidadPresentacion" class="form-control" />
+                <span class="text-danger"></span>
             </div>
             <div  class="contenedorFooter">
-            <button class="btn btn-primary" id="btnAgregarDetalleCompra" onclick="agregarDetalleCompra()"><i id="agregarDetalleIcono" class="fas fa-plus-circle"></i>Agregar Producto</button>
+                 <div style="display: flex;">
+                    <h5 id="ValorTotalTitulo">Valor Total Compra:</h5>
+                    <input type="text" id="ValorTotal" readonly />
             </div>
+            <button class="btn btn-primary" id="btnAgregarDetalleCompra" onclick="agregarDetalleCompra()"><i id="agregarDetalleIcono" class="fas fa-plus-circle"></i>Agregar Producto</button>
+           </div>
             </div>
             <div class="modal-footer noVisualizar" id="verCompra">
-            <div style="display: flex;">
-            <h5 id="ValorTotalTitulo">Valor Total Compra:</h5>
-            <input type="text" id="ValorTotal" readonly />
-            </div>
+           
             <div style="display: flex; justify-content: space-between;">
             <div class="ml-auto">
             <button class="btn btn-secondary" onclick="verTodo()" title="Ver todo"><i class="fas fa-minus"></i></button>

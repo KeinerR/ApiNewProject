@@ -1,13 +1,13 @@
 
-html, body {
+* {
+    padding:0px;
+    margin:0px;
+}
+body {
     position: relative;
-    margin:0;
-    padding:0;
     min-height: 90vh;
 }
 input, span, a,button{
-    padding:0;
-    margin:0;
     border:none;
 }
 
@@ -171,7 +171,7 @@ header {
     margin-top:0px; /*Margen entre el header y el menu de navegacio*/
 }
 
-/*------------------------------ Estilo para elmenu de navegacion----------------------------------------------------------------------------------------*/
+/*------------------------------ Estilo para el menu de navegacion----------------------------------------------------------------------------------------*/
 
 
 #Menu {
@@ -752,9 +752,7 @@ input:checked + .slider:before {
             font-size: 17px; /* Tamaño reducido de los íconos */
         }
     /*---------------------------------------------------------------------*/
- 
-  
- 
+
 
 }
 /*Medida mas grande que el promedio*/

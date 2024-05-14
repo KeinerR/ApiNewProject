@@ -288,12 +288,10 @@ function validarCampos(input, campo) {
             // La fecha de compra es mayor que la fecha y hora actual
             input.addClass('is-invalid');
             spanError.text('La fecha de compra no puede ser mayor que la fecha y hora actual.');
-            console.log(fechaCompra + " " + ahora);
         } else if (fechaCompra < dosDiasAntes) {
             // La fecha de compra es menor que 20 días antes de la fecha de hoy
             input.addClass('is-invalid');
             spanError.text('La fecha de compra no puede ser más de 20 días antes de la fecha actual.');
-            console.log(fechaCompra + " " + dosDiasAntes);
         } else if (fechaCompra.getFullYear().toString().length !== 4) {
             spanError.text('El año no debe tener mas de 4 caracteres.');
             input.addClass('is-invalid');
@@ -312,7 +310,6 @@ function validarCampos(input, campo) {
         }
     }   
     if (input.is('#FechaVencimiento')) {
-        console.log('here');
         var fechaVencimiento = new Date(valor);
         var ahora = new Date(); // Fecha actual con hora
         if (fechaVencimiento.getTime() === ahora.getTime()) {
@@ -322,7 +319,6 @@ function validarCampos(input, campo) {
             // La fecha de compra es mayor que la fecha y hora actual
             input.addClass('is-invalid');
             spanError.text('La fecha de vencimiento no puede ser menor que la fecha actual.');
-            console.log(fechaVencimiento + " " + ahora);
         }else if (fechaVencimiento.getFullYear().toString().length !== 4) {
             spanError.text('El año no debe tener mas de 4 caracteres.');
             input.addClass('is-invalid');
@@ -424,10 +420,11 @@ function agregarDetalleCompra() {
     var porcentajeAGanar = document.getElementById('PorcentajeGanancia').value;
     cantidadPorUnidad = document.getElementById('CantidadPorUnidad').value;
 
-    if (cantidad === '' || porcentajeAGanar === ' ) {
-        mostrarAlerta(cantidad === '' ? 'Cantidad' : (unidadId === '' ? 'Unidad' : '% A Ganar'));
+    if (cantidad === '' || unidad === '') {
+        mostrarAlerta(cantidad === '' ? 'Cantidad' : 'Unidad');
         return;
     }
+
     // Validar los campos obligatorios y las condiciones necesarias antes de agregar el detalle de compra
     if (productoId != verificarProducto) {
         alert('¡Atención! Parece que has modificado el campo de producto. Por favor, asegúrate de realizar de nuevo el cálculo.');
@@ -1408,8 +1405,11 @@ document.addEventListener   ("DOMContentLoaded", function () {
         const unidadId = document.getElementById('UnidadId').value;
 
         // Verificar si los campos requeridos están completos
-        if (precioCompraConPuntos === '' || producto === '' || unidadId === '' || porcentajeAGanarConPuntos === '') {
-            mostrarAlerta(producto === '' ? 'Producto' : (unidadId === '' ? 'Unidad' : '% A Ganar'));
+        if (precioCompraConPuntos === '' || producto === '' || unidadId === '' || porcentajeAGanarConPuntos === '' || unidad === '' || cantidad === '' || productoId === '' || cantidadPorPresentacion === '') {
+            if (producto === '' || unidadId === '' || precioCompraConPuntos === '' || porcentajeAGanarConPuntos === '' || unidad === '' || cantidad === '' || productoId === '' || cantidadPorPresentacion === '') {
+                mostrarAlerta(producto === '' ? 'Producto' : (unidadId === '' ? 'Unidad' : (precioCompraConPuntos === '' ? 'Precio de Compra' : (porcentajeAGanarConPuntos === '' ? '% A Ganar' : (unidad === '' ? 'Unidad (Cantidad Por Unidad)' : (cantidad === '' ? 'Cantidad' : (productoId === '' ? 'Producto (Hidden)' : 'Cantidad Por Presentación (Hidden)')))))));
+                return;
+            }
             return;
         } else if (productoId === '') {
             Swal.fire({
@@ -1500,11 +1500,11 @@ document.addEventListener   ("DOMContentLoaded", function () {
         for (var i = mensajes.length - 3; i < mensajes.length; i++) {
             var mensaje = mensajes[i];
             mensaje.textContent = ''; // Restaurar mensajes de error
-            mensaje.style.display = 'inline-block'; // Establecer estilo si es necesario
+            mensaje.style.display = 'flex'; // Establecer estilo si es necesario
         }
 
         document.getElementById('PrecioBuy').style.display = "flex";
-        document.getElementById('PrecioBougth').style.display = "flex";
+        document.getElementById('PrecioBougth').style.display = "inline-flex";
 
 
         // Aquí puedes realizar cualquier operación adicional con los valores calculados

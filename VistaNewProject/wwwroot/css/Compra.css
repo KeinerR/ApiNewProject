@@ -1,48 +1,104 @@
-﻿/*----------------------------------------DIV PADRE --------------------------------------------------------------------*/
-/* Establecer la modal para que ocupe el 100% del ancho de la pantalla */
+﻿/* Estilo para el contenido de la modal */
 #CompraModal {
-    margin:0;
-    padding:0;
-    border:solid yellow 2px;
+    margin: 0;
+    padding: 0;
+    border: solid yellow 1px;
 }
 
-
-/* Estilo para el contenido de la modal */
 #CompraVista {
-    margin-top: 10px;
-    border: solid black 2px;
-    justify-content: center; /* Centrar horizontalmente */
-    align-items: center; /* Centrar verticalmente */
+    margin-top: 0px;
+    margin-left: 0px;
+    min-width: 100vw;
+    border: solid skyblue 2px;
 }
-
-
 .modal-header {
-   text-justify:inter-character;
+    text-align: center;
+    display: block;
+    justify-content: space-around; /* Espacio entre elementos */
+    align-items: center;
+    border: solid red 2px;
 }
+
+.modal-header-view {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative; /* Importante para posicionar la "X" sobre el título */
+    border: green solid 2px;
+}
+
+.close {
+    position: absolute; /* Posición absoluta para la "X" */
+    top: 0;
+    right: 0;
+    z-index: 999; /* Asegura que la "X" esté sobre el título */
+    background-color: transparent;
+    border: none;
+}
+
+#modal-header-boton {
+    background: red;
+}
+
+#modal-header-icono-boton {
+    color: blue;
+}
+
+#modal-header-valorTotal {
+    background: red;
+    display: flex;
+    align-items: center;
+}
+
 .modal-title {
-    text-align:center;
+    text-align: center;
+    border: solid black 2px;
+    width: 100%;
 }
+
+.tituloCompra {
+    background: red;
+}
+
+.subtituloCompra {
+    background: black;
+}
+
+.modal-content {
+    background: #dede;
+}
+
+#cabeceraValorTotal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px; /* Espacio opcional debajo de la cabecera */
+}
+
+    #cabeceraValorTotal .ValorTotalTitulo {
+        margin: 0;
+    }
+
+    #cabeceraValorTotal input {
+        text-align: right;
+    }
 
 
 
 /*----------------------------------------PrimerFormulario datos de compra---------------------------------*/
 
 /*DIV con los input para agregar la compra incluido botones */
-#PrincipalCompra {
-    padding-top: 2px;
-    padding-bottom: 10px;
-    border: solid blue 2px;
-}
 
 /*DIV Boton de agregar productos*/
 #agregarDetalle {
-    margin-top: 20px;
     padding: 0px;
 }
 
 #agregarDetalleIcono {
     font-size: 20px;
     margin-right: 10px;
+    border:solid 20px solid;
 }
 
 /*DIV Botones de actualizar compra*/
@@ -67,6 +123,33 @@
         border-radius: 20px;
     }
 
+.Mensaje {
+    color: red;
+    margin-left: 5px;
+    padding-top: 10px;
+    font-size: 2em;
+    height: 20px;
+    width: 20px;
+    white-space: nowrap; /* Evitar que el texto se desborde a la siguiente línea */
+    display: flex; /* Convertir el contenedor en un flex container */
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+}
+
+    .Mensaje:hover {
+        color: blue;
+        transform: translateY(-1px); /* Mover el elemento hacia arriba 1px al colocar el cursor sobre él */
+        cursor: pointer;
+    }
+
+#PrecioBougth .Mensaje {
+    position: relative; /* Posicionamiento relativo para el contenedor */
+    height: 20px;
+    width: 20px;
+    padding-top: 10px; /* Ajuste para que el asterisco no se salga */
+    text-align: center; /* Centrar texto dentro del contenedor */
+}
+
 
 /*DIV para generar un espacio*/
 .EspacioForm {
@@ -76,14 +159,11 @@
 .contenedorFooter {
     display: flex;
     justify-content: flex-end;
-    margin-top: 10px;
     padding: 0px;
 }
-
+    
 /*Div para agregar detalles a la compra desde el producto hasta la tabla donde se pueden ver dichos productos*/
 #DetallesCompra {
-    padding-top: 2px;
-    border: solid red 2px;
 }
 
 /**Div que contiene los botones de para registrar la compra expandirla, reducirla y limpiarla de ser necesario*/
@@ -91,9 +171,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px; /* Ajusta el espacio interno según sea necesario */
     border: solid red 2px;
 }
+
 
     #verCompra .ml-auto {
         display: inline-block;
@@ -106,26 +186,19 @@
     }
 
 /*Diseño input de valor total*/
-#ValorTotal {
+.ValorTotal {
     pointer-events: none;
     user-select: none; /* Evita la selección de texto */
     font-size: 20px;
     border-radius: 20px;
-    border: solid red 2px;
+    background:transparent;
     padding: 0px;
     width: 200px;
 }
 
-    #ValorTotal::selection {
+    .ValorTotal::selection {
         background-color: transparent;
     }
-
-#ValorTotalTitulo {
-    padding-bottom: 0px;
-    margin: 0px;
-    margin-right: 20px;
-}
-
 
 /*Diseños tabla de detalles producto*/
 
@@ -147,7 +220,6 @@
     border-radius: 20px; /* Elimina la esquina redondeada */
     font-size: 15px; /* Ajusta el tamaño de la fuente */
     background:none;
-    border:1px solid black;
 }
     .paginacion-btn:hover {
         background-color: #0069d9; /* Cambia el color de fondo al pasar el mouse */
@@ -242,24 +314,7 @@
     display: inline-flex; /* Mantener el display flex para centrar verticalmente */
     align-items: center; /* Centrar verticalmente */
 }
-/*Asterisco de campo vacio*/
-.Mensaje {
-    color: red;
-    height: 10px;
-    font-size: 25px;
-    margin-left: 5px;
-    margin-top:7px; 
-    white-space: nowrap; /* Evitar que el texto se desborde a la siguiente línea */
-    line-height: 1; /* Evitar que el span afecte el tamaño del label */
-    display: flex; /* Hacer el span un contenedor flex */
-    justify-content: center; /* Centrar horizontalmente */
-    align-items: center; /* Centrar verticalmente */
-}
-    .Mensaje:hover {
-        color: blue;
-        transform: translateY(-1px); /* Mover el elemento hacia arriba 1px al colocar el cursor sobre él */
-        cursor: pointer;
-    }
+
 
 
 /*Estilos de SWEET ALERT que se muestra al momento de agregar el detalle*/
@@ -284,6 +339,7 @@
     margin-bottom:7px;
     width:400px; 
 }
+
 .textoAlerta {
     color: black;
     font-size: 18px;
