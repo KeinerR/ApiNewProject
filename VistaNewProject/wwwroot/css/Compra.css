@@ -1,88 +1,83 @@
-﻿/* Estilo para el contenido de la modal */
+﻿/* Estilo para que la odal ocupe el 100% de la pantalla*/
 #CompraModal {
     margin: 0;
     padding: 0;
-    border: solid yellow 1px;
 }
-
+/* Estilo para la posicion de la modal*/
 #CompraVista {
-    margin-top: 0px;
-    margin-left: 0px;
-    min-width: 100vw;
-    border: solid skyblue 2px;
+   margin-top:0px;
+   border:solid red;
 }
-.modal-header {
-    text-align: center;
-    display: block;
-    justify-content: space-around; /* Espacio entre elementos */
-    align-items: center;
-    border: solid red 2px;
-}
-
-.modal-header-view {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative; /* Importante para posicionar la "X" sobre el título */
-    border: green solid 2px;
+/*Estilo pars el contenedor de los distintos titulos que puede haber*/
+.modal-content {
+    background: #dede;
 }
 
 .close {
-    position: absolute; /* Posición absoluta para la "X" */
-    top: 0;
-    right: 0;
-    z-index: 999; /* Asegura que la "X" esté sobre el título */
-    background-color: transparent;
+    background-color: rgba(0, 0, 0, 0.1); /* Color de fondo semi-transparente */
     border: none;
+    cursor: pointer;
+}
+
+.close:hover {
+    background-color: rgba(0, 0, 0, 0.3); /* Color de fondo al pasar el ratón */
+}
+
+.modal-header {
+    display: block;
+    padding: 0px;
+    border: solid purple 2px;
+}
+
+.modal-header-view {
+    align-items:center;
+    min-width:100%;
+    user-select:none;
 }
 
 #modal-header-boton {
     background: red;
+    height:20px;
 }
 
 #modal-header-icono-boton {
     color: blue;
 }
 
-#modal-header-valorTotal {
-    background: red;
-    display: flex;
-    align-items: center;
-}
-
-.modal-title {
-    text-align: center;
-    border: solid black 2px;
-    width: 100%;
-}
-
 .tituloCompra {
-    background: red;
+    max-height:50px;
+    display:flex;
 }
 
 .subtituloCompra {
-    background: black;
-}
-
-.modal-content {
-    background: #dede;
-}
-
-#cabeceraValorTotal {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 10px; /* Espacio opcional debajo de la cabecera */
+    color: red;
 }
 
-    #cabeceraValorTotal .ValorTotalTitulo {
-        margin: 0;
+
+#modal-header-valorTotal {
+    max-height: 40px;
+    display:flex;
+}
+    #modal-header-valorTotal input {
+        border: solid black 2px;
+        background-color: transparent;
+        max-width: 200px;
+        text-align: center;
+        pointer-events: none;
+        user-select: none; /* Evita la selección de texto */
+        font-size: 20px;
+        border-radius: 20px;
+        background: transparent;
+        padding: 0px;
+        max-width: 200px;
     }
 
-    #cabeceraValorTotal input {
-        text-align: right;
-    }
+
+
+
+
+
 
 
 
@@ -185,20 +180,6 @@
         margin-left: auto; /* Hace que se vaya a la esquina izquierda */
     }
 
-/*Diseño input de valor total*/
-.ValorTotal {
-    pointer-events: none;
-    user-select: none; /* Evita la selección de texto */
-    font-size: 20px;
-    border-radius: 20px;
-    background:transparent;
-    padding: 0px;
-    width: 200px;
-}
-
-    .ValorTotal::selection {
-        background-color: transparent;
-    }
 
 /*Diseños tabla de detalles producto*/
 

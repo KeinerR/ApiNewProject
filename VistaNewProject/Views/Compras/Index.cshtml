@@ -24,30 +24,29 @@
         </button>
 
     </div>
-    <!-- Modal -->
+        <!-- Modal -->
     <div class="modal fade" id="CompraModal" tabindex="-1" aria-labelledby="titulomodal" aria-hidden="true">
         <div class="modal-dialog modal-lg" id="CompraVista">
             <div class="modal-content modal-lg">
                 <div class="modal-header">
                     <div class="modal-header-view">
                         <h2 class="modal-title tituloCompra">Agregar Compra</h2>
-                                                <button type="button" class="close" onclick="reiniciarCompra()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <button type="button" class="close" onclick="reiniciarCompra()" aria-label="Close"><span aria-hidden="true">×</span></button>
                     </div>
                     <div class="modal-header-view">
                         <h3 class="modal-title subtituloCompra">Agregar productos a la compra noVer</h3>
-                                                <button type="button" class="close" onclick="reiniciarCompra()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-
+                        <button type="button" class="close" onclick="reiniciarCompra()" aria-label="Close"><span aria-hidden="true">×</span></button>
                     </div>
                     <div class="modal-header-view">
                         <div id="modal-header-valorTotal">
-                            <h5 class="ValorTotal">Valor Total Compra:</h5>
-                            <input type="text" class="ValorTotal" readonly />
+                            <h5 class="ValorTotal">Valor Total:</h5>
+                            <input type="text" id="ValorTotal" readonly />
                         </div>
                         <button id="modal-header-boton" onclick="agregarDetalleCompra()"><i id="modal-header-icono-boton" class="fas fa-plus-circle"></i></button>
                         <button type="button" class="close" onclick="reiniciarCompra()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     </div>
-                </div>
-
+                    </div>
+                               
             <div id="PrincipalCompra" class="modal-body">
             <div class="form-group">
             <input type="hidden" id="CompraId" name="compraId" class="form-control" />
@@ -297,7 +296,7 @@
             </div>
             </div>
         </div>
-    </div>
+        </div>
     <br />
     <hr>
         <table class="table table-custom text-center">
