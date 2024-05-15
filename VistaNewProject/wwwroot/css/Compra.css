@@ -3,78 +3,91 @@
     margin: 0;
     padding: 0;
 }
+
 /* Estilo para la posicion de la modal*/
 #CompraVista {
    margin-top:0px;
 }
-/*Estilo pars el contenedor de los distintos titulos que puede haber*/
+
+/*Estilos para las etiquetas dentro de la modal y hacer crecer o decrecer la modal */
 .modal-content {
-  
+    user-select: none;
 }
 
-.close { 
-    background-color: rgba(0, 0, 0, 0.1); /* Color de fondo semi-transparente */
-    border: none;
-    cursor: pointer;
-}
-
-.close:hover {
-    background-color: rgba(0, 0, 0, 0.3); /* Color de fondo al pasar el ratón */
-}
-
-.modal-header {
+/*-------------------------Estilos para la cabecera de la ventana modal de compras-----------------*/
+.Compra .modal-header {
     display: flex;
     justify-content:space-between;
-    padding: 0px;
+    padding:0px;
+}
+/*Estilo para el titulo*/
+.Compra .modal-header h2 {
+  padding:0px;
+  margin:0px;
+}
+/*Estilos valor total*/
+#modal-header-ValorTotal-contenedor {
+    display: flex; /* Utiliza flexbox para el diseño */
+    align-items: center; /* Alinea verticalmente los elementos */
 }
 
-.modal-header-view {    
-    user-select:none;
-}
-
-#modal-header-boton {
-    height:20px;
-}
-
-#modal-header-icono-boton {
-    
-}
-
-.tituloCompra {
-    max-height:50px;
-    display:flex;
-}
-
-.subtituloCompra {
-    display: flex;
-}
-
-#joker {
-}
-
-
-#modal-header-valorTotal {
-    max-height: 40px;
-    display:flex;
-}
-    #modal-header-valorTotal input {
-        border: solid black 2px;
-        background-color: transparent;
+    #modal-header-ValorTotal-contenedor h5, #modal-header-ValorTotal-contenedor input {
         max-width: 200px;
-        text-align: center;
         pointer-events: none;
         user-select: none; /* Evita la selección de texto */
         font-size: 20px;
         border-radius: 20px;
         background: transparent;
-        padding: 0px;
-        max-width: 200px;
     }
 
 
+    #modal-header-ValorTotal-contenedor h5 {
+        padding-top:10px;
+        padding-left:10px;
+    }
+    #modal-header-ValorTotal-contenedor input:hover,
+    #modal-header-ValorTotal-contenedor input:focus,
+    #modal-header-ValorTotal-contenedor input:active {
+        /* Estilos para :hover, :focus, :active */
+        /* Aquí puedes dejar los estilos vacíos o como prefieras */
+        /* Ejemplo: */
+        outline: none; /* Quitar el contorno al hacer hover, focus o active */
+    }
 
 
+        /*Boton agregar detalle*/
+        /*#modal-header-botonAgregarDetalle {
+    position: absolute;*/ /* Asegura que el div se posicione según coordenadas especificadas */
+        /*top: 00px;*/ /* Coloca el div en la parte superior */
+        /*left: 76%;*/ /* Coloca el div en la mitad horizontalmente */
+        /*transform: translateX(-50%);*/ /* Centra el div horizontalmente */
+        /*z-index: 999;*/ /* Valor alto para asegurar que esté encima de otros elementos */
+        /*}*/
+        #modal-header-botonAgregarDetalle {
+        position: absolute; /* Asegura que el div se posicione según coordenadas especificadas */
+        top: 3px; /* Coloca el div en la parte superior */
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 999; /* Valor alto para asegurar que esté encima de otros elementos */
+    }
 
+#modal-header-icono-boton {
+
+    
+}
+
+#modal-header-equis {
+    margin-right:10px;
+    margin-top:5px;
+}
+.close {
+    border: none;
+    cursor: pointer;
+}
+
+    .close:hover {
+        background-color: rgba(0, 0, 0, 0.3); /* Color de fondo al pasar el ratón */
+    }
 
 
 
@@ -93,6 +106,22 @@
     margin-right: 10px;
     border:solid 20px solid;
 }
+
+/*DIV para generar un espacio*/
+.EspacioForm {
+    height: 20px;
+}
+/*estilos para los footer en la ventana modal*/
+.contenedorFooter {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0px;
+}
+
+/*Div para agregar detalles a la compra desde el producto hasta la tabla donde se pueden ver dichos productos*/
+#DetallesCompra {
+}
+
 
 /*DIV Botones de actualizar compra*/
 #actualizarCompra {
@@ -144,20 +173,6 @@
 }
 
 
-/*DIV para generar un espacio*/
-.EspacioForm {
-    height: 20px;
-}
-/*estilos para los footer en la ventana modal*/
-.contenedorFooter {
-    display: flex;
-    justify-content: flex-end;
-    padding: 0px;
-}
-    
-/*Div para agregar detalles a la compra desde el producto hasta la tabla donde se pueden ver dichos productos*/
-#DetallesCompra {
-}
 
 /**Div que contiene los botones de para registrar la compra expandirla, reducirla y limpiarla de ser necesario*/
 #verCompra {

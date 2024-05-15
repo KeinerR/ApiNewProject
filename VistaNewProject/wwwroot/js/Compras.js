@@ -462,6 +462,7 @@ function agregarDetalleCompra() {
 
     var cantidadLote = detalleCompra.cantidad * cantidadUnidad;
     var fechaVencimiento = document.getElementById('FechaVencimiento').value;
+   
 
     var todolleno = $('.Mensaje').filter(function () {
         return $(this).text() !== '';
@@ -935,14 +936,16 @@ function verificarPaginado() {
     const filasPorPagina = 3; // Cambia este valor según tus necesidades
     const filas = Array.from(detalleTableBody.rows);
     let paginasTotales = Math.ceil(filas.length / filasPorPagina);
+    document.getElementById('joker').style.display = 'none';
+    document.getElementById('modal-header-ValorTotal').style.display= 'flex';
+    document.getElementById('modal-header-ValorTotal').style.visibility = 'visible';
     if (paginasTotales > 1) {
         document.getElementById('contenedorTablaDetallesBotones').style.display = 'block';
         document.getElementById('contenedorTablaDetallesBotones').style.visibility = 'visible';
         console.log('Here');
     } else {
         document.getElementById('contenedorTablaDetallesBotones').style.display = 'none';
-        document.getElementById('contenedorTablaDetallesBotones').style.visibility = 'hidden';
-        console.log('Heres');
+        document.getElementById('contenedorTablaDetallesBotones').style.visibility = 'hidden'; 
     }
 }
 
@@ -970,6 +973,8 @@ function agregarFilaDetalle(detalleCompra) {
     cellSubtotal.innerHTML = ultimoLote.precioCompra;
     cellAcciones.innerHTML = '<button onclick="eliminarFilaDetalle(this)">Eliminar</button>';
 
+    document.getElementById('modal-header-botonAgregarDetalle').style.display = 'none';
+    document.getElementById('modal-header-botonAgregarDetalle').style.visibility = 'hidden';
 
     //verifica si es necesario que se vea u no el paginado
     verificarPaginado() 
@@ -1412,13 +1417,11 @@ document.addEventListener   ("DOMContentLoaded", function () {
         document.getElementById('tituloCompra').style.visibility = 'hidden';
         document.getElementById('subtituloCompra').style.visibility = 'hidden';
         document.getElementById('tituloCompra').style.display = 'none';
-        document.getElementById('subtituloCompra').style.display = 'none';
-        document.getElementById('joker').style.display = 'block';
-
-        document.getElementById('modal-header-valorTotal').style.display = 'block';
-        document.getElementById('modal-header-valorTotal').style.visibility = 'visible';
-        document.getElementById('botonAgregarDetalle').style.display = 'block';
-        document.getElementById('botonAgregarDetalle').style.visibility = 'visible';
+        
+        
+        document.getElementById('modal-header-botonAgregarDetalle').style.display = 'block';
+        document.getElementById('modal-header-botonAgregarDetalle').style.visibility = 'visible';
+      
 
 
         // Verificar si los campos requeridos están completos

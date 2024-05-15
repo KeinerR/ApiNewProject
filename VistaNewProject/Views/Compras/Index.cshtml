@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Compras";
 }
-<div id="ContenedorVista">
+<div id="ContenedorVista" class="Compra">
     <br />
     <div class="d-flex justify-content-between">
         <!-- Formulario de búsqueda a la izquierda -->
@@ -32,25 +32,30 @@
                     <div id="joker">
                         <span></span>
                     </div>
-                    <div class="modal-header-view noVer" id="modal-header-divValorTotal">
-                        <div id="modal-header-valorTotal">
-                            <h5 class="ValorTotal">Valor Total:</h5>
-                            <input type="text" id="ValorTotal" readonly />
+                   
+                        <div class="modal-header-view noVer" id="modal-header-ValorTotal">
+                            <div id="modal-header-ValorTotal-contenedor">
+                                <h5 class="ValorTotal">Valor Total:</h5>
+                                <input type="text" style="border:none;"id="ValorTotal" readonly />
+                            </div>
                         </div>
-                    </div>
+
+                   
                     <div class="modal-header-view" id="tituloCompra">
                         <h2 class="modal-title tituloCompra">Agregar Compra</h2>
                     </div>       
-                    <div class="modal-header-view noVer" id="botonAgregarDetalle">
-                        <button id="modal-header-boton" onclick="agregarDetalleCompra()"><i id="modal-header-icono-boton" class="fas fa-plus-circle"></i></button>
-                    </div>
                     <div class="modal-header-view noVer" id="subtituloCompra">
-                        <h3 class="modal-title subtituloCompra">Agregar productos a la compra</h3>
+                        <h2 class="modal-title subtituloCompra">Agregar productos a la compra</h2>
                     </div>
-                    <div class="modal-header-view">
-                        <button type="button" class="close" onclick="reiniciarCompra()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <div class="modal-header-view" id="modal-header-equis">
+                           <button type="button" onclick="limpiarFormulario()" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+@*                         <button type="button" class="close" onclick="reiniciarCompra()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+ *@                    </div>
                     </div>
-                    </div>
+                <div class="modal-header-view d-flex justify-content-center noVer" id="modal-header-botonAgregarDetalle">
+                     <button class="btn btn-primary" id="btnAgregarDetalleCompra" onclick="agregarDetalleCompra()"><i id="agregarDetalleIcono" class="fas fa-plus-circle"></i>Agregar Producto</button>
+                    
+                </div>
                                
             <div id="PrincipalCompra" class="modal-body">
             <div class="form-group">
@@ -243,12 +248,6 @@
                 <input type="text" id="PrecioDeVentaxUnidadPresentacion" name="precioDeVentaxUnidadPresentacion" class="form-control" />
                 <span class="text-danger"></span>
             </div>
-            <div  class="contenedorFooter">
-                 <div style="display: flex;">
-                    <h5 id="ValorTotalTitulo">Valor Total Compra:</h5>
-                    <input type="text" id="ValorTotal" readonly />
-            </div>
-            <button class="btn btn-primary" id="btnAgregarDetalleCompra" onclick="agregarDetalleCompra()"><i id="agregarDetalleIcono" class="fas fa-plus-circle"></i>Agregar Producto</button>
            </div>
             </div>
             <div class="modal-footer noVisualizar" id="verCompra">
