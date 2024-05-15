@@ -10,21 +10,23 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="DomicilioId" class="control-label"></label>
-                <input asp-for="DomicilioId" class="form-control" />
-                <span asp-validation-for="DomicilioId" class="text-danger"></span>
-            </div>
+
             <div class="form-group">
                 <label asp-for="PedidoId" class="control-label"></label>
-                <input asp-for="PedidoId" class="form-control" />
+                <input asp-for="PedidoId" name="PedidoId" class="form-control" value="@ViewBag.UltimoPedidoId" />
                 <span asp-validation-for="PedidoId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="UsuarioId" class="control-label"></label>
-                <input asp-for="UsuarioId" class="form-control" />
+                <input asp-for="UsuarioId" name="UsuarioId" class="form-control" list="usuarioList" />
+                <datalist id="usuarioList">
+                    @foreach (var pedido in ViewBag.Usuarios)
+                    {
+                        <option value="@pedido.UsuarioId">@pedido.Nombre</option>
+                    }
+                </datalist>
                 <span asp-validation-for="UsuarioId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -44,7 +46,21 @@
             </div>
             <div class="form-group">
                 <label asp-for="EstadoDomicilio" class="control-label"></label>
-                <input asp-for="EstadoDomicilio" class="form-control" />
+                <select asp-for="EstadoDomicilio" class="form-control" name="EstadoDomicilio" disabled>
+                    @{
+                        var estadoDomicilio = Model.EstadoDomicilio;
+                        var opciones = new List<SelectListItem>
+                    {
+                    new SelectListItem { Text = "Pendiente", Value = "Pendiente", Selected = estadoDomicilio == "Pendiente" },
+                    new SelectListItem { Text = "Realizado", Value = "Realizado", Selected = estadoDomicilio == "Realizado" },
+                    new SelectListItem { Text = "Cancelado", Value = "Cancelado", Selected = estadoDomicilio == "Cancelado" }
+                    };
+                    }
+                    @foreach (var opcion in opciones)
+                    {
+                        <option value="@opcion.Value" selected="@opcion.Selected">@opcion.Text</option>
+                    }
+                </select>
                 <span asp-validation-for="EstadoDomicilio" class="text-danger"></span>
             </div>
             <div class="form-group">

@@ -656,6 +656,18 @@ namespace VistaNewProject.Services
         }
 
 
+        public async Task<HttpResponseMessage> CreateDomicilioAsync(Domicilio domicilio)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Domicilios/InsertDomicilio", domicilio);
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+            }
+                return response;
+        }
+
+
         //detallepedido
         public async Task<IEnumerable<Detallepedido>> GetDetallepedidoAsync()
         {

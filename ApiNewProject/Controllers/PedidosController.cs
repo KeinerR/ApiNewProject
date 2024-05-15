@@ -34,6 +34,7 @@ namespace ApiNewProject.Controllers
                     ClienteId = s.ClienteId,
                     TipoServicio = s.TipoServicio,
                     FechaPedido = s.FechaPedido,
+                    ValorTotalPedido=s.ValorTotalPedido,
                     EstadoPedido = s.EstadoPedido,
 
                 }
@@ -226,8 +227,8 @@ namespace ApiNewProject.Controllers
                 pedidoExistente.ClienteId = pedido.ClienteId;
                 pedidoExistente.TipoServicio = pedido.TipoServicio;
                 pedidoExistente.FechaPedido = pedido.FechaPedido;
-                pedidoExistente.EstadoPedido = pedido.EstadoPedido;
                 pedidoExistente.ValorTotalPedido = pedido.ValorTotalPedido;
+                pedidoExistente.EstadoPedido = pedido.EstadoPedido;
 
 
 
