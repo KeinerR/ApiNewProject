@@ -157,6 +157,7 @@ $(document).ready(function () {
                 // Filtrar los productos por productId seleccionado
                 const productoSeleccionado = data.find(producto => producto.productoId == productId);
 
+
                 if (productoSeleccionado) {
                     // Mostrar la cantidad total como marcador de posición en el campo "Cantidad"
                     $('#Cantidad').attr('placeholder', `Cantidad total Disponible en l inventario: ${productoSeleccionado.cantidadTotal}`);
@@ -164,6 +165,48 @@ $(document).ready(function () {
                     // Si no se encuentra ningún producto con el productId seleccionado, mostrar un mensaje
                     $('#Cantidad').attr('placeholder', '');
                 }
+
+                $('#Cantidad').on('input', function () {
+                    const cantidadIngresada = parseFloat($(this).val()); // Convertir el valor a un número flotante
+                    console.log(cantidadIngresada);
+                    const cantidadDisponible = parseFloat($('#Cantidad').attr('placeholder').split(':')[1].trim());
+                    console.log(cantidadDisponible);
+
+                    if (isNaN(cantidadIngresada)) {
+                        // Si la cantidad ingresada no es un número válido, mostrar mensaje de error
+                        $('#Cantidad').addClass('input-validation-error'); // Agregar la clase de error al campo
+                        $('span[data-valmsg-for="Cantidad"]').text('Por favor, ingrese una cantidad válida'); // Mostrar el mensaje de error
+                        $('#Cantidad').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
+                    } else if (cantidadIngresada > cantidadDisponible) {
+                        // Si la cantidad ingresada es mayor que la cantidad disponible, mostrar mensaje de error
+                        $('#Cantidad').addClass('input-validation-error');
+                        // Agregar la clase de error al campo
+                        $('span[data-valmsg-for="Cantidad"]').text('La cantidad ingresada no puede ser mayor que la cantidad disponible');
+                        $('#btnEnviar').prop('disabled', true);
+                        // Mostrar el mensaje de error
+                        // Puedes deshabilitar el botón de envío u otra acción según tus necesidades
+                        $('#Cantidad').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
+                    } else if (cantidadIngresada <= 0) {
+                        // Si la cantidad ingresada es menor o igual a 0, mostrar mensaje de error
+                        $('#Cantidad').addClass('input-validation-error');
+                        // Agregar la clase de error al campo
+                        $('span[data-valmsg-for="Cantidad"]').text('La cantidad ingresada no puede ser menor o igual a 0');
+                        $('#btnEnviar').prop('disabled', true);
+                        // Mostrar el mensaje de error
+                        // Puedes deshabilitar el botón de envío u otra acción según tus necesidades
+                        $('#Cantidad').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
+                    } else {
+                        // Si la cantidad ingresada es válida, quitar la clase de error del campo
+                        $('#Cantidad').removeClass('input-validation-error');
+                        // Quitar el mensaje de error
+                        $('span[data-valmsg-for="Cantidad"]').text('');
+                        // Quitar la clase de error del campo para los estilos de Bootstrap
+                        $('#Cantidad').removeClass('is-invalid');
+                        // Puedes habilitar el botón de envío u otra acción según tus necesidades
+                    }
+                });
+
+
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -185,12 +228,10 @@ $(document).ready(function () {
         });
 
         // Evento input para el campo "Cantidad"
-        $('#Cantidad').on('input', function () {
-            if (!$(this).val()) {
-                // Si el campo de cantidad está vacío, limpiar el precio unitario
-                $('#PrecioUnitario').val('');
-            }
-        })
+
+        // Evento input para el campo "Cantidad"
+       
+
     });
 });
 
@@ -205,3 +246,11 @@ function mostrarDetallesActuales() {
         console.log('Detalles actuales:', data);
     });
 }
+
+
+
+
+
+
+
+

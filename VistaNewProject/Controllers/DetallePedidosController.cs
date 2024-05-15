@@ -66,7 +66,46 @@ namespace VistaNewProject.Controllers
         public async Task<IActionResult> CrearDetalles([FromBody] Detallepedido detallePedido)
         {
             // Agrega el detalle recibido a la lista global
-            Console.WriteLine(detallePedido);
+
+            var pedidos = await _client.GetPedidoAsync();
+            var ultimoPedido = pedidos.OrderByDescending(p => p.PedidoId).FirstOrDefault();
+            if (ultimoPedido != null && ultimoPedido.EstadoPedido == "Realizado")
+            {
+                var productoId = detallePedido.ProductoId.Value; // Obtiene el valor de detallePedido.ProductoId
+                Console.WriteLine(productoId);
+                var producto = await _client.FindProductoAsync(productoId);
+                if (producto != null)
+                {
+                    producto.CantidadTotal -= detallePedido.Cantidad;
+                    var update = await _client.UpdateProductoAsync(producto);
+                    if (update.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine("Correcto");
+                    }
+                }
+                var lotes = await _client.GetLoteAsync();
+
+                var lotesFiltrado = lotes.Where(l => l.ProductoId == productoId);
+                if (lotesFiltrado.Any())
+                {
+                    // Encontrar el lote con la fecha de vencimiento más próxima
+                    var loteProximoVencimiento = lotesFiltrado.OrderBy(l => l.FechaVencimiento).First();
+                    loteProximoVencimiento.Cantidad -= detallePedido.Cantidad;
+                    var UpdateLote = await _client.UpdateLotesAsync(loteProximoVencimiento);
+
+                    if (UpdateLote.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine("Lotes Correctamente");
+                    }
+
+                    // Ahora tienes el lote con la fecha de vencimiento más próxima: loteProximoVencimiento
+                }
+            }
+           
+            // Restar la cantidad del detalle del pedido de cada lote asociado
+          
+
+
 
             listaGlobalDetalles.Add(detallePedido);
 
@@ -133,6 +172,12 @@ namespace VistaNewProject.Controllers
                     {
                         listaGlobalDetalles.Clear();
                         return RedirectToAction("Create", "Domicilios");
+                    }
+                    else
+                    {
+                        listaGlobalDetalles.Clear();
+                        TempData["ValidarPedido"] = "Pedido Guardado Correctamente.";
+                        return RedirectToAction("Index", "Pedidos");
                     }
                 }
 

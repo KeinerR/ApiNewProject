@@ -81,7 +81,7 @@ namespace VistaNewProject.Services
 
         Task<IEnumerable<Producto>> GetProductoAsync();
 
-        Task<HttpResponseMessage> CreateUnidadAsync(Producto producto);
+        Task<HttpResponseMessage> CreateProductoAsynAsync(Producto producto);
         Task<Producto> FindProductoAsync(int id);
         Task<HttpResponseMessage> UpdateProductoAsync(Producto producto);
         Task<HttpResponseMessage> DeleteProductuAsync(int id);
@@ -118,13 +118,15 @@ namespace VistaNewProject.Services
         // lote
 
         Task<IEnumerable<Lote>> GetLoteAsync();
+        Task<Lote> FindLotesAsync(int id);
+        Task<HttpResponseMessage> UpdateLotesAsync(Lote lote);
 
-        
 
         // domicilio
 
         Task<IEnumerable<Domicilio>> GetDomicilioAsync();
         Task<HttpResponseMessage> CreateDomicilioAsync(Domicilio domicilio);
+
 
 
         // detallepedido

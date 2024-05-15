@@ -7,7 +7,6 @@
 //    });
 //}
 
-<<<<<<< Updated upstream
 //const { data } = require("jquery");
 
 //const { data } = require("jquery");
@@ -37,7 +36,7 @@
 //$(document).ready(function () {
 //    inicializarEventos();
 //});
-=======
+
 //var fechaActual = new Date();
 //var fechaFormateada = fechaActual.toISOString().slice(0, 16);
 //document.getElementById("FechaPedido1").value = fechaFormateada;
@@ -46,12 +45,7 @@
 
 //// Asignar la fecha formateada al campo de entrada
 //document.getElementById("FechaEntrega3").value = fechaFormateada1;
->>>>>>> Stashed changes
 
-
-
-
-<<<<<<< Updated upstream
 
 //var fechaActual = new Date();
 //var fechaFormateada = fechaActual.toISOString().slice(0, 16);
@@ -89,7 +83,7 @@
 //        };
 //    }
 
-=======
+
 //document.getElementById("btnGuardarPedido").onclick = function () {
 
 //    var tipoServicio = document.getElementById("TipoServicio1").value;
@@ -114,7 +108,7 @@
 //        };
 //    }
 
->>>>>>> Stashed changes
+
 //    console.log('Pedido guardado:', pedido.Detallepedidos);
 //    console.log('Pedido guardado:', pedido.Domicilios);
 //    confirm(" real mente desea envial los datos");    // Enviar la solicitud POST al servidor utilizando la Fetch API
@@ -154,10 +148,8 @@
 //        // Si hay un índice de edición establecido, actualiza el detalle existente en lugar de agregar uno nuevo
 //        detallespedido[indiceEdicion] = {
 //            ProductoId: document.getElementById("ProductoId2").value,
-<<<<<<< Updated upstream
 //            UnidadId: document.getElementById("UnidadId").value,
-=======
->>>>>>> Stashed changes
+
 //            Cantidad: document.getElementById("Cantidad2").value,
 //            PrecioUnitario: document.getElementById("PrecioUnitario2").value
 //        };
@@ -167,10 +159,8 @@
 //        // Si no hay un índice de edición, agrega un nuevo detalle
 //        var detallePedido = {
 //            ProductoId: document.getElementById("ProductoId2").value,
-<<<<<<< Updated upstream
 //            UnidadId: document.getElementById("UnidadId").value,
-=======
->>>>>>> Stashed changes
+
 //            Cantidad: document.getElementById("Cantidad2").value,
 //            PrecioUnitario: document.getElementById("PrecioUnitario2").value
 //        };
@@ -195,11 +185,10 @@
 
 //    // Rellenar los campos del formulario de edición con los datos del detalle del pedido
 //    document.getElementById("ProductoId2").value = detallePedido.ProductoId;
-<<<<<<< Updated upstream
+
 //    document.getElementById("UnidadId").value = detallePedido.UnidadId,
 
-=======
->>>>>>> Stashed changes
+
 //    document.getElementById("Cantidad2").value = detallePedido.Cantidad;
 //    document.getElementById("PrecioUnitario2").value = detallePedido.PrecioUnitario;
 
@@ -209,7 +198,7 @@
 //    // Mostrar el datalist nuevamente
 //    document.getElementById("productoList").hidden = false;
 //}
-<<<<<<< Updated upstream
+
 
 
 
@@ -425,7 +414,6 @@
 //    }
 //};
 
-=======
 
 
 
@@ -639,39 +627,73 @@
 //    }
 //};
 
-// Manejar clic en el botón "Agregar Detalle"
-document.getElementById("btnAgregarDetalle").addEventListener("click", function () {
-    // Obtener los valores del formulario de detalle
-    var productoId2 = document.getElementById("productoId2").value;
-    var cantidad = document.getElementById("Cantidad").value;
-    var precioUnitario = document.getElementById("PrecioUnitario").value;
+//// Manejar clic en el botón "Agregar Detalle"
+//document.getElementById("btnAgregarDetalle").addEventListener("click", function () {
+//    // Obtener los valores del formulario de detalle
+//    var productoId2 = document.getElementById("productoId2").value;
+//    var cantidad = document.getElementById("Cantidad").value;
+//    var precioUnitario = document.getElementById("PrecioUnitario").value;
 
-    // Enviar los datos al servidor
-    fetch('/Pedidos/CreateDetalle', {
-        method: 'POST',
+//    // Enviar los datos al servidor
+//    fetch('/Pedidos/CreateDetalle', {
+//        method: 'POST',
+//        headers: {
+//            'Content-Type': 'application/json'
+//        },
+//        body: JSON.stringify({
+//            productoId2: productoId2,
+//            cantidad: cantidad,
+//            precioUnitario: precioUnitario
+//        })
+//    })
+//        .then(response => {
+//            if (response.ok) {
+//                // Mostrar mensaje de éxito
+//                Swal.fire('Detalle agregado correctamente');
+//            } else {
+//                // Mostrar mensaje de error
+//                Swal.fire('Error al agregar el detalle');
+//            }
+//        })
+//        .catch(error => {
+//            // Mostrar mensaje de error
+//            Swal.fire('Error al agregar el detalle');
+//        });
+//});
+
+function actualizarEstadoPedido(PedidoId, estado) {
+
+    console.log(PedidoId);
+    let estadoPedido = ""; // Por defecto, el estado del pedido es una cadena vacía
+
+    // Determinar el estado del pedido basado en el valor recibido
+    if (estado === "Pendiente" || estado === "Realizado" || estado === "Cancelado") {
+        estadoPedido = estado;
+    } else {
+        console.error("Estado de pedido no válido:", estado);
+        return; // Salir de la función si el estado del pedido no es válido
+    }
+
+    console.log("Estado actual del pedido:", estadoPedido); // Imprimir el estado actual del pedido
+
+    fetch(`https://localhost:7013/api/Pedidos/UpdateEstadoPedido/${PedidoId}`, {
+        method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            productoId2: productoId2,
-            cantidad: cantidad,
-            precioUnitario: precioUnitario
-        })
+        body: JSON.stringify({ EstadoPedido: estadoPedido })
     })
         .then(response => {
             if (response.ok) {
-                // Mostrar mensaje de éxito
-                Swal.fire('Detalle agregado correctamente');
+                console.log("Estado actualizado correctamente");
+                // Aquí puedes realizar cualquier acción adicional si es necesario
             } else {
-                // Mostrar mensaje de error
-                Swal.fire('Error al agregar el detalle');
+                console.error('Error al actualizar el estado del pedido');
             }
         })
         .catch(error => {
-            // Mostrar mensaje de error
-            Swal.fire('Error al agregar el detalle');
+            console.error('Error de red:', error);
         });
-});
+}
 
 
->>>>>>> Stashed changes

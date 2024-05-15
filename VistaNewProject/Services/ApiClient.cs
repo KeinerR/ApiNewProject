@@ -530,15 +530,17 @@ namespace VistaNewProject.Services
         }
 
 
-        public async Task<HttpResponseMessage> CreateUnidadAsync(Producto producto)
+
+
+        public async Task<HttpResponseMessage> CreateProductoAsynAsync(Producto producto)
         {
-            var response = await _httpClient.PostAsJsonAsync("", producto);
+            var response = await _httpClient.PostAsJsonAsync("Productos/InsertarProducto", producto);
             return response;
         }
 
         public async Task<Producto> FindProductoAsync(int id)
         {
-            var response = await _httpClient.GetFromJsonAsync<Producto>($"?id={id}");
+            var response = await _httpClient.GetFromJsonAsync<Producto>($"Productos/GetProductoById?id={id}");
             return response;
         }
 
@@ -548,7 +550,7 @@ namespace VistaNewProject.Services
 
         public async Task<HttpResponseMessage> UpdateProductoAsync(Producto producto)
         {
-            var response = await _httpClient.PutAsJsonAsync($"/", producto);
+            var response = await _httpClient.PutAsJsonAsync($"Productos/UpdateProductos/", producto);
             return response;
         }
 
@@ -638,6 +640,23 @@ namespace VistaNewProject.Services
                 // Manejar el caso en el que response sea nulo
                 throw new Exception("No se encontró nada.");
             }
+            return response;
+        }
+
+
+        public async Task<Lote> FindLotesAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Lote>($"Lotes/GetLoteById?id={id}");
+            return response;
+        }
+
+
+
+
+
+        public async Task<HttpResponseMessage> UpdateLotesAsync(Lote lote)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"Lotes/UpdateLotes/", lote);
             return response;
         }
 

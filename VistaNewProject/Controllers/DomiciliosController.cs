@@ -125,7 +125,7 @@ namespace VistaNewProject.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     Console.WriteLine("domicilio Guardado");
-                    TempData["ValidarDomicilio"] = "Pedido Guardado Corectamente.";
+                    TempData["ValidarPedido"] = "Pedido Guardado Corectamente.";
                     return RedirectToAction("Index", "Pedidos");
 
                 }

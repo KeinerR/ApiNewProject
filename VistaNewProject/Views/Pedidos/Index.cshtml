@@ -2,21 +2,26 @@
 
 @{
     ViewData["Title"] = "Index";
-    var validationMessage = TempData["Validacion"] as string;
+    var validationMessage = TempData["ValidarPedido"] as string;
 }
+
 
 @if (!string.IsNullOrEmpty(validationMessage))
 {
     <script>
-        // Mostrar SweetAlert con el mensaje TempData
-        Swal.fire({
-            title: '¡Pedido creado!',
-            text: '@validationMessage',S
-            icon: 'success',
-            confirmButtonText: 'Aceptar'
+        $(document).ready(function () {
+            // Mostrar SweetAlert con el mensaje TempData
+            Swal.fire({
+                title: '¡Pedido creado!',
+                text: '@validationMessage',
+                icon: 'success',
+                showConfirmButton: false, // Mostrar botón de confirmación
+                timer: 3000
+            });
         });
     </script>
 }
+
 
 
 <h1>Index</h1>
@@ -69,9 +74,24 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.ValorTotalPedido)
                     </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.EstadoPedido)
+                    <td class="text-center align-middle contenedorEstadoTabla">
+                        <label class="switch">
+                            <input type="radio" name="estado_@item.PedidoId" value="Pendiente" @(item.EstadoPedido == "Pendiente" ? "checked" : "") onchange="actualizarEstadoPedido('@item.PedidoId', this.value)">
+                            <span class="slider" style="background-color: #48E6E2;"></span>
+                        </label>
+                        <label class="switch">
+                            <input type="radio" name="estado_@item.PedidoId" value="Realizado" @(item.EstadoPedido == "Realizado" ? "checked" : "") onchange="actualizarEstadoPedido('@item.PedidoId', this.value)">
+                            <span class="slider" style="background-color: #00E54B;"></span>
+                        </label>
+                        <label class="switch">
+                            <input type="radio" name="estado_@item.PedidoId" value="Cancelado" @(item.EstadoPedido == "Cancelado" ? "checked" : "") onchange="actualizarEstadoPedido('@item.PedidoId', this.value)">
+                            <span class="slider" style="background-color:#E61905;"></span>
+                        </label>
                     </td>
+
+
+
+
                     <td>
                         @Html.ActionLink("Edit", "Edit", new { id = item.PedidoId }) |
                         @Html.ActionLink("Details", "Details", new { id = item.PedidoId }) |
@@ -88,3 +108,4 @@
         }
     </tbody>
 </table>
+<script src="~/js/pedidos.js"></script>
