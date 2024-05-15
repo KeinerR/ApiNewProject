@@ -66,7 +66,6 @@ function LimpiarFormulario() {
     // Ocultar elementos
     document.getElementById('PrecioBougth').style.display = 'none';
     document.getElementById('PrecioBuy').style.display = 'none';
-    document.getElementById('TablaDetalles').style.display = 'flex';
 }
 
 // Se uas para eliminar todos los detalles de la tabla en la venta modal
@@ -92,9 +91,13 @@ function limpiarFormularioTotalmente() {
         estadoCompra: 0,
         detallecompras: []
     };
-
-    document.getElementById('tituloModal').style.display = 'block';
-    document.getElementById('subTituloModal').style.display = 'none';
+    // Ocultar elementos
+    document.getElementById('PrecioBougth').style.display = 'none';
+    document.getElementById('PrecioBuy').style.display = 'none';
+    document.getElementById('TablaDetalles').style.display = 'none';
+    document.getElementById('tituloCompra').style.display = 'block';
+    document.getElementById('tituloCompra').style.visibility = 'visible';
+    document.getElementById('subtituloCompra').style.display = 'none';
     document.getElementById('PrincipalCompra').style.display = 'block';
     document.getElementById('agregarDetalle').style.display = 'block';
     document.getElementById('DetallesCompra').style.display = 'none';
@@ -131,20 +134,19 @@ function limpiarFormularioTotalmente() {
 
     var mensajes = document.querySelectorAll('.Mensaje');
     // Iterar sobre los mensajes, omitiendo los primeros 2 y los últimos 2
-    for (var i = 0; i < mensajes.length - 3; i++) {
-        var mensaje = mensajes[i];
-        mensaje.textContent = '*'; // Restaurar mensajes de error
-        mensaje.style.display = 'flex'; // Establecer estilo si es necesario
+    for (var i = 0; i < mensajes.length; i++) {
+        if (i !== 1) { // Omitir el segundo mensaje (índice 1)
+            var mensaje = mensajes[i];
+            mensaje.textContent = '*'; // Restaurar mensajes de error
+            mensaje.style.display = 'flex'; // Establecer estilo si es necesario
+        }
     }
     const mensajesError = document.querySelectorAll('.text-danger');
     mensajesError.forEach(span => {
         span.innerText = ''; // Limpiar contenido del mensaje
     });
 
-    // Ocultar elementos
-    document.getElementById('PrecioBougth').style.display = 'none';
-    document.getElementById('PrecioBuy').style.display = 'none';
-    document.getElementById('TablaDetalles').style.display = 'flex';
+
 }
 
 // Función para registrar la compra
@@ -936,13 +938,11 @@ function verificarPaginado() {
     const filasPorPagina = 3; // Cambia este valor según tus necesidades
     const filas = Array.from(detalleTableBody.rows);
     let paginasTotales = Math.ceil(filas.length / filasPorPagina);
-    document.getElementById('joker').style.display = 'none';
     document.getElementById('modal-header-ValorTotal').style.display= 'flex';
     document.getElementById('modal-header-ValorTotal').style.visibility = 'visible';
     if (paginasTotales > 1) {
         document.getElementById('contenedorTablaDetallesBotones').style.display = 'block';
-        document.getElementById('contenedorTablaDetallesBotones').style.visibility = 'visible';
-        console.log('Here');
+        document.getElementById('contenedorTablaDetallesBotones').style.visibility = 'visible'; 
     } else {
         document.getElementById('contenedorTablaDetallesBotones').style.display = 'none';
         document.getElementById('contenedorTablaDetallesBotones').style.visibility = 'hidden'; 
@@ -950,6 +950,8 @@ function verificarPaginado() {
 }
 
 function agregarFilaDetalle(detalleCompra) {
+    document.getElementById('modal-header-botonAgregarDetalle').style.display = 'none';
+    document.getElementById('modal-header-botonAgregarDetalle').style.visibility = 'hidden';
     // Obtener el cuerpo de la tabla
     var detalleTableBody = document.getElementById('detalleTableBody');
 
@@ -973,8 +975,7 @@ function agregarFilaDetalle(detalleCompra) {
     cellSubtotal.innerHTML = ultimoLote.precioCompra;
     cellAcciones.innerHTML = '<button onclick="eliminarFilaDetalle(this)">Eliminar</button>';
 
-    document.getElementById('modal-header-botonAgregarDetalle').style.display = 'none';
-    document.getElementById('modal-header-botonAgregarDetalle').style.visibility = 'hidden';
+
 
     //verifica si es necesario que se vea u no el paginado
     verificarPaginado() 
@@ -1078,6 +1079,17 @@ function verTodo() {
     console.log(window.innerWidth); // Ancho de la ventana del navegador
     console.log(document.title); // Título del documento HTML
 }
+function verTabla() {
+    document.getElementById('expandirTabla').style.display = 'none';
+    document.getElementById('minimizarTabla').style.display = 'block';
+    document.getElementById('minimizarTabla').style.visibility = 'visible';
+    document.getElementById('TablaDetalles').style.display = 'flex';
+}
+function minimizarTabla() {
+    document.getElementById('TablaDetalles').style.display = 'none';
+    document.getElementById('expandirTabla').style.display = 'block';
+    document.getElementById('minimizarTabla').style.display = 'none';
+}
 function volverARegistrarCompra()    {
     document.getElementById('tituloModal').style.display = 'block';
     document.getElementById('subTituloModal').style.display = 'none';
@@ -1121,7 +1133,6 @@ function volverARegistrarCompra()    {
         mensaje.textContent = '*'; // Restaurar mensajes de error
         mensaje.style.display = 'flex'; // Establecer estilo si es necesario
     }
-    console.log('Here');
 
     setHoraActual();
 }
@@ -1166,7 +1177,7 @@ function cambioFechaVencimiento() {
     const fechaVencimiento = document.getElementById('FechaVencimiento');
     const fechaVencimientoNunca = document.getElementById('FechaVencimientoNunca');
     const labelFechaVencimiento = document.getElementById('Vencimiento');
-    const spanMensajeNoFecha = document.querySelector('.col-4 .Mensaje');
+    const spanMensajeNoFecha = document.querySelector('.col-3 .Mensaje');
     const spanText = document.querySelector('span#spanFechaVencimiento.text-danger');
 
 
@@ -1174,7 +1185,7 @@ function cambioFechaVencimiento() {
         if (checkboxNoVencimiento.checked) {
             fechaVencimiento.style.display = 'none'; // Ocultar la fecha de vencimiento
             fechaVencimientoNunca.style.display = 'block'; // Mostrar el texto "Producto no perecedero"
-            labelFechaVencimiento.textContent = 'Fecha Vencimiento click';
+            labelFechaVencimiento.textContent = 'Aplica click';
             fechaVencimiento.value = ''; // Asignar un valor vacío por defecto
             spanMensajeNoFecha.textContent = ''; // Cambia el contenido del span a vacío
             spanText.style.display = 'none'; 
@@ -1278,12 +1289,13 @@ document.addEventListener   ("DOMContentLoaded", function () {
     // Evitar que se ingrese texto manualmente en el input
     // Agregar un evento de entrada al campo de cantidad
     inputCantidad.addEventListener('input', function () {
-        // Eliminar cualquier carácter que no sea número, incluido el cero inicial
-        this.value = this.value.replace(/[^\d]/g, '');
-        // Verificar si el valor es cero y reemplazarlo por uno si es necesario
-        if (parseInt(this.value, 10) === 0 || this.value === '') {
-            this.value = '1';
-        }
+        //// Eliminar cualquier carácter que no sea número, incluido el cero inicial
+        //this.value = this.value.replace(/[^\d]/g, '');
+        //// Verificar si el valor es cero y reemplazarlo por uno si es necesario
+        //if (parseInt(this.value, 10) === 0 || this.value === '') {
+        //    this.value = '1';
+        //}
+        formatoNumeroINT(this);
     });
 
     // Agregar eventos de entrada a los inputs que necesitas formatear
@@ -1415,7 +1427,6 @@ document.addEventListener   ("DOMContentLoaded", function () {
         const producto = document.getElementById('ProductoId').value;
         const unidadId = document.getElementById('UnidadId').value;
         document.getElementById('tituloCompra').style.visibility = 'hidden';
-        document.getElementById('subtituloCompra').style.visibility = 'hidden';
         document.getElementById('tituloCompra').style.display = 'none';
         
         
@@ -1550,4 +1561,13 @@ document.addEventListener   ("DOMContentLoaded", function () {
     });
     document.getElementById('checkboxNoVencimiento').addEventListener('click', cambioFechaVencimiento);
 });
+
+
+
+function formatNumber(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+parseFloat(document.getElementById('PrecioDeCompra').value.replace(/[\.,]/g, ''));
+
 
