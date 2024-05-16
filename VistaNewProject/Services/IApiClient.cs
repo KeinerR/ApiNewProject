@@ -127,6 +127,7 @@ namespace VistaNewProject.Services
 
         Task<IEnumerable<Domicilio>> GetDomicilioAsync();
         Task<HttpResponseMessage> CreateDomicilioAsync(Domicilio domicilio);
+        Task<Domicilio> FindDomicilioAsync(int id);
 
 
 

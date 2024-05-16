@@ -123,5 +123,41 @@ namespace ApiNewProject.Controllers
 
 
 
+        [HttpPatch("UpdateEstadoDomicilio/{id}")]
+        public async Task<IActionResult> UpdateEstadoDomicilio(int id, [FromBody] Domicilio EstadoDomicilio)
+        {
+            try
+            {
+                var domi = await _context.Domicilios.FindAsync(id);
+
+                if (domi == null)
+                {
+                    return NotFound();
+                }
+
+                // Actualizar el estado del cliente con el nuevo valor
+                domi.EstadoDomicilio = EstadoDomicilio.EstadoDomicilio;
+
+                var pedidoAsociado = await _context.Pedidos.FirstOrDefaultAsync(p => p.PedidoId == domi.PedidoId);
+
+                if (pedidoAsociado != null)
+                {
+                    // Update the state of the associated order to match the state of the domicile
+                    pedidoAsociado.EstadoPedido = EstadoDomicilio.EstadoDomicilio;
+                }
+                await _context.SaveChangesAsync();
+
+                // Devolver una respuesta exitosa
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Si ocurre algún error, devolver un error 500 Internal Server Error
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el estado del Domicilio: " + ex.Message);
+            }
+        }
+
+
+
     }
 }

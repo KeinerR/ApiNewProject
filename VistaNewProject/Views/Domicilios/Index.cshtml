@@ -134,9 +134,28 @@
                 <td class="observacion">@Html.DisplayFor(modelItem => item.Observacion)</td>
                 <td class="fecha-entrega">@Html.DisplayFor(modelItem => item.FechaEntrega)</td>
                 <td class="direccion-domiciliario">@Html.DisplayFor(modelItem => item.DireccionDomiciliario)</td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EstadoDomicilio)
+                <td class="text-center align-middle contenedorEstadoTabla">
+                    @if (item.EstadoDomicilio == "Pendiente")
+                    {
+                        <label class="switch">
+                            <input type="radio" name="estado_@item.DomicilioId" value="Realizado" onchange="actualizarEstadoDomicilio('@item.DomicilioId', this.value)">
+                            <span class="slider" style="background-color: #00215E;"></span>
+                        </label>
+                    }
+                    else if (item.EstadoDomicilio == "Realizado")
+                    {
+
+                        <label class="switch">
+                            <input type="radio" name="estado_@item.DomicilioId" value="Cancelado" onchange="actualizarEstadoDomicilio('@item.DomicilioId', this.value)">
+                            <span class="slider" style="background-color: #E61905;"></span>
+                        </label>
+                    }
+                    else if (item.EstadoDomicilio == "Cancelado")
+                    {
+                        <!-- No mostrar ninguna opción si el estado es Cancelado -->
+                    }
                 </td>
+
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
                     <button class="btn btn-warning" onclick="obtenerDatosDomicilio('@item.DomicilioId')" data-cliente-id="@item.DomicilioId" data-bs-toggle="modal" data-bs-target="#DomicilioModal">Editar</button>
@@ -230,5 +249,4 @@
 </div>
 
 
-<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="~/js/domicilios.js"></script>
+<script src="~/js/pedidos.js"></script>

@@ -49,9 +49,8 @@ namespace VistaNewProject.Controllers
             Console.WriteLine(EstadoPedido);
             Console.WriteLine(ClienteId);
             Console.WriteLine(FechaPedido);
-            Console.WriteLine(ClienteId);
-
             Console.WriteLine(TipoServicio);
+
                 var pedidosnuevos = new Pedido
                 {
                     ClienteId = ClienteId,
@@ -85,111 +84,317 @@ namespace VistaNewProject.Controllers
         }
 
 
-        public async Task<IActionResult> DescontardeInventario(int pedidoId)
+        //public async Task<IActionResult> DescontardeInventario(int pedidoId)
+        //{
+        //    Console.WriteLine(pedidoId);
+        //    try
+        //    {
+        //        var pedidostraidos = await _client.FindPedidosAsync(pedidoId);
+        //        var domicilios = await _client.GetDomicilioAsync();
+        //        var domicilioDetalle = domicilios.FirstOrDefault(d => d.PedidoId == pedidoId);
+
+        //        if ((pedidostraidos != null && pedidostraidos.EstadoPedido == "Realizado") || (domicilioDetalle != null && domicilioDetalle.EstadoDomicilio == "Realizado"))
+        //        {
+        //            var detalles = await _client.GetDetallepedidoAsync();
+        //            var detallesPedido = detalles.Where(d => d.PedidoId == pedidoId).ToList();
+        //            if (detallesPedido != null)
+        //            {
+
+        //                foreach (var detallePedido in detallesPedido)
+        //                {
+        //                    var productoId = detallePedido.ProductoId.Value;
+        //                    var producto = await _client.FindProductoAsync(productoId);
+
+        //                    if (producto != null)
+        //                    {
+        //                        producto.CantidadTotal -= detallePedido.Cantidad;
+        //                        var updateProducto = await _client.UpdateProductoAsync(producto);
+        //                        if (updateProducto.IsSuccessStatusCode)
+        //                        {
+        //                            Console.WriteLine("Producto actualizado correctamente");
+        //                        }
+        //                    }
+
+        //                    var lotes = await _client.GetLoteAsync();
+        //                    var lotesFiltrados = lotes.Where(l => l.ProductoId == productoId);
+
+        //                    if (lotesFiltrados.Any())
+        //                    {
+        //                        // Encontrar el lote con la fecha de vencimiento más próxima
+        //                        var loteProximoVencimiento = lotesFiltrados.OrderBy(l => l.FechaVencimiento).First();
+        //                        loteProximoVencimiento.Cantidad -= detallePedido.Cantidad;
+        //                        var updateLote = await _client.UpdateLotesAsync(loteProximoVencimiento);
+
+        //                        if (updateLote.IsSuccessStatusCode)
+        //                        {
+        //                            Console.WriteLine("Lote actualizado correctamente");
+        //                        }
+        //                    }
+        //                }
+
+
+
+
+
+
+
+
+        //            }
+        //        }
+        //        else if (pedidostraidos != null && pedidostraidos.EstadoPedido == "Cancelado")
+        //        {
+        //            var detallescancelados = await _client.GetDetallepedidoAsync();
+
+        //            var detallesPedidoAgreagos = detallescancelados.Where(d => d.PedidoId == pedidoId).ToList();
+        //            if (detallesPedidoAgreagos != null)
+        //            {
+        //                foreach (var detallePedido in detallesPedidoAgreagos)
+        //                {
+        //                    var productoId = detallePedido.ProductoId.Value;
+        //                    var producto = await _client.FindProductoAsync(productoId);
+
+        //                    if (producto != null)
+        //                    {
+        //                        producto.CantidadTotal += detallePedido.Cantidad;
+        //                        var updateProducto = await _client.UpdateProductoAsync(producto);
+        //                        if (updateProducto.IsSuccessStatusCode)
+        //                        {
+        //                            Console.WriteLine("Producto actualizado correctamente");
+        //                        }
+        //                    }
+
+        //                    var lotes = await _client.GetLoteAsync();
+        //                    var lotesFiltrados = lotes.Where(l => l.ProductoId == productoId);
+
+        //                    if (lotesFiltrados.Any())
+        //                    {
+        //                        // Encontrar el lote con la fecha de vencimiento más próxima
+        //                        var loteProximoVencimiento = lotesFiltrados.OrderBy(l => l.FechaVencimiento).First();
+        //                        loteProximoVencimiento.Cantidad += detallePedido.Cantidad;
+        //                        var updateLote = await _client.UpdateLotesAsync(loteProximoVencimiento);
+
+        //                        if (updateLote.IsSuccessStatusCode)
+        //                        {
+        //                            Console.WriteLine("Lote actualizado correctamente");
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+
+
+
+        //        // Retorna una respuesta exitosa si el proceso se realizó correctamente
+        //        return Ok("Inventario descontado correctamente.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // En caso de que ocurra algún error, puedes manejarlo y devolver un error al cliente
+        //        return StatusCode(500, $"Error al descontar el inventario: {ex.Message}");
+        //    }
+        //}
+
+
+        public async Task<IActionResult> DescontardeInventario(int id, string tipo)
         {
-            Console.WriteLine(pedidoId);
+            Console.WriteLine(id);
             try
             {
-                var pedidostraidos = await _client.FindPedidosAsync(pedidoId);
-
-                if (pedidostraidos != null && pedidostraidos.EstadoPedido == "Realizado")
+                if (tipo == "Pedido")
                 {
-                    var detalles = await _client.GetDetallepedidoAsync();
-                    var detallesPedido = detalles.Where(d => d.PedidoId == pedidoId).ToList();
-                    if (detallesPedido != null)
+                    var pedidostraidos = await _client.FindPedidosAsync(id);
+                    var domicilios = await _client.GetDomicilioAsync();
+                    var domicilioDetalle = domicilios.FirstOrDefault(d => d.PedidoId == id);
+
+                    if (pedidostraidos != null && pedidostraidos.EstadoPedido == "Realizado")
                     {
-
-                        foreach (var detallePedido in detallesPedido)
+                        var detalles = await _client.GetDetallepedidoAsync();
+                        var detallesPedido = detalles.Where(d => d.PedidoId == id).ToList();
+                        if (detallesPedido != null)
                         {
-                            var productoId = detallePedido.ProductoId.Value;
-                            var producto = await _client.FindProductoAsync(productoId);
-
-                            if (producto != null)
+                            foreach (var detallePedido in detallesPedido)
                             {
-                                producto.CantidadTotal -= detallePedido.Cantidad;
-                                var updateProducto = await _client.UpdateProductoAsync(producto);
-                                if (updateProducto.IsSuccessStatusCode)
+                                var productoId = detallePedido.ProductoId.Value;
+                                var producto = await _client.FindProductoAsync(productoId);
+
+                                if (producto != null)
                                 {
-                                    Console.WriteLine("Producto actualizado correctamente");
+                                    producto.CantidadTotal -= detallePedido.Cantidad;
+                                    var updateProducto = await _client.UpdateProductoAsync(producto);
+                                    if (updateProducto.IsSuccessStatusCode)
+                                    {
+                                        Console.WriteLine("Producto actualizado correctamente");
+                                    }
                                 }
-                            }
 
-                            var lotes = await _client.GetLoteAsync();
-                            var lotesFiltrados = lotes.Where(l => l.ProductoId == productoId);
+                                var lotes = await _client.GetLoteAsync();
+                                var lotesFiltrados = lotes.Where(l => l.ProductoId == productoId);
 
-                            if (lotesFiltrados.Any())
-                            {
-                                // Encontrar el lote con la fecha de vencimiento más próxima
-                                var loteProximoVencimiento = lotesFiltrados.OrderBy(l => l.FechaVencimiento).First();
-                                loteProximoVencimiento.Cantidad -= detallePedido.Cantidad;
-                                var updateLote = await _client.UpdateLotesAsync(loteProximoVencimiento);
-
-                                if (updateLote.IsSuccessStatusCode)
+                                if (lotesFiltrados.Any())
                                 {
-                                    Console.WriteLine("Lote actualizado correctamente");
-                                }
-                            }
-                        }
+                                    var loteProximoVencimiento = lotesFiltrados.OrderBy(l => l.FechaVencimiento).First();
+                                    loteProximoVencimiento.Cantidad -= detallePedido.Cantidad;
+                                    var updateLote = await _client.UpdateLotesAsync(loteProximoVencimiento);
 
-
-
-
-
-
-
-
-                    }
-                }
-                else if (pedidostraidos != null && pedidostraidos.EstadoPedido == "Cancelado")
-                {
-                    var detallescancelados = await _client.GetDetallepedidoAsync();
-
-                    var detallesPedidoAgreagos = detallescancelados.Where(d => d.PedidoId == pedidoId).ToList();
-                    if (detallesPedidoAgreagos != null)
-                    {
-                        foreach (var detallePedido in detallesPedidoAgreagos)
-                        {
-                            var productoId = detallePedido.ProductoId.Value;
-                            var producto = await _client.FindProductoAsync(productoId);
-
-                            if (producto != null)
-                            {
-                                producto.CantidadTotal += detallePedido.Cantidad;
-                                var updateProducto = await _client.UpdateProductoAsync(producto);
-                                if (updateProducto.IsSuccessStatusCode)
-                                {
-                                    Console.WriteLine("Producto actualizado correctamente");
-                                }
-                            }
-
-                            var lotes = await _client.GetLoteAsync();
-                            var lotesFiltrados = lotes.Where(l => l.ProductoId == productoId);
-
-                            if (lotesFiltrados.Any())
-                            {
-                                // Encontrar el lote con la fecha de vencimiento más próxima
-                                var loteProximoVencimiento = lotesFiltrados.OrderBy(l => l.FechaVencimiento).First();
-                                loteProximoVencimiento.Cantidad += detallePedido.Cantidad;
-                                var updateLote = await _client.UpdateLotesAsync(loteProximoVencimiento);
-
-                                if (updateLote.IsSuccessStatusCode)
-                                {
-                                    Console.WriteLine("Lote actualizado correctamente");
+                                    if (updateLote.IsSuccessStatusCode)
+                                    {
+                                        Console.WriteLine("Lote actualizado correctamente");
+                                    }
                                 }
                             }
                         }
                     }
+
+                    else if (pedidostraidos != null && pedidostraidos.EstadoPedido == "Cancelado")
+                    {
+                        var detallescancelados = await _client.GetDetallepedidoAsync();
+
+                        var detallesPedidoAgreagos = detallescancelados.Where(d => d.PedidoId == id).ToList();
+                        if (detallesPedidoAgreagos != null)
+                        {
+                            foreach (var detallePedido in detallesPedidoAgreagos)
+                            {
+                                var productoId = detallePedido.ProductoId.Value;
+                                var producto = await _client.FindProductoAsync(productoId);
+
+                                if (producto != null)
+                                {
+                                    producto.CantidadTotal += detallePedido.Cantidad;
+                                    var updateProducto = await _client.UpdateProductoAsync(producto);
+                                    if (updateProducto.IsSuccessStatusCode)
+                                    {
+                                        Console.WriteLine("Producto actualizado correctamente");
+                                    }
+                                }
+
+                                var lotes = await _client.GetLoteAsync();
+                                var lotesFiltrados = lotes.Where(l => l.ProductoId == productoId);
+
+                                if (lotesFiltrados.Any())
+                                {
+                                    // Encontrar el lote con la fecha de vencimiento más próxima
+                                    var loteProximoVencimiento = lotesFiltrados.OrderBy(l => l.FechaVencimiento).First();
+                                    loteProximoVencimiento.Cantidad += detallePedido.Cantidad;
+                                    var updateLote = await _client.UpdateLotesAsync(loteProximoVencimiento);
+
+                                    if (updateLote.IsSuccessStatusCode)
+                                    {
+                                        Console.WriteLine("Lote actualizado correctamente");
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+
+                    // Retorna una respuesta exitosa si el proceso se realizó correctamente
+                    return Ok("Inventario descontado correctamente.");
+                }
+                else if (tipo == "Domicilio")
+                {
+                    var domicilios = await _client.GetDomicilioAsync();
+                    var domicilioDetalle = domicilios.FirstOrDefault(d => d.DomicilioId == id);
+                    int pedidoIdSeleccionado = 0; // Valor predeterminado en caso de que no se encuentre el domicilio
+
+                    if (domicilioDetalle != null)
+                    {
+                        pedidoIdSeleccionado = domicilioDetalle.PedidoId.Value;
+                    }
+
+
+                    if (domicilioDetalle != null && domicilioDetalle.EstadoDomicilio == "Realizado")
+                    {
+
+                        var detalles = await _client.GetDetallepedidoAsync();
+                       
+                        var detallesPedido = detalles.Where(d => d.PedidoId == pedidoIdSeleccionado).ToList();
+                        if (detallesPedido != null)
+                        {
+                            foreach (var detallePedido in detallesPedido)
+                            {
+                                var productoId = detallePedido.ProductoId.Value;
+                                var producto = await _client.FindProductoAsync(productoId);
+
+                                if (producto != null)
+                                {
+                                    producto.CantidadTotal -= detallePedido.Cantidad;
+                                    var updateProducto = await _client.UpdateProductoAsync(producto);
+                                    if (updateProducto.IsSuccessStatusCode)
+                                    {
+                                        Console.WriteLine("Producto actualizado correctamente");
+                                    }
+                                }
+
+                                var lotes = await _client.GetLoteAsync();
+                                var lotesFiltrados = lotes.Where(l => l.ProductoId == productoId);
+
+                                if (lotesFiltrados.Any())
+                                {
+                                    var loteProximoVencimiento = lotesFiltrados.OrderBy(l => l.FechaVencimiento).First();
+                                    loteProximoVencimiento.Cantidad -= detallePedido.Cantidad;
+                                    var updateLote = await _client.UpdateLotesAsync(loteProximoVencimiento);
+
+                                    if (updateLote.IsSuccessStatusCode)
+                                    {
+                                        Console.WriteLine("Lote actualizado correctamente");
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    else if   (domicilioDetalle != null && domicilioDetalle.EstadoDomicilio == "Cancelado")
+                        {
+                        var detallescancelados = await _client.GetDetallepedidoAsync();
+
+                        var detallesPedidoAgreagos = detallescancelados.Where(d => d.PedidoId == pedidoIdSeleccionado).ToList();
+                        if (detallesPedidoAgreagos != null)
+                        {
+                            foreach (var detallePedido in detallesPedidoAgreagos)
+                            {
+                                var productoId = detallePedido.ProductoId.Value;
+                                var producto = await _client.FindProductoAsync(productoId);
+
+                                if (producto != null)
+                                {
+                                    producto.CantidadTotal += detallePedido.Cantidad;
+                                    var updateProducto = await _client.UpdateProductoAsync(producto);
+                                    if (updateProducto.IsSuccessStatusCode)
+                                    {
+                                        Console.WriteLine("Producto actualizado correctamente");
+                                    }
+                                }
+
+                                var lotes = await _client.GetLoteAsync();
+                                var lotesFiltrados = lotes.Where(l => l.ProductoId == productoId);
+
+                                if (lotesFiltrados.Any())
+                                {
+                                    // Encontrar el lote con la fecha de vencimiento más próxima
+                                    var loteProximoVencimiento = lotesFiltrados.OrderBy(l => l.FechaVencimiento).First();
+                                    loteProximoVencimiento.Cantidad += detallePedido.Cantidad;
+                                    var updateLote = await _client.UpdateLotesAsync(loteProximoVencimiento);
+
+                                    if (updateLote.IsSuccessStatusCode)
+                                    {
+                                        Console.WriteLine("Lote actualizado correctamente");
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+
+                    // Retorna una respuesta exitosa si el proceso se realizó correctamente
                 }
 
-
-
-                // Retorna una respuesta exitosa si el proceso se realizó correctamente
-                return Ok("Inventario descontado correctamente.");
+                return Ok("Inventario descontado correctamente");
             }
             catch (Exception ex)
             {
-                // En caso de que ocurra algún error, puedes manejarlo y devolver un error al cliente
-                return StatusCode(500, $"Error al descontar el inventario: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al descontar el inventario: " + ex.Message);
             }
         }
 
@@ -197,3 +402,6 @@ namespace VistaNewProject.Controllers
 
     }
 }
+
+
+
