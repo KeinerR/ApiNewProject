@@ -160,40 +160,36 @@ $(document).ready(function () {
 
                 if (productoSeleccionado) {
                     // Mostrar la cantidad total como marcador de posición en el campo "Cantidad"
-                    $('#Cantidad').attr('placeholder', `Cantidad total Disponible en l inventario: ${productoSeleccionado.cantidadTotal}`);
+                    $('#Cantidad').attr('placeholder', `Disponible: ${productoSeleccionado.cantidadTotal}`);
                 } else {
                     // Si no se encuentra ningún producto con el productId seleccionado, mostrar un mensaje
                     $('#Cantidad').attr('placeholder', '');
                 }
-
                 $('#Cantidad').on('input', function () {
                     const cantidadIngresada = parseFloat($(this).val()); // Convertir el valor a un número flotante
                     console.log(cantidadIngresada);
                     const cantidadDisponible = parseFloat($('#Cantidad').attr('placeholder').split(':')[1].trim());
-                    console.log(cantidadDisponible);
+                    console.log("keienrrivamendoza",cantidadDisponible);
 
                     if (isNaN(cantidadIngresada)) {
                         // Si la cantidad ingresada no es un número válido, mostrar mensaje de error
                         $('#Cantidad').addClass('input-validation-error'); // Agregar la clase de error al campo
                         $('span[data-valmsg-for="Cantidad"]').text('Por favor, ingrese una cantidad válida'); // Mostrar el mensaje de error
                         $('#Cantidad').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
+                        $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
                     } else if (cantidadIngresada > cantidadDisponible) {
                         // Si la cantidad ingresada es mayor que la cantidad disponible, mostrar mensaje de error
                         $('#Cantidad').addClass('input-validation-error');
                         // Agregar la clase de error al campo
                         $('span[data-valmsg-for="Cantidad"]').text('La cantidad ingresada no puede ser mayor que la cantidad disponible');
-                        $('#btnEnviar').prop('disabled', true);
-                        // Mostrar el mensaje de error
-                        // Puedes deshabilitar el botón de envío u otra acción según tus necesidades
+                        $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
                         $('#Cantidad').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
                     } else if (cantidadIngresada <= 0) {
                         // Si la cantidad ingresada es menor o igual a 0, mostrar mensaje de error
                         $('#Cantidad').addClass('input-validation-error');
                         // Agregar la clase de error al campo
                         $('span[data-valmsg-for="Cantidad"]').text('La cantidad ingresada no puede ser menor o igual a 0');
-                        $('#btnEnviar').prop('disabled', true);
-                        // Mostrar el mensaje de error
-                        // Puedes deshabilitar el botón de envío u otra acción según tus necesidades
+                        $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
                         $('#Cantidad').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
                     } else {
                         // Si la cantidad ingresada es válida, quitar la clase de error del campo
@@ -202,7 +198,8 @@ $(document).ready(function () {
                         $('span[data-valmsg-for="Cantidad"]').text('');
                         // Quitar la clase de error del campo para los estilos de Bootstrap
                         $('#Cantidad').removeClass('is-invalid');
-                        // Puedes habilitar el botón de envío u otra acción según tus necesidades
+                        // Habilitar el botón de enviar
+                        $('#btnEnviar').prop('disabled', false);
                     }
                 });
 

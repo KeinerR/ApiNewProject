@@ -661,8 +661,9 @@
 //        });
 //});
 
-function actualizarEstadoPedido(PedidoId, estado) {
 
+// Llamada al método DescontardeInventario con el pedidoId
+function actualizarEstadoPedido(PedidoId, estado) {
     console.log(PedidoId);
     let estadoPedido = ""; // Por defecto, el estado del pedido es una cadena vacía
 
@@ -686,7 +687,23 @@ function actualizarEstadoPedido(PedidoId, estado) {
         .then(response => {
             if (response.ok) {
                 console.log("Estado actualizado correctamente");
-                // Aquí puedes realizar cualquier acción adicional si es necesario
+
+                // Llama al método DescontardeInventario pasando el pedidoId
+                $.ajax({
+                    url: '/Pedidos/DescontardeInventario',
+                    type: 'GET',
+                    data: { pedidoId: PedidoId },
+                    success: function (response) {
+                        console.log("Inventario descontado correctamente");
+                        location.reload(); // Recargar la página para reflejar los cambios
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error al descontar el inventario:", error);
+                    }
+                });
+
+
+                location.reload(); // Recargar la página para reflejar los cambios
             } else {
                 console.error('Error al actualizar el estado del pedido');
             }
@@ -695,5 +712,4 @@ function actualizarEstadoPedido(PedidoId, estado) {
             console.error('Error de red:', error);
         });
 }
-
 

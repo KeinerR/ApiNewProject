@@ -75,19 +75,27 @@
                         @Html.DisplayFor(modelItem => item.ValorTotalPedido)
                     </td>
                     <td class="text-center align-middle contenedorEstadoTabla">
-                        <label class="switch">
-                            <input type="radio" name="estado_@item.PedidoId" value="Pendiente" @(item.EstadoPedido == "Pendiente" ? "checked" : "") onchange="actualizarEstadoPedido('@item.PedidoId', this.value)">
-                            <span class="slider" style="background-color: #48E6E2;"></span>
-                        </label>
-                        <label class="switch">
-                            <input type="radio" name="estado_@item.PedidoId" value="Realizado" @(item.EstadoPedido == "Realizado" ? "checked" : "") onchange="actualizarEstadoPedido('@item.PedidoId', this.value)">
-                            <span class="slider" style="background-color: #00E54B;"></span>
-                        </label>
-                        <label class="switch">
-                            <input type="radio" name="estado_@item.PedidoId" value="Cancelado" @(item.EstadoPedido == "Cancelado" ? "checked" : "") onchange="actualizarEstadoPedido('@item.PedidoId', this.value)">
-                            <span class="slider" style="background-color:#E61905;"></span>
-                        </label>
+                        @if (item.EstadoPedido == "Pendiente")
+                        {
+                            <label class="switch">
+                                <input type="radio" name="estado_@item.PedidoId" value="Realizado" onchange="actualizarEstadoPedido('@item.PedidoId', this.value)">
+                                <span class="slider" style="background-color: #00215E;"></span>
+                            </label>
+                        }
+                        else if (item.EstadoPedido == "Realizado")
+                        {
+                        
+                            <label class="switch">
+                                <input type="radio" name="estado_@item.PedidoId" value="Cancelado" onchange="actualizarEstadoPedido('@item.PedidoId', this.value)">
+                                <span class="slider" style="background-color: #E61905;"></span>
+                            </label>
+                        }
+                        else if (item.EstadoPedido == "Cancelado")
+                        {
+                            <!-- No mostrar ninguna opción si el estado es Cancelado -->
+                        }
                     </td>
+
 
 
 

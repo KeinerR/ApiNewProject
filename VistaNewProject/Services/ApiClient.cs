@@ -73,6 +73,12 @@ namespace VistaNewProject.Services
 
             
         }
+
+        public async Task<Pedido> FindPedidosAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Pedido>($"Pedidos/GetPedidos?id={id}");
+            return response;
+        }
         public async Task<HttpResponseMessage> CreatePediiosAsync(Pedido pedido)
         {
             var response = await _httpClient.PostAsJsonAsync("Pedidos/InsertPedidos", pedido);

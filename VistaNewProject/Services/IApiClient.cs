@@ -19,6 +19,7 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> DeletePedidoAsync(int id);
 
         Task<HttpResponseMessage> UpdatePedidoAsync(Pedido pedido);
+        Task<Pedido> FindPedidosAsync(int id);
 
         Task<HttpResponseMessage> CreatePediiosAsync(Pedido pedido);
 
