@@ -28,20 +28,42 @@ namespace VistaNewProject.Controllers
                 return NotFound("error");
             }
 
+            // Concatenar nombre DEL PRODUCTO controlador
+            foreach (var producto in productos)
+            {
+                var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
+                var nombrePresentacion = presentacionEncontrada != null ? presentacionEncontrada.NombrePresentacion : "Sin presentación";
+                var contenido = presentacionEncontrada != null ? presentacionEncontrada.Contenido : "";
+                int cantidad = presentacionEncontrada != null ? presentacionEncontrada.CantidadPorPresentacion ?? 0 : 0;
+
+                var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
+                var nombreMarca = marcaEncontrada != null ? marcaEncontrada.NombreMarca : "Sin marca";
+
+                producto.NombreCompleto = $"{producto.NombreProducto} {nombreMarca} {nombrePresentacion} de {contenido}";
+
+                if (cantidad > 1)
+                {
+                    producto.NombreCompleto += $" {cantidad} x unidades";
+                }
+                producto.CantidadPorPresentacion = cantidad;
+            }
+           
+           
+
             var pageCompra = await compras.ToPagedListAsync(pageNumber, pageSize);
             if (!pageCompra.Any() && pageCompra.PageNumber > 1)
             {
                 pageCompra = await compras.ToPagedListAsync(pageCompra.PageCount, pageSize);
             }
 
-            int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
-
+            int contador = (pageNumber - 1) * pageSize + 1;
             ViewBag.Contador = contador;
             ViewBag.Proveedores = proveedores;
             ViewBag.Marcas = marcas;
             ViewBag.Unidades = unidades;
             ViewBag.Productos = productos;
             ViewBag.Presentaciones = presentaciones;
+
             return View(pageCompra);
         }
 

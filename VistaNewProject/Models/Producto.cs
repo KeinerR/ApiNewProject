@@ -10,6 +10,9 @@
         public string? NombreProducto { get; set; }
         public int? CantidadTotal { get; set; }
         public ulong? Estado { get; set; }
+        public string NombreCompleto { get; set; }
+
+        public int CantidadPorPresentacion { get; set; } 
 
         public virtual Categoria? Categoria { get; set; }
         public virtual Marca? Marca { get; set; }

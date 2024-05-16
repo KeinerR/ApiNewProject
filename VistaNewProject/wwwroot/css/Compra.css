@@ -224,6 +224,11 @@
     visibility: hidden;
     display: none;
 }
+.invisible{
+    border:solid 3px black;
+    background:red;
+}
+
 
 
 
@@ -277,9 +282,10 @@
 /*------------------ BOTONES ------------------------*/
 #modal-header-botonAgregarDetalle {
     position: absolute;
-    right: 10px;
-    padding-top:10px;
+    right: 20px;
+    margin-top:10px;
     z-index: 999;
+    visibility:hidden;
 }
 
 
