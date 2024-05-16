@@ -39,6 +39,7 @@ function LimpiarFormulario() {
     document.getElementById('NumeroLote').value = '';
     document.getElementById('PorcentajeGanancia').value = '';
     document.getElementById('checkboxNoVencimiento').checked = false;
+    document.getElementById('modal-header-botonAgregarDetalle').style.display = 'none'; // Opcionalmente puedes usar 'display: none;' en lugar de 'visibility: hidden;'
     const fechaVencimiento = document.getElementById('FechaVencimiento');
     const fechaVencimientoNunca = document.getElementById('FechaVencimientoNunca');
     const labelFechaVencimiento = document.getElementById('Vencimiento');
@@ -290,7 +291,6 @@ function validarCampos(input, campo) {
     var labelForCampo = $('label[for="' + campo + '"]');
     var spanVacio = labelForCampo.find('.Mensaje');
     var spanDanger = input.closest('.col-4').find('span#spanErmitanio.text-danger');
-
     spanError.text('');
     spanVacio.text('');
 
@@ -335,7 +335,7 @@ function validarCampos(input, campo) {
         if (valor.length < 2) {
             input.addClass('is-invalid');
             spanError.text('El número de factura debe tener al menos 2 caracteres.');
-        }
+        } 
     }
     if (input.is('#ProductoId')) {
         if (valor === "") {
@@ -444,18 +444,12 @@ $('#NumeroFactura, #ProveedorId, #FechaCompra, #ProductoId, #FechaVencimiento, #
         document.getElementById('subtituloCompra').style.visibility = 'visible';
         document.getElementById('tituloCompra').style.display = 'none';
         document.getElementById('subtituloCompra').style.display = 'block';
-        
-
-
-   
     }
 
 
 // Función para agregar un detalle de compra al objeto principal
-// Función para agregar un detalle de compra al objeto principal
 function agregarDetalleCompraend(objeto) {
-    document.getElementById('modal-header-botonAgregarDetalle').style.display = 'none'; // Opcionalmente puedes usar 'display: none;' en lugar de 'visibility: hidden;'
-
+    nombreProducto = document.getElementById('ProductoId').value;
     var detalleCompra = {
         productoId: objeto.productoId,
         unidadId: objeto.unidadId,
@@ -910,7 +904,7 @@ function agregarDetalleCompra() {
                     var objeto = {
                         productoId: productoId,
                         unidadId: unidad,
-                        cantidad: cantidad,
+                        cantidad: cantidad, 
                         numeroLote: numeroLote,
                         precioCompra: precioCompra,
                         precioVentaxUnidad: precioVentaxUnidad,
@@ -1015,7 +1009,7 @@ function agregarFilaDetalle(detalleCompra) {
     // Asignar los valores del detalle a las celdas
     cellProducto.innerHTML = detalleCompra.productoId;
     cellProducto.innerHTML = detalleCompra.productoId;
-    cellProducto.setAttribute('title', 'Aquí va tu mensaje de tooltip');
+    cellProducto.setAttribute('title', nombreProducto);
     cellCantidad.innerHTML = detalleCompra.cantidad * cantidadPorUnidad;
     cellPrecioUnitario.innerHTML = ultimoLote.precioCompra / (detalleCompra.cantidad * cantidadPorUnidad);
     cellSubtotal.innerHTML = ultimoLote.precioCompra;
@@ -1118,12 +1112,6 @@ function actualizarCompra() {
         MostrarAlertaExito('Compra actualizada');
         noVerCompra();
     }
-}
-
-function verTodo() {
-    console.log(compra);
-    console.log(window.innerWidth); // Ancho de la ventana del navegador
-    console.log(document.title); // Título del documento HTML
 }
 function verTabla() {
     document.getElementById('expandirTabla').style.display = 'none';
@@ -1380,9 +1368,19 @@ document.addEventListener   ("DOMContentLoaded", function () {
     function seleccionarOpcion(input, dataList, hiddenInput, campo) {
         var selectedValue = input.value.trim();
 
-        // Verifica si selectedValue es un número válido usando parseFloat()
-        if (!isNaN(parseFloat(selectedValue))) {
-            // Si es un número válido, busca la opción correspondiente al ID ingresado en el datalist
+ 
+      if (/^\d+[a-zA-Z]$/.test(selectedValue)) {
+            // Si selectedValue es un número seguido de una letra, realizar la acción correspondiente
+            console.log('Número seguido de letra encontrado:', selectedValue);
+            var selectedOptionByName = Array.from(dataList.options).find(function (option) {
+                return option.value === selectedValue;
+            });
+
+        } else {
+            var selectedOptionByName = Array.from(dataList.options).find(function (option) {
+                return option.value === selectedValue;
+            });
+        } if (/^\d+$/.test(selectedValue)) {
             var selectedOptionById = Array.from(dataList.options).find(function (option) {
                 return option.getAttribute('data-id') === selectedValue;
             });
@@ -1396,17 +1394,21 @@ document.addEventListener   ("DOMContentLoaded", function () {
                 input.value = '';
                 input.dispatchEvent(new Event('input'));
             }
-        } else {
-            var selectedOptionByName = Array.from(dataList.options).find(function (option) {
-                return option.value === selectedValue;
-            });
+        } 
+
+        if (selectedOptionByName) {
+            // Si se seleccionó un nombre del datalist, mostrar el nombre y enviar el data-id al input hidden
+            input.value = selectedOptionByName.value;
+            hiddenInput.value = selectedOptionByName.getAttribute('data-id');
+
+            // Verificar si es el campo ProductoId y el resto del código...
+        } else if (selectedOptionById) {
+            // Si se ingresó un ID en el campo de entrada, mostrar el nombre correspondiente y enviar el ID al input hidden
+            input.value = selectedOptionById.value;
+            hiddenInput.value = selectedOptionById.getAttribute('data-id');
+
+            // Verificar si es el campo ProductoId y el resto del código...
         }
-
-      
-
-        // Busca la opción correspondiente al nombre seleccionado en el datalist
-       
-
         if (selectedOptionByName) {
             // Si se seleccionó un nombre del datalist, mostrar el nombre y enviar el data-id al input hidden
             input.value = selectedOptionByName.value;
@@ -1436,10 +1438,11 @@ document.addEventListener   ("DOMContentLoaded", function () {
                 document.getElementById('CantidadPorUnidad').value = selectedOptionById.getAttribute('data-cantidad') || '';
             }
         }
-
-      
     }
 
+      
+
+      
 
 
     // Asignar función de selección a los campos ProveedorId, ProductoId y UnidadId
@@ -1447,21 +1450,21 @@ document.addEventListener   ("DOMContentLoaded", function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
             seleccionarOpcion(this, document.getElementById('proveedores'), document.getElementById('ProveedorIdHidden'), 'proveedor');
-         }, 500); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
+         }, 700); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
     });
 
     document.getElementById('ProductoId').addEventListener('input', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
             seleccionarOpcion(this, document.getElementById('productos'), document.getElementById('ProductoIdHidden'), 'Producto');
-        }, 500); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
+        }, 700); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
     });
 
     document.getElementById('UnidadId').addEventListener('input', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
             seleccionarOpcion(this, document.getElementById('unidades'), document.getElementById('UnidadIdHidden'), 'Unidad');
-        }, 500); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
+        }, 700); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
     });
 
     

@@ -111,9 +111,8 @@ namespace ApiNewProject.Controllers
                                 ProductoId = lote.ProductoId,
                                 NumeroLote = lote.NumeroLote,
                                 PrecioCompra = lote.PrecioCompra,
-                                PrecioPorUnidad = lote.PrecioPorUnidad,
-                                PrecioPorUnidadProducto = lote.PrecioPorUnidadProducto,
                                 PrecioPorPresentacion = lote.PrecioPorPresentacion,
+                                PrecioPorUnidadProducto = lote.PrecioPorUnidadProducto,
                                 FechaVencimiento = lote.FechaVencimiento,
                                 Cantidad = lote.Cantidad,
                                 EstadoLote = lote.EstadoLote

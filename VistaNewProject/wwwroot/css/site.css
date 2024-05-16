@@ -875,3 +875,16 @@ input:checked + .slider:before {
         margin-bottom: 10px; /* Ajuste de espacio entre botones */
     }
 }
+
+
+
+
+/*Estilos para no ver elementos*/
+.noSee {
+    visibility:hidden;
+}
+
+.noBe{
+    visibility:hidden;
+    display:none;
+}

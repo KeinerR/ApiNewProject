@@ -43,10 +43,6 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> UpdateMarcaAsync(Marca marca);
         Task<HttpResponseMessage> DeleteMarcaAsync(int id);
 
-
-
-
-
         // categoria
 
         Task<IEnumerable<Categoria>> GetCategoriaAsync();
@@ -73,8 +69,7 @@ namespace VistaNewProject.Services
         // producto
 
         Task<IEnumerable<Producto>> GetProductoAsync();
-
-        Task<HttpResponseMessage> CreateUnidadAsync(Producto producto);
+        Task<HttpResponseMessage> CreateProductoAsync(Producto producto);
         Task<Producto> FindProductoAsync(int id);
         Task<HttpResponseMessage> UpdateProductoAsync(Producto producto);
         Task<HttpResponseMessage> DeleteProductuAsync(int id);

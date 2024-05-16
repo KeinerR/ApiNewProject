@@ -32,7 +32,6 @@
                 <!-- Aquí agregamos el data-bs-dismiss="modal" -->
                 <button type="button" class="btn-close" onclick="limpiarFormulario()" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            
             <form asp-controller="Marcas" asp-action="Create" method="post">
                 <div class="modal-body">
                     <div class="form-group">
@@ -53,6 +52,7 @@
                     </div>
                     <!-- Resto del formulario -->
                 </div>
+                <div id="MensajeInicial" class="d-flex text-center"></div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
                 </div>

@@ -493,33 +493,104 @@ namespace VistaNewProject.Services
             return response;
         }
 
-
-        public async Task<HttpResponseMessage> CreateUnidadAsync(Producto producto)
+        public async Task<HttpResponseMessage> CreateProductoAsync(Producto producto)
         {
-            var response = await _httpClient.PostAsJsonAsync("", producto);
+            var response = await _httpClient.PostAsJsonAsync("Productos/InsertarProducto",producto);
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró el producto con el ID especificado.");
+            }
             return response;
         }
-
+   
         public async Task<Producto> FindProductoAsync(int id)
+
         {
-            var response = await _httpClient.GetFromJsonAsync<Producto>($"?id={id}");
+            var response = await _httpClient.GetFromJsonAsync<Producto>($"Productos/GetProductoById?id={id}");
+            if (response == null)
+            {
+                throw new Exception("No se encontro el producto con el ID especificado.");
+            }
             return response;
         }
-
-
-
-
-
+   
         public async Task<HttpResponseMessage> UpdateProductoAsync(Producto producto)
         {
-            var response = await _httpClient.PutAsJsonAsync($"/", producto);
-            return response;
+            try
+            {
+                // Hacer la solicitud PUT al servidor para actualizar la marca
+                var response = await _httpClient.PutAsJsonAsync("Productos/UpdateProductos", producto);
+
+                // Verificar si la solicitud fue exitosa (código de estado 200 OK)
+                if (response.IsSuccessStatusCode)
+                {
+                    return response;
+                }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    // La marca no se encontró en el servidor
+                    return response;
+                }
+                else if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    // Error debido a una solicitud incorrecta (por ejemplo, nombre de marca duplicado)
+                    return response;
+                }
+                else
+                {
+                    return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                    {
+                        Content = new StringContent("Error al actualizar la marca")
+                    };
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // Manejar errores de solicitud HTTP (por ejemplo, error de conexión)
+                Console.WriteLine($"Error en la solicitud HTTP: {ex.Message}");
+                return null; // Otra opción es lanzar una excepción para notificar el error
+            }
         }
 
         public async Task<HttpResponseMessage> DeleteProductuAsync(int id)
         {
-            var response = await _httpClient.DeleteAsync($"/{id}");
-            return response;
+            try
+            {
+                // Hacer la solicitud DELETE al servidor
+                var response = await _httpClient.DeleteAsync($"Productos/DeleteProducto/{id}");
+
+                // Verificar si la solicitud fue exitosa (código de estado 200 OK)
+                if (response.IsSuccessStatusCode)
+                {
+                    // Marca eliminada correctamente
+                    return response;
+                }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    // La marca no se encontró en el servidor
+                    // Puedes manejar este caso específico según tus necesidades
+                    return response;
+                }
+                else if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    // La solicitud fue incorrecta debido a una restricción (por ejemplo, marca asociada a un producto)
+                    // Puedes manejar este caso específico según tus necesidades
+                    return response;
+                }
+                else
+                {
+                    // Otro tipo de error no manejado específicamente
+                    // Puedes registrar el error o manejarlo según tus necesidades
+                    return new HttpResponseMessage(HttpStatusCode.InternalServerError) { Content = new StringContent("Error al eliminar la marca") };
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en la solicitud HTTP: {ex.Message}");
+                return null;
+            }
         }
 
 

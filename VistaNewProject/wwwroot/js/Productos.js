@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.querySelectorAll('#btnEdit').forEach(button => {
         button.addEventListener('click', function () {
-            const presentacionId = this.getAttribute('data-presentacion-id');
+            const presentacionId = this.getAttribute('data-producto-id');
             obtenerDatosProducto(presentacionId);
         });
     });

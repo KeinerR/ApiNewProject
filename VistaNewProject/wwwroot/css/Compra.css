@@ -234,9 +234,8 @@
 
 
 
-
 /*-----------------------Estilos del * que acompaña al label---------------------------------------------*/
-.Mensaje {
+.Compra .Mensaje {
     color: red;
     margin-left: 5px;
     padding-top: 10px;
@@ -249,7 +248,7 @@
     align-items: center; /* Centrar verticalmente */
 }
 
-    .Mensaje:hover {
+    .Compra .Mensaje:hover {
         color: blue;
         transform: translateY(-1px); /* Mover el elemento hacia arriba 1px al colocar el cursor sobre él */
         cursor: pointer;

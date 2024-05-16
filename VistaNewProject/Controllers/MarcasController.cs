@@ -50,6 +50,7 @@ namespace VistaNewProject.Controllers
                 ViewData["Marcas"] = marcas;
                 return View(pageMarca);
             }
+
             catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
             {
                 HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
@@ -60,6 +61,7 @@ namespace VistaNewProject.Controllers
                 HttpContext.Session.SetString("Message", "Error en el aplicativo");
                 return RedirectToAction("LogOut", "Accesos");
             }
+
         }
         public async Task<IActionResult> Details(int? id, int? page)
         {

@@ -19,7 +19,7 @@ namespace ApiNewProject.Controllers
 
 
         [HttpGet("GetProductos")]
-        public async Task<ActionResult<List<Producto>>> GetProducto()
+        public async Task<ActionResult<List<Producto>>> GetProductos()
         {
             var List = await _context.Productos.Select(
                 s => new Producto

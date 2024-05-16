@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
 
@@ -65,7 +66,55 @@ namespace VistaNewProject.Controllers
                 return RedirectToAction("LogOut", "Accesos");
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> Create([FromForm] string producto)
+        {
+            if (ModelState.IsValid)
+            {
+                var productos = await _client.GetProductoAsync();
+                var existeProducto= productos.FirstOrDefault(c => string.Equals(c.NombreProducto, producto, StringComparison.OrdinalIgnoreCase));
 
+                // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
+                if (existeProducto != null)
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "Ya hay un producto registrado con este nombre.";
+                    return RedirectToAction("Index");
+                }
+
+                // Resto del código para crear la nueva marca
+                var producto = new Producto
+                {
+                    NombreProducto = producto
+                };
+
+                if (producto == null)
+                {
+                    ViewBag.MensajeError = "No se pudieron campos  los datos.";
+                    return View("Index");
+                }
+
+                var response = await _client.CreateMarcaAsync(marca);
+
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Guardar un mensaje en TempData para mostrar en el Index
+                    TempData["Mensaje"] = "¡Registro guardado correctamente!";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ViewBag.MensajeError = "No se pudieron guardar los datos.";
+                    return View("Index");
+                }
+            }
+
+
+            ViewBag.Mensaje = TempData["Mensaje"]; ViewBag.Mensaje = TempData["Mensaje"];
+            return View("Index");
+        }
 
     }
 }

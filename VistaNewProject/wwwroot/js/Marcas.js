@@ -1,4 +1,5 @@
 
+
 // Función para verificar si hay conexión a Internet
 function checkInternetConnection() {
     return navigator.onLine;
@@ -39,7 +40,7 @@ function valoresPorDefaultSinConexion() {
         const botonModal = document.querySelector('[data-bs-target="#MarcaModal"]');
         document.getElementById('FormAgregar').style.display = 'none';
         document.getElementById('FormActualizar').style.display = 'block';
-            if(botonModal) {
+        if (botonModal) {
             // Simular el clic en el botón para mostrar la modal
             botonModal.click();
         }
@@ -211,7 +212,7 @@ function valoresPorDefaultSinConexion() {
                 document.getElementById('MarcaIdAct').value = marca.marcaId;
                 document.getElementById('NombreMarcaAct').value = marca.nombreMarca;
                 document.getElementById('EstadoMarcaAct').value = marca.estadoMarca; // Si EstadoMarcaAct es un elemento select
-      
+
                 console.log(marca);
                 NoCamposVaciosAct();
 
@@ -268,11 +269,11 @@ function limpiarFormulario() {
     document.getElementById('MarcaIdAct').value = '';
     document.getElementById('NombreMarcaAct').value = '';
     document.getElementById('EstadoMarcaAct').value = '';
- 
+
 
     document.getElementById('FormActualizar').style.display = 'none';
     document.getElementById('FormAgregar').style.display = 'block';
- 
+
     var mensajes = document.querySelectorAll('.Mensaje');
     mensajes.forEach(function (mensaje) {
         mensaje.textContent = ' *'; // Restaurar mensajes de error
@@ -375,5 +376,9 @@ function actualizarEstadoMarca(MarcaId, EstadoMarca) {
             console.error('Error de red:', error);
         });
 }
+
+
+
+
 
 
