@@ -123,16 +123,24 @@ $(document).ready(function () {
                 const lotesProducto = data.filter(lote => lote.productoId == productId);
                 console.log("Lotes del producto ID:", lotesProducto)
                 if (lotesProducto.length > 0) {
-                    // Encontrar el lote con la fecha de vencimiento más próxima
-                    const loteProximoVencimiento = lotesProducto.reduce((anterior, actual) => {
-                        const fechaActual = new Date(actual.fechaVencimiento);
-                        const fechaAnterior = anterior ? new Date(anterior.fechaVencimiento) : null;
-                        return (!fechaAnterior || fechaActual < fechaAnterior) ? actual : anterior;
-                    });
+                    // Encontrar el lote con la fecha de vencimiento más próxima y con cantidad disponible mayor que cero
+                    let loteProximoVencimiento = null;
+                    for (const lote of lotesProducto) {
+                        if (lote.cantidad > 0) {
+                            if (loteProximoVencimiento === null || new Date(lote.fechaVencimiento) < new Date(loteProximoVencimiento.fechaVencimiento)) {
+                                loteProximoVencimiento = lote;
+                            }
+                        }
+                    }
 
-                    console.log("Lote con la fecha de vencimiento más próxima:", loteProximoVencimiento);
-                    const precio = loteProximoVencimiento.precioPorUnidadProducto; // Ajusta esta propiedad según la estructura real
-                    $('#PrecioUnitario').val(precio);
+                    if (loteProximoVencimiento !== null) {
+                        console.log("Lote con la fecha de vencimiento más próxima y con cantidad disponible mayor que cero:", loteProximoVencimiento);
+                        const precio = loteProximoVencimiento.precioPorUnidad; // Ajusta esta propiedad según la estructura real
+                        $('#PrecioUnitario').val(precio);
+                    } else {
+                        // Si no se encontró ningún lote con cantidad disponible mayor que cero
+                        $('#PrecioUnitario').val('');
+                    }
                 } else {
                     // Manejar el caso en que no se encuentren lotes
                     $('#PrecioUnitario').val('');
