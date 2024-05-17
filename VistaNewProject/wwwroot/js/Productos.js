@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var productos = [];
     let todoValido = true;
+    let timeout = null;
+
     function obtenerDatosProductos() {
         fetch(`${API_URL}/GetProductos`)
             .then(response => {
@@ -69,30 +71,77 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Función para manejar la selección de opciones en los campos MarcaId, CategoriaId, PresentacionId
         function seleccionarOpcion(input, dataList, hiddenInput) {
-            var selectedOption = Array.from(dataList.options).find(function (option) {
-                return option.value === input.value;
+            var selectedValue = input.value.trim();
+
+            var selectedOptionByName = Array.from(dataList.options).find(function (option) {
+                return option.value === selectedValue;
             });
 
-            if (selectedOption) {
-                input.value = selectedOption.text; // Mostrar el nombre seleccionado
-                hiddenInput.value = selectedOption.value; // Asignar el ID al campo oculto
-            } else if (!input.value.trim()) {
-                // Mantener el valor actual si el campo de entrada está vacío
+            var selectedOptionById = Array.from(dataList.options).find(function (option) {
+                return option.getAttribute('data-id') === selectedValue;
+            });
+
+            if (/^\d+[a-zA-Z]$/.test(selectedValue)) {
+                // Si selectedValue es un número seguido de una letra, realizar la acción correspondiente
+                console.log('Número seguido de letra encontrado:', selectedValue);
+                selectedOptionByName = Array.from(dataList.options).find(function (option) {
+                    return option.value === selectedValue;
+                });
+            }
+
+            if (!selectedOptionByName && !selectedOptionById && /^\d+$/.test(selectedValue)) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No se encontró ningún resultado con este ID',
+                    showConfirmButton: false,
+                    timer: 1800
+                });
                 input.value = '';
+                input.dispatchEvent(new Event('input'));
+                return;
+            }
+
+            if (selectedOptionByName) {
+                input.value = selectedOptionByName.value;
+                hiddenInput.value = selectedOptionByName.getAttribute('data-id');
+
+                // Verificar si es el campo ProductoId
+                if (input.id === 'ProductoId') {
+                    // Aquí puedes agregar la lógica específica para ProductoId si es necesario
+                }
+                // Agregar más verificaciones para otros campos si es necesario
+            } else if (selectedOptionById) {
+                input.value = selectedOptionById.value;
+                hiddenInput.value = selectedOptionById.getAttribute('data-id');
+
+                // Verificar si es el campo ProductoId
+                if (input.id === 'ProductoId') {
+                    // Aquí puedes agregar la lógica específica para ProductoId si es necesario
+                }
+                // Agregar más verificaciones para otros campos si es necesario
             }
         }
 
         // Asignar función de selección a los campos MarcaId, CategoriaId, PresentacionId
         $('#MarcaId').on('input', function () {
-            seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaIdHidden'));
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaIdHidden'));
+            }, 1000); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
         });
 
         $('#CategoriaId').on('input', function () {
-            seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaIdHidden'));
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaIdHidden'));
+            }, 1000); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
         });
 
         $('#PresentacionId').on('input', function () {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
             seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionIdHidden'));
+        }, 1000); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
         });
     }
 
@@ -138,80 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return todoValido;
     }
 
-    function agregarProducto() {
-        if (!todoValido) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                timer: 3000,
-                timerProgressBar: true,
-                text: 'Por favor, completa correctamente todos los campos para poder registrar el producto.'
-            });
-            return;
-        }
-
-        const presentacionId = document.getElementById('PresentacionIdHidden').value;
-        const marcaId = document.getElementById('MarcaIdHidden').value;
-        const categoriaId = document.getElementById('CategoriaIdHidden').value;
-        const nombreProducto = document.getElementById('NombreProducto').value;
-        const estado = document.getElementById('EstadoProducto').value;
-
-
-        // Verificar que todos los campos obligatorios estén llenos
-        if (marcaId.trim() === '' || categoriaId.trim() === '' || presentacionId.trim() === '' || nombreProducto === '') {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                timer: 3000,
-                timerProgressBar: true,
-                text: 'Por favor, completa todos los campos con * para poder registrar el producto.'
-            });
-            return;
-        }
-
-        const productoObjeto = {
-            PresentacionId: presentacionId,
-            MarcaId: marcaId,
-            CategoriaId: categoriaId,
-            NombreProducto: nombreProducto,
-            Estado: estado
-        };
-
-        fetch(`${API_URL}/InsertarProducto`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(productoObjeto)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Ocurrió un error al enviar la solicitud.');
-                }
-                return response.json();
-            })
-            .then(data => {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Éxito',
-                    text: 'Producto agregado correctamente.',
-                    timer: 3000,
-                    timerProgressBar: true
-                }).then(() => {
-                    location.reload(); // Recargar la página
-                });
-            })
-            .catch(error => {
-                console.error('Error al agregar el producto:', error);
-                console.log(productoObjeto)
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Ocurrió un error al agregar el producto. Por favor, inténtalo de nuevo más tarde.'
-                });
-            });
-    }
-
+  
 
     function obtenerDatosProducto(productoId) {
         fetch(`https://localhost:7013/api/Productos/GetProductoById?Id=${productoId}`)

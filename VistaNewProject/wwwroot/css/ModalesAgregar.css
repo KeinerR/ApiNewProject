@@ -1,0 +1,81 @@
+﻿/* Diseño de modal en general */
+.modal-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+#pibo {
+    flex: 0 0 auto;
+}
+
+.TituloModal {
+    font-size: 1.875rem; /* 30px en rem para adaptabilidad */
+    font-weight: 400;
+    flex: 1 1 auto;
+    text-align: center;
+    white-space: nowrap; /* Evita que el texto se desplace a una nueva línea */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    z-index: 1; /* Asegura que el título esté por encima de otros elementos */
+}
+
+#modal-cabecera-equis {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    z-index: 2; /* Permite la interacción con el botón de cierre */
+}
+
+.modal-dialog {
+    width: 100%;
+    max-width: 800px; /* Ajusta según tus necesidades */
+    margin: auto;
+    border: solid red 2px;
+}
+
+.modal-content {
+    border: solid black 1px;
+}
+
+.modal-cuerpo {
+    border: solid red 2px;
+    padding: 15px; /* Añadir un poco de padding para mejor visualización */
+}
+
+.modal-contenido-producto {
+    max-width: 100%;
+    border: solid blue 20px;
+    overflow-x: auto; /* Para manejar contenido desbordante */
+}
+
+.row {
+    border: solid red dashed;
+    margin: 0; /* Eliminar márgenes para un mejor ajuste */
+}
+
+.form-check {
+    border: solid red 2px;
+    max-width: 100%;
+    margin-bottom: 1rem; /* Espacio inferior para separación */
+}
+
+/* Media queries para adaptabilidad */
+@media (max-width: 768px) {
+    .TituloModal {
+        font-size: 1.5rem; /* Ajuste de tamaño de fuente para pantallas más pequeñas */
+    }
+
+    #modal-cabecera-equis {
+        right: 5px; /* Ajuste de posición para pantallas más pequeñas */
+    }
+
+    .modal-dialog {
+        max-width: 90%; /* Ajuste de ancho para pantallas más pequeñas */
+    }
+}

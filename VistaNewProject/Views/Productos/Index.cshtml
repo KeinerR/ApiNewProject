@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Index";
 }
-
+<div id="ContenedorVista" class="Producto">
 <br />
 
 <div class="d-flex justify-content-between">
@@ -29,187 +29,114 @@
 <div class="modal fade" id="ProductoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="TituloModal">Agregar Producto</h5>
-                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-cabecera">
+                <div id="pibo"></div>
+                <div class="modal-header-view TituloModal">
+                    <h2 class="modal-title">Agregar Producto</h2>
+                </div>
+                <div class="modal-header-view" id="modal-cabecera-equis">
+                    <button type="button" onclick="reiniciarCompra()" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
             </div>
-            <form asp-controller="Productoes" asp-action="" method="post">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <input type="hidden" id="ProductoId" name="productoId" class="form-control" />
+            <div class="modal-cuerpo">
+                <form asp-controller="Productos" asp-action="Create" class="modal-formulario-crear" method="post">
+                    @Html.AntiForgeryToken() <!-- Asegúrate de tener esto si el modelo tiene FK-->
+                    <input type="hidden" id="ProductoId" name="productoId" class="form-control" />
+                    <input type="hidden" id="CantidadTotal" name="cantidadTotal" class="form-control" />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="MarcaId" class="control-label">Marca</label>
+                                <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                                <input list="marcas" id="MarcaId" name="marcaId" class="form-control" placeholder="Selecciona una marca..." onclick="showNoMarcasAlert()">
+                                <datalist id="marcas">
+                                    @foreach (var item in ViewBag.Marcas)
+                                    {
+                                        @if (item.EstadoMarca != 0) // Solo mostramos las marcas que tienen estado diferente de 0
+                                        {
+                                                    <option value="@item.NombreMarca" data-id="@item.MarcaId">@item.NombreMarca</option>
+                                        }
+                                    }
+                                </datalist>
+                                <input id="MarcaIdHidden" name="marcaIdHidden" type="hidden">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="CategoriaId" class="control-label">Categoria Id</label>
+                                <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                                <input list="categorias" id="CategoriaId" name="categoriaId" class="form-control" placeholder="Selecciona una categoria..." onclick="showCategorias()">
+                                <datalist id="categorias">
+                                    @foreach (var item in ViewBag.Categorias)
+                                    {
+                                        @if (item.EstadoCategoria != 0)
+                                        {
+                                                    <option value="@item.NombreCategoria" data-id="@item.CategoriaId">@item.NombreCategoria</option>
+                                        }
+                                    }
+                                </datalist>
+                                <input id="CategoriaIdHidden" name="categoriaIdHidden" type="hidden">
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="MarcaId" class="control-label">Marca</label>
-                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
-                        <input list="marcas" id="MarcaId" name="marcaId" class="form-control" placeholder="Selecciona una marca..." onclick="showNoMarcasAlert()">
-                        <datalist id="marcas">
-                            @foreach (var item in ViewBag.Marcas)
-                            {
-                                @if (item.EstadoMarca != 0) // Solo mostramos las marcas que tienen estado diferente de 0
-                                {
-                                    <option value="@item.MarcaId">@item.NombreMarca</option>
-                                }
-                            }
-                        </datalist>
-                        <input type="hidden" id="MarcaIdHidden" name="marcaIdHidden">
-
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="PresentacionId" class="control-label">Presentacion</label>
+                                <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                                <input list="presentaciones" id="PresentacionId" name="presentacionId" class="form-control" placeholder="Selecciona una presentación..." onclick="showNoPresentacionesAlert()">
+                                <datalist id="presentaciones">
+                                    @foreach (var item in ViewBag.Presentaciones)
+                                    {
+                                        @if (item.EstadoPresentacion != 0)
+                                        {
+                                                    <option value="@item.NombreCompleto" data-id="@item.PresentacionId">@item.NombreCompleto</option>
+                                        }
+                                    }
+                                </datalist>
+                                <input id="PresentacionIdHidden" name="presentacionIdHidden" type="hidden">
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="NombreProducto" class="control-label">Nombre Producto</label>
+                                <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                                <input type="text" id="NombreProducto" name="nombreProducto" class="form-control" />
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="CategoriaId" class="control-label">Categoria Id</label>
-                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
-                        <input list="categorias" id="CategoriaId" name="categoriaId" class="form-control" placeholder="Selecciona una categoria..." onclick="showCategorias()">
-                        <datalist id="categorias">
-                            @foreach (var item in ViewBag.Categorias)
-                            {
-                                @if (item.EstadoCategoria != 0)
-                                {
-                                    <option value="@item.CategoriaId">@item.NombreCategoria</option>
-                                }
-
-                            }
-                        </datalist>
-                        <input type="hidden" id="CategoriaIdHidden" name="categoriaIdHidden">
-                        <span class="text-danger"></span>
+                    <div class="row">
+                        <div class="modal-contenedor-check">
+                            <input type="checkbox" class="form-check-input" id="checkboxNoVencimiento">
+                            <label class="form-check-label labelFechaVencimiento" for="checkboxNoVencimiento" id="Vencimiento">Precio por mayor</label>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="NombreProducto" class="control-label">Nombre Producto</label>
+                                <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                                <input type="text" id="NombreProducto" name="nombreProducto" class="form-control" />
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="NombreProducto" class="control-label">Nombre Producto</label>
+                                <span class="Mensaje" style="color:red;display:inline-block;">*</span>
+                                <input type="text" id="NombreProducto" name="nombreProducto" class="form-control" />
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
                     </div>
-
-                    <div class="form-group">
-                        <label for="PresentacionId" class="control-label">Presentacion</label>
-                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
-                        <input list="presentaciones" id="PresentacionId" name="presentacionId" class="form-control" placeholder="Selecciona una presentación..." onclick="showNoPresentacionesAlert()">
-                        <datalist id="presentaciones">
-                            @foreach (var item in ViewBag.Presentaciones)
-                            {
-
-                                @if (item.EstadoPresentacion != 0)
-                                {
-                                    <option value="@item.PresentacionId">@($"{item.NombrePresentacion} x {item.Contenido}")</option>
-                                }
-
-                            }
-
-
-                        </datalist>
-                        <input type="hidden" id="PresentacionIdHidden" name="presentacionIdHidden">
-                        <span class="text-danger"></span>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                        <button type="button" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Producto</button>
                     </div>
-
-                    <div class="form-group">
-                        <label for="NombreProducto" class="control-label">Nombre Producto</label>
-                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
-                        <input type="text" id="NombreProducto" name="nombreProducto" class="form-control" />
-                        <span class="text-danger"></span>
-                    </div>
-                    <div class="form-group d-none">
-                        <label for="CantidadTotal" class="control-label">Cantidad Total</label>
-                        <input type="text" id="CantidadTotal" name="cantidadTotal" class="form-control" />
-                    </div>
-                    <div class="form-group" id="Estado" style="display:none">
-                        <label for="EstadoProducto" class="control-label">Estado producto</label>
-                        <select id="EstadoProducto" name="estadoProduco" class="form-control">
-                            <option value="1">Activo</option>
-                            <option value="0">Inactivo</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="btnGuardar">Agregar</button>
-                    <button type="button" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Producto</button>
-                </div>
-            </form>
-        </div>
-        <div class="modal-content noBe" id="FormularioActualizarProducto">
-            <div class="modal-header">
-                <h5 class="modal-title" id="TituloModal">Actualizar Producto</h5>
-                <!-- Aquí agregamos el data-bs-dismiss="modal" -->
-                <button type="button" class="btn-close" onclick="limpiarFormulario()" data-bs-dismiss="modal" aria-label="Close"></button>
+                </form>
             </div>
-            <form asp-controller="Marcas" asp-action="Update" method="post">
-                @Html.AntiForgeryToken() <!-- Asegúrate de tener esto si estás utilizando AntiForgeryToken -->
-                <div class="modal-body">
-                    <div class="form-group">
-                        <input type="hidden" id="ProductoId" name="productoId" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="MarcaId" class="control-label">Marca</label>
-                        <span class="Mensaje" style="color:red;display:inline-block;"></span>
-                        <input list="marcas" id="MarcaId" name="marcaId" class="form-control" placeholder="Selecciona una marca..." onclick="showNoMarcasAlert()">
-                        <datalist id="marcas">
-                            @foreach (var item in ViewBag.Marcas)
-                            {
-                                @if (item.EstadoMarca != 0) // Solo mostramos las marcas que tienen estado diferente de 0
-                                {
-                                    <option value="@item.MarcaId">@item.NombreMarca</option>
-                                }
-                            }
-                        </datalist>
-                        <input type="hidden" id="MarcaIdHidden" name="marcaIdHidden">
-
-                    </div>
-                    <div class="form-group">
-                        <label for="CategoriaId" class="control-label">Categoria Id</label>
-                        <span class="Mensaje" style="color:red;display:inline-block;">S</span>
-                        <input list="categorias" id="CategoriaId" name="categoriaId" class="form-control" placeholder="Selecciona una categoria..." onclick="showCategorias()">
-                        <datalist id="categorias">
-                            @foreach (var item in ViewBag.Categorias)   
-                            {
-                                @if (item.EstadoCategoria != 0)
-                                {
-                                    <option value="@item.CategoriaId">@item.NombreCategoria</option>
-                                }
-
-                            }
-                        </datalist>
-                        <input type="hidden" id="CategoriaIdHidden" name="categoriaIdHidden">
-                        <span class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="PresentacionId" class="control-label">Presentacion</label>
-                        <span class="Mensaje" style="color:red;display:inline-block;"></span>
-                        <input list="presentaciones" id="PresentacionId" name="presentacionId" class="form-control" placeholder="Selecciona una presentación..." onclick="showNoPresentacionesAlert()">
-                        <datalist id="presentaciones">
-                            @foreach (var item in ViewBag.Presentaciones)
-                            {
-
-                                @if (item.EstadoPresentacion != 0)
-                                {
-                                    <option value="@item.PresentacionId">@($"{item.NombrePresentacion} x {item.Contenido}")</option>
-                                }
-
-                            }
-
-
-                        </datalist>
-                        <input type="hidden" id="PresentacionIdHidden" name="presentacionIdHidden">
-                        <span class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="NombreProducto" class="control-label">Nombre Producto</label>
-                        <span class="Mensaje"></span>
-                        <input type="text" id="NombreProducto" name="nombreProducto" class="form-control" />
-                        <span class="text-danger"></span>
-                    </div>
-                    <div class="form-group d-none">
-                        <label for="CantidadTotal" class="control-label">Cantidad Total</label>
-                        <input type="text" id="CantidadTotal" name="cantidadTotal" class="form-control" />
-                    </div>
-                    <div class="form-group" id="Estado">
-                        <label for="EstadoProducto" class="control-label">Estado producto</label>
-                        <select id="EstadoProducto" name="estadoProduco" class="form-control">
-                            <option value="1">Activo</option>
-                            <option value="0">Inactivo</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="btnGuardar">Agregar</button>
-                    <button type="button" class="btn btn-primary" id="btnEditar" style="display: none;">Actualizar Producto</button>
-                </div>
-            </form>
-
         </div>
     </div>
 </div>
@@ -275,13 +202,12 @@
                         }
                     }
                 </td>
-
                 <td>
                     @foreach (var presentacion in ViewBag.Presentaciones)
                     {
                         @if (presentacion.PresentacionId == item.PresentacionId) // Verifica si el ID del rol coincide con el ID del rol del usuario
                         {
-                            <span>@(presentacion.NombrePresentacion + "x" + presentacion.Contenido)</span> <!-- Muestra el nombre del rol si coincide -->
+                            <span>@presentacion.NombreCompleto</span> <!-- Muestra el nombre del rol si coincide -->
                         }
                     }
                 </td>

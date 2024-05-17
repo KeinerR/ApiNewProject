@@ -2,6 +2,10 @@
 using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
+using System;
+using Microsoft.AspNetCore.Http;
+using System.Net;
+
 
 namespace VistaNewProject.Controllers
 {
@@ -21,11 +25,23 @@ namespace VistaNewProject.Controllers
 
             var productos = await _client.GetProductoAsync();
 
-            var presentacion = await _client.GetPresentacionAsync();
-            var marca = await _client.GetMarcaAsync();
-            var unidad = await _client.GetUnidadAsync();
-            var categoria = await _client.GetCategoriaAsync();
+            var presentaciones = await _client.GetPresentacionAsync();
+            var marcas = await _client.GetMarcaAsync();
+            var unidades = await _client.GetUnidadAsync();
+            var categorias = await _client.GetCategoriaAsync();
 
+            // Concatenar nombre DEL PRODUCTO controlador
+            foreach (var presentacion in presentaciones)
+            {
+                var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId== presentacion.PresentacionId);
+                var nombrepresentacion= presentacionEncontrada != null ? presentacionEncontrada.NombrePresentacion : "Sin nombre";
+                var contenido = presentacionEncontrada != null ? presentacionEncontrada.Contenido : "Sin contennido";
+                var cantidad = presentacionEncontrada != null ? presentacionEncontrada.CantidadPorPresentacion : 0;
+             
+
+
+                presentacion.NombreCompleto= $"{nombrepresentacion} {cantidad}x{contenido}";
+            }
             if (productos == null)
             {
                 return NotFound("error");
@@ -39,12 +55,12 @@ namespace VistaNewProject.Controllers
 
             int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
 
+            ViewBag.Presentaciones = presentaciones;
+            ViewBag.Categorias = categorias;
+            ViewBag.Unidades = unidades;
+            ViewBag.Marcas = marcas;
 
-
-            ViewBag.Presentaciones = presentacion;
-            ViewBag.Categorias = categoria;
-            ViewBag.Unidades = unidad;
-            ViewBag.Marcas = marca;
+        
 
             // Código del método Index que querías integrar
             string mensaje = HttpContext.Session.GetString("Message");
@@ -67,53 +83,20 @@ namespace VistaNewProject.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] string producto)
+        public IActionResult Create([FromForm] Producto producto)
         {
-            if (ModelState.IsValid)
-            {
-                var productos = await _client.GetProductoAsync();
-                var existeProducto= productos.FirstOrDefault(c => string.Equals(c.NombreProducto, producto, StringComparison.OrdinalIgnoreCase));
+            // Imprimir los valores por consola
+            Console.WriteLine("Datos recibidos del formulario:");
+            Console.WriteLine($"Producto ID: {producto.ProductoId}");
+            Console.WriteLine($"Marca ID: {producto.MarcaId}");
+            Console.WriteLine($"Categoria ID: {producto.CategoriaId}");
+            Console.WriteLine($"Presentacion ID: {producto.PresentacionId}");
+            Console.WriteLine($"Nombre Producto: {producto.NombreProducto}");
+            Console.WriteLine($"Cantidad Total: {producto.CantidadTotal}");
+            Console.WriteLine($"Estado Producto: {producto.Estado}");
 
-                // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
-                if (existeProducto != null)
-                {
-                    TempData["SweetAlertIcon"] = "error";
-                    TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "Ya hay un producto registrado con este nombre.";
-                    return RedirectToAction("Index");
-                }
-
-                // Resto del código para crear la nueva marca
-                var producto = new Producto
-                {
-                    NombreProducto = producto
-                };
-
-                if (producto == null)
-                {
-                    ViewBag.MensajeError = "No se pudieron campos  los datos.";
-                    return View("Index");
-                }
-
-                var response = await _client.CreateMarcaAsync(marca);
-
-
-                if (response.IsSuccessStatusCode)
-                {
-                    // Guardar un mensaje en TempData para mostrar en el Index
-                    TempData["Mensaje"] = "¡Registro guardado correctamente!";
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    ViewBag.MensajeError = "No se pudieron guardar los datos.";
-                    return View("Index");
-                }
-            }
-
-
-            ViewBag.Mensaje = TempData["Mensaje"]; ViewBag.Mensaje = TempData["Mensaje"];
-            return View("Index");
+            // Regresar a la vista sin realizar ninguna operación adicional
+            return RedirectToAction("Index");
         }
 
     }
