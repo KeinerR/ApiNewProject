@@ -33,6 +33,9 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\image\" />
+    <Folder Include="wwwroot\js\1Login\" />
+    <Folder Include="wwwroot\js\4Compras\" />
+    <Folder Include="wwwroot\js\Productos\" />
   </ItemGroup>
 
 </Project>

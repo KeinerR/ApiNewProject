@@ -1172,6 +1172,7 @@ function volverARegistrarCompra()    {
 }
 
 function reiniciarCompra() {
+    document.getElementById('NumeroFactura').value = '';
     location.reload();
 }
 function verCompra() {
@@ -1206,7 +1207,7 @@ function verCalculo() {
 
 }
 function noVerCalculo() {
-    var boton = document.getElementById('modal-header-botonAgregarDetalle').style.visibility = 'hidden';
+    document.getElementById('modal-header-botonAgregarDetalle').style.visibility = 'hidden';
     document.getElementById('modal-header-botonAgregarDetalle').style.display = "none"
     document.getElementById('PrecioBougth').style.display = 'none';
     document.getElementById('PrecioBuy').style.display = 'none';

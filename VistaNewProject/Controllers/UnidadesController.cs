@@ -174,14 +174,14 @@ public async Task<IActionResult> Create([FromForm] string nombreUnidad, int cant
 
         public async Task<IActionResult> Delete(int id)
         {
-            var productos = await _client.GetProductoAsync();
-            var productosDeUnidad = productos.Where(p => p.UnidadId == id);
+            var detalles = await _client.GetDetallecompraAsync();
+            var detallesDeUnidad = detalles.Where(p => p.UnidadId == id);
 
-            if (productosDeUnidad.Any())
+            if (detallesDeUnidad.Any())
             {
                 TempData["SweetAlertIcon"] = "error";
                 TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "No se puede eliminar la Unidad porque tiene productos asociados.";
+                TempData["SweetAlertMessage"] = "No se puede eliminar la Unidad porque tiene detalles de compra y productos asociados.";
                 return RedirectToAction("Index");
             }
 

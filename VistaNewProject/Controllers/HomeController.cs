@@ -27,8 +27,8 @@ namespace VistaNewProject.Controllers
             int CantidadTotal = 0;
             foreach (var producto in registroProductos)
             {
-                // Verificar si Unidad es nulo y asignar un valor predeterminado en ese caso
-                int unidad = producto.UnidadId ?? 1; // Si Unidad es nulo, asigna 0
+                // Verificar si ProductoId es nulo y asignar un valor predeterminado en ese caso
+                int unidad = producto.ProductoId != null ? producto.ProductoId : 0;
                 CantidadTotal += unidad;
             }
             TempData["TotalProductos"] = CantidadTotal.ToString();

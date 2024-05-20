@@ -1,4 +1,4 @@
-﻿/* Estilo para que la odal ocupe el 100% de la pantalla*/
+﻿/* Estilo para que la modal ocupe el 100% de la pantalla*/
 #CompraModal {
     margin: 0;
     padding: 0;
@@ -6,7 +6,7 @@
 
 /* Estilo para la posicion de la modal*/
 #CompraVista {
-   margin-top:0px;
+   margin-top:10px;
 }
 
 /*Estilos para las etiquetas dentro de la modal y hacer crecer o decrecer la modal */

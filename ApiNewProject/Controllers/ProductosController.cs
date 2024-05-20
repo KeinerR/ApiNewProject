@@ -30,6 +30,8 @@ namespace ApiNewProject.Controllers
                     CategoriaId = s.CategoriaId,
                     NombreProducto = s.NombreProducto,
                     CantidadTotal = s.CantidadTotal,
+                    CantidadAplicarPorMayor = s.CantidadAplicarPorMayor,
+                    DescuentoAplicarPorMayor = s.DescuentoAplicarPorMayor,
                     Estado = s.Estado,
                 }
             ).ToListAsync();
@@ -53,6 +55,8 @@ namespace ApiNewProject.Controllers
                         CategoriaId = s.CategoriaId,
                         NombreProducto = s.NombreProducto,
                         CantidadTotal = s.CantidadTotal,
+                        CantidadAplicarPorMayor = s.CantidadAplicarPorMayor,
+                        DescuentoAplicarPorMayor = s.DescuentoAplicarPorMayor,
                         Estado = s.Estado,
                     })
                 .FirstOrDefaultAsync(s => s.ProductoId == Id);
@@ -105,6 +109,8 @@ namespace ApiNewProject.Controllers
             productos.CategoriaId = producto.CategoriaId;
             productos.NombreProducto = producto.NombreProducto;
             productos.CantidadTotal = producto.CantidadTotal;
+            productos.CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor;
+            productos.DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor;
             productos.Estado = producto.Estado;
 
             await _context.SaveChangesAsync();
@@ -169,6 +175,8 @@ namespace ApiNewProject.Controllers
                         CategoriaId = p.CategoriaId,
                         NombreProducto = p.NombreProducto,
                         CantidadTotal = p.CantidadTotal,
+                        CantidadAplicarPorMayor = p.CantidadAplicarPorMayor,
+                        DescuentoAplicarPorMayor = p.DescuentoAplicarPorMayor,
                         Estado = p.Estado
                     })
                     .ToListAsync();

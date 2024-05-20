@@ -1,4 +1,4 @@
-﻿// Definir la función opcionesDePerfil
+﻿//Hacer que el menu de oocu¡iones de perfil aparezca u desaparezca ann sweet aoert de confirmacion
 function opcionesDePerfil() {
     var profilePopup = document.getElementById("perfilVentanaEmergente");
     if (profilePopup.style.display === "none") {
@@ -15,6 +15,9 @@ function confirmLogout() {
         window.location.reload();
     }
 }
+
+
+//Funcion que hace desplegar o reducir el menu de navegacion
 $(function () {
    $("#menu-toggle").on("click", function (e) {
     e.preventDefault();
@@ -61,7 +64,11 @@ $(function () {
     }
     
 });
-/**/
+
+
+
+
+/*Mostrar la hora actual en un campo solo llamarla i pasarle el id del campo al que se dese aagregar la fecha*/
 function setHoraActual(campo) {
     // Crear un nuevo objeto Date que representa la fecha y hora actual
     var fechaHoraActual = new Date();
@@ -80,4 +87,15 @@ function setHoraActual(campo) {
 }
 
 
+
+
+function reiniciarFormulario() {
+    location.reload();
+}
+
+window.simularClick = function () {
+     //ocultar formulario de actualizar  y mostrar el formulario principal
+        $('#FormActualizar').hide();
+        $('#FormPrincipal').show().css('visibility', 'visible');  
+}
 
