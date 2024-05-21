@@ -264,16 +264,17 @@ input[type="checkbox"]:checked + .sub-menu {
     max-height: 500px;
 }
 
-/*----------------*/
+/*---------------------------------------EDITAR-----------------------------------------------------------------------*/
 
-#ContenedorProducto table{
-        border:solid green  2px;
-
+.container {
+    overflow-x: auto; /* Habilita el scroll horizontal si es necesario */
+    overflow-y: hidden; /* Oculta el scroll vertical */
 }
-
-
+#ContenedorProducto {
+    overflow-x: auto; /* Habilita el scroll horizontal si es necesario */
+    overflow-y: hidden; /* Oculta el scroll vertical */
+}
 /*----------------------------------------FOOTER------------------------------------------------------------------------------*/
-
 .PIE {
     height: auto;
     min-height: 30px;
@@ -291,7 +292,6 @@ input[type="checkbox"]:checked + .sub-menu {
 }*/
 
 
-/*-------------------------------------------ESTILOS PARA LAS VSTAS------------------------------------------------------------------------------------*/
 /*------------------------------------------ Estilos para el buscador y el botón agregar ----------------------------------------------------------------------------*/
 
 
@@ -365,6 +365,11 @@ input[type="checkbox"]:checked + .sub-menu {
         align-content:center;
         padding:4px;
     }
+    .table-custom .contenedorCantidad {
+        width: 50px; /* Establece el ancho deseado */
+    }
+
+
 
 /*Switch*/   /*Checkbox de estado en everyviews*/
 .switch {
@@ -683,7 +688,6 @@ input:checked + .slider:before {
     .container {
         min-width: auto;
         border: solid purple 2px;
-        overflow: auto; /* Habilita el scroll automático cuando el contenido excede el tamaño del contenedor */
     }
     /*---------------------------------------------------------------------*/
     header .iconoHeaderMenu {
@@ -722,6 +726,7 @@ input:checked + .slider:before {
         min-width: auto;
         border: solid brown 2px;
     }
+
     /*---------------------------------------------------------------------*/
     header .iconoHeaderMenu {
         font-size: 2em;
@@ -827,33 +832,6 @@ input:checked + .slider:before {
 }
 
 
-
-
-@media screen and (max-width: 400px) {
-    /*---------------------------------------------------------------------*/
-    .table-custom tbody tr {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 10px;
-        margin-bottom: 30px;
-        color: black;
-        height: auto;
-    }
-
-    .table-custom td, .table-custom th {
-        display: block;
-        text-align: left;
-        height: auto;
-    }
-
-    .table-custom tbody td, .table-custom tbody th {
-        padding: 10px;
-        border: none;
-    }
-    /*---------------------------------------------------------------------*/
-
-}
-
 /* Media queries para hacer la tabla responsive */
 @media screen and (max-width: 400px) {
     .table-custom tbody tr {
@@ -880,9 +858,6 @@ input:checked + .slider:before {
         margin-bottom: 10px; /* Ajuste de espacio entre botones */
     }
 }
-
-
-
 
 /*Estilos para no ver elementos*/
 .noSee {

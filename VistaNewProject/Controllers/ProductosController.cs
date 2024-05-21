@@ -28,7 +28,6 @@ namespace VistaNewProject.Controllers
 
             var presentaciones = await _client.GetPresentacionAsync();
             var Productos = await _client.GetProductoAsync();
-            var unidades = await _client.GetUnidadAsync();
             var categorias = await _client.GetCategoriaAsync();
             var marcas = await _client.GetMarcaAsync();
 
@@ -40,7 +39,12 @@ namespace VistaNewProject.Controllers
                 var contenido = presentacionEncontrada != null ? presentacionEncontrada.Contenido : "Sin contennido";
                 var cantidad = presentacionEncontrada != null ? presentacionEncontrada.CantidadPorPresentacion : 0;
 
-                presentacion.NombreCompleto= $"{nombrepresentacion} {cantidad} x {contenido}";
+                if (cantidad > 1) {
+                    presentacion.NombreCompleto = $"{nombrepresentacion} x {cantidad} unidades de {contenido}";
+                } else {
+                    presentacion.NombreCompleto = $"{nombrepresentacion} de {contenido}";
+                }
+               
             }
             if (productos == null)
             {
@@ -66,7 +70,7 @@ namespace VistaNewProject.Controllers
                
                 if (cantidad > 1)
                 {
-                    producto.NombreCompleto = $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} unidades {nombreMarca}  de {contenido}";
+                    producto.NombreCompleto = $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} {contenido}";
                 }
                 else {
                     producto.NombreCompleto = $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca}  de {contenido}"; ;
@@ -77,7 +81,6 @@ namespace VistaNewProject.Controllers
             ViewBag.Contador = contador;
             ViewBag.Presentaciones = presentaciones;
             ViewBag.Categorias = categorias;
-            ViewBag.Unidades = unidades;
             ViewBag.Productos = Productos;
             ViewBag.Marcas = marcas;
 
@@ -190,6 +193,64 @@ namespace VistaNewProject.Controllers
             return Json(producto);
         }
 
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var producto = await _client.GetProductoAsync();
+            var presentacion = await _client.GetPresentacionAsync();
+            var marca = await _client.GetMarcaAsync();
+            var categoria = await _client.GetCategoriaAsync();
+            var lotes = await _client.GetLoteAsync();
+
+            if (producto == null || presentacion == null || marca == null || categoria == null || lotes == null)
+            {
+                return NotFound();
+            }
+
+            var productoInfo = producto.FirstOrDefault(u => u.ProductoId == id);
+            if (productoInfo == null)
+            {
+                return NotFound();
+            }
+
+            var presentacionInfo = presentacion.FirstOrDefault(u => u.PresentacionId == productoInfo.PresentacionId);
+            var marcaInfo = marca.FirstOrDefault(u => u.MarcaId == productoInfo.MarcaId);
+            var categoriaInfo = categoria.FirstOrDefault(u => u.CategoriaId == productoInfo.CategoriaId);
+
+            // Filtrar los lotes para obtener solo aquellos con una cantidad mayor que cero
+            var lotesInfo = lotes
+                .Where(u => u.ProductoId == productoInfo.ProductoId && u.Cantidad > 0 && u.EstadoLote == 1)
+                .ToList();
+
+            var nombrePresentacion = presentacionInfo.NombrePresentacion;
+            var contenido = presentacionInfo.Contenido;
+            int cantidad = 0; // Valor predeterminado en caso de que CantidadPorPresentacion sea nulo
+            if (presentacionInfo.CantidadPorPresentacion.HasValue)
+            {
+                cantidad = presentacionInfo.CantidadPorPresentacion.Value;
+            }
+
+            var nombreMarca = marcaInfo.NombreMarca;
+
+            if (cantidad > 1)
+            {
+                productoInfo.NombreCompleto = $"{nombrePresentacion} de {productoInfo.NombreProducto} x {cantidad} {contenido}";
+            }
+            else
+            {
+                productoInfo.NombreCompleto = $"{nombrePresentacion} de {productoInfo.NombreProducto} {nombreMarca}  de {contenido}";
+            }
+
+            ViewData["Producto"] = productoInfo;
+            ViewData["Lotes"] = lotesInfo;
+
+            return View();
+        }
 
         [HttpPost]
         public async Task<JsonResult> FindProductos()

@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Detalle de producto";
+}
+
+<h1>Detalle de producto</h1>
+<a asp-action="Index" class="btn btn-primary btn-sm">
+    <i class="fas fa-arrow-left"></i> Volver
+</a>
+<div style="display:flex;">
+    <h5>Producto ID:</h5>
+    <p>@ViewBag.Producto.ProductoId</p>
+    <h5>Nombre:</h5>
+    <p>@ViewBag.Producto.NombreCompleto</p>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Lote ID</th>
+            <th>Lote</th>
+            <th>Cantidad en lote</th>
+            <th>Precio por producto</th>
+            <th>Precio por unidad de producto</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var lote in ViewBag.Lotes)
+        {
+            <tr>
+                <td>@lote.LoteId</td>
+                <td>@lote.NumeroLote</td>
+                <td>@lote.Cantidad</td>
+                <td>@lote.PrecioPorPresentacion</td>
+                <td>@lote.PrecioPorUnidadProducto</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script src="~/js/Detalle.js"></script>

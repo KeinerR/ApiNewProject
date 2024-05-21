@@ -286,7 +286,6 @@ document.addEventListener('DOMContentLoaded', function () {
         let selectedOptionById = Array.from(dataList.options).find(option => option.getAttribute('data-id') === selectedValue);
 
         if (/^\d+[a-zA-Z]$/.test(selectedValue)) {
-            console.log('Número seguido de letra encontrado:', selectedValue);
             selectedOptionByName = Array.from(dataList.options).find(option => option.value === selectedValue);
         }
 
@@ -401,7 +400,6 @@ function actualizarProducto(campo) {
             } else {
                 $('#checkboxDescuentoPorMayorAct').prop('checked', false); // Desmarcar el checkbox
             }
-                llenarCampos(); // Llamada a la función llenarCampos
         },
         error: function () {
             alert('Error al obtener los datos del producto.');

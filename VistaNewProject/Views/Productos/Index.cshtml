@@ -4,395 +4,402 @@
     ViewData["Title"] = "Index";
 }
 <div class="ContenedorVista" id="ContenedorProducto">
-<br />
+    <br />
 
-<div class="d-flex justify-content-between">
-    <!-- Formulario de búsqueda a la izquierda -->
-    <div class="mr-auto">
-        <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
-            <div class="input-group">
-                <input id="buscarProducto" type="text" class="form-control" placeholder="Buscar producto" aria-label="Search" aria-describedby="button-addon2">
-                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
-            </div>
-        </form>
-    </div>
-
-
-    <!-- Botón para abrir el modal -->
-        <button type="button" id="botonAbrirModal" onclick="simularClick(); obtenerDatosProductos();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#GeneralModal">
-       <i class="fas fa-plus-circle"></i>  Agregar Producto
-    </button>
-</div>
-
-
-<!-- Modal -->
-<div class="modal fade" id="GeneralModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div id="FormPrincipal" class="modal-content">
-            <div class="modal-cabecera">
-                <div id="pibo"></div>
-                <div class="modal-header-view TituloModal">
-                    <h2 class="modal-title">Agregar Producto</h2>
+    <div class="d-flex justify-content-between" id="ContenedorOpciones" >
+        <!-- Formulario de búsqueda a la izquierda -->
+        <div class="mr-auto">
+            <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
+                <div class="input-group">
+                    <input id="buscarProducto" type="text" class="form-control" placeholder="Buscar producto" aria-label="Search" aria-describedby="button-addon2">
+                    <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
                 </div>
-                <div class="modal-header-view" id="modal-cabecera-equis">
-                    <button type="button" onclick="limpiarFormularioProducto();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-            </div>
-            <div class="modal-cuerpo">
-                <form asp-controller="Productos" asp-action="Create" class="modal-formulario-crear" method="post">
-                    @Html.AntiForgeryToken() <!-- Asegúrate de tener esto si el modelo tiene FK-->
-                    <div class="d-none">
-                        <select id="Estado" type="hidden" name="estado" class="form-control">
-                        <option selected value="1">Activo</option>
-                        <option value="0">Inactivo</option>
-                    </select>
-
-                    </div>
-                    <input  id="ProductoId" type="hidden" name="productoId" class="form-control" />
-                        <input id="CantidadTotal" type="hidden" value="0" name="cantidadTotal" class="form-control" />
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="CategoriaId" class="control-label">Categoria</label><span class="Mensaje">*</span>
-                                    <input list="categorias" oninput="validarCampo(this)" id="NombreCategoria" name="nombreCategoria" class="form-control" placeholder="Escribe  y/o selecciona..." onclick="showCategorias()" autocomplete="off" maxlength="20" />
-                                    <datalist id="categorias">
-                                        @foreach (var item in ViewBag.Categorias)
-                                        {
-                                            @if (item.EstadoCategoria != 0)
-                                            {
-                                                <option value="@item.NombreCategoria" data-id="@item.CategoriaId">@item.NombreCategoria</option>
-                                            }
-                                        }
-                                    </datalist>
-                                    <input id="CategoriaId" type="hidden" name="categoriaId">
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="NombreProducto" class="control-label">Nombre Producto</label><span class="Mensaje">*</span>
-                                    <input type="text" id="NombreProducto" oninput="validarCampo(this)" name="nombreProducto" class="form-control" />                                <span class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                    <label for="MarcaId" class="control-label">Marca</label>
-                                    <span class="Mensaje">*</span>
-                                    <input list="marcas" oninput="validarCampo(this)" id="NombreMarca" name="nombeMarca" class="form-control" placeholder="Escribe  y/o selecciona..." onclick="showNoMarcasAlert()" autocomplete="off" maxlength="20"/>
-                                    <datalist id="marcas">
-                                    @foreach (var item in ViewBag.Marcas)
-                                    {
-                                        @if (item.EstadoMarca != 0) // Solo mostramos las marcas que tienen estado diferente de 0
-                                        {
-                                                    <option value="@item.NombreMarca" data-id="@item.MarcaId">@item.NombreMarca</option>
-                                        }
-                                    }
-                                </datalist>
-                                    <input id="MarcaId" type="hidden" name="marcaId">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="PresentacionId" class="control-label">Presentacion</label>
-                                <span class="Mensaje">*</span>
-
-                                <input list="presentaciones" oninput="validarCampo(this)" id="NombrePresentacion" name="NombrePresentacion" class="form-control" placeholder="Escribe  y/o selecciona..." onclick="showNoPresentacionesAlert()" autocomplete="off" maxlength="20" />
-                                <datalist id="presentaciones">
-                                    @foreach (var item in ViewBag.Presentaciones)
-                                    {
-                                        @if (item.EstadoPresentacion != 0)
-                                        {
-                                            <option value="@item.NombreCompleto" data-id="@item.PresentacionId">@item.NombreCompleto</option>
-                                        }
-                                    }
-                                </datalist>
-                                <input id="PresentacionId" type="hidden" name="presentacionId">
-                                <span class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-               
-                    <div class="row">
-                        <div class="modal-contenedor-check">
-                            <div class="contenedorDatos">
-                                 <label class="form-check-label labelDescuentoPorMayor" for="checkboxDescuentoPorMayor" id="Vencimiento">Descuento por mayor</label>
-                                <input type="checkbox" class="form-check-input" onclick="Llamar();" onchange="Llamar();" id="checkboxDescuentoPorMayor"/>
-                            </div>
-                        </div>
-                            <div class="col-md-6 noBe PorMayor">
-                            <div class="form-group">
-                                    <label for="CantidadAplicarPorMayor" class="control-label">Cantidad A Superar</label>
-                                    <span class="Mensaje"></span>
-                                    <input type="text" id="CantidadAplicarPorMayor" value="0" oninput="validarCampo(this)" name="cantidadAplicarPorMayor" class="form-control" />
-                                <span class="text-danger"></span>
-                            </div>
-                        </div>
-                            <div class="col-md-6 noBe PorMayor">
-                            <div class="form-group">
-                                    <label for="DescuentoAplicarPorMayor" class="control-label">Descuento Por Producto</label><span class="Mensaje"></span>
-                                    <input type="text" id="DescuentoAplicarPorMayor" value="0" oninput="validarCampo(this)" name="descuentoAplicarPorMayor" class="form-control" />
-                                <span class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-                        <div class="MensajeInicial"></div>
-                        <div class="modal-contenedor-footer">
-                            <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormularioProducto();">Cancelar</button>
-                            <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
-                        </div>
-                </form>
-            </div>
-                   
+            </form>
         </div>
 
-        <div class="modal-content noBe" id="FormActualizar">
+
+        <!-- Botón para abrir el modal -->
+            <button type="button" id="botonAbrirModal" onclick="simularClick(); obtenerDatosProductos();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#GeneralModal">
+           <i class="fas fa-plus-circle"></i>  Agregar Producto
+        </button>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="GeneralModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div id="FormPrincipal" class="modal-content">
                 <div class="modal-cabecera">
                     <div id="pibo"></div>
                     <div class="modal-header-view TituloModal">
-                        <h2 class="modal-title">Actualizar Producto</h2>
+                        <h2 class="modal-title">Agregar Producto</h2>
                     </div>
                     <div class="modal-header-view" id="modal-cabecera-equis">
-                        <button type="button"  onclick="limpiarFormularioProducto();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" onclick="limpiarFormularioProducto();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                 </div>
                 <div class="modal-cuerpo">
-                    <form asp-controller="Productos" asp-action="Update" class="modal-formulario-actualizar" method="post">
+                    <form asp-controller="Productos" asp-action="Create" class="modal-formulario-crear" method="post">
                         @Html.AntiForgeryToken() <!-- Asegúrate de tener esto si el modelo tiene FK-->
-                        <input id="ProductoIdAct" type="hidden" name="productoId" class="form-control" />
-                        <input id="CantidadTotalAct" type="hidden" value="0" name="cantidadTotal" class="form-control" />
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="NombreCategoriaAct" class="control-label">Categoria</label><span class="Mensaje"></span>
-                                    <input list="categorias" oninput="validarCampo(this)" id="NombreCategoriaAct" name="nombreCategoria" class="form-control" placeholder="Selecciona una categoria..." onclick="showCategorias()" autocomplete="off" maxlength="20">
-                                    <datalist id="categorias">
-                                        @foreach (var item in ViewBag.Categorias)
-                                        {
-                                            @if (item.EstadoCategoria != 0)
-                                            {
-                                                <option value="@item.NombreCategoria" data-id="@item.CategoriaId">@item.NombreCategoria</option>
-                                            }
-                                        }
-                                    </datalist>
-                                    <input type="hidden" id="CategoriaIdAct" name="categoriaId">
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="NombreProductoAct" class="control-label">Nombre Producto</label><span class="Mensaje"></span>
-                                    <input type="text" id="NombreProductoAct" oninput="validarCampo(this)" name="nombreProducto" class="form-control" />
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
+                        <div class="d-none">
+                            <select id="Estado" type="hidden" name="estado" class="form-control">
+                            <option selected value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+
                         </div>
+                        <input  id="ProductoId" type="hidden" name="productoId" class="form-control" />
+                            <input id="CantidadTotal" type="hidden" value="0" name="cantidadTotal" class="form-control" />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="CategoriaId" class="control-label">Categoria</label><span class="Mensaje">*</span>
+                                        <input list="categorias" oninput="validarCampo(this)" id="NombreCategoria" name="nombreCategoria" class="form-control" placeholder="Escribe  y/o selecciona..." onclick="showCategorias()" autocomplete="off"/>
+                                        <datalist id="categorias">
+                                            @foreach (var item in ViewBag.Categorias)
+                                            {
+                                                @if (item.EstadoCategoria != 0)
+                                                {
+                                                    <option value="@item.NombreCategoria" data-id="@item.CategoriaId">@item.NombreCategoria</option>
+                                                }
+                                            }
+                                        </datalist>
+                                        <input id="CategoriaId" type="hidden" name="categoriaId">
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="NombreProducto" class="control-label">Nombre Producto</label><span class="Mensaje">*</span>
+                                        <input type="text" id="NombreProducto" oninput="validarCampo(this)" name="nombreProducto" class="form-control" />                                <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="NombreMarcaAct" class="control-label">Marca</label>
-                                    <span class="Mensaje"></span>
-                                    <input list="marcas" oninput="validarCampo(this)"  id="NombreMarcaAct" name="nombreMarca" class="form-control" placeholder="Escribe y/o selecciona una marca..." onclick="showNoMarcasAlert()" autocomplete="off" maxlength="20">
-                                    <datalist id="marcas">
+                                        <label for="MarcaId" class="control-label">Marca</label>
+                                        <span class="Mensaje">*</span>
+                                        <input list="marcas" oninput="validarCampo(this)" id="NombreMarca" name="nombeMarca" class="form-control" placeholder="Escribe  y/o selecciona..." onclick="showNoMarcasAlert()" autocomplete="off" />
+                                        <datalist id="marcas">
                                         @foreach (var item in ViewBag.Marcas)
                                         {
                                             @if (item.EstadoMarca != 0) // Solo mostramos las marcas que tienen estado diferente de 0
                                             {
-                                                <option value="@item.NombreMarca" data-id="@item.MarcaId">@item.NombreMarca</option>
+                                                        <option value="@item.NombreMarca" data-id="@item.MarcaId">@item.NombreMarca</option>
                                             }
                                         }
                                     </datalist>
-                                    <input type="hidden" id="MarcaIdAct" name="marcaId">
+                                        <input id="MarcaId" type="hidden" name="marcaId">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="NombrePresentacionAct" class="control-label">Presentacion</label>
-                                    <span class="Mensaje"></span>
-                                    <input list="presentaciones" oninput="validarCampo(this)" id="NombrePresentacionAct" name="NombrePresentacion" class="form-control" placeholder="Escribe  y/o selecciona una presentación..." onclick="showNoPresentacionesAlert()" autocomplete="off" maxlength="20">
+                                    <label for="PresentacionId" class="control-label">Presentacion</label>
+                                    <span class="Mensaje">*</span>
+                                    <input list="presentaciones" oninput="validarCampo(this)" id="NombrePresentacion" name="nombrePresentacion" class="form-control" placeholder="Escribe  y/o selecciona..." onclick="showNoPresentacionesAlert()" autocomplete="off"  />
                                     <datalist id="presentaciones">
                                         @foreach (var item in ViewBag.Presentaciones)
                                         {
                                             @if (item.EstadoPresentacion != 0)
                                             {
-                                                <option value="@item.NombreCompleto" data-id="@item.PresentacionId">@item.NombreCompleto</option>
+                                                <option data-id="@item.PresentacionId">@item.NombreCompleto</option>
                                             }
                                         }
                                     </datalist>
-                                    <input type="hidden" id="PresentacionIdAct" name="presentacionId">
+                                    <input id="PresentacionId" type="hidden" name="presentacionId">
                                     <span class="text-danger"></span>
                                 </div>
                             </div>
-                           
                         </div>
+               
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="EstadoAct" class="control-label">Estado Producto</label>
-                                    <select id="EstadoAct" type="hidden" name="estado" class="form-control">
-                                        <option value="1">Activo</option>
-                                        <option value="0">Inactivo</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6 PorMayorAct noBe">
-                                <div class="form-group">
-                                    <label for="CantidadAplicarPorMayorAct" class="control-label">Cantidad A Superar</label>
-                                    <span class="Mensaje"></span>
-                                    <input type="text" id="CantidadAplicarPorMayorAct" oninput="validarCampo(this)" name="cantidadAplicarPorMayor" class="form-control" />
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6 PorMayorAct noBe">
-                                <div class="form-group">
-                                    <label for="DescuentoAplicarPorMayorAct" class="control-label">Descuento Por Producto</label><span class="Mensaje"></span>
-                                    <input type="text" id="DescuentoAplicarPorMayorAct" oninput="validarCampo(this)" name="descuentoAplicarPorMayor" class="form-control" />
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
                             <div class="modal-contenedor-check">
                                 <div class="contenedorDatos">
-                                    <label class="form-check-label labelDescuentoPorMayor" for="checkboxDescuentoPorMayorAct">Descuento por mayor</label>
-                                    <input type="checkbox" class="form-check-input" onclick="Llamar2();" onchange="Llamar2();" id="checkboxDescuentoPorMayorAct">
+                                     <label class="form-check-label labelDescuentoPorMayor" for="checkboxDescuentoPorMayor" id="Vencimiento">Descuento por mayor</label>
+                                    <input type="checkbox" class="form-check-input" onclick="Llamar();" onchange="Llamar();" id="checkboxDescuentoPorMayor"/>
                                 </div>
                             </div>
-                            
+                                <div class="col-md-6 noBe PorMayor">
+                                <div class="form-group">
+                                        <label for="CantidadAplicarPorMayor" class="control-label">Cantidad A Superar</label>
+                                        <span class="Mensaje"></span>
+                                        <input type="text" id="CantidadAplicarPorMayor" value="0" oninput="validarCampo(this)" name="cantidadAplicarPorMayor" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                                <div class="col-md-6 noBe PorMayor">
+                                <div class="form-group">
+                                        <label for="DescuentoAplicarPorMayor" class="control-label">Descuento Por Producto</label><span class="Mensaje"></span>
+                                        <input type="text" id="DescuentoAplicarPorMayor" value="0" oninput="validarCampo(this)" name="descuentoAplicarPorMayor" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="MensajeInicial"></div>
-                        <div class="modal-contenedor-footer">
-                            <button type="reset" onclick="limpiarFormularioProducto();" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary" id="btnGuardar">Actualizar</button>
-                        </div>
+                            <div class="MensajeInicial"></div>
+                            <div class="modal-contenedor-footer">
+                                <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormularioProducto();">Cancelar</button>
+                                <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                            </div>
                     </form>
-                   
                 </div>
-                
+                   
             </div>
-    </div>
 
-</div>
-
-<br />
-<hr>
-
-<table class="table table-custom text-center">
-    <thead>
-        <tr>
-            <th>
-                #
-            </th>
-            <th class="d-none">
-                producto Id
-            </th>
-            <th>
-                CATEGORIA
-            </th>
-            <th>
-                NOMBRE PRODUCTO
-            </th>
-            <th title="cantidad total por producto">
-                CANTIDAD
-            </th>
-            <th>
-                ESTADO
-            </th>
-            <th>
-                ACCIONES
-            </th>
-        </tr>
-    </thead>
-    <tbody class="text-center">
-            @{
-                int contador = ViewBag.Contador;
-            }
-
-        @foreach (var item in Model)
-        {
-            <tr class="productosPaginado">
-                <td>
-                    @contador
-                    @{
-                        contador++;
-                    }
-                </td>
-                <td class="d-none">
-                    @Html.DisplayFor(modelItem => item.ProductoId)
-                </td>
-                <td>
-                    @foreach (var categoria in ViewBag.Categorias)
-                    {
-                        @if (categoria.CategoriaId == item.CategoriaId) // Verifica si el ID del rol coincide con el ID del rol del usuario
-                        {
-                            <span>@categoria.NombreCategoria</span> <!-- Muestra el nombre del rol si coincide -->
-                        }
-                    }
-                </td>               
-                <td>
-                    @Html.DisplayFor(modelItem => item.NombreCompleto)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CantidadTotal)
-                </td>
-                <td class="text-center align-middle contenedorEstadoTabla">
-                    <label class="switch">
-                        <input type="checkbox" @(item.Estado != 0 ? "checked" : "") onchange="actualizarEstadoProducto('@item.ProductoId', this.checked)">
-                        <span class="slider"></span>
-                    </label>
-                </td>
-
-                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
-                <td>
-                        <button class="btn" id="btnEdit" onclick="mostrarModalConRetraso(@item.ProductoId);"><i class="fas fa-edit"></i></button>
-                        <a asp-action="Details"asp-route-id="@item.ProductoId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
-                        <form style="display: inline-block;" asp-controller="Productos" id="botonTrash" asp-action="Delete" method="post" class="delete-form">
-                            @Html.Hidden("id", item.ProductoId)
-                            <button type="submit" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+            <div class="modal-content noBe" id="FormActualizar">
+                    <div class="modal-cabecera">
+                        <div id="pibo"></div>
+                        <div class="modal-header-view TituloModal">
+                            <h2 class="modal-title">Actualizar Producto</h2>
+                        </div>
+                        <div class="modal-header-view" id="modal-cabecera-equis">
+                            <button type="button"  onclick="limpiarFormularioProducto();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    </div>
+                    <div class="modal-cuerpo">
+                        <form asp-controller="Productos" asp-action="Update" class="modal-formulario-actualizar" method="post">
+                            @Html.AntiForgeryToken() <!-- Asegúrate de tener esto si el modelo tiene FK-->
+                            <input id="ProductoIdAct" type="hidden" name="productoId" class="form-control" />
+                            <input id="CantidadTotalAct" type="hidden" value="0" name="cantidadTotal" class="form-control" />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="NombreCategoriaAct" class="control-label">Categoria</label><span class="Mensaje"></span>
+                                        <input list="categorias" oninput="validarCampo(this)" id="NombreCategoriaAct" name="nombreCategoria" class="form-control" placeholder="Selecciona una categoria..." onclick="showCategorias()" autocomplete="off">
+                                        <datalist id="categorias">
+                                            @foreach (var item in ViewBag.Categorias)
+                                            {
+                                                @if (item.EstadoCategoria != 0)
+                                                {
+                                                    <option value="@item.NombreCategoria" data-id="@item.CategoriaId">@item.NombreCategoria</option>
+                                                }
+                                            }
+                                        </datalist>
+                                        <input type="hidden" id="CategoriaIdAct" name="categoriaId">
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="NombreProductoAct" class="control-label">Nombre Producto</label><span class="Mensaje"></span>
+                                        <input type="text" id="NombreProductoAct" oninput="validarCampo(this)" name="nombreProducto" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="NombreMarcaAct" class="control-label">Marca</label>
+                                        <span class="Mensaje"></span>
+                                        <input list="marcas" oninput="validarCampo(this)"  id="NombreMarcaAct" name="nombreMarca" class="form-control" placeholder="Escribe y/o selecciona una marca..." onclick="showNoMarcasAlert()" autocomplete="off" >
+                                        <datalist id="marcas">
+                                            @foreach (var item in ViewBag.Marcas)
+                                            {
+                                                @if (item.EstadoMarca != 0) // Solo mostramos las marcas que tienen estado diferente de 0
+                                                {
+                                                    <option value="@item.NombreMarca" data-id="@item.MarcaId">@item.NombreMarca</option>
+                                                }
+                                            }
+                                        </datalist>
+                                        <input type="hidden" id="MarcaIdAct" name="marcaId">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="NombrePresentacionAct" class="control-label">Presentacion</label>
+                                        <span class="Mensaje"></span>
+                                        <input list="presentaciones" oninput="validarCampo(this)" id="NombrePresentacionAct" name="NombrePresentacion" class="form-control" placeholder="Escribe  y/o selecciona una presentación..." onclick="showNoPresentacionesAlert()" autocomplete="off">
+                                        <datalist id="presentaciones">
+                                            @foreach (var item in ViewBag.Presentaciones)
+                                            {
+                                                @if (item.EstadoPresentacion != 0)
+                                                {
+                                                    <option value="@item.NombreCompleto" data-id="@item.PresentacionId">@item.NombreCompleto</option>
+                                                }
+                                            }
+                                        </datalist>
+                                        <input type="hidden" id="PresentacionIdAct" name="presentacionId">
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                           
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="EstadoAct" class="control-label">Estado Producto</label>
+                                        <select id="EstadoAct" type="hidden" name="estado" class="form-control">
+                                            <option value="1">Activo</option>
+                                            <option value="0">Inactivo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 PorMayorAct noBe">
+                                    <div class="form-group">
+                                        <label for="CantidadAplicarPorMayorAct" class="control-label">Cantidad A Superar</label>
+                                        <span class="Mensaje"></span>
+                                        <input type="text" id="CantidadAplicarPorMayorAct" oninput="validarCampo(this)" name="cantidadAplicarPorMayor" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 PorMayorAct noBe">
+                                    <div class="form-group">
+                                        <label for="DescuentoAplicarPorMayorAct" class="control-label">Descuento Por Producto</label><span class="Mensaje"></span>
+                                        <input type="text" id="DescuentoAplicarPorMayorAct" oninput="validarCampo(this)" name="descuentoAplicarPorMayor" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="modal-contenedor-check">
+                                    <div class="contenedorDatos">
+                                        <label class="form-check-label labelDescuentoPorMayor" for="checkboxDescuentoPorMayorAct">Descuento por mayor</label>
+                                        <input type="checkbox" class="form-check-input" onclick="Llamar2();" onchange="Llamar2();" id="checkboxDescuentoPorMayorAct">
+                                    </div>
+                                </div>
+                            
+                            </div>
+                            <div class="MensajeInicial"></div>
+                            <div class="modal-contenedor-footer">
+                                <button type="reset" onclick="limpiarFormularioProducto();" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary" id="btnGuardar">Actualizar</button>
+                            </div>
                         </form>
-                </td>
+                   
+                    </div>
+                
+                </div>
+        </div>
+
+    </div>
+    <br />
+    <hr>
+    <table class="table table-custom text-center">
+        <thead>
+            <tr>
+                <th>
+                    #
+                </th>
+                <th class="d-none">
+                    producto Id
+                </th>
+                <th>
+                    CATEGORIA
+                </th>
+                <th>
+                    Marca
+                </th>
+                <th>
+                    NOMBRE PRODUCTO
+                </th>
+                <th title="cantidad total por producto">
+                    CANTIDAD
+                </th>
+                <th>
+                    ESTADO
+                </th>
+                <th>
+                    ACCIONES
+                </th>
             </tr>
-        }@{
-            var productos = ViewData["Productos"] as List<Producto>;
-            if (productos != null)
+        </thead>
+        <tbody class="text-center">
+                @{
+                    int contador = ViewBag.Contador;
+                }
+
+            @foreach (var item in Model)
             {
-                foreach (var producto in productos)
-                {
-                    <tr class="Productos" style="display:none;">
-                        <td>@producto.ProductoId</td>
-                        <td>
-                            @foreach (var categoria in ViewBag.Categorias)
+                <tr class="productosPaginado">
+                    <td>
+                        @contador
+                        @{
+                            contador++;
+                        }
+                    </td>
+                    <td class="d-none">
+                        @Html.DisplayFor(modelItem => item.ProductoId)
+                    </td>
+                    <td>
+                        @foreach (var categoria in ViewBag.Categorias)
+                        {
+                            @if (categoria.CategoriaId == item.CategoriaId) // Verifica si el ID del rol coincide con el ID del rol del usuario
                             {
-                                @if (categoria.CategoriaId == producto.CategoriaId) // Verifica si el ID del rol coincide con el ID del rol del usuario
-                                {   
-                                    <span>@categoria.NombreCategoria</span> <!-- Muestra el nombre del rol si coincide -->
-                                } 
+                                <span>@categoria.NombreCategoria</span> <!-- Muestra el nombre del rol si coincide -->
                             }
-                        </td>
-                        <td>@producto.NombreCompleto</td>
-                        <td>@producto.CantidadTotal</td>
+                        }
+                    </td>          
+                    <td>
+                        @foreach (var marca in ViewBag.Marcas)
+                        {
+                            @if (marca.MarcaId == item.MarcaId) // Verifica si el ID del rol coincide con el ID del rol del usuario
+                            {                                                                                                   
+                                <span>@marca.NombreMarca</span> <!-- Muestra el nombre del rol si coincide -->
+                            }
+                        }
+                    </td>               
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NombreCompleto)
+                    </td>
+                    <td class="contenedorCantidad">
+                        @Html.DisplayFor(modelItem => item.CantidadTotal)
+                    </td>
+                    <td class="text-center align-middle contenedorEstadoTabla">
+                        <label class="switch">
+                            <input type="checkbox" @(item.Estado != 0 ? "checked" : "") onchange="actualizarEstadoProducto('@item.ProductoId', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </td>
 
-                        <td class="text-center align-middle contenedorEstadoTabla">
-                            <label class="switch">
-                                <input type="checkbox" @(producto.Estado != 0 ? "checked" : "") onchange="actualizarEstadoProducto('@producto.ProductoId', this.checked)">
-                                <span class="slider"></span>
-                            </label>
-                        </td>
+                    <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                    <td class="opcionesTabla">
+                            <button class="btn" id="btnEdit" onclick="mostrarModalConRetraso(@item.ProductoId);"><i class="fas fa-edit"></i></button>
+                            <a asp-action="Details" asp-controller="Productos" asp-route-id="@item.ProductoId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
+                            <form style="display: inline-block;" asp-controller="Productos" id="botonTrash" asp-action="Delete" method="post" class="delete-form">
+                                @Html.Hidden("id", item.ProductoId)
+                                <button type="submit" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                    </td>
+                </tr>
+            }@{
+                var productos = ViewData["Productos"] as List<Producto>;
+                if (productos != null)
+                {
+                    foreach (var producto in productos)
+                    {
+                        <tr class="Productos" style="display:none;">
+                            <td>@producto.ProductoId</td>
+                            <td>
+                                @foreach (var categoria in ViewBag.Categorias)
+                                {
+                                    @if (categoria.CategoriaId == producto.CategoriaId) // Verifica si el ID del rol coincide con el ID del rol del usuario
+                                    {   
+                                        <span>@categoria.NombreCategoria</span> <!-- Muestra el nombre del rol si coincide -->
+                                    } 
+                                }
+                            </td>
+                            <td>@producto.NombreCompleto</td>
+                            <td>@producto.CantidadTotal</td>
 
-                        <!-- Agrega esto a tu tabla dentro de la sección tbody -->
-                        <td>
-                                <button class="btn" id="btnEdit" onclick="mostrarModalConRetraso(@producto.ProductoId);"><i class="fas fa-edit"></i></button>
-                                <a asp-action="Details"asp-route-id="@producto.ProductoId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
+                            <td class="text-center align-middle contenedorEstadoTabla">
+                                <label class="switch">
+                                    <input type="checkbox" @(producto.Estado != 0 ? "checked" : "") onchange="actualizarEstadoProducto('@producto.ProductoId', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </td>
+
+                            <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                            <td>
+                                    <button class="btn" id="btnEdit" onclick="mostrarModalConRetraso(@producto.ProductoId);"><i class="fas fa-edit"></i></button>
+                                <a asp-action="Details" asp-controller="Productos" asp-route-id="@producto.ProductoId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
                                 <form style="display: inline-block;" asp-controller="Productos" id="botonTrash" asp-action="Delete" method="post" class="delete-form">
-                                    @Html.Hidden("id", producto.ProductoId)
-                                    <button type="submit" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
-                                </form>
-                        </td>
-                    </tr>
+                                        @Html.Hidden("id", producto.ProductoId)
+                                        <button type="submit" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                            </td>
+                        </tr>
+                    }
                 }
             }
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
 
     <div class="pagination-container mt-2">
         @if (Model != null && Model.PageCount > 1)
@@ -442,7 +449,7 @@
             </div>
         }
     </div>
-    </div>
+</div>
 @if (TempData["SweetAlertMessage"] != null)
 {
     <script>
