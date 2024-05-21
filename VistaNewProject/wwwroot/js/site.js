@@ -93,9 +93,3 @@ function reiniciarFormulario() {
     location.reload();
 }
 
-window.simularClick = function () {
-     //ocultar formulario de actualizar  y mostrar el formulario principal
-        $('#FormActualizar').hide();
-        $('#FormPrincipal').show().css('visibility', 'visible');  
-}
-

@@ -72,7 +72,7 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> CreateProductoAsync(Producto producto);
         Task<Producto> FindProductoAsync(int id);
         Task<HttpResponseMessage> UpdateProductoAsync(Producto producto);
-        Task<HttpResponseMessage> DeleteProductuAsync(int id);
+        Task<HttpResponseMessage> DeleteProductoAsync(int id);
 
 
 

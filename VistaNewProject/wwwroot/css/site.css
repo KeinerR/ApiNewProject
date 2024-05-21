@@ -11,6 +11,7 @@ input, span, a,button{
     border:none;
 }
 
+
 /*----------------------------------------------------------------------------------------------------------------------*/
 /*Estilos del contenedor header*/
 header {
@@ -263,7 +264,12 @@ input[type="checkbox"]:checked + .sub-menu {
     max-height: 500px;
 }
 
+/*----------------*/
 
+#ContenedorProducto table{
+        border:solid green  2px;
+
+}
 
 
 /*----------------------------------------FOOTER------------------------------------------------------------------------------*/

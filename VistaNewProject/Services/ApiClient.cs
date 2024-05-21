@@ -554,7 +554,7 @@ namespace VistaNewProject.Services
             }
         }
 
-        public async Task<HttpResponseMessage> DeleteProductuAsync(int id)
+        public async Task<HttpResponseMessage> DeleteProductoAsync(int id)
         {
             try
             {

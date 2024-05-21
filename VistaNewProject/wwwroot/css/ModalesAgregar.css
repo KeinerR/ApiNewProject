@@ -105,8 +105,9 @@
     display: block;  
     max-width: 100%
 }
-#MensajeInicial {
+.MensajeInicial {
     text-align: center; 
+    justify-content:center;
 }
 
 

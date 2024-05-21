@@ -40,8 +40,7 @@ namespace VistaNewProject.Controllers
                 var contenido = presentacionEncontrada != null ? presentacionEncontrada.Contenido : "Sin contennido";
                 var cantidad = presentacionEncontrada != null ? presentacionEncontrada.CantidadPorPresentacion : 0;
 
-
-                presentacion.NombreCompleto= $"{nombrepresentacion} {cantidad}x{contenido}";
+                presentacion.NombreCompleto= $"{nombrepresentacion} {cantidad} x {contenido}";
             }
             if (productos == null)
             {
@@ -52,6 +51,26 @@ namespace VistaNewProject.Controllers
             if (!pageProducto.Any() && pageProducto.PageNumber > 1)
             {
                 pageProducto = await productos.ToPagedListAsync(pageProducto.PageCount, pageSize);
+            }
+            // Concatenar nombre DEL PRODUCTO controlador
+            foreach (var producto in productos)
+            {
+                var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
+                var nombrePresentacion = presentacionEncontrada != null ? presentacionEncontrada.NombrePresentacion : "Sin presentación";
+                var contenido = presentacionEncontrada != null ? presentacionEncontrada.Contenido : "";
+                int cantidad = presentacionEncontrada != null ? presentacionEncontrada.CantidadPorPresentacion ?? 0 : 0;
+
+                var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
+                var nombreMarca = marcaEncontrada != null ? marcaEncontrada.NombreMarca : "Sin marca";
+
+               
+                if (cantidad > 1)
+                {
+                    producto.NombreCompleto = $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} unidades {nombreMarca}  de {contenido}";
+                }
+                else {
+                    producto.NombreCompleto = $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca}  de {contenido}"; ;
+                }
             }
 
             int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
@@ -116,6 +135,7 @@ namespace VistaNewProject.Controllers
                     {
                         NombreProducto = producto.NombreProducto,
                         PresentacionId = producto.PresentacionId,
+                        MarcaId = producto.MarcaId,
                         ProductoId = producto.ProductoId,
                         CategoriaId = producto.CategoriaId,
                         CantidadTotal = producto.CantidadTotal,
@@ -170,6 +190,13 @@ namespace VistaNewProject.Controllers
             return Json(producto);
         }
 
+
+        [HttpPost]
+        public async Task<JsonResult> FindProductos()
+        {
+            var productos = await _client.GetProductoAsync();
+            return Json(productos);
+        }
         [HttpPost]
         public async Task<IActionResult> Update([FromForm] ProductoEnd producto)
         {
@@ -206,6 +233,7 @@ namespace VistaNewProject.Controllers
                         ProductoId = producto.ProductoId,
                         NombreProducto = producto.NombreProducto,
                         PresentacionId = producto.PresentacionId,
+                        MarcaId = producto.MarcaId,
                         CategoriaId = producto.CategoriaId,
                         CantidadTotal = producto.CantidadTotal,
                         CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor,
@@ -253,46 +281,102 @@ namespace VistaNewProject.Controllers
 
         public async Task<IActionResult> Delete(int id)
         {
-            var productos = await _client.GetProductoAsync();
-            var productosDeProducto = productos.Where(p => p.ProductoId == id);
-            
-
-            if (productosDeProducto.Any())
+            try
             {
-                TempData["SweetAlertIcon"] = "error";
-                TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "No se puede eliminar la Producto porque tiene productos asociados.";
+                var producto = await _client.FindProductoAsync(id);
+
+                if (producto == null)
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "El producto a eliminar no existe.";
+                    TempData["Tiempo"] = 3000;
+                    return RedirectToAction("Index");
+                }
+
+                // Verificar si el producto está asociado a algún detalle de compra, detalle de pedido o lote
+                bool tieneDetallesAsociados = await VerificarDetallesAsociados(producto);
+
+                if (tieneDetallesAsociados)
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "No se puede eliminar el producto porque tiene detalles asociados.";
+                    TempData["Tiempo"] = 3000;
+                    return RedirectToAction("Index");
+                }
+
+                // Si no tiene detalles asociados, procede con la eliminación del producto
+                // Código para eliminar el producto...
+                var response = await _client.DeleteProductoAsync(id);
+                if (response == null)
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "Error al eliminar el Producto.";
+                    TempData["Tiempo"] = 3000;
+                }
+                else if (response.IsSuccessStatusCode)
+                {
+                    TempData["SweetAlertIcon"] = "success";
+                    TempData["SweetAlertTitle"] = "Éxito";
+                    TempData["SweetAlertMessage"] = "Producto eliminado correctamente.";
+                    TempData["Tiempo"] = 3000;
+                }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "El Producto no se encontró en el servidor.";
+                    TempData["Tiempo"] = 3000;
+                }
+                else
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "Error desconocido al eliminar el Producto.";
+                    TempData["Tiempo"] = 3000;
+                }
                 return RedirectToAction("Index");
             }
-
-            var response = await _client.DeleteProductuAsync(id);
-            if (response == null)
+            catch (Exception ex)
             {
+                // Log de la excepción u otro manejo de errores
                 TempData["SweetAlertIcon"] = "error";
                 TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "Error al eliminar el Producto.";
+                TempData["SweetAlertMessage"] = "Hubo un problema al eliminar el producto.";
+                TempData["Tiempo"] = 3000;
+                return RedirectToAction("Index");
             }
-            else if (response.IsSuccessStatusCode)
-            {
-                TempData["SweetAlertIcon"] = "success";
-                TempData["SweetAlertTitle"] = "Éxito";
-                TempData["SweetAlertMessage"] = "Producto eliminado correctamente.";
-            }
-            else if (response.StatusCode == HttpStatusCode.NotFound)
-            {
-                TempData["SweetAlertIcon"] = "error";
-                TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "La Producto no se encontró en el servidor.";
-            }
-            else
-            {
-                TempData["SweetAlertIcon"] = "error";
-                TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "Error desconocido al eliminar la Producto.";
-            }
-
-            return RedirectToAction("Index");
         }
+
+        private async Task<bool> VerificarDetallesAsociados(Producto producto)
+        {
+            var detallesC = await _client.GetDetallecompraAsync();
+            var detallesP = await _client.GetDetallepedidoAsync();
+            var lotes = await _client.GetLoteAsync();
+
+            // Verificar si el producto está asociado a algún detalle de compra
+            if (detallesC.Any(detalle => detalle.ProductoId == producto.ProductoId))
+            {
+                return true;
+            }
+
+            // Verificar si el producto está asociado a algún detalle de pedido
+            if (detallesP.Any(detalle => detalle.ProductoId == producto.ProductoId))
+            {
+                return true;
+            }
+
+            // Verificar si el producto está asociado a algún lote
+            if (lotes.Any(lote => lote.ProductoId == producto.ProductoId))
+            {
+                return true;
+            }
+
+            return false; // No tiene detalles asociados
+        }
+
 
 
 
