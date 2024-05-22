@@ -29,9 +29,13 @@
 
 @if (ViewBag.Lotes.Count > 1)
 {
-    <div id="contenedor-redondear" class="text-center">
-        <button>Redonderar precios</button>
+    <div id="contenedor-redondear" class="text-center d-flex justify-content-center align-items-center">
+        <form asp-action="RedondearPrecios" asp-controller="Productos">
+            <input type="hidden" name="id" value="@ViewBag.Producto.ProductoId"/>
+            <button type="submit">Redonderar precios</button>
+        </form>
     </div>
+
 }
 
 @if (Model.Any())

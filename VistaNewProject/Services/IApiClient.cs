@@ -112,8 +112,12 @@ namespace VistaNewProject.Services
         // lote
 
         Task<IEnumerable<Lote>> GetLoteAsync();
-        Task<Lote> FindLotesAsync(int id);
-        Task<HttpResponseMessage> UpdateLotesAsync(Lote lote);
+        Task<HttpResponseMessage> CreateLoteAsync(Lote lote);
+        Task<Lote> FindLoteAsync(int id);
+        Task<HttpResponseMessage> UpdateLoteAsync(Lote lote);
+        Task<HttpResponseMessage> DeleteLoteAsync(int id);
+
+
 
 
         // domicilio

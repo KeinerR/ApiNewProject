@@ -724,6 +724,37 @@ namespace VistaNewProject.Services
             return response;
         }
 
+        public async Task<HttpResponseMessage> CreateLoteAsync(Lote lote)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Lotes/InsertarLote", lote);
+            return response;
+        }
+
+        public async Task<Lote> FindLoteAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Lote>($"?id={id}");
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró nada.");
+            }
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateLoteAsync(Lote lote)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"Lotes/UdateLotes/", lote);
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> DeleteLoteAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"Lotes/DeleteLote/{id}");
+            return response;
+        }
+
+
+
 
         public async Task<Lote> FindLotesAsync(int id)
         {

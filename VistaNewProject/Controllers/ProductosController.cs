@@ -163,7 +163,6 @@ namespace VistaNewProject.Controllers
                         TempData["SweetAlertMessage"] = "Se ha registrado exitosamente el producto";
                         TempData["EstadoAlerta"] = "false";
                         TempData["Tiempo"] = 2000;
-
                         return RedirectToAction("Index");
                     }
                     else
@@ -355,6 +354,7 @@ namespace VistaNewProject.Controllers
                     TempData["SweetAlertTitle"] = "Error";
                     TempData["SweetAlertMessage"] = "El producto a eliminar no existe.";
                     TempData["Tiempo"] = 3000;
+                    TempData["EstadoAlerta"] = "false";
                     return RedirectToAction("Index");
                 }
 
@@ -367,6 +367,7 @@ namespace VistaNewProject.Controllers
                     TempData["SweetAlertTitle"] = "Error";
                     TempData["SweetAlertMessage"] = "No se puede eliminar el producto porque tiene detalles asociados.";
                     TempData["Tiempo"] = 3000;
+                    TempData["EstadoAlerta"] = "false";
                     return RedirectToAction("Index");
                 }
 
@@ -379,6 +380,7 @@ namespace VistaNewProject.Controllers
                     TempData["SweetAlertTitle"] = "Error";
                     TempData["SweetAlertMessage"] = "Error al eliminar el Producto.";
                     TempData["Tiempo"] = 3000;
+                    TempData["EstadoAlerta"] = "false";
                 }
                 else if (response.IsSuccessStatusCode)
                 {
@@ -386,6 +388,7 @@ namespace VistaNewProject.Controllers
                     TempData["SweetAlertTitle"] = "Éxito";
                     TempData["SweetAlertMessage"] = "Producto eliminado correctamente.";
                     TempData["Tiempo"] = 3000;
+                    TempData["EstadoAlerta"] = "false";
                 }
                 else if (response.StatusCode == HttpStatusCode.NotFound)
                 {
@@ -393,6 +396,7 @@ namespace VistaNewProject.Controllers
                     TempData["SweetAlertTitle"] = "Error";
                     TempData["SweetAlertMessage"] = "El Producto no se encontró en el servidor.";
                     TempData["Tiempo"] = 3000;
+                    TempData["EstadoAlerta"] = "false";
                 }
                 else
                 {
@@ -400,6 +404,7 @@ namespace VistaNewProject.Controllers
                     TempData["SweetAlertTitle"] = "Error";
                     TempData["SweetAlertMessage"] = "Error desconocido al eliminar el Producto.";
                     TempData["Tiempo"] = 3000;
+                    TempData["EstadoAlerta"] = "false";
                 }
                 return RedirectToAction("Index");
             }
@@ -410,6 +415,7 @@ namespace VistaNewProject.Controllers
                 TempData["SweetAlertTitle"] = "Error";
                 TempData["SweetAlertMessage"] = "Hubo un problema al eliminar el producto.";
                 TempData["Tiempo"] = 3000;
+                TempData["EstadoAlerta"] = "false";
                 return RedirectToAction("Index");
             }
         }
@@ -441,7 +447,7 @@ namespace VistaNewProject.Controllers
             return false; // No tiene detalles asociados
         }
 
-
+        [HttpPost]
         public async Task<IActionResult> RedondearPrecios(int id)
         {
             try
@@ -466,21 +472,23 @@ namespace VistaNewProject.Controllers
                 {
                     decimal? precioPorPresentacionRedondeado;
                     decimal? sumaPrecioPorPresentacion = lotesFiltrados.Sum(l => l.PrecioPorPresentacion);
+                    decimal? precioPorUnidadDeProductoRedondeado;
+                    decimal? sumaPrecioPorUnidadDeProducto = lotesFiltrados.Sum(l => l.PrecioPorUnidadProducto);
 
                     if (sumaPrecioPorPresentacion != null)
                     {
-                        // Conversión explícita de double a decimal
-                        decimal? precioCalculado = Math.Round((decimal)(sumaPrecioPorPresentacion / lotesFiltrados.Count));
-                        precioPorPresentacionRedondeado = precioCalculado.HasValue ? precioCalculado.Value : 0.0m;
+                        precioPorPresentacionRedondeado = Math.Round((decimal)(sumaPrecioPorPresentacion / lotesFiltrados.Count));
+                        precioPorUnidadDeProductoRedondeado = Math.Round((decimal)(sumaPrecioPorUnidadDeProducto/ lotesFiltrados.Count));
                     }
                     else
                     {
+                        precioPorUnidadDeProductoRedondeado = 0;
                         precioPorPresentacionRedondeado = 0; // O el valor por defecto que desees
                     }
-
+                    Console.WriteLine(precioPorPresentacionRedondeado);
+                    Console.WriteLine(precioPorUnidadDeProductoRedondeado);
                     // Aquí puedes guardar el producto actualizado en tu base de datos si es necesario
-
-                    return RedirectToAction("Index"); // O redirige a donde sea necesario después de calcular los precios
+                    return RedirectToAction("Details", "Productos", new { id = id });
                 }
                 else
                 {
@@ -488,7 +496,11 @@ namespace VistaNewProject.Controllers
                     TempData["SweetAlertTitle"] = "Advertencia";
                     TempData["SweetAlertMessage"] = "El producto no tiene lotes válidos para calcular precios redondeados.";
                     TempData["Tiempo"] = 3000;
-                    return RedirectToAction("Index");
+
+                    Console.WriteLine("fail");
+
+                    return RedirectToAction("Details", "Productos", new { id = id });
+
                 }
             }
             catch (Exception ex)
@@ -499,6 +511,7 @@ namespace VistaNewProject.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
 
 
 

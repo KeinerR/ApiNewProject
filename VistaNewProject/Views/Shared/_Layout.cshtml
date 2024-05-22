@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>@ViewData["Title"] - VistaNewProject</title>
+    <title>@ViewData["Title"] - OPTIMUS</title>
     <link rel="icon" href="~/favicon.png" type="image/x-icon" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/main.css" asp-append-version="true" />
@@ -17,6 +17,7 @@
 </head>
 <body>
     <header>
+        <h2>Borrar despues de que keyner a¿junte su parte</h2>
         <div id="Cabecera">
             <div id="cabeceraMenu">
                 <button id="menu-toggle">
@@ -131,34 +132,6 @@
             &copy; 2024 - Optimus - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    @if (TempData["SweetAlertMessage"] != null)
-    {
-        <script>
-            Swal.fire({
-                position: "center",
-                icon: "@TempData["SweetAlertIcon"]",
-                title: "@TempData["SweetAlertTitle"]",
-                text: "@TempData["SweetAlertMessage"]",
-                showConfirmButton: "@TempData["EstadoAlerta"]", // Mostrar botón de confirmación
-                timer: "@TempData["Tiempo"]" || 6000,
-                timerProgressBar: true
-            })
-        </script>
-    }else
-    {
-
-        <script>
-            Swal.fire({
-                position: "center",
-                icon: "alert"",
-                title: "Alerta",
-                text: "@TempData["SweetAlertMessage"]",
-                showConfirmButton: "@TempData["EstadoAlerta"]", // Mostrar botón de confirmación
-                timer: "@TempData["Tiempo"]" || 6000,
-                timerProgressBar: true
-            })
-        </script>
-    }
     <script src="https://kit.fontawesome.com/822fe3c749.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -167,6 +140,25 @@
     <script src="~/js/Compras.js"></script>
     <script src="~/js/Detalle.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    @if (TempData["SweetAlertMessage"] != null)
+    {
+        <script>
+            Swal.fire({
+                position: "center",
+                icon: "@TempData["SweetAlertIcon"]",
+                title: "@TempData["SweetAlertTitle"]",
+                text: "@TempData["SweetAlertMessage"]",
+                showConfirmButton: "@TempData["EstadoAlerta"]" === "true" ? true : false,
+                timer: "@TempData["Tiempo"]" || 6000,
+                timerProgressBar: true
+            });
+            console.log("@TempData["SweetAlertIcon"]");
+            console.log("@TempData["SweetAlertTitle"]");
+            console.log("@TempData["SweetAlertMessage"]");
+            console.log("@TempData["EstadoAlerta"]");
+            console.log("@TempData["Tiempo"]");
+        </script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

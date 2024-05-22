@@ -235,42 +235,4 @@
 <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="~/js/marcas.js"></script>
 
-@if (!string.IsNullOrEmpty(TempData["Mensaje"]?.ToString()))
-{
-    <div class="alert alert-success" role="alert">
-        @TempData["Mensaje"]
-    </div>
-
-
-    <script>
-        // Mostrar SweetAlert cuando haya un mensaje en TempData["Mensaje"]
-        Swal.fire({
-            position: "center",
-            icon: "success",
-            title: "Se ha registrado la marca exitosamente",
-            showConfirmButton: false,
-            timer: 1500
-        }).then((result) => {
-            // Después de cerrar el SweetAlert, abrimos el modal nuevamente
-            $('#MarcaModal').modal('show');
-        });
-    </script>
-}
-
-@if (TempData["SweetAlertMessage"] != null)
-{
-    <script>
-        Swal.fire({
-            position: "center",
-            icon: "@TempData["SweetAlertIcon"]",
-            title: "@TempData["SweetAlertTitle"]",
-            text: "@TempData["SweetAlertMessage"]",
-            showConfirmButton: false, // Mostrar botón de confirmación
-            timer: 3000
-        }).then((result) => {
-            if (result.isConfirmed) { // Si el usuario confirmó la acción
-                window.location.href = "@Url.Action("Index", "Marcas")"; // Redireccionar a la página de índice de marcas
-            }
-        });
-    </script>
-}
+                            
