@@ -39,7 +39,7 @@ namespace VistaNewProject.Services
 
         public async Task<Cliente> FindClienteAsync(int id)
         {
-            var response = await _httpClient.GetFromJsonAsync<Cliente>($"?id={id}");
+            var response = await _httpClient.GetFromJsonAsync<Cliente>($"Clientes/GetClienetById?id={id}");
             return response;
         }
 
@@ -59,6 +59,8 @@ namespace VistaNewProject.Services
             return response;
         }
 
+
+
         /// pedidos
         public async Task<IEnumerable<Pedido>> GetPedidoAsync()
         {
@@ -70,7 +72,51 @@ namespace VistaNewProject.Services
                 throw new Exception("No se encontró la unidad con el ID especificado.");
             }
             return response;
+
+
         }
+
+        public async Task<Pedido> FindPedidosAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Pedido>($"Pedidos/GetPedidos?id={id}");
+            return response;
+        }
+        public async Task<HttpResponseMessage> CreatePediiosAsync(Pedido pedido)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Pedidos/InsertPedidos", pedido);
+            return response;
+        }
+
+
+
+
+        public async Task<HttpResponseMessage> UpdatePedidoAsync(Pedido pedido)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"Pedidos/UpdatePedido/{pedido.PedidoId}", pedido);
+            return response;
+        }
+
+
+
+
+        public async Task<HttpResponseMessage> CreatePedidoAsync(Pedido pedido)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Pedidos/InsertPedidos", pedido);
+            return response;
+
+
+        }
+
+
+
+        public async Task<HttpResponseMessage> DeletePedidoAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($" Pedidos/DeletePedido/{id}");
+            return response;
+        }
+
+
+
 
 
         /// PRESENTACION 
@@ -423,6 +469,8 @@ namespace VistaNewProject.Services
 
 
         //Unidad
+
+        //Unidad
         public async Task<IEnumerable<Unidad>> GetUnidadAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Unidad>>("unidades/GetUnidades");
@@ -444,7 +492,7 @@ namespace VistaNewProject.Services
 
         public async Task<Unidad> FindUnidadAsync(int id)
         {
-            var response = await _httpClient.GetFromJsonAsync<Unidad>($"?id={id}");
+            var response = await _httpClient.GetFromJsonAsync<Unidad>($"Unidades/GetUnidadById?id={id}");
             return response;
         }
 
@@ -677,6 +725,25 @@ namespace VistaNewProject.Services
         }
 
 
+        public async Task<Lote> FindLotesAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Lote>($"Lotes/GetLoteById?id={id}");
+            return response;
+        }
+
+
+
+
+
+        public async Task<HttpResponseMessage> UpdateLotesAsync(Lote lote)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"Lotes/UpdateLotes/", lote);
+            return response;
+        }
+
+
+
+
         //domicilio
         public async Task<IEnumerable<Domicilio>> GetDomicilioAsync()
         {
@@ -691,6 +758,26 @@ namespace VistaNewProject.Services
         }
 
 
+
+        public async Task<HttpResponseMessage> CreateDomicilioAsync(Domicilio domicilio)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Domicilios/InsertDomicilio", domicilio);
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+            }
+            return response;
+        }
+
+        public async Task<Domicilio> FindDomicilioAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Domicilio>($"Domicilios/GetDomicilioById?id={id}");
+            return response;
+        }
+
+
+
         //detallepedido
         public async Task<IEnumerable<Detallepedido>> GetDetallepedidoAsync()
         {
@@ -702,7 +789,24 @@ namespace VistaNewProject.Services
                 throw new Exception("No se encontró domicilios con el ID especificado.");
             }
             return response;
+
+
         }
+        public async Task<Detallepedido> FindDetallesPedidoAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Detallepedido>($"Detallepedidos/GetDetallepedidoById?id={id}");
+            return response;
+        }
+
+
+
+
+        public async Task<HttpResponseMessage> CreateDetallesPedidosAsync(Detallepedido detallepedido)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Detallepedidos/InsertarDetallepedido", detallepedido);
+            return response;
+        }
+
 
 
         //permiso

@@ -1,9 +1,43 @@
 ﻿@using X.PagedList
 @model X.PagedList.IPagedList<VistaNewProject.Models.Pedido>
 
+
 @{
     ViewData["Title"] = "Index";
+    var successMessage = TempData["SuccessMessage"] as string;
+    var errorMessage = TempData["ErrorMessage"] as string;
 }
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <script>
+        $(document).ready(function () {
+            Swal.fire({
+                title: '¡Éxito!',
+                text: '@successMessage',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 3000
+            });
+        });
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <script>
+        $(document).ready(function () {
+            Swal.fire({
+                title: '¡Error!',
+                text: '@errorMessage',
+                icon: 'error',
+                showConfirmButton: true
+            });
+        });
+    </script>
+}
+
+
 <style>
     /* Estilos para el formulario */
 
@@ -64,7 +98,7 @@
 
 </style>
 
-
+<br />
 <div class="d-flex justify-content-between" style="margin-bottom: 20px;">
     <!-- Formulario de búsqueda a la izquierda -->
     <div class="mr-auto">
@@ -76,211 +110,16 @@
         </form>
     </div>
 
-    <!-- Botón para abrir el modal -->
-    <button type="button" style=" " class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clienteModal">
-        Agregar pedido <i class="fa-solid fa-cart-shopping"></i>
-    </button>
+
+    
+        <a asp-action="Create">
+        <button class="btn btn-primary">   Agregar pedido <i class="fa-solid fa-cart-shopping"></i>    </button> 
+        </a>
+
+    
+  
 </div>
 
-<div class="modal fade" id="clienteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
-    <div class="modal-dialog modal-lg">
-        <!-- Agrega la clase modal-lg para hacer el modal más ancho -->
-        <div class="modal-content modal-lg">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Agregar Pedido</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-
-              
-
-                <div style="display:table-row">
-                    <!-- Primer formulario -->
-                    <form id="formPedido" class="styled-form" asp-controller="Pedidos" asp-action="Create" method="post">
-                        <div class="form-row">
-                            <div class="mb-3 col">
-                                <label for="ClienteId1" class="form-label">Cliente</label>
-                                <!-- Input con el datalist -->
-                                <input list="clientesList" id="ClienteId1" name="ClienteId" class="form-control">
-                                <!-- Datalist con opciones de clientes -->
-                                <datalist id="clientesList">
-                                    @foreach (var cliente in ViewBag.Clientes)
-                                    {
-                                        <option value="@cliente.ClienteId">cliente.NombreEmpresa</option>
-                                    }
-                                </datalist>
-                            </div>
-
-                            <div class="mb-3 col">
-                                <label for="TipoServicio1" class="form-label">Tipo de Servicio</label>
-                                <select id="TipoServicio1" name="TipoServicio" class="form-select">
-                                    <option value="Caja">Caja</option>
-                                    <option value="Domicilio">Domicilio</option>
-                                </select>
-                            </div>
-                            <div class="mb-3 col">
-                                <label for="FechaPedido1" class="form-label">Fecha Pedido</label>
-                                <input type="datetime-local" id="FechaPedido1" name="FechaPedido" class="form-control" disabled />
-                            </div>
-                            <div class="mb-3 col">
-                                <label for="EstadoPedido1" class="form-label">Estado Pedido</label>
-                                <select id="EstadoPedido1" name="EstadoPedido" class="form-select" disabled>
-                                    <option value="En Proceso">En Proceso</option>
-                                    <option value="Realizado">Realizado</option>
-                                    <option value="Cancelado">Cancelado</option>
-                                </select>
-                            </div>
-                        </div>
-                      
-                    </form>
-                </div>
-
-
-                <div  id="detallecontainer">
-                    <form id="formDetallePedido" asp-controller="DetallePedidos" asp-action="Create" method="post" class="styled-form">
-                        <div class="form-row">
-                            <div class="mb-3 col">
-                                <label for="productoList" class="form-label">Producto</label>
-
-                                <input list="productoList" id="ProductoId2" name="productoId2" class="form-control">
-                                <!-- Datalist con opciones de clientes -->
-                                <datalist id="productoList">
-                                    @foreach (var producto in ViewBag.Productos)
-                                    {
-                                        <option value="@producto.ProductoId">@producto.NombreProducto</option>
-                                    }
-                                </datalist>
-                            </div>
-
-                            <div class="mb-3 col">
-                                <label for="unidadList" class="form-label">Unidad</label>
-
-                                <input list="unidadList" id="UnidadId" name="unidadid" class="form-control">
-
-                                <!-- Datalist con opciones de clientes -->
-                                <datalist id="unidadList">
-                                    @foreach (var unidad in ViewBag.Unidad)
-                                    {
-                                        <option value="@unidad.UnidadId">@unidad.NombreUnidad</option>
-                                    }
-                                </datalist>
-                            </div>
-
-                            <div class="mb-3 col">
-                                <label for="Cantidad2" class="form-label">Cantidad</label>
-                                <input type="number" id="Cantidad2" name="Cantidad" class="form-control" />
-                            </div>
-                            <div class="mb-3 col">
-                                <label for="PrecioUnitario2" class="form-label">Precio Unitario</label>
-                                <input type="number" id="PrecioUnitario2" name="PrecioUnitario" class="form-control" />
-                            </div>
-                            <div class="mb-3 col align-self-end">
-                                <div class=" ">
-                                    <button type="button" id="btnAgregardetalle" class="btn btn-success"><i class="fa-solid fa-cart-plus"></i> Agregar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-             
-                <div class=" d-none" style="display:table-row" id="formDomicilioContainer">
-                    <div class="col-md-8" style=" margin-left:60px">
-                        <div class="modal-footer mb-8">
-                            <button type="button" id="btnAgregarDomicilio" class="btn btn-warning"> <i class="fa-solid fa-user-plus"></i></button>
-                            <button type="button" class="btn btn-secondary" id="cerradomicilio"> Cerrar</button>
-                        </div>
-                    </div>
-                    <!-- Tercer formulario (Domicilio) -->
-                    <form id="formDomicilio" asp-controller="Domicilios" asp-action="Create" method="post" class="styled-form">
-                        <!-- Primera fila del formulario -->
-                        <div class="form-row">
-                            <div class="mb-3 col">
-                                <label for="UsuariloList" class="form-label">Usuario</label>
-
-                                <input list="UsuariloList" id="UsuarioId" name="usuarioId" class="form-control">
-
-                                <!-- Datalist con opciones de clientes -->
-                                <datalist id="UsuariloList">
-                                    @foreach (var usuario in ViewBag.Usuario)
-                                    {
-                                        <option value="@usuario.UsuarioId">@usuario.Nombre</option>
-                                    }
-                                </datalist>
-                            </div>
-                            <div class="col-md-4" style="margin-right: 10px; border-radius: 30px;">
-                                <div class="mb-6">
-                                    <label for="FechaEntrega3" class="form-label">Fecha Entrega</label>
-                                    <input type="datetime-local" id="FechaEntrega3" name="sechaEntrega" class="form-control" />
-                                </div>
-                            </div>
-                            <div class="col-md-4" style="margin-right: 10px; border-radius: 50px;">
-                                <div class="md-3">
-                                    <label for="Observacion3" class="form-label">Observacion</label>
-                                    <input type="text" id="Observacion3" name="Observacion" class="form-control" />
-                                </div>
-                            </div>
-                            <div class="col-md-6" style="margin-right: 10px; border-radius: 50px;">
-                                <div class="mb-3">
-                                    <label for="DireccionDomiciliario3" class="form-label">Direccion Domiciliario</label>
-                                    <input type="text" id="DireccionDomiciliario3" name="DireccionDomiciliario" class="form-control" />
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Segunda fila del formulario -->
-                     
-                          
-                    </form>
-                </div>
-
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button id="btnGuardarPedido" type="submit" class="btn btn-primary">Guardar Pedido <i class="fa-solid fa-file-arrow-up"></i></button>
-            </div>
-                <!-- Fin del contenido del modal -->
-
-                <div id="">
-
-                    <table id="detalleTable" class="table table-custom text-center">
-                    <thead>
-                        <tr>
-                             <th>Producto</th>
-                                <th>Unidad</th>
-                            <th>Cantidad</th>
-                            <th>Precio Unitario</th>
-                            
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="detalleTableBody">
-                        <!-- Aquí se mostrarán los detalles agregados dinámicamente -->
-                    </tbody>
-                </table>
-            </div>
-
-                <div id="domiciliotable" class="d-none">
-                    <!-- Agregar el elemento "detalleTableBody" aquí -->
-                    <table id="detalleTable" class="table table-custom text-center ">
-                        <thead>
-                            <tr>
-                                <th>Usuario </th>
-                                <th>FechaEntrega3</th>
-                                <th>Observacion</th>
-                                <th>Direccion</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="domicilioTableBody">
-                            <!-- Aquí se mostrarán los detalles agregados dinámicamente -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        
-        </div>
-    </div>
-   </div>
 
 
 
@@ -339,16 +178,34 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.FechaPedido)
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EstadoPedido)
+                <td class="text-center align-middle contenedorEstadoTabla">
+                    @if (item.EstadoPedido == "Pendiente")
+                    {
+                        <label class="switch">
+                            <input type="radio" name="estado_@item.PedidoId" value="Realizado" onchange="actualizarEstadoPedido('@item.PedidoId', this.value)">
+                            <span class="slider" style="background-color: #00215E;"></span>
+                        </label>
+                    }
+                    else if (item.EstadoPedido == "Realizado")
+                    {
+                        <label class="switch">
+                            <input type="radio" name="estado_@item.PedidoId" value="Cancelado" onchange="actualizarEstadoPedido('@item.PedidoId', this.value)">
+                            <span class="slider" style="background-color: #E61905;"></span>
+                        </label>
+                    }
+                    else if (item.EstadoPedido == "Cancelado")
+                    {
+                        <!-- No mostrar ninguna opción si el estado es Cancelado -->
+                    }
                 </td>
+              
 
                
              
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
                     <button class="btn" id="btnEdit" data-cliente-id="@item.PedidoId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
-                    <a asp-action="Details" asp-route-id="@item.PedidoId" class="btn" id="btnDetail"><i class="fa-solid fa-file"></i></a>
+                    <a asp-action="Details" asp-controller="Pedidos" asp-route-id="@item.PedidoId" class="btn" id="btnDetail"><i class="fa-solid fa-file"></i></a>
                     <button class="btn" id="btnDelete" data-cliente-id="@item.PedidoId"><i class="fas fa-trash-alt"></i></button>
                 </td>
             </tr>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
 
@@ -59,5 +60,75 @@ namespace VistaNewProject.Controllers
 
 
         }
+
+        public async Task<IActionResult> Create()
+        {
+            var Roles = await _client.GetRolAsync();
+            var usuario = await _client.GetUsuarioAsync();
+            var pedido = await _client.GetPedidoAsync();
+
+            var ultimoPedidoGuardado = pedido.OrderByDescending(p => p.PedidoId).FirstOrDefault();
+
+
+            ViewBag.UltimoPedidoId = ultimoPedidoGuardado?.PedidoId ?? 0;
+            var estadoUltimoPedido = ultimoPedidoGuardado?.EstadoPedido ?? "Pendiente"; // Ajusta el valor por defecto si es necesario
+            const int DOMICILIARIO_ROLE_ID = 3; // Id del rol de domiciliario
+
+            var usuariosDomiciliarios = usuario.Where(u => u.RolId == DOMICILIARIO_ROLE_ID).ToList();
+
+
+
+            Console.WriteLine(usuariosDomiciliarios);
+
+
+
+            var domicilio = new Domicilio
+            {
+                EstadoDomicilio = estadoUltimoPedido
+            };
+
+            ViewBag.Usuarios = usuariosDomiciliarios;
+            Console.WriteLine(ViewBag.Usuarios);
+
+            return View(domicilio);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Create(int PedidoId, int UsuarioId, string Observacion, DateTime FechaEntrega, string DireccionDomiciliario, string EstadoDomicilio)
+        {
+            if (ModelState.IsValid)
+            {
+                var domicilio = new Domicilio
+                {
+                    PedidoId = PedidoId,
+                    UsuarioId = UsuarioId,
+                    Observacion = Observacion,
+                    FechaEntrega = FechaEntrega,
+                    DireccionDomiciliario = DireccionDomiciliario,
+                    EstadoDomicilio = EstadoDomicilio
+                };
+
+                var response = await _client.CreateDomicilioAsync(domicilio);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    if (EstadoDomicilio == "Realizado")
+                    {
+                        // Redirigir a la vista de creación de pagos con el último PedidoId
+                        return RedirectToAction("Create", "Pagos", new { pedidoId = PedidoId });
+                    }
+
+                    TempData["ValidarPedido"] = "Pedido Guardado Correctamente.";
+                    return RedirectToAction("Index", "Pedidos");
+                }
+                else
+                {
+                    Console.WriteLine("domicilio no Guardado");
+                }
+            }
+            return RedirectToAction("Index", "Pedidos");
+        }
+
     }
 }

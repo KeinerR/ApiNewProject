@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ApiNewProject.Controllers
@@ -33,8 +34,9 @@ namespace ApiNewProject.Controllers
                     ClienteId = s.ClienteId,
                     TipoServicio = s.TipoServicio,
                     FechaPedido = s.FechaPedido,
-                    EstadoPedido = s.EstadoPedido,
                     ValorTotalPedido = s.ValorTotalPedido,
+                    EstadoPedido = s.EstadoPedido,
+
                 }
             ).ToListAsync();
 
@@ -45,112 +47,135 @@ namespace ApiNewProject.Controllers
         }
 
 
+        //[HttpPost("InsertPedidos")]
+        //public async Task<IActionResult> InsertPedidos(Pedido pedido)
+        //{
+        //    Console.WriteLine(pedido.TipoServicio);
+        //    try
+        //    {
+        //        var vlPedido = new Pedido
+        //        {
+        //            ClienteId = pedido.ClienteId,
+        //            TipoServicio = pedido.TipoServicio,
+        //            FechaPedido = pedido.FechaPedido,
+        //            EstadoPedido = pedido.EstadoPedido,
+        //            Domicilios = new List<Domicilio>() // Solo inicializamos los domicilios
+        //        };
+
+        //        if (pedido.TipoServicio == "Domicilio")
+        //        {
+        //            foreach (var item in pedido.Domicilios)
+        //            {
+        //                vlPedido.Domicilios.Add(new Domicilio
+        //                {
+        //                    PedidoId = vlPedido.PedidoId,
+        //                    UsuarioId = item.UsuarioId,
+        //                    Observacion = item.Observacion,
+        //                    FechaEntrega = item.FechaEntrega,
+        //                    DireccionDomiciliario = item.DireccionDomiciliario,
+        //                    EstadoDomicilio = item.EstadoDomicilio
+        //                });
+        //            }
+        //        }
+
+        //        foreach (var item in pedido.Detallepedidos)
+        //        {
+        //            if (!item.Cantidad.HasValue || !item.PrecioUnitario.HasValue)
+        //            {
+        //                return BadRequest("Cantidad y PrecioUnitario son requeridos.");
+        //            }
+
+        //            // Restar la cantidad del producto
+        //            var producto = await _context.Productos.FindAsync(item.ProductoId);
+        //            if (producto != null)
+        //            {
+        //                producto.CantidadTotal -= item.Cantidad.Value;
+
+        //                // Guardar los cambios en el producto
+        //                _context.Productos.Update(producto);
+        //                await _context.SaveChangesAsync();
+
+        //                // Restar la cantidad del lote más próximo a vencer
+        //                var lote = await _context.Lotes
+        //                    .Where(l => l.ProductoId == item.ProductoId && l.Cantidad > 0)
+        //                    .OrderBy(l => l.FechaVencimiento)
+        //                    .FirstOrDefaultAsync();
+
+        //                if (lote != null)
+        //                {
+        //                    if (lote.Cantidad >= item.Cantidad)
+        //                    {
+        //                        lote.Cantidad -= item.Cantidad.Value;
+        //                    }
+        //                    else
+        //                    {
+        //                        // Restar la cantidad del siguiente lote más viejo
+        //                        var siguienteLote = await _context.Lotes
+        //                            .Where(l => l.ProductoId == item.ProductoId && l.Cantidad > 0 && l.FechaVencimiento > lote.FechaVencimiento)
+        //                            .OrderBy(l => l.FechaVencimiento)
+        //                            .FirstOrDefaultAsync();
+
+        //                        if (siguienteLote != null && siguienteLote.Cantidad >= item.Cantidad)
+        //                        {
+        //                            siguienteLote.Cantidad -= item.Cantidad.Value;
+        //                        }
+        //                        else
+        //                        {
+        //                            throw new InvalidOperationException("No hay suficiente cantidad en los lotes disponibles para el producto.");
+        //                        }
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    throw new InvalidOperationException("No hay lotes disponibles para el producto.");
+        //                }
+        //            }
+        //            else
+        //            {
+        //                throw new InvalidOperationException("El producto no existe.");
+        //            }
+
+        //            vlPedido.Detallepedidos.Add(new Detallepedido
+        //            {
+        //                PedidoId = vlPedido.PedidoId,
+        //                ProductoId = item.ProductoId,
+        //                Cantidad = item.Cantidad.Value,
+        //                PrecioUnitario = item.PrecioUnitario.Value
+        //            });
+        //        }
+
+        //        _context.Pedidos.Add(vlPedido);
+        //        await _context.SaveChangesAsync();
+        //        return Ok();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest("Error al insertar el pedido: " + ex.Message);
+        //    }
+        //}
+
+
         [HttpPost("InsertPedidos")]
-        public async Task<IActionResult> InsertPedidos(Pedido pedido)
+        public async Task<ActionResult<Pedido>> InsertPedidos(Pedido pedido)
         {
-            Console.WriteLine(pedido.TipoServicio);
             try
             {
-                var vlPedido = new Pedido
+                if (pedido == null)
                 {
-                    ClienteId = pedido.ClienteId,
-                    TipoServicio = pedido.TipoServicio,
-                    FechaPedido = pedido.FechaPedido,
-                    EstadoPedido = pedido.EstadoPedido,
-                    Domicilios = new List<Domicilio>() // Solo inicializamos los domicilios
-                };
-
-                if (pedido.TipoServicio == "Domicilio")
-                {
-                    foreach (var item in pedido.Domicilios)
-                    {
-                        vlPedido.Domicilios.Add(new Domicilio
-                        {
-                            PedidoId = vlPedido.PedidoId,
-                            UsuarioId = item.UsuarioId,
-                            Observacion = item.Observacion,
-                            FechaEntrega = item.FechaEntrega,
-                            DireccionDomiciliario = item.DireccionDomiciliario,
-                            EstadoDomicilio = item.EstadoDomicilio
-                        });
-                    }
+                    return BadRequest("Los datos del detallepedido no pueden ser nulos.");
                 }
 
-                foreach (var item in pedido.Detallepedidos)
-                {
-                    if (!item.Cantidad.HasValue || !item.PrecioUnitario.HasValue)
-                    {
-                        return BadRequest("Cantidad y PrecioUnitario son requeridos.");
-                    }
-
-                    // Restar la cantidad del producto
-                    var producto = await _context.Productos.FindAsync(item.ProductoId);
-                    if (producto != null)
-                    {
-                        producto.CantidadTotal -= item.Cantidad.Value;
-
-                        // Guardar los cambios en el producto
-                        _context.Productos.Update(producto);
-                        await _context.SaveChangesAsync();
-
-                        // Restar la cantidad del lote más próximo a vencer
-                        var lote = await _context.Lotes
-                            .Where(l => l.ProductoId == item.ProductoId && l.Cantidad > 0)
-                            .OrderBy(l => l.FechaVencimiento)
-                            .FirstOrDefaultAsync();
-
-                        if (lote != null)
-                        {
-                            if (lote.Cantidad >= item.Cantidad)
-                            {
-                                lote.Cantidad -= item.Cantidad.Value;
-                            }
-                            else
-                            {
-                                // Restar la cantidad del siguiente lote más viejo
-                                var siguienteLote = await _context.Lotes
-                                    .Where(l => l.ProductoId == item.ProductoId && l.Cantidad > 0 && l.FechaVencimiento > lote.FechaVencimiento)
-                                    .OrderBy(l => l.FechaVencimiento)
-                                    .FirstOrDefaultAsync();
-
-                                if (siguienteLote != null && siguienteLote.Cantidad >= item.Cantidad)
-                                {
-                                    siguienteLote.Cantidad -= item.Cantidad.Value;
-                                }
-                                else
-                                {
-                                    throw new InvalidOperationException("No hay suficiente cantidad en los lotes disponibles para el producto.");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            throw new InvalidOperationException("No hay lotes disponibles para el producto.");
-                        }
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("El producto no existe.");
-                    }
-
-                    vlPedido.Detallepedidos.Add(new Detallepedido
-                    {
-                        PedidoId = vlPedido.PedidoId,
-                        ProductoId = item.ProductoId,
-                        Cantidad = item.Cantidad.Value,
-                        PrecioUnitario = item.PrecioUnitario.Value
-                    });
-                }
-
-                _context.Pedidos.Add(vlPedido);
+                _context.Pedidos.Add(pedido);
                 await _context.SaveChangesAsync();
-                return Ok();
+
+                return CreatedAtAction(nameof(GetPedidos), new { id = pedido.PedidoId }, pedido);
             }
             catch (Exception ex)
             {
-                return BadRequest("Error al insertar el pedido: " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar el detallepedido en la base de datos: " + ex.Message);
             }
         }
+
 
 
 
@@ -160,7 +185,7 @@ namespace ApiNewProject.Controllers
             try
             {
                 var pedido = await _context.Pedidos
-                  
+
                     .FirstOrDefaultAsync(p => p.PedidoId == id);
                 if (pedido == null)
                 {
@@ -174,40 +199,19 @@ namespace ApiNewProject.Controllers
             }
         }
 
-        [HttpDelete("DeletePedido")]
-        public async Task<IActionResult> DeletePedido(int id)
+        [HttpDelete("DeletePedido/{Id}")]
+        public async Task<HttpStatusCode> DeletePedido(int Id)
         {
-            try
+            var pedido = new Pedido()
             {
-                var eliminarPedido = await _context.Pedidos.FindAsync(id);
-                if (eliminarPedido == null)
-                {
-                    return NotFound();
-
-                }
-                var tienedetalles = await _context.Detallepedidos.AnyAsync(d => d.PedidoId == id);
-
-                var tienedomicilio = await _context.Domicilios.AnyAsync(d => d.PedidoId == id);
-
-                if (tienedetalles || tienedomicilio)
-                {
-                    return BadRequest("no se puede eliminar el pedido por que tiene datos asociados");
-                }
-                _context.Remove(eliminarPedido);
-                await _context.SaveChangesAsync();
-                return Ok();
-            }
-            catch (DbUpdateException ex)
-            {
-                return BadRequest("error en eliminar el pedido" + ex.Message);
-
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "error en el servidor " + ex.Message);
-            }
+                PedidoId = Id
+            };
+            _context.Pedidos.Attach(pedido);
+            _context.Pedidos.Remove(pedido);
+            await _context.SaveChangesAsync();
+            return HttpStatusCode.OK;
         }
-        [HttpPut("UpdatePedido")]
+        [HttpPut("UpdatePedido/{id}")]
         public async Task<IActionResult> UpdatePedido(int id, Pedido pedido)
         {
             try
@@ -223,10 +227,11 @@ namespace ApiNewProject.Controllers
                 pedidoExistente.ClienteId = pedido.ClienteId;
                 pedidoExistente.TipoServicio = pedido.TipoServicio;
                 pedidoExistente.FechaPedido = pedido.FechaPedido;
+                pedidoExistente.ValorTotalPedido = pedido.ValorTotalPedido;
                 pedidoExistente.EstadoPedido = pedido.EstadoPedido;
-          
 
-              
+
+
                 // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
 
@@ -237,6 +242,45 @@ namespace ApiNewProject.Controllers
                 return StatusCode(500, "Error del servidor al actualizar el pedido: " + ex.Message);
             }
         }
+
+
+
+        [HttpPatch("UpdateEstadoPedido/{id}")]
+        public async Task<IActionResult> UpdateEstadoPedido(int id, [FromBody] Pedido EstadoPedido)
+        {
+            try
+            {
+                var pedidos = await _context.Pedidos.FindAsync(id);
+
+                if (pedidos == null)
+                {
+                    return NotFound();
+                }
+
+                // Actualizar el estado del cliente con el nuevo valor
+                pedidos.EstadoPedido = EstadoPedido.EstadoPedido;
+                var domicilioAsociado = await _context.Domicilios.FirstOrDefaultAsync(d => d.PedidoId == pedidos.PedidoId);
+                if (domicilioAsociado != null)
+                {
+                    // Update the state of the associated domicile to match the state of the order
+                    domicilioAsociado.EstadoDomicilio = EstadoPedido.EstadoPedido;
+
+                }
+
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+
+                // Devolver una respuesta exitosa
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Si ocurre algún error, devolver un error 500 Internal Server Error
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el estado del cliente: " + ex.Message);
+            }
+        }
+
+
 
     }
 }

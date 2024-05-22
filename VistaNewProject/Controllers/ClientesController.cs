@@ -62,19 +62,17 @@ namespace VistaNewProject.Controllers
                 return RedirectToAction("LogOut", "Accesos");
             }
         }
-
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] string identificacion, string nombreEntidad, string nombreCompleto, string tipoCliente, string telefono, string correo, string direccion, ulong estadoCliente)
         {
             if (ModelState.IsValid)
             {
-
                 var allClients = await _client.GetClientesAsync();
 
                 // Verificar si existe algún cliente con el mismo nombre de entidad y nombre de contacto
-                var existingClient = allClients.FirstOrDefault(c => c.NombreEntidad == nombreEntidad && c.NombreCompleto == nombreCompleto );
+                var existingClient = allClients.FirstOrDefault(c => c.NombreEntidad == nombreEntidad && c.NombreCompleto == nombreCompleto);
 
-                if (existingClient != null )
+                if (existingClient != null)
                 {
                     // Si existe un cliente diferente con el mismo nombre de entidad y nombre de contacto
                     // Mostrar un mensaje de error y redireccionar a la página de índice
@@ -83,8 +81,6 @@ namespace VistaNewProject.Controllers
                     TempData["SweetAlertMessage"] = "Ya existe un cliente con el mismo nombre de entidad y nombre de contacto.";
                     return RedirectToAction("Index");
                 }
-
-                
 
                 var cliente = new Cliente
                 {
@@ -100,33 +96,32 @@ namespace VistaNewProject.Controllers
 
                 if (cliente == null)
                 {
-                    ViewBag.MensajeError = "No se pudieron campos  los datos.";
-                    return View("Index");
+                    TempData["Mensaje"] = "No se pudieron campos  los datos.";
+                    return RedirectToAction("Index");
                 }
 
                 var response = await _client.CreateClienteAsync(cliente);
 
-
                 if (response.IsSuccessStatusCode)
                 {
-                    // Guardar un mensaje en TempData para mostrar en el Index
-                    TempData["Mensaje"] = "¡Registro guardado correctamente!";
+                    TempData["SweetAlertIcon"] = "success"; // Puede ser "success", "error", "warning", "info", etc.
+                    TempData["SweetAlertTitle"] = "Éxito"; // Título de la alerta
+                    TempData["SweetAlertMessage"] = "¡Registro guardado correctamente!"; // Mensaje de la alerta
+
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    ViewBag.MensajeError = "No se pudieron guardar los datos.";
-                    return View("Index");
+                    TempData["Mensaje"] = "No se pudieron guardar los datos.";
+                    return RedirectToAction("Index");
                 }
             }
 
-
-            ViewBag.Mensaje = TempData["Mensaje"]; ViewBag.Mensaje = TempData["Mensaje"];
             return View("Index");
         }
-       
-           
-      
+
+
+
         public async Task<IActionResult> Update([FromForm] int clienteIdAct, string identificacionAct, string nombreEntidadAct, string nombreCompletoAct, string tipoClienteAct, string telefonoAct, string correoAct, string direccionAct, ulong estadoClienetAct)
         {
 

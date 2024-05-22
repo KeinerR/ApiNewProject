@@ -1,0 +1,102 @@
+﻿@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<VistaNewProject.Models.Detallepedido>
+
+@{
+    ViewData["Title"] = "Details";
+}
+<style>
+    .pagination {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+        .pagination a {
+            display: inline-block;
+            padding: 8px 16px;
+            text-decoration: none;
+            color: #007bff;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            margin-right: 5px;
+        }
+
+            .pagination a:hover {
+                background-color: #007bff;
+                color: white;
+            }
+
+        .pagination .disabled {
+            color: #aaa;
+            pointer-events: none;
+            cursor: default;
+        }
+</style>
+
+<div class="container">
+
+    <div class="pedido-info">
+        <h2 style="text-align:center;">Información del Pedido</h2>
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>Tipo de Servicio:</th>
+                    <td>@ViewBag.Pedidos.TipoServicio</td>
+                </tr>
+                <tr>
+                    <th>Cliente:</th>
+                    <td>@ViewBag.NombreCliente</td>
+                </tr>
+               
+            </tbody>
+        </table>
+    </div>
+    <div style="margin:auto">
+        <h2 style="text-align:center;">Informacion Detalles</h2>
+    </div>
+    <div>
+        @if (Model.Any())
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Unidad</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var detallepedido in Model)
+                    {
+                        <tr>
+                            <td>@detallepedido.Producto.NombreProducto</td>
+                            <td>@detallepedido.Unidad.NombreUnidad</td>
+                            <td>@String.Format("{0:N0}", @detallepedido.Cantidad)</td>
+                            <td>@String.Format("{0:N0}", @detallepedido.PrecioUnitario)</td>
+                            <td>@String.Format("{0:N0}", @detallepedido.Subtotal)</td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="pagination-detail">
+                @Html.PagedListPager(Model, page => Url.Action("Details", new { id = ViewBag.Pedidos.PedidoId, page }),
+                         new PagedListRenderOptions
+            {
+                LiElementClasses = new[] { "page-item" },
+                PageClasses = new[] { "page-link" },
+                UlElementClasses = new[] { "pagination" }
+            })
+            </div>
+        }
+        else
+        {
+            <p>No se encontraron productos asociados a este pedido.</p>
+        }
+    </div>
+
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    <a asp-action="Index">Back to List</a>
+</div>

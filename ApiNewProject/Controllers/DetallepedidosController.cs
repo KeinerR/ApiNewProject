@@ -26,9 +26,12 @@ namespace ApiNewProject.Controllers
                 {
                     DetallePedidoId = s.DetallePedidoId,
                     PedidoId = s.PedidoId,
+                    UnidadId = s.UnidadId,
+                    LoteId = s.LoteId,
                     ProductoId = s.ProductoId,
                     Cantidad = s.Cantidad,
                     PrecioUnitario = s.PrecioUnitario,
+                    Subtotal = s.Subtotal,
                 }
             ).ToListAsync();
 
@@ -47,9 +50,13 @@ namespace ApiNewProject.Controllers
                     {
                         DetallePedidoId = s.DetallePedidoId,
                         PedidoId = s.PedidoId,
+                        UnidadId = s.UnidadId,
+                        LoteId = s.LoteId,
+
                         ProductoId = s.ProductoId,
                         Cantidad = s.Cantidad,
                         PrecioUnitario = s.PrecioUnitario,
+                        Subtotal = s.Subtotal,
                     })
                 .FirstOrDefaultAsync(s => s.DetallePedidoId == Id);
 
@@ -84,26 +91,36 @@ namespace ApiNewProject.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar el detallepedido en la base de datos: " + ex.Message);
             }
         }
-
-
         [HttpPut("UpdateDetallepedidos")]
         public async Task<ActionResult> UpdateDetallepedidos(Detallepedido detallepedido)
         {
-            var detallepedidos = await _context.Detallepedidos.FirstOrDefaultAsync(s => s.DetallePedidoId == detallepedido.DetallePedidoId);
-
             if (detallepedido == null)
             {
-                return NotFound();
+                return BadRequest(); // Devolver un código de estado BadRequest si el objeto detallepedido es nulo
             }
-            detallepedidos.DetallePedidoId = detallepedido.DetallePedidoId;
+
+            var detallepedidos = await _context.Detallepedidos.FirstOrDefaultAsync(s => s.DetallePedidoId == detallepedido.DetallePedidoId);
+
+            if (detallepedidos == null)
+            {
+                return NotFound(); // Devolver un código de estado NotFound si el detalle de pedido no se encuentra en la base de datos
+            }
+
+            // Actualizar las propiedades del detalle de pedido con los valores proporcionados
             detallepedidos.PedidoId = detallepedido.PedidoId;
             detallepedidos.ProductoId = detallepedido.ProductoId;
+            detallepedidos.UnidadId = detallepedido.UnidadId;
+            detallepedidos.LoteId = detallepedido.LoteId;
+
             detallepedidos.Cantidad = detallepedido.Cantidad;
             detallepedidos.PrecioUnitario = detallepedido.PrecioUnitario;
 
+            // Guardar los cambios en la base de datos
             await _context.SaveChangesAsync();
-            return Ok();
+
+            return Ok(); // Devolver un código de estado Ok para indicar que la actualización fue exitosa
         }
+
 
         [HttpDelete("DeleteDetallepedido/{Id}")]
         public async Task<HttpStatusCode> DeleteDetallepedido(int Id)

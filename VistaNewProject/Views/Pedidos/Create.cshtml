@@ -1,0 +1,103 @@
+﻿@model VistaNewProject.Models.Pedido
+
+@{
+    ViewData["Title"] = "Create";
+    var successMessage = TempData["successMessage"] as string;
+}
+
+
+<h4 style="text-align:center">Agregar Pedidos</h4>
+<hr />
+
+
+<div>
+    <a asp-action="Index" class="btn btn-primary">
+
+        <i class="fas fa-arrow-left"></i> Cancelar
+
+    </a>
+</div>
+
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col-6">
+            <label asp-for="ClienteId" class="control-label"></label>
+            <input type="text" id="ClienteIdTxt" class="form-control" list="clientesList" />
+            <input type="hidden" id="ClienteIdHidden" name="ClienteId" />
+            <datalist id="clientesList">
+                @foreach (var cliente in ViewBag.Clientes)
+                {
+                    <option value="@cliente.NombreEntidad" data-cliente-id="@cliente.ClienteId"></option>
+                }
+            </datalist>
+            <span asp-validation-for="ClienteId" id="ClienteIdTspan" class="text-danger"></span>
+        </div>
+
+
+
+        <div class="col-6">
+            <label asp-for="TipoServicio" class="control-label"></label>
+            <select asp-for="TipoServicio" id="TipoServicio" name="TipoServicio" class="form-control" onchange="updateEstadoPedido()">
+                <option value="Caja">Caja</option>
+                <option value="Domicilio">Domicilio</option>
+            </select>
+            <span asp-validation-for="TipoServicio" class="text-danger"></span>
+        </div>
+        <div class="col-6">
+            <label asp-for="FechaPedido" class="control-label"></label>
+            <input asp-for="FechaPedido" id="FechaPedido" name="FechaPedido" class="form-control" />
+            <span asp-validation-for="FechaPedido" class="text-danger"></span>
+        </div>
+        <div class="col-6">
+            <label asp-for="EstadoPedido" class="control-label"></label>
+            <select asp-for="EstadoPedido" id="EstadoPedido" name="EstadoPedido" class="form-control">
+                <option value="Pendiente">Pendiente</option>
+                <option value="Realizado">Realizado</option>
+                <option value="Cancelado">Cancelado</option>
+            </select>
+            <span asp-validation-for="EstadoPedido" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class=" mt-4">
+
+        <div class="d-flex justify-content-center aling-item-center mt-4">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> Agregar
+            </button>
+        </div>
+    </div>
+
+
+
+</form>
+
+
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+
+}
+
+
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <script>
+        Swal.fire({
+            title: '¡Pedido guardado!',
+            text: '@successMessage',
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+        });
+    </script>
+}
+
+<script src="~/js/pedidos.js"></script>

@@ -15,7 +15,13 @@ namespace VistaNewProject.Services
         // pedido
 
         Task<IEnumerable<Pedido>> GetPedidoAsync();
+        Task<HttpResponseMessage> CreatePedidoAsync(Pedido pedido);
+        Task<HttpResponseMessage> DeletePedidoAsync(int id);
 
+        Task<HttpResponseMessage> UpdatePedidoAsync(Pedido pedido);
+        Task<Pedido> FindPedidosAsync(int id);
+
+        Task<HttpResponseMessage> CreatePediiosAsync(Pedido pedido);
 
         // presentacion
 
@@ -101,24 +107,28 @@ namespace VistaNewProject.Services
 
         Task<IEnumerable<Movimiento>> GetMovimientoAsync();
 
-        
+
 
         // lote
 
         Task<IEnumerable<Lote>> GetLoteAsync();
+        Task<Lote> FindLotesAsync(int id);
+        Task<HttpResponseMessage> UpdateLotesAsync(Lote lote);
 
-        
 
         // domicilio
 
         Task<IEnumerable<Domicilio>> GetDomicilioAsync();
+        Task<HttpResponseMessage> CreateDomicilioAsync(Domicilio domicilio);
+        Task<Domicilio> FindDomicilioAsync(int id);
 
-        
         // detallepedido
 
-        Task<IEnumerable<Detallepedido>> GetDetallepedidoAsync();
 
-       
+        Task<IEnumerable<Detallepedido>> GetDetallepedidoAsync();
+        Task<HttpResponseMessage> CreateDetallesPedidosAsync(Detallepedido detallepedido);
+        Task<Detallepedido> FindDetallesPedidoAsync(int id);
+
 
         // detallecompra
 

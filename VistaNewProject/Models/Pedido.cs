@@ -11,7 +11,7 @@
 
 
         public virtual Cliente? Cliente { get; set; }
-        public virtual ICollection<Domicilio> Domicilios { get; set; }
+        public virtual Domicilio ? Domicilios { get; set; }
 
     }
 }
