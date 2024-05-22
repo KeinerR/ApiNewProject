@@ -7,6 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\js\1Login\**" />
+    <Compile Remove="wwwroot\js\4Compras\**" />
+    <Compile Remove="wwwroot\js\Productos\**" />
+    <Content Remove="wwwroot\js\1Login\**" />
+    <Content Remove="wwwroot\js\4Compras\**" />
+    <Content Remove="wwwroot\js\Productos\**" />
+    <EmbeddedResource Remove="wwwroot\js\1Login\**" />
+    <EmbeddedResource Remove="wwwroot\js\4Compras\**" />
+    <EmbeddedResource Remove="wwwroot\js\Productos\**" />
+    <None Remove="wwwroot\js\1Login\**" />
+    <None Remove="wwwroot\js\4Compras\**" />
+    <None Remove="wwwroot\js\Productos\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="wwwroot\js\Detalle.js" />
     <Content Remove="wwwroot\js\Domicilios.js" />
   </ItemGroup>
@@ -33,9 +48,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\image\" />
-    <Folder Include="wwwroot\js\1Login\" />
-    <Folder Include="wwwroot\js\4Compras\" />
-    <Folder Include="wwwroot\js\Productos\" />
   </ItemGroup>
 
 </Project>

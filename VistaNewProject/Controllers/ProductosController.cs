@@ -467,7 +467,6 @@ namespace VistaNewProject.Controllers
                 var lotesFiltrados = lotes
                     .Where(u => u.ProductoId == producto.ProductoId && u.Cantidad > 0 && u.EstadoLote == 1)
                     .ToList();
-
                 if (lotesFiltrados.Any())
                 {
                     decimal? precioPorPresentacionRedondeado;
@@ -478,19 +477,35 @@ namespace VistaNewProject.Controllers
                     if (sumaPrecioPorPresentacion != null)
                     {
                         precioPorPresentacionRedondeado = Math.Round((decimal)(sumaPrecioPorPresentacion / lotesFiltrados.Count));
-                        precioPorUnidadDeProductoRedondeado = Math.Round((decimal)(sumaPrecioPorUnidadDeProducto/ lotesFiltrados.Count));
+                        precioPorUnidadDeProductoRedondeado = Math.Round((decimal)(sumaPrecioPorUnidadDeProducto / lotesFiltrados.Count));
                     }
                     else
                     {
                         precioPorUnidadDeProductoRedondeado = 0;
                         precioPorPresentacionRedondeado = 0; // O el valor por defecto que desees
                     }
+
+                    TempData["SweetAlertIconAct"] = "info";
+                    TempData["SweetAlertTitleAct"] = "¡Atencion!";  
+                    TempData["SweetAlertMessageAct"] = $"El precio por producto será: {precioPorPresentacionRedondeado}. El precio por unidad de producto será: {precioPorUnidadDeProductoRedondeado}";
+                    TempData["SweetAlertContenedor"] = @"
+                        <div class=""contenedor-detalle-producto"">
+                            <h4>Detalle del Producto</h4>
+                            <div>
+                                <label class=""detalle-label"" for=""precioProducto"">Precio por Producto:</label>
+                                <input type=""text"" value=""" + precioPorPresentacionRedondeado + @""" id=""precioProducto"" name=""precioProducto"" class=""detalle-input form-control"">
+                            </div>
+                            <div>
+                                <label class=""detalle-label"" for=""precioUnidad"">Precio por Unidad de Producto:</label>
+                                <input type=""text"" value=""" + precioPorUnidadDeProductoRedondeado + @""" id=""precioUnidad"" name=""precioUnidad"" class=""detalle-input form-control"">
+                            </div>
+                        </div>";
+                    TempData["TiempoAct"] = 20000;
+                    TempData["EstadoAlertaAct"] = "true";
                     Console.WriteLine(precioPorPresentacionRedondeado);
                     Console.WriteLine(precioPorUnidadDeProductoRedondeado);
-                    // Aquí puedes guardar el producto actualizado en tu base de datos si es necesario
                     return RedirectToAction("Details", "Productos", new { id = id });
-                }
-                else
+                }else
                 {
                     TempData["SweetAlertIcon"] = "warning";
                     TempData["SweetAlertTitle"] = "Advertencia";
@@ -512,6 +527,10 @@ namespace VistaNewProject.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> RedondearPreciosEnd([FromForm] Lote lote) { 
+            
+        }
 
 
 

@@ -69,7 +69,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="NombreProducto" class="control-label">Nombre Producto</label><span class="Mensaje">*</span>
-                                        <input type="text" id="NombreProducto" oninput="validarCampo(this)" name="nombreProducto" class="form-control" />                                <span class="text-danger"></span>
+                                        <input type="text" id="NombreProducto" oninput="validarCampo(this)" name="nombreProducto" class="form-control" />                                
+                                        <span class="text-danger"></span>
                                     </div>
                                 </div>
                             </div>
@@ -372,6 +373,15 @@
                                     @if (categoria.CategoriaId == producto.CategoriaId) // Verifica si el ID del rol coincide con el ID del rol del usuario
                                     {   
                                         <span>@categoria.NombreCategoria</span> <!-- Muestra el nombre del rol si coincide -->
+                                    } 
+                                }
+                            </td>  
+                            <td>
+                                @foreach (var marca in ViewBag.Marcas)
+                                {
+                                    @if (marca.MarcaId == producto.MarcaId) // Verifica si el ID del rol coincide con el ID del rol del usuario
+                                    {   
+                                        <span>@marca.NombreMarca </span> <!-- Muestra el nombre del rol si coincide -->
                                     } 
                                 }
                             </td>
