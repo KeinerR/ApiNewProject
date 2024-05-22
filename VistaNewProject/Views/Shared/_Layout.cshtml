@@ -159,6 +159,27 @@
             console.log("@TempData["Tiempo"]");
         </script>
     }
+    @* Sweet alert para detalle de producto *@
+    @if (TempData["SweetAlertMessageAct"] != null)
+    {
+        <script>
+            Swal.fire({
+                position: "top",
+                icon: "@TempData["SweetAlertIconAct"]",
+                title: "@TempData["SweetAlertTitleAct"]",
+                text: " @Html.Raw(TempData["SweetAlertMessageAct"])",
+                html: `@Html.Raw(@TempData["SweetAlertContenedor"]) `,
+                showConfirmButton: "@TempData["EstadoAlertaAct"]" === "true" ? true : false,
+                timer: "@TempData["TiempoAct"]" || 20000,
+                timerProgressBar: true
+            });
+            console.log("@TempData["SweetAlertIconAct"]");
+            console.log("@TempData["SweetAlertTitleAct"]");
+            console.log("@TempData["SweetAlertMessageAct"]");
+            console.log("@TempData["EstadoAlertaAct"]");
+            console.log("@TempData["TiempoAct"]");
+        </script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
