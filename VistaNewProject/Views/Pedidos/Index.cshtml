@@ -195,10 +195,13 @@
                     }
                     else if (item.EstadoPedido == "Cancelado")
                     {
-                        <!-- No mostrar ninguna opción si el estado es Cancelado -->
+                        <script>
+                            // Eliminar el radio button cuando el estado es "Cancelado"
+                            var radioBtn = document.querySelector("input[name='estado_@item.PedidoId'][value='Realizado']");
+                            radioBtn.parentNode.parentNode.parentNode.removeChild(radioBtn.parentNode.parentNode);
+                        </script>
                     }
                 </td>
-              
 
                
              

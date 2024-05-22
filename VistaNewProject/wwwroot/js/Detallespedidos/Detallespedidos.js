@@ -1,4 +1,7 @@
-﻿var detallesdepedidp = [];
+﻿
+
+
+var detallesdepedidp = [];
 
 function agregarDetalle(url) {
     var unidadId = document.getElementById("UnidadId").value; // Corrección aquí
@@ -105,9 +108,76 @@ function mostrarDetallesPedido() {
     });
 }
 
+
+
+
+
+// Función para obtener y mostrar los detalles actuales
+function mostrarDetallesActuales() {
+    // Realizar una solicitud al servidor para obtener la lista global de detalles
+    $.get('/DetallePedidos/ObtenerDetalles', function (data) {
+        // Mostrar los detalles en la consola
+        console.log('Detalles actuales:', data);
+    });
+}
+
+
+document.getElementById('ProductoId').addEventListener('change', async function () {
+    var productoId = this.value;
+    var response = await fetch('/DetallePedidos/ObtenerLotesDisponibles?productoId=' + productoId);
+    var data = await response.json();
+    var datalist = document.getElementById('LoteList');
+    datalist.innerHTML = '';
+    data.forEach(function (lote) {
+        var option = document.createElement('option');
+        option.value = lote.loteId;
+        option.textContent = lote.numeroLote;
+        datalist.appendChild(option);
+    });
+});
+
+$(document).ready(function () {
+    // Función para cargar los productos
+    function cargarProductos() {
+        let query = $('#busqueda').val(); // Captura el valor del input
+        fetch(`https://localhost:7013/api/Productos/GetProductos?busqueda=${query}`, {
+            method: 'GET', // Especifica el método de la solicitud
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json()) // Convierte la respuesta a JSON
+            .then(data => {
+                $('#ProductosList').empty(); // Limpia la lista de productos
+                $.each(data, function (index, producto) {
+                    $('#ProductosList').append('<option value="' + producto.nombreProducto + '" data-id="' + producto.productId + '">');
+                });
+            })
+            .catch(error => {
+                console.log(error); // Muestra el error en la consola
+            });
+    }
+
+    // Cargar productos al cargar la vista
+    cargarProductos();
+
+    // Evento para cargar productos al escribir en el campo de búsqueda
+    $('#busqueda').on('input', function () {
+        cargarProductos();
+    });
+
+    // Evento para capturar la selección del producto del datalist
+    $('#ProductosList').on('input', function () {
+        var idSeleccionado = $(this).find('option[value="' + $(this).val() + '"]').attr('data-id');
+        console.log("ProductoId seleccionado:", idSeleccionado);
+        $('#ProductoIdTxt').val($(this).val()); // Mostrar el nombre del producto en el campo de texto
+        $('#ClienteIdHidden').val(idSeleccionado); // Asignar el ID del producto al campo oculto
+    });
+});
+
 $(document).ready(function () {
     // Función para obtener y mostrar los detalles del producto seleccionado
-    $('#ProductoId').on('input', function () {
+    $('#ClienteIdHidden').on('input', function () {
         const productId = $(this).val();
         console.log('ProductoId seleccionado:', productId);
 
@@ -230,58 +300,5 @@ $(document).ready(function () {
                 $('#LoteId').val('');
             }
         });
-    });
-});
-
-
-
-
-// Función para obtener y mostrar los detalles actuales
-function mostrarDetallesActuales() {
-    // Realizar una solicitud al servidor para obtener la lista global de detalles
-    $.get('/DetallePedidos/ObtenerDetalles', function (data) {
-        // Mostrar los detalles en la consola
-        console.log('Detalles actuales:', data);
-    });
-}
-
-
-document.getElementById('ProductoId').addEventListener('change', async function () {
-    var productoId = this.value;
-    var response = await fetch('/DetallePedidos/ObtenerLotesDisponibles?productoId=' + productoId);
-    var data = await response.json();
-    var datalist = document.getElementById('LoteList');
-    datalist.innerHTML = '';
-    data.forEach(function (lote) {
-        var option = document.createElement('option');
-        option.value = lote.loteId;
-        option.textContent = lote.numeroLote;
-        datalist.appendChild(option);
-    });
-});
-
-
-document.addEventListener("DOMContentLoaded", function () {
-    var productoInput = document.getElementById("ProductoId");
-    var datalist = document.getElementById("ProductosList");
-    var productos = @Html.Raw(Json.Serialize(ViewBag.Producto));
-
-    productoInput.addEventListener("input", function () {
-        var filtro = this.value.toLowerCase();
-        // Limpiar opciones anteriores del datalist
-        datalist.innerHTML = "";
-        // Filtrar y agregar opciones al datalist
-        var count = 0;
-        for (var i = 0; i < productos.length; i++) {
-            var producto = productos[i];
-            if (producto.NombreProducto.toLowerCase().includes(filtro)) {
-                var option = document.createElement("option");
-                option.value = producto.ProductoId;
-                option.textContent = producto.NombreProducto;
-                datalist.appendChild(option);
-                count++;
-                if (count >= 10) break; // Detener después de agregar 10 opciones
-            }
-        }
     });
 });

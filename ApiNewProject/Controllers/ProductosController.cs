@@ -17,12 +17,22 @@ namespace ApiNewProject.Controllers
             _context = context;
         }
 
-
         [HttpGet("GetProductos")]
-        public async Task<ActionResult<List<Producto>>> GetProductos()
+        public async Task<ActionResult<List<Producto>>> GetProductos(string ? busqueda = "")
         {
-            var List = await _context.Productos.Select(
-                s => new Producto
+            IQueryable<Producto> query = _context.Productos;
+
+            if (!string.IsNullOrEmpty(busqueda))
+            {
+                // Aplica filtros de búsqueda solo si se proporciona una consulta de búsqueda
+                query = query.Where(p =>
+                    p.NombreProducto.Contains(busqueda) ||
+                    p.Categoria.NombreCategoria.Contains(busqueda) ||
+                    p.Marca.NombreMarca.Contains(busqueda));
+            }
+
+            var productList = await query
+                .Select(s => new Producto
                 {
                     ProductoId = s.ProductoId,
                     PresentacionId = s.PresentacionId,
@@ -32,15 +42,13 @@ namespace ApiNewProject.Controllers
                     CantidadTotal = s.CantidadTotal,
                     CantidadAplicarPorMayor = s.CantidadAplicarPorMayor,
                     DescuentoAplicarPorMayor = s.DescuentoAplicarPorMayor,
-                    Estado = s.Estado,
-                }
-            ).ToListAsync();
+                    Estado = s.Estado
+                })
+                .ToListAsync();
 
-
-
-            return List;
-
+            return productList;
         }
+
 
         [HttpGet("GetProductoById")]
         public async Task<ActionResult<Producto>> GetProductoById(int Id)

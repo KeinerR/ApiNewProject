@@ -18,21 +18,34 @@
     </script>
 }
 
+<style>
+    /* Estilos para el icono */
+    #busqueda::placeholder:before {
+        content: "\f002"; /* Código del icono de lupa de Font Awesome */
+        font-family: "Font Awesome 5 Free";
+        position: relative;
+        left: 10px; /* Espacio izquierdo */
+        color: #aaa; /* Color del icono */
+    }
+
+</style>
+
 
 
 <h4 style="text-align:center">Agregar Productos</h4>
 <hr />
-
-<div class="mt-5">
+<br />
+<div >
     <form asp-action="Cancelar" method="post">
-        <div class="col-4 mt-5 d-flex justify-content-center">
+        <div class="">
             <button type="submit" class="btn btn-primary">
-                <i class="fas fa-times-circle mr-1"></i> Cancelar
+                <i class="fas fa-arrow-left"></i> Cancelar
             </button>
         </div>
     </form>
 </div>
 
+<br />
 
 <form asp-action="CreatePost" method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -45,12 +58,22 @@
     <div class="row">
 
 
+        <!-- Campo de búsqueda único -->
+        <div class="col-6">
+            <label for="busqueda"> filtrar Productos:</label>
+            <input class="form-control" type="text" id="busqueda" name="busqueda" placeholder="Buscar Productos" />
+        </div>
+
         <div class="col-4">
-            <label asp-for="ProductoId" class="control-label"> productos</label>
-            <input asp-for="ProductoId" name="ProductoId" id="ProductoId" class="form-control" list="ProductosList" />
+            <label asp-for="ProductoId" class="control-label">Productos</label>
+            <input  name="ProductoId" id="ProductoId" class="form-control" list="ProductosList" />
+            <input type="hidden" id="ClienteIdHidden" name="ProductoId" />
+
             <datalist id="ProductosList"></datalist>
             <span asp-validation-for="ProductoId" class="text-danger"></span>
         </div>
+
+     
 
 
         <div class="d-none">

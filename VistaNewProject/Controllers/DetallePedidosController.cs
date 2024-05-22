@@ -254,6 +254,15 @@ namespace VistaNewProject.Controllers
 
 
 
+        [HttpPost]
+        public async Task<JsonResult> GetProductos([FromBody] string busqueda = null)
+        {
+            var productos = await _client.GetProductoAsync(busqueda);
+            return Json(productos);
+        }
+
+
+
 
 
     }
