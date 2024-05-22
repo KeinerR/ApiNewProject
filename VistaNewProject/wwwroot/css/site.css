@@ -285,10 +285,10 @@ input[type="checkbox"]:checked + .sub-menu {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: auto;*/ /* Opcional: puedes especificar una altura fija si lo deseas */
-/*min-height: 20px;
-    background-color: #f0f0f0;*/ /* Cambia el color de fondo según tu diseño */
-/*border: solid green 2px;
+    height: auto;  
+    min-height: 20px;
+    background-color: #f0f0f0; 
+    border: solid green 2px;
 }*/
 
 
@@ -544,7 +544,7 @@ input:checked + .slider:before {
     flex-grow: 1;
 }
 
-/* Estilos para el contenedor de paginación */
+/* Estilos para el contenedor de paginación genetal By:Esteban*/
 .pagination-detail {
     display: flex;
     justify-content: center;
@@ -867,4 +867,16 @@ input:checked + .slider:before {
 .noBe{
     visibility:hidden;
     display:none;
+}
+
+
+#contenedor-datos-producto {
+    display: flex; /* Convertir el contenedor en un flex container */
+    align-items: center; /* Centrar verticalmente los elementos hijos */
+    justify-content: center;
+}
+#contenedor-datos-lote table td{
+    padding:4px;
+  
+
 }

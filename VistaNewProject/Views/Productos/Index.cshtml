@@ -1,7 +1,7 @@
 ﻿@using X.PagedList
 @model X.PagedList.IPagedList<VistaNewProject.Models.Producto>
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Productos";
 }
 <div class="ContenedorVista" id="ContenedorProducto">
     <br />
@@ -450,17 +450,3 @@
         }
     </div>
 </div>
-@if (TempData["SweetAlertMessage"] != null)
-{
-    <script>
-        Swal.fire({
-            position: "center",
-            icon: "@TempData["SweetAlertIcon"]",
-            title: "@TempData["SweetAlertTitle"]",
-            text: "@TempData["SweetAlertMessage"]",
-            showConfirmButton: "@TempData["EstadoAlerta"]", // Mostrar botón de confirmación
-            timer: "@TempData["Tiempo"]"|| 6000,
-            timerProgressBar: true
-        })
-    </script>
-}

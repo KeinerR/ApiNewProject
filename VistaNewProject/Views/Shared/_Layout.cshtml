@@ -1,5 +1,5 @@
-﻿ @using Microsoft.AspNetCore.Authentication
- @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+﻿@using Microsoft.AspNetCore.Authentication
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,14 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>@ViewData["Title"] - VistaNewProject</title>
-    <link rel="icon" href="./favicon.png" type="image/x-icon" />
+    <link rel="icon" href="~/favicon.png" type="image/x-icon" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/main.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
-    <script src="https://kit.fontawesome.com/822fe3c749.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-
-  
+    @RenderSection("Styles", required: false)
 </head>
 <body>
     <header>
@@ -25,14 +22,14 @@
                 </button>
                 <div class="circle">
                     <a asp-area="" asp-controller="Home" asp-action="Index">
-                        <img src="./favicon.png" />
+                        <img src="~/favicon.png" />
                     </a>
                 </div>
             </div>
             <div id="cabeceraCircle">
-                <span class="tituloHeader">T</span> <!-- Ajusta el margen superior según sea necesario -->
+                <span class="tituloHeader">T</span>
                 <a class="circle" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="./image/OPTIMUS/3-removebg-preview.png" />
+                    <img src="~/image/OPTIMUS/3-removebg-preview.png" />
                 </a>
             </div>
             @if (User.Identity.IsAuthenticated)
@@ -52,17 +49,15 @@
                         <span>Inicia sesión</span>
                     </a>
                 </div>
-
-
             }
         </div>
         <div id="cabeceraTitulo">
-            <span class="tituloHeader">OPTIMUS</span> <!-- Ajusta el margen superior según sea necesario -->
+            <span class="tituloHeader">OPTIMUS</span>
         </div>
     </header>
-     <div id="perfilVentanaEmergente" style="display:none;">
-        <a id="MiPerfil"asp-controller="MiPerfil" asp-action="Index" class="opcionesVentanaEmergente">Mi perfil</a>
-        <a href="#" id="exit" onclick="confirmLogout();"class="opcionesVentanaEmergente">Cerrar sesión</a>
+    <div id="perfilVentanaEmergente" style="display:none;">
+        <a id="MiPerfil" asp-controller="MiPerfil" asp-action="Index" class="opcionesVentanaEmergente">Mi perfil</a>
+        <a href="#" id="exit" onclick="confirmLogout();" class="opcionesVentanaEmergente">Cerrar sesión</a>
     </div>
     <div id="Cuerpo">
         <div id="Menu" class="sidebar">
@@ -123,26 +118,53 @@
                 <i class="fas fa-cubes icononosMenu"></i><span class="TextoMenu">Lotes</span>
             </a>
         </div>
-        <div class="container">
-            <main role="main" class="iframe-optimus">
-                @RenderBody()
-            </main>
-        </div>
+    <div class="container">
+        <main role="main" class="iframe-optimus">
+            @RenderBody()
+        </main>
+    </div>
     </div>
     <footer class="PIE">
         <div>
             &copy; 2024 - Optimus - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
-    </footer>   
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> 
+    </footer>
+    @if (TempData["SweetAlertMessage"] != null)
+    {
+        <script>
+            Swal.fire({
+                position: "center",
+                icon: "@TempData["SweetAlertIcon"]",
+                title: "@TempData["SweetAlertTitle"]",
+                text: "@TempData["SweetAlertMessage"]",
+                showConfirmButton: "@TempData["EstadoAlerta"]", // Mostrar botón de confirmación
+                timer: "@TempData["Tiempo"]" || 6000,
+                timerProgressBar: true
+            })
+        </script>
+    }else
+    {
+
+        <script>
+            Swal.fire({
+                position: "center",
+                icon: "alert"",
+                title: "Alerta",
+                text: "@TempData["SweetAlertMessage"]",
+                showConfirmButton: "@TempData["EstadoAlerta"]", // Mostrar botón de confirmación
+                timer: "@TempData["Tiempo"]" || 6000,
+                timerProgressBar: true
+            })
+        </script>
+    }
+    <script src="https://kit.fontawesome.com/822fe3c749.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/productos.js"></script>
     <script src="~/js/Compras.js"></script>
+    <script src="~/js/Detalle.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-
 </body>
 </html>
-

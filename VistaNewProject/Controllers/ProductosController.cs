@@ -194,8 +194,10 @@ namespace VistaNewProject.Controllers
         }
 
 
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, int? page)
         {
+            int pageSize = 5; // Número máximo de elementos por página
+            int pageNumber = page ?? 1;
             if (id == null)
             {
                 return NotFound();
@@ -226,7 +228,7 @@ namespace VistaNewProject.Controllers
             var lotesInfo = lotes
                 .Where(u => u.ProductoId == productoInfo.ProductoId && u.Cantidad > 0 && u.EstadoLote == 1)
                 .ToList();
-
+            var pagedLote = lotesInfo.ToPagedList(pageNumber, pageSize);
             var nombrePresentacion = presentacionInfo.NombrePresentacion;
             var contenido = presentacionInfo.Contenido;
             int cantidad = 0; // Valor predeterminado en caso de que CantidadPorPresentacion sea nulo
@@ -246,10 +248,11 @@ namespace VistaNewProject.Controllers
                 productoInfo.NombreCompleto = $"{nombrePresentacion} de {productoInfo.NombreProducto} {nombreMarca}  de {contenido}";
             }
 
+
             ViewData["Producto"] = productoInfo;
             ViewData["Lotes"] = lotesInfo;
 
-            return View();
+            return View(pagedLote);
         }
 
         [HttpPost]
@@ -439,6 +442,63 @@ namespace VistaNewProject.Controllers
         }
 
 
+        public async Task<IActionResult> RedondearPrecios(int id)
+        {
+            try
+            {
+                var producto = await _client.FindProductoAsync(id);
+
+                if (producto == null)
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "El producto no existe.";
+                    TempData["Tiempo"] = 3000;
+                    return RedirectToAction("Index");
+                }
+
+                var lotes = await _client.GetLoteAsync();
+                var lotesFiltrados = lotes
+                    .Where(u => u.ProductoId == producto.ProductoId && u.Cantidad > 0 && u.EstadoLote == 1)
+                    .ToList();
+
+                if (lotesFiltrados.Any())
+                {
+                    decimal? precioPorPresentacionRedondeado;
+                    decimal? sumaPrecioPorPresentacion = lotesFiltrados.Sum(l => l.PrecioPorPresentacion);
+
+                    if (sumaPrecioPorPresentacion != null)
+                    {
+                        // Conversión explícita de double a decimal
+                        decimal? precioCalculado = Math.Round((decimal)(sumaPrecioPorPresentacion / lotesFiltrados.Count));
+                        precioPorPresentacionRedondeado = precioCalculado.HasValue ? precioCalculado.Value : 0.0m;
+                    }
+                    else
+                    {
+                        precioPorPresentacionRedondeado = 0; // O el valor por defecto que desees
+                    }
+
+                    // Aquí puedes guardar el producto actualizado en tu base de datos si es necesario
+
+                    return RedirectToAction("Index"); // O redirige a donde sea necesario después de calcular los precios
+                }
+                else
+                {
+                    TempData["SweetAlertIcon"] = "warning";
+                    TempData["SweetAlertTitle"] = "Advertencia";
+                    TempData["SweetAlertMessage"] = "El producto no tiene lotes válidos para calcular precios redondeados.";
+                    TempData["Tiempo"] = 3000;
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (consider using a logging framework)
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                // Return a 500 Internal Server Error response with the error message
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
 
 
 
