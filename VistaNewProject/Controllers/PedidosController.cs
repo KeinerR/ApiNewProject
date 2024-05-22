@@ -156,7 +156,7 @@ namespace VistaNewProject.Controllers
                                         lote.Cantidad -= cantidadDescontar;
                                         cantidadRestante -= cantidadDescontar;
 
-                                        var updateLotees = await _client.UpdateLotesAsync(lote);
+                                        var updateLotees = await _client.UpdateLoteAsync(lote);
 
                                         if (updateLotees.IsSuccessStatusCode)
                                         {
@@ -197,13 +197,13 @@ namespace VistaNewProject.Controllers
                                 }
                             }
 
-                            var lote = await _client.FindLotesAsync(loteId.Value);
+                            var lote = await _client.FindLoteAsync(loteId.Value);
 
                             if (lote != null)
                             {
                                 // Sumar la cantidad cancelada al lote
                                 lote.Cantidad += grupo.Sum(d => d.Cantidad);
-                                var updateLote = await _client.UpdateLotesAsync(lote);
+                                var updateLote = await _client.UpdateLoteAsync(lote);
 
                                 if (updateLote.IsSuccessStatusCode)
                                 {
