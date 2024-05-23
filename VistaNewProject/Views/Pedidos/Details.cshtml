@@ -32,7 +32,19 @@
         }
 </style>
 
+
+
 <div class="container">
+    <br />
+
+    <div >  
+
+        <a asp-action="Index" class="btn btn-primary">
+            <i class="fas fa-arrow-left"></i>
+            Regresar</a>
+
+    </div>
+
 
     <div class="pedido-info">
         <h2 style="text-align:center;">Información del Pedido</h2>
@@ -45,6 +57,10 @@
                 <tr>
                     <th>Cliente:</th>
                     <td>@ViewBag.NombreCliente</td>
+                </tr>
+                <tr>
+                    <th>ValorTotal:</th>
+                    <td>@ViewBag.Pedidos.ValorTotalPedido</td>
                 </tr>
                
             </tbody>
@@ -97,6 +113,4 @@
         }
     </div>
 
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
 </div>

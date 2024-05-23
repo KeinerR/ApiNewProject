@@ -743,7 +743,7 @@ namespace VistaNewProject.Services
 
         public async Task<HttpResponseMessage> UpdateLoteAsync(Lote lote)
         {
-            var response = await _httpClient.PutAsJsonAsync($"Lotes/UdateLotes/", lote);
+            var response = await _httpClient.PutAsJsonAsync($"Lotes/UpdateLotes/", lote);
             return response;
         }
 
@@ -766,12 +766,7 @@ namespace VistaNewProject.Services
 
 
 
-        public async Task<HttpResponseMessage> UpdateLotesAsync(Lote lote)
-        {
-            var response = await _httpClient.PutAsJsonAsync($"Lotes/UpdateLotes/", lote);
-            return response;
-        }
-
+     
 
 
 

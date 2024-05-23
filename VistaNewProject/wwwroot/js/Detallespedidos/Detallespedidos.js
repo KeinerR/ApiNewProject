@@ -1,11 +1,10 @@
 ﻿
-
+   
 
 var detallesdepedidp = [];
 
 function agregarDetalle(url) {
-    var unidadId = document.getElementById("UnidadId").value; // Corrección aquí
-
+    var unidadId = document.getElementById("UnidadId").value;
     var cantidad = document.getElementById("Cantidad").value;
     var precioUnitario = document.getElementById("PrecioUnitario").value;
 
@@ -16,13 +15,57 @@ function agregarDetalle(url) {
         Cantidad: cantidad,
         PrecioUnitario: precioUnitario,
         UnidadId: unidadId,
-        Subtotal: cantidad * precioUnitario // Agregar el subtotal aquí
+        Subtotal: cantidad * precioUnitario
     };
-    detallesdepedidp.push(detalle);
-    mostrarDetallesPedido();
-    enviarDetallePedido(detalle, url);
-    mostrarDetallesActuales();
-    // Llamar a enviarDetallePedido con el detalle recién agregado
+
+    if (validarDetalle(detalle)) {
+        detallesdepedidp.push(detalle);
+        mostrarDetallesPedido();
+        enviarDetallePedido(detalle, url);
+        mostrarDetallesActuales();
+    }
+}
+
+function validarDetalle(detalle) {
+    var isValid = true;
+
+   
+
+    document.getElementById('ProductoIdError').textContent = '';
+    document.getElementById('UnidadError').textContent = '';
+    document.getElementById('CantidadError').textContent = '';
+    document.getElementById('PrecioUnitarioError').textContent = '';
+  
+
+ 
+    if (detalle.ProductoId.trim().length === 0) {
+        document.getElementById('ProductoIdError').textContent = 'El Producto ID está vacío';
+      
+        isValid = false;
+    } else {
+        // If there is data, hide the error message
+        document.getElementById('ProductoIdError').style.display = 'none';
+    }
+ 
+    if (detalle.UnidadId.trim().length === 0) {
+        document.getElementById('UnidadError').textContent = 'La Unidad ID está vacía';
+        isValid = false;
+    } else {
+        document.getElementById('UnidadError').style.display = 'none';
+    }
+    if (detalle.Cantidad.trim().length === 0) {
+        document.getElementById('CantidadError').textContent = 'La Cantidad está vacía';
+        isValid = false;
+    } else {
+        document.getElementById('CantidadError').style.display = 'none';
+    }
+    if (detalle.PrecioUnitario.trim().length === 0) {
+        document.getElementById('PrecioUnitarioError').textContent = 'El Precio Unitario está vacío';
+        isValid = false;
+    } else {
+        document.getElementById('PrecioUnitarioError').style.display = 'none';
+    }
+    return isValid;
 }
 
 
@@ -171,7 +214,10 @@ $(document).ready(function () {
     // Evento para capturar la selección del producto del datalist
     $('#ProductoIdtxt').on('input', function () {
         const input = $(this).val();
-        const selectedOption = $('#ProductosList option[value="' + input + '"]');
+        const selectedOption = $('#ProductosList option').filter(function () {
+            return $(this).val() === input || $(this).data('id') == input;
+        });
+
         if (selectedOption.length > 0) {
             const idSeleccionado = selectedOption.attr('data-id');
             console.log("ProductoId seleccionado:", idSeleccionado);
@@ -184,6 +230,7 @@ $(document).ready(function () {
             limpiarDetallesProducto();
         }
     });
+
 
     // Función para obtener y mostrar los detalles del producto seleccionado
     function obtenerDetallesProducto(productId) {
@@ -262,6 +309,8 @@ $(document).ready(function () {
     // Función para limpiar los detalles del producto
     function limpiarDetallesProducto() {
         $('#PrecioUnitario').val('');
+        $('#ProductoId').val('');
+        $('#ProductoIdtxt').val('');   
         $('#Cantidad').attr('placeholder', '');
         $('#LoteId').val('');
     }
@@ -300,3 +349,4 @@ $(document).ready(function () {
         }
     });
 });
+
