@@ -59,16 +59,16 @@
 
 
         <!-- Campo de búsqueda único -->
+     
         <div class="col-6">
-            <label for="busqueda"> filtrar Productos:</label>
+            <label for="busqueda">Filtrar Productos:</label>
             <input class="form-control" type="text" id="busqueda" name="busqueda" placeholder="Buscar Productos" />
         </div>
 
         <div class="col-4">
-            <label asp-for="ProductoId" class="control-label">Productos</label>
-            <input  name="ProductoId" id="ProductoId" class="form-control" list="ProductosList" />
-            <input type="hidden" id="ClienteIdHidden" name="ProductoId" />
-
+            <label for="ProductoIdtxt" class="control-label">Productos</label>
+            <input name="ProductoIdtxt" id="ProductoIdtxt" class="form-control" list="ProductosList" />
+            <input type="hidden" id="ProductoId" name="productoId" class="form-control" />
             <datalist id="ProductosList"></datalist>
             <span asp-validation-for="ProductoId" class="text-danger"></span>
         </div>

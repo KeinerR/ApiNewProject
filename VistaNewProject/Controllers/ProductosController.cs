@@ -527,11 +527,7 @@ namespace VistaNewProject.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> RedondearPreciosEnd([FromForm] Lote lote) { 
-            
-        }
-
+       
 
 
 

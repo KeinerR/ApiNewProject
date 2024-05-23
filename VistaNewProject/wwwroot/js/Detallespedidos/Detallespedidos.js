@@ -136,6 +136,7 @@ document.getElementById('ProductoId').addEventListener('change', async function 
     });
 });
 
+
 $(document).ready(function () {
     // Función para cargar los productos
     function cargarProductos() {
@@ -150,7 +151,7 @@ $(document).ready(function () {
             .then(data => {
                 $('#ProductosList').empty(); // Limpia la lista de productos
                 $.each(data, function (index, producto) {
-                    $('#ProductosList').append('<option value="' + producto.nombreProducto + '" data-id="' + producto.productId + '">');
+                    $('#ProductosList').append('<option value="' + producto.nombreProducto + '" data-id="' + producto.productoId + '"></option>');
                 });
             })
             .catch(error => {
@@ -167,19 +168,26 @@ $(document).ready(function () {
     });
 
     // Evento para capturar la selección del producto del datalist
-    $('#ProductosList').on('input', function () {
-        var idSeleccionado = $(this).find('option[value="' + $(this).val() + '"]').attr('data-id');
-        console.log("ProductoId seleccionado:", idSeleccionado);
-        $('#ProductoIdTxt').val($(this).val()); // Mostrar el nombre del producto en el campo de texto
-        $('#ClienteIdHidden').val(idSeleccionado); // Asignar el ID del producto al campo oculto
+    // Evento para capturar la selección del producto del datalist
+    $('#ProductoIdtxt').on('input', function () {
+        const input = $(this).val();
+        const selectedOption = $('#ProductosList option[value="' + input + '"]');
+        if (selectedOption.length > 0) {
+            const idSeleccionado = selectedOption.attr('data-id');
+            console.log("ProductoId seleccionado:", idSeleccionado);
+            $('#ProductoId').val(idSeleccionado); // Asignar el ID del producto al campo oculto
+            obtenerDetallesProducto(idSeleccionado);
+        } else if (!isNaN(input) && input !== '') { // Verificar si el valor ingresado es un número
+            $('#ProductoId').val(input); // Si es un número, establecerlo directamente en el campo oculto
+            obtenerDetallesProducto(input);
+        } else {
+            limpiarDetallesProducto();
+        }
     });
-});
 
-$(document).ready(function () {
     // Función para obtener y mostrar los detalles del producto seleccionado
-    $('#ClienteIdHidden').on('input', function () {
-        const productId = $(this).val();
-        console.log('ProductoId seleccionado:', productId);
+    function obtenerDetallesProducto(productId) {
+        console.log('Obteniendo detalles del ProductoId:', productId);
 
         // Llamada a la API para obtener los lotes del producto
         fetch(`https://localhost:7013/api/Lotes/GetLotes`)
@@ -192,7 +200,7 @@ $(document).ready(function () {
             .then(data => {
                 // Filtrar los lotes por productId seleccionado
                 const lotesProducto = data.filter(lote => lote.productoId == productId);
-                console.log("Lotes del producto ID:", lotesProducto)
+                console.log("Lotes del producto ID:", lotesProducto);
                 if (lotesProducto.length > 0) {
                     // Encontrar el lote con la fecha de vencimiento más próxima y con cantidad disponible mayor que cero
                     let loteProximoVencimiento = null;
@@ -206,7 +214,7 @@ $(document).ready(function () {
 
                     if (loteProximoVencimiento !== null) {
                         console.log("Lote con la fecha de vencimiento más próxima y con cantidad disponible mayor que cero:", loteProximoVencimiento);
-                        const precio = loteProximoVencimiento.precioPorUnidad; // Ajusta esta propiedad según la estructura real
+                        const precio = loteProximoVencimiento.precioPorPresentacion; // Ajusta esta propiedad según la estructura real
                         $('#PrecioUnitario').val(precio);
                         $('#LoteId').val(loteProximoVencimiento.loteId); // Asigna el ID del lote al campo LoteId
                     } else {
@@ -244,61 +252,51 @@ $(document).ready(function () {
                     // Si no se encuentra ningún producto con el productId seleccionado, mostrar un mensaje
                     $('#Cantidad').attr('placeholder', '');
                 }
-                $('#Cantidad').on('input', function () {
-                    const cantidadIngresada = parseFloat($(this).val()); // Convertir el valor a un número flotante
-                    console.log(cantidadIngresada);
-                    const cantidadDisponible = parseFloat($('#Cantidad').attr('placeholder').split(':')[1].trim());
-                    console.log("Cantidad disponible:", cantidadDisponible);
-
-                    if (isNaN(cantidadIngresada)) {
-                        // Si la cantidad ingresada no es un número válido, mostrar mensaje de error
-                        $('#Cantidad').addClass('input-validation-error'); // Agregar la clase de error al campo
-                        $('span[data-valmsg-for="Cantidad"]').text('Por favor, ingrese una cantidad válida'); // Mostrar el mensaje de error
-                        $('#Cantidad').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
-                        $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
-                    } else if (cantidadIngresada > cantidadDisponible) {
-                        // Si la cantidad ingresada es mayor que la cantidad disponible, mostrar mensaje de error
-                        $('#Cantidad').addClass('input-validation-error');
-                        // Agregar la clase de error al campo
-                        $('span[data-valmsg-for="Cantidad"]').text('La cantidad ingresada no puede ser mayor que la cantidad disponible');
-                        $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
-                        $('#Cantidad').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
-                    } else if (cantidadIngresada <= 0) {
-                        // Si la cantidad ingresada es menor o igual a 0, mostrar mensaje de error
-                        $('#Cantidad').addClass('input-validation-error');
-                        // Agregar la clase de error al campo
-                        $('span[data-valmsg-for="Cantidad"]').text('La cantidad ingresada no puede ser menor o igual a 0');
-                        $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
-                        $('#Cantidad').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
-                    } else {
-                        // Si la cantidad ingresada es válida, quitar la clase de error del campo
-                        $('#Cantidad').removeClass('input-validation-error');
-                        // Quitar el mensaje de error
-                        $('span[data-valmsg-for="Cantidad"]').text('');
-                        // Quitar la clase de error del campo para los estilos de Bootstrap
-                        $('#Cantidad').removeClass('is-invalid');
-                        // Habilitar el botón de enviar
-                        $('#btnEnviar').prop('disabled', false);
-                    }
-                });
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('Error al obtener los productos');
             });
+    }
 
-        // Evento input para el campo "ProductoId"
-        $('#ProductoId').on('input', function () {
-            const productId = $(this).val();
-            console.log('ProductoId seleccionado:', productId);
-            if (productId) {
-                // Si hay un productId seleccionado, obtener y mostrar los detalles del producto
-            } else {
-                // Si el campo está vacío, limpiar los campos relacionados
-                $('#PrecioUnitario').val('');
-                $('#Cantidad').attr('placeholder', '');
-                $('#LoteId').val('');
-            }
-        });
+    // Función para limpiar los detalles del producto
+    function limpiarDetallesProducto() {
+        $('#PrecioUnitario').val('');
+        $('#Cantidad').attr('placeholder', '');
+        $('#LoteId').val('');
+    }
+
+    // Evento input para el campo "Cantidad"
+    $('#Cantidad').on('input', function () {
+        const cantidadIngresada = parseFloat($(this).val()); // Convertir el valor a un número flotante
+        console.log(cantidadIngresada);
+        const cantidadDisponible = parseFloat($('#Cantidad').attr('placeholder').split(':')[1].trim());
+        console.log("Cantidad disponible:", cantidadDisponible);
+
+        if (isNaN(cantidadIngresada)) {
+            // Si la cantidad ingresada no es un número válido, mostrar mensaje de error
+            $('#Cantidad').addClass('input-validation-error'); // Agregar la clase de error al campo
+            $('span[data-valmsg-for="Cantidad"]').text('Por favor, ingrese una cantidad válida'); // Mostrar el mensaje de error
+            $('#Cantidad').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
+            $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
+        } else if (cantidadIngresada > cantidadDisponible) {
+            // Si la cantidad ingresada es mayor que la cantidad disponible, mostrar mensaje de error
+            $('#Cantidad').addClass('input-validation-error');
+            $('span[data-valmsg-for="Cantidad"]').text('La cantidad ingresada no puede ser mayor que la cantidad disponible');
+            $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
+            $('#Cantidad').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
+        } else if (cantidadIngresada <= 0) {
+            // Si la cantidad ingresada es menor o igual a 0, mostrar mensaje de error
+            $('#Cantidad').addClass('input-validation-error');
+            $('span[data-valmsg-for="Cantidad"]').text('La cantidad ingresada no puede ser menor o igual a 0');
+            $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
+            $('#Cantidad').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
+        } else {
+            // Si la cantidad ingresada es válida, quitar la clase de error del campo
+            $('#Cantidad').removeClass('input-validation-error');
+            $('span[data-valmsg-for="Cantidad"]').text('');
+            $('#Cantidad').removeClass('is-invalid');
+            $('#btnEnviar').prop('disabled', false);
+        }
     });
 });

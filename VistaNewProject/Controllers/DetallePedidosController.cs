@@ -121,12 +121,7 @@ namespace VistaNewProject.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePost()
         {
-
-
-
-
-
-            if (listaGlobalDetalles.Count < 0)
+            if (listaGlobalDetalles.Count <= 0) // Corrección aquí: debería ser <= 0 para incluir el caso en que la lista esté vacía
             {
                 TempData["ErrorMessage"] = "Por favor agregue los productos para guardar el pedido correctamente.";
                 return RedirectToAction("Create", "DetallePedidos");
@@ -137,7 +132,6 @@ namespace VistaNewProject.Controllers
                 decimal sumaSubtotales = listaGlobalDetalles.Sum(detalle => detalle.Subtotal ?? 0);
                 foreach (var detalle in listaGlobalDetalles)
                 {
-                    // Verifica si el detalle actual no es nulo antes de intentar acceder a sus propiedades
                     if (detalle != null)
                     {
                         Console.WriteLine($"ID: {detalle.PedidoId}, Nombre: {detalle.ProductoId}, Cantidad: {detalle.Cantidad}");
@@ -156,11 +150,12 @@ namespace VistaNewProject.Controllers
                 {
                     var ultimoPedidoGuardado = ultimoPedido.OrderByDescending(p => p.PedidoId).First();
 
+                    // Actualizar el valor total del pedido
                     ultimoPedidoGuardado.ValorTotalPedido = sumaSubtotales;
                     var updateResponse = await _client.UpdatePedidoAsync(ultimoPedidoGuardado);
+
                     if (!updateResponse.IsSuccessStatusCode)
                     {
-                        // Aquí agregamos más detalles para la depuración
                         var errorContent = await updateResponse.Content.ReadAsStringAsync();
                         TempData["ErrorMessage"] = $"Error al actualizar el valor total del pedido: {updateResponse.ReasonPhrase} - {errorContent}";
                         return RedirectToAction("Create", "DetallePedidos");
@@ -169,8 +164,7 @@ namespace VistaNewProject.Controllers
                     // Verifica si el estado del último pedido es "Realizado"
                     if (ultimoPedidoGuardado.EstadoPedido == "Realizado" && ultimoPedidoGuardado.TipoServicio == "Caja")
                     {
-                        // Redirigir a la vista de creación de pagos con el último ID de pedido
-                        return RedirectToAction("Create", "Pagos", new { pedidoId = ultimoPedidoGuardado.PedidoId });
+                        return RedirectToAction("Index", "Pedidos");
                     }
 
                     // Verifica el tipo de servicio para redireccionar apropiadamente
@@ -190,7 +184,6 @@ namespace VistaNewProject.Controllers
                 return RedirectToAction("Create", "DetallePedidos");
             }
         }
-
 
 
         public async Task<IActionResult> Cancelar()
