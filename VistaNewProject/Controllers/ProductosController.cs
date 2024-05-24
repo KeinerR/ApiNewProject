@@ -142,6 +142,7 @@ namespace VistaNewProject.Controllers
                         ProductoId = producto.ProductoId,
                         CategoriaId = producto.CategoriaId,
                         CantidadTotal = producto.CantidadTotal,
+                        CantidadReservada=0,
                         CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor,
                         DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor,
                         Estado = producto.Estado
@@ -299,6 +300,7 @@ namespace VistaNewProject.Controllers
                         MarcaId = producto.MarcaId,
                         CategoriaId = producto.CategoriaId,
                         CantidadTotal = producto.CantidadTotal,
+                        CantidadReservada=0,
                         CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor,
                         DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor,
                         Estado = producto.Estado

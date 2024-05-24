@@ -107,6 +107,27 @@ function enviarDetallePedido(detalle, url) {
 
 
 
+function mostrarDetallesPedido() {
+    var tablaDetalles = document.getElementById("listaDetallesPedido").getElementsByTagName("tbody")[0];
+    tablaDetalles.innerHTML = "";
+
+    detallesdepedidp.forEach(function (detalle, index) {
+        var fila = tablaDetalles.insertRow();
+        fila.insertCell(0).innerHTML = detalle.ProductoId;
+        fila.insertCell(1).innerHTML = detalle.Cantidad;
+        fila.insertCell(2).innerHTML = detalle.PrecioUnitario;
+        fila.insertCell(3).innerHTML = detalle.UnidadId;
+        fila.insertCell(4).innerHTML = detalle.Cantidad * detalle.PrecioUnitario; // Subtotal
+        // Agregar un botón de eliminar en la última celda de cada fila
+        var btnEliminar = document.createElement("button");
+        btnEliminar.innerHTML = '<i class="fa-solid fa-trash-can"></i>'; // Icono de eliminación
+        btnEliminar.onclick = function () {
+            eliminarDetalle(index);
+        };
+        fila.insertCell(5).appendChild(btnEliminar); // Insertar el botón en la última celda (índice 6)
+    });
+}
+
 function eliminarDetalle(index) {
     console.log(index);
     $.ajax({
@@ -127,27 +148,6 @@ function eliminarDetalle(index) {
             // Manejar errores, como mostrar un mensaje al usuario
             console.error('Error al eliminar el detalle:', error);
         }
-    });
-}
-
-function mostrarDetallesPedido() {
-    var tablaDetalles = document.getElementById("listaDetallesPedido").getElementsByTagName("tbody")[0];
-    tablaDetalles.innerHTML = "";
-
-    detallesdepedidp.forEach(function (detalle, index) {
-        var fila = tablaDetalles.insertRow();
-        fila.insertCell(0).innerHTML = detalle.ProductoId;
-        fila.insertCell(1).innerHTML = detalle.Cantidad;
-        fila.insertCell(2).innerHTML = detalle.PrecioUnitario;
-        fila.insertCell(3).innerHTML = detalle.UnidadId;
-        fila.insertCell(4).innerHTML = detalle.Cantidad * detalle.PrecioUnitario; // Subtotal
-        // Agregar un botón de eliminar en la última celda de cada fila
-        var btnEliminar = document.createElement("button");
-        btnEliminar.innerHTML = '<i class="fa-solid fa-trash-can text-info"></i>'; // Icono de eliminación en color azul
-        btnEliminar.onclick = function () {
-            eliminarDetalle(index);
-        };
-        fila.insertCell(5).appendChild(btnEliminar); // Insertar el botón en la última celda (índice 5)
     });
 }
 
