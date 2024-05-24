@@ -168,6 +168,71 @@ namespace VistaNewProject.Controllers
                 {
                     var ultimoPedidoGuardado = ultimoPedido.OrderByDescending(p => p.PedidoId).First();
 
+                    // Si el pedido está pendiente
+                    if (ultimoPedidoGuardado.EstadoPedido == "Pendiente")
+                    {
+                        foreach (var detalle in listaGlobalDetalles)
+                        {
+                            // Reservar cantidad del producto
+                            var producto = await _client.FindProductoAsync(detalle.ProductoId.Value);
+                            if (producto != null)
+                            {
+                                if (detalle.Cantidad > producto.CantidadTotal - producto.CantidadReservada)
+                                {
+                                    // Configurar el mensaje de error en TempData
+                                    TempData["ErrorMessage"] = "No hay suficiente stock disponible para este producto";
+
+                                    // Retornar BadRequest para indicar el error
+                                    return RedirectToAction("Index","Pedidos");
+                                }
+
+
+
+                                producto.CantidadReservada += detalle.Cantidad.Value;
+                                var updateProducto = await _client.UpdateProductoAsync(producto);
+                                if (!updateProducto.IsSuccessStatusCode)
+                                {
+                                    TempData["ErrorMessage"] = $"Error al reservar cantidad del producto: {updateProducto.ReasonPhrase}";
+                                    return RedirectToAction("Index", "Pedidos");
+                                }
+                            }
+
+                            // Aquí iría el código para reservar cantidades de los lotes correspondientes
+                            var lotes = await _client.GetLoteAsync();
+                            var lotesFiltrados = lotes
+                                .Where(l => l.ProductoId == detalle.ProductoId && l.Cantidad > 0)
+                                .OrderBy(l => l.FechaVencimiento)
+                                .ThenByDescending(l => l.Cantidad);
+
+                            if (lotesFiltrados.Any())
+                            {
+                                int cantidadRestante = detalle.Cantidad.Value;
+
+                                foreach (var lote in lotesFiltrados)
+                                {
+                                    if (cantidadRestante <= 0)
+                                        break;
+
+
+                                    int cantidadReservar = Math.Min(cantidadRestante, lote.Cantidad.Value);
+
+                                    // Actualizar la cantidad del lote
+                                    lote.Cantidad -= cantidadReservar;
+                                    cantidadRestante -= cantidadReservar;
+
+                                    // Actualizar el lote en la base de datos
+                                    var updateLoteResponse = await _client.UpdateLoteAsync(lote);
+
+                                    if (!updateLoteResponse.IsSuccessStatusCode)
+                                    {
+                                        TempData["ErrorMessage"] = $"Error al actualizar el lote: {updateLoteResponse.ReasonPhrase}";
+                                        return RedirectToAction("Index", "Pedidos");
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     // Actualizar el valor total del pedido
                     ultimoPedidoGuardado.ValorTotalPedido = sumaSubtotales;
                     var updateResponse = await _client.UpdatePedidoAsync(ultimoPedidoGuardado);
@@ -176,10 +241,10 @@ namespace VistaNewProject.Controllers
                     {
                         var errorContent = await updateResponse.Content.ReadAsStringAsync();
                         TempData["ErrorMessage"] = $"Error al actualizar el valor total del pedido: {updateResponse.ReasonPhrase} - {errorContent}";
-                        return RedirectToAction("Create", "DetallePedidos");
+                        return RedirectToAction("Index", "Pedidos");
                     }
 
-                    // Verifica si el estado del último pedido es "Realizado" y es por caja
+                    // Si el pedido está "Realizado" y es por caja
                     if (ultimoPedidoGuardado.EstadoPedido == "Realizado" && ultimoPedidoGuardado.TipoServicio == "Caja")
                     {
                         // Iterar sobre los detalles del pedido para descontar el inventario y los lotes
@@ -249,6 +314,7 @@ namespace VistaNewProject.Controllers
                     }
                 }
 
+                // Limpiar la lista de detalles globales después de procesar el pedido
                 listaGlobalDetalles.Clear();
                 return RedirectToAction("Index", "Pedidos");
             }
@@ -258,8 +324,6 @@ namespace VistaNewProject.Controllers
                 return RedirectToAction("Create", "DetallePedidos");
             }
         }
-
-
         public async Task<IActionResult> Cancelar(bool confirmarCancelacion)
         {
             if (listaGlobalDetalles.Count > 0 && confirmarCancelacion)

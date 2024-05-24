@@ -129,46 +129,32 @@ namespace VistaNewProject.Controllers
 
                                 if (producto != null)
                                 {
-                                    producto.CantidadTotal -= detallePedido.Cantidad;
+                                    producto.CantidadTotal -= producto.CantidadReservada;
                                     var updateProducto = await _client.UpdateProductoAsync(producto);
                                     if (updateProducto.IsSuccessStatusCode)
                                     {
                                         Console.WriteLine("Producto actualizado correctamente");
                                     }
                                 }
-                                var lotes = await _client.GetLoteAsync();
-                                var lotesFiltrados = lotes
-            .Where(l => l.ProductoId == productoId && l.Cantidad > 0)
-            .OrderBy(l => l.FechaVencimiento)
-            .ThenByDescending(l => l.Cantidad);
-
-                                if (lotesFiltrados.Any())
+                                if (detallePedido.LoteId != null)
                                 {
-                                    int cantidadRestante = detallePedido.Cantidad.Value;
+                                    var lote = await _client.FindLoteAsync(detallePedido.LoteId.Value);
+                                    lote.Cantidad -= detallePedido.Cantidad.Value;
 
-                                    foreach (var lote in lotesFiltrados)
+                                    // Actualizar el lote en la base de datos
+                                    var updateLote = await _client.UpdateLoteAsync(lote);
+                                    if (!updateLote.IsSuccessStatusCode)
                                     {
-                                        if (cantidadRestante <= 0)
-                                            break;
-
-                                        int cantidadDescontar = Math.Min(cantidadRestante, lote.Cantidad.Value);
-
-                                        lote.Cantidad -= cantidadDescontar;
-                                        cantidadRestante -= cantidadDescontar;
-
-                                        var updateLotees = await _client.UpdateLoteAsync(lote);
-
-                                        if (updateLotees.IsSuccessStatusCode)
-                                        {
-                                            Console.WriteLine($"Se descontaron {cantidadDescontar} del lote con ID {lote.LoteId}");
-                                        }
+                                        // Manejar el error si la actualización del lote falla
+                                        return StatusCode(500, "Error interno del servidor al actualizar el lote.");
                                     }
                                 }
-
                             }
 
                         }
+
                     }
+
                     else if (pedidostraidos != null && pedidostraidos.EstadoPedido == "Cancelado")
                     {
                         var detallescancelados = await _client.GetDetallepedidoAsync();

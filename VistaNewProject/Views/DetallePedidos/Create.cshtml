@@ -108,7 +108,7 @@
             </div>
         </div>
     </form>
-</div>
+
 
 <div class="mt-4" id="listaDetallesPedido">
     <!-- Aquí se mostrarán los detalles de pedido agregados en una tabla -->
@@ -128,7 +128,7 @@
         </tbody>
     </table>
 </div>
-
+</div>
 <script>
     document.addEventListener('click', function (event) {
         var isClickInside = document.getElementById('createContainer').contains(event.target);
@@ -142,6 +142,56 @@
             }
         }
     });
-</script>
 
+    // Función para mostrar el mensaje de confirmación
+    function mostrarConfirmacion() {
+        return confirm('¿Deseas cancelar la creación del pedido?');
+    }
+
+    // Agregar un event listener a todos los enlaces y formularios del layout
+    document.addEventListener('DOMContentLoaded', function () {
+        // Seleccionar todos los enlaces y formularios dentro del layout
+        var enlaces = document.querySelectorAll('header a, #Menu a, #perfilVentanaEmergente a');
+        var formularios = document.querySelectorAll('header form, #Menu form, #perfilVentanaEmergente form');
+
+        // Función para manejar el clic en los enlaces y formularios
+        function manejarClick(event) {
+            if (!mostrarConfirmacion()) {
+                // Si el usuario decide no cancelar, prevenir la navegación
+                event.preventDefault();
+            }
+        }
+
+        // Agregar el event listener a cada enlace
+        enlaces.forEach(function (enlace) {
+            enlace.addEventListener('click', manejarClick);
+        });
+
+        // Agregar el event listener a cada formulario
+        formularios.forEach(function (formulario) {
+            formulario.addEventListener('submit', manejarClick);
+        });
+    });
+
+    // Restablecer los mensajes de error cuando el usuario comience a escribir en los campos
+    document.getElementById('ProductoIdtxt').addEventListener('input', function () {
+        document.getElementById('ProductoIdError').textContent = '';
+        this.classList.remove('border-danger');
+    });
+
+    document.getElementById('UnidadId').addEventListener('input', function () {
+        document.getElementById('UnidadError').textContent = '';
+        this.classList.remove('border-danger');
+    });
+
+    document.getElementById('PrecioUnitario').addEventListener('input', function () {
+        document.getElementById('PrecioUnitarioError').textContent = '';
+        this.classList.remove('border-danger');
+    });
+
+    document.getElementById('Cantidad').addEventListener('input', function () {
+        document.getElementById('CantidadError').textContent = '';
+        this.classList.remove('border-danger');
+    });
+</script>
 <script src="~/js/detallespedidos/detallespedidos.js"></script>
