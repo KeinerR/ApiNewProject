@@ -19,8 +19,8 @@ namespace ApiNewProject.Entities
         public int? MarcaId { get; set; }
         public int? CategoriaId { get; set; }
         public string? NombreProducto { get; set; }
-        public int ? CantidadTotal { get; set; }
-        public int ? CantidadReservada { get; set; }  // Nueva propiedad
+        public int? CantidadTotal { get; set; } = 0;
+        public int? CantidadReservada { get; set; } = 0;  // Nueva propiedad
 
         public int CantidadAplicarPorMayor { get; set; }
         public int DescuentoAplicarPorMayor { get; set; }

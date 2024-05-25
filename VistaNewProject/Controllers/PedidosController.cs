@@ -129,75 +129,134 @@ namespace VistaNewProject.Controllers
 
                                 if (producto != null)
                                 {
-                                    producto.CantidadTotal -= producto.CantidadReservada;
+                                    producto.CantidadTotal -= detallePedido.Cantidad;
+                                    producto.CantidadReservada -= detallePedido.Cantidad;
                                     var updateProducto = await _client.UpdateProductoAsync(producto);
                                     if (updateProducto.IsSuccessStatusCode)
                                     {
                                         Console.WriteLine("Producto actualizado correctamente");
                                     }
                                 }
-                                if (detallePedido.LoteId != null)
-                                {
-                                    var lote = await _client.FindLoteAsync(detallePedido.LoteId.Value);
-                                    lote.Cantidad -= detallePedido.Cantidad.Value;
 
-                                    // Actualizar el lote en la base de datos
-                                    var updateLote = await _client.UpdateLoteAsync(lote);
-                                    if (!updateLote.IsSuccessStatusCode)
+
+
+                                // Obtener los lotes disponibles para el producto actual
+                                var lotes = await _client.GetLoteAsync();
+                                var lotesFiltrados = lotes
+                                    .Where(l => l.ProductoId == productoId && l.Cantidad > 0)
+                                    .OrderBy(l => l.FechaVencimiento)
+                                    .ThenByDescending(l => l.Cantidad);
+
+                                if (lotesFiltrados.Any())
+                                {
+                                    int cantidadRestante = detallePedido.Cantidad.Value;
+
+                                    foreach (var lote in lotesFiltrados)
                                     {
-                                        // Manejar el error si la actualización del lote falla
-                                        return StatusCode(500, "Error interno del servidor al actualizar el lote.");
+                                        if (cantidadRestante <= 0)
+                                            break;
+
+                                        int cantidadDescontar = Math.Min(cantidadRestante, lote.Cantidad.Value);
+
+                                        // Actualizar la cantidad del lote
+                                        lote.Cantidad -= cantidadDescontar;
+                                        cantidadRestante -= cantidadDescontar;
+
+                                        // Actualizar el lote en la base de datos
+                                        var updateLoteResponse = await _client.UpdateLoteAsync(lote);
+
+                                        if (!updateLoteResponse.IsSuccessStatusCode)
+                                        {
+                                            TempData["ErrorMessage"] = $"Error al actualizar el lote: {updateLoteResponse.ReasonPhrase}";
+                                            return RedirectToAction("Index", "Pedidos");
+                                        }
                                     }
                                 }
                             }
+                        }
+                    }
+
+
+                    else if (pedidostraidos != null && pedidostraidos.EstadoPedido == "Anulado")
+                    {
+                        var detalles = await _client.GetDetallepedidoAsync();
+                        var detallesPedido = detalles.Where(d => d.PedidoId == id).ToList();
+
+                        if (detallesPedido != null)
+                        {
+                            foreach (var detallePedido in detallesPedido)
+                            {
+                                var productoId = detallePedido.ProductoId.Value;
+                                var producto = await _client.FindProductoAsync(productoId);
+
+                                if (producto != null)
+                                {
+                                    producto.CantidadReservada -= detallePedido.Cantidad;
+                                    var updateProducto = await _client.UpdateProductoAsync(producto);
+                                    if (updateProducto.IsSuccessStatusCode)
+                                    {
+                                        Console.WriteLine("Producto actualizado correctamente");
+                                    }
+                                }
+                               
+                            }
 
                         }
 
                     }
-
                     else if (pedidostraidos != null && pedidostraidos.EstadoPedido == "Cancelado")
                     {
-                        var detallescancelados = await _client.GetDetallepedidoAsync();
+                        var detalles = await _client.GetDetallepedidoAsync();
+                        var detallesPedido = detalles.Where(d => d.PedidoId == id).ToList();
 
-                        // Agrupar los detalles cancelados por ProductoId y LoteId
-                        var detallesAgrupadosPorProductoYLote = detallescancelados
-                            .Where(d => d.PedidoId == id)
-                            .GroupBy(d => new { d.ProductoId, d.LoteId });
-
-                        foreach (var grupo in detallesAgrupadosPorProductoYLote)
+                        if (detallesPedido != null)
                         {
-                            var productoId = grupo.Key.ProductoId;
-                            var loteId = grupo.Key.LoteId;
-
-                            var producto = await _client.FindProductoAsync(productoId.Value);
-
-                            if (producto != null)
+                            foreach (var detalleCancelado in detallesPedido)
                             {
-                                // Sumar la cantidad cancelada al producto
-                                producto.CantidadTotal += grupo.Sum(d => d.Cantidad);
-                                var updateProducto = await _client.UpdateProductoAsync(producto);
+                                var productoId = detalleCancelado.ProductoId.Value;
+                                var producto = await _client.FindProductoAsync(productoId);
 
-                                if (updateProducto.IsSuccessStatusCode)
+                                if (producto != null)
                                 {
-                                    Console.WriteLine("Producto actualizado correctamente");
+                                    // Devolver la cantidad del detalle cancelado al producto
+                                    producto.CantidadTotal += detalleCancelado.Cantidad;
+                                    var updateProducto = await _client.UpdateProductoAsync(producto);
+
+                                    if (updateProducto.IsSuccessStatusCode)
+                                    {
+                                        Console.WriteLine("Cantidad devuelta al producto correctamente");
+                                    }
                                 }
-                            }
 
-                            var lote = await _client.FindLoteAsync(loteId.Value);
-
-                            if (lote != null)
-                            {
-                                // Sumar la cantidad cancelada al lote
-                                lote.Cantidad += grupo.Sum(d => d.Cantidad);
-                                var updateLote = await _client.UpdateLoteAsync(lote);
-
-                                if (updateLote.IsSuccessStatusCode)
+                                if (detalleCancelado.LoteId != null) // Verificar si hay un lote asociado al detalle
                                 {
-                                    Console.WriteLine($"Se devolvieron {grupo.Sum(d => d.Cantidad)} al lote con ID {lote.LoteId}");
+                                    var loteId = detalleCancelado.LoteId.Value;
+                                    var lote = await _client.FindLoteAsync(loteId);
+
+                                    if (lote != null) // Verificar si el lote es válido
+                                    {
+                                        // Obtener el lote más próximo a vencer disponible para ese producto
+                                        var loteProximoVencimiento = await ObtenerLoteProximoVencimientoDisponible(productoId);
+
+                                        if (loteProximoVencimiento != null)
+                                        {
+                                            // Devolver la cantidad del detalle cancelado al lote más próximo a vencer
+                                            loteProximoVencimiento.Cantidad += detalleCancelado.Cantidad;
+
+                                            // Actualizar el lote en la base de datos
+                                            var updateLote = await _client.UpdateLoteAsync(loteProximoVencimiento);
+
+                                            if (updateLote.IsSuccessStatusCode)
+                                            {
+                                                Console.WriteLine("Cantidad devuelta al lote más próximo a vencer correctamente");
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
+
 
 
 

@@ -7,9 +7,9 @@
         public int? MarcaId { get; set; }
         public int? CategoriaId { get; set; }
         public string? NombreProducto { get; set; }
-        public int? CantidadTotal { get; set; }
-        public int? CantidadReservada { get; set; }  
-        public string NombreCompleto { get; set; }
+        public int? CantidadTotal { get; set; } = 0;
+        public int? CantidadReservada { get; set; }  = 0;
+        public string NombreCompleto { get; set; } 
         public int CantidadAplicarPorMayor { get; set; }
 
         public int CantidadPorPresentacion { get; set; }

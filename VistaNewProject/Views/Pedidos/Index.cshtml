@@ -185,6 +185,10 @@
                             <input type="radio" name="estado_@item.PedidoId" value="Realizado" onchange="actualizarEstadoPedido('@item.PedidoId', this.value)">
                             <span class="slider" style="background-color: #00215E;"></span>
                         </label>
+                        <label class="switch">
+                            <input type="radio" name="estado_@item.PedidoId" value="Anulado" onchange="actualizarEstadoPedido('@item.PedidoId', this.value)">
+                            <span class="slider" style="background-color: #615E5E;"></span>
+                        </label>
                     }
                     else if (item.EstadoPedido == "Realizado")
                     {
@@ -198,10 +202,13 @@
                         <script>
                             // Eliminar el radio button cuando el estado es "Cancelado"
                             var radioBtn = document.querySelector("input[name='estado_@item.PedidoId'][value='Realizado']");
-                            radioBtn.parentNode.parentNode.parentNode.removeChild(radioBtn.parentNode.parentNode);
+                            if (radioBtn) {
+                                radioBtn.parentNode.parentNode.parentNode.removeChild(radioBtn.parentNode.parentNode);
+                            }
                         </script>
                     }
                 </td>
+
 
                
              

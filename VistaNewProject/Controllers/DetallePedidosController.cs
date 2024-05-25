@@ -183,7 +183,7 @@ namespace VistaNewProject.Controllers
                                     TempData["ErrorMessage"] = "No hay suficiente stock disponible para este producto";
 
                                     // Retornar BadRequest para indicar el error
-                                    return RedirectToAction("Index","Pedidos");
+                                    return RedirectToAction("Index", "Pedidos");
                                 }
 
 
@@ -197,55 +197,11 @@ namespace VistaNewProject.Controllers
                                 }
                             }
 
-                            // Aquí iría el código para reservar cantidades de los lotes correspondientes
-                            var lotes = await _client.GetLoteAsync();
-                            var lotesFiltrados = lotes
-                                .Where(l => l.ProductoId == detalle.ProductoId && l.Cantidad > 0)
-                                .OrderBy(l => l.FechaVencimiento)
-                                .ThenByDescending(l => l.Cantidad);
-
-                            if (lotesFiltrados.Any())
-                            {
-                                int cantidadRestante = detalle.Cantidad.Value;
-
-                                foreach (var lote in lotesFiltrados)
-                                {
-                                    if (cantidadRestante <= 0)
-                                        break;
-
-
-                                    int cantidadReservar = Math.Min(cantidadRestante, lote.Cantidad.Value);
-
-                                    // Actualizar la cantidad del lote
-                                    lote.Cantidad -= cantidadReservar;
-                                    cantidadRestante -= cantidadReservar;
-
-                                    // Actualizar el lote en la base de datos
-                                    var updateLoteResponse = await _client.UpdateLoteAsync(lote);
-
-                                    if (!updateLoteResponse.IsSuccessStatusCode)
-                                    {
-                                        TempData["ErrorMessage"] = $"Error al actualizar el lote: {updateLoteResponse.ReasonPhrase}";
-                                        return RedirectToAction("Index", "Pedidos");
-                                    }
-                                }
-                            }
                         }
                     }
 
-                    // Actualizar el valor total del pedido
-                    ultimoPedidoGuardado.ValorTotalPedido = sumaSubtotales;
-                    var updateResponse = await _client.UpdatePedidoAsync(ultimoPedidoGuardado);
-
-                    if (!updateResponse.IsSuccessStatusCode)
-                    {
-                        var errorContent = await updateResponse.Content.ReadAsStringAsync();
-                        TempData["ErrorMessage"] = $"Error al actualizar el valor total del pedido: {updateResponse.ReasonPhrase} - {errorContent}";
-                        return RedirectToAction("Index", "Pedidos");
-                    }
-
                     // Si el pedido está "Realizado" y es por caja
-                    if (ultimoPedidoGuardado.EstadoPedido == "Realizado" && ultimoPedidoGuardado.TipoServicio == "Caja")
+                    else if (ultimoPedidoGuardado.EstadoPedido == "Realizado" && ultimoPedidoGuardado.TipoServicio == "Caja")
                     {
                         // Iterar sobre los detalles del pedido para descontar el inventario y los lotes
                         foreach (var detalle in listaGlobalDetalles)
@@ -306,17 +262,18 @@ namespace VistaNewProject.Controllers
                         return RedirectToAction("Index", "Pedidos");
                     }
 
-                    // Verifica el tipo de servicio para redireccionar apropiadamente
-                    if (ultimoPedidoGuardado.TipoServicio == "Domicilio")
-                    {
-                        listaGlobalDetalles.Clear();
-                        return RedirectToAction("Index", "Domicilios");
+                        // Verifica el tipo de servicio para redireccionar apropiadamente
+                        if (ultimoPedidoGuardado.TipoServicio == "Domicilio")
+                        {
+                            listaGlobalDetalles.Clear();
+                            return RedirectToAction("Index", "Domicilios");
+                        }
                     }
-                }
-
+                
                 // Limpiar la lista de detalles globales después de procesar el pedido
                 listaGlobalDetalles.Clear();
-                return RedirectToAction("Index", "Pedidos");
+                    return RedirectToAction("Index", "Pedidos");
+               
             }
             catch (Exception ex)
             {
