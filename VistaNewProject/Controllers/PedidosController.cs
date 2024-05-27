@@ -18,8 +18,8 @@ namespace VistaNewProject.Controllers
 
         public async Task<ActionResult> Index(int? page)
         {
-            int pageSize = 5;
-            int pageNumber = page ?? 1;
+            int pageSize = 5; // Cambiado a 5 para que la paginación se haga cada 5 registros
+            int pageNumber = page ?? 1; // Número de página actual (si no se especifica, es 1)
 
             var pedidos = await _client.GetPedidoAsync();
             var pedidosFiltrados = pedidos.Where(p => p.EstadoPedido == "Realizado" || p.EstadoPedido == "Pendiente");
@@ -29,26 +29,49 @@ namespace VistaNewProject.Controllers
                 return View("Error");
             }
 
-            var pagesPedidos = await pedidosFiltrados.ToPagedListAsync(pageNumber, pageSize);
-
-            if (!pagesPedidos.Any() && pagesPedidos.PageNumber > 1)
+            var pagePedido = await pedidosFiltrados.ToPagedListAsync(pageNumber, pageSize);
+            if (!pagePedido.Any() && pagePedido.PageNumber > 1)
             {
-                pagesPedidos = await pedidosFiltrados.ToPagedListAsync(pagesPedidos.PageCount, pageSize);
+                pagePedido = await pedidosFiltrados.ToPagedListAsync(pagePedido.PageCount, pageSize);
             }
 
+            int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
+
             var clientes = await _client.GetClientesAsync();
-           
+
 
             ViewBag.Clientes = clientes;
-           
 
-            return View(pagesPedidos);
+
+            // Código del método Index que querías integrar
+            string mensaje = HttpContext.Session.GetString("Message");
+            TempData["Message"] = mensaje;
+
+            try
+            {
+                ViewData["Pedidos"] = pedidos;
+
+            }
+
+            catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
+            {
+                HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
+                return RedirectToAction("Index", "Home");
+            }
+            catch
+            {
+                HttpContext.Session.SetString("Message", "Error en el aplicativo");
+                return RedirectToAction("LogOut", "Accesos");
+            }
+            return View(pagePedido);
+
         }
+
 
         public async Task<ActionResult> PedidosCancelados(int? page)
         {
-            int pageSize = 5;
-            int pageNumber = page ?? 1;
+            int pageSize = 5; // Cambiado a 5 para que la paginación se haga cada 5 registros
+            int pageNumber = page ?? 1; // Número de página actual (si no se especifica, es 1)
 
             var pedidos = await _client.GetPedidoAsync();
             var pedidosFiltrados = pedidos.Where(p => p.EstadoPedido == "Cancelado" || p.EstadoPedido == "Anulado");

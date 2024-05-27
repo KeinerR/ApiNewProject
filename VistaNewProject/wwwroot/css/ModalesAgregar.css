@@ -17,8 +17,7 @@
 }
 
 #pibo {
-    flex: 0 0 auto;
-    border:solid red 2px;
+    flex: 0 0 auto; 
 }
 
 .TituloModal {

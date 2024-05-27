@@ -138,10 +138,10 @@
 <div class="d-flex justify-content-between" style="margin-bottom: 20px;">
     <!-- Formulario de búsqueda a la izquierda -->
     <div class="mr-auto">
-        <form class="d-none d-md-inline-block form-inline my-2 my-md-0">
+        <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
             <div class="input-group">
-                <input class="form-control" type="text" placeholder="Buscar" aria-label="Search for..." aria-describedby="btnNavbarSearch" id="searchInput" />
-                <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+                <input id="buscarPedido" type="text" class="form-control" placeholder="Buscar pedido" aria-label="Search" aria-describedby="button-addon2">
+                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
             </div>
         </form>
     </div>
@@ -195,7 +195,7 @@
         }
         @foreach (var item in Model)
         {
-            <tr>
+            <tr class="pedidosPaginado">
                 <td>
                     @contador <!-- Muestra el valor del contador -->
                     @{
@@ -250,22 +250,88 @@
                 </td>
             </tr>
         }
+        @{
+            int contadorDos = 1;
+            var pedidos = ViewData["Pedidos"] as List<Pedido>;
+            if (pedidos != null)
+            {
+                foreach (var pedido in pedidos)
+                {
+                    <tr class="Pedidos" style="display:none;">
+                        <td>@contadorDos</td>
+                        <td>
+                            @foreach (var clientes in ViewBag.Clientes)
+                            {
+                                @if (clientes.ClienteId == pedido.ClienteId) // Verifica si el ID del rol coincide con el ID del rol del usuario
+                                {
+                                    <span>@clientes.Identificacion</span> <!-- Muestra el nombre del rol si coincide -->
+                                }
+                            }
+                        </td>
+                        <td>@pedido.TipoServicio</td>
+                        <td>@pedido.FechaPedido</td>
+                        <td class="text-center align-middle contenedorEstadoTabla">
+                            @if (pedido.EstadoPedido == "Pendiente")
+                            {
+                                <label class="switch">
+                                    <input type="radio" name="estado_@pedido.PedidoId" value="Realizado" onchange="actualizarEstadoPedido('@pedido.PedidoId', this.value)">
+                                    <span class="slider" style="background-color: #00215E;"></span>
+                                </label>
+                                <label class="switch">
+                                    <input type="radio" name="estado_@pedido.PedidoId" value="Anulado" onchange="actualizarEstadoPedido('@pedido.PedidoId', this.value)">
+                                    <span class="slider" style="background-color: #615E5E;"></span>
+                                </label>
+                            }
+                            else if (pedido.EstadoPedido == "Realizado")
+                            {
+                                <label class="switch">
+                                    <input type="radio" name="estado_@pedido.PedidoId" value="Cancelado" onchange="actualizarEstadoPedido('@pedido.PedidoId', this.value)">
+                                    <span class="slider" style="background-color: #E61905;"></span>
+                                </label>
+                            }
+
+
+                        </td>
+
+
+
+
+                        <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                        <td>
+                            <a asp-action="Details" asp-controller="Pedidos" asp-route-id="@pedido.PedidoId" class="btn" id="btnDetail"><i class="fa-solid fa-file"></i></a>
+                        </td>
+                    </tr>
+                    contadorDos++;
+
+                }
+            }
+        }
     </tbody>
 </table>
+
 <div class="pagination-container mt-2">
     @if (Model != null && Model.PageCount > 1)
     {
         <div class="d-flex justify-content-center mb-5">
-            <nav aria-label="Page navigation bg-dark">
-                <ul class="pagination">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <!-- Botón para ir a la primera página -->
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="First">
+                                <span aria-hidden="true">Primero</span>
+                            </a>
+                        </li>
+                    }
                     <!-- Botón para la página anterior (oculto en la página 1) -->
                     <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
                         <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
                         </a>
                     </li>
                     <!-- Iterar sobre las páginas disponibles -->
-                    @for (var i = 1; i <= Model.PageCount; i++)
+                    @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
                     {
                         <li class="page-item @(i == Model.PageNumber ? "active" : "")">
                             <a class="page-link" href="?page=@i">@i</a>
@@ -274,9 +340,18 @@
                     <!-- Botón para la página siguiente (oculto en la última página) -->
                     <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
                         <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
                         </a>
                     </li>
+                    <!-- Botón para ir a la última página -->
+                    @if (Model.PageNumber < Model.PageCount)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@Model.PageCount" aria-label="Last">
+                                <span aria-hidden="true">Último</span>
+                            </a>
+                        </li>
+                    }
                 </ul>
             </nav>
         </div>
