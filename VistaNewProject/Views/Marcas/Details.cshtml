@@ -9,7 +9,7 @@
 <a asp-action="Index" class="btn btn-primary btn-sm">
     <i class="fas fa-arrow-left"></i> Volver
 </a>
-<!-- Agrega esto en tu enlace de "Editar" en Details.cshtml -->
+
 @if (ViewBag.Marca != null && ViewBag.Marca.MarcaId != null)
 {
     <a href="#" onclick="redireccionarYEditar('@ViewBag.Marca.MarcaId', 'Marcas','marca')" class="btn btn-warning"><i class="fa-solid fa-pen"></i> Editar</a>
@@ -21,49 +21,70 @@ else
 
 
 <div>
-    <h3>Marca ID:</h3> <p>@ViewBag.Marca.MarcaId</p>
-    <h3>Nombre de la Marca:</h3><p>@ViewBag.Marca.NombreMarca</p>
-</div>
+    <br />
 
-<h4>Productos asociados:</h4>
-
-@if (Model.Any())
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Cantidad</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var producto in Model)
-            {
-                <tr>
-                    <td>@producto.ProductoId</td>
-                    <td>@producto.NombreProducto</td>
-                    <td>@producto.CantidadTotal</td>
+    <div class="pedido-info">
+        <h2 style="text-align:center;">Información de la Marca</h2>
+        <table class="table" style="margin: 0 auto; width: 60%;">
+            <tbody style="text-align: center;">
+                <tr style="background-color: lightgray;">
+                    <th>Marca ID:</th>
+                    <th>Nombre de la Marca:</th>
+                  
                 </tr>
-            }
-        </tbody>
-    </table>
-    <div class="pagination-detail">
-        @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Marca.MarcaId, page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 }) + "' class='prev-next " + (Model.HasPreviousPage ? "" : "disabled") + "'>Anterior</a>")
-
-        @for (int i = 1; i <= Model.PageCount; i++)
+                <tr sstyle="background-color: white;">
+                    <td>@ViewBag.Marca.MarcaId</td>
+                    <td>@ViewBag.Marca.NombreMarca</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="margin:auto; text-align:center;">
+        <h2 style="">Productos asociados</h2>
+    </div>
+    <div>
+        @if (Model.Any())
         {
-            <a href="@Url.Action("Details", new { id = ViewBag.Marca.MarcaId, page = i })" class="@(i == Model.PageNumber ? "active" : "")">@i</a>
-        }
+            <table class="table" style="margin: 0 auto; width: 60%;">
+                <thead style="background-color: lightgray;">
+                    <tr style="text-align: center;">
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var producto in Model)
+                    {
+                        <tr style="text-align: center; background-color: white;">
+                            <td>@producto.ProductoId</td>
+                            <td>@producto.NombreProducto</td>
+                            <td>@producto.CantidadTotal</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
 
-        @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Marca.MarcaId, page = Model.HasNextPage ? Model.PageNumber + 1 : Model.PageCount }) + "' class='prev-next " + (Model.HasNextPage ? "" : "disabled") + "'>Siguiente</a>")
+            <div class="pagination-detail">
+                @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Marca.MarcaId, page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 }) + "' class='prev-next " + (Model.HasPreviousPage ? "" : "disabled") + "'>Anterior</a>")
+
+                @for (int i = 1; i <= Model.PageCount; i++)
+                {
+                    <a href="@Url.Action("Details", new { id = ViewBag.Marca.MarcaId, page = i })" class="@(i == Model.PageNumber ? "active" : "")">@i</a>
+                }
+
+                @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Marca.MarcaId, page = Model.HasNextPage ? Model.PageNumber + 1 : Model.PageCount }) + "' class='prev-next " + (Model.HasNextPage ? "" : "disabled") + "'>Siguiente</a>")
+            </div>
+        }
+        else
+        {
+            <p>No se encontraron productos asociados a esta marca.</p>
+        }
     </div>
 
+</div>
 
-}
-else
-{
-    <p>No se encontraron productos asociados a esta marca.</p>
-}
+
+
 
 <script src="~/js/Detalle.js"></script>

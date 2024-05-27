@@ -15,21 +15,17 @@ function obtenerDatosProductos() {
         .catch(error => console.error('Error al obtener los productos:', error));
 }
 
-//Funciones que se cargan first
+//Funciones que se cargan al mismo tiempo que la pagina
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const mostrarAlerta = urlParams.get('mostrarAlerta');
     const productoId = urlParams.get('productoId');
 
-   
-    let timeout = null;
 
     if (mostrarAlerta === 'true' && productoId) {
-        obtenerDatosProducto(productoId);
-        const botonModal = document.querySelector('[data-bs-target="#ModalProducto"]');
-        if (botonModal) {
-            botonModal.click();
-        }
+        mostrarModalSinRetrasoProducto(productoId);
+    } else {
+        console.log('ProductoId no encontrado en la URL');
     }
 
     // Evita el envío del formulario si no se cumplen con los requerimientos mínimos
@@ -162,7 +158,6 @@ document.addEventListener('DOMContentLoaded', function () {
         $('.MensajeInicial').text('');
         return true;
     }
-
     function NoCamposVaciosInicial()     {
         const textDangerElements = $('.text-danger');
         const mensajeElements = $('.Mensaje');
@@ -272,7 +267,16 @@ function mostrarModalConRetrasoProducto(productoId) {
         }, 170); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
     }, 0); // 0 milisegundos de retraso antes de llamar a actualizarProducto
 }
-
+function mostrarModalSinRetrasoProducto(productoId) {
+    setTimeout(function () {
+        actualizarProducto(productoId);
+        setTimeout(function () {
+            var myModal = new bootstrap.Modal(document.getElementById('ModalProducto'));
+            myModal.show();
+            // Aquí puedes llamar a la función actualizarProducto si es necesario
+        }, 50); // 50 milisegundos (0.05 segundos) de retraso antes de abrir la modal
+    }, 0); // 0 milisegundos de retraso antes de llamar a actualizarProducto
+}
 function actualizarProducto(campo) {
     var productoId = campo;
     $.ajax({
@@ -341,7 +345,14 @@ function vaciarInputProducto() {
     document.getElementById('buscarProducto').value = "";
     var icon = document.querySelector('#btnNavbarSearch i');
     icon.className = 'fas fa-search';
-    icon.style.color = 'gray';
+    icon.style.color = 'white';
+
+    var contador = document.querySelector('.contador');
+    contador.innerText = '#';
+    var contadores = document.querySelectorAll('.contadorB');
+    contadores.forEach(function (contador) {
+        contador.classList.add('noIs'); // Removemos la clase 'noIs'
+    });
 
     var rows = document.querySelectorAll('.productosPaginado');
     rows.forEach(function (row) {
@@ -357,38 +368,46 @@ function vaciarInputProducto() {
 
 
 function searchProducto() {
-    var input = document.querySelector('#buscarProducto').value.trim().toLowerCase();
-    var rows = document.querySelectorAll('.productosPaginado');
-    var icon = document.querySelector('#btnNavbarSearch i');
-
+    var input = $('#buscarProducto').val().trim().toLowerCase();    //Obtiene el valor del buscadpor
+    var rows = document.querySelectorAll('.productosPaginado');    //Obtiene el tr de Usuario Paginado.
+    var rowsTodos = document.querySelectorAll('.Productos');      //Obtiene el tr de Usuario que esta en none
+    var icon = document.querySelector('#btnNavbarSearch i');     //Obtiene el icino de buscar
+    var contador = document.querySelector('.contador');         //Obtiene la columna que tiene el # 
+    var contadores = document.querySelectorAll('.contadorB');  //Obtiene el contadorB que esta en none y lo hace visible para mostrar el consecutivo y el ID
     if (input === "") {
-        rows.forEach(function (row) {
+        rows.forEach(function (row) { //Esconde los usuarios paginado
             row.style.display = '';
         });
+        contadores.forEach(function (contador) {
+            contador.classList.add('noIs'); // Removemos la clase 'noIs' para mostrar la columna
+        });
         icon.className = 'fas fa-search';
-        icon.style.color = 'gray';
+        icon.style.color = 'white';
+        contador.innerText = '#';
     } else {
         rows.forEach(function (row) {
             row.style.display = 'none';
         });
+        contadores.forEach(function (contador) {
+            contador.classList.remove('noIs'); // Removemos la clase 'noIs'
+        });
         icon.className = 'fas fa-times';
-        icon.style.color = 'gray';
-    }
+        icon.style.color = 'white';
+        contador.innerText = 'ID';
 
-    var rowsTodos = document.querySelectorAll('.Productos');
+    }
 
     rowsTodos.forEach(function (row) {
         if (input === "") {
             row.style.display = 'none';
         } else {
-            var productoId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
-            var nombreM = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var productoId = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
             var nombreC = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
-            var nombreP = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
-            var nombrePr = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
+            var nombreM = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
+            var nombreP = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
             var cantidadT = row.querySelector('td:nth-child(6)').textContent.trim().toLowerCase();
 
-            row.style.display = (productoId.includes(input) || nombreM.includes(input) || nombreC.includes(input) || nombreP.includes(input) || nombrePr.includes(input) || cantidadT.includes(input)) ? 'table-row' : 'none';
+            row.style.display = (productoId.includes(input) || nombreM.includes(input) || nombreC.includes(input) || nombreP.includes(input) || cantidadT.includes(input)) ? 'table-row' : 'none';
         }
     });
     
@@ -563,7 +582,7 @@ function Llamar2() {
     }
 }
 
-
+//Se llama al daar click en la x
 function limpiarFormularioProducto() {
     // Simular clic en el checkboxDescuentoPorMayor si está marcado
     var checkbox = document.getElementById('checkboxDescuentoPorMayor');
@@ -616,7 +635,27 @@ function limpiarFormularioProducto() {
     }
     document.getElementById('checkboxDescuentoPorMayorAct').checked = false; // Desmarcar el checkbox
 }
+//Se llama al daar click en cancelar en la modal de agregar producto
+function limpiarFormularioProductoAgregar() {
+    // Limpiar mensajes de alerta y *
+    var mensajes = document.querySelectorAll('.Mensaje');
+    var mensajesText = document.querySelectorAll('.text-danger');
 
+    for (var i = Math.max(0, mensajes.length - 6); i < mensajes.length; i++) {
+        mensajes[i].textContent = '';
+    }
+    for (var i = 0; i < mensajes.length - 8; i++) {
+        mensajes[i].textContent = '*';
+    }
+    for (var i = 0; i < mensajesText.length; i++) {
+        mensajesText[i].textContent = '';
+    }
+
+    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
+        element.textContent = '';
+    });
+}
+//Se llama al perder el foco de la modal para limpiar el formulario actualizar
 function limpiarFormularioProductoAct() {
     // Limpiar campos y elementos específicos de la versión actualizada
     limpiarCampo('NombreMarcaAct');

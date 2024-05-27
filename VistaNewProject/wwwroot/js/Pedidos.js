@@ -185,3 +185,58 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+
+
+document.getElementById('buscarPedido').addEventListener('input', function () {
+    var input = this.value.trim().toLowerCase();
+    var rows = document.querySelectorAll('.pedidosPaginado');
+
+    if (input === "") {
+        rows.forEach(function (row) {
+            row.style.display = '';
+        });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-search';
+        icon.style.color = 'white';
+    } else {
+        rows.forEach(function (row) {
+            row.style.display = 'none';
+        });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-times';
+        icon.style.color = 'white';
+    }
+    var rowsTodos = document.querySelectorAll('.Pedidos');
+
+    rowsTodos.forEach(function (row) {
+        if (input === "") {
+            row.style.display = 'none';
+        } else {
+            var clienteId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
+            var tipoP = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var fechaP = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+
+            row.style.display = (clienteId.includes(input) || tipoP.includes(input) || fechaP.includes(input)) ? 'table-row' : 'none';
+        }
+    });
+});
+
+function vaciarInput() {
+    document.getElementById('buscarPedido').value = "";
+    var icon = document.querySelector('#btnNavbarSearch i');
+    icon.className = 'fas fa-search';
+    icon.style.color = 'gray';
+
+    var rows = document.querySelectorAll('.pedidosPaginado');
+    rows.forEach(function (row) {
+        row.style.display = 'table-row';
+    });
+
+    var rowsTodos = document.querySelectorAll('.Pedidos');
+    rowsTodos.forEach(function (row) {
+        row.style.display = 'none';
+    });
+}
+
+
+

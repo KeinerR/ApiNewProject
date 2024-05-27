@@ -102,15 +102,7 @@
                 </tbody>
             </table>
 
-            <div class="pagination-detail">
-                @Html.PagedListPager(Model, page => Url.Action("Details", new { id = ViewBag.Pedidos.PedidoId, page }),
-                         new PagedListRenderOptions
-            {
-                LiElementClasses = new[] { "page-item" },
-                PageClasses = new[] { "page-link" },
-                UlElementClasses = new[] { "pagination" }
-            })
-            </div>
+            
         }
         else
         {
