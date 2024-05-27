@@ -8,7 +8,7 @@
         public int? CategoriaId { get; set; }
         public string? NombreProducto { get; set; }
         public int? CantidadTotal { get; set; }
-        public string NombreCompleto { get; set; }
+        public string? NombreCompleto { get; set; }
         public int CantidadAplicarPorMayor { get; set; }
 
         public int CantidadPorPresentacion { get; set; }

@@ -132,7 +132,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="btnEditarPresntacion">Actualizar</button>
+                    <button type="submit" class="btn btn-primary" id="botonEditararPresntacion">Actualizar</button>
                 </div>
             </form>
         </div>
@@ -181,16 +181,16 @@
                 <td class="descripcion-presentacion">@Html.DisplayFor(modelItem => item.DescripcionPresentacion)</td>
 
                 <td class="contenedorBotonesTabla">
-                    <button class="btn" id="btnEdit" data-presentacion-id="@item.PresentacionId" data-bs-toggle="modal" data-bs-target="#PresentacionModal">
+                    <button class="btn"  data-presentacion-id="@item.PresentacionId" data-bs-toggle="modal" data-bs-target="#PresentacionModal">
                         <i class="fas fa-edit"></i> <!-- Icono de edición -->
                     </button>
-                    <a asp-action="Details" asp-route-id="@item.PresentacionId" id="btnDetail" class="btn"><i class="fa-solid fa-file"></i></a>
+                    <a asp-action="Details" asp-route-id="@item.PresentacionId"  class="btn"><i class="fa-solid fa-file"></i></a>
                   
 
                     <form style="display:inline-block;" asp-controller="Presentaciones" asp-action="Delete" method="post" class="delete-form">
                         @Html.Hidden("id", item.PresentacionId)
                         <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
-                        <button type="button" onclick="confirmarEliminacion()" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                        <button type="button" onclick="confirmarEliminacion()"  value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
                     </form>
                 </td>
             </tr>
@@ -217,16 +217,16 @@
                         <td>@presentacion.DescripcionPresentacion</td>
 
                         <td class="contenedorBotonesTabla">
-                            <button class="btn" id="btnEdit" data-presentacion-id="@presentacion.PresentacionId" data-bs-toggle="modal" data-bs-target="#PresentacionModal">
+                            <button class="btn"  data-presentacion-id="@presentacion.PresentacionId" data-bs-toggle="modal" data-bs-target="#PresentacionModal">
                                 <i class="fas fa-edit"></i> <!-- Icono de edición -->
                             </button>
-                            <a asp-action="Details" asp-route-id="@presentacion.PresentacionId" id="btnDetail" class="btn"><i class="fa-solid fa-file"></i></a>
+                            <a asp-action="Details" asp-route-id="@presentacion.PresentacionId"  class="btn"><i class="fa-solid fa-file"></i></a>
 
 
                             <form style="display:inline-block;" asp-controller="Presentaciones" asp-action="Delete" method="post" class="delete-form">
                                 @Html.Hidden("id", presentacion.PresentacionId)
                                 <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
-                                <button type="button" onclick="confirmarEliminacion()" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                <button type="button" onclick="confirmarEliminacion()"  value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
                             </form>
                         </td>
                     </tr>

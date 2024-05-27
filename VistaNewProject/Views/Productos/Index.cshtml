@@ -11,22 +11,23 @@
         <div class="mr-auto">
             <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
                 <div class="input-group">
-                    <input id="buscarProducto" type="text" class="form-control" placeholder="Buscar producto" aria-label="Search" aria-describedby="button-addon2">
-                    <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
+                    <input id="buscarProducto" oninput="searchProducto();" type="text" class="form-control" placeholder="Buscar producto" aria-label="Search" aria-describedby="button-addon2">
+                    <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputProducto()" type="button"><i class="fas fa-search"></i></button>
                 </div>
+
             </form>
         </div>
 
 
         <!-- Botón para abrir el modal -->
-            <button type="button" id="botonAbrirModal" onclick="simularClick(); obtenerDatosProductos();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#GeneralModal">
+        <button type="button" id="botonAbrirModal" onclick="simularClickProducto(); obtenerDatosProductos();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalProducto">
            <i class="fas fa-plus-circle"></i>  Agregar Producto
         </button>
     </div>
     <!-- Modal -->
-    <div class="modal fade" id="GeneralModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade GeneralModal" onblur="AlPerderFocoProducto();" id="ModalProducto" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div id="FormPrincipal" class="modal-content">
+            <div id="FormPrincipalProducto" class="modal-content">
                 <div class="modal-cabecera">
                     <div id="pibo"></div>
                     <div class="modal-header-view TituloModal">
@@ -37,7 +38,7 @@
                     </div>
                 </div>
                 <div class="modal-cuerpo">
-                    <form asp-controller="Productos" asp-action="Create" class="modal-formulario-crear" method="post">
+                    <form asp-controller="Productos" asp-action="Create" class="modal-formulario-crear-producto" method="post">
                         @Html.AntiForgeryToken() <!-- Asegúrate de tener esto si el modelo tiene FK-->
                         <div class="d-none">
                             <select id="Estado" type="hidden" name="estado" class="form-control">
@@ -52,7 +53,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="CategoriaId" class="control-label">Categoria</label><span class="Mensaje">*</span>
-                                        <input list="categorias" oninput="validarCampo(this)" id="NombreCategoria" name="nombreCategoria" class="form-control" placeholder="Escribe  y/o selecciona..." onclick="showCategorias()" autocomplete="off"/>
+                                        <input list="categorias" oninput="validarCampoProducto(this)" id="NombreCategoria" name="nombreCategoria" class="form-control" placeholder="Escribe  y/o selecciona..." onclick="showCategoriasAlert();" autocomplete="off"/>
                                         <datalist id="categorias">
                                             @foreach (var item in ViewBag.Categorias)
                                             {
@@ -69,7 +70,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="NombreProducto" class="control-label">Nombre Producto</label><span class="Mensaje">*</span>
-                                        <input type="text" id="NombreProducto" oninput="validarCampo(this)" name="nombreProducto" class="form-control" />                                
+                                        <input type="text" id="NombreProducto" oninput="validarCampoProducto(this)" name="nombreProducto" class="form-control" />                                
                                         <span class="text-danger"></span>
                                     </div>
                                 </div>
@@ -79,7 +80,7 @@
                                 <div class="form-group">
                                         <label for="MarcaId" class="control-label">Marca</label>
                                         <span class="Mensaje">*</span>
-                                        <input list="marcas" oninput="validarCampo(this)" id="NombreMarca" name="nombeMarca" class="form-control" placeholder="Escribe  y/o selecciona..." onclick="showNoMarcasAlert()" autocomplete="off" />
+                                        <input list="marcas" oninput="validarCampoProducto(this)" id="NombreMarca" name="nombeMarca" class="form-control" placeholder="Escribe  y/o selecciona..." onclick="showNoMarcasAlert()" autocomplete="off" />
                                         <datalist id="marcas">
                                         @foreach (var item in ViewBag.Marcas)
                                         {
@@ -96,13 +97,13 @@
                                 <div class="form-group">
                                     <label for="PresentacionId" class="control-label">Presentacion</label>
                                     <span class="Mensaje">*</span>
-                                    <input list="presentaciones" oninput="validarCampo(this)" id="NombrePresentacion" name="nombrePresentacion" class="form-control" placeholder="Escribe  y/o selecciona..." onclick="showNoPresentacionesAlert()" autocomplete="off"  />
+                                    <input list="presentaciones" oninput="validarCampoProducto(this)" id="NombrePresentacion" name="nombrePresentacion" class="form-control" placeholder="Escribe  y/o selecciona..." onclick="showNoPresentacionesAlert()" autocomplete="off"  />
                                     <datalist id="presentaciones">
                                         @foreach (var item in ViewBag.Presentaciones)
                                         {
                                             @if (item.EstadoPresentacion != 0)
                                             {
-                                                <option data-id="@item.PresentacionId">@item.NombreCompleto</option>
+                                                <option value="@item.NombreCompleto" data-id="@item.PresentacionId">@item.NombreCompleto</option>
                                             }
                                         }
                                     </datalist>
@@ -123,14 +124,14 @@
                                 <div class="form-group">
                                         <label for="CantidadAplicarPorMayor" class="control-label">Cantidad A Superar</label>
                                         <span class="Mensaje"></span>
-                                        <input type="text" id="CantidadAplicarPorMayor" value="0" oninput="validarCampo(this)" name="cantidadAplicarPorMayor" class="form-control" />
+                                        <input type="text" id="CantidadAplicarPorMayor" value="0" oninput="validarCampoProducto(this)" name="cantidadAplicarPorMayor" class="form-control" />
                                     <span class="text-danger"></span>
                                 </div>
                             </div>
                                 <div class="col-md-6 noBe PorMayor">
                                 <div class="form-group">
                                         <label for="DescuentoAplicarPorMayor" class="control-label">Descuento Por Producto</label><span class="Mensaje"></span>
-                                        <input type="text" id="DescuentoAplicarPorMayor" value="0" oninput="validarCampo(this)" name="descuentoAplicarPorMayor" class="form-control" />
+                                        <input type="text" id="DescuentoAplicarPorMayor" value="0" oninput="validarCampoProducto(this)" name="descuentoAplicarPorMayor" class="form-control" />
                                     <span class="text-danger"></span>
                                 </div>
                             </div>
@@ -145,14 +146,14 @@
                    
             </div>
 
-            <div class="modal-content noBe" id="FormActualizar">
+            <div class="modal-content noBe" id="FormActualizarProducto">
                     <div class="modal-cabecera">
                         <div id="pibo"></div>
                         <div class="modal-header-view TituloModal">
                             <h2 class="modal-title">Actualizar Producto</h2>
                         </div>
                         <div class="modal-header-view" id="modal-cabecera-equis">
-                            <button type="button"  onclick="limpiarFormularioProducto();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" onclick="limpiarFormularioProducto();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                     </div>
                     <div class="modal-cuerpo">
@@ -164,7 +165,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="NombreCategoriaAct" class="control-label">Categoria</label><span class="Mensaje"></span>
-                                        <input list="categorias" oninput="validarCampo(this)" id="NombreCategoriaAct" name="nombreCategoria" class="form-control" placeholder="Selecciona una categoria..." onclick="showCategorias()" autocomplete="off">
+                                        <input list="categorias" oninput="validarCampoProducto(this)" id="NombreCategoriaAct" name="nombreCategoria" class="form-control" placeholder="Selecciona una categoria..." onclick="showCategorias()" autocomplete="off">
                                         <datalist id="categorias">
                                             @foreach (var item in ViewBag.Categorias)
                                             {
@@ -181,7 +182,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="NombreProductoAct" class="control-label">Nombre Producto</label><span class="Mensaje"></span>
-                                        <input type="text" id="NombreProductoAct" oninput="validarCampo(this)" name="nombreProducto" class="form-control" />
+                                        <input type="text" id="NombreProductoAct" oninput="validarCampoProducto(this)" name="nombreProducto" class="form-control" />
                                         <span class="text-danger"></span>
                                     </div>
                                 </div>
@@ -191,7 +192,7 @@
                                     <div class="form-group">
                                         <label for="NombreMarcaAct" class="control-label">Marca</label>
                                         <span class="Mensaje"></span>
-                                        <input list="marcas" oninput="validarCampo(this)"  id="NombreMarcaAct" name="nombreMarca" class="form-control" placeholder="Escribe y/o selecciona una marca..." onclick="showNoMarcasAlert()" autocomplete="off" >
+                                        <input list="marcas" oninput="validarCampoProducto(this)"  id="NombreMarcaAct" name="nombreMarca" class="form-control" placeholder="Escribe y/o selecciona una marca..." onclick="showNoMarcasAlert()" autocomplete="off" >
                                         <datalist id="marcas">
                                             @foreach (var item in ViewBag.Marcas)
                                             {
@@ -208,7 +209,7 @@
                                     <div class="form-group">
                                         <label for="NombrePresentacionAct" class="control-label">Presentacion</label>
                                         <span class="Mensaje"></span>
-                                        <input list="presentaciones" oninput="validarCampo(this)" id="NombrePresentacionAct" name="NombrePresentacion" class="form-control" placeholder="Escribe  y/o selecciona una presentación..." onclick="showNoPresentacionesAlert()" autocomplete="off">
+                                        <input list="presentaciones" oninput="validarCampoProducto(this)" id="NombrePresentacionAct" name="NombrePresentacion" class="form-control" placeholder="Escribe  y/o selecciona una presentación..." onclick="showNoPresentacionesAlert()" autocomplete="off">
                                         <datalist id="presentaciones">
                                             @foreach (var item in ViewBag.Presentaciones)
                                             {
@@ -238,14 +239,14 @@
                                     <div class="form-group">
                                         <label for="CantidadAplicarPorMayorAct" class="control-label">Cantidad A Superar</label>
                                         <span class="Mensaje"></span>
-                                        <input type="text" id="CantidadAplicarPorMayorAct" oninput="validarCampo(this)" name="cantidadAplicarPorMayor" class="form-control" />
+                                        <input type="text" id="CantidadAplicarPorMayorAct" oninput="validarCampoProducto(this)" name="cantidadAplicarPorMayor" class="form-control" />
                                         <span class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="col-md-6 PorMayorAct noBe">
                                     <div class="form-group">
                                         <label for="DescuentoAplicarPorMayorAct" class="control-label">Descuento Por Producto</label><span class="Mensaje"></span>
-                                        <input type="text" id="DescuentoAplicarPorMayorAct" oninput="validarCampo(this)" name="descuentoAplicarPorMayor" class="form-control" />
+                                        <input type="text" id="DescuentoAplicarPorMayorAct" oninput="validarCampoProducto(this)" name="descuentoAplicarPorMayor" class="form-control" />
                                         <span class="text-danger"></span>
                                     </div>
                                 </div>
@@ -344,19 +345,18 @@
                     </td>
                     <td class="text-center align-middle contenedorEstadoTabla">
                         <label class="switch">
-                            <input type="checkbox" @(item.Estado != 0 ? "checked" : "") onchange="actualizarEstadoProducto('@item.ProductoId', this.checked)">
+                            <input type="checkbox" @(item.Estado != 0 ? "checked" : "") onchange="actualizarEstadoProducto('@item.ProductoId')">
                             <span class="slider"></span>
                         </label>
                     </td>
-
                     <!-- Agrega esto a tu tabla dentro de la sección tbody -->
-                    <td class="opcionesTabla">
-                            <button class="btn" id="btnEdit" onclick="mostrarModalConRetraso(@item.ProductoId);"><i class="fas fa-edit"></i></button>
-                            <a asp-action="Details" asp-controller="Productos" asp-route-id="@item.ProductoId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
-                            <form style="display: inline-block;" asp-controller="Productos" id="botonTrash" asp-action="Delete" method="post" class="delete-form">
-                                @Html.Hidden("id", item.ProductoId)
-                                <button type="submit" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
-                            </form>
+                    <td class="botonesTabla">
+                            <button class="btn botonEditar" onclick="mostrarModalConRetrasoProducto(@item.ProductoId);"><i class="fas fa-edit"></i></button>
+                            <a asp-action="Details" asp-controller="Productos" asp-route-id="@item.ProductoId" class="btn botonDetalle"><i class="fas fa-file"></i></a>
+                        <form asp-controller="Productos" asp-action="Delete" method="post" class="delete-form" id="botonTrash">
+                            <input type="hidden" value="@item.ProductoId" name="productoId" />
+                            <button type="submit"  value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                        </form>
                     </td>
                 </tr>
             }@{
@@ -390,18 +390,18 @@
 
                             <td class="text-center align-middle contenedorEstadoTabla">
                                 <label class="switch">
-                                    <input type="checkbox" @(producto.Estado != 0 ? "checked" : "") onchange="actualizarEstadoProducto('@producto.ProductoId', this.checked)">
+                                    <input type="checkbox" @(producto.Estado != 0 ? "checked" : "") onchange="actualizarEstadoProducto('@producto.ProductoId')">
                                     <span class="slider"></span>
                                 </label>
                             </td>
 
                             <!-- Agrega esto a tu tabla dentro de la sección tbody -->
-                            <td>
-                                    <button class="btn" id="btnEdit" onclick="mostrarModalConRetraso(@producto.ProductoId);"><i class="fas fa-edit"></i></button>
-                                <a asp-action="Details" asp-controller="Productos" asp-route-id="@producto.ProductoId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
-                                <form style="display: inline-block;" asp-controller="Productos" id="botonTrash" asp-action="Delete" method="post" class="delete-form">
-                                        @Html.Hidden("id", producto.ProductoId)
-                                        <button type="submit" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                            <td class="botonesTabla">
+                                <button class="btn botonEditar" onclick="mostrarModalConRetraso(@producto.ProductoId);"><i class="fas fa-edit"></i></button>
+                                <a asp-action="Details" asp-controller="Productos" asp-route-id="@producto.ProductoId" class="btn botonDetalle"><i class="fas fa-file"></i></a>
+                                <form asp-controller="Productos" asp-action="Delete" method="post" class="delete-form" id="botonTrash">
+                                        <input type="hidden" value="@producto.ProductoId" name="productoId"/>
+                                        <button type="submit"  value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
                                     </form>
                             </td>
                         </tr>

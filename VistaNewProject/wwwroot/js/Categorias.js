@@ -27,7 +27,7 @@ function NoCamposVacios() {
     $('#MensajeInicial').text(' Completa todos los campos con *');
     $('.Mensaje').text(' *');
     $('#NombreCategoria').on('input', function () {
-        validarCampo($(this));
+        validarCampoCompra($(this));
 
         // Validar si todos los campos son válidos antes de agregar la categoria
         var todoValido = $('.text-danger').filter(function () {
@@ -46,7 +46,7 @@ function NoCamposVacios() {
 function NoCamposVaciosAct() {
     // Mostrar mensaje inicial de validación
     $('#NombreCategoriaAct').on('input', function () {
-        validarCampoAct($(this));
+        validarCampoCompraAct($(this));
 
         // Validar si todos los campos son válidos antes de actualizar la categoria
         var todoValido = $('.text-dangerAct').filter(function () {
@@ -66,7 +66,7 @@ function NoCamposVacios() {
     var todoValido = true;
 
     $('#NombreCategoria').on('input', function () {
-        todoValido = validarCampo($(this)); // Actualizar el valor de todoValido según la validación del campo
+        todoValido = validarCampoCompra($(this)); // Actualizar el valor de todoValido según la validación del campo
 
         // Validar si todos los campos son válidos antes de agregar la categoría
         $('.text-danger').each(function () {
@@ -89,7 +89,7 @@ function NoCamposVacios() {
 function NoCamposVaciosAct() {
     // Mostrar mensaje inicial de validación
     $('#NombreCategoriaAct').on('input', function () {
-        validarCampoAct($(this));
+        validarCampoCompraAct($(this));
 
         // Validar si todos los campos son válidos antes de actualizar la categoria
         var todoValido = $('.text-dangerAct').filter(function () {
@@ -119,7 +119,7 @@ $('.modal').on('click', function (e) {
     }
 });
 
-function validarCampo(input) {
+function validarCampoCompra(input) {
     var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
     var spanError = input.next('.text-danger'); // Obtener el elemento span de error asociado al input
     var spanVacio = input.prev('.Mensaje'); // Obtener el elemento span vacío asociado al input
@@ -165,7 +165,7 @@ function validarCampo(input) {
     return todoValido; // Devuelve el estado de validación al finalizar la función
 }
 
-function validarCampoAct(input) {
+function validarCampoCompraAct(input) {
     var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
     var spanError = input.next('.text-dangerAct'); // Obtener el elemento span de error asociado al input
     var spanVacio = input.prev('.MensajeAct'); // Obtener el elemento span vacío asociado al input
@@ -232,7 +232,7 @@ function obtenercategoriaid(CategoriaId) {
         });
 }
 
-document.querySelectorAll('#btnEdit').forEach(button => {
+document.querySelectorAll('#btnEditar').forEach(button => {
     button.addEventListener('click', function () {
         const Id = this.getAttribute('data-categoria-id');
 

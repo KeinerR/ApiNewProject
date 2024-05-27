@@ -71,7 +71,7 @@ function valoresPorDefaultSinConexion() {
         $('#MensajeInicial').text(' Completa todos los campos con *');
         $('.Mensaje').text(' *');
         $('#NombreMarca').on('input', function () {
-            validarCampo($(this));
+            validarCampoCompra($(this));
 
             // Validar si todos los campos son válidos antes de agregar el usuario
             todoValido = $('.text-danger').filter(function () {
@@ -95,7 +95,7 @@ function valoresPorDefaultSinConexion() {
     function NoCamposVaciosAct() {
         // Mostrar mensaje inicial de validación
         $('#NombreMarcaAct').on('input', function () {
-            validarCampoAct($(this));
+            validarCampoCompraAct($(this));
 
             // Validar si todos los campos son válidos antes de agregar el usuario
             todoValido = $('.text-dangerAct').filter(function () {
@@ -110,7 +110,7 @@ function valoresPorDefaultSinConexion() {
         });
     }
 
-    function validarCampo(input) {
+    function validarCampoCompra(input) {
         var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
         var spanError = input.next('.text-danger'); // Obtener el elemento span de error asociado al input
         var spanVacio = input.prev('.Mensaje'); // Obtener el elemento span vacío asociado al input
@@ -155,7 +155,7 @@ function valoresPorDefaultSinConexion() {
         return todoValido; // Devuelve el estado de validación al finalizar la función
     }
 
-    function validarCampoAct(input) {
+    function validarCampoCompraAct(input) {
         var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
         var spanError = input.next('.text-dangerAct'); // Obtener el elemento span de error asociado al input
         var spanVacio = input.prev('.MensajeAct'); // Obtener el elemento span vacío asociado al input
@@ -223,7 +223,7 @@ function valoresPorDefaultSinConexion() {
     }
 
     // Evento click en botones de editar
-    document.querySelectorAll('#btnEdit').forEach(button => {
+    document.querySelectorAll('#botonEditar').forEach(button => {
         button.addEventListener('click', function () {
             const Id = this.getAttribute('data-marca-id');
             document.getElementById('FormAgregar').style.display = 'none';

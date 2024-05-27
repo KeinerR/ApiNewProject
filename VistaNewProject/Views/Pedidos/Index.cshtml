@@ -207,9 +207,9 @@
              
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
-                    <button class="btn" id="btnEdit" data-cliente-id="@item.PedidoId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
-                    <a asp-action="Details" asp-controller="Pedidos" asp-route-id="@item.PedidoId" class="btn" id="btnDetail"><i class="fa-solid fa-file"></i></a>
-                    <button class="btn" id="btnDelete" data-cliente-id="@item.PedidoId"><i class="fas fa-trash-alt"></i></button>
+                    <button class="btn" id="btnEditar" data-cliente-id="@item.PedidoId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
+                    <a asp-action="Details" asp-controller="Pedidos" asp-route-id="@item.PedidoId" class="btn" ><i class="fa-solid fa-file"></i></a>
+                    <button class="btn"  data-cliente-id="@item.PedidoId"><i class="fas fa-trash-alt"></i></button>
                 </td>
             </tr>
         }

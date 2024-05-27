@@ -369,9 +369,8 @@ input[type="checkbox"]:checked + .sub-menu {
         width: 50px; /* Establece el ancho deseado */
     }
 
-
-
-/*Switch*/   /*Checkbox de estado en everyviews*/
+ 
+/*Switch*/ /*Checkbox de estado en everyviews*/
 .switch {
     position: relative;
     display: inline-block;
@@ -419,11 +418,13 @@ input:checked + .slider {
     width: 100%;
     height: 25px;
     border-radius: 30px;
+    border: solid 1px black;
 }
 
 input:focus + .slider {
     border: solid 1px #878AB3;
     border-radius: 30px;
+    border: solid 1px black;
 }
 
 
@@ -431,6 +432,7 @@ input:checked + .slider:before {
     -webkit-transform: translateX(70%);
     -ms-transform: translateX(70%);
     transform: translateX(70%);
+    border: solid 1px black;
 }
 
 /*------Paginacion ---------------*/
@@ -470,34 +472,25 @@ input:checked + .slider:before {
   
 
 
-    /*Colores y diseño  de los Botones de las tabla*/
-#btnDelete {
+    /*Colores y diseño  de los Botones de las tablas*/
+.botonesTabla {
+    display: flex;  /*Permite que los botones se posicionen uno al lado del otro*/
+    gap: 4px;    /*Aumenta el espacio entre los botones*/
+}
+
+.botonEliminar {
     background: #DB5461;
     color: black;
 }
-#btnEdit {
-    background: #F8D552;
+
+.botonEditar {
+    background: #F8D545;
     color: black;
 }
-#btnDetail {
+
+.botonDetalle {
     background: #7ACBC4;
     color: black;
-}
-
-#botonEliminar {
-    background: #DB5461;
-    color:black;
-}
-
-#botonEditar {
-    background: #F8D552;
-    color: black;
-}
-
-#botonDetalle {
-    background: #7ACBC4;
-    color: black;
-    margin-right:10px;
 }
 
 .select-input {
@@ -704,12 +697,6 @@ input:checked + .slider:before {
     }
     .cabeceraSalir .Perfil span {
         display: none;
-    }
-    /*---------------------------------------------------------------------*/
-    /*Botones tabla detalle*/
-    .botonesTabla {
-        width: 45px;
-        height: 45px;
     }
 
     

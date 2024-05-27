@@ -21,41 +21,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const mostrarAlerta = urlParams.get('mostrarAlerta');
     const productoId = urlParams.get('productoId');
 
-    /*Se usa para que si se cierra la ventana modal al estar 
-    actualizando se limpie el formulario si es necesario agregar dicha
-    funcionalidad al crear hacerlo aqui*/
-    var modal = document.getElementById('GeneralModal'); 
    
     let timeout = null;
 
     if (mostrarAlerta === 'true' && productoId) {
         obtenerDatosProducto(productoId);
-        const botonModal = document.querySelector('[data-bs-target="#ProductoModal"]');
+        const botonModal = document.querySelector('[data-bs-target="#ModalProducto"]');
         if (botonModal) {
             botonModal.click();
         }
     }
 
-
-
-    // Agregar evento blur al modal
-    modal.addEventListener('blur', function () {
-        // Llamar a la función al perder el foco
-        funcionAlPerderFoco();
-    });
-
-    // Función a llamar al perder el foco del modal
-    function funcionAlPerderFoco() {
-        // Obtener el estilo de #FormActualizar
-        var displayFormActualizar = $('#GeneralModal').css('display');
-        
-        if (displayFormActualizar == "none") {
-            console.log('Displaysss de #FormActualizar:', displayFormActualizar);
-            limpiarFormularioProductoAct();
-        }
-    }
     // Evita el envío del formulario si no se cumplen con los requerimientos mínimos
-    $('.modal-formulario-crear').on('submit', function (event) {
+    $('.modal-formulario-crear-producto').on('submit', function (event) {
         if (!NoCamposVacios()) {
             event.preventDefault();
         } else {
@@ -99,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Validar campos en cada cambio
-    $('.modal-formulario-crear input, .modal-formulario-crear select').on('input', function () {
+    $('.modal-formulario-crear-producto input, .modal-formulario-crear-producto select').on('input', function () {
         NoCamposVaciosInicial();
     });
     $('.modal-formulario-actualizar input, .modal-formulario-actualizar select').on('input', function () {
@@ -153,38 +131,6 @@ document.addEventListener('DOMContentLoaded', function () {
         $('.MensajeInicial').text('');
         return true;
     }
-    function NoCamposVacios() {
-        const textDangerElements = $('.text-danger');
-        const mensajeElements = $('.Mensaje');
-
-        const textDangerSlice = textDangerElements.slice(0, 6);
-        const mensajeSlice = mensajeElements.slice(0, 6);
-
-        const todoValido = textDangerSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
-        const todosLlenos = mensajeSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
-        console.log('Todos los campos son válidos:', todoValido);
-        console.log('Todos los campos están llenos:', todosLlenos);
-
-        if (!todosLlenos) {
-            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
-            return false;
-        }
-
-        if (!todoValido) {
-            $('.MensajeInicial').text('Algunos campos contienen errores.');
-            return false;
-        }
-
-        $('.MensajeInicial').text('');
-        return true;
-    }
-
     function NoCamposVaciosAct() {
         const textDangerElements = $('.text-danger');
         const mensajeElements = $('.Mensaje');
@@ -231,12 +177,14 @@ document.addEventListener('DOMContentLoaded', function () {
         const todosLlenos = mensajeSlice.filter(function () {
             return $(this).text() !== '';
         }).length === 0;
+
         if (todosLlenos) {
             $('.MensajeInicial').text('');
+            if (todoValido) {
+                $('.MensajeInicial').text('');
+            }
         }
-        if (todoValido) {
-            $('.MensajeInicial').text('');
-        }
+
     }
     function NoCamposVaciosInicialAct() {
         const textDangerElements = $('.text-danger');
@@ -254,62 +202,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }).length === 0;
         if (todosLlenos) {
             $('.MensajeInicial').text('');
-        }
-        if (todoValido) {
-            $('.MensajeInicial').text('');
+            if (todoValido) {
+                $('.MensajeInicial').text('');
+            }
         }
         
-    }
-
-    //Funcion para mostrar un sweet alert en caso de que se ingrese un numero de id que no tiene coincidencias
-    function mostrarAlertaDataList(campo) {
-        Swal.fire({
-            position: "center",
-            icon: 'warning',
-            title: '\u00A1Atencion!',
-            html: `<p style="margin: 0;">Recuerda que debes seleccionar la ${campo} dando click en la opci\u00F3n que deseas</p>
-            <div class="text-center" style="margin: 0; padding: 0;">
-            <p style="margin: 0;">O</p>
-            </div>
-            <p style="margin: 0;">En su defecto, escribir el ID del ${campo} o nombre exactamente igual.</p>`,
-
-            showConfirmButton: false, // Mostrar botón de confirmación
-            timer: 6000
-
-        });
+        
     }
     
-    // Función para manejar la selección de opciones en los datalist
-    window.seleccionarOpcion = function (input, dataList, hiddenInput) {
-        const selectedValue = input.value.trim();
-        let selectedOptionByName = Array.from(dataList.options).find(option => option.value === selectedValue);
-        let selectedOptionById = Array.from(dataList.options).find(option => option.getAttribute('data-id') === selectedValue);
-
-        if (/^\d+[a-zA-Z]$/.test(selectedValue)) {
-            selectedOptionByName = Array.from(dataList.options).find(option => option.value === selectedValue);
-        }
-
-        if (!selectedOptionByName && !selectedOptionById && /^\d+$/.test(selectedValue)) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'No se encontró ningún resultado con este ID',
-                showConfirmButton: false,
-                timer: 1800
-            });
-            input.value = '';
-            input.dispatchEvent(new Event('input'));
-            return;
-        }
-
-        if (selectedOptionByName) {
-            input.value = selectedOptionByName.value;
-            hiddenInput.value = selectedOptionByName.getAttribute('data-id');
-        } else if (selectedOptionById) {
-            input.value = selectedOptionById.value;
-            hiddenInput.value = selectedOptionById.getAttribute('data-id');
-        }
-    }
-
     // Asignar función de selección a los campos
     $('#NombreMarca').on('input', function () {
         clearTimeout(timeout);
@@ -329,8 +229,9 @@ document.addEventListener('DOMContentLoaded', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
             seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionId'));
-        }, 650);
+        }, 600);
     });
+
     $('#NombreMarcaAct').on('input', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
@@ -351,38 +252,35 @@ document.addEventListener('DOMContentLoaded', function () {
             seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'));
         }, 650);
     });
-   
+
        
 });
 
-function simularClick() {
+function simularClickProducto() {
     //ocultar formulario de actualizar  y mostrar el formulario principal
-    $('#FormActualizar').hide();
-    $('#FormPrincipal').show().css('visibility', 'visible');
+    $('#FormActualizarProducto').hide();
+    $('#FormPrincipalProducto').show().css('visibility', 'visible');
 }
 //Funcion que se activa al haer clik en el boton de editar.
-function mostrarModalConRetraso(productoId) {
+function mostrarModalConRetrasoProducto(productoId) {
     setTimeout(function () {
         actualizarProducto(productoId);
         setTimeout(function () {
-            var myModal = new bootstrap.Modal(document.getElementById('GeneralModal'));
+            var myModal = new bootstrap.Modal(document.getElementById('ModalProducto'));
             myModal.show();
             // Aquí puedes llamar a la función actualizarProducto si es necesario
         }, 170); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
     }, 0); // 0 milisegundos de retraso antes de llamar a actualizarProducto
 }
 
-
 function actualizarProducto(campo) {
-    $('#FormPrincipal').hide().css('visibility', 'hidden');
-    $('#FormActualizar').show().css('visibility', 'visible');
     var productoId = campo;
     $.ajax({
         url: '/Productos/FindProducto', // Ruta relativa al controlador y la acción
         type: 'POST',
         data: { productoId: productoId },
         success: function (data) {
-            var formActualizar = $('#FormActualizar');
+            var formActualizar = $('#FormActualizarProducto');
             formActualizar.find('#ProductoIdAct').val(data.productoId);
             formActualizar.find('#EstadoAct').val(data.estado);
             formActualizar.find('#NombreMarcaAct').val(data.marcaId);
@@ -405,72 +303,41 @@ function actualizarProducto(campo) {
             alert('Error al obtener los datos del producto.');
         }
     });
+    $('#FormPrincipalProducto').hide().css('visibility', 'hidden');
+    $('#FormActualizarProducto').show().css('visibility', 'visible');
 }
 
-//Funcion que cambia el estado del checbox (Migrar a controlador)
-function actualizarEstadoProducto(ProductoId, Estado) {
-    fetch(`https://localhost:7013/api/Productos/UpdateEstadoProducto/${ProductoId}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
+//Funcion que cambia el estado del checbox (Migrar a controlador Echo ;))
+function actualizarEstadoProducto(ProductoId) {
+    $.ajax({
+        url: `/Productos/UpdateEstadoProducto/${ProductoId}`,
+        type: 'PATCH',
+        contentType: 'application/json',
+        success: function (response) {
+            // Mostrar SweetAlert de éxito
+            Swal.fire({
+                icon: 'success',
+                title: '\u00A1Estado actualizado!',
+                showConfirmButton: false,
+                timer: 1500 // Duración del SweetAlert en milisegundos
+            });
         },
-        body: JSON.stringify({ Estado: Estado ? 1 : 0 })
-    })
-        .then(response => {
-            if (response.ok) {
-                setTimeout(() => {
-                    location.reload(); // Recargar la página
-                }, 500);
-            } else {
-                console.error('Error al actualizar el estado del cliente');
-            }
-        })
-        .catch(error => {
-            console.error('Error de red:', error);
-        });
+        error: function (xhr, status, error) {
+            console.error('Error al actualizar el estado del producto:', xhr.responseText);
+            // Mostrar SweetAlert de error
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Hubo un error al actualizar el estado del producto. Por favor, inténtalo de nuevo.'
+            });
+        }
+    });
 }
 
 
 //Funcion que le da la funcionalidad al buscador
 
-document.getElementById('buscarProducto').addEventListener('input', function () {
-    var input = this.value.trim().toLowerCase();
-    var rows = document.querySelectorAll('.productosPaginado');
-
-    if (input === "") {
-        rows.forEach(function (row) {
-            row.style.display = '';
-        });
-        var icon = document.querySelector('#btnNavbarSearch i');
-        icon.className = 'fas fa-search';
-        icon.style.color = 'gray';
-    } else {
-        rows.forEach(function (row) {
-            row.style.display = 'none';
-        });
-        var icon = document.querySelector('#btnNavbarSearch i');
-        icon.className = 'fas fa-times';
-        icon.style.color = 'gray';
-    }
-    var rowsTodos = document.querySelectorAll('.Productos');
-
-    rowsTodos.forEach(function (row) {
-        if (input === "") {
-            row.style.display = 'none';
-        } else {
-            var productoId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
-            var nombreM = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-            var nombreC = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
-            var nombreP = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
-            var nombrePr = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
-            var cantidadT = row.querySelector('td:nth-child(6)').textContent.trim().toLowerCase();
-
-            row.style.display = (productoId.includes(input) || nombreM.includes(input) || nombreC.includes(input) || nombreP.includes(input) || nombrePr.includes(input) || cantidadT.includes(input)) ? 'table-row' : 'none';
-        }
-    });
-});
-
-function vaciarInput() {
+function vaciarInputProducto() {
     document.getElementById('buscarProducto').value = "";
     var icon = document.querySelector('#btnNavbarSearch i');
     icon.className = 'fas fa-search';
@@ -489,8 +356,45 @@ function vaciarInput() {
 }
 
 
+function searchProducto() {
+    var input = document.querySelector('#buscarProducto').value.trim().toLowerCase();
+    var rows = document.querySelectorAll('.productosPaginado');
+    var icon = document.querySelector('#btnNavbarSearch i');
+
+    if (input === "") {
+        rows.forEach(function (row) {
+            row.style.display = '';
+        });
+        icon.className = 'fas fa-search';
+        icon.style.color = 'gray';
+    } else {
+        rows.forEach(function (row) {
+            row.style.display = 'none';
+        });
+        icon.className = 'fas fa-times';
+        icon.style.color = 'gray';
+    }
+
+    var rowsTodos = document.querySelectorAll('.Productos');
+
+    rowsTodos.forEach(function (row) {
+        if (input === "") {
+            row.style.display = 'none';
+        } else {
+            var productoId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
+            var nombreM = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var nombreC = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+            var nombreP = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
+            var nombrePr = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
+            var cantidadT = row.querySelector('td:nth-child(6)').textContent.trim().toLowerCase();
+
+            row.style.display = (productoId.includes(input) || nombreM.includes(input) || nombreC.includes(input) || nombreP.includes(input) || nombrePr.includes(input) || cantidadT.includes(input)) ? 'table-row' : 'none';
+        }
+    });
+    
+}
 //Funcion para hacer las respectivas validaciones a los campos
-function validarCampo(input) {
+function validarCampoProducto(input) {
     console.log(input.id);
     const $input = $(input); // Convertir el input a objeto jQuery
     const valor = $input.val().trim(); // Obtener el valor del input y eliminar espacios en blanco
@@ -533,20 +437,6 @@ function validarCampo(input) {
     return true; // Asumir que todo está bien si no hay errores
 }
 
-
-// Función general para mostrar el Sweet Alert si no hay opciones disponibles
-function showAlertIfNoOptions(elementId, alertTitle, alertText) {
-    var options = document.getElementById(elementId).getElementsByTagName("option");
-    if (options.length === 0) {
-        Swal.fire({
-            icon: 'info',
-            title: alertTitle,
-            text: alertText,
-            timer: 3000,
-            timerProgressBar: true
-        });
-    }
-}
 // Llama a la función general con los parámetros específicos
 function showNoMarcasAlert() {
     showAlertIfNoOptions("marcas", "No hay marcas activas", "No hay marcas disponibles en este momento.");
@@ -556,7 +446,7 @@ function showNoPresentacionesAlert() {
     showAlertIfNoOptions("presentaciones", "No hay presentaciones activas", "No hay presentaciones disponibles en este momento.");
 }
 
-function showCategorias() {
+function showCategoriasAlert() {
     showAlertIfNoOptions("categorias", "No hay categorias ", "No hay categorias disponibles en este momento.");
 }
 /*Mostrar o no las opciones de producto por mayor en la ventana modal de producto al hacer click en el chacbox de la ventana modal producto*/
@@ -705,12 +595,6 @@ function limpiarFormularioProducto() {
     document.querySelectorAll('.MensajeInicial').forEach(function (element) {
         element.textContent = '';
     });
-
-    // Función auxiliar para limpiar un campo por su ID
-    function limpiarCampo(idCampo) {
-        document.getElementById(idCampo).value = '';
-    }
-
     // Limpiar elementos adicionales
     var elementos = document.getElementsByClassName('PorMayorAct');
     for (var i = 0; i < elementos.length; i++) {
@@ -721,8 +605,6 @@ function limpiarFormularioProducto() {
     var mensajes = document.querySelectorAll('.Mensaje');
     var mensajesText = document.querySelectorAll('.text-danger');
    
-
-    // Añadir texto a los últimos seis mensajes
     for (var i = Math.max(0, mensajes.length - 6); i < mensajes.length; i++) {
         mensajes[i].textContent = '';
     }
@@ -774,4 +656,14 @@ function limpiarFormularioProductoAct() {
         mensajesText[i].textContent = '';
     }
     document.getElementById('checkboxDescuentoPorMayorAct').checked = false; // Desmarcar el checkbox
+}
+
+// Función a llamar al perder el foco del modal
+function AlPerderFocoProducto() {
+    // Obtener el estilo de #FormActualizar
+    var displayFormActualizar = $('#FormActualizarProducto').css('display');
+    var displayModal = $('#ModalProducto').css('display');
+    if (displayFormActualizar == "block" && displayModal == "none") {
+        limpiarFormularioProductoAct();
+    }
 }

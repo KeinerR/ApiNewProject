@@ -86,7 +86,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="btnEditar">Actualizar</button>
+                    <button type="submit" class="btn btn-primary" id="botonEditarar">Actualizar</button>
                 </div>
             </form>
 
@@ -143,11 +143,11 @@
                     </label>
                 </td>
                 <td class="contenedorBotonesTabla">
-                    <button class="btn btn-warning botonEditar" id="btnEdit" value="" data-marca-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal"><i class="fas fa-edit"></i></button>
-                    <a asp-action="Details" asp-route-id="@item.MarcaId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
+                    <button class="btn btn-warning botonEditar"  value="" data-marca-id="@item.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal"><i class="fas fa-edit"></i></button>
+                    <a asp-action="Details" asp-route-id="@item.MarcaId" class="btn botonDetalle" ><i class="fas fa-file"></i></a>
                     <form style="display:inline-block;" asp-controller="Marcas" asp-action="Delete" method="post" class="delete-form">
                         @Html.Hidden("id", item.MarcaId)
-                        <button type="submit" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                        <button type="submit"  value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
                     </form>
                 </td>
             </tr>
@@ -168,11 +168,11 @@
                             </label>
                         </td>
                         <td class="contenedorBotonesTabla">
-                            <button class="btn btn-warning botonEditar" id="btnEdit" value="" data-marca-id="@marca.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal"><i class="fas fa-edit"></i></button>
-                            <a asp-action="Details" asp-route-id="@marca.MarcaId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
+                            <button class="btn btn-warning botonEditar"  value="" data-marca-id="@marca.MarcaId" data-bs-toggle="modal" data-bs-target="#MarcaModal"><i class="fas fa-edit"></i></button>
+                            <a asp-action="Details" asp-route-id="@marca.MarcaId" class="btn botonDetalle" ><i class="fas fa-file"></i></a>
                             <form style="display:inline-block;" asp-controller="Marcas" asp-action="Delete" method="post" class="delete-form">
                                 @Html.Hidden("id", marca.MarcaId)
-                                <button type="submit" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                <button type="submit"  value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
                             </form>
                         </td>
                     </tr>

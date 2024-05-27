@@ -18,7 +18,7 @@ namespace ApiNewProject.Controllers
         }
 
         [HttpGet("GetProductos")]
-        public async Task<ActionResult<List<Producto>>> GetProductos(string ? busqueda = "")
+        public async Task<ActionResult<List<Producto>>> GetProductos(string? busqueda = "")
         {
             IQueryable<Producto> query = _context.Productos;
 
@@ -125,6 +125,7 @@ namespace ApiNewProject.Controllers
             return Ok();
         }
 
+
         [HttpDelete("DeleteProducto/{Id}")]
         public async Task<HttpStatusCode> DeleteProducto(int Id)
         {
@@ -137,22 +138,24 @@ namespace ApiNewProject.Controllers
             await _context.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
+
         [HttpPatch("UpdateEstadoProducto/{id}")]
-        public async Task<IActionResult> UpdateEstadoProducto(int id, [FromBody] Producto Estado)
+        public async Task<IActionResult> UpdateEstadoProductoAsync(int id)
         {
+
             try
             {
-                // Buscar el cliente por su ID
+                // Buscar el producto por su ID
                 var producto = await _context.Productos.FindAsync(id);
 
-                // Si no se encuentra el cliente, devolver un error 404 Not Found
+                // Si no se encuentra el producto, devolver un error 404 Not Found
                 if (producto == null)
                 {
                     return NotFound();
                 }
 
-                // Actualizar el estado del cliente con el nuevo valor
-                producto.Estado = Estado.Estado;
+                // Invertir el valor del estado del producto
+                producto.Estado = producto.Estado == 0 ? 1UL : 0UL;
 
                 // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
@@ -163,7 +166,7 @@ namespace ApiNewProject.Controllers
             catch (Exception ex)
             {
                 // Si ocurre algún error, devolver un error 500 Internal Server Error
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el estado del cliente: " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el estado del producto: " + ex.Message);
             }
         }
 

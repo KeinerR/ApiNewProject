@@ -20,7 +20,7 @@ $(function () {
 
             $('#Usuario1,#Nombre,#Apellido, #Correo, #Telefono').on('input', function () {
                 if (usuarios) {
-                    validarCampo($(this), usuarios);
+                    validarCampoCompra($(this), usuarios);
                     // Validar si todos los campos son válidos
                     todoValido = $('.text-danger').filter(function () {
                         return $(this).text() !== '';
@@ -32,7 +32,7 @@ $(function () {
             console.error('Error:', error);
         });
 
-    function validarCampo(input, usuarios) {
+    function validarCampoCompra(input, usuarios) {
         var valor = input.val().trim();
         var spanError = input.next('.text-danger');
 
@@ -179,7 +179,7 @@ $(function () {
                     });
             });
         }
-        $('#btnEditar').on('click', function () {
+        $('#botonEditarar').on('click', function () {
             obtenerDatosUsuario(usuarioId).then(usuarioInicial => {
                 if (todoValido) { // Validar que todos los campos sean válidos antes de actualizar
                     ActualizarUsuario();

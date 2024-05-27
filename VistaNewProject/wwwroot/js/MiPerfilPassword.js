@@ -4,7 +4,7 @@
     var todoValido = false;
     obtenerDatosUsuario(usuarioId);
     $('#currentPassword,#newPassword,#verifyPassword').on('input', function () {
-        validarCampo($(this));
+        validarCampoCompra($(this));
         todoValido = $('.text-danger').filter(function () {
             return $(this).text() !== '';
         }).length === 0;
@@ -36,7 +36,7 @@
 
 
 
-    function validarCampo(input) {
+    function validarCampoCompra(input) {
         var valor = input.val().trim();
         var spanError = input.next('.text-danger');
         var passwordInicial = usuarioInicial.contraseña;

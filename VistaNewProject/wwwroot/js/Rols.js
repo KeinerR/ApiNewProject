@@ -36,7 +36,7 @@ function limpiarFormulario() {
     document.getElementById('NombreRol').value = '';
     document.getElementById('TituloModal').innerText = 'Agregar Rol';
     document.getElementById('btnGuardar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
-    document.getElementById('btnEditar').style.display = 'none';
+    document.getElementById('botonEditarar').style.display = 'none';
 }
 
 document.getElementById('buscarRol').addEventListener('input', function () {
@@ -157,7 +157,7 @@ function vaciarInput() {
 //            document.getElementById('TituloModal').innerText = 'Editar rol';
 //            // Ocultar el botón "Agregar" y mostrar el botón "Actualizar Usuario"
 //            document.getElementById('btnGuardar').style.display = 'none';
-//            document.getElementById('btnEditar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
+//            document.getElementById('botonEditarar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
 
 
 //        })
@@ -206,5 +206,5 @@ function vaciarInput() {
 
 //    document.getElementById('TituloModal').innerText = 'Agregar Rol';
 //    document.getElementById('btnGuardar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
-//    document.getElementById('btnEditar').style.display = 'none';
+//    document.getElementById('botonEditarar').style.display = 'none';
 //}

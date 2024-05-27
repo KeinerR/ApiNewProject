@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Net;
@@ -29,42 +30,42 @@ namespace VistaNewProject.Controllers
 
             var usuarios = await _client.GetUsuarioAsync();
 
-            if (usuarios == null)
+            if (usuarios == null || !usuarios.Any()) // Verificar si la lista de usuarios está vacía
             {
-                return NotFound("error");
+                return NotFound("No se encontraron usuarios.");
             }
 
-            var pageUsuario = await usuarios.ToPagedListAsync(pageNumber, pageSize);
-            if (!pageUsuario.Any() && pageUsuario.PageNumber > 1)
+            var pageUsuarios = await usuarios.ToPagedListAsync(pageNumber, pageSize);
+
+            // Si la página solicitada no tiene elementos y no es la primera página, redirigir a la última página
+            if (!pageUsuarios.Any() && pageUsuarios.PageNumber > 1)
             {
-                pageUsuario = await usuarios.ToPagedListAsync(pageUsuario.PageCount, pageSize);
+                return RedirectToAction("Index", new { page = pageUsuarios.PageCount });
             }
 
             int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
 
-
             ViewBag.Contador = contador;
             ViewBag.Roles = roles;
+            ViewData["Usuarios"] = usuarios;
 
-            // Código del método Index que querías integrar
-            string mensaje = HttpContext.Session.GetString("Message");
-            TempData["Message"] = mensaje;
 
-            try
-            {
-                ViewData["Usuarios"] = usuarios;
-                return View(pageUsuario);
-            }
-            catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
-            {
-                HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
-                return RedirectToAction("Index", "Home");
-            }
-            catch
-            {
-                HttpContext.Session.SetString("Message", "Error en el aplicativo");
-                return RedirectToAction("LogOut", "Accesos");
-            }
+
+            return View(pageUsuarios);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> FindUsuario(int usuarioId)
+        {
+            var usuario = await _client.FindUsuarioAsync(usuarioId);
+            return Json(usuario);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> FindUsuarios()
+        {
+            var usuarios = await _client.GetUsuarioAsync();
+            return Json(usuarios);
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -87,46 +88,85 @@ namespace VistaNewProject.Controllers
         }
 
 
-        public async Task<IActionResult> Create([FromForm] int rolId, string nombre, string apellido, string usuario, string contraseña, string telefono, string correo, ulong estadoUsuario)
+        public async Task<IActionResult> Create([FromForm] Usuario usuario)
         {
-
-            if (ModelState.IsValid)
+            try
             {
-
-
-
                 var usuarios = await _client.GetUsuarioAsync();
-                var usuariosExis = usuarios.FirstOrDefault(c => string.Equals(c.Usuario1, usuario, StringComparison.OrdinalIgnoreCase));
 
-                if (usuariosExis != null)
+                // Verificar si hay algún usuario con el mismo nombre, apellido y usuario1
+                var usuarioExistente = usuarios.FirstOrDefault(c =>
+                    string.Equals(c.Nombre, usuario.Nombre, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(c.Apellido, usuario.Apellido, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(c.Usuario1, usuario.Usuario1, StringComparison.OrdinalIgnoreCase));
+
+                // Verificar si hay algún usuario con el mismo nombre de usuario1
+                var usuarioMismoUsuario = usuarios.FirstOrDefault(c =>
+                    string.Equals(c.Usuario1, usuario.Usuario1, StringComparison.OrdinalIgnoreCase));
+
+                var usuarioExistenteOne = usuarios.FirstOrDefault(c =>
+                 string.Equals(c.Nombre, usuario.Nombre, StringComparison.OrdinalIgnoreCase) &&
+                 string.Equals(c.Apellido, usuario.Apellido, StringComparison.OrdinalIgnoreCase));
+
+                var CorreoExistente = usuarios.FirstOrDefault(c =>
+                 string.Equals(c.Correo, usuario.Correo, StringComparison.OrdinalIgnoreCase));
+
+
+                if (usuarioExistente != null)
                 {
                     TempData["SweetAlertIcon"] = "error";
                     TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "Ya hay un Usuario  registrado con ese nombre.";
+                    TempData["SweetAlertMessage"] = $"Ya hay un usuario registrado con el nombre {usuarioExistente.Nombre}, apellido {usuarioExistente.Apellido}, y usuario {usuarioExistente.UsuarioId}";
+                    TempData["EstadoAlerta"] = "false";
                     return RedirectToAction("Index");
                 }
 
-                var Usuarios = new Usuario
+                if (usuarioMismoUsuario != null)
                 {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = $"Ya hay un usuario registrado con el mismo nombre de usuario: {usuarioMismoUsuario.Nombre} {usuarioMismoUsuario.Apellido}";
+                    TempData["EstadoAlerta"] = "false";
+                    return RedirectToAction("Index");
+                }
+                if (usuarioExistenteOne != null)
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = $"Ya hay un usuario registrado con los mismos datos, Id de usuario: {usuarioExistenteOne.UsuarioId}";
+                    TempData["EstadoAlerta"] = "false";
+                    return RedirectToAction("Index");
+                }
+                if (CorreoExistente != null && (CorreoExistente.Correo != "Correo@gmmailcom" && CorreoExistente.Correo != "correo@gmmailcom"))
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = $"Ya esta el correo registrado por otro usuario: {CorreoExistente.Nombre} {CorreoExistente.Apellido}";
+                    TempData["EstadoAlerta"] = "false";
+                    return RedirectToAction("Index");
+                }
 
-                    RolId = rolId,
-                    Nombre = nombre,
-                    Apellido = apellido,
-                    Usuario1 = usuario,
-                    Contraseña = contraseña,
-                    Telefono = telefono,
-                    Correo = correo,
-                    EstadoUsuario = estadoUsuario
-
+                // Si no hay usuarios con los mismos datos, proceder con el registro
+                var nuevoUsuario = new Usuario
+                {
+                    RolId = usuario.RolId,
+                    Nombre = usuario.Nombre,
+                    Apellido = usuario.Apellido,
+                    Usuario1 = usuario.Usuario1,
+                    Contraseña = usuario.Contraseña,
+                    Telefono = usuario.Telefono,
+                    Correo = usuario.Correo,
+                    EstadoUsuario = usuario.EstadoUsuario
                 };
-                Console.WriteLine(Usuarios);
-                var response = await _client.CreateUsuarioAsync(Usuarios);
-                Console.WriteLine(response);
 
+                var response = await _client.CreateUsuarioAsync(nuevoUsuario);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    TempData["Mensaje"] = "¡Registro guardado correctamente!";
+                    TempData["SweetAlertIcon"] = "sucess";
+                    TempData["SweetAlertTitle"] = "Exito";
+                    TempData["EstadoAlerta"] = "true";
+                    TempData["SweetAlertMessage"] = "¡Usuario guardado correctamente!";
                     return RedirectToAction("Index");
                 }
                 else
@@ -134,69 +174,145 @@ namespace VistaNewProject.Controllers
                     ViewBag.MensajeError = "No se pudieron guardar los datos.";
                     return View("Index");
                 }
-
             }
-
-            return RedirectToAction("Index");
-
-
-        }
-
-        public async Task<IActionResult> Update([FromForm] int usuarioIdAct, int rolIdAct, string nombreAct, string apellidoAct, string usuarioAct, string contraseñaAct, string telefonoAct, string correoAct, ulong estadoUsuarioAct)
-        {
-
-            var usuarios = await _client.GetUsuarioAsync();
-            var usuarioExis = usuarios.FirstOrDefault(c =>
-                                     string.Equals(c.Usuario1, usuarioAct, StringComparison.OrdinalIgnoreCase)
-                                     && c.UsuarioId != usuarioIdAct);
-            // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
-            if (usuarioExis != null)
+            catch (Exception ex)
             {
+                // Manejar cualquier excepción que ocurra durante el proceso
+                Console.WriteLine($"Error al crear usuario: {ex.Message}");
                 TempData["SweetAlertIcon"] = "error";
                 TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "Ya hay un usuario  registrada con ese nombre.";
+                TempData["SweetAlertMessage"] = "Ocurrió un error al crear el usuario.";
+                TempData["EstadoAlerta"] = "false";
                 return RedirectToAction("Index");
             }
+        }
 
-            var Usuarios = new Usuario
+
+        public async Task<IActionResult> Update([FromForm] Usuario usuario)
+        {
+            try
             {
+                var usuarios = await _client.GetUsuarioAsync();
 
-                UsuarioId = usuarioIdAct,
-                RolId = rolIdAct,
-                Nombre = nombreAct,
-                Apellido = apellidoAct,
-                Usuario1 = usuarioAct,
-                Contraseña = contraseñaAct,
-                Telefono = telefonoAct,
-                Correo = correoAct,
-                EstadoUsuario = estadoUsuarioAct
-            };
+                // Verificar si hay algún usuario con el mismo nombre de usuario y diferente ID
+                var usuarioExis = usuarios.FirstOrDefault(c =>
+                    string.Equals(c.Usuario1, usuario.Usuario1, StringComparison.OrdinalIgnoreCase)
+                    && c.UsuarioId != usuario.UsuarioId);
 
-            var response = await _client.UpdateUsuarioAsync(Usuarios);
-
-            if (response != null)
-            {
-
-                if (response.IsSuccessStatusCode)
-                {
-                    TempData["SweetAlertIcon"] = "success";
-                    TempData["SweetAlertTitle"] = "Éxito";
-                    TempData["SweetAlertMessage"] = "Usuario actualizado correctamente.";
-                    return RedirectToAction("Index");
-                }
-                else if (response.StatusCode == HttpStatusCode.NotFound)
+                // Si ya existe un usuario con el mismo nombre de usuario y diferente ID, mostrar un mensaje de error
+                if (usuarioExis != null)
                 {
                     TempData["SweetAlertIcon"] = "error";
                     TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "El Usuario no se encontró en el servidor.";
+                    TempData["SweetAlertMessage"] = "Ya hay un usuario registrado con ese nombre de usuario.";
                     return RedirectToAction("Index");
                 }
-                else if (response.StatusCode == HttpStatusCode.BadRequest)
+
+                // Verificar si hay algún usuario con el mismo nombre, apellido y usuario1
+                var usuarioExistente = usuarios.FirstOrDefault(c =>
+                    string.Equals(c.Nombre, usuario.Nombre, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(c.Apellido, usuario.Apellido, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(c.Usuario1, usuario.Usuario1, StringComparison.OrdinalIgnoreCase) &&
+                    c.UsuarioId != usuario.UsuarioId);
+
+
+                // Si ya existe un usuario con el mismo nombre, apellido y usuario1, mostrar un mensaje de error
+                if (usuarioExistente != null)
                 {
                     TempData["SweetAlertIcon"] = "error";
                     TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "Nombre de Usuario duplicado.";
+                    TempData["SweetAlertMessage"] = $"Ya existe un usuario con el nombre {usuario.Nombre}, apellido {usuario.Apellido} y nombre de usuario {usuario.Usuario1} ID de usuario: {usuarioExistente.UsuarioId}..";
                     return RedirectToAction("Index");
+                }
+
+                // Verificar si hay algún usuario con el mismo nombre de usuario1
+                var usuarioMismoUsuario = usuarios.FirstOrDefault(c =>
+                    string.Equals(c.Usuario1, usuario.Usuario1, StringComparison.OrdinalIgnoreCase) &&
+                    c.UsuarioId != usuario.UsuarioId);
+
+                // Si ya existe un usuario con el mismo nombre de usuario1, mostrar un mensaje de error
+                if (usuarioMismoUsuario != null)
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = $"Ya existe un usuario con el nombre de usuario {usuario.Usuario1} ID de usuario: {usuarioMismoUsuario.UsuarioId}.";
+                    return RedirectToAction("Index");
+                }
+
+                // Verificar si hay algún usuario con el mismo nombre y apellido
+                var usuarioExistenteOne = usuarios.FirstOrDefault(c =>
+              string.Equals(c.Nombre, usuario.Nombre, StringComparison.OrdinalIgnoreCase) &&
+              string.Equals(c.Apellido, usuario.Apellido, StringComparison.OrdinalIgnoreCase) &&
+              c.UsuarioId != usuario.UsuarioId);
+
+                // Si ya existe un usuario con el mismo nombre y apellido, mostrar un mensaje de error
+                if (usuarioExistenteOne != null)
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = $"Ya existe un usuario con el nombre {usuario.Nombre} y apellido {usuario.Apellido} ID de usuario: {usuarioExistenteOne.UsuarioId}.";
+                    return RedirectToAction("Index");
+                }
+
+                // Verificar si hay algún usuario con el mismo correo electrónico
+                var correoExistente = usuarios.FirstOrDefault(c =>
+                    string.Equals(c.Correo, usuario.Correo, StringComparison.OrdinalIgnoreCase) &&
+                    c.UsuarioId != usuario.UsuarioId);
+
+                // Si ya existe un usuario con el mismo correo electrónico, mostrar un mensaje de error
+                if (correoExistente != null && (correoExistente.Correo != "Correo@gmmailcom" && correoExistente.Correo != "correo@gmmailcom"))
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = $"Ya hay un usuario registrado con el correo electrónico {usuario.Correo} ID de usuario: {correoExistente.UsuarioId}.";
+                    return RedirectToAction("Index");
+                }
+
+                var Usuarios = new Usuario
+                {
+                    UsuarioId = usuario.UsuarioId,
+                    RolId = usuario.RolId,
+                    Nombre = usuario.Nombre,
+                    Apellido = usuario.Apellido,
+                    Usuario1 = usuario.Usuario1,
+                    Contraseña = usuario.Contraseña,
+                    Telefono = usuario.Telefono,
+                    Correo = usuario.Correo,
+                    EstadoUsuario = usuario.EstadoUsuario
+                };
+
+                var response = await _client.UpdateUsuarioAsync(Usuarios);
+
+                if (response != null)
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData["SweetAlertIcon"] = "success";
+                        TempData["SweetAlertTitle"] = "Éxito";
+                        TempData["SweetAlertMessage"] = "Usuario actualizado correctamente.";
+                        return RedirectToAction("Index");
+                    }
+                    else if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        TempData["SweetAlertIcon"] = "error";
+                        TempData["SweetAlertTitle"] = "Error";
+                        TempData["SweetAlertMessage"] = "El Usuario no se encontró en el servidor.";
+                        return RedirectToAction("Index");
+                    }
+                    else if (response.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        TempData["SweetAlertIcon"] = "error";
+                        TempData["SweetAlertTitle"] = "Error";
+                        TempData["SweetAlertMessage"] = "Nombre de Usuario duplicado.";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["SweetAlertIcon"] = "error";
+                        TempData["SweetAlertTitle"] = "Error";
+                        TempData["SweetAlertMessage"] = "Error al actualizar el Usuario.";
+                        return RedirectToAction("Index");
+                    }
                 }
                 else
                 {
@@ -206,16 +322,22 @@ namespace VistaNewProject.Controllers
                     return RedirectToAction("Index");
                 }
             }
-
-
-
-            return RedirectToAction("Index");
+            catch (Exception ex)
+            {
+                // Manejar cualquier excepción que ocurra durante el proceso
+                Console.WriteLine($"Error al actualizar usuario: {ex.Message}");
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "Ocurrió un error al actualizar el usuario.";
+                return RedirectToAction("Index");
+            }
         }
 
-        public async Task<IActionResult> Delete(int id)
+
+        public async Task<IActionResult> Delete(int usuarioId)
         {
             var domicilios = await _client.GetDomicilioAsync();
-            var domiciliosDelUsuario = domicilios.Where(d => d.UsuarioId == id);
+            var domiciliosDelUsuario = domicilios.Where(d => d.UsuarioId == usuarioId);
 
             if (domiciliosDelUsuario.Any())
             {
@@ -225,7 +347,7 @@ namespace VistaNewProject.Controllers
                 return RedirectToAction("Index");
             }
 
-            var response = await _client.DeleteUsuarioAsync(id);
+            var response = await _client.DeleteUsuarioAsync(usuarioId);
             if (response == null)
             {
                 TempData["SweetAlertIcon"] = "error";
@@ -236,23 +358,45 @@ namespace VistaNewProject.Controllers
             {
                 TempData["SweetAlertIcon"] = "success";
                 TempData["SweetAlertTitle"] = "Éxito";
-                TempData["SweetAlertMessage"] = "Usuario eliminada correctamente.";
+                TempData["SweetAlertMessage"] = "Usuario eliminado correctamente.";
             }
             else if (response.StatusCode == HttpStatusCode.NotFound)
             {
                 TempData["SweetAlertIcon"] = "error";
                 TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "El Usuario no se encontró en el servidor.";
+                TempData["SweetAlertMessage"] = "El Usuario no se encontró en el servusuarioIdor.";
             }
             else
             {
                 TempData["SweetAlertIcon"] = "error";
                 TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "Error desconocido al eliminar el usuario.";
+                TempData["SweetAlertMessage"] = "Error desconocusuarioIdo al eliminar el usuario.";
             }
 
             return RedirectToAction("Index");
         }
+
+        [HttpPatch("Usuarios/UpdateEstadoUsuario/{id}")]
+        public async Task<IActionResult> CambiarEstadoUsuario(int id)
+        {
+            // Llama al método del servicio para cambiar el estado del usuario
+            var response = await _client.CambiarEstadoUsuarioAsync(id);
+
+            // Devuelve una respuesta adecuada en función de la respuesta del servicio
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok();
+            }
+            else
+            {
+                return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+            }
+        }
+
+
+
+
+
 
 
     }

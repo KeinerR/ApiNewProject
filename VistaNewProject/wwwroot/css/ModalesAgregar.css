@@ -6,14 +6,19 @@
     padding: 0;
     overflow: hidden;
     position: relative;
+    border-radius:3px 3px 0px 0px;
+    background: #878AB3;
+    color:white;
+    border-bottom:solid 1px black;
 }
 /*Posicion de la modal*/
-#GeneralModal {
-    margin-top:49px ;
+.GeneralModal {
+    margin-top:20px ;
 }
 
 #pibo {
     flex: 0 0 auto;
+    border:solid red 2px;
 }
 
 .TituloModal {
@@ -36,16 +41,15 @@
     z-index: 2; /* Permite la interacción con el botón de cierre */
 }
 
-#ContenedorVista .modal-dialog {
+.ContenedorVista .modal-dialog {
     width: 100%;
-    max-width:600px; /* Ajusta según tus necesidades */
+    max-width: 600px; /* Ajusta según tus necesidades */
     margin: auto;
 }
 
 .modal-content {
     border: solid black 1px;
 }
-
 .modal-cuerpo {
     padding: 15px; /* Añadir un poco de padding para mejor visualización */
 }
@@ -69,18 +73,24 @@
         max-width: 90%; /* Ajuste de ancho para pantallas más pequeñas */
     }
 }
-
 /*--------------- Estilos de *------------------------------------------*/
-#GeneralModal .form-group {
+.GeneralModal .form-group {
     position: relative; /* Posicionamiento relativo para que el span absoluto se base en este contenedor */
 }
 
-#GeneralModal .Mensaje {
+.GeneralModal .Mensaje {
     position: absolute; /* Posiciona el asterisco de forma absoluta dentro del contenedor relativo */
-    top: -5px; /* Centra verticalmente*/
+    top: -1px; /* Centra verticalmente*/
     margin-left: 5px; /* Mantiene el margen izquierdo para separación */
-    font-size: 2em;
-    color:red;
+    font-size: 1.5em;
+    color: red;
+}
+.GeneralModal .MensajeAct {
+    position: absolute; /* Posiciona el asterisco de forma absoluta dentro del contenedor relativo */
+    top: -1px; /* Centra verticalmente*/
+    margin-left: 5px; /* Mantiene el margen izquierdo para separación */
+    font-size: 1.5em;
+    color: red;
 }
 
 /*-----------FOOTER  M0DAL---------------------------------------------------------*/
@@ -106,6 +116,10 @@
     max-width: 100%
 }
 .MensajeInicial {
+    text-align: center; 
+    justify-content:center;
+}
+.MensajeActInicial {
     text-align: center; 
     justify-content:center;
 }

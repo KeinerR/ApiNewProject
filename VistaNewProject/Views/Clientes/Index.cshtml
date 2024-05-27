@@ -384,8 +384,8 @@
                 </td>
 
                 <td class="contenedorBotonesTabla">
-                    <button class="btn botonEditarCategoria" id="btnEdit" data-cliente-id="@item.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
-                    <a asp-action="Details" asp-route-id="@item.ClienteId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
+                    <button class="btn botonEditarCategoria" id="botonEditar" data-cliente-id="@item.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
+                    <a asp-action="Details" asp-route-id="@item.ClienteId" class="btn botonDetalle" ><i class="fas fa-file"></i></a>
                     <form style="display:inline-block;" asp-controller="Clientes" asp-action="Delete" method="post" class="delete-form">
                         <!-- Agrega un campo oculto con el ID del cliente -->
                         <input type="hidden" name="id" value="@item.ClienteId" />
@@ -421,8 +421,8 @@
 
                         <td class="text-center align-middle">
                             <div class="btn-group" role="group">
-                                <button class="btn botonEditarCategoria" id="btnEdit" data-cliente-id="@cliente.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
-                                <a asp-action="Details" asp-route-id="@cliente.ClienteId" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
+                                <button class="btn botonEditarCategoria" id="botonEditar" data-cliente-id="@cliente.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
+                                <a asp-action="Details" asp-route-id="@cliente.ClienteId" class="btn botonDetalle" ><i class="fas fa-file"></i></a>
                                 <form style="display:inline-block;" asp-controller="Clientes" asp-action="Delete" method="post" class="delete-form">
                                     <input type="hidden" name="id" value="@cliente.ClienteId" />
                                     <button type="button" onclick="confirmarEliminacion()" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>

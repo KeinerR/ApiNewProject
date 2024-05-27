@@ -148,7 +148,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="btnEditarProveeor">Actualizar</button>
+                    <button type="submit" class="btn btn-primary" id="botonEditararProveeor">Actualizar</button>
                 </div>
             </form>
         </div>
@@ -232,12 +232,12 @@
 
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td class="contenedorBotonesTabla">
-                    <button class="btn" id="btnEdit" data-proveedor-id="@item.ProveedorId" data-bs-toggle="modal" data-bs-target="#ProveedorModal"><i class="fas fa-edit"></i></button>
-                    <a asp-action="Details" asp-route-id="@item.ProveedorId" class="btn" id="btnDetail"><i class="fas fa-file"></i></a>
+                    <button class="btn" id="botonEditar" data-proveedor-id="@item.ProveedorId" data-bs-toggle="modal" data-bs-target="#ProveedorModal"><i class="fas fa-edit"></i></button>
+                    <a asp-action="Details" asp-route-id="@item.ProveedorId" class="btn" ><i class="fas fa-file"></i></a>
                     <form style="display:inline-block;" asp-controller="Proveedores" asp-action="Delete" method="post" class="delete-form">
                             @Html.Hidden("id", item.ProveedorId)
                         <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
-                        <button type="button" onclick="confirmarEliminacion()" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                        <button type="button" onclick="confirmarEliminacion()"  value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
                     </form>
 
 
@@ -267,12 +267,12 @@
 
                         <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                         <td class="contenedorBotonesTabla">
-                            <button class="btn" id="btnEdit" data-proveedor-id="@proveedor.ProveedorId" data-bs-toggle="modal" data-bs-target="#ProveedorModal"><i class="fas fa-edit"></i></button>
-                            <a asp-action="Details" asp-route-id="@proveedor.ProveedorId" class="btn" id="btnDetail"><i class="fas fa-file"></i></a>
+                            <button class="btn" id="botonEditar" data-proveedor-id="@proveedor.ProveedorId" data-bs-toggle="modal" data-bs-target="#ProveedorModal"><i class="fas fa-edit"></i></button>
+                            <a asp-action="Details" asp-route-id="@proveedor.ProveedorId" class="btn" ><i class="fas fa-file"></i></a>
                             <form style="display:inline-block;" asp-controller="Proveedores" asp-action="Delete" method="post" class="delete-form">
                                 @Html.Hidden("id", proveedor.ProveedorId)
                                 <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
-                                <button type="button" onclick="confirmarEliminacion()" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                <button type="button" onclick="confirmarEliminacion()"  value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
                             </form>
 
 

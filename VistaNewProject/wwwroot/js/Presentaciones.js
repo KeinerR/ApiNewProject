@@ -12,7 +12,7 @@ function checkInternetConnection() {
         $('.Mensaje').text('*');
 
         $('#NombrePresentacion, #DescripcionPresentacion, #Contenido, #CantidadPorPresentacion').on('input', function () {
-            validarCampo($(this));
+            validarCampoCompra($(this));
 
             // Validar si todos los campos son válidos antes de agregar la presentación
             todoValido = $('.text-danger').filter(function () {
@@ -34,7 +34,7 @@ function checkInternetConnection() {
         });
     }
 
-    function validarCampo(input) {
+    function validarCampoCompra(input) {
         const valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
         const spanError = input.next('.text-danger'); // Obtener el elemento span de error asociado al input
         const spanVacio = input.prev('.Mensaje'); // Obtener el elemento span vacío asociado al input
@@ -222,7 +222,7 @@ function obtenerPresentacionId(PresentacionId) {
 
 }
 
-document.querySelectorAll('#btnEdit').forEach(button => {
+document.querySelectorAll('#btnEditar').forEach(button => {
     button.addEventListener('click', function () {
         const Id = this.getAttribute('data-presentacion-id');
 

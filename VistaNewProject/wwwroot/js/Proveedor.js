@@ -55,7 +55,7 @@ function obtenerProveedorid(ProveedorId) {
 
 
 
-document.querySelectorAll('#btnEdit').forEach(button => {
+document.querySelectorAll('#btnEditar').forEach(button => {
     button.addEventListener('click', function () {
         const Id = this.getAttribute('data-proveedor-id');
 

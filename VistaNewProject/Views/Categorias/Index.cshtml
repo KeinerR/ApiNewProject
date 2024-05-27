@@ -99,7 +99,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="btnEditarCategoria">Actualizar</button>
+                    <button type="submit" class="btn btn-primary" id="botonEditararCategoria">Actualizar</button>
                 </div>
             </form>
         </div>
@@ -160,13 +160,13 @@
                 </td>
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td class="contenedorBotonesTabla" >
-                    <button class="btn botonEditarCategoria" id="btnEdit" data-categoria-id="@item.CategoriaId" data-bs-toggle="modal" data-bs-target="#CategoriaModal"><i class="fas fa-edit"></i></button>
-                    <a asp-action="Details botonDetalleCategoria" asp-route-id="@item.CategoriaId" id="btnDetail" class="btn"><i class="fa-solid fa-file"></i></a>
+                    <button class="btn botonEditarCategoria" id="botonEditar" data-categoria-id="@item.CategoriaId" data-bs-toggle="modal" data-bs-target="#CategoriaModal"><i class="fas fa-edit"></i></button>
+                    <a asp-action="Details botonDetalleCategoria" asp-route-id="@item.CategoriaId" class="btn btnDetalle"><i class="fa-solid fa-file"></i></a>
                     <!-- Dentro del bucle foreach en tu vista Razor -->
                     <form style="display:inline-block;" asp-controller="Categorias" asp-action="Delete" method="post" class="delete-form">
                         @Html.Hidden("id", item.CategoriaId)
                         <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
-                        <button type="button" onclick="confirmarEliminacion()" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                        <button type="button" onclick="confirmarEliminacion()"  value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
                     </form>
 
                 </td>
@@ -191,13 +191,13 @@
                         </td>
                         <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                         <td class="contenedorBotonesTabla">
-                            <button class="btn botonEditarCategoria" id="btnEdit" data-categoria-id="@categoria.CategoriaId" data-bs-toggle="modal" data-bs-target="#CategoriaModal"><i class="fas fa-edit"></i></button>
-                            <a asp-action="Details botonDetalleCategoria" asp-route-id="@categoria.CategoriaId" id="btnDetail" class="btn"><i class="fa-solid fa-file"></i></a>
+                            <button class="btn botonEditarCategoria" id="botonEditar" data-categoria-id="@categoria.CategoriaId" data-bs-toggle="modal" data-bs-target="#CategoriaModal"><i class="fas fa-edit"></i></button>
+                            <a asp-action="Details botonDetalleCategoria" asp-route-id="@categoria.CategoriaId"  class="btn"><i class="fa-solid fa-file"></i></a>
                             <!-- Dentro del bucle foreach en tu vista Razor -->
                             <form style="display:inline-block;" asp-controller="Categorias" asp-action="Delete" method="post" class="delete-form">
                                 @Html.Hidden("id", categoria.CategoriaId)
                                 <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
-                                <button type="button" onclick="confirmarEliminacion()" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                <button type="button" onclick="confirmarEliminacion()"  value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
                             </form>
 
                         </td>

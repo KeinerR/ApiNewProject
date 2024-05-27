@@ -79,6 +79,7 @@ namespace VistaNewProject.Services
         Task<Producto> FindProductoAsync(int id);
         Task<HttpResponseMessage> UpdateProductoAsync(Producto producto);
         Task<HttpResponseMessage> DeleteProductoAsync(int id);
+        Task<HttpResponseMessage> CambiarEstadoProductoAsync(int id);
 
 
 
@@ -102,6 +103,7 @@ namespace VistaNewProject.Services
         Task<Usuario> FindUsuarioAsync(int id);
         Task<HttpResponseMessage> UpdateUsuarioAsync(Usuario usuario);
         Task<HttpResponseMessage> DeleteUsuarioAsync(int id);
+        Task<HttpResponseMessage> CambiarEstadoUsuarioAsync(int id);
 
         // movimiento
 

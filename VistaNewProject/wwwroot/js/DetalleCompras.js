@@ -55,7 +55,7 @@ function obtenerDatosDetalleCompra(detalleCompraId) {
             document.getElementById('TituloModal').innerText = 'Editar DetalleCompra';
             // Ocultar el botón "Agregar" y mostrar el botón "Actualizar Usuario"
             document.getElementById('btnGuardar').style.display = 'none';
-            document.getElementById('btnEditar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
+            document.getElementById('botonEditarar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
         })
         .catch(error => {
             console.error('Error:', error);
@@ -124,5 +124,5 @@ function limpiarFormulario() {
 
     document.getElementById('TituloModal').innerText = 'Agregar DetalleCompra';
     document.getElementById('btnGuardar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
-    document.getElementById('btnEditar').style.display = 'none';
+    document.getElementById('botonEditarar').style.display = 'none';
 }

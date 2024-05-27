@@ -1,631 +1,426 @@
-﻿document.addEventListener('DOMContentLoaded', function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const mostrarAlerta = urlParams.get('mostrarAlerta');
-    const usuarioId = urlParams.get('usuarioId');
+﻿var usuarios = []; // Inicializamos la variable usuarios como un objeto vacío
 
-
-    usuarios = {}; // Inicializamos la variable usuarios como un objeto vacío
-    var todoValido = true;
-
-
-
-    function obtenerDatosUsuarios() {
-        fetch('https://localhost:7013/api/Usuarios/GetUsuarios')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener los usuarios.');
-                }
-                return response.json();
-            })
-            .then(data => {
-                usuarios = data; // Asignamos el resultado de la petición a la variable usuarios
-                console.log('Usuarios obtenidos:', usuarios);
-                // Llamar a la función para validar campos después de obtener los usuarios
-                NoCamposVacios();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-
-    // Llamamos a la función obtenerDatosUsuarios
-    obtenerDatosUsuarios();
-    if (mostrarAlerta === 'true' && usuarioId) {
-        obtenerDatosUsuario(usuarioId);
-
-        // Obtener el botón que activa la modal
-        const botonModal = document.querySelector('[data-bs-target="#usuarioModal"]');
-        if (botonModal) {
-            // Simular el clic en el botón para mostrar la modal
-            botonModal.click();
+// Obtener usuarios al dar click en agregar usuario
+function obtenerDatosUsuarios() {
+    fetch('/Usuarios/FindUsuarios', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
         }
-    } else {
-        console.log('UsuarioId no encontrado en la URL');
-    }
-    function mostrarOcultarContrasena(idCampo) {
-        var inputContrasena = document.getElementById(idCampo);
-        /*var iconoOjo = document.getElementById("MostrarOcultar" + idCampo.charAt(idCampo.length - 1)).querySelector("img");*/
-
-        if (inputContrasena.type === "password") {
-            inputContrasena.type = "text";
-            // iconoOjo.src = "ruta/para/el/ícono-de-ojo-cerrado.svg";
-        } else {
-            inputContrasena.type = "password";
-            // iconoOjo.src = "ruta/para/el/ícono-de-ojo-abierto.svg";
-        }
-    }
-    // Función para validar campos y mostrar mensaje inicial de validación
-    function NoCamposVacios() {
-        // Mostrar mensaje inicial de validación
-        $('#MensajeInicial').text(' Completa todos los campos con *');
-        $('.Mensaje').text(' *');
-
-
-        $('#Nombre,#RolId, #Apellido,#Telefono,#RepetirContraseña, #Usuario, #Contraseña, #Correo').on('input', function () {
-            validarCampo($(this));
-
-            // Validar si todos los campos son válidos antes de agregar el usuario
-            todoValido = $('.text-danger').filter(function () {
-                return $(this).text() !== '';
-            }).length === 0;
-
-            todolleno = $('.Mensaje ').filter(function () {
-                return $(this).text() !== '';
-            }).length === 0;
-            console.log('Todos los campos son válidos:', todoValido);
-
-            // Si todos los campos son válidos, ocultar el mensaje en todos los campos
-            if (todolleno) {
-                $('#MensajeInicial').hide();
-            } else {
-                $('#MensajeInicial').show(); // Mostrar el mensaje si no todos los campos son válidos
-            }
-        });
-    }
-
-    // Función para validar un campo y mostrar mensajes de error en el span asociado
-    function validarCampo(input) {
-
-        var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
-        var spanError = input.next('.text-danger'); // Obtener el elemento span de error asociado al input
-        var spanVacio = input.prev('.Mensaje'); // Obtener el elemento span vacío asociado al input
-
-        // Limpiar el mensaje de error previo
-        spanError.text('');
-        spanVacio.text('');
-
-        // Validar el campo y mostrar mensaje de error si es necesario
-        if (valor === '') {
-            spanVacio.text(' *obligatorio');
-            spanError.text('Este campo es obligatorio.');
-        }
-        if (input.is('#RolId')) {
-            if (valor) {
-                spanError.text('');
-                spanVacio.text('');
-            } else {
-                spanError.text(' ')
-                spanVacio.text(' *obligatorio');
-
-            }
-            // Resto del código de validación del campo RolId
-        }
-        if (input.is('#Nombre') || input.is('#Apellido')) {
-            var spanErrorNombre = $('#Nombre').next('.text-danger'); // Obtén el elemento span correspondiente al campo Nombre
-            var spanErrorApellido = $('#Apellido').next('.text-danger'); // Obtén el elemento span correspondiente al campo Apellido
-            var valorNombre = $('#Nombre').val().trim(); // Obtén el valor del campo Nombre
-            var valorApellido = $('#Apellido').val().trim(); // Obtén el valor del campo Apellido
-            var spanVacioNombre = $('#Nombre').prev('.Mensaje');
-            var spanVacioApellido = $('#Apellido').prev('.Mensaje');
-
-
-            if (valorNombre === '') {
-                spanErrorNombre.text(' ');
-                spanVacioNombre.text(' *');
-            } else if ($('#Nombre').val().trim().length < 3) {
-                spanErrorNombre.text('Este campo debe tener un mínimo de 3 caracteres.');
-                spanVacioNombre.text('');
-            } else if (/^[a-zA-Z]+\s[a-zA-Z]+$/.test(valorNombre)) {
-                spanErrorNombre.text('El nombre no puede contener números ni caracteres especiales (excepto espacios en nombres compuestos).');
-            } else {
-                spanErrorNombre.text('');
-                spanVacioNombre.text('');
-            }
-
-            if (valorApellido === '') {
-                spanErrorApellido.text(' ');
-                spanVacioApellido.text(' *');
-            } else if ($('#Apellido').val().trim().length < 3) {
-                spanErrorApellido.text('Este campo debe tener un mínimo de 3 caracteres.');
-                spanVacioApellido.text('');
-            } else if (/^[a-zA-Z]+\s[a-zA-Z]+$/.test(valorApellido)) {
-                spanErrorApellido.text('El apellido no puede contener números ni caracteres especiales (excepto espacios en apellidos compuestos).');
-                spanVacioApellido.text('');
-            } else {
-                spanErrorApellido.text('');
-                spanVacioApellido.text('');
-            }
-
-            var nombreRepetido = usuarios.some(function (user) {
-                return user.nombre.toLowerCase() === valorNombre.toLowerCase() &&
-                    user.apellido.toLowerCase() === valorApellido.toLowerCase() &&
-                    user.usuarioId != $('#UsuarioId').val().trim();
-            });
-
-            if (nombreRepetido) {
-                spanErrorNombre.text('Este nombre y apellido ya se encuentran registrados.');
-                spanErrorApellido.text('Este nombre y apellido ya se encuentran registrados.');
-                spanVacio.text('');
-            }
-        }
-
-
-
-        // Validación de teléfono
-        if (input.is('#Telefono')) {
-            var telefonoValido = /^\d{7,}$/.test(valor); // Permite al menos 6 dígitos
-
-            if (valor === '') {
-                spanError.text('');
-                spanVacio.text(' *obligatorio');
-            } else if (valor.length < 7 && valor.length > 0) {
-                spanError.text('El teléfono debe tener minimo 7 dígitos numéricos.');
-                spanVacio.text('');
-            } else if (!telefonoValido) {
-                spanError.text('este campo no permite letras u espacios');
-                spanVacio.text('');
-            } else {
-                var telefonoRepetido = usuarios.some(function (user) {
-                    return user.telefono === valor
-                });
-
-                if (telefonoRepetido) {
-                    spanError.text('Este telefono ya se encuentra registrado por otro usuario.');
-                    spanVacio.text('');
-                } else {
-                    spanError.text('');
-                    spanVacio.text('');
-                }
-            }
-        }
-
-        // Validación de correo electrónico
-        if (input.is('#Correo')) {
-            const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor); // Verifica el formato de correo electrónico
-            if (valor === '') {
-                spanError.text('Este campo es necesario. Si desea omitirlo, use: correo@gmail.com');
-                spanVacio.text(' *');
-            } else if (valor.toLowerCase() === 'correo@gmail.com') {
-                spanError.text('');
-                spanVacio.text('');
-            } else if (!correoValido) {
-                spanError.text('Ingrese un correo electrónico válido.');
-                spanVacio.text('');
-            } else {
-                var correoRepetido = usuarios.some(function (user) {
-                    return user.correo === valor
-                });
-
-                if (correoRepetido) {
-                    spanError.text('Este correo ya se encuentra registrado por otro usuario.');
-                    spanVacio.text('');
-                } else {
-                    spanError.text('');
-                    spanVacio.text('');
-                }
-            }
-        }
-
-
-
-        // Validación de usuario
-        if (input.is('#Usuario')) {
-            const usuarioValido = /^[a-zA-Z]{3,}[a-zA-Z0-9_-]{0,16}$/.test(valor); // Verifica que el usuario cumpla con el formato especificado
-            if (valor === '') {
-                spanVacio.text(' *obligatorio');
-            } else if (valor.length < 4 && valor.length > 1) {
-                spanVacio.text('');
-                spanError.text('El usuario debe contener entre 4 y 16 caracteres y empezar con letras. ejemplo:juan123 ');
-            } else if (!usuarioValido) {
-                spanVacio.text('');
-                spanError.text('El usuario debe contener entre 4 y 16 caracteres alfanumericos, guiones bajos (_) o guiones medios (-).');
-            } else {
-                var usuarioRepetido = usuarios.some(function (user) {
-                    return user.usuario1 === valor
-                });
-
-                if (usuarioRepetido) {
-                    spanVacio.text('');
-                    spanError.text('Este usuario ya se encuentra registrado.');
-                } else {
-                    spanError.text('');
-                    spanVacio.text('');
-                }
-            }
-        }
-
-        // Validación de contraseña
-        if (input.is('#Contraseña')) {
-            var spanErrorRepetir = $('#RepetirContraseña').next('.text-danger'); // Obtén el elemento span correspondiente al campo Nombre
-            const contraseñaValida = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+={}\[\]:;"'<>,.?/|\\~-]).{6,}$/.test(valor);
-            const contraseña = $('#RepetirContraseña').val();
-            if (!contraseñaValida) {
-                spanError.text('La contraseña debe contener al menos 6 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial.');
-                spanVacio.text('');
-            } else {
-                spanError.text('');
-                spanVacio.text('');
-            }
-            if (contraseña) {
-                if (contraseña !== valor) {
-                    spanErrorRepetir.text('Las contraseñas no coinciden')
-                } else {
-                    spanErrorRepetir.text('')
-                }
-            }
-
-        }
-        if (input.is('#RepetirContraseña')) {
-            const contraseña = $('#Contraseña').val();
-            const repetirContraseña = valor;
-
-            if (contraseña !== repetirContraseña) {
-                spanError.text('Las contraseñas no coinciden.');
-                spanVacio.text('');
-            } else {
-                spanError.text('');
-                spanVacio.text('');
-            }
-        }
-
-        return todoValido; // Devuelve el estado de validación al finalizar la función
-    }
-    // Función para agregar un usuario después de validar los campos
-    function agregarUsuario() {
-        // Validar si todos los campos son válidos
-        if (!todoValido) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                timer: 3000, // Tiempo en milisegundos (en este caso, 3 segundos)
-                timerProgressBar: true,
-                text: 'Por favor, completa correctamente todos los campos para poder registrar este usuario.'
-            });
-            return;
-        }
-
-        // Obtener los valores de los campos del formulario
-        const nombre = document.getElementById('Nombre').value.trim();
-        const rolId = document.getElementById('RolId').value;
-        const apellido = document.getElementById('Apellido').value.trim();
-        const usuario = document.getElementById('Usuario').value.trim();
-        const contraseña = document.getElementById('Contraseña').value.trim();
-        const telefono = document.getElementById('Telefono').value.trim();
-        const correo = document.getElementById('Correo').value.trim();
-        const estadoUsuario = document.getElementById('EstadoUsuario').value;
-
-        if (
-            nombre.trim() === '' ||
-            rolId.trim() === '' ||
-            apellido.trim() === '' ||
-            usuario.trim() === '' ||
-            contraseña.trim() === '' ||
-            telefono.trim() === '' ||
-            correo.trim() === '' ||
-            estadoUsuario.trim() === ''
-        ) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                timer: 3000,
-                timerProgressBar: true,
-                text: 'Por favor, completa todos los campos con * para poder registrar este usuario.'
-            });
-            return;
-        }
-        // Crear un objeto con los valores del formulario
-        const usuarioObjeto = {
-            RolId: rolId,
-            Nombre: nombre,
-            Apellido: apellido,
-            Usuario1: usuario,
-            Contraseña: contraseña,
-            Telefono: telefono,
-            Correo: correo,
-            EstadoUsuario: estadoUsuario
-        };
-
-        // Enviar la solicitud POST al servidor utilizando la Fetch API
-        fetch('https://localhost:7013/api/Usuarios/InsertUsuario', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(usuarioObjeto)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Ocurrió un error al enviar la solicitud.');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Mostrar SweetAlert
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Éxito',
-                    text: 'Se ha registro al usuario con éxito.',
-                    timer: 3000, // Tiempo en milisegundos (en este caso, 3 segundos)
-                    timerProgressBar: true
-                }).then((result) => {
-                    if (result.dismiss === Swal.DismissReason.timer) {
-                        console.log('El usuario cerró el SweetAlert después del tiempo establecido');
-                    }
-                    // Recargar la página
-                    location.reload();
-                });
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                // Manejar errores de la solicitud
-            });
-    }
-
-
-
-    function obtenerDatosUsuario(usuarioId) {
-        fetch(`https://localhost:7013/api/Usuarios/GetUsuarioById?Id=${usuarioId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener los datos del usuario.');
-                }
-                return response.json();
-            })
-            .then(usuario => {
-                // Llenar los campos del formulario modal con los datos del cliente
-                document.getElementById('UsuarioId').value = usuario.usuarioId;
-                document.getElementById('RolId').value = usuario.rolId;
-                document.getElementById('Nombre').value = usuario.nombre;
-                document.getElementById('Apellido').value = usuario.apellido;
-                document.getElementById('Usuario').value = usuario.usuario1;
-                document.getElementById('Contraseña').value = usuario.contraseña;
-                document.getElementById('Telefono').value = usuario.telefono;
-                document.getElementById('Correo').value = usuario.correo;
-
-
-                document.getElementById('EstadoUser').style.display = 'block';
-                document.querySelectorAll('.Novisible').forEach(function (element) {
-                    element.style.display = 'none';
-                });
-
-                // Seleccionar el valor correcto en el campo de Estado Usuario
-                var selectEstadoUsuario = document.getElementById('EstadoUsuario');
-                if (usuario.estadoUsuario === 1) {
-                    selectEstadoUsuario.value = '1'; // Activo
-                } else if (usuario.estadoUsuario === 0) {
-                    selectEstadoUsuario.value = '0'; // Inactivo
-                }
-
-                // Cambiar el título de la ventana modal
-                document.getElementById('TituloModal').innerText = 'Editar Usuario';
-
-                // Ocultar el botón "Agregar" y mostrar el botón "Actualizar Usuario"
-                $('#MensajeInicial').text('');
-                var mensajes = document.querySelectorAll('.Mensaje');
-                mensajes.forEach(function (mensaje) {
-                    mensaje.textContent = ''; // Restaurar mensajes de error
-                    mensaje.style.display = 'inline-block';
-                });
-
-                document.getElementById('btnGuardar').style.display = 'none';
-                document.getElementById('btnEditar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
-
-                // Seleccionar el valor correcto en el campo de Rol
-                var selectRol = document.getElementById('RolId');
-                if (usuario.rolId === 1) {
-                    selectRol.value = '1';
-                } else if (usuario.rolId === 2) {
-                    selectRol.value = '2';
-                } else {
-                    selectRol.value = '3';
-                }
-                // Mostrar el campo de Estado Usuario
-
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-    function ActualizarUsuario() {
-        if (!todoValido) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                timer: 3000, // Tiempo en milisegundos (en este caso, 3 segundos)
-                timerProgressBar: true,
-                text: 'Por favor, completa correctamente todos los campos para poder actualizar este usuario.'
-            });
-            return;
-        }
-        const usuarioId = document.getElementById('UsuarioId').value;
-        const rolId = document.getElementById('RolId').value;
-        const nombre = document.getElementById('Nombre').value.trim();
-        const apellido = document.getElementById('Apellido').value.trim();
-        const usuario = document.getElementById('Usuario').value.trim();
-        const contraseña = document.getElementById('Contraseña').value.trim();
-        const telefono = document.getElementById('Telefono').value.trim();
-        const correo = document.getElementById('Correo').value.trim();
-        const estadoUsuario = document.getElementById('EstadoUsuario').value;
-
-        const usuarioObjeto = {
-            UsuarioId: usuarioId,
-            RolId: rolId,
-            Nombre: nombre,
-            Apellido: apellido,
-            Usuario1: usuario,
-            Contraseña: contraseña,
-            Telefono: telefono,
-            Correo: correo,
-            EstadoUsuario: estadoUsuario
-        };
-
-        fetch(`https://localhost:7013/api/Usuarios/UpdateUsuarios`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(usuarioObjeto)
-        })
-            .then(response => {
-                if (response.ok) {
-                    // Mostrar SweetAlert
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Éxito',
-                        text: 'Se ha actualizado con éxito.',
-                        timer: 3000, // Tiempo en milisegundos (en este caso, 3 segundos)
-                        timerProgressBar: true
-                    }).then((result) => {
-                        location.reload();
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'No Se ha podido actualizar el usuario intentalo de nuevo luego.',
-                        timer: 3000, // Tiempo en milisegundos (en este caso, 3 segundos)
-                        timerProgressBar: true
-                    }).then((result) => {
-                        if (result.dismiss === Swal.DismissReason.timer) {
-                            console.log('El usuario cerró el SweetAlert después del tiempo establecido');
-                        }
-                        // Recargar la página
-                        location.reload();
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert("Error en la actualización. Por favor, inténtalo de nuevo más tarde.");
-            });
-    }
-
-
-
-    // Attach the ojoMostrarContraseña function to the button's onclick event
-    document.getElementById('MostrarOcultar1').onclick = function () {
-        mostrarOcultarContrasena('Contraseña');
-    };
-
-    document.getElementById('MostrarOcultar2').onclick = function () {
-        mostrarOcultarContrasena('RepetirContraseña');
-    };
-    // Llamar a la función agregarUsuario al hacer clic en el botón de agregar
-    document.getElementById('btnGuardar').addEventListener('click', function () {
-        agregarUsuario();
-    });
-    document.getElementById('btnEditar').addEventListener('click', function () {
-        ActualizarUsuario();
-    });
-
-    document.querySelectorAll('#btnEdit').forEach(button => {
-        button.addEventListener('click', function () {
-            const usuarioId = this.getAttribute('data-usuario-id');
-            obtenerDatosUsuario(usuarioId);
-        });
-    });
-    // Llamar a la función obtenerDatosUsuario al hacer clic en el botón de editar
-    document.querySelectorAll('#btnDelete').forEach(button => {
-        button.addEventListener('click', function () {
-            const usuarioId = this.getAttribute('data-usuario-id');
-            eliminarUsuario(usuarioId);
-        });
-    });
-
-});
-function eliminarUsuario(usuarioId) {
-    // Hacer la solicitud DELETE al servidor para eliminar el cliente
-    fetch(`https://localhost:7013/api/Usuarios/DeleteUser/${usuarioId}`, {
-        method: 'DELETE',
     })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error al eliminar el usuario.');
-            } else {
-                // Aquí puedes manejar la respuesta si es necesario
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Éxito',
-                    text: 'Usuario Eliminado correctamente.',
-                    timer: 1500,
-                    timerProgressBar: true,
-                    showConfirmButton: false
-                }).then(() => {
-                    location.reload();
-                });
-            }
+        .then(response => response.json())
+        .then(data => {
+            productos = data;
+            console.log(productos);
         })
-        .catch(error => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                timerProgressBar: true,
-                text: 'No puedes eliminar un usuario con acciones asociadas en el aplicativo.'
-            }).then((result) => {
-                if (result.dismiss === Swal.DismissReason.timer) {
-                    console.error('Error:', error);
-                }
-                // Recargar la página
-                location.reload();
-            });
-
-        });
+        .catch(error => console.error('Error al obtener los usuarios:', error));
 }
 
 
 
+/*------------------------------------- Al cargar la vista ------------------------------------------------------------------------------------------ */
+
+document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const mostrarAlerta = urlParams.get('mostrarAlerta');
+    const usuarioId = urlParams.get('usuarioId');
+
+    if (mostrarAlerta === 'true' && usuarioId) {
+        mostrarModalSinRetrasoUsuario(usuarioId);
+    } else {
+        console.log('UsuarioId no encontrado en la URL');
+    }
+    //Evitar el envio de los formularios hasta que todo este validado
+    $('.modal-formulario-actualizar-usuario').on('submit', function (event) {
+        if (!NoCamposVaciosAct()) {
+            event.preventDefault();
+        } else {
+            // Obtener los valores de los campos del formulario
+            var rolId = $('#rolIdAct').val();
+
+            if (rolId === '') {
+                event.preventDefault();
+                mostrarAlertaDataList('rol');
+            }
+        }
+    });
+    $('.modal-formulario-crear-usuario').on('submit', function (event) {
+        if (!NoCamposVacios()) {
+            event.preventDefault();
+        } else {
+            // Obtener los valores de los campos del formulario
+            var rolId = $('#RolId').val();
+
+            if (rolId === '') {
+                event.preventDefault();
+                mostrarAlertaDataList('rol');
+            }
+        }
+    });
+    // Validar campos en cada cambio para eliminar o cambiar el mensaje inicial que aparece arriba de los botones del formulario
+    $('.modal-formulario-crear-usuario input, .modal-formulario-crear-usuario select').on('input', function () {
+        NoCamposVaciosInicial();
+    });
+    $('.modal-formulario-actualizar-usuario input, .modal-formulario-actualizar-usuario select').on('input', function () {
+        NoCamposVaciosInicialAct();
+    });
+    // Asignar función de selección a los campos data-list
+    $('#NombreRol').on('input', function () {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            seleccionarOpcion(this, document.getElementById('roles'), document.getElementById('RolId'));
+        }, 650);
+    });
+    $('#NombreRolAct').on('input', function () {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            seleccionarOpcion(this, document.getElementById('roles'), document.getElementById('RolIdAct'));
+        }, 650);
+    });
+
+    //Este elimina el mensaje inicial u lo agrega de ser necesario el que aparece sobre los botones
+    function NoCamposVacios() {
+        const textDangerElements = $('.text-danger');
+        const mensajeElements = $('.Mensaje');
+
+        const textDangerSlice = textDangerElements.slice(0, 8);
+        const mensajeSlice = mensajeElements.slice(0, 8);
+        const todoValido = textDangerSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+
+        const todosLlenos = mensajeSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+
+        console.log('Todos los campos son válidos:', todoValido);
+        console.log('Todos los campos están llenos:', todosLlenos);
+
+        if (!todosLlenos) {
+            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+            return false;
+        }
+
+        if (!todoValido) {
+            $('.MensajeInicial').text('Algunos campos contienen errores.');
+            return false;
+        }
+
+        $('.MensajeInicial').text('');
+        return true;
+    }
+    function NoCamposVaciosAct() {
+        const textDangerElements = $('.text-danger');
+        const mensajeElements = $('.Mensaje');
+
+        const textDangerSlice = textDangerElements.slice(-7);
+        const mensajeSlice = mensajeElements.slice(-7);
+
+        const todoValido = textDangerSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+
+        const todosLlenos = mensajeSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+
+
+        console.log('Todos los campos son válidos:', todoValido);
+        console.log('Todos los campos están llenos:', todosLlenos);
+
+        if (!todosLlenos) {
+            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+            return false;
+        }
+
+        if (!todoValido) {
+            $('.MensajeInicial').text('Algunos campos contienen errores.');
+            return false;
+        }
+
+        $('.MensajeInicial').text('');
+        return true;
+    }
+    function NoCamposVaciosInicial() {
+        const textDangerElements = $('.text-danger');
+        const mensajeElements = $('.Mensaje');
+
+        const textDangerSlice = textDangerElements.slice(0, 8);
+        const mensajeSlice = mensajeElements.slice(0, 8);
+
+        const todoValido = textDangerSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+
+        const todosLlenos = mensajeSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+
+        if (todosLlenos) {
+            $('.MensajeInicial').text('');
+            if (todoValido) {
+                $('.MensajeInicial').text('');
+            }
+        }
 
 
 
+    }
+    function NoCamposVaciosInicialAct() {
+        const textDangerElements = $('.text-danger');
+        const mensajeElements = $('.Mensaje');
 
-document.getElementById('buscarUsuario').addEventListener('input', function () {
-    var input = this.value.trim().toLowerCase();
+        const textDangerSlice = textDangerElements.slice(-7);
+        const mensajeSlice = mensajeElements.slice(-7);
+
+        const todoValido = textDangerSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+
+        const todosLlenos = mensajeSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+
+        if (todosLlenos) {
+            $('.MensajeInicial').text('');
+            if (todoValido) {
+                $('.MensajeInicial').text('');
+            }
+        }
+    }
+    $('.delete-form-usuario').on('submit', function (event) {
+        event.preventDefault(); // Evita que el formulario se envíe automáticamente
+        // Mostrar el diálogo de confirmación
+        Swal.fire({
+            title: '\u00BFEst\u00E1s seguro?',
+            text: '\u00A1Esta acci\u00F3n no se puede deshacer.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'S\u00ED, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, enviar el formulario
+                event.target.submit();
+            }
+        });
+    });
+
+
+});
+
+
+/*---------------------------------------------------- Al dar click en el boton de agregar usuario  ---------------------------------------------------- */
+function simularClickUsuario() {
+    //ocultar formulario de actualizar  y mostrar el formulario principal
+    $('#FormActualizarUsuario').hide();
+    $('#FormPrincipalUsuario').show().css('visibility', 'visible');
+}
+
+document.addEventListener('keydown', function (event) {
+    // Verificar si se presionó Ctrl + Espacio
+    if (event.ctrlKey && event.key === ' ') {
+        // Ejecutar la función que deseas al presionar Ctrl + Espacio
+        abrirModal();
+    }
+});
+
+function abrirModal() {
+    // Verificar si la modal está abierta
+    if ($('#Modal').hasClass('show')) {
+        $('#Modal').modal('hide'); // Cerrar la modal
+    } else {
+        simularClickUsuario(); // Simular algún evento antes de abrir la modal
+        $('#Modal').modal('show'); // Abrir la modal
+    }
+}
+
+/*------------------------------ Limpiar formularios y url ---------------------------------------------------------------------------------------------------- */
+
+function limpiarFormularioUsuario() {
+    // Limpiar campos y elementos específicos
+    limpiarCampo('NombreRol');
+    limpiarCampo('RolId');
+    limpiarCampo('Nombre');
+    limpiarCampo('Apellido');
+    limpiarCampo('Usuario');
+    limpiarCampo('Contraseña');
+    limpiarCampo('RepetirContraseña');
+    limpiarCampo('Telefono');
+    limpiarCampo('Correo');
+
+    // Limpiar campos y elementos específicos de la versión actualizada
+    limpiarCampo('UsuarioIdAct');
+    limpiarCampo('NombreRolAct');
+    limpiarCampo('RolIdAct');
+    limpiarCampo('NombreAct');
+    limpiarCampo('ApellidoAct');
+    limpiarCampo('ContraseñaAct');
+    limpiarCampo('TelefonoAct');
+    limpiarCampo('CorreoAct');
+
+    // Limpiar mensajes de alerta y *
+    var mensajes = document.querySelectorAll('.Mensaje');
+    var mensajesText = document.querySelectorAll('.text-danger');
+
+    for (var i = Math.max(0, mensajes.length - 7); i < mensajes.length; i++) {
+        mensajes[i].textContent = '';
+    }
+    for (var i = 0; i < mensajes.length - 7; i++) {
+        mensajes[i].textContent = '*';
+    }
+    for (var i = 0; i < mensajesText.length; i++) {
+        mensajesText[i].textContent = '';
+    }
+
+    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
+        element.textContent = '';
+    });
+    // Limpiar la URL eliminando los parámetros de consulta
+    history.replaceState(null, '', location.pathname);
+}
+function limpiarFormularioUsuarioAgregar() {
+    // Limpiar mensajes de alerta y *
+    var mensajes = document.querySelectorAll('.Mensaje');
+    var mensajesText = document.querySelectorAll('.text-danger');
+
+    for (var i = Math.max(0, mensajes.length - 7); i < mensajes.length; i++) {
+        mensajes[i].textContent = '';
+    }
+    for (var i = 0; i < mensajes.length - 7; i++) {
+        mensajes[i].textContent = '*';
+    }
+    for (var i = 0; i < mensajesText.length; i++) {
+        mensajesText[i].textContent = '';
+    }
+
+    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
+        element.textContent = '';
+    }); 
+}
+
+//Función para limpiuar la url si el usuario da fuera de ella 
+$('.modal').on('click', function (e) {
+    if (e.target === this) {
+        // Limpiar la URL eliminando los parámetros de consulta
+        history.replaceState(null, '', location.pathname);
+        $(this).modal('hide'); // Oculta la modal
+    }
+});
+
+/*--------------------------------------------------------- Modal de actualizar usuario ---------------------------------------*/
+function mostrarModalConRetrasoUsuario(usuarioId) {
+    setTimeout(function () {
+        actualizarUsuario(usuarioId);
+        setTimeout(function () {
+            var myModal = new bootstrap.Modal(document.getElementById('Modal'));
+            myModal.show();
+            // Aquí puedes llamar a la función actualizarProducto si es necesario
+        }, 100); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
+    }, 0); // 0 milisegundos de retraso antes de llamar a actualizarProducto
+}
+//Modal cuando se hace click en editar en el boton de detalle
+function mostrarModalSinRetrasoUsuario(usuarioId) {
+    setTimeout(function () {
+        actualizarUsuario(usuarioId);
+        setTimeout(function () {
+            var myModal = new bootstrap.Modal(document.getElementById('Modal'));
+            myModal.show();
+            // Aquí puedes llamar a la función actualizarProducto si es necesario
+        }, 50); // 50 milisegundos (0.05 segundos) de retraso antes de abrir la modal
+    }, 0); // 0 milisegundos de retraso antes de llamar a actualizarProducto
+}
+
+function actualizarUsuario(campo) {
+    var usuarioId = campo;
+    $.ajax({
+        url: '/Usuarios/FindUsuario', // Ruta relativa al controlador y la acción
+        type: 'POST',
+        data: { usuarioId: usuarioId },
+        success: function (data) {
+            var formActualizar = $('#FormActualizarUsuario');
+            formActualizar.find('#UsuarioIdAct').val(data.usuarioId);
+            formActualizar.find('#NombreRolAct').val(data.rolId);
+            formActualizar.find('#EstadoUsuarioAct').val(data.estadoUsuario);
+            formActualizar.find('#NombreAct').val(data.nombre);
+            formActualizar.find('#UsuarioAct').val(data.usuario1);
+            formActualizar.find('#ContraseñaAct').val(data.contraseña);
+            formActualizar.find('#ApellidoAct').val(data.apellido);
+            formActualizar.find('#TelefonoAct').val(data.telefono);
+            formActualizar.find('#CorreoAct').val(data.correo);
+            formActualizar.find('#EstadoProductoAct').val(data.correo);
+            seleccionarOpcion(document.getElementById('NombreRolAct'), document.getElementById('roles'), document.getElementById('RolIdAct'));
+        },
+        error: function () {
+            alert('Error al obtener los datos del usuario.');
+        }
+    });
+    $('#FormPrincipalUsuario').hide().css('visibility', 'hidden');
+    $('#FormActualizarUsuario').show().css('visibility', 'visible');
+}
+
+
+/*------------------- Cambiar estado usuaurio------------------------------------------*/
+function actualizarEstadoUsuario(UsuarioId) {
+    $.ajax({
+        url: `/Usuarios/UpdateEstadoUsuario/${UsuarioId}`,
+        type: 'PATCH',
+        contentType: 'application/json',
+        success: function (response) {
+            console.log("Estado actualizado:", EstadoUsuario);
+            // Mostrar SweetAlert
+            Swal.fire({
+                icon: 'success',
+                title: '¡Estado actualizado!',
+                showConfirmButton: false,
+                timer: 1500 // Duración del SweetAlert en milisegundos
+            })
+        },
+        error: function (xhr, status, error) {
+            console.error('Error al actualizar el estado del usuario:', xhr.responseText);
+            // Mostrar SweetAlert de error si es necesario
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Hubo un error al actualizar el estado del usuario. Por favor, inténtalo de nuevo.'
+            });
+        }
+    });
+}
+
+
+
+/*---------------------------------------------------------Buscador--------------------------------------------------------- */
+function hello() {
+    var input = $('#buscarUsuario').val().trim().toLowerCase();
     var rows = document.querySelectorAll('.usuariosPaginado');
+    var icon = document.querySelector('#btnNavbarSearch i');
 
     if (input === "") {
         rows.forEach(function (row) {
             row.style.display = '';
         });
-        var icon = document.querySelector('#btnNavbarSearch i');
         icon.className = 'fas fa-search';
         icon.style.color = 'gray';
     } else {
         rows.forEach(function (row) {
             row.style.display = 'none';
         });
-        var icon = document.querySelector('#btnNavbarSearch i');
         icon.className = 'fas fa-times';
         icon.style.color = 'gray';
     }
+
     var rowsTodos = document.querySelectorAll('.Usuarios');
-
     rowsTodos.forEach(function (row) {
-        if (input === "") {
-            row.style.display = 'none';
-        } else {
-            var nombreR = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
-            var usuarioId = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-            var nombre = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
-            var apellido = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
-            var telefono = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
-            var correo = row.querySelector('td:nth-child(6)').textContent.trim().toLowerCase();
+        var usuarioId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
+        var nombreR = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+        var nombreC = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();    
 
-            row.style.display = (nombreR.includes(input) || usuarioId.includes(input) || nombre.includes(input) || apellido.includes(input) || telefono.includes(input) || correo.includes(input)) ? 'table-row' : 'none';
-        }
+        row.style.display = (input === "" || usuarioId.includes(input) || nombreR.includes(input) ) ? 'table-row' : 'none';
     });
-});
+}
 
 function vaciarInput() {
     document.getElementById('buscarUsuario').value = "";
@@ -639,104 +434,181 @@ function vaciarInput() {
     });
 
     var rowsTodos = document.querySelectorAll('.Usuarios');
-
     rowsTodos.forEach(function (row) {
         row.style.display = 'none';
     });
 }
 
-
-
-
-function limpiarFormulario() {
-    // Limpiar los valores de los campos del formulario
-    $('#UsuarioId, #RolId, #Nombre, #Apellido,#Usuario ,#Contraseña,#Telefono,#Correo,#EstadoUsuario ,#UsuarioIdAct, #RolIdAct, #NombreAct, #ApellidoAct,#UsuarioAct ,#ContraseñaAct,#TelefonoAct,#CorreoAct, #EstadoUsuarioAct').val('');
-
-    // Restaurar mensajes de error
-    $('.Mensaje, .MensajeAct').text(' *');
-    $('.Mensaje, .MensajeAct').show(); // Mostrar mensajes de error
-
-
-    $('.text-danger, .text-dangerAct').text(''); // Limpiar mensajes de error
-    $('#AgregarUsuarios').show();
-    $('#FormActualizarUsuarios').hide();
+/*---------------------- Llama a la funcion en site.js  ---------------------------*/
+function showNoRolesAlert() {
+    showAlertIfNoOptions("roles", "No hay roles activos", "No hay roles disponibles en este momento.");
 }
 
+/*------------------------ Validaciones---------------*/
+function validarCampoUsuario(campo) {
+    const input = $(campo); // Convertir el input a objeto jQuery
+    var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
+    var spanError = input.next('.text-danger'); // Obtener el elemento span de error asociado al input
+    var spanVacio = input.prev('.Mensaje'); // Obtener el elemento span vacío asociado al input
 
+    // Limpiar el mensaje de error previo
+    spanError.text('');
+    spanVacio.text('');
 
-$('.modal').on('click', function (e) {
-    if (e.target === this) {
-        limpiarFormulario(); // Limpia el formulario si se hace clic fuera de la modal
-        $(this).modal('hide'); // Oculta la modal
+    // Validar el campo y mostrar mensaje de error si es necesario
+    if (valor === '') {
+        spanVacio.text('*');
+        spanError.text('Este campo es obligatorio.');
     }
-});
-function mostraralerta(usuarioId) {
-    alert('El estado del usuario a cambiado usaurioId:' + usuarioId)
-}
 
-function obteneUsuarioid(UsuarioId) {
+    if (input.is('#Nombre') || input.is('#Apellido') || input.is('#NombreAct') || input.is('#ApellidoAct')) {
+        var campoNombre = input.is('#Nombre') ? $('#Nombre') : $('#NombreAct');
+        var campoApellido = input.is('#Apellido') ? $('#Apellido') : $('#ApellidoAct');
 
-    fetch(`https://localhost:7013/api/Usuarios/GetUsuarioById?Id=${UsuarioId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error al obtener los datos');
-            }
-            return response.json();
-        })
-        .then(usuario => {
+        var spanErrorNombre = campoNombre.next('.text-danger');
+        var spanErrorApellido = campoApellido.next('.text-danger');
+        var valorNombre = campoNombre.val().trim();
+        var valorApellido = campoApellido.val().trim();
+        var spanVacioNombre = campoNombre.prev('.Mensaje');
+        var spanVacioApellido = campoApellido.prev('.Mensaje');
 
-            document.getElementById('UsuarioIdAct').value = usuario.usuarioId;
-            document.getElementById('RolIdAct').value = usuario.rolId;
-            document.getElementById('NombreAct').value = usuario.nombre;
-            document.getElementById('ApellidoAct').value = usuario.apellido;
-            document.getElementById('UsuarioAct').value = usuario.usuario;
-            document.getElementById('ContraseñaAct').value = usuario.contraseña;
-            document.getElementById('TelefonoAct').value = usuario.telefono;
-            document.getElementById('CorreoAct').value = usuario.correo;
-            document.getElementById('EstadoUsuarioAct').value = usuario.estadoUsuario;
-            document.getElementById('RepetirContraseñaAct').value = usuario.contraseña;
+        // Validaciones de nombre
+        if (valorNombre === '') {
+            spanErrorNombre.text('');
+            spanVacioNombre.text('*');
+        } else if (valorNombre.length < 3) {
+            spanErrorNombre.text('Este campo debe tener un mínimo de 3 caracteres.');
+            spanVacioNombre.text('');
+        } else if (/^[a-zA-Z]+\s[a-zA-Z]+$/.test(valorNombre)) {
+            spanErrorNombre.text('El nombre no puede contener números ni caracteres especiales (excepto espacios en nombres compuestos).');
+        } else {
+            spanErrorNombre.text('');
+            spanVacioNombre.text('');
+        }
 
+        // Validaciones de apellido
+        if (valorApellido === '') {
+            spanErrorApellido.text(' ');
+            spanVacioApellido.text('*');
+        } else if (valorApellido.length < 3) {
+            spanErrorApellido.text('Este campo debe tener un mínimo de 3 caracteres.');
+            spanVacioApellido.text('');
+        } else if (/^[a-zA-Z]+\s[a-zA-Z]+$/.test(valorApellido)) {
+            spanErrorApellido.text('El apellido no puede contener números ni caracteres especiales (excepto espacios en apellidos compuestos).');
+            spanVacioApellido.text('');
+        } else {
+            spanErrorApellido.text('');
+            spanVacioApellido.text('');
+        }
+    }
 
+    // Validación de teléfono
+    if (input.is('#Telefono') || input.is('#TelefonoAct')) {
+        var telefonoValido = /^\d{7,}$/.test(valor); // Permite al menos 6 dígitos
 
-            console.log(usuario);
-        })
-        .catch(error => {
-            console.error("Error :", error)
-        });
-}
+        if (valor === '') {
+            spanError.text('');
+            spanVacio.text('*');
+        } else if (valor.length < 7 && valor.length > 0) {
+            spanError.text('El teléfono debe tener mínimo 7 dígitos numéricos.');
+            spanVacio.text('');
+        } else if (!telefonoValido) {
+            spanError.text('Este campo no permite letras o espacios.');
+            spanVacio.text('');
+        }
+    }
 
-document.querySelectorAll('#btnEdit').forEach(button => {
-    button.addEventListener('click', function () {
-        const Id = this.getAttribute('data-usuario-id');
+    // Validación de correo electrónico
+    if (input.is('#Correo') || input.is('#CorreoAct')) {
+        const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor); // Verifica el formato de correo electrónico
+        if (valor === '') {
+            spanError.text('Este campo es necesario. Si desea omitirlo, use: correo@gmail.com');
+            spanVacio.text(' *');
+        } else if (valor.toLowerCase() === 'correo@gmail.com') {
+            spanError.text('');
+            spanVacio.text('');
+        } else if (!correoValido) {
+            spanError.text('Ingrese un correo electrónico válido.');
+            spanVacio.text('');
+        }
+    }
 
-        document.getElementById('AgregarUsuarios').style.display = 'none';
-        document.getElementById('FormActualizarUsuarios').style.display = 'block';
-        obteneUsuarioid(Id); // Aquí se pasa el Id como argumento a la función obtenercategoriaid()
-    });
-});
+    // Validación de usuario
+    if (input.is('#Usuario') || input.is('#UsuarioAct')) {
+        const usuarioValido = /^[a-zA-Z]{3,}[a-zA-Z0-9_-]{0,16}$/.test(valor); // Verifica que el usuario cumpla con el formato especificado
+        if (valor === '') {
+            spanVacio.text('*');
+        } else if (valor.length < 4 && valor.length > 1) {
+            spanVacio.text('');
+            spanError.text('El usuario debe contener entre 4 y 16 caracteres y empezar con letras. Ejemplo: juan123');
+        } else if (!usuarioValido) {
+            spanVacio.text('');
+            spanError.text('El usuario debe contener entre 4 y 16 caracteres alfanuméricos, guiones bajos (_) o guiones medios (-).');
+        } else {
+            spanError.text('');
+            spanVacio.text('');
+        }
+    }
 
+    // Validación de contraseña
+    if (input.is('#Contraseña') || input.is('#ContraseñaAct')) {
+        var spanErrorContraseña = $('#Contraseña').next('.text-danger'); // Obtén el elemento span correspondiente al campo Contraseña
+        var spanErrorRepetir = $('#RepetirContraseña').next('.text-danger'); // Obtén el elemento span correspondiente al campo Repetir Contraseña
+        var spanVacioContraseña = $('#Contraseña').prev('.text-danger'); // Obtén el elemento span correspondiente al campo Contraseña vacía
+        var valorContraseña = $('#Contraseña').val(); // Obtén el valor del campo Contraseña
+        const contraseñaValida = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/.test(valorContraseña); // Expresión regular actualizada
 
+        if (valorContraseña === '') {
+            spanErrorContraseña.text('');
+            spanVacioContraseña.text('*');
+        } else if (!contraseñaValida) {
+            spanErrorContraseña.text('La contraseña debe contener al menos 5 caracteres, una letra mayúscula, una letra minúscula y un número.');
+            spanVacioContraseña.text('');
+        } else {
+            spanErrorContraseña.text('');
+            spanVacioContraseña.text('*');
+        }
 
-function actualizarEstadoUsuario(UsuarioId, EstadoUsuario) {
-    fetch(`https://localhost:7013/api/Usuarios/UpdateEstadoUsuario/${UsuarioId}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ EstadoUsuario: EstadoUsuario ? 1 : 0 })
-    })
-        .then(response => {
-            if (response.ok) {
-                console.log("estado ", EstadoUsuario);
-                setTimeout(() => {
-                    location.reload(); // Recargar la página
-                }, 500);
+        var repetirContraseña = $('#RepetirContraseña').val(); // Obtén el valor del campo Repetir Contraseña
+
+        if (repetirContraseña !== '') {
+            if (repetirContraseña !== valorContraseña) {
+                spanErrorRepetir.text('Las contraseñas no coinciden');
             } else {
-                console.error('Error al actualizar el estado del cliente');
+                spanErrorRepetir.text('');
             }
-        })
-        .catch(error => {
-            console.error('Error de red:', error);
-        });
+        } else {
+            spanErrorRepetir.text('');
+        }
+    }
+
+    if (input.is('#RepetirContraseña')) {
+        const contraseña = $('#Contraseña').val();
+        const repetirContraseña = valor;
+
+        if (contraseña !== repetirContraseña) {
+            spanError.text('Las contraseñas no coinciden.');
+            spanVacio.text('');
+        } else {
+            spanError.text('');
+            spanVacio.text('');
+        }
+    }
+
+    return true; // Devuelve el estado de validación al finalizar la función
 }
+
+
+
+
+/*Util*/
+//$('.modal').on('click', function (e) {
+//    if (e.target === this) {
+//        limpiarFormulario(); // Limpia el formulario si se hace clic fuera de la modal
+//        $(this).modal('hide'); // Oculta la modal
+//    }
+//});
+
+
+
 

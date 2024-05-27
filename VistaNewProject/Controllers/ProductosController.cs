@@ -6,6 +6,7 @@ using System;
 using Microsoft.AspNetCore.Http;
 using System.Net;
 using Microsoft.CodeAnalysis.Operations;
+using System.Collections.Immutable;
 
 
 namespace VistaNewProject.Controllers
@@ -342,83 +343,49 @@ namespace VistaNewProject.Controllers
 
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int productoId)
         {
-            try
+            Console.WriteLine($"ID recibido desde el formulario: {productoId}");
+            // Resto del código...
+            var producto = await _client.FindProductoAsync(productoId);
+
+            if (producto == null)
             {
-                var producto = await _client.FindProductoAsync(id);
-
-                if (producto == null)
-                {
-                    TempData["SweetAlertIcon"] = "error";
-                    TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "El producto a eliminar no existe.";
-                    TempData["Tiempo"] = 3000;
-                    TempData["EstadoAlerta"] = "false";
-                    return RedirectToAction("Index");
-                }
-
-                // Verificar si el producto está asociado a algún detalle de compra, detalle de pedido o lote
-                bool tieneDetallesAsociados = await VerificarDetallesAsociados(producto);
-
-                if (tieneDetallesAsociados)
-                {
-                    TempData["SweetAlertIcon"] = "error";
-                    TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "No se puede eliminar el producto porque tiene detalles asociados.";
-                    TempData["Tiempo"] = 3000;
-                    TempData["EstadoAlerta"] = "false";
-                    return RedirectToAction("Index");
-                }
-
-                // Si no tiene detalles asociados, procede con la eliminación del producto
-                // Código para eliminar el producto...
-                var response = await _client.DeleteProductoAsync(id);
-                if (response == null)
-                {
-                    TempData["SweetAlertIcon"] = "error";
-                    TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "Error al eliminar el Producto.";
-                    TempData["Tiempo"] = 3000;
-                    TempData["EstadoAlerta"] = "false";
-                }
-                else if (response.IsSuccessStatusCode)
-                {
-                    TempData["SweetAlertIcon"] = "success";
-                    TempData["SweetAlertTitle"] = "Éxito";
-                    TempData["SweetAlertMessage"] = "Producto eliminado correctamente.";
-                    TempData["Tiempo"] = 3000;
-                    TempData["EstadoAlerta"] = "false";
-                }
-                else if (response.StatusCode == HttpStatusCode.NotFound)
-                {
-                    TempData["SweetAlertIcon"] = "error";
-                    TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "El Producto no se encontró en el servidor.";
-                    TempData["Tiempo"] = 3000;
-                    TempData["EstadoAlerta"] = "false";
-                }
-                else
-                {
-                    TempData["SweetAlertIcon"] = "error";
-                    TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "Error desconocido al eliminar el Producto.";
-                    TempData["Tiempo"] = 3000;
-                    TempData["EstadoAlerta"] = "false";
-                }
+                SetTempData("error", "Error", "El producto a eliminar no existe.");
                 return RedirectToAction("Index");
             }
-            catch (Exception ex)
+            Console.WriteLine(producto);
+
+            // Verificar si el producto está asociado a algún detalle de compra, detalle de pedido o lote
+            bool tieneDetallesAsociados = await VerificarDetallesAsociados(producto);
+
+            if (tieneDetallesAsociados)
             {
-                // Log de la excepción u otro manejo de errores
-                TempData["SweetAlertIcon"] = "error";
-                TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "Hubo un problema al eliminar el producto.";
-                TempData["Tiempo"] = 3000;
-                TempData["EstadoAlerta"] = "false";
+                SetTempData("error", "Error", "No se puede eliminar el producto porque tiene detalles asociados.");
                 return RedirectToAction("Index");
             }
+            // Si no tiene detalles asociados, procede con la eliminación del producto
+                var response = await _client.DeleteProductoAsync(productoId);
+            if (response == null)
+            {
+                SetTempData("error", "Error", "Error al eliminar el Producto.");
+            }
+            else if (response.IsSuccessStatusCode)
+            {
+                SetTempData("success", "Éxito", "Producto eliminado correctamente.");
+            }
+            else if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                SetTempData("error", "Error", "El Producto no se encontró en el servidor.");
+            }
+            else
+            {
+                SetTempData("error", "Error", "Error desconocido al eliminar el Producto.");
+            }
+            return RedirectToAction("Index");
         }
+
+
 
         private async Task<bool> VerificarDetallesAsociados(Producto producto)
         {
@@ -527,7 +494,42 @@ namespace VistaNewProject.Controllers
             }
         }
 
-       
+        [HttpPatch("Productos/UpdateEstadoProducto/{id}")]
+        public async Task<IActionResult> CambiarEstadoProducto(int id)
+        {
+            try
+            {
+                // Llama al método del servicio para cambiar el estado del producto
+                var response = await _client.CambiarEstadoProductoAsync(id);
+
+                // Devuelve una respuesta adecuada en función de la respuesta del servicio
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+                }
+            }
+            catch (Exception ex)
+            {
+                // Manejar cualquier excepción y devolver una respuesta de error
+                return StatusCode(500, $"Error al actualizar el estado del producto: {ex.Message}");
+            }
+        }
+
+
+        private void SetTempData(string icon, string title, string message)
+        {
+            TempData["SweetAlertIcon"] = icon;
+            TempData["SweetAlertTitle"] = title;
+            TempData["SweetAlertMessage"] = message;
+            TempData["Tiempo"] = 3000;
+            TempData["EstadoAlerta"] = "false";
+        }
+
+
 
 
 

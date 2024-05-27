@@ -52,7 +52,6 @@ namespace ApiNewProject.Controllers
                         PedidoId = s.PedidoId,
                         UnidadId = s.UnidadId,
                         LoteId = s.LoteId,
-
                         ProductoId = s.ProductoId,
                         Cantidad = s.Cantidad,
                         PrecioUnitario = s.PrecioUnitario,
@@ -111,7 +110,6 @@ namespace ApiNewProject.Controllers
             detallepedidos.ProductoId = detallepedido.ProductoId;
             detallepedidos.UnidadId = detallepedido.UnidadId;
             detallepedidos.LoteId = detallepedido.LoteId;
-
             detallepedidos.Cantidad = detallepedido.Cantidad;
             detallepedidos.PrecioUnitario = detallepedido.PrecioUnitario;
 

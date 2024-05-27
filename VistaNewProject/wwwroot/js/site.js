@@ -93,3 +93,92 @@ function reiniciarFormulario() {
     location.reload();
 }
 
+
+
+function mostrarOcultarContrasena(idCampo) {
+    var inputContrasena = document.getElementById(idCampo);
+    /*var iconoOjo = document.getElementById("MostrarOcultar" + idCampo.charAt(idCampo.length - 1)).querySelector("img");*/
+
+    if (inputContrasena.type === "password") {
+        inputContrasena.type = "text";
+        // iconoOjo.src = "ruta/para/el/ícono-de-ojo-cerrado.svg";
+    } else {
+        inputContrasena.type = "password";
+        // iconoOjo.src = "ruta/para/el/ícono-de-ojo-abierto.svg";
+    }
+}
+
+
+
+// Función general para mostrar el Sweet Alert si no hay opciones disponibles
+function showAlertIfNoOptions(elementId, alertTitle, alertText) {
+    var options = document.getElementById(elementId).getElementsByTagName("option");
+    if (options.length === 0) {
+        Swal.fire({
+            icon: 'info',
+            title: alertTitle,
+            text: alertText,
+            timer: 3000,
+            timerProgressBar: true
+        });
+    }
+}
+
+
+// Función para manejar la selección de opciones en los datalist
+window.seleccionarOpcion = function (input, dataList, hiddenInput) {
+    const selectedValue = input.value.trim();
+    let selectedOptionByName = Array.from(dataList.options).find(option => option.value === selectedValue);
+    let selectedOptionById = Array.from(dataList.options).find(option => option.getAttribute('data-id') === selectedValue);
+
+    if (/^\d+[a-zA-Z]$/.test(selectedValue)) {
+        selectedOptionByName = Array.from(dataList.options).find(option => option.value === selectedValue);
+    }
+
+    if (!selectedOptionByName && !selectedOptionById && /^\d+$/.test(selectedValue)) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'No se encontró ningún resultado con este ID',
+            showConfirmButton: false,
+            timer: 1800
+        });
+        input.value = '';
+        input.dispatchEvent(new Event('input'));
+        return;
+    }
+
+    if (selectedOptionByName) {
+        input.value = selectedOptionByName.value;
+        hiddenInput.value = selectedOptionByName.getAttribute('data-id');
+    } else if (selectedOptionById) {
+        input.value = selectedOptionById.value;
+        hiddenInput.value = selectedOptionById.getAttribute('data-id');
+    }
+}
+
+//Funcion para mostrar un sweet alert en caso de que se ingrese un numero de id que no tiene coincidencias
+function mostrarAlertaDataList(campo) {
+    Swal.fire({
+        position: "center",
+        icon: 'warning',
+        title: '\u00A1Atencion!',
+        html: `<p style="margin: 0;">Recuerda que debes seleccionar la ${campo} dando click en la opci\u00F3n que deseas</p>
+            <div class="text-center" style="margin: 0; padding: 0;">
+            <p style="margin: 0;">O</p>
+            </div>
+            <p style="margin: 0;">En su defecto, escribir el ID del ${campo} o nombre exactamente igual.</p>`,
+
+        showConfirmButton: false, // Mostrar botón de confirmación
+        timer: 6000
+
+    });
+}
+
+
+
+
+
+// Función auxiliar para limpiar un campo por su ID
+function limpiarCampo(idCampo) {
+    document.getElementById(idCampo).value = '';
+}

@@ -23,7 +23,8 @@ namespace ApiNewProject.Controllers
                 s => new Rol
                 {
                     RolId = s.RolId,
-                    NombreRol = s.NombreRol
+                    NombreRol = s.NombreRol,
+                    EstadoRol = s.EstadoRol
                 }
             ).ToListAsync();
 
@@ -43,7 +44,8 @@ namespace ApiNewProject.Controllers
                 .Select(s => new Rol
                 {
                     RolId = s.RolId,
-                    NombreRol = s.NombreRol
+                    NombreRol = s.NombreRol,
+                    EstadoRol= s.EstadoRol 
                 })
                 .FirstOrDefaultAsync(s => s.RolId == Id);
 
@@ -91,6 +93,7 @@ namespace ApiNewProject.Controllers
             }
             rols.RolId = rol.RolId;
             rols.NombreRol = rol.NombreRol;
+            rols.EstadoRol = rol.EstadoRol;
             await _context.SaveChangesAsync();
             return Ok();
         }

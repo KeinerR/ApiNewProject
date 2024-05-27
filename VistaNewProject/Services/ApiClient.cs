@@ -2,10 +2,19 @@
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
 using VistaNewProject.Models;
 
 namespace VistaNewProject.Services
 {
+    public static class HttpClientExtensions
+    {
+        public static Task<HttpResponseMessage> PatchAsync(this HttpClient client, string requestUri)
+        {
+            var request = new HttpRequestMessage(new HttpMethod("PATCH"), requestUri);
+            return client.SendAsync(request);
+        }
+    }
     public class ApiClient : IApiClient
     {
         private readonly HttpClient _httpClient;
@@ -443,7 +452,11 @@ namespace VistaNewProject.Services
 
         public async Task<Usuario> FindUsuarioAsync(int id)
         {
-            var response = await _httpClient.GetFromJsonAsync<Usuario>($"?id={id}");
+            var response = await _httpClient.GetFromJsonAsync<Usuario>($"Usuarios/GetUsuarioById?id={id}");
+            if (response == null)
+            {
+                throw new Exception("No se encontro el usuario con el ID especificado.");
+            }
             return response;
         }
 
@@ -464,7 +477,14 @@ namespace VistaNewProject.Services
         }
 
 
+        public async Task<HttpResponseMessage> CambiarEstadoUsuarioAsync(int id)
+        {
+            // Realiza la solicitud PATCH a la API
+            var response = await _httpClient.PatchAsync($"Usuarios/UpdateEstadoUsuario/{id}");
 
+            // Retorna la respuesta de la solicitud
+            return response;
+        }
 
 
 
@@ -563,12 +583,12 @@ namespace VistaNewProject.Services
             }
             return response;
         }
-   
+
         public async Task<HttpResponseMessage> UpdateProductoAsync(Producto producto)
         {
             try
             {
-                // Hacer la solicitud PUT al servidor para actualizar la marca
+                // Hacer la solicitud PUT al servidor para actualizar el producto
                 var response = await _httpClient.PutAsJsonAsync("Productos/UpdateProductos", producto);
 
                 // Verificar si la solicitud fue exitosa (código de estado 200 OK)
@@ -578,19 +598,19 @@ namespace VistaNewProject.Services
                 }
                 else if (response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    // La marca no se encontró en el servidor
+                    // El producto no se encontró en el servidor
                     return response;
                 }
                 else if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    // Error debido a una solicitud incorrecta (por ejemplo, nombre de marca duplicado)
+                    // Error debido a una solicitud incorrecta (por ejemplo, datos de producto inválidos)
                     return response;
                 }
                 else
                 {
                     return new HttpResponseMessage(HttpStatusCode.InternalServerError)
                     {
-                        Content = new StringContent("Error al actualizar la marca")
+                        Content = new StringContent("Error al actualizar el producto")
                     };
                 }
             }
@@ -598,7 +618,19 @@ namespace VistaNewProject.Services
             {
                 // Manejar errores de solicitud HTTP (por ejemplo, error de conexión)
                 Console.WriteLine($"Error en la solicitud HTTP: {ex.Message}");
-                return null; // Otra opción es lanzar una excepción para notificar el error
+                return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                {
+                    Content = new StringContent($"Error en la solicitud HTTP: {ex.Message}")
+                };
+            }
+            catch (Exception ex)
+            {
+                // Manejar cualquier otra excepción
+                Console.WriteLine($"Error inesperado: {ex.Message}");
+                return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                {
+                    Content = new StringContent($"Error inesperado: {ex.Message}")
+                };
             }
         }
 
@@ -634,11 +666,33 @@ namespace VistaNewProject.Services
                     return new HttpResponseMessage(HttpStatusCode.InternalServerError) { Content = new StringContent("Error al eliminar la marca") };
                 }
             }
+            catch (HttpRequestException ex)
+            {
+                // Manejar errores de solicitud HTTP (por ejemplo, error de conexión)
+                Console.WriteLine($"Error en la solicitud HTTP: {ex.Message}");
+                return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                {
+                    Content = new StringContent($"Error en la solicitud HTTP: {ex.Message}")
+                };
+            }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error en la solicitud HTTP: {ex.Message}");
-                return null;
+                // Manejar cualquier otra excepción
+                Console.WriteLine($"Error inesperado: {ex.Message}");
+                return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                {
+                    Content = new StringContent($"Error inesperado: {ex.Message}")
+                };
             }
+        }
+
+        public async Task<HttpResponseMessage> CambiarEstadoProductoAsync(int id) {
+            // Realiza la solicitud PATCH a la API
+            var response = await _httpClient.PatchAsync($"Productos/UpdateEstadoProducto/{id}");
+
+            // Retorna la respuesta de la solicitud
+            return response;
+
         }
 
 

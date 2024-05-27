@@ -285,7 +285,7 @@ function mostrarAlertaDataList(campo) {
 }
 
 //Funcion para validar campos vacios
-function validarCampos(input, campo) {
+function validarCampoCompras(input, campo) {
     var valor = input.val().trim();
     var spanError = input.next('.text-danger');
     var labelForCampo = $('label[for="' + campo + '"]');
@@ -388,7 +388,7 @@ function validarCampos(input, campo) {
 $('#NumeroFactura, #ProveedorId, #FechaCompra, #ProductoId, #FechaVencimiento, #NumeroLote, #UnidadId, #PrecioDeCompra, #PorcentajeGanancia, #PrecioDeVentaPorUnidad, #PrecioDeVentaxUnidadPresentacion, #PrecioDeVentaUnitario'  ).on('input', function () {
     var input = $(this);
     var campo = input.attr('id'); // Obtener el id del input actual como nombre de campo
-    validarCampos(input, campo);
+    validarCampoCompras(input, campo);
 });
 
 // Función para llenar correcgtamente la compra antes agregar productos a la compra
@@ -1296,7 +1296,7 @@ document.addEventListener   ("DOMContentLoaded", function () {
         input.value = formattedValue;
         
         // Llamar a la función de validación de campos
-        validarCampos($(input));
+        validarCampoCompras($(input));
     }
 
     // Función para iniciar el intervalo al mantener presionado el botón

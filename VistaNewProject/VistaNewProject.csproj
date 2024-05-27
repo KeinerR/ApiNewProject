@@ -13,9 +13,6 @@
     <Content Remove="wwwroot\js\1Login\**" />
     <Content Remove="wwwroot\js\4Compras\**" />
     <Content Remove="wwwroot\js\Productos\**" />
-    <EmbeddedResource Remove="wwwroot\js\1Login\**" />
-    <EmbeddedResource Remove="wwwroot\js\4Compras\**" />
-    <EmbeddedResource Remove="wwwroot\js\Productos\**" />
     <None Remove="wwwroot\js\1Login\**" />
     <None Remove="wwwroot\js\4Compras\**" />
     <None Remove="wwwroot\js\Productos\**" />

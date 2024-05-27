@@ -20,7 +20,7 @@
 
         <!-- Botón para abrir el modal -->
         <button type="button" id="btnModal" class="btn btn-primary" onclick="setHoraActual('FechaCompra');" data-bs-toggle="modal" data-bs-target="#CompraModal">
-            <i class="fas fa-plus-circle"></i>  Agregar Compra
+            <i class="fas fa-plus-circle"></i> Agregar Compra
         </button>
 
     </div>
@@ -334,10 +334,10 @@
         </label>
         </td>
         <td>
-        <a asp-action="Details" asp-route-id="@item.CompraId" value="" class="btn botonDetalle" id="btnDetail"><i class="fas fa-file"></i></a>
+        <a asp-action="Details" asp-route-id="@item.CompraId" value="" class="btn botonDetalle" ><i class="fas fa-file"></i></a>
         <form style="display: inline-block;" asp-controller="Compras" id="botonTrash" asp-action="Delete" method="post" class="delete-form">
         <input type="hidden" name="id" id="campoId" value="@item.CompraId" />
-        <button type="submit" id="btnDelete" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+        <button type="submit"  value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
         </form>
         </td>
 
