@@ -1,4 +1,5 @@
-﻿@using X.PagedList
+﻿
+@using X.PagedList
 @model X.PagedList.IPagedList<VistaNewProject.Models.Cliente>
 @{
     ViewData["Title"] = "Index";
@@ -36,62 +37,62 @@
             <form asp-controller="Clientes" asp-action="Create" method="post" onsubmit="return validarFormulario()">
                 <div class="modal-body">
 
-                    <div class="col-5">
+                    <div class="col-5 d-none ">
                         <input type="hidden" id="ClienteId" name="clienteId" class="form-control" />
                     </div>
                     <div style=" form-group">
                         <div class="row">
 
-                            <div class="col-5">
+                            <div class="col-6">
                                 <div class="form-group">
                                     <label for="Identificacion" class="control-label">Identificación</label>
-                                    <input type="text" id="Identificacion" maxlength="26" name="identificacion" class="form-control" style="border-radius: 50px;" />
+                                    <input type="text" id="Identificacion" maxlength="26" name="identificacion" class="form-control"  />
                                     <span id="MensajeIdentificacion" class="error"></span>
                                 </div>
                             </div>
 
 
-                            <div class="col-5">
+                            <div class="col-6">
 
                                 <div class="form-group">
                                     <label for="NombreCompleto" class="control-label">Nombre Completo</label>
-                                    <input type="text" id="NombreCompleto" name="nombreCompleto" class="form-control" style=" border-radius: 50px;" />
+                                    <input type="text" id="NombreCompleto" name="nombreCompleto" class="form-control" />
                                     <span id="MensajeNombreCompleto" class="text-danger"></span>
 
                                 </div>
                             </div>
 
-                            <div class="col-5">
+                            <div class="col-6">
                                 <div class="form-group col">
                                     <label for="NombreEntidad" class="control-label">Nombre Entidad</label>
-                                    <input type="text" id="NombreEntidad" name="nombreEntidad" class="form-control" style=" border-radius: 50px;" />
+                                    <input type="text" id="NombreEntidad" name="nombreEntidad" class="form-control"  />
                                     <span id="MensajeNombreEntidad" class="text-danger"></span>
 
                                 </div>
                             </div>
-                            <div class="col-5">
+                            <div class="col-6">
                                 <div class="form-group">
                                     <label for="Telefono" class="control-label">Teléfono</label>
-                                    <input type="text" id="Telefono" name="telefono" class="form-control" style=" border-radius: 50px;" />
+                                    <input type="text" id="Telefono" name="telefono" class="form-control" />
                                     <span id="MensajeTelefono" class="text-danger"></span>
 
                                 </div>
 
                             </div>
 
-                            <div class="col-5">
+                            <div class="col-6">
                                 <div class="form-group">
                                     <label for="Correo" class="control-label">Correo</label>
-                                    <input type="text" id="Correo" name="correo" class="form-control" style=" border-radius: 50px;" />
+                                    <input type="text" id="Correo" name="correo" class="form-control"  />
                                     <span id="MensajeCorreo" class="text-danger"></span>
 
                                 </div>
                             </div>
 
-                            <div class="col-5">
+                            <div class="col-6">
                                 <div class="form-group">
                                     <label for="Direccion" class="control-label">Direccion</label>
-                                    <input type="text" id="Direccion" name="direccion" class="form-control" style=" border-radius: 50px;" />
+                                    <input type="text" id="Direccion" name="direccion" class="form-control"  />
                                     <span id="MensajeDireccion" class="text-danger"></span>
 
                                 </div>
@@ -100,10 +101,10 @@
 
 
 
-                            <div class="col-5">
+                            <div class="col-6">
                                 <div class="form-group">
                                     <label for="TipoCliente" class="control-label">Tipo Cliente </label>
-                                    <select id="TipoCliente" name="tipoCliente" class="form-control" style=" border-radius: 50px;">
+                                    <select id="TipoCliente" name="tipoCliente" class="form-control" >
                                         <option value="Natural">Natural</option>
                                         <option value="Empresa">Empresa</option>
                                     </select>
@@ -112,16 +113,16 @@
                                 </div>
                             </div>
 
-                            <div class="col-5">
+                            <div class="col-6">
                                 <div class="modal-footer  form-group">
                                     <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
                                 </div>
                             </div>
 
-                            <div class="col-5">
+                            <div class="col-6">
                                 <div class="form-group" id="EstadoCliente" style="display:none">
                                     <label for="EstadoCliente" class="control-label">Estado Cliente</label>
-                                    <select id="EstadoCliente" name="estadoCliente" class="form-control" style=" border-radius: 50px;">
+                                    <select id="EstadoCliente" name="estadoCliente" class="form-control" >
                                         <option value="1">Activo</option>
                                         <option value="0">Inactivo</option>
                                     </select>
@@ -177,57 +178,57 @@
                     </div>
                     <div style=" form-group">
                         <div class="row">
-                            <div class="col-5">
+                            <div class="col-6">
                                 <div class="form-group">
                                     <label for="IdentificacionAct" class="control-label">Identificacion</label>
-                                    <input type="text" id="IdentificacionAct" name="identificacionAct" class="form-control" style="border-radius: 50px;" />
+                                    <input type="text" id="IdentificacionAct" name="identificacionAct" class="form-control"  />
                                     <span id="MensajeIdentificacionAct" class="text-danger"></span>
                                     <!-- Use un ID más descriptivo como "MensajeIdentificacion" -->
                                 </div>
                             </div>
 
 
-                            <div class="col-5">
+                            <div class="col-6">
 
                                 <div class="form-group">
                                     <label for="NombreCompletoAct" class="control-label">Nombre Completo</label>
-                                    <input type="text" id="NombreCompletoAct" name="nombreCompletoAct" class="form-control" style=" border-radius: 50px;" />
+                                    <input type="text" id="NombreCompletoAct" name="nombreCompletoAct" class="form-control" />
                                     <span id="MensajeNombreCompletoAct" class="text-danger"></span>
 
                                 </div>
                             </div>
 
-                            <div class="col-5">
+                            <div class="col-6">
                                 <div class="form-group col">
                                     <label for="NombreEntidadAct" class="control-label">Nombre Entidad</label>
-                                    <input type="text" id="NombreEntidadAct" name="nombreEntidadAct" class="form-control" style=" border-radius: 50px;" />
+                                    <input type="text" id="NombreEntidadAct" name="nombreEntidadAct" class="form-control" />
                                     <span id="MensajeNombreEntidadAct" class="text-danger"></span>
 
                                 </div>
                             </div>
-                            <div class="col-5">
+                            <div class="col-6">
                                 <div class="form-group">
                                     <label for="TelefonoAct" class="control-label">Teléfono</label>
-                                    <input type="text" id="TelefonoAct" name="telefonoAct" class="form-control" style=" border-radius: 50px;" />
+                                    <input type="text" id="TelefonoAct" name="telefonoAct" class="form-control" />
                                     <span id="MensajeTelefonoAct" class="text-danger"></span>
 
                                 </div>
 
                             </div>
 
-                            <div class="col-5">
+                            <div class="col-6">
                                 <div class="form-group">
                                     <label for="CorreoAct" class="control-label">Correo</label>
-                                    <input type="text" id="CorreoAct" name="correoAct" class="form-control" style=" border-radius: 50px;" />
+                                    <input type="text" id="CorreoAct" name="correoAct" class="form-control"  />
                                     <span id="MensajeCorreoAct" class="text-danger"></span>
 
                                 </div>
                             </div>
 
-                            <div class="col-5">
+                            <div class="col-6">
                                 <div class="form-group">
                                     <label for="DireccionAct" class="control-label">Direccion</label>
-                                    <input type="text" id="DireccionAct" name="direccionAct" class="form-control" style=" border-radius: 50px;" />
+                                    <input type="text" id="DireccionAct" name="direccionAct" class="form-control"  />
                                     <span id="MensajeDireccionAct" class="text-danger"></span>
 
                                 </div>
@@ -236,10 +237,10 @@
 
 
 
-                            <div class="col-5">
+                            <div class="col-6">
                                 <div class="form-group">
                                     <label for="TipoClienteAct" class="control-label">Tipo Cliente </label>
-                                    <select id="TipoClienteAct" name="tipoClienteAct" class="form-control" style=" border-radius: 50px;">
+                                    <select id="TipoClienteAct" name="tipoClienteAct" class="form-control" >
                                         <option value="Natural">Natural</option>
                                         <option value="Empresa">Empresa</option>
                                     </select>
@@ -248,10 +249,10 @@
                                 </div>
                             </div>
 
-                            <div class="col-5">
+                            <div class="col-6">
                                 <div class="form-group" id="EstadoCliente">
                                     <label for="EstadoClienteAct" class="control-label">Estado Cliente</label>
-                                    <select id="EstadoClienteAct" name="estadoClienteAct" class="form-control" style=" border-radius: 50px;">
+                                    <select id="EstadoClienteAct" name="estadoClienteAct" class="form-control" >
                                         <option value="1">Activo</option>
                                         <option value="0">Inactivo</option>
                                     </select>
@@ -443,7 +444,7 @@
     @if (Model != null && Model.PageCount > 1)
     {
         <div class="d-flex justify-content-center mb-5">
-            <nav aria-label="Page navigation" class="shadow p-3 mb-5 bg-white rounded">
+            <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-center">
                     <!-- Botón para ir a la primera página -->
                     @if (Model.PageNumber > 1)
@@ -487,7 +488,7 @@
         </div>
     }
 </div>
-
+                                       
 @if (!string.IsNullOrEmpty(TempData["Mensaje"]?.ToString()))
 {
     <div class="alert alert-success" role="alert">

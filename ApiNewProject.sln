@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiNewProject", "ApiNewProject\ApiNewProject.csproj", "{54126FA8-E30C-400C-B6AF-85D35788E47C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1F4C535E-1280-4257-A5DC-44E3731A263F} = {1F4C535E-1280-4257-A5DC-44E3731A263F}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VistaNewProject", "VistaNewProject\VistaNewProject.csproj", "{1F4C535E-1280-4257-A5DC-44E3731A263F}"
 EndProject

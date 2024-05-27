@@ -40,6 +40,7 @@ namespace ApiNewProject.Controllers
                     CategoriaId = s.CategoriaId,
                     NombreProducto = s.NombreProducto,
                     CantidadTotal = s.CantidadTotal,
+                    CantidadReservada = s.CantidadReservada,
                     CantidadAplicarPorMayor = s.CantidadAplicarPorMayor,
                     DescuentoAplicarPorMayor = s.DescuentoAplicarPorMayor,
                     Estado = s.Estado
@@ -63,6 +64,7 @@ namespace ApiNewProject.Controllers
                         CategoriaId = s.CategoriaId,
                         NombreProducto = s.NombreProducto,
                         CantidadTotal = s.CantidadTotal,
+                        CantidadReservada= s.CantidadReservada,
                         CantidadAplicarPorMayor = s.CantidadAplicarPorMayor,
                         DescuentoAplicarPorMayor = s.DescuentoAplicarPorMayor,
                         Estado = s.Estado,
@@ -117,6 +119,7 @@ namespace ApiNewProject.Controllers
             productos.CategoriaId = producto.CategoriaId;
             productos.NombreProducto = producto.NombreProducto;
             productos.CantidadTotal = producto.CantidadTotal;
+            productos.CantidadReservada = producto.CantidadReservada;
             productos.CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor;
             productos.DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor;
             productos.Estado = producto.Estado;
@@ -186,6 +189,7 @@ namespace ApiNewProject.Controllers
                         CategoriaId = p.CategoriaId,
                         NombreProducto = p.NombreProducto,
                         CantidadTotal = p.CantidadTotal,
+                        CantidadReservada = p.CantidadReservada,    
                         CantidadAplicarPorMayor = p.CantidadAplicarPorMayor,
                         DescuentoAplicarPorMayor = p.DescuentoAplicarPorMayor,
                         Estado = p.Estado

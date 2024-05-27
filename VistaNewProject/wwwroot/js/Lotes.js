@@ -159,3 +159,63 @@ function limpiarFormulario() {
     document.getElementById('btnGuardar').style.display = 'inline-block'; // Mostrar el botón "Actualizar Usuario"
     document.getElementById('botonEditarar').style.display = 'none';
 }
+
+
+document.getElementById('buscarLote').addEventListener('input', function () {
+    var input = this.value.trim().toLowerCase();
+    var rows = document.querySelectorAll('.lotesPaginado');
+
+    if (input === "") {
+        rows.forEach(function (row) {
+            row.style.display = '';
+        });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-search';
+        icon.style.color = 'gray';
+    } else {
+        rows.forEach(function (row) {
+            row.style.display = 'none';
+        });
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-times';
+        icon.style.color = 'gray';
+    }
+    var rowsTodos = document.querySelectorAll('.Lotes');
+
+    rowsTodos.forEach(function (row) {
+        if (input === "") {
+            row.style.display = 'none';
+        } else {
+            var loteId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
+            var detalleC = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var productoI = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var numeroL = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var precioC = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var precioPP = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var fechaV = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var cantidad = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+
+            row.style.display = (loteId.includes(input) || detalleC.includes(input) || productoI.includes(input) || numeroL.includes(input) || precioC.includes(input) || precioPP.includes(input) || fechaV.includes(input) || fechaV.includes(input)) ? 'table-row' : 'none';
+        }
+    });
+});
+
+function vaciarInput() {
+    document.getElementById('buscarLote').value = "";
+    var icon = document.querySelector('#btnNavbarSearch i');
+    icon.className = 'fas fa-search';
+    icon.style.color = 'gray';
+
+    var rows = document.querySelectorAll('.lotesPaginado');
+    rows.forEach(function (row) {
+        row.style.display = 'table-row';
+    });
+
+    var rowsTodos = document.querySelectorAll('.Lotes');
+
+    rowsTodos.forEach(function (row) {
+        row.style.display = 'none';
+    });
+}
+
+

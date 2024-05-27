@@ -29,8 +29,8 @@ namespace ApiNewProject.Controllers
                     ProductoId = s.ProductoId,
                     NumeroLote = s.NumeroLote,
                     PrecioCompra = s.PrecioCompra,
-                    PrecioPorPresentacion = s.PrecioPorPresentacion,
                     PrecioPorUnidadProducto = s.PrecioPorUnidadProducto,
+                    PrecioPorPresentacion = s.PrecioPorPresentacion,
                     FechaVencimiento = s.FechaVencimiento,
                     Cantidad = s.Cantidad,
                     EstadoLote = s.EstadoLote,
@@ -55,8 +55,8 @@ namespace ApiNewProject.Controllers
                         ProductoId = s.ProductoId,
                         NumeroLote = s.NumeroLote,
                         PrecioCompra = s.PrecioCompra,
-                        PrecioPorPresentacion = s.PrecioPorPresentacion,
                         PrecioPorUnidadProducto = s.PrecioPorUnidadProducto,
+                        PrecioPorPresentacion = s.PrecioPorPresentacion,
                         FechaVencimiento = s.FechaVencimiento,
                         Cantidad = s.Cantidad,
                         EstadoLote = s.EstadoLote,
@@ -94,31 +94,33 @@ namespace ApiNewProject.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar el lote en la base de datos: " + ex.Message);
             }
         }
-
-
         [HttpPut("UpdateLotes")]
         public async Task<ActionResult> UpdateLotes(Lote lote)
         {
-            var lotes = await _context.Lotes.FirstOrDefaultAsync(s => s.LoteId == lote.LoteId);
+            var loteExistente = await _context.Lotes.FirstOrDefaultAsync(s => s.LoteId == lote.LoteId);
 
-            if (lotes == null)
+            if (loteExistente == null)
             {
                 return NotFound();
             }
-            lotes.LoteId = lote.LoteId;
-            lotes.DetalleCompraId = lote.DetalleCompraId;
-            lotes.ProductoId = lote.ProductoId;
-            lotes.NumeroLote = lote.NumeroLote;
-            lotes.PrecioCompra = lote.PrecioCompra;
-            lotes.PrecioPorPresentacion = lote.PrecioPorPresentacion;
-            lotes.PrecioPorUnidadProducto = lote.PrecioPorUnidadProducto;
-            lotes.FechaVencimiento = lote.FechaVencimiento;
-            lotes.Cantidad = lote.Cantidad;
-            lotes.EstadoLote = lote.EstadoLote;
 
+            // Actualizar los campos del lote existente con los valores del lote recibido
+            loteExistente.DetalleCompraId = lote.DetalleCompraId;
+            loteExistente.ProductoId = lote.ProductoId;
+            loteExistente.NumeroLote = lote.NumeroLote;
+            loteExistente.PrecioCompra = lote.PrecioCompra;
+            loteExistente.PrecioPorUnidadProducto = lote.PrecioPorUnidadProducto;
+            loteExistente.PrecioPorPresentacion = lote.PrecioPorPresentacion;
+            loteExistente.FechaVencimiento = lote.FechaVencimiento;
+            loteExistente.Cantidad = lote.Cantidad;
+            loteExistente.EstadoLote = lote.EstadoLote;
+
+            // Guardar los cambios en la base de datos
             await _context.SaveChangesAsync();
+
             return Ok();
         }
+
 
         [HttpDelete("DeleteLote/{Id}")]
         public async Task<HttpStatusCode> DeleteLote(int Id)

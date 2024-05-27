@@ -51,6 +51,7 @@ namespace VistaNewProject.Controllers
                 ViewData["Clientes"] = clientes;
                 return View(pageCliente);
             }
+
             catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
             {
                 HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
@@ -61,6 +62,7 @@ namespace VistaNewProject.Controllers
                 HttpContext.Session.SetString("Message", "Error en el aplicativo");
                 return RedirectToAction("LogOut", "Accesos");
             }
+
         }
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] string identificacion, string nombreEntidad, string nombreCompleto, string tipoCliente, string telefono, string correo, string direccion, ulong estadoCliente)
