@@ -57,6 +57,25 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     });
+    $('.delete-form-usuario').on('submit', function (event) {
+        event.preventDefault(); // Evita que el formulario se envíe automáticamente
+        // Mostrar el diálogo de confirmación
+        Swal.fire({
+            title: '\u00BFEst\u00E1s seguro?',
+            text: '\u00A1Esta acci\u00F3n no se puede deshacer.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'S\u00ED, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, enviar el formulario
+                event.target.submit();
+            }
+        });
+    });
     // Validar campos en cada cambio para eliminar o cambiar el mensaje inicial que aparece arriba de los botones del formulario
     $('.modal-formulario-crear-usuario input, .modal-formulario-crear-usuario select').on('input', function () {
         NoCamposVaciosInicial();
@@ -188,25 +207,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     }
-    $('.delete-form-usuario').on('submit', function (event) {
-        event.preventDefault(); // Evita que el formulario se envíe automáticamente
-        // Mostrar el diálogo de confirmación
-        Swal.fire({
-            title: '\u00BFEst\u00E1s seguro?',
-            text: '\u00A1Esta acci\u00F3n no se puede deshacer.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'S\u00ED, eliminar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Si el usuario confirma, enviar el formulario
-                event.target.submit();
-            }
-        });
-    });
 
 
 });
@@ -229,11 +229,11 @@ document.addEventListener('keydown', function (event) {
 
 function abrirModal() {
     // Verificar si la modal está abierta
-    if ($('#Modal').hasClass('show')) {
-        $('#Modal').modal('hide'); // Cerrar la modal
+    if ($('#ModalUsuario').hasClass('show')) {
+        $('#ModalUsuario').modal('hide'); // Cerrar la modal
     } else {
         simularClickUsuario(); // Simular algún evento antes de abrir la modal
-        $('#Modal').modal('show'); // Abrir la modal
+        $('#ModalUsuario').modal('show'); // Abrir la modal
     }
 }
 
@@ -301,6 +301,27 @@ function limpiarFormularioUsuarioAgregar() {
     }); 
 }
 
+function limpiarFormularioUsuarioAct() {
+    // Limpiar mensajes de alerta y *
+    var mensajes = document.querySelectorAll('.Mensaje');
+    var mensajesText = document.querySelectorAll('.text-danger');
+
+    for (var i = Math.max(0, mensajes.length - 7); i < mensajes.length; i++) {
+        mensajes[i].textContent = '';
+    }
+    for (var i = 0; i < mensajes.length - 7; i++) {
+        mensajes[i].textContent = '*';
+    }
+    for (var i = 0; i < mensajesText.length; i++) {
+        mensajesText[i].textContent = '';
+    }
+
+    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
+        element.textContent = '';
+    }); 
+
+}
+
 //Función para limpiuar la url si el usuario da fuera de ella 
 $('.modal').on('click', function (e) {
     if (e.target === this) {
@@ -310,12 +331,20 @@ $('.modal').on('click', function (e) {
     }
 });
 
+function AlPerderFocoUsuario() {
+    var displayFormActualizar = $('#FormActualizarUsuario').css('display');
+    var displayModal = $('#ModalUsuario').css('display');
+    if (displayFormActualizar == "block" && displayModal == "none") {
+        limpiarFormularioUsuarioAct();
+    }
+}
+
 /*--------------------------------------------------------- Modal de actualizar usuario ---------------------------------------*/
 function mostrarModalConRetrasoUsuario(usuarioId) {
     setTimeout(function () {
         actualizarUsuario(usuarioId);
         setTimeout(function () {
-            var myModal = new bootstrap.Modal(document.getElementById('Modal'));
+            var myModal = new bootstrap.Modal(document.getElementById('ModalUsuario'));
             myModal.show();
             // Aquí puedes llamar a la función actualizarProducto si es necesario
         }, 100); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
@@ -326,7 +355,7 @@ function mostrarModalSinRetrasoUsuario(usuarioId) {
     setTimeout(function () {
         actualizarUsuario(usuarioId);
         setTimeout(function () {
-            var myModal = new bootstrap.Modal(document.getElementById('Modal'));
+            var myModal = new bootstrap.Modal(document.getElementById('ModalUsuario'));
             myModal.show();
             // Aquí puedes llamar a la función actualizarProducto si es necesario
         }, 50); // 50 milisegundos (0.05 segundos) de retraso antes de abrir la modal

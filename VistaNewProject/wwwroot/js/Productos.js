@@ -15,21 +15,17 @@ function obtenerDatosProductos() {
         .catch(error => console.error('Error al obtener los productos:', error));
 }
 
-//Funciones que se cargan first
+//Funciones que se cargan al mismo tiempo que la pagina
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const mostrarAlerta = urlParams.get('mostrarAlerta');
     const productoId = urlParams.get('productoId');
 
-   
-    let timeout = null;
 
     if (mostrarAlerta === 'true' && productoId) {
-        obtenerDatosProducto(productoId);
-        const botonModal = document.querySelector('[data-bs-target="#ModalProducto"]');
-        if (botonModal) {
-            botonModal.click();
-        }
+        mostrarModalSinRetrasoProducto(productoId);
+    } else {
+        console.log('ProductoId no encontrado en la URL');
     }
 
     // Evita el envío del formulario si no se cumplen con los requerimientos mínimos
@@ -162,7 +158,6 @@ document.addEventListener('DOMContentLoaded', function () {
         $('.MensajeInicial').text('');
         return true;
     }
-
     function NoCamposVaciosInicial()     {
         const textDangerElements = $('.text-danger');
         const mensajeElements = $('.Mensaje');
@@ -272,7 +267,16 @@ function mostrarModalConRetrasoProducto(productoId) {
         }, 170); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
     }, 0); // 0 milisegundos de retraso antes de llamar a actualizarProducto
 }
-
+function mostrarModalSinRetrasoProducto(productoId) {
+    setTimeout(function () {
+        actualizarProducto(productoId);
+        setTimeout(function () {
+            var myModal = new bootstrap.Modal(document.getElementById('ModalProducto'));
+            myModal.show();
+            // Aquí puedes llamar a la función actualizarProducto si es necesario
+        }, 50); // 50 milisegundos (0.05 segundos) de retraso antes de abrir la modal
+    }, 0); // 0 milisegundos de retraso antes de llamar a actualizarProducto
+}
 function actualizarProducto(campo) {
     var productoId = campo;
     $.ajax({
@@ -578,7 +582,7 @@ function Llamar2() {
     }
 }
 
-
+//Se llama al daar click en la x
 function limpiarFormularioProducto() {
     // Simular clic en el checkboxDescuentoPorMayor si está marcado
     var checkbox = document.getElementById('checkboxDescuentoPorMayor');
@@ -631,7 +635,27 @@ function limpiarFormularioProducto() {
     }
     document.getElementById('checkboxDescuentoPorMayorAct').checked = false; // Desmarcar el checkbox
 }
+//Se llama al daar click en cancelar en la modal de agregar producto
+function limpiarFormularioProductoAgregar() {
+    // Limpiar mensajes de alerta y *
+    var mensajes = document.querySelectorAll('.Mensaje');
+    var mensajesText = document.querySelectorAll('.text-danger');
 
+    for (var i = Math.max(0, mensajes.length - 6); i < mensajes.length; i++) {
+        mensajes[i].textContent = '';
+    }
+    for (var i = 0; i < mensajes.length - 8; i++) {
+        mensajes[i].textContent = '*';
+    }
+    for (var i = 0; i < mensajesText.length; i++) {
+        mensajesText[i].textContent = '';
+    }
+
+    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
+        element.textContent = '';
+    });
+}
+//Se llama al perder el foco de la modal para limpiar el formulario actualizar
 function limpiarFormularioProductoAct() {
     // Limpiar campos y elementos específicos de la versión actualizada
     limpiarCampo('NombreMarcaAct');

@@ -22,12 +22,12 @@
 
 
         <!-- Botón para abrir el modal -->
-        <button type="button" id="botonAbrirModal" onclick="simularClickUsuario(); obtenerDatosUsuarios();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal">
+        <button type="button" id="botonAbrirModal" onclick="simularClickUsuario(); obtenerDatosUsuarios();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalUsuario">
             <i class="fas fa-plus-circle"></i> Agregar Usuario
         </button>
     </div>
     <!-- Modal -->
-    <div class="modal fade GeneralModal" id="Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade GeneralModal" onblur="AlPerderFocoUsuario();" id="ModalUsuario" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content" id="FormPrincipalUsuario">
                 <div class="modal-cabecera">
