@@ -12,7 +12,7 @@
         <div class="mr-auto">
             <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
                 <div class="input-group">
-                    <input id="buscarUsuario" type="text" class="form-control" oninput="hello();" placeholder="Buscar usuario" aria-label="Search" aria-describedby="button-addon2">
+                    <input id="buscarUsuario" type="text" class="form-control" oninput="searchUsuario();" placeholder="Buscar usuario" aria-label="Search" aria-describedby="button-addon2">
                     <button class="btn btn-primary" id="btnNavbarSearch" oninput="vaciarInput();" onclick="vaciarInput();" type="button"><i class="fas fa-search"></i></button>
                 </div>
             </form>
@@ -268,6 +268,7 @@
     <table class="table table-custom text-center">
         <thead>
             <tr>
+                <th class="contadorB noIs">#</th>
                 <th class="contador">#</th>
                 <th class="d-none">usuario Id</th>
                 <th>ROL</th>
@@ -321,13 +322,19 @@
                 </tr>
             }
             @{
+          
                 var usuarios = ViewData["Usuarios"] as List<Usuario>;
                 if (usuarios != null)
                 {
+                    int contadorC = 1;
                     foreach (var usuario in usuarios)
-                    {
-                        <tr class="Usuarios" style="display:none;">
-                            <td>@usuario.UsuarioId </td>
+                    {                
+
+                        <tr class="Usuarios noIs">
+                            <td class="contadorB noIs">
+                                @contadorC <!-- Muestra el valor del contador -->
+                            </td>
+                            <td>@usuario.UsuarioId</td>
                             <td class="rol-id">
                                 @foreach (var rol in ViewBag.Roles)
                                 {
@@ -355,9 +362,13 @@
                                 </form>
                             </td>
                         </tr>
+                        contadorC++;
                     }
                 }
+
             }
+          
+
         </tbody>
     </table>
 

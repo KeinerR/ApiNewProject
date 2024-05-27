@@ -6,19 +6,16 @@
 <div class="ContenedorVista" id="ContenedorProducto">
     <br />
 
-    <div class="d-flex justify-content-between" id="ContenedorOpciones" >
+    <div class="d-flex justify-content-between" id="ContenedorOpciones">
         <!-- Formulario de búsqueda a la izquierda -->
         <div class="mr-auto">
             <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
                 <div class="input-group">
-                    <input id="buscarProducto" oninput="searchProducto();" type="text" class="form-control" placeholder="Buscar producto" aria-label="Search" aria-describedby="button-addon2">
+                    <input id="buscarProducto" type="text" class="form-control" oninput="searchProducto();" placeholder="Buscar usuario" aria-label="Search" aria-describedby="button-addon2">
                     <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputProducto()" type="button"><i class="fas fa-search"></i></button>
                 </div>
-
             </form>
         </div>
-
-
         <!-- Botón para abrir el modal -->
         <button type="button" id="botonAbrirModal" onclick="simularClickProducto(); obtenerDatosProductos();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalProducto">
            <i class="fas fa-plus-circle"></i>  Agregar Producto
@@ -276,7 +273,8 @@
     <table class="table table-custom text-center">
         <thead>
             <tr>
-                <th>
+                <th class="contadorB noIs">#</th>
+                <th class="contador">
                     #
                 </th>
                 <th class="d-none">
@@ -363,9 +361,13 @@
                 var productos = ViewData["Productos"] as List<Producto>;
                 if (productos != null)
                 {
+                    int contadorB = 1;
                     foreach (var producto in productos)
                     {
-                        <tr class="Productos" style="display:none;">
+                        <tr class="Productos noIs">
+                            <td class="contadorB noIs">
+                                @contadorB <!-- Muestra el valor del contador -->
+                            </td>
                             <td>@producto.ProductoId</td>
                             <td>
                                 @foreach (var categoria in ViewBag.Categorias)
@@ -405,7 +407,9 @@
                                     </form>
                             </td>
                         </tr>
+                        contadorB++;
                     }
+                
                 }
             }
         </tbody>
