@@ -2,28 +2,10 @@
 @model X.PagedList.IPagedList<VistaNewProject.Models.Pedido>
 <meta charset="UTF-8">
 
-
 @{
     ViewData["Title"] = "Index";
     var successMessage = TempData["SuccessMessage"] as string;
     var errorMessage = TempData["ErrorMessage"] as string;
-    var validationMessage = TempData["ValidarPedido"] as string;
-}
-
-@if (!string.IsNullOrEmpty(validationMessage))
-{
-    <script>
-        $(document).ready(function () {
-            // Mostrar SweetAlert con el mensaje TempData
-            Swal.fire({
-                title: '¡Pedido creado!',
-                text: '@validationMessage',
-                icon: 'success',
-                showConfirmButton: false, // Mostrar botón de confirmación
-                timer: 3000
-            });
-        });
-    </script>
 }
 
 @if (!string.IsNullOrEmpty(successMessage))
@@ -112,25 +94,7 @@
             margin-right: 10px; /* Espacio entre columnas */
         }
 
-
-
-
-   
-    .btn-primary-custom {
-        color: white;
-        border: none;
-        border-radius: 50px;
-        padding: 10px 20px;
-        text-decoration: none;
-        display: inline-block;
-        transition: background-color 0.3s;
-    }
-
-    .btn-primary-custom:hover {
-            background-color: #0CB9B6;
-        color: black;
-    }
-
+ 
 
 </style>
 
@@ -147,22 +111,22 @@
     </div>
 
 
-
-    <a asp-action="Create" class="btn btn-primary">
-        Agregar pedido <i class="fa-solid fa-cart-shopping"></i>
-    </a>
-
-
+    
+       
+    
+  
 </div>
-
-
 
 
 <div>
-    <a asp-action="PedidosCancelados" class="btn btn-primary-custom btn btn-primary">
-        Cancelados <i class="fa-solid fa-ban"></i>
+
+    <a asp-action="Index" class="btn btn-primary">
+        <i class="fas fa-arrow-left"></i>
+        Regresar
     </a>
+
 </div>
+
 
 
 <table class="table table-custom text-center mt-4">
@@ -219,26 +183,32 @@
                     @Html.DisplayFor(modelItem => item.FechaPedido)
                 </td>
                 <td class="text-center align-middle contenedorEstadoTabla">
-                    @if (item.EstadoPedido == "Pendiente")
-                    {
-                        <label class="switch">
-                            <input type="radio" name="estado_@item.PedidoId" value="Realizado" onchange="actualizarEstadoPedido('@item.PedidoId', this.value)">
-                            <span class="slider" style="background-color: #00215E;"></span>
-                        </label>
-                        <label class="switch">
-                            <input type="radio" name="estado_@item.PedidoId" value="Anulado" onchange="actualizarEstadoPedido('@item.PedidoId', this.value)">
-                            <span class="slider" style="background-color: #615E5E;"></span>
-                        </label>
-                    }
-                    else if (item.EstadoPedido == "Realizado")
-                    {
-                        <label class="switch">
-                            <input type="radio" name="estado_@item.PedidoId" value="Cancelado" onchange="actualizarEstadoPedido('@item.PedidoId', this.value)">
-                            <span class="slider" style="background-color: #E61905;"></span>
-                        </label>
-                    }
                    
-                   
+                    @if (item.EstadoPedido == "Cancelado")
+                    {
+                        <script>
+                            // Eliminar el radio button cuando el estado es "Cancelado"
+                            var radioBtn = document.querySelector("input[name='estado_@item.PedidoId'][value='Realizado']");
+                            if (radioBtn) {
+                                radioBtn.parentNode.parentNode.parentNode.removeChild(radioBtn.parentNode.parentNode);
+                            }
+                        </script>
+                        <h4 style="color:red">Cancelado </h4>
+                    }
+
+                    else if (item.EstadoPedido == "Anulado")
+                    {
+                        <script>
+                            // Eliminar el radio button cuando el estado es "Cancelado"
+                            var radioBtn = document.querySelector("input[name='estado_@item.PedidoId'][value='Realizado']");
+                            if (radioBtn) {
+                                radioBtn.parentNode.parentNode.parentNode.removeChild(radioBtn.parentNode.parentNode);
+                            }
+
+                        </script>
+                        <h4 style="color:red">Anulado </h4>
+
+                    }
                 </td>
 
 

@@ -26,6 +26,7 @@ function agregarDetalle(url) {
     }
 }
 
+
 function validarDetalle(detalle) {
     var isValid = true;
 
@@ -106,51 +107,74 @@ function enviarDetallePedido(detalle, url) {
 
 
 
-
 function mostrarDetallesPedido() {
     var tablaDetalles = document.getElementById("listaDetallesPedido").getElementsByTagName("tbody")[0];
     tablaDetalles.innerHTML = "";
 
+    var cantidadAcumuladaPorProducto = {};
     detallesdepedidp.forEach(function (detalle, index) {
+        // Verificar si ya se ha agregado un detalle para este producto
+        if (cantidadAcumuladaPorProducto.hasOwnProperty(detalle.ProductoId)) {
+            // Si ya existe una cantidad acumulada para este producto, sumar la nueva cantidad
+            cantidadAcumuladaPorProducto[detalle.ProductoId].Cantidad += parseFloat(detalle.Cantidad);
+            cantidadAcumuladaPorProducto[detalle.ProductoId].Subtotal += parseFloat(detalle.Subtotal);
+        } else {
+            // Si es la primera vez que se encuentra este producto, almacenar sus detalles
+            cantidadAcumuladaPorProducto[detalle.ProductoId] = {
+                Cantidad: parseFloat(detalle.Cantidad),
+                PrecioUnitario: parseFloat(detalle.PrecioUnitario),
+                UnidadId: detalle.UnidadId,
+                Subtotal: parseFloat(detalle.Subtotal)
+            };
+        }
+    });
+    Object.keys(cantidadAcumuladaPorProducto).forEach(function (productoId) {
         var fila = tablaDetalles.insertRow();
-        fila.insertCell(0).innerHTML = detalle.ProductoId;
-        fila.insertCell(1).innerHTML = detalle.Cantidad;
-        fila.insertCell(2).innerHTML = detalle.PrecioUnitario;
-        fila.insertCell(3).innerHTML = detalle.UnidadId;
-        fila.insertCell(4).innerHTML = detalle.Cantidad * detalle.PrecioUnitario; // Subtotal
+        fila.insertCell(0).innerHTML = productoId; // ProductoId
+        fila.insertCell(1).innerHTML = cantidadAcumuladaPorProducto[productoId].Cantidad; // Cantidad acumulada
+        fila.insertCell(2).innerHTML = cantidadAcumuladaPorProducto[productoId].PrecioUnitario; // PrecioUnitario
+        fila.insertCell(3).innerHTML = cantidadAcumuladaPorProducto[productoId].UnidadId; // UnidadId
+        fila.insertCell(4).innerHTML = cantidadAcumuladaPorProducto[productoId].Subtotal; // Subtotal
         // Agregar un botón de eliminar en la última celda de cada fila
         var btnEliminar = document.createElement("button");
         btnEliminar.innerHTML = '<i class="fa-solid fa-trash-can"></i>'; // Icono de eliminación
         btnEliminar.onclick = function () {
-            eliminarDetalle(index);
+            eliminarDetalle(productoId);
         };
         fila.insertCell(5).appendChild(btnEliminar); // Insertar el botón en la última celda (índice 6)
     });
 }
 
-function eliminarDetalle(index) {
-    console.log(index);
-    $.ajax({
-        url: '/DetallePedidos/EliminarDetalle',
-        type: 'POST',
-        data: { index: index },
-        success: function (response) {
-            // Manejar la respuesta del servidor, como actualizar la interfaz de usuario
-            console.log('Detalle eliminado exitosamente');
-            // Eliminar el detalle de la lista detallesdepedidp
-            detallesdepedidp.splice(index, 1);
-            // Actualizar la tabla de detalles
-            mostrarDetallesPedido();
-            mostrarDetallesActuales();// Actualizar los detalles mostrados en la tabla
-
-        },
-        error: function (xhr, status, error) {
-            // Manejar errores, como mostrar un mensaje al usuario
-            console.error('Error al eliminar el detalle:', error);
-        }
+function eliminarDetalle(productoId) {
+    console.log(productoId);
+    // Buscar el índice del detalle con el productoId dado
+    var indiceDetalle = detallesdepedidp.findIndex(function (detalle) {
+        return detalle.ProductoId === productoId;
     });
-}
 
+    if (indiceDetalle !== -1) {
+        $.ajax({
+            url: '/DetallePedidos/EliminarDetalle',
+            type: 'POST',
+            data: { index: indiceDetalle },
+            success: function (response) {
+                // Manejar la respuesta del servidor, como actualizar la interfaz de usuario
+                console.log('Detalle eliminado exitosamente');
+                // Eliminar el detalle de la lista detallesdepedidp
+                detallesdepedidp.splice(indiceDetalle, 1);
+                // Actualizar la tabla de detalles
+                mostrarDetallesPedido();
+                mostrarDetallesActuales();// Actualizar los detalles mostrados en la tabla
+            },
+            error: function (xhr, status, error) {
+                // Manejar errores, como mostrar un mensaje al usuario
+                console.error('Error al eliminar el detalle:', error);
+            }
+        });
+    } else {
+        console.log('No se encontró ningún detalle con el productoId:', productoId);
+    }
+}
 
 
 
@@ -291,10 +315,25 @@ $(document).ready(function () {
             .then(data => {
                 // Filtrar los productos por productId seleccionado
                 const productoSeleccionado = data.find(producto => producto.productoId == productId);
+                console.log(productoSeleccionado);
 
                 if (productoSeleccionado) {
-                    // Mostrar la cantidad total como marcador de posición en el campo "Cantidad"
-                    $('#Cantidad').attr('placeholder', `Disponible: ${productoSeleccionado.cantidadTotal}`);
+
+                    const cantidadTotal = productoSeleccionado.cantidadTotal;
+                    const cantidadReservada = productoSeleccionado.cantidadReservada;
+                    const cantidadDisponible = cantidadTotal - cantidadReservada;
+                    const detalleExistente = detallesdepedidp.find(detalle => detalle.ProductoId === productId);
+
+                    console.log(detalleExistente);
+                   
+                   
+                    if (cantidadDisponible > 0) {
+                        // Mostrar la cantidad total como marcador de posición en el campo "Cantidad"
+                        $('#Cantidad').attr('placeholder', `Disponible: ${cantidadDisponible}`);
+                    } else {
+                        // Si la cantidad disponible es cero, mostrar el mensaje apropiado en el marcador de posición
+                        $('#Cantidad').attr('placeholder', 'No hay productos disponibles');
+                    }
                 } else {
                     // Si no se encuentra ningún producto con el productId seleccionado, mostrar un mensaje
                     $('#Cantidad').attr('placeholder', '');
@@ -311,6 +350,7 @@ $(document).ready(function () {
         $('#PrecioUnitario').val('');
         $('#ProductoId').val('');
         $('#ProductoIdtxt').val('');   
+        $('#ProductosList').val('');  
         $('#Cantidad').attr('placeholder', '');
         $('#LoteId').val('');
     }
@@ -320,7 +360,7 @@ $(document).ready(function () {
         const cantidadIngresada = parseFloat($(this).val()); // Convertir el valor a un número flotante
         console.log(cantidadIngresada);
         const cantidadDisponible = parseFloat($('#Cantidad').attr('placeholder').split(':')[1].trim());
-        console.log("Cantidad disponible:", cantidadDisponible);
+        console.log("keienrrivamendoza", cantidadDisponible);
 
         if (isNaN(cantidadIngresada)) {
             // Si la cantidad ingresada no es un número válido, mostrar mensaje de error
@@ -331,22 +371,51 @@ $(document).ready(function () {
         } else if (cantidadIngresada > cantidadDisponible) {
             // Si la cantidad ingresada es mayor que la cantidad disponible, mostrar mensaje de error
             $('#Cantidad').addClass('input-validation-error');
+            // Agregar la clase de error al campo
             $('span[data-valmsg-for="Cantidad"]').text('La cantidad ingresada no puede ser mayor que la cantidad disponible');
             $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
             $('#Cantidad').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
         } else if (cantidadIngresada <= 0) {
             // Si la cantidad ingresada es menor o igual a 0, mostrar mensaje de error
             $('#Cantidad').addClass('input-validation-error');
+            // Agregar la clase de error al campo
             $('span[data-valmsg-for="Cantidad"]').text('La cantidad ingresada no puede ser menor o igual a 0');
             $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
             $('#Cantidad').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
         } else {
             // Si la cantidad ingresada es válida, quitar la clase de error del campo
             $('#Cantidad').removeClass('input-validation-error');
+            // Quitar el mensaje de error
             $('span[data-valmsg-for="Cantidad"]').text('');
+            // Quitar la clase de error del campo para los estilos de Bootstrap
             $('#Cantidad').removeClass('is-invalid');
+            // Habilitar el botón de enviar
             $('#btnEnviar').prop('disabled', false);
         }
     });
+
+
+})
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al obtener los productos');
+    });
+
+
+// Evento input para el campo "ProductoId"
+$('#ProductoId').on('input', function () {
+    const productId = $(this).val();
+    console.log('ProductoId seleccionado:', productId);
+    if (productId) {
+        // Si hay un productId seleccionado, obtener y mostrar los detalles del producto
+    } else {
+        // Si el campo está vacío, limpiar los campos relacionados
+        $('#PrecioUnitario').val('');
+        $('#Cantidad').attr('placeholder', '');
+    }
 });
+
+
+
+
 

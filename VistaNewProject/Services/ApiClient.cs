@@ -732,7 +732,7 @@ namespace VistaNewProject.Services
 
         public async Task<Lote> FindLoteAsync(int id)
         {
-            var response = await _httpClient.GetFromJsonAsync<Lote>($"?id={id}");
+            var response = await _httpClient.GetFromJsonAsync<Lote>($"Lotes/GetLoteById?id={id}");
             if (response == null)
             {
                 // Manejar el caso en el que response sea nulo

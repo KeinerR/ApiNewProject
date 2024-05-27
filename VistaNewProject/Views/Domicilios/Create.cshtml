@@ -1,0 +1,85 @@
+﻿@model VistaNewProject.Models.Domicilio
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Domicilio</h4>
+<hr />
+
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="row">
+        <div class=" d-none">
+            <label asp-for="PedidoId" class="control-label"></label>
+            <input asp-for="PedidoId" name="PedidoId" class="form-control" value="@ViewBag.UltimoPedidoId" />
+            <span asp-validation-for="PedidoId" class="text-danger"></span>
+        </div>
+        <div class="col-6">
+            <label asp-for="UsuarioId" class="control-label"></label>
+            <input asp-for="UsuarioId" name="UsuarioId" class="form-control" list="usuarioList" />
+            <datalist id="usuarioList">
+                @foreach (var pedido in ViewBag.Usuarios)
+                {
+                    <option value="@pedido.UsuarioId">@pedido.Nombre</option>
+                }
+            </datalist>
+            <span asp-validation-for="UsuarioId" class="text-danger"></span>
+        </div>
+        <div class="col-6">
+            <label asp-for="Observacion" class="control-label"></label>
+            <input asp-for="Observacion" class="form-control" />
+            <span asp-validation-for="Observacion" class="text-danger"></span>
+        </div>
+        <div class="col-6">
+            <label asp-for="FechaEntrega" class="control-label"></label>
+            <input asp-for="FechaEntrega" class="form-control" />
+            <span asp-validation-for="FechaEntrega" class="text-danger"></span>
+        </div>
+        <div class="col-6">
+            <label asp-for="DireccionDomiciliario" class="control-label"></label>
+            <input asp-for="DireccionDomiciliario" class="form-control" />
+            <span asp-validation-for="DireccionDomiciliario" class="text-danger"></span>
+        </div>
+        <div class="col-6">
+            <label asp-for="EstadoDomicilio" class="control-label"></label>
+            <select asp-for="EstadoDomicilio" class="form-control" disabled>
+                @{
+                    var estadoDomicilio = Model.EstadoDomicilio;
+                    var opciones = new List<SelectListItem>
+                {
+                new SelectListItem { Text = "Pendiente", Value = "Pendiente", Selected = estadoDomicilio == "Pendiente" },
+                new SelectListItem { Text = "Realizado", Value = "Realizado", Selected = estadoDomicilio == "Realizado" },
+                new SelectListItem { Text = "Cancelado", Value = "Cancelado", Selected = estadoDomicilio == "Cancelado" }
+                };
+                }
+                @foreach (var opcion in opciones)
+                {
+                    <option value="@opcion.Value" selected="@opcion.Selected">@opcion.Text</option>
+                }
+            </select>
+            <input asp-for="EstadoDomicilio" type="hidden" />
+            <span asp-validation-for="EstadoDomicilio" class="text-danger"></span>
+        </div>
+
+        <div class="col-6  mt-4">
+            <input type="submit" value="AgregarDomicilio" class="btn btn-primary" />
+
+        </div>
+    </div>
+</form>
+
+
+<div>
+    <a asp-action="Index" asp-controller="Pedidos">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

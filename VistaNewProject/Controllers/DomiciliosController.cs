@@ -111,22 +111,10 @@ namespace VistaNewProject.Controllers
 
                 var response = await _client.CreateDomicilioAsync(domicilio);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    if (EstadoDomicilio == "Realizado")
-                    {
-                        // Redirigir a la vista de creación de pagos con el último PedidoId
-                        return RedirectToAction("Create", "Pagos", new { pedidoId = PedidoId });
-                    }
-
-                    TempData["ValidarPedido"] = "Pedido Guardado Correctamente.";
-                    return RedirectToAction("Index", "Pedidos");
-                }
-                else
-                {
-                    Console.WriteLine("domicilio no Guardado");
-                }
+               
+               
             }
+            TempData["ValidarPedido"] = "Pedido Guardado Correctamente.";
             return RedirectToAction("Index", "Pedidos");
         }
 

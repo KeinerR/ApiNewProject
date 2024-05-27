@@ -7,7 +7,18 @@
 @if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
 {
     <script>
-        alert('@TempData["ErrorMessage"]');
+
+        function mostrarSweetAlert(mensaje) {
+            Swal.fire({
+                title: 'Oops...',
+                text: mensaje,
+                icon: 'error',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+
+        mostrarSweetAlert('@TempData["ErrorMessage"]');
     </script>
 }
 
@@ -25,21 +36,22 @@
         border-color: red;
     }
 </style>
-
+<div id="createContainer">
 <h4 style="text-align:center">Agregar Productos</h4>
 <hr />
 <br />
-<div>
-    <form id="cancelForm" asp-action="Cancelar" method="post">
-        <button type="submit" class="btn btn-primary">
-            <i class="fas fa-arrow-left"></i> Cancelar
-        </button>
-    </form>
-</div>
+    <div>
+        <form id="cancelForm" asp-action="Cancelar" method="post">
+            
+                <i class="fas fa-arrow-left"></i> Cancelar
+
+        </form>
+    </div>
+
 
 <br />
 
-<div id="createContainer">
+
     <form asp-action="CreatePost" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -110,7 +122,7 @@
     </form>
 
 
-<div class="mt-4" id="listaDetallesPedido">
+  <div class="mt-4" id="listaDetallesPedido">
     <!-- Aquí se mostrarán los detalles de pedido agregados en una tabla -->
     <table class="table table-custom text-center">
         <thead>
@@ -127,71 +139,26 @@
             <!-- Los detalles del pedido se mostrarán aquí -->
         </tbody>
     </table>
-</div>
+  </div>
 </div>
 <script>
-    document.addEventListener('click', function (event) {
-        var isClickInside = document.getElementById('createContainer').contains(event.target);
-
-        if (!isClickInside) {
-            // El usuario hizo clic fuera del contenedor
-            var isConfirm = confirm('¿Deseas cancelar la creación del pedido?');
-            if (isConfirm) {
+    // Función para mostrar SweetAlert de cancelación
+    function mostrarSweetAlert() {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Deseas cancelar el pedido?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
                 // Si el usuario confirma, enviar el formulario de cancelación
                 document.getElementById('cancelForm').submit();
             }
-        }
-    });
-
-    // Función para mostrar el mensaje de confirmación
-    function mostrarConfirmacion() {
-        return confirm('¿Deseas cancelar la creación del pedido?');
+        });
     }
-
-    // Agregar un event listener a todos los enlaces y formularios del layout
-    document.addEventListener('DOMContentLoaded', function () {
-        // Seleccionar todos los enlaces y formularios dentro del layout
-        var enlaces = document.querySelectorAll('header a, #Menu a, #perfilVentanaEmergente a');
-        var formularios = document.querySelectorAll('header form, #Menu form, #perfilVentanaEmergente form');
-
-        // Función para manejar el clic en los enlaces y formularios
-        function manejarClick(event) {
-            if (!mostrarConfirmacion()) {
-                // Si el usuario decide no cancelar, prevenir la navegación
-                event.preventDefault();
-            }
-        }
-
-        // Agregar el event listener a cada enlace
-        enlaces.forEach(function (enlace) {
-            enlace.addEventListener('click', manejarClick);
-        });
-
-        // Agregar el event listener a cada formulario
-        formularios.forEach(function (formulario) {
-            formulario.addEventListener('submit', manejarClick);
-        });
-    });
-
-    // Restablecer los mensajes de error cuando el usuario comience a escribir en los campos
-    document.getElementById('ProductoIdtxt').addEventListener('input', function () {
-        document.getElementById('ProductoIdError').textContent = '';
-        this.classList.remove('border-danger');
-    });
-
-    document.getElementById('UnidadId').addEventListener('input', function () {
-        document.getElementById('UnidadError').textContent = '';
-        this.classList.remove('border-danger');
-    });
-
-    document.getElementById('PrecioUnitario').addEventListener('input', function () {
-        document.getElementById('PrecioUnitarioError').textContent = '';
-        this.classList.remove('border-danger');
-    });
-
-    document.getElementById('Cantidad').addEventListener('input', function () {
-        document.getElementById('CantidadError').textContent = '';
-        this.classList.remove('border-danger');
-    });
 </script>
+
 <script src="~/js/detallespedidos/detallespedidos.js"></script>

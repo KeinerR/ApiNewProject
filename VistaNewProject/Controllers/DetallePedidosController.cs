@@ -30,39 +30,7 @@ namespace VistaNewProject.Controllers
             return View(detallepedido);
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> Create()
-        //{
-        //    var producto = await _client.GetProductoAsync();
-        //    var unidad = await _client.GetUnidadAsync();
-        //    var pedidos = await _client.GetPedidoAsync();
-
-        //    var ultimoPedido = pedidos.OrderByDescending(p => p.PedidoId).FirstOrDefault();
-        //    ViewBag.UltimoPedidoId = ultimoPedido?.PedidoId ?? 0;
-
-        //    var lotes = await _client.GetLoteAsync();
-
-        //    // Filtrar los lotes para mostrar solo aquellos con cantidad disponible mayor que cero
-        //    var lotesDisponibles = lotes.Where(l => l.Cantidad > 0).ToList();
-
-        //    // Si hay lotes disponibles, encontrar el próximo lote próximo a vencer
-        //    if (lotesDisponibles.Any())
-        //    {
-        //        var loteProximoVencer = lotesDisponibles.OrderBy(l => l.FechaVencimiento).First();
-        //        ViewBag.LotesDisponibles = lotesDisponibles;
-        //    }
-        //    else
-        //    {
-        //        // Si no hay lotes disponibles, mostrar un mensaje de error o manejar la situación según corresponda
-        //        ViewBag.ErrorMessage = "No hay lotes disponibles.";
-        //    }
-
-        //    ViewBag.Producto = producto;
-        //    ViewBag.Unidad = unidad;
-
-        //    return View();
-        //}
-
+       
 
         [HttpGet]
         public async Task<IActionResult> ObtenerLotesDisponibles(int productoId)
@@ -160,6 +128,7 @@ namespace VistaNewProject.Controllers
                             TempData["ErrorMessage"] = $"Error al guardar el detalle del pedido: {response.ReasonPhrase}";
                             return RedirectToAction("Create", "DetallePedidos");
                         }
+
                     }
                 }
 
@@ -167,6 +136,13 @@ namespace VistaNewProject.Controllers
                 if (ultimoPedido != null && ultimoPedido.Any())
                 {
                     var ultimoPedidoGuardado = ultimoPedido.OrderByDescending(p => p.PedidoId).First();
+
+
+
+                    // Actualiza el campo ValorTotalPedido del pedido con la suma de los subtotales
+                    ultimoPedidoGuardado.ValorTotalPedido = sumaSubtotales;
+
+                    var total = await _client.UpdatePedidoAsync(ultimoPedidoGuardado);
 
                     // Si el pedido está pendiente
                     if (ultimoPedidoGuardado.EstadoPedido == "Pendiente")
@@ -204,6 +180,8 @@ namespace VistaNewProject.Controllers
                     else if (ultimoPedidoGuardado.EstadoPedido == "Realizado" && ultimoPedidoGuardado.TipoServicio == "Caja")
                     {
                         // Iterar sobre los detalles del pedido para descontar el inventario y los lotes
+
+
                         foreach (var detalle in listaGlobalDetalles)
                         {
                             var productoId = detalle.ProductoId.Value;
@@ -266,7 +244,7 @@ namespace VistaNewProject.Controllers
                         if (ultimoPedidoGuardado.TipoServicio == "Domicilio")
                         {
                             listaGlobalDetalles.Clear();
-                            return RedirectToAction("Index", "Domicilios");
+                            return RedirectToAction("Create", "Domicilios");
                         }
                     }
                 

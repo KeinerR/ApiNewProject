@@ -16,34 +16,65 @@ namespace VistaNewProject.Controllers
             _client = client;
         }
 
-        public async Task<ActionResult> Index( int ? page)
+        public async Task<ActionResult> Index(int? page)
         {
-
-            int pagenSize = 5;
+            int pageSize = 5;
             int pageNumber = page ?? 1;
 
             var pedidos = await _client.GetPedidoAsync();
-            var clientes = await _client.GetClientesAsync();
-            var producto = await _client.GetProductoAsync();
-            var unidad=await _client.GetUnidadAsync();
-            var usuario=await _client.GetUsuarioAsync();
+            var pedidosFiltrados = pedidos.Where(p => p.EstadoPedido == "Realizado" || p.EstadoPedido == "Pendiente");
 
-            if (pedidos == null || clientes == null || producto== null)
+            if (pedidosFiltrados == null)
             {
                 return View("Error");
             }
-            var pagesPedidos= await pedidos.ToPagedListAsync(pageNumber, pagenSize);
-            if(!pagesPedidos.Any() && pagesPedidos.PageNumber > 1)
+
+            var pagesPedidos = await pedidosFiltrados.ToPagedListAsync(pageNumber, pageSize);
+
+            if (!pagesPedidos.Any() && pagesPedidos.PageNumber > 1)
             {
-                pagesPedidos=await pedidos.ToPagedListAsync(pagesPedidos.PageCount, pagenSize);
+                pagesPedidos = await pedidosFiltrados.ToPagedListAsync(pagesPedidos.PageCount, pageSize);
             }
+
+            var clientes = await _client.GetClientesAsync();
+           
+
             ViewBag.Clientes = clientes;
-            ViewBag.Productos = producto;
-            ViewBag.Unidad = unidad;
-            ViewBag.Usuario = usuario;
+           
 
             return View(pagesPedidos);
         }
+
+        public async Task<ActionResult> PedidosCancelados(int? page)
+        {
+            int pageSize = 5;
+            int pageNumber = page ?? 1;
+
+            var pedidos = await _client.GetPedidoAsync();
+            var pedidosFiltrados = pedidos.Where(p => p.EstadoPedido == "Cancelado" || p.EstadoPedido == "Anulado");
+
+            if (pedidosFiltrados == null)
+            {
+                return View("Error");
+            }
+
+            var pagesPedidos = await pedidosFiltrados.ToPagedListAsync(pageNumber, pageSize);
+
+            if (!pagesPedidos.Any() && pagesPedidos.PageNumber > 1)
+            {
+                pagesPedidos = await pedidosFiltrados.ToPagedListAsync(pagesPedidos.PageCount, pageSize);
+            }
+
+            var clientes = await _client.GetClientesAsync();
+
+
+            ViewBag.Clientes = clientes;
+
+
+            return View(pagesPedidos);
+        }
+
+
 
 
         [HttpGet]
@@ -172,8 +203,12 @@ namespace VistaNewProject.Controllers
                                         }
                                     }
                                 }
+
                             }
+                           
                         }
+
+
                     }
 
 
@@ -198,7 +233,7 @@ namespace VistaNewProject.Controllers
                                         Console.WriteLine("Producto actualizado correctamente");
                                     }
                                 }
-                               
+
                             }
 
                         }
@@ -228,39 +263,30 @@ namespace VistaNewProject.Controllers
                                     }
                                 }
 
-                                if (detalleCancelado.LoteId != null) // Verificar si hay un lote asociado al detalle
+                                var loteId = detalleCancelado.LoteId.Value;
+                                if (loteId!=null)
                                 {
-                                    var loteId = detalleCancelado.LoteId.Value;
                                     var lote = await _client.FindLoteAsync(loteId);
 
-                                    if (lote != null) // Verificar si el lote es válido
+                                    Console.WriteLine(lote);
+
+                                    if (lote != null)
                                     {
-                                        // Obtener el lote más próximo a vencer disponible para ese producto
-                                        var loteProximoVencimiento = await ObtenerLoteProximoVencimientoDisponible(productoId);
+                                        lote.Cantidad += detalleCancelado.Cantidad;
+                                        var updateLote = await _client.UpdateLoteAsync(lote);
 
-                                        if (loteProximoVencimiento != null)
+                                        if (updateLote.IsSuccessStatusCode)
                                         {
-                                            // Devolver la cantidad del detalle cancelado al lote más próximo a vencer
-                                            loteProximoVencimiento.Cantidad += detalleCancelado.Cantidad;
-
-                                            // Actualizar el lote en la base de datos
-                                            var updateLote = await _client.UpdateLoteAsync(loteProximoVencimiento);
-
-                                            if (updateLote.IsSuccessStatusCode)
-                                            {
-                                                Console.WriteLine("Cantidad devuelta al lote más próximo a vencer correctamente");
-                                            }
+                                            Console.WriteLine("Cantidad devuelta al lote correctamente");
                                         }
                                     }
+
                                 }
                             }
                         }
+
+
                     }
-
-
-
-
-
                 }    // Retorna una respuesta exitosa si el proceso se realizó correctamente
                 return Ok("Inventario descontado correctamente.");
 
