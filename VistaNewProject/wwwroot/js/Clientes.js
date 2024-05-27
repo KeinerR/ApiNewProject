@@ -1,4 +1,4 @@
-﻿function obtenerDatosUsuarios() {
+﻿function obtenerDatosclientes() {
     fetch('https://localhost:7013/api/Clientes/GetClientes')
         .then(response => {
             if (!response.ok) {
@@ -17,21 +17,8 @@
         });
 }
 
-function inicializarEventos() {
-    // Botón para abrir el modal de agregar cliente
-    $('#clienteModal').on('show.bs.modal', function (event) {
-        obtenerDatosUsuarios();
-    });
-}
-// Función para validar el formulario antes de enviarlo
-$(document).ready(function () {
-    inicializarEventos();
-});
 
 function validarFormulario() {
-
-
-    // Obtener los valores de los campos del formulario
     var identificacion = $("#Identificacion").val();
     var nombreEntidad = $("#NombreEntidad").val();
     var nombreCompleto = $("#NombreCompleto").val();
@@ -39,35 +26,13 @@ function validarFormulario() {
     var correo = $("#Correo").val();
     var direccion = $("#Direccion").val();
 
+    if (!validarIdentificacion(identificacion)) return false;
+    if (!validarNombreEntidad(nombreEntidad)) return false;
+    if (!validarNombreCompleto(nombreCompleto)) return false;
+    if (!validarTelefono(telefono)) return false;
+    if (!validarDireccion(direccion)) return false;
+    if (!validarCorreo(correo)) return false;
 
-
-    // Validar cada campo individualmente
-    if (!validarIdentificacion(identificacion)) {
-        return false;
-    }
-
-    if (!validarNombreEntidad(nombreEntidad)) {
-        return false;
-    }
-
-    if (!validarNombreCompleto(nombreCompleto)) {
-        return false;
-    }
-
-    if (!validarTelefono(telefono)) {
-        return false;
-    }
-    if (!validarDireccion(direccion)) {
-        return false;
-    }
-
-    if (!validarCorreo(correo)) {
-        return false;
-    }
-
-
-
-    // Si todas las validaciones pasan, se puede enviar el formulario
     return true;
 }
 
@@ -365,10 +330,7 @@ function validarNombreEntidadAct(nombreEntidadAct) {
         mostrarOcultarError("#MensajeNombreEntidadAct", "El campo Nombre de Entidad solo puede contener letras y espacios entre palabras.");
         return false;
     }
-    if (!/^\d+$/.test(nombreEntidadAct)) {
-        mostrarOcultarError("#MensajeNombreEntidadAct", "El campo Nombre Entidad no puede tener solo espacios en blancos.");
-        return false;
-    }
+   
 
     mostrarOcultarError("#MensajeNombreEntidadAct"); // Limpiar mensaje de error si pasa todas las validaciones
     return true;
@@ -400,10 +362,7 @@ function validarNombreCompletoAct(nombreCompletoAct) {
         mostrarOcultarError("#MensajeNombreCompletoAct", "El campo Nombre de Completo solo puede contener letras.");
         return false;
     }
-    if (!/^\d+$/.test(nombreCompletoAct)) {
-        mostrarOcultarError("#MensajeNombreCompletoAct", "El campo Nombre Completo no puede tener solo espacios en blancos.");
-        return false;
-    }
+   
 
     mostrarOcultarError("#MensajeNombreCompletoAct"); // Limpiar mensaje de error si pasa todas las validaciones
     return true;
@@ -458,10 +417,7 @@ function validarDireccionAct(direccionAct) {
         mostrarOcultarError("#MensajeDireccionAct", "El campo tiene menos de 5 caracteres.");
         return false;
     }
-    if (!/^\d+$/.test(direccionAct)) {
-        mostrarOcultarError("#MensajeDireccionAct", "La direccion  no puede tener solo espsacios.");
-        return false;
-    }
+   
 
     mostrarOcultarError("#MensajeDireccionAct"); // Limpiar mensaje de error en el span
     return true;
@@ -484,15 +440,9 @@ function validarCorreoAct(correoAct) {
         return false;
     }
 
-    if (cliente.some(cliente => cliente.correo.toLowerCase() === correoAct.toLowerCase())) {
-        mostrarOcultarError("#MensajeCorreoAct", "Este Correo ya se encuentra registrado.");
-        return false;
-    }
+  
 
-    if (!/^\d+$/.test(correoValido)) {
-        mostrarOcultarError("#MensajeCorreoAct", "El correo  no puede tener solo espsacios.");
-        return false;
-    }
+ 
     mostrarOcultarError("#MensajeCorreoAct"); // Limpiar mensaje de error si pasa todas las validaciones
     return true;
 }
@@ -552,10 +502,7 @@ function mostrarOcultarError(spanId, mensaje) {
 }
 
 // Evento para capturar cuando se comienza a escribir en el campo
-$("#campoTexto").on("input", function () {
-    // Cuando se empieza a escribir, establecer la bandera textoIngresado a true
-    textoIngresado = true;
-});
+
 
 
 document.getElementById('buscarCliente').addEventListener('input', function () {
@@ -659,25 +606,9 @@ function obteneClienteid(ClienteId) {
         });
 }
 
-document.querySelectorAll('#btnEditar').forEach(button => {
-    button.addEventListener('click', function () {
-        const Id = this.getAttribute('data-cliente-id');
 
-        document.getElementById('agregarDetalleCliente').style.display = 'none';
-        document.getElementById('FormActualizarCliente').style.display = 'block';
-        obtenerDatosUsuarios();
-        obteneClienteid(Id); // Aquí se pasa el Id como argumento a la función obtenercategoriaid()
-    });
-});
 
-// Agregar un evento de clic fuera del modal para limpiar el formulario
-$(document).mouseup(function (e) {
-    var modal = $("#clienteModal");
-    // Si el clic no está dentro del modal ni dentro de sus descendientes, limpiar el formulario
-    if (!modal.is(e.target) && modal.has(e.target).length === 0) {
-        limpiarFormulario();
-    }
-});
+
 
 function actualizarEstadoCliente(clienteId, estadoCliente) {
     fetch(`https://localhost:7013/api/Clientes/UpdateEstadoCliente/${clienteId}`, {
@@ -699,6 +630,159 @@ function actualizarEstadoCliente(clienteId, estadoCliente) {
         .catch(error => {
             console.error('Error de red:', error);
         });
+}
+
+
+/*---------------------------------------------------- Al dar click en el boton de agregar usuario  ---------------------------------------------------- */
+
+function simularClickCliente() {
+    //ocultar formulario de actualizar  y mostrar el formulario principal
+    $('#FormActualizarCliente').hide();
+    $('#FormPrincipalCliente').show().css('visibility', 'visible');
+}
+
+document.addEventListener('keydown', function (event) {
+    // Verificar si se presionó Ctrl + Espacio
+    if (event.ctrlKey && event.key === ' ') {
+        // Ejecutar la función que deseas al presionar Ctrl + Espacio
+        obtenerDatosclientes();
+        abrirModal();
+    }
+});
+
+
+
+function abrirModal() {
+    // Verificar si la modal está abierta
+    if ($('#Modal').hasClass('show')) {
+        $('#Modal').modal('hide'); // Cerrar la modal
+    } else {
+        simularClickCliente(); // Simular algún evento antes de abrir la modal
+        $('#Modal').modal('show'); // Abrir la modal
+    }
+}
+
+/*------------------------------ Limpiar formularios y url ---------------------------------------------------------------------------------------------------- */
+
+function limpiarFormularioCliente() {
+    // Limpiar campos y elementos específicos
+    limpiarCampo('ClienteId');
+    limpiarCampo('Identificacion');
+    limpiarCampo('NombreCompleto');
+    limpiarCampo('NombreEntidad');
+    limpiarCampo('Telefono');
+    limpiarCampo('Correo');
+    limpiarCampo('Direccion');
+    limpiarCampo('TipoCliente');
+    limpiarCampo('EstadoCliente');
+
+    // Limpiar campos y elementos específicos de la versión actualizada
+    limpiarCampo('ClienteIdAct');
+    limpiarCampo('NombreCompletoAct');
+    limpiarCampo('NombreEntidadAct');
+    limpiarCampo('TelefonoAct');
+    limpiarCampo('CorreoAct');
+    limpiarCampo('DireccionAct');
+    limpiarCampo('TipoClienteAct');
+    limpiarCampo('EstadoClienteAct');
+
+    // Limpiar mensajes de alerta y *
+    var mensajes = document.querySelectorAll('.Mensaje');
+    var mensajesText = document.querySelectorAll('.text-danger');
+
+    for (var i = Math.max(0, mensajes.length - 7); i < mensajes.length; i++) {
+        mensajes[i].textContent = '';
+    }
+    for (var i = 0; i < mensajes.length - 7; i++) {
+        mensajes[i].textContent = '*';
+    }
+    for (var i = 0; i < mensajesText.length; i++) {
+        mensajesText[i].textContent = '';
+    }
+
+    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
+        element.textContent = '';
+    });
+    // Limpiar la URL eliminando los parámetros de consulta
+    history.replaceState(null, '', location.pathname);
+}
+function limpiarFormularioAgregarCliente() {
+    // Limpiar mensajes de alerta y *
+    var mensajes = document.querySelectorAll('.Mensaje');
+    var mensajesText = document.querySelectorAll('.text-danger');
+
+    for (var i = Math.max(0, mensajes.length - 7); i < mensajes.length; i++) {
+        mensajes[i].textContent = '';
+    }
+    for (var i = 0; i < mensajes.length - 7; i++) {
+        mensajes[i].textContent = '*';
+    }
+    for (var i = 0; i < mensajesText.length; i++) {
+        mensajesText[i].textContent = '';
+    }
+
+    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
+        element.textContent = '';
+    });
+}
+
+//Función para limpiuar la url si el usuario da fuera de ella 
+$('.modal').on('click', function (e) {
+    if (e.target === this) {
+        // Limpiar la URL eliminando los parámetros de consulta
+        history.replaceState(null, '', location.pathname);
+        $(this).modal('hide'); // Oculta la modal
+    }
+});
+
+/*--------------------------------------------------------- Modal de actualizar usuario ---------------------------------------*/
+function mostrarModalConRetrasoCliente(clienteId) {
+    setTimeout(function () {
+        actualizarCliente(clienteId);
+        setTimeout(function () {
+            var myModal = new bootstrap.Modal(document.getElementById('Modal'));
+            myModal.show();
+            // Aquí puedes llamar a la función actualizarProducto si es necesario
+        }, 100); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
+    }, 0); // 0 milisegundos de retraso antes de llamar a actualizarProducto
+}
+//Modal cuando se hace click en editar en el boton de detalle
+function mostrarModalSinRetrasoCliente(clienteId) {
+    setTimeout(function () {
+        actualizarCliente(clienteId);
+        setTimeout(function () {
+            var myModal = new bootstrap.Modal(document.getElementById('Modal'));
+            myModal.show();
+            // Aquí puedes llamar a la función actualizarProducto si es necesario
+        }, 50); // 50 milisegundos (0.05 segundos) de retraso antes de abrir la modal
+    }, 0); // 0 milisegundos de retraso antes de llamar a actualizarProducto
+}
+
+
+function actualizarCliente(campo) {
+    var clienteId = campo;
+    $.ajax({
+        url: '/Clientes/FindCliente', // Ruta relativa al controlador y la acción
+        type: 'POST',
+        data: { clienteId: clienteId },
+        success: function (data) {
+            var formActualizar = $('#FormActualizarCliente');
+            formActualizar.find('#ClienteIdAct').val(data.clienteId);
+            formActualizar.find('#IdentificacionAct').val(data.identificacion);
+            formActualizar.find('#NombreCompletoAct').val(data.nombreCompleto);
+            formActualizar.find('#NombreEntidadAct').val(data.nombreEntidad);
+            formActualizar.find('#TelefonoAct').val(data.telefono);
+            formActualizar.find('#CorreoAct').val(data.correo);
+            formActualizar.find('#DireccionAct').val(data.direccion);
+            formActualizar.find('#TipoClienteAct').val(data.tipoCliente);
+            formActualizar.find('#EstadoClienteAct').val(data.estadoCliente);
+        },
+        error: function () {
+            alert('Error al obtener los datos del usuario.');
+        }
+    });
+    $('#FormPrincipalCliente').hide().css('visibility', 'hidden');
+    $('#FormActualizarCliente').show().css('visibility', 'visible');
 }
 
 

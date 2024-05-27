@@ -164,7 +164,9 @@ namespace VistaNewProject.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     // Guardar un mensaje en TempData para mostrar en el Index
-                    TempData["Mensaje"] = "¡Registro guardado correctamente!";
+                    TempData["SweetAlertIcon"] = "success";
+                    TempData["SweetAlertTitle"] = "Exito";
+                    TempData["SweetAlertMessage"] = "Registro Registrado Correctamente.";
                     return RedirectToAction("Index");
                 }
                 else

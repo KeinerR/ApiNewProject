@@ -98,7 +98,9 @@ namespace VistaNewProject.Controllers
 
                 if (cliente == null)
                 {
-                    TempData["Mensaje"] = "No se pudieron campos  los datos.";
+                    TempData["SweetAlertIcon"] = "erro";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "Cliente no se pudo Registrar Correctamente.";
                     return RedirectToAction("Index");
                 }
 
@@ -106,15 +108,17 @@ namespace VistaNewProject.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                    TempData["SweetAlertIcon"] = "success"; // Puede ser "success", "error", "warning", "info", etc.
-                    TempData["SweetAlertTitle"] = "Éxito"; // Título de la alerta
-                    TempData["SweetAlertMessage"] = "¡Registro guardado correctamente!"; // Mensaje de la alerta
+                    TempData["SweetAlertIcon"] = "success"; 
+                    TempData["SweetAlertTitle"] = "Éxito";
+                    TempData["SweetAlertMessage"] = "¡Registro guardado correctamente!"; 
 
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    TempData["Mensaje"] = "No se pudieron guardar los datos.";
+                    TempData["SweetAlertIcon"] = "erro";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "Cliente no se pudo Registrar Correctamente.";
                     return RedirectToAction("Index");
                 }
             }
@@ -124,63 +128,76 @@ namespace VistaNewProject.Controllers
 
 
 
-        public async Task<IActionResult> Update([FromForm] int clienteIdAct, string identificacionAct, string nombreEntidadAct, string nombreCompletoAct, string tipoClienteAct, string telefonoAct, string correoAct, string direccionAct, ulong estadoClienetAct)
+        public async Task<IActionResult> Update([FromForm] int clienteIdAct, string identificacionAct, string nombreEntidadAct, string nombreCompletoAct, string tipoClienteAct, string telefonoAct, string correoAct, string direccionAct, ulong estadoClienteAct)
         {
+            var allClients = await _client.GetClientesAsync();
 
+            // Verificar si existe algún cliente con el mismo nombre de entidad y nombre de contacto
+            var clienteExistente = allClients.FirstOrDefault(c =>
+                string.Equals(c.NombreEntidad, nombreEntidadAct, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(c.NombreCompleto, nombreCompletoAct, StringComparison.OrdinalIgnoreCase) &&
+                c.ClienteId != clienteIdAct);
 
-            // Obtener todos los clientes
-           
+            // Verificar si es una actualización de cliente existente
+            var esActualizacion = clienteIdAct != 0; // Asumiendo que ClienteId 0 significa que es un nuevo cliente
+
+            // Si ya existe un cliente con el mismo nombre de entidad y nombre de contacto, y no es una actualización, mostrar un mensaje de error
+            if (clienteExistente != null && !esActualizacion)
+            {
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = $"Ya existe un cliente con el nombre de entidad {nombreEntidadAct} y nombre de contacto {nombreCompletoAct}. ID de cliente existente: {clienteExistente.ClienteId}.";
+                return RedirectToAction("Index");
+            }
 
             var cliente = new Cliente
             {
-
                 ClienteId = clienteIdAct,
-                Identificacion=identificacionAct,
-                NombreEntidad=nombreEntidadAct,
-                NombreCompleto=nombreCompletoAct,   
-                TipoCliente=tipoClienteAct,
-                Telefono=telefonoAct,
-                Correo=correoAct,
-                Direccion=direccionAct,
-                EstadoCliente=estadoClienetAct
+                Identificacion = identificacionAct,
+                NombreEntidad = nombreEntidadAct,
+                NombreCompleto = nombreCompletoAct,
+                TipoCliente = tipoClienteAct,
+                Telefono = telefonoAct,
+                Correo = correoAct,
+                Direccion = direccionAct,
+                EstadoCliente = estadoClienteAct
             };
-
-
 
             var response = await _client.UpdateClienteAsync(cliente);
             if (response != null)
             {
-
                 if (response.IsSuccessStatusCode)
                 {
-
-
                     TempData["SweetAlertIcon"] = "success";
                     TempData["SweetAlertTitle"] = "Éxito";
-                    TempData["SweetAlertMessage"] = "Clienet actualizada correctamente.";
-                    return RedirectToAction("Index");
+                    TempData["SweetAlertMessage"] = "Cliente actualizado correctamente.";
                 }
                 else if (response.StatusCode == HttpStatusCode.NotFound)
                 {
                     TempData["SweetAlertIcon"] = "error";
                     TempData["SweetAlertTitle"] = "Error";
                     TempData["SweetAlertMessage"] = "El Cliente no se encontró en el servidor.";
-                    return RedirectToAction("Index");
                 }
-              
                 else
                 {
                     TempData["SweetAlertIcon"] = "error";
                     TempData["SweetAlertTitle"] = "Error";
                     TempData["SweetAlertMessage"] = "Error al actualizar el Cliente.";
-                    return RedirectToAction("Index");
                 }
+            }
+            else
+            {
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "Error al actualizar el Cliente.";
             }
 
             return RedirectToAction("Index");
-
         }
 
+
+
+        [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
 
@@ -224,6 +241,21 @@ namespace VistaNewProject.Controllers
 
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        public async Task<JsonResult> FindCliente(int clienteId)
+        {
+            var cliente = await _client.FindClienteAsync(clienteId);
+            return Json(cliente);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> FindClientes()
+        {
+            var clientes = await _client.GetClientesAsync();
+            return Json(clientes);
+        }
+
     }
 }
 

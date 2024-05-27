@@ -1,563 +1,493 @@
-﻿
-@using X.PagedList
+﻿@using X.PagedList
 @model X.PagedList.IPagedList<VistaNewProject.Models.Cliente>
 @{
     ViewData["Title"] = "Index";
 }
 <br />
 
-<div class="d-flex justify-content-between">
-    <!-- Formulario de búsqueda a la izquierda -->
-    <div class="mr-auto">
-        <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
-            <div class="input-group">
-                <input id="buscarCliente" type="text" class="form-control" placeholder="Buscar cliente" aria-label="Search" aria-describedby="button-addon2">
-                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
-            </div>
-        </form>
+
+<div class="ContenedorVista" id="ContenedorUsuario">
+    <div class="d-flex justify-content-between">
+        <!-- Formulario de búsqueda a la izquierda -->
+        <div class="mr-auto">
+            <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
+                <div class="input-group">
+                    <input id="buscarCliente" type="text" class="form-control" placeholder="Buscar cliente" aria-label="Search" aria-describedby="button-addon2">
+                    <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+        </div>
+
+
+        <!-- Botón para abrir el modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" onclick="simularClickCliente();obtenerDatosclientes() ;" data-bs-target="#Modal">
+            <i class="fas fa-plus-circle"></i>  Agregar Cliente
+        </button>
     </div>
 
 
-    <!-- Botón para abrir el modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clienteModal">
-        <i class="fas fa-plus-circle"></i>  Agregar Cliente
-    </button>
-</div>
-
-
-<!-- Modal -->
-<div class="modal fade" id="clienteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content" id="agregarDetalleCliente">
-            <div class="modal-header">
-                <h5 class="" id="TituloModal" style="text-align:center">Agregar Cliente</h5>
-                <button type="button" onclick="limpiarFormulario() " class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-
-            </div>
-            <form asp-controller="Clientes" asp-action="Create" method="post" onsubmit="return validarFormulario()">
-                <div class="modal-body">
-
-                    <div class="col-5 d-none ">
-                        <input type="hidden" id="ClienteId" name="clienteId" class="form-control" />
+    <div class="modal fade GeneralModal" id="Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" id="FormPrincipalCliente">
+                <div class="modal-cabecera">
+                    <div id="pibo"></div>
+                    <div class="modal-header-view TituloModal">
+                        <h2 class="modal-title">Agregar Cliente</h2>
                     </div>
-                    <div style=" form-group">
-                        <div class="row">
-
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="Identificacion" class="control-label">Identificación</label>
-                                    <input type="text" id="Identificacion" maxlength="26" name="identificacion" class="form-control"  />
-                                    <span id="MensajeIdentificacion" class="error"></span>
-                                </div>
-                            </div>
-
-
-                            <div class="col-6">
-
-                                <div class="form-group">
-                                    <label for="NombreCompleto" class="control-label">Nombre Completo</label>
-                                    <input type="text" id="NombreCompleto" name="nombreCompleto" class="form-control" />
-                                    <span id="MensajeNombreCompleto" class="text-danger"></span>
-
-                                </div>
-                            </div>
-
-                            <div class="col-6">
-                                <div class="form-group col">
-                                    <label for="NombreEntidad" class="control-label">Nombre Entidad</label>
-                                    <input type="text" id="NombreEntidad" name="nombreEntidad" class="form-control"  />
-                                    <span id="MensajeNombreEntidad" class="text-danger"></span>
-
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="Telefono" class="control-label">Teléfono</label>
-                                    <input type="text" id="Telefono" name="telefono" class="form-control" />
-                                    <span id="MensajeTelefono" class="text-danger"></span>
-
-                                </div>
-
-                            </div>
-
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="Correo" class="control-label">Correo</label>
-                                    <input type="text" id="Correo" name="correo" class="form-control"  />
-                                    <span id="MensajeCorreo" class="text-danger"></span>
-
-                                </div>
-                            </div>
-
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="Direccion" class="control-label">Direccion</label>
-                                    <input type="text" id="Direccion" name="direccion" class="form-control"  />
-                                    <span id="MensajeDireccion" class="text-danger"></span>
-
-                                </div>
-                            </div>
-
-
-
-
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="TipoCliente" class="control-label">Tipo Cliente </label>
-                                    <select id="TipoCliente" name="tipoCliente" class="form-control" >
-                                        <option value="Natural">Natural</option>
-                                        <option value="Empresa">Empresa</option>
-                                    </select>
-                                    <span id="MensajeTipoCliente" class="text-danger"></span>
-
-                                </div>
-                            </div>
-
-                            <div class="col-6">
-                                <div class="modal-footer  form-group">
-                                    <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
-                                </div>
-                            </div>
-
-                            <div class="col-6">
-                                <div class="form-group" id="EstadoCliente" style="display:none">
-                                    <label for="EstadoCliente" class="control-label">Estado Cliente</label>
-                                    <select id="EstadoCliente" name="estadoCliente" class="form-control" >
-                                        <option value="1">Activo</option>
-                                        <option value="0">Inactivo</option>
-                                    </select>
-                                    <span id="MensajeEstadoCliente" class="text-danger"></span>
-                                </div>
-                            </div>
-
-
-
-
-                        </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
+                    <div class="moda-header-view" id="modal-cabecera-equis">
+                        <button type="button" onclick="limpiarFormularioCliente();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-
-
-
-
-
                 </div>
+                <div class="modal-cuerpo">
 
+                    <form asp-controller="Clientes" asp-action="Create" method="post" onsubmit="return validarFormulario()">
+                        <div class="modal-body">
 
-
-            </form>
-
-        </div>
-
-
-
-        <div class="modal-content" id="FormActualizarCliente" style="display:none;">
-            <div class="modal-header">
-                <h5 class="modal-title" id="TituloModalUsuarios">Actualizar Usuarios</h5>
-                <button type="button" class="btn-close" onclick="limpiarFormulario()" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div id="MensajeInicialUsuario"></div>
-            <form asp-controller="Clientes" asp-action="Update" method="post" onsubmit="return validarFormularioAct()">
-                @Html.AntiForgeryToken()
-                <div class="modal-body">
-
-                    <div class="col-5">
-                        <input type="hidden" id="ClienteIdAct" name="clienteIdAct" class="form-control" />
-                    </div>
-                    <div style=" form-group">
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="IdentificacionAct" class="control-label">Identificacion</label>
-                                    <input type="text" id="IdentificacionAct" name="identificacionAct" class="form-control"  />
-                                    <span id="MensajeIdentificacionAct" class="text-danger"></span>
-                                    <!-- Use un ID más descriptivo como "MensajeIdentificacion" -->
-                                </div>
+                            <div class="col-5 d-none ">
+                                <input type="hidden" id="ClienteId" name="clienteId" class="form-control" />
                             </div>
+                            <div style=" form-group">
+                                <div class="row">
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="Identificacion" class="control-label">Identificación</label>
+                                            <input type="text" id="Identificacion" maxlength="26" name="identificacion" class="form-control" />
+                                            <span id="MensajeIdentificacion" class="error"></span>
+                                        </div>
+                                    </div>
 
 
-                            <div class="col-6">
+                                    <div class="col-6">
 
-                                <div class="form-group">
-                                    <label for="NombreCompletoAct" class="control-label">Nombre Completo</label>
-                                    <input type="text" id="NombreCompletoAct" name="nombreCompletoAct" class="form-control" />
-                                    <span id="MensajeNombreCompletoAct" class="text-danger"></span>
+                                        <div class="form-group">
+                                            <label for="NombreCompleto" class="control-label">Nombre Completo</label>
+                                            <input type="text" id="NombreCompleto" name="nombreCompleto" class="form-control" />
+                                            <span id="MensajeNombreCompleto" class="text-danger"></span>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group col">
+                                            <label for="NombreEntidad" class="control-label">Nombre Entidad</label>
+                                            <input type="text" id="NombreEntidad" name="nombreEntidad" class="form-control" />
+                                            <span id="MensajeNombreEntidad" class="text-danger"></span>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="Telefono" class="control-label">Telefono</label>
+                                            <input type="text" id="Telefono" name="telefono" class="form-control" />
+                                            <span id="MensajeTelefono" class="text-danger"></span>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="Correo" class="control-label">Correo</label>
+                                            <input type="text" id="Correo" name="correo" class="form-control" />
+                                            <span id="MensajeCorreo" class="text-danger"></span>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="Direccion" class="control-label">Direccion</label>
+                                            <input type="text" id="Direccion" name="direccion" class="form-control" />
+                                            <span id="MensajeDireccion" class="text-danger"></span>
+
+                                        </div>
+                                    </div>
+
+
+
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="TipoCliente" class="control-label">Tipo Cliente </label>
+                                            <select id="TipoCliente" name="tipoCliente" class="form-control">
+                                                <option value="Natural">Natural</option>
+                                                <option value="Empresa">Empresa</option>
+                                            </select>
+                                            <span id="MensajeTipoCliente" class="text-danger"></span>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group" id="EstadoCliente" style="display:none">
+                                            <label for="EstadoCliente" class="control-label">Estado Cliente</label>
+                                            <select id="EstadoCliente" name="estadoCliente" class="form-control">
+                                                <option value="1">Activo</option>
+                                                <option value="0">Inactivo</option>
+                                            </select>
+                                            <span id="MensajeEstadoCliente" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+
+
 
                                 </div>
-                            </div>
 
-                            <div class="col-6">
-                                <div class="form-group col">
-                                    <label for="NombreEntidadAct" class="control-label">Nombre Entidad</label>
-                                    <input type="text" id="NombreEntidadAct" name="nombreEntidadAct" class="form-control" />
-                                    <span id="MensajeNombreEntidadAct" class="text-danger"></span>
 
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="TelefonoAct" class="control-label">Teléfono</label>
-                                    <input type="text" id="TelefonoAct" name="telefonoAct" class="form-control" />
-                                    <span id="MensajeTelefonoAct" class="text-danger"></span>
 
-                                </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
                             </div>
-
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="CorreoAct" class="control-label">Correo</label>
-                                    <input type="text" id="CorreoAct" name="correoAct" class="form-control"  />
-                                    <span id="MensajeCorreoAct" class="text-danger"></span>
-
-                                </div>
-                            </div>
-
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="DireccionAct" class="control-label">Direccion</label>
-                                    <input type="text" id="DireccionAct" name="direccionAct" class="form-control"  />
-                                    <span id="MensajeDireccionAct" class="text-danger"></span>
-
-                                </div>
-                            </div>
-
-
-
-
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="TipoClienteAct" class="control-label">Tipo Cliente </label>
-                                    <select id="TipoClienteAct" name="tipoClienteAct" class="form-control" >
-                                        <option value="Natural">Natural</option>
-                                        <option value="Empresa">Empresa</option>
-                                    </select>
-                                    <span id="MensajeTipoClienteAct" class="text-danger"></span>
-
-                                </div>
-                            </div>
-
-                            <div class="col-6">
-                                <div class="form-group" id="EstadoCliente">
-                                    <label for="EstadoClienteAct" class="control-label">Estado Cliente</label>
-                                    <select id="EstadoClienteAct" name="estadoClienteAct" class="form-control" >
-                                        <option value="1">Activo</option>
-                                        <option value="0">Inactivo</option>
-                                    </select>
-                                    <span id="MensajeEstadoClienteAct" class="text-danger"></span>
-                                </div>
-                            </div>
-
-
 
 
 
 
 
                         </div>
+                        <div class="MensajeInicial"></div>
+                        <div class="modal-contenedor-footer">
+                            <button type="reset" onclick="limpiarFormularioAgregarCliente();" class="btn btn-secondary">Cancelar</button>
 
-
-                        <div class="col-9">
-                            <div class="modal-footer  form-group">
-                                <button type="submit" class="btn btn-primary" id="btnGuardar">Actualizar</button>
-                            </div>
+                            <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
                         </div>
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-                    </div>
-
-
-
-
-
-                </div>
-
-            </form>
-        </div>
-    </div>
-</div>
-<br />
-<hr>
-
-<table class="table table-custom text-center">
-    <thead>
-        <tr>
-            <th> #</th>
-            <th class="d-none">
-                ClienteId
-            </th>
-            <th>
-                Identificacion
-            </th>
-            <th>
-                NombreEntidad
-            </th>
-            <th>
-                NombreCompleto
-            </th>
-            <th>
-                TipoCliente
-            </th>
-            <th>
-                Telefono
-            </th>
-            <th>
-                Correo
-            </th>
-            <th>
-                Direccion
-            </th>
-            <th>
-                EstadoCliente
-            </th>
-            <th>
-                Acciones
-            </th>
-        </tr>
-    </thead>
-    <tbody class="text-center">
-        @{
-            int contador = ViewBag.Contador ?? 1;
-        }
-
-        @foreach (var item in Model)
-        {
-            <tr class="clientesPaginado">
-                <td>
-                    @contador
-                    @{
-                        contador++;
-                    }
-                </td>
-                <td class="d-none cliente-id">
-                    @Html.DisplayFor(modelItem => item.ClienteId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Identificacion)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NombreEntidad)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NombreCompleto)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TipoCliente)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Telefono)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Correo)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Direccion)
-                </td>
-                <td class="text-center align-middle contenedorEstadoTabla">
-                    <label class="switch">
-                        <input type="checkbox" @(item.EstadoCliente != 0 ? "checked" : "") onchange="actualizarEstadoCliente('@item.ClienteId', this.checked)">
-                        <span class="slider"></span>
-                    </label>
-                </td>
-
-                <td class="contenedorBotonesTabla">
-                    <button class="btn botonEditarCategoria" id="botonEditar" data-cliente-id="@item.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
-                    <a asp-action="Details" asp-route-id="@item.ClienteId" class="btn botonDetalle" ><i class="fas fa-file"></i></a>
-                    <form style="display:inline-block;" asp-controller="Clientes" asp-action="Delete" method="post" class="delete-form">
-                        <!-- Agrega un campo oculto con el ID del cliente -->
-                        <input type="hidden" name="id" value="@item.ClienteId" />
-                        <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
-                        <button type="button" onclick="confirmarEliminacion()" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
                     </form>
-                </td>
+                </div>
+            </div>
+            <div class="modal-content noBe" id="FormActualizarCliente">
+                <div class="modal-cabecera">
+                    <div id="pibo"></div>
+                      <div class="modal-header-view TituloModal">
+                        <h2 class="modal-title">Actualizar datos de Usuario</h2>
+                      </div>
+                    <div class="moda-header-view" id="modal-cabecera-equis">
+                        <button type="button" onclick="limpiarFormularioCliente();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <form asp-controller="Clientes" asp-action="Update" method="post" onsubmit="return validarFormularioAct()">
+                    @Html.AntiForgeryToken()
+                    <div class="modal-body">
 
-            </tr>
-        }
-        @{
-            var clientes = ViewData["Clientes"] as List<Cliente>;
-            if (clientes != null)
-            {
-                foreach (var cliente in clientes)
-                {
-                    <tr class="Clientes" style="display:none;">
-                        <td>@cliente.ClienteId</td>
-                        <td>@cliente.Identificacion</td>
-                        <td>@cliente.NombreEntidad</td>
-                        <td>@cliente.NombreCompleto</td>
-                        <td>@cliente.TipoCliente</td>
-                        <td>@cliente.Telefono</td>
-                        <td>@cliente.Correo</td>
-                        <td>@cliente.Direccion</td>
+                        <div class="col-5">
+                            <input type="hidden" id="ClienteIdAct" name="clienteIdAct" class="form-control" />
+                        </div>
+                        <div style=" form-group">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="IdentificacionAct" class="control-label">Identificacion</label>
+                                        <input type="text" id="IdentificacionAct" name="identificacionAct" class="form-control" />
+                                        <span id="MensajeIdentificacionAct" class="text-danger"></span>
+                                        <!-- Use un ID más descriptivo como "MensajeIdentificacion" -->
+                                    </div>
+                                </div>
 
-                        <td class="text-center align-middle contenedorEstadoTabla">
-                            <label class="switch">
-                                <input type="checkbox" @(cliente.EstadoCliente != 0 ? "checked" : "") onchange="actualizarEstadoCliente('@cliente.ClienteId', this.checked)">
-                                <span class="slider"></span>
-                            </label>
-                        </td>
 
-                        <td class="text-center align-middle">
-                            <div class="btn-group" role="group">
-                                <button class="btn botonEditarCategoria" id="botonEditar" data-cliente-id="@cliente.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
-                                <a asp-action="Details" asp-route-id="@cliente.ClienteId" class="btn botonDetalle" ><i class="fas fa-file"></i></a>
-                                <form style="display:inline-block;" asp-controller="Clientes" asp-action="Delete" method="post" class="delete-form">
-                                    <input type="hidden" name="id" value="@cliente.ClienteId" />
-                                    <button type="button" onclick="confirmarEliminacion()" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
-                                </form>
+                                <div class="col-6">
+
+                                    <div class="form-group">
+                                        <label for="NombreCompletoAct" class="control-label">Nombre Completo</label>
+                                        <input type="text" id="NombreCompletoAct" name="nombreCompletoAct" class="form-control" />
+                                        <span id="MensajeNombreCompletoAct" class="text-danger"></span>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-group col">
+                                        <label for="NombreEntidadAct" class="control-label">Nombre Entidad</label>
+                                        <input type="text" id="NombreEntidadAct" name="nombreEntidadAct" class="form-control" />
+                                        <span id="MensajeNombreEntidadAct" class="text-danger"></span>
+
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="TelefonoAct" class="control-label">Teléfono</label>
+                                        <input type="text" id="TelefonoAct" name="telefonoAct" class="form-control" />
+                                        <span id="MensajeTelefonoAct" class="text-danger"></span>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="CorreoAct" class="control-label">Correo</label>
+                                        <input type="text" id="CorreoAct" name="correoAct" class="form-control" />
+                                        <span id="MensajeCorreoAct" class="text-danger"></span>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="DireccionAct" class="control-label">Direccion</label>
+                                        <input type="text" id="DireccionAct" name="direccionAct" class="form-control" />
+                                        <span id="MensajeDireccionAct" class="text-danger"></span>
+
+                                    </div>
+                                </div>
+
+
+
+
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="TipoClienteAct" class="control-label">Tipo Cliente </label>
+                                        <select id="TipoClienteAct" name="tipoClienteAct" class="form-control">
+                                            <option value="Natural">Natural</option>
+                                            <option value="Empresa">Empresa</option>
+                                        </select>
+                                        <span id="MensajeTipoClienteAct" class="text-danger"></span>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-group" id="EstadoCliente">
+                                        <label for="EstadoClienteAct" class="control-label">Estado Cliente</label>
+                                        <select id="EstadoClienteAct" name="estadoClienteAct" class="form-control">
+                                            <option value="1">Activo</option>
+                                            <option value="0">Inactivo</option>
+                                        </select>
+                                        <span id="MensajeEstadoClienteAct" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+
+
+
+
+
+
                             </div>
-                        </td>
 
 
-                    </tr>
+                           
+                        </div>
+
+
+                    </div>
+
+                    <div class="MensajeInicial"></div>
+                    <div class="modal-contenedor-footer">
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormularioCliente();">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="btnGuardar">Actualizar</button>
+                    </div>
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+    <br />
+    <hr>
+
+    <table class="table table-custom text-center">
+        <thead>
+            <tr>
+                <th> #</th>
+                <th class="d-none">
+                    ClienteId
+                </th>
+                <th>
+                    Identificacion
+                </th>
+                <th>
+                    NombreEntidad
+                </th>
+                <th>
+                    NombreCompleto
+                </th>
+                <th>
+                    TipoCliente
+                </th>
+                <th>
+                    Telefono
+                </th>
+                <th>
+                    Correo
+                </th>
+                <th>
+                    Direccion
+                </th>
+                <th>
+                    EstadoCliente
+                </th>
+                <th>
+                    Acciones
+                </th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            @{
+                int contador = ViewBag.Contador ?? 1;
+            }
+
+            @foreach (var item in Model)
+            {
+                <tr class="clientesPaginado">
+                    <td>
+                        @contador
+                        @{
+                            contador++;
+                        }
+                    </td>
+                    <td class="d-none cliente-id">
+                        @Html.DisplayFor(modelItem => item.ClienteId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Identificacion)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NombreEntidad)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NombreCompleto)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TipoCliente)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Telefono)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Correo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Direccion)
+                    </td>
+                    <td class="text-center align-middle contenedorEstadoTabla">
+                        <label class="switch">
+                            <input type="checkbox" @(item.EstadoCliente != 0 ? "checked" : "") onchange="actualizarEstadoCliente('@item.ClienteId', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+
+                <td class="botonesTabla">
+                    <button class="btn botonEditar" onclick="mostrarModalConRetrasoCliente(@item.ClienteId)"><i class="fas fa-edit"></i></button>
+
+                        <a asp-action="Details" asp-route-id="@item.ClienteId" class="btn botonDetalle"><i class="fas fa-file"></i></a>
+                   
+
+                    <form asp-controller="Clientes" asp-action="Delete" method="post" class="delete-form-cliente">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@item.ClienteId" />
+                        <button type="submit" class="btn botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                    </form>
+
+
+                    </td>
+
+                </tr>
+            }
+            @{
+                var clientes = ViewData["Clientes"] as List<Cliente>;
+                if (clientes != null)
+                {
+                    foreach (var cliente in clientes)
+                    {
+                        <tr class="Clientes" style="display:none;">
+                            <td>@cliente.ClienteId</td>
+                            <td>@cliente.Identificacion</td>
+                            <td>@cliente.NombreEntidad</td>
+                            <td>@cliente.NombreCompleto</td>
+                            <td>@cliente.TipoCliente</td>
+                            <td>@cliente.Telefono</td>
+                            <td>@cliente.Correo</td>
+                            <td>@cliente.Direccion</td>
+
+                            <td class="text-center align-middle contenedorEstadoTabla">
+                                <label class="switch">
+                                    <input type="checkbox" @(cliente.EstadoCliente != 0 ? "checked" : "") onchange="actualizarEstadoCliente('@cliente.ClienteId', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </td>
+
+                            <td class="text-center align-middle">
+                                <div class="btn-group" role="group">
+                                    <button class="btn botonEditarCategoria" id="botonEditar" data-cliente-id="@cliente.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
+                                    <a asp-action="Details" asp-route-id="@cliente.ClienteId" class="btn botonDetalle"><i class="fas fa-file"></i></a>
+                                    <form style="display:inline-block;" asp-controller="Clientes" asp-action="Delete" method="post" class="delete-form">
+                                        <input type="hidden" name="id" value="@cliente.ClienteId" />
+                                        <button type="button" onclick="confirmarEliminacion()" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                                </div>
+                            </td>
+
+
+                        </tr>
+                    }
                 }
             }
+        </tbody>
+    </table>
+
+
+    <div class="pagination-container mt-2">
+        @if (Model != null && Model.PageCount > 1)
+        {
+            <div class="d-flex justify-content-center mb-5">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <!-- Botón para ir a la primera página -->
+                        @if (Model.PageNumber > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1" aria-label="First">
+                                    <span aria-hidden="true">Primero</span>
+                                </a>
+                            </li>
+                        }
+                        <!-- Botón para la página anterior (oculto en la página 1) -->
+                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
+                                <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                            </a>
+                        </li>
+                        <!-- Iterar sobre las páginas disponibles -->
+                        @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                        {
+                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                <a class="page-link" href="?page=@i">@i</a>
+                            </li>
+                        }
+                        <!-- Botón para la página siguiente (oculto en la última página) -->
+                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
+                                <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                            </a>
+                        </li>
+                        <!-- Botón para ir a la última página -->
+                        @if (Model.PageNumber < Model.PageCount)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?page=@Model.PageCount" aria-label="Last">
+                                    <span aria-hidden="true">Último</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
         }
-    </tbody>
-</table>
-
-
-<div class="pagination-container mt-2">
-    @if (Model != null && Model.PageCount > 1)
-    {
-        <div class="d-flex justify-content-center mb-5">
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
-                    <!-- Botón para ir a la primera página -->
-                    @if (Model.PageNumber > 1)
-                    {
-                        <li class="page-item">
-                            <a class="page-link" href="?page=1" aria-label="First">
-                                <span aria-hidden="true">Primero</span>
-                            </a>
-                        </li>
-                    }
-                    <!-- Botón para la página anterior (oculto en la página 1) -->
-                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                        <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
-                            <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
-                        </a>
-                    </li>
-                    <!-- Iterar sobre las páginas disponibles -->
-                    @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
-                    {
-                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                            <a class="page-link" href="?page=@i">@i</a>
-                        </li>
-                    }
-                    <!-- Botón para la página siguiente (oculto en la última página) -->
-                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                        <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
-                            <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
-                        </a>
-                    </li>
-                    <!-- Botón para ir a la última página -->
-                    @if (Model.PageNumber < Model.PageCount)
-                    {
-                        <li class="page-item">
-                            <a class="page-link" href="?page=@Model.PageCount" aria-label="Last">
-                                <span aria-hidden="true">Último</span>
-                            </a>
-                        </li>
-                    }
-                </ul>
-            </nav>
-        </div>
-    }
-</div>
-                                       
-@if (!string.IsNullOrEmpty(TempData["Mensaje"]?.ToString()))
-{
-    <div class="alert alert-success" role="alert">
-        @TempData["Mensaje"]
     </div>
-
-
-    <script>
-        // Mostrar SweetAlert cuando haya un mensaje en TempData["Mensaje"]
-        Swal.fire({
-            position: "center",
-            icon: "success",
-            title: "Se ha registrado la marca exitosamente",
-            showConfirmButton: false,
-            timer: 1500
-        }).then((result) => {
-            // Después de cerrar el SweetAlert, abrimos el modal nuevamente
-            $('#clienteModal').modal('show');
-        });
-    </script>
-}
-
-
-
-
-@if (TempData["SweetAlertMessage"] != null)
-{
-    <script>
-        Swal.fire({
-            position: "center",
-            icon: "@TempData["SweetAlertIcon"]",
-            title: "@TempData["SweetAlertTitle"]",
-            text: "@TempData["SweetAlertMessage"]",
-            showConfirmButton: false, // Mostrar botón de confirmación
-            timer: 3000
-        }).then((result) => {
-            if (result.isConfirmed) { // Si el usuario confirmó la acción
-                window.location.href = "@Url.Action("Index", "Clientes")"; // Redireccionar a la página de índice de marcas
-            }
-        });
-    </script>
-}
-
-<script>
-
-
-    // Función para mostrar el modal de confirmación antes de eliminar
-    function confirmarEliminacion() {
-        // Mostrar modal de confirmación
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "Esta acción no se puede deshacer",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Sí, eliminarlo!',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Si el usuario confirma, enviar el formulario de eliminación
-                $(".delete-form").submit();
-            }
-        });
-    }
-
-
-
-
-</script>
-
-<script src="~/js/clientes.js"></script>
+</div>

@@ -5,7 +5,7 @@ function limpiarFormulario() {
 
     // Restaurar mensajes de error
     $('.Mensaje, .MensajeAct').text(' *');
-    $('.Mensaje, .MensajeAct').show(); // Mostrar mensajes de error
+    $('.Mensaje, .MensajeAct').show();// Mostrar mensajes de error
 
     $('.text-danger, .text-dangerAct').text(''); // Limpiar mensajes de error
 
