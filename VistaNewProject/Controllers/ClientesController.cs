@@ -108,9 +108,9 @@ namespace VistaNewProject.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                    TempData["SweetAlertIcon"] = "success"; 
+                    TempData["SweetAlertIcon"] = "success";
                     TempData["SweetAlertTitle"] = "Éxito";
-                    TempData["SweetAlertMessage"] = "¡Registro guardado correctamente!"; 
+                    TempData["SweetAlertMessage"] = "¡Registro guardado correctamente!";
 
                     return RedirectToAction("Index");
                 }
@@ -256,9 +256,43 @@ namespace VistaNewProject.Controllers
             return Json(clientes);
         }
 
-    }
-}
+        public async Task<IActionResult> Details(int? id, int? page)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
+            var pedidos = await _client.GetPedidoAsync();
+            var cliente = await _client.GetClientesAsync();
+            var clientes = cliente.FirstOrDefault(u => u.ClienteId == id);
+
+            if (clientes == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Clientes = clientes;
+
+            var pedidosCliente = pedidos.Where(p => p.ClienteId == id).ToList();
+
+            // Load client details for each pedido
+            foreach (var pedido in pedidosCliente)
+            {
+                pedido.Cliente = await _client.FindClienteAsync(pedido.ClienteId.Value);
+            }
+
+            int pageSize = 2; // Número máximo de elementos por página
+            int pageNumber = page ?? 1;
+
+            var pagepedidos = pedidosCliente.ToPagedList(pageNumber, pageSize);
+
+            return View(pagepedidos);
+        }
+
+    }
+
+}
 
 
 

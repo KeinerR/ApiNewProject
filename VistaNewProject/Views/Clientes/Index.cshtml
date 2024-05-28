@@ -424,8 +424,8 @@
 
                             <td class="text-center align-middle">
                                 <div class="btn-group" role="group">
-                                    <button class="btn botonEditarCategoria" id="botonEditar" data-cliente-id="@cliente.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
-                                    <a asp-action="Details" asp-route-id="@cliente.ClienteId" class="btn botonDetalle"><i class="fas fa-file"></i></a>
+                                <button class="btn botonEditarCaoria" id="botonEditar" data-cliente-id="@cliente.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
+                                <a asp-action="Details" asp-route-id="@cliente.ClienteId" class="btn botonDetalle"><i class="fas fa-file"></i></a>teg
                                     <form style="display:inline-block;" asp-controller="Clientes" asp-action="Delete" method="post" class="delete-form">
                                         <input type="hidden" name="id" value="@cliente.ClienteId" />
                                         <button type="button" onclick="confirmarEliminacion()" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
