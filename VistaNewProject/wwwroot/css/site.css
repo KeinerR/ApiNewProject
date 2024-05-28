@@ -368,6 +368,9 @@ input[type="checkbox"]:checked + .sub-menu {
     .table-custom .contenedorCantidad {
         width: 50px; /* Establece el ancho deseado */
     }
+    .table-custom .contenedorEstado{
+        width: 50px; /* Establece el ancho deseado */
+    }
 
  
 /*Switch*/ /*Checkbox de estado en everyviews*/

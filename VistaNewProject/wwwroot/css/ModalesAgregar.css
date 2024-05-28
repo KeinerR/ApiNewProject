@@ -13,7 +13,7 @@
 }
 /*Posicion de la modal*/
 .GeneralModal {
-    margin-top:20px ;
+    margin-top: 20px;   
 }
 
 #pibo {
@@ -123,5 +123,8 @@
     justify-content:center;
 }
 
-
-
+/*ajustar tamaño para la modal de categoria*/
+#ContenedorCategoria .modal-dialog {
+    width:450px;
+ 
+}

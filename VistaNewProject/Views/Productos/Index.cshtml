@@ -24,7 +24,7 @@
     <!-- Modal -->
     <div class="modal fade GeneralModal" onblur="AlPerderFocoProducto();" id="ModalProducto" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div id="FormPrincipalProducto" class="modal-content">
+            <div class="modal-content" id="FormPrincipalProducto">
                 <div class="modal-cabecera">
                     <div id="pibo"></div>
                     <div class="modal-header-view TituloModal">
@@ -139,8 +139,7 @@
                                 <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
                             </div>
                     </form>
-                </div>
-                   
+                </div> 
             </div>
 
             <div class="modal-content noBe" id="FormActualizarProducto">
@@ -155,7 +154,6 @@
                     </div>
                     <div class="modal-cuerpo">
                         <form asp-controller="Productos" asp-action="Update" class="modal-formulario-actualizar" method="post">
-                            @Html.AntiForgeryToken() <!-- Asegúrate de tener esto si el modelo tiene FK-->
                             <input id="ProductoIdAct" type="hidden" name="productoId" class="form-control" />
                             <input id="CantidadTotalAct" type="hidden" value="0" name="cantidadTotal" class="form-control" />
                             <div class="row">
@@ -263,7 +261,6 @@
                         </form>
                    
                     </div>
-                
                 </div>
         </div>
 
@@ -341,7 +338,7 @@
                     <td class="contenedorCantidad">
                         @Html.DisplayFor(modelItem => item.CantidadTotal)
                     </td>
-                    <td class="text-center align-middle contenedorEstadoTabla">
+                    <td class="text-center align-middle contenedorEstado">
                         <label class="switch">
                             <input type="checkbox" @(item.Estado != 0 ? "checked" : "") onchange="actualizarEstadoProducto('@item.ProductoId')">
                             <span class="slider"></span>
@@ -388,9 +385,8 @@
                                 }
                             </td>
                             <td>@producto.NombreCompleto</td>
-                            <td>@producto.CantidadTotal</td>
-
-                            <td class="text-center align-middle contenedorEstadoTabla">
+                            <td class="">@producto.CantidadTotal</td>
+                            <td class="text-center align-middle contenedorEstado">
                                 <label class="switch">
                                     <input type="checkbox" @(producto.Estado != 0 ? "checked" : "") onchange="actualizarEstadoProducto('@producto.ProductoId')">
                                     <span class="slider"></span>

@@ -24,9 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (mostrarAlerta === 'true' && productoId) {
         mostrarModalSinRetrasoProducto(productoId);
-    } else {
-        console.log('ProductoId no encontrado en la URL');
-    }
+    } 
 
     // Evita el envío del formulario si no se cumplen con los requerimientos mínimos
     $('.modal-formulario-crear-producto').on('submit', function (event) {
@@ -252,9 +250,13 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function simularClickProducto() {
+    limpiarFormularioProductoAct();
+    Llamar();
     //ocultar formulario de actualizar  y mostrar el formulario principal
     $('#FormActualizarProducto').hide();
     $('#FormPrincipalProducto').show().css('visibility', 'visible');
+    
+
 }
 //Funcion que se activa al haer clik en el boton de editar.
 function mostrarModalConRetrasoProducto(productoId) {

@@ -13,7 +13,7 @@
             <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
                 <div class="input-group">
                     <input id="buscarUsuario" type="text" class="form-control" oninput="searchUsuario();" placeholder="Buscar usuario" aria-label="Search" aria-describedby="button-addon2">
-                    <button class="btn btn-primary" id="btnNavbarSearch" oninput="vaciarInput();" onclick="vaciarInput();" type="button"><i class="fas fa-search"></i></button>
+                    <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputUsuario();" type="button"><i class="fas fa-search"></i></button>
                 </div>
             </form>
         </div>
@@ -47,8 +47,8 @@
                                     <option selected value="1">Activo</option>
                                     <option value="0">Inactivo</option>
                                 </select>
+                                <input type="hidden" value="0" name="usuarioId" class="form-control" />
                             </div>
-                            <input type="hidden" value="0" name="usuarioId" class="form-control"/>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -132,9 +132,9 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="Correo" class="control-label">Correo</label>
+                                        <label for="CorreoUsuario" class="control-label">Correo</label>
                                         <span  class="Mensaje">*</span>
-                                        <input type="text" id="Correo" oninput="validarCampoUsuario(this);" name="correo" class="form-control" autocomplete="off" />
+                                        <input type="text" id="CorreoUsuario" oninput="validarCampoUsuario(this);" name="correo" class="form-control" autocomplete="off" />
                                         <span id="MensajeCorreo" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
                                 </div>
@@ -244,9 +244,9 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="CorreoAct" class="control-label">Correo</label>
+                                        <label for="CorreoUsuarioAct" class="control-label">Correo</label>
                                         <span class="Mensaje"></span>
-                                        <input type="text" id="CorreoAct" oninput="validarCampoUsuario(this)" name="correo" class="form-control" autocomplete="off" />
+                                        <input type="text" id="CorreoUsuarioAct" oninput="validarCampoUsuario(this)" name="correo" class="form-control" autocomplete="off" />
                                         <span id="MensajeCorreo" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
                                 </div>
@@ -347,7 +347,7 @@
                             <td>@usuario.Nombre @usuario.Apellido</td>
                             <td>@usuario.Telefono</td>
                             <td>@usuario.Correo</td>
-                            <td class="text-center align-middle">
+                            <td class="text-center align-middle contenedorEstado">
                                 <label class="switch">
                                     <input type="checkbox" id="check_@usuario.UsuarioId" @(usuario.EstadoUsuario != 0 ? "checked" : "") onchange="actualizarEstadoUsuario('@usuario.UsuarioId')">
                                     <span class="slider"></span>

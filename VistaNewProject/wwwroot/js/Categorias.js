@@ -301,7 +301,7 @@ document.getElementById('buscarCategoria').addEventListener('input', function ()
     });
 });
 
-function vaciarInput() {
+function vaciarInputS() {
     document.getElementById('buscarCategoria').value = "";
     var icon = document.querySelector('#btnNavbarSearch i');
     icon.className = 'fas fa-search';

@@ -27,8 +27,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (mostrarAlerta === 'true' && usuarioId) {
         mostrarModalSinRetrasoUsuario(usuarioId);
-    } else {
-        console.log('UsuarioId no encontrado en la URL');
     }
     //Evitar el envio de los formularios hasta que todo este validado
     $('.modal-formulario-actualizar-usuario').on('submit', function (event) {
@@ -217,6 +215,8 @@ function simularClickUsuario() {
     //ocultar formulario de actualizar  y mostrar el formulario principal
     $('#FormActualizarUsuario').hide();
     $('#FormPrincipalUsuario').show().css('visibility', 'visible');
+    limpiarFormularioUsuarioAct();
+    limpiarFormularioUsuarioAgregar();
 }
 
 document.addEventListener('keydown', function (event) {
@@ -249,7 +249,7 @@ function limpiarFormularioUsuario() {
     limpiarCampo('Contraseña');
     limpiarCampo('RepetirContraseña');
     limpiarCampo('Telefono');
-    limpiarCampo('Correo');
+    limpiarCampo('CorreoUsuario');
 
     // Limpiar campos y elementos específicos de la versión actualizada
     limpiarCampo('UsuarioIdAct');
@@ -259,7 +259,7 @@ function limpiarFormularioUsuario() {
     limpiarCampo('ApellidoAct');
     limpiarCampo('ContraseñaAct');
     limpiarCampo('TelefonoAct');
-    limpiarCampo('CorreoAct');
+    limpiarCampo('CorreoUsuarioAct');
 
     // Limpiar mensajes de alerta y *
     var mensajes = document.querySelectorAll('.Mensaje');
@@ -341,13 +341,15 @@ function AlPerderFocoUsuario() {
 
 /*--------------------------------------------------------- Modal de actualizar usuario ---------------------------------------*/
 function mostrarModalConRetrasoUsuario(usuarioId) {
+    limpiarFormularioUsuarioAct();
     setTimeout(function () {
         actualizarUsuario(usuarioId);
         setTimeout(function () {
+
             var myModal = new bootstrap.Modal(document.getElementById('ModalUsuario'));
             myModal.show();
             // Aquí puedes llamar a la función actualizarProducto si es necesario
-        }, 100); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
+        }, 500); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
     }, 0); // 0 milisegundos de retraso antes de llamar a actualizarProducto
 }
 //Modal cuando se hace click en editar en el boton de detalle
@@ -378,7 +380,7 @@ function actualizarUsuario(campo) {
             formActualizar.find('#ContraseñaAct').val(data.contraseña);
             formActualizar.find('#ApellidoAct').val(data.apellido);
             formActualizar.find('#TelefonoAct').val(data.telefono);
-            formActualizar.find('#CorreoAct').val(data.correo);
+            formActualizar.find('#CorreoUsuarioAct').val(data.correo);
             formActualizar.find('#EstadoProductoAct').val(data.correo);
             seleccionarOpcion(document.getElementById('NombreRolAct'), document.getElementById('roles'), document.getElementById('RolIdAct'));
         },
@@ -467,7 +469,7 @@ function searchUsuario() {
     });
 }
 
-function vaciarInput() {
+function vaciarInputUsuario() {
     document.getElementById('buscarUsuario').value = "";
     var icon = document.querySelector('#btnNavbarSearch i');
     icon.className = 'fas fa-search';
@@ -572,7 +574,7 @@ function validarCampoUsuario(campo) {
     }
 
     // Validación de correo electrónico
-    if (input.is('#Correo') || input.is('#CorreoAct')) {
+    if (input.is('#CorreoUsuario') || input.is('#CorreoUsuarioAct')) {
         const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor); // Verifica el formato de correo electrónico
         if (valor === '') {
             spanError.text('Este campo es necesario. Si desea omitirlo, use: correo@gmail.com');
