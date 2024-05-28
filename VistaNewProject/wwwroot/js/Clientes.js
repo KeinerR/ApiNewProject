@@ -786,5 +786,46 @@ function actualizarCliente(campo) {
 }
 
 
+function actualizarEstadoCliente(ClienteId) {
+    $.ajax({
+        url: `/Clientes/CambiarEstadoCliente/${ClienteId}`,
+        type: 'PATCH',
+        contentType: 'application/json',
+        success: function (response) {
+            console.log("Estado actualizado:", EstadoCliente);
+            // Mostrar SweetAlert
+            Swal.fire({
+                icon: 'success',
+                title: '¡Estado actualizado!',
+                showConfirmButton: false,
+                timer: 1500 // Duración del SweetAlert en milisegundos
+            })
+        },
+        error: function (xhr, status, error) {
+            console.error('Error al actualizar el estado del usuario:', xhr.responseText);
+            // Mostrar SweetAlert de error si es necesario
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Hubo un error al actualizar el estado del usuario. Por favor, inténtalo de nuevo.'
+            });
+        }
+    });
+}
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const mostrarAlerta = urlParams.get('mostrarAlerta');
+    const clienteId = urlParams.get('clienteId');
+    if (mostrarAlerta === 'true' && clienteId) {
+        mostrarModalSinRetrasoCliente(clienteId);
+    }
+
+
+});
+
+
 
 

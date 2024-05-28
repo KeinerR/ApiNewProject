@@ -2,8 +2,9 @@
 @model X.PagedList.IPagedList<VistaNewProject.Models.Detallepedido>
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalles de Pedido";
 }
+
 <style>
     .pagination {
         margin-top: 20px;
@@ -32,54 +33,67 @@
         }
 </style>
 
-
-
 <div class="container">
     <br />
-
-    <div >  
-
+    <div>
         <a asp-action="Index" class="btn btn-primary">
-            <i class="fas fa-arrow-left"></i>
-            Regresar</a>
-
+            <i class="fas fa-arrow-left"></i> Regresar
+        </a>
     </div>
 
+    <br />
 
     <div class="pedido-info">
         <h2 style="text-align:center;">Información del Pedido</h2>
-        <table class="table">
-            <tbody>
-                <tr>
+        <table class="table" style="margin: 0 auto; width: 60%;">
+            <tbody style="text-align: center;">
+                <tr style="background-color: lightgray;">
                     <th>Tipo de Servicio:</th>
-                    <td>@ViewBag.Pedidos.TipoServicio</td>
-                </tr>
-                <tr>
                     <th>Cliente:</th>
-                    <td>@ViewBag.NombreCliente</td>
-                </tr>
-                <tr>
-                    <th>ValorTotal:</th>
-                    <td>@ViewBag.Pedidos.ValorTotalPedido</td>
-                </tr>
-
-                <tr>
+                    <th>Valor Total:</th>
                     <th>Estado:</th>
-                    <td>@ViewBag.Pedidos.EstadoPedido</td>
                 </tr>
-               
+                <tr style="background-color: white;">
+                    <td>@(ViewBag.Pedidos != null ? ViewBag.Pedidos.TipoServicio : "No disponible")</td>
+                    <td>@(ViewBag.NombreCliente )</td>
+                    <td>@( ViewBag.Pedidos.ValorTotalPedido )</td>
+                    <td>@( ViewBag.Pedidos.EstadoPedido  )</td>
+                </tr>
             </tbody>
         </table>
+
+        <br />
+        @if (ViewBag.Pedidos.TipoServicio == "Domicilio")
+        {
+            <h2 style="text-align:center;">Información del Domicilio</h2>
+            <table class="table" style="margin: 0 auto; width: 60%;">
+                <tbody style="text-align: center;">
+                    <tr style="background-color: lightgray;">
+                        <th>Dirección:</th>
+                        <th>Observacion:</th>
+                        <th> FechaEntrega:</th>
+                    </tr>
+                    <tr style="background-color: white;">
+                        <td>@ViewBag.Domicilio?.DireccionDomiciliario</td>
+                        <td>@ViewBag.Domicilio?.Observacion </td>
+                        <td>@ViewBag.Domicilio?.FechaEntrega </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
     </div>
-    <div style="margin:auto">
-        <h2 style="text-align:center;">Informacion Detalles</h2>
+
+    <br />
+    <div style="margin:auto; text-align:center;">
+        <h2>Detalles del Pedido</h2>
     </div>
+
     <div>
         @if (Model.Any())
         {
-            <table class="table">
-                <thead>
-                    <tr>
+            <table class="table" style="margin: 0 auto; width: 60%;">
+                <thead style="background-color: lightgray;">
+                    <tr style="text-align: center;">
                         <th>Producto</th>
                         <th>Unidad</th>
                         <th>Cantidad</th>
@@ -90,24 +104,35 @@
                 <tbody>
                     @foreach (var detallepedido in Model)
                     {
-                        <tr>
-                            <td>@detallepedido.Producto.NombreProducto</td>
-                            <td>@detallepedido.Unidad.NombreUnidad</td>
-                            <td>@String.Format("{0:N0}", @detallepedido.Cantidad)</td>
-                            <td>@String.Format("{0:N0}", @detallepedido.PrecioUnitario)</td>
-                            <td>@String.Format("{0:N0}", @detallepedido.Subtotal)</td>
-
+                        <tr style="text-align: center; background-color: white;">
+                            <td>@detallepedido.Producto?.NombreProducto </td>
+                            <td>@detallepedido.Unidad?.NombreUnidad </td>
+                            <td>@String.Format("{0:N0}", detallepedido.Cantidad)</td>
+                            <td>@String.Format("{0:N0}", detallepedido.PrecioUnitario)</td>
+                            <td>@String.Format("{0:N0}", detallepedido.Subtotal)</td>
                         </tr>
                     }
                 </tbody>
             </table>
 
-            
+
+            <div class="pagination-detail">
+                @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Pedidos.PedidoId, page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 }) + "' class='prev-next " + (Model.HasPreviousPage ? "" : "disabled") + "'>Anterior</a>")
+
+                @for (int i = 1; i <= Model.PageCount; i++)
+                {
+                    <a href="@Url.Action("Details", new { id =  ViewBag.Pedidos.PedidoId, page = i })" class="@(i == Model.PageNumber ? "active" : "")">@i</a>
+                }
+
+                @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Pedidos.PedidoId, page = Model.HasNextPage ? Model.PageNumber + 1 : Model.PageCount }) + "' class='prev-next " + (Model.HasNextPage ? "" : "disabled") + "'>Siguiente</a>")
+            </div>
         }
         else
         {
-            <p>No se encontraron productos asociados a este pedido.</p>
+            <p style="text-align:center">No se encontraron pedidos asociados a este cliente.</p>
         }
     </div>
-
 </div>
+
+<script src="~/js/Detalle.js"></script>
+

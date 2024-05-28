@@ -9,6 +9,8 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> CreateClienteAsync(Cliente cliente);
         Task<Cliente> FindClienteAsync(int id);
         Task<HttpResponseMessage> UpdateClienteAsync(Cliente cliente);
+        Task<HttpResponseMessage> CambiarEstadoClienteAsync(int id);
+
         Task<HttpResponseMessage> DeleteClienteAsync(int id);
 
 

@@ -145,7 +145,6 @@ namespace ApiNewProject.Controllers
                     return NotFound();
                 }
 
-                // Invertir el valor del estado del usuario
                 usuario.EstadoUsuario = usuario.EstadoUsuario == 0 ? 1UL : 0UL;
 
                 // Guardar los cambios en la base de datos

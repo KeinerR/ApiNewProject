@@ -335,7 +335,10 @@ namespace VistaNewProject.Controllers
             var pedidosTask = _client.GetPedidoAsync();
             var detallesTask = _client.GetDetallepedidoAsync();
 
-            await Task.WhenAll(pedidosTask, detallesTask);
+            var domicilios = _client.GetDomicilioAsync();
+
+
+            await Task.WhenAll(pedidosTask, detallesTask, domicilios);
 
             var pedido = pedidosTask.Result.FirstOrDefault(u => u.PedidoId == id);
             if (pedido == null)
@@ -350,6 +353,8 @@ namespace VistaNewProject.Controllers
             ViewBag.NombreCliente = cliente != null ? cliente.NombreEntidad : "Cliente no encontrado"; // Asignar el nombre del cliente a la ViewBag
 
             var detallepedidos = detallesTask.Result.Where(p => p.PedidoId == id).ToList();
+            var domicilio = domicilios.Result.FirstOrDefault(d => d.PedidoId == id);
+            ViewBag.Domicilio = domicilio;
 
             // Recuperar los productos y unidades correspondientes de manera asíncrona
             var productosTasks = detallepedidos.Select(async detalle =>

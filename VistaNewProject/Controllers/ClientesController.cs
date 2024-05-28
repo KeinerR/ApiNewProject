@@ -65,105 +65,97 @@ namespace VistaNewProject.Controllers
 
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] string identificacion, string nombreEntidad, string nombreCompleto, string tipoCliente, string telefono, string correo, string direccion, ulong estadoCliente)
+        public async Task<IActionResult> Create([FromForm] Cliente cliente)
         {
-            if (ModelState.IsValid)
+
+            Console.WriteLine(cliente);
+
+                Console.WriteLine("el modelo esta mal");
+            
+
+            Console.WriteLine(cliente);
+            var clientes = new Cliente
             {
-                var allClients = await _client.GetClientesAsync();
+                Identificacion = cliente.Identificacion,
+                NombreEntidad = cliente.NombreEntidad,
+                NombreCompleto = cliente.NombreCompleto,
+                TipoCliente = cliente.TipoCliente,
+                Telefono = cliente.Telefono,
+                Correo = cliente.Correo,
+                Direccion = cliente.Direccion,
+                EstadoCliente = cliente.EstadoCliente
+            };
 
-                // Verificar si existe algún cliente con el mismo nombre de entidad y nombre de contacto
-                var existingClient = allClients.FirstOrDefault(c => c.NombreEntidad == nombreEntidad && c.NombreCompleto == nombreCompleto);
-
-                if (existingClient != null)
-                {
-                    // Si existe un cliente diferente con el mismo nombre de entidad y nombre de contacto
-                    // Mostrar un mensaje de error y redireccionar a la página de índice
-                    TempData["SweetAlertIcon"] = "error";
-                    TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "Ya existe un cliente con el mismo nombre de entidad y nombre de contacto.";
-                    return RedirectToAction("Index");
-                }
-
-                var cliente = new Cliente
-                {
-                    Identificacion = identificacion,
-                    NombreEntidad = nombreEntidad,
-                    NombreCompleto = nombreCompleto,
-                    TipoCliente = tipoCliente,
-                    Telefono = telefono,
-                    Correo = correo,
-                    Direccion = direccion,
-                    EstadoCliente = estadoCliente
-                };
-
-                if (cliente == null)
-                {
-                    TempData["SweetAlertIcon"] = "erro";
-                    TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "Cliente no se pudo Registrar Correctamente.";
-                    return RedirectToAction("Index");
-                }
-
-                var response = await _client.CreateClienteAsync(cliente);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    TempData["SweetAlertIcon"] = "success";
-                    TempData["SweetAlertTitle"] = "Éxito";
-                    TempData["SweetAlertMessage"] = "¡Registro guardado correctamente!";
-
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    TempData["SweetAlertIcon"] = "erro";
-                    TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "Cliente no se pudo Registrar Correctamente.";
-                    return RedirectToAction("Index");
-                }
+            Console.WriteLine(clientes);
+            if (clientes == null)
+            {
+                TempData["SweetAlertIcon"] = "erro";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "Cliente no se pudo Registrar Correctamente.";
+                return RedirectToAction("Index");
             }
 
-            return View("Index");
+            var response = await _client.CreateClienteAsync(clientes);
+
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SweetAlertIcon"] = "success";
+                TempData["SweetAlertTitle"] = "Éxito";
+                TempData["SweetAlertMessage"] = "¡Registro guardado correctamente!";
+
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["SweetAlertIcon"] = "erro";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "Cliente no se pudo Registrar Correctamente.";
+                return RedirectToAction("Index");
+            }
+        
         }
 
 
-
-        public async Task<IActionResult> Update([FromForm] int clienteIdAct, string identificacionAct, string nombreEntidadAct, string nombreCompletoAct, string tipoClienteAct, string telefonoAct, string correoAct, string direccionAct, ulong estadoClienteAct)
+        public async Task<IActionResult> Update([FromForm] Cliente cliente)
         {
-            var allClients = await _client.GetClientesAsync();
+            if (!ModelState.IsValid)
+            {
+                return View("Index");
+            }
 
-            // Verificar si existe algún cliente con el mismo nombre de entidad y nombre de contacto
-            var clienteExistente = allClients.FirstOrDefault(c =>
-                string.Equals(c.NombreEntidad, nombreEntidadAct, StringComparison.OrdinalIgnoreCase) &&
-                string.Equals(c.NombreCompleto, nombreCompletoAct, StringComparison.OrdinalIgnoreCase) &&
-                c.ClienteId != clienteIdAct);
+            var clientes = await _client.GetClientesAsync();
+
+            // Verificar si existe algún cliente con el mismo nombre de entidad y nombre de contacto (ignorando mayúsculas y minúsculas)
+            var clienteExistente = clientes.FirstOrDefault(c =>
+                string.Equals(c.NombreEntidad, cliente.NombreEntidad, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(c.NombreCompleto, cliente.NombreCompleto, StringComparison.OrdinalIgnoreCase) &&
+                c.ClienteId != cliente.ClienteId);
 
             // Verificar si es una actualización de cliente existente
-            var esActualizacion = clienteIdAct != 0; // Asumiendo que ClienteId 0 significa que es un nuevo cliente
+            var esActualizacion = cliente.ClienteId != 0; // Asumiendo que ClienteId 0 significa que es un nuevo cliente
 
             // Si ya existe un cliente con el mismo nombre de entidad y nombre de contacto, y no es una actualización, mostrar un mensaje de error
             if (clienteExistente != null && !esActualizacion)
             {
-                TempData["SweetAlertIcon"] = "error";
-                TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = $"Ya existe un cliente con el nombre de entidad {nombreEntidadAct} y nombre de contacto {nombreCompletoAct}. ID de cliente existente: {clienteExistente.ClienteId}.";
-                return RedirectToAction("Index");
+                ModelState.AddModelError("NombreEntidad", $"Ya existe un cliente con el nombre de entidad {cliente.NombreEntidad} y nombre de contacto {cliente.NombreCompleto}. ID de cliente existente: {clienteExistente.ClienteId}.");
+                return View("Index");
             }
 
-            var cliente = new Cliente
+            var updateclienet = new Cliente
             {
-                ClienteId = clienteIdAct,
-                Identificacion = identificacionAct,
-                NombreEntidad = nombreEntidadAct,
-                NombreCompleto = nombreCompletoAct,
-                TipoCliente = tipoClienteAct,
-                Telefono = telefonoAct,
-                Correo = correoAct,
-                Direccion = direccionAct,
-                EstadoCliente = estadoClienteAct
+                ClienteId = cliente.ClienteId,
+                NombreEntidad = cliente.NombreEntidad,
+                NombreCompleto = cliente.NombreCompleto,
+                Identificacion = cliente.Identificacion,
+                Telefono = cliente.Telefono,
+                Correo = cliente.Correo,
+                TipoCliente = cliente.TipoCliente,
+                Direccion = cliente.Direccion,
+                EstadoCliente = cliente.EstadoCliente,
+
             };
 
-            var response = await _client.UpdateClienteAsync(cliente);
+            var response = await _client.UpdateClienteAsync(updateclienet);
             if (response != null)
             {
                 if (response.IsSuccessStatusCode)
@@ -194,7 +186,6 @@ namespace VistaNewProject.Controllers
 
             return RedirectToAction("Index");
         }
-
 
 
         [HttpPost]
@@ -288,6 +279,23 @@ namespace VistaNewProject.Controllers
             var pagepedidos = pedidosCliente.ToPagedList(pageNumber, pageSize);
 
             return View(pagepedidos);
+        }
+
+        [HttpPatch]
+        public async Task<IActionResult> CambiarEstadoCliente(int id)
+        {
+            // Llama al método del servicio para cambiar el estado del usuario
+            var response = await _client.CambiarEstadoClienteAsync(id);
+
+            // Devuelve una respuesta adecuada en función de la respuesta del servicio
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok();
+            }
+            else
+            {
+                return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+            }
         }
 
     }

@@ -95,28 +95,26 @@ namespace VistaNewProject.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Create(int PedidoId, int UsuarioId, string Observacion, DateTime FechaEntrega, string DireccionDomiciliario, string EstadoDomicilio)
+        public async Task<IActionResult> Create([FromForm] Domicilio domicilio)
         {
-            if (ModelState.IsValid)
-            {
-                var domicilio = new Domicilio
+            var domicilios = new Domicilio
                 {
-                    PedidoId = PedidoId,
-                    UsuarioId = UsuarioId,
-                    Observacion = Observacion,
-                    FechaEntrega = FechaEntrega,
-                    DireccionDomiciliario = DireccionDomiciliario,
-                    EstadoDomicilio = EstadoDomicilio
+                    PedidoId = domicilio.PedidoId,
+                    UsuarioId = domicilio.UsuarioId,
+                    Observacion = domicilio.Observacion,
+                    FechaEntrega = domicilio.FechaEntrega,
+                    DireccionDomiciliario = domicilio.DireccionDomiciliario,
+                    EstadoDomicilio = domicilio.EstadoDomicilio,
                 };
 
                 var response = await _client.CreateDomicilioAsync(domicilio);
 
-               
-               
-            }
             TempData["ValidarPedido"] = "Pedido Guardado Correctamente.";
             return RedirectToAction("Index", "Pedidos");
+
         }
+          
+        
 
     }
 }

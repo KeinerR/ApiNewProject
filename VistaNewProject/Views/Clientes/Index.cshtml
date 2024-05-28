@@ -173,7 +173,7 @@
                 <div class="modal-cabecera">
                     <div id="pibo"></div>
                       <div class="modal-header-view TituloModal">
-                        <h2 class="modal-title">Actualizar datos de Usuario</h2>
+                        <h2 class="modal-title">Actualizar datos del Cliente</h2>
                       </div>
                     <div class="moda-header-view" id="modal-cabecera-equis">
                         <button type="button" onclick="limpiarFormularioCliente();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -184,14 +184,14 @@
                     <div class="modal-body">
 
                         <div class="col-5">
-                            <input type="hidden" id="ClienteIdAct" name="clienteIdAct" class="form-control" />
+                            <input type="hidden" id="ClienteIdAct" name="clienteId" class="form-control" />
                         </div>
                         <div style=" form-group">
                             <div class="row">
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="IdentificacionAct" class="control-label">Identificacion</label>
-                                        <input type="text" id="IdentificacionAct" name="identificacionAct" class="form-control" />
+                                        <input type="text" id="IdentificacionAct" name="identificacion" class="form-control" />
                                         <span id="MensajeIdentificacionAct" class="text-danger"></span>
                                         <!-- Use un ID más descriptivo como "MensajeIdentificacion" -->
                                     </div>
@@ -202,7 +202,7 @@
 
                                     <div class="form-group">
                                         <label for="NombreCompletoAct" class="control-label">Nombre Completo</label>
-                                        <input type="text" id="NombreCompletoAct" name="nombreCompletoAct" class="form-control" />
+                                        <input type="text" id="NombreCompletoAct" name="nombreCompleto" class="form-control" />
                                         <span id="MensajeNombreCompletoAct" class="text-danger"></span>
 
                                     </div>
@@ -211,7 +211,7 @@
                                 <div class="col-6">
                                     <div class="form-group col">
                                         <label for="NombreEntidadAct" class="control-label">Nombre Entidad</label>
-                                        <input type="text" id="NombreEntidadAct" name="nombreEntidadAct" class="form-control" />
+                                        <input type="text" id="NombreEntidadAct" name="nombreEntidad" class="form-control" />
                                         <span id="MensajeNombreEntidadAct" class="text-danger"></span>
 
                                     </div>
@@ -219,7 +219,7 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="TelefonoAct" class="control-label">Teléfono</label>
-                                        <input type="text" id="TelefonoAct" name="telefonoAct" class="form-control" />
+                                        <input type="text" id="TelefonoAct" name="telefono" class="form-control" />
                                         <span id="MensajeTelefonoAct" class="text-danger"></span>
 
                                     </div>
@@ -229,7 +229,7 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="CorreoAct" class="control-label">Correo</label>
-                                        <input type="text" id="CorreoAct" name="correoAct" class="form-control" />
+                                        <input type="text" id="CorreoAct" name="correo" class="form-control" />
                                         <span id="MensajeCorreoAct" class="text-danger"></span>
 
                                     </div>
@@ -238,7 +238,7 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="DireccionAct" class="control-label">Direccion</label>
-                                        <input type="text" id="DireccionAct" name="direccionAct" class="form-control" />
+                                        <input type="text" id="DireccionAct" name="direccion" class="form-control" />
                                         <span id="MensajeDireccionAct" class="text-danger"></span>
 
                                     </div>
@@ -250,7 +250,7 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="TipoClienteAct" class="control-label">Tipo Cliente </label>
-                                        <select id="TipoClienteAct" name="tipoClienteAct" class="form-control">
+                                        <select id="TipoClienteAct" name="tipoCliente" class="form-control">
                                             <option value="Natural">Natural</option>
                                             <option value="Empresa">Empresa</option>
                                         </select>
@@ -262,7 +262,7 @@
                                 <div class="col-6">
                                     <div class="form-group" id="EstadoCliente">
                                         <label for="EstadoClienteAct" class="control-label">Estado Cliente</label>
-                                        <select id="EstadoClienteAct" name="estadoClienteAct" class="form-control">
+                                        <select id="EstadoClienteAct" name="estadoCliente" class="form-control">
                                             <option value="1">Activo</option>
                                             <option value="0">Inactivo</option>
                                         </select>
@@ -380,6 +380,9 @@
                             <input type="checkbox" @(item.EstadoCliente != 0 ? "checked" : "") onchange="actualizarEstadoCliente('@item.ClienteId', this.checked)">
                             <span class="slider"></span>
                         </label>
+
+
+
                     </td>
 
                 <td class="botonesTabla">
