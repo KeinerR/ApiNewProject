@@ -30,10 +30,10 @@ namespace VistaNewProject.Controllers
 
             var usuarios = await _client.GetUsuarioAsync();
 
-            if (usuarios == null || !usuarios.Any()) // Verificar si la lista de usuarios está vacía
-            {
-                return NotFound("No se encontraron usuarios.");
-            }
+            //if (usuarios == null || !usuarios.Any()) // Verificar si la lista de usuarios está vacía
+            //{
+            //    return NotFound("No se encontraron usuarios.");
+            //}
 
             var pageUsuarios = await usuarios.ToPagedListAsync(pageNumber, pageSize);
 
