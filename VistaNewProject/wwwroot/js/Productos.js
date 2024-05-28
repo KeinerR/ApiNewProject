@@ -69,15 +69,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     });
-
-    // Validar campos en cada cambio
-    $('.modal-formulario-crear-producto input, .modal-formulario-crear-producto select').on('input', function () {
-        NoCamposVaciosInicial();
-    });
-    $('.modal-formulario-actualizar input, .modal-formulario-actualizar select').on('input', function () {
-        NoCamposVaciosInicialAct();
-    });
-
     // Confirmación de eliminación
     $('.delete-form').on('submit', function (event) {
         event.preventDefault(); // Evita que el formulario se envíe automáticamente
@@ -100,14 +91,73 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+
+    // Validar campos en cada cambio para cambiar el mensaje inicial que aparece arriba de los botones del formulario
+    $('.modal-formulario-crear-producto input, .modal-formulario-crear-producto select').on('input', function () {
+        NoCamposVaciosInicial();
+    });
+    $('.modal-formulario-actualizar input, .modal-formulario-actualizar select').on('input', function () {
+        NoCamposVaciosInicialAct();
+    });
+
+    // Asignar función de selección a los campos
+    $('#NombreMarca').on('input', function () {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaId'));
+        }, 650);
+    });
+
+    $('#NombreCategoria').on('input', function () {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaId'));
+        }, 650);
+    });
+
+    $('#NombrePresentacion').on('input', function () {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionId'));
+        }, 600);
+    });
+
+    $('#NombreMarcaAct').on('input', function () {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaIdAct'));
+        }, 650);
+    });
+
+    $('#NombreCategoriaAct').on('input', function () {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaIdAct'));
+        }, 650);
+    });
+
+    $('#NombrePresentacionAct').on('input', function () {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'));
+        }, 650);
+    });
+
+   
     function NoCamposVacios() {
-        const todoValido = $('.text-danger').filter(function () {
+        const textDangerElements = $('.text-danger');
+        const mensajeElements = $('.Mensaje');
+
+        const textDangerSlice = textDangerElements.slice(0, 6);
+        const mensajeSlice = mensajeElements.slice(0, 6);
+        const todoValido = textDangerSlice.filter(function () {
             return $(this).text() !== '';
         }).length === 0;
 
-        const todosLlenos = $('.Mensaje').filter(function () {
+        const todosLlenos = mensajeSlice.filter(function () {
             return $(this).text() !== '';
         }).length === 0;
+
 
         console.log('Todos los campos son válidos:', todoValido);
         console.log('Todos los campos están llenos:', todosLlenos);
@@ -129,8 +179,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const textDangerElements = $('.text-danger');
         const mensajeElements = $('.Mensaje');
 
-        const textDangerSlice = textDangerElements.slice(6);
-        const mensajeSlice = mensajeElements.slice(6);
+        const textDangerSlice = textDangerElements.slice(-6);
+        const mensajeSlice = mensajeElements.slice(-6);
 
         const todoValido = textDangerSlice.filter(function () {
             return $(this).text() !== '';
@@ -183,8 +233,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const textDangerElements = $('.text-danger');
         const mensajeElements = $('.Mensaje');
 
-        const textDangerSlice = textDangerElements.slice(6);
-        const mensajeSlice = mensajeElements.slice(6);
+        const textDangerSlice = textDangerElements.slice(-6);
+        const mensajeSlice = mensajeElements.slice(-6);
 
         const todoValido = textDangerSlice.filter(function () {
             return $(this).text() !== '';
@@ -202,63 +252,173 @@ document.addEventListener('DOMContentLoaded', function () {
         
         
     }
-    
-    // Asignar función de selección a los campos
-    $('#NombreMarca').on('input', function () {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaId'));
-        }, 650);
-    });
-
-    $('#NombreCategoria').on('input', function () {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaId'));
-        }, 650);
-    });
-
-    $('#NombrePresentacion').on('input', function () {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionId'));
-        }, 600);
-    });
-
-    $('#NombreMarcaAct').on('input', function () {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaIdAct'));
-        }, 650);
-    });
-
-    $('#NombreCategoriaAct').on('input', function () {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaIdAct'));
-        }, 650);
-    });
-
-    $('#NombrePresentacionAct').on('input', function () {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'));
-        }, 650);
-    });
-
        
 });
 
+
+/*---------------------------------------------------- Al dar click en el boton de agregar usuario  ---------------------------------------------------- */
 function simularClickProducto() {
-    limpiarFormularioProductoAct();
-    Llamar();
     //ocultar formulario de actualizar  y mostrar el formulario principal
     $('#FormActualizarProducto').hide();
     $('#FormPrincipalProducto').show().css('visibility', 'visible');
-    
-
+    limpiarFormularioProductoAct();
+    limpiarFormularioProductoAgregar();
+    Llamar();
 }
-//Funcion que se activa al haer clik en el boton de editar.
+
+document.addEventListener('keydown', function (event) {
+    // Verificar si se presionó Ctrl + Espacio
+    if (event.ctrlKey && event.key === ' ') {
+        // Ejecutar la función que deseas al presionar Ctrl + Espacio
+        abrirModalProducto();
+    }
+});
+function abrirModalProducto() {
+    // Verificar si la modal está abierta
+    if ($('#ModalProducto').hasClass('show')) {
+        $('#ModalProducto').modal('hide'); // Cerrar la modal
+    } else {
+        simularClickProducto(); // Simular algún evento antes de abrir la modal
+        $('#ModalProducto').modal('show'); // Abrir la modal
+    }
+}
+
+/*------------------------------ Limpiar formularios y url ---------------------------------------------------------------------------------------------------- */
+
+//Se llama al daar click en la x
+function limpiarFormularioProducto() {
+    // Simular clic en el checkboxDescuentoPorMayor si está marcado
+    var checkbox = document.getElementById('checkboxDescuentoPorMayor');
+    if (checkbox.checked) {
+        checkbox.click();
+    }
+
+    // Limpiar campos y elementos específicos
+    limpiarCampo('NombreMarca');
+    limpiarCampo('MarcaId');
+    limpiarCampo('NombreCategoria');
+    limpiarCampo('CategoriaId');
+    limpiarCampo('NombrePresentacion');
+    limpiarCampo('PresentacionId');
+    limpiarCampo('NombreProducto');
+    limpiarCampo('CantidadAplicarPorMayor');
+    limpiarCampo('DescuentoAplicarPorMayor');
+
+    // Limpiar campos y elementos específicos de la versión actualizada
+    limpiarCampo('NombreMarcaAct');
+    limpiarCampo('MarcaIdAct');
+    limpiarCampo('NombreCategoriaAct');
+    limpiarCampo('CategoriaIdAct');
+    limpiarCampo('NombrePresentacionAct');
+    limpiarCampo('PresentacionIdAct');
+    limpiarCampo('NombreProductoAct');
+    limpiarCampo('CantidadAplicarPorMayorAct');
+    limpiarCampo('DescuentoAplicarPorMayorAct');
+    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
+        element.textContent = '';
+    });
+    // Limpiar elementos adicionales
+    var elementos = document.getElementsByClassName('PorMayorAct');
+    for (var i = 0; i < elementos.length; i++) {
+        elementos[i].style.display = "none";
+        elementos[i].style.visibility = "hidden";
+    }
+
+    var mensajes = document.querySelectorAll('.Mensaje');
+    var mensajesText = document.querySelectorAll('.text-danger');
+
+    for (var i = Math.max(0, mensajes.length - 6); i < mensajes.length; i++) {
+        mensajes[i].textContent = '';
+    }
+    for (var i = 0; i < mensajes.length - 8; i++) {
+        mensajes[i].textContent = '*';
+    }
+    for (var i = 0; i < mensajesText.length; i++) {
+        mensajesText[i].textContent = '';
+    }
+    document.getElementById('checkboxDescuentoPorMayorAct').checked = false; // Desmarcar el checkbox
+}
+//Se llama al daar click en cancelar en la modal de agregar producto
+function limpiarFormularioProductoAgregar() {
+    // Limpiar mensajes de alerta y *
+    var mensajes = document.querySelectorAll('.Mensaje');
+    var mensajesText = document.querySelectorAll('.text-danger');
+
+    for (var i = Math.max(0, mensajes.length - 8); i < mensajes.length; i++) {
+        mensajes[i].textContent = '';
+    }
+    for (var i = 0; i < mensajes.length - 6; i++) {
+        mensajes[i].textContent = '*';
+    }
+    for (var i = 0; i < mensajesText.length; i++) {
+        mensajesText[i].textContent = '';
+    }
+
+    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
+        element.textContent = '';
+    });
+    // Simular clic en el checkboxDescuentoPorMayor si está marcado
+    var checkbox = document.getElementById('checkboxDescuentoPorMayor');
+    if (checkbox.checked) {
+        checkbox.click();
+    }
+}
+//Se llama al perder el foco de la modal para limpiar el formulario actualizar
+function limpiarFormularioProductoAct() {
+    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
+        element.textContent = '';
+    });
+
+    // Marcar el checkbox DescuentoPorMayorAct como no seleccionado
+    document.getElementById('checkboxDescuentoPorMayorAct').checked = false;
+
+    // Limpiar campos específicos
+    $('#DescuentoAplicarPorMayorAct').val(0);
+    $('#CantidadAplicarPorMayorAct').val(0);
+
+    // Ocultar y ocultar elementos adicionales
+    var elementos = document.getElementsByClassName('PorMayorAct');
+    for (var i = 0; i < elementos.length; i++) {
+        elementos[i].style.display = "none";
+        elementos[i].style.visibility = "hidden";
+    }
+
+    // Limpiar mensajes de alerta y asteriscos
+    var mensajes = document.querySelectorAll('.Mensaje');
+    var mensajesText = document.querySelectorAll('.text-danger');
+
+    for (var i = Math.max(0, mensajes.length - 8); i < mensajes.length; i++) {
+        mensajes[i].textContent = '';
+    }
+    for (var i = 0; i < mensajes.length - 6; i++) {
+        mensajes[i].textContent = '*';
+    }
+    for (var i = 0; i < mensajesText.length; i++) {
+        mensajesText[i].textContent = '';
+    }
+}
+
+//Función para limpiar la url si el usuario da fuera de ella 
+$('.modal').on('click', function (e) {
+    if (e.target === this) {
+        // Limpiar la URL eliminando los parámetros de consulta
+        history.replaceState(null, '', location.pathname);
+        $(this).modal('hide'); // Oculta la modal
+    }
+});
+
+// Función a llamar al perder el foco del modal
+function AlPerderFocoProducto() {
+    // Obtener el estilo de #FormActualizar
+    var displayFormActualizar = $('#FormActualizarProducto').css('display');
+    var displayModal = $('#ModalProducto').css('display');
+    if (displayFormActualizar == "block" && displayModal == "none") {
+        limpiarFormularioProductoAct();
+    }
+}
+
+/*--------------------------------------------------------- Modal de actualizar usuario ---------------------------------------*/
+//Funcion que se activa al hacer clik en el boton de editar.
 function mostrarModalConRetrasoProducto(productoId) {
     setTimeout(function () {
         actualizarProducto(productoId);
@@ -266,7 +426,7 @@ function mostrarModalConRetrasoProducto(productoId) {
             var myModal = new bootstrap.Modal(document.getElementById('ModalProducto'));
             myModal.show();
             // Aquí puedes llamar a la función actualizarProducto si es necesario
-        }, 170); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
+        }, 400); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
     }, 0); // 0 milisegundos de retraso antes de llamar a actualizarProducto
 }
 function mostrarModalSinRetrasoProducto(productoId) {
@@ -275,10 +435,11 @@ function mostrarModalSinRetrasoProducto(productoId) {
         setTimeout(function () {
             var myModal = new bootstrap.Modal(document.getElementById('ModalProducto'));
             myModal.show();
-            // Aquí puedes llamar a la función actualizarProducto si es necesario
-        }, 50); // 50 milisegundos (0.05 segundos) de retraso antes de abrir la modal
+            limpiarFormularioProductoAct(); // Limpia los campos después de llamar a las funciones
+        }, 40); // 40 milisegundos (0.04 segundos) de retraso antes de abrir la modal
     }, 0); // 0 milisegundos de retraso antes de llamar a actualizarProducto
 }
+
 function actualizarProducto(campo) {
     var productoId = campo;
     $.ajax({
@@ -310,10 +471,12 @@ function actualizarProducto(campo) {
         }
     });
     $('#FormPrincipalProducto').hide().css('visibility', 'hidden');
-    $('#FormActualizarProducto').show().css('visibility', 'visible');
+    $('#FormActualizarProducto').show().css('visibility', 'visible');    
 }
 
-//Funcion que cambia el estado del checbox (Migrar a controlador Echo ;))
+/*------------------- Cambiar estado producto------------------------------------------*/
+
+//Funcion que cambia el estado del producto
 function actualizarEstadoProducto(ProductoId) {
     $.ajax({
         url: `/Productos/UpdateEstadoProducto/${ProductoId}`,
@@ -340,8 +503,9 @@ function actualizarEstadoProducto(ProductoId) {
     });
 }
 
-
 //Funcion que le da la funcionalidad al buscador
+
+/*---------------------------------------------------------Buscador--------------------------------------------------------- */
 
 function vaciarInputProducto() {
     document.getElementById('buscarProducto').value = "";
@@ -367,7 +531,6 @@ function vaciarInputProducto() {
         row.style.display = 'none';
     });
 }
-
 
 function searchProducto() {
     var input = $('#buscarProducto').val().trim().toLowerCase();    //Obtiene el valor del buscadpor
@@ -415,6 +578,24 @@ function searchProducto() {
     
 }
 //Funcion para hacer las respectivas validaciones a los campos
+
+/*---------------------- Llama a la funcion en site.js  ---------------------------*/
+
+
+// Llama a la función general con los parámetros específicos
+function showNoMarcasAlert() {
+    showAlertIfNoOptions("marcas", "No hay marcas activas", "No hay marcas disponibles en este momento.");
+}
+
+function showNoPresentacionesAlert() {
+    showAlertIfNoOptions("presentaciones", "No hay presentaciones activas", "No hay presentaciones disponibles en este momento.");
+}
+
+function showCategoriasAlert() {
+    showAlertIfNoOptions("categorias", "No hay categorias ", "No hay categorias disponibles en este momento.");
+}
+
+/*------------------------ Validaciones---------------*/
 function validarCampoProducto(input) {
     console.log(input.id);
     const $input = $(input); // Convertir el input a objeto jQuery
@@ -458,18 +639,9 @@ function validarCampoProducto(input) {
     return true; // Asumir que todo está bien si no hay errores
 }
 
-// Llama a la función general con los parámetros específicos
-function showNoMarcasAlert() {
-    showAlertIfNoOptions("marcas", "No hay marcas activas", "No hay marcas disponibles en este momento.");
-}
 
-function showNoPresentacionesAlert() {
-    showAlertIfNoOptions("presentaciones", "No hay presentaciones activas", "No hay presentaciones disponibles en este momento.");
-}
+/*------------------------------------------- Funciones para dar funcionalidad a los checkbox   ---------------------------------------------------*/
 
-function showCategoriasAlert() {
-    showAlertIfNoOptions("categorias", "No hay categorias ", "No hay categorias disponibles en este momento.");
-}
 /*Mostrar o no las opciones de producto por mayor en la ventana modal de producto al hacer click en el chacbox de la ventana modal producto*/
 function Llamar() {
     var checkbox = document.getElementById('checkboxDescuentoPorMayor');
@@ -516,9 +688,7 @@ function Llamar() {
         console.log("El checkbox no está marcado");
     }
 }
-
 /*Mostrar o no las opciones de producto por mayor en la ventana modal de actualizar producto al hacer click en el checbox de la ventana modal producto*/
-
 function Llamar2() {
     var checkbox = document.getElementById('checkboxDescuentoPorMayorAct');
     var cantidadElement = document.getElementById('CantidadAplicarPorMayorAct');
@@ -571,10 +741,8 @@ function Llamar2() {
                         mensaje.textContent = '';
                     }
                     // Establecer los campos de cantidad y descuento por mayor a vacío
-                    cantidadElement.value = '0';
-                    descuentoElement.value = '0';
-
-
+                    cantidadElement.value = '';
+                    descuentoElement.value = '';
                 });
             } else {
                 // Si el usuario cancela, volver a marcar el checkbox
@@ -584,127 +752,3 @@ function Llamar2() {
     }
 }
 
-//Se llama al daar click en la x
-function limpiarFormularioProducto() {
-    // Simular clic en el checkboxDescuentoPorMayor si está marcado
-    var checkbox = document.getElementById('checkboxDescuentoPorMayor');
-    if (checkbox.checked) {
-        checkbox.click();
-    }
-
-    // Limpiar campos y elementos específicos
-    limpiarCampo('NombreMarca');
-    limpiarCampo('MarcaId');
-    limpiarCampo('NombreCategoria');
-    limpiarCampo('CategoriaId');
-    limpiarCampo('NombrePresentacion');
-    limpiarCampo('PresentacionId');
-    limpiarCampo('NombreProducto');
-    limpiarCampo('CantidadAplicarPorMayor');
-    limpiarCampo('DescuentoAplicarPorMayor');
-
-    // Limpiar campos y elementos específicos de la versión actualizada
-    limpiarCampo('NombreMarcaAct');
-    limpiarCampo('MarcaIdAct');
-    limpiarCampo('NombreCategoriaAct');
-    limpiarCampo('CategoriaIdAct');
-    limpiarCampo('NombrePresentacionAct');
-    limpiarCampo('PresentacionIdAct');
-    limpiarCampo('NombreProductoAct');
-    limpiarCampo('CantidadAplicarPorMayorAct');
-    limpiarCampo('DescuentoAplicarPorMayorAct');
-    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
-        element.textContent = '';
-    });
-    // Limpiar elementos adicionales
-    var elementos = document.getElementsByClassName('PorMayorAct');
-    for (var i = 0; i < elementos.length; i++) {
-        elementos[i].style.display = "none";
-        elementos[i].style.visibility = "hidden";
-    }
-  
-    var mensajes = document.querySelectorAll('.Mensaje');
-    var mensajesText = document.querySelectorAll('.text-danger');
-   
-    for (var i = Math.max(0, mensajes.length - 6); i < mensajes.length; i++) {
-        mensajes[i].textContent = '';
-    }
-    for (var i = 0; i < mensajes.length -8; i++) {
-        mensajes[i].textContent = '*';
-    }
-    for (var i = 0; i < mensajesText.length; i++) {
-        mensajesText[i].textContent = '';
-    }
-    document.getElementById('checkboxDescuentoPorMayorAct').checked = false; // Desmarcar el checkbox
-}
-//Se llama al daar click en cancelar en la modal de agregar producto
-function limpiarFormularioProductoAgregar() {
-    // Limpiar mensajes de alerta y *
-    var mensajes = document.querySelectorAll('.Mensaje');
-    var mensajesText = document.querySelectorAll('.text-danger');
-
-    for (var i = Math.max(0, mensajes.length - 6); i < mensajes.length; i++) {
-        mensajes[i].textContent = '';
-    }
-    for (var i = 0; i < mensajes.length - 8; i++) {
-        mensajes[i].textContent = '*';
-    }
-    for (var i = 0; i < mensajesText.length; i++) {
-        mensajesText[i].textContent = '';
-    }
-
-    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
-        element.textContent = '';
-    });
-}
-//Se llama al perder el foco de la modal para limpiar el formulario actualizar
-function limpiarFormularioProductoAct() {
-    // Limpiar campos y elementos específicos de la versión actualizada
-    limpiarCampo('NombreMarcaAct');
-    limpiarCampo('MarcaIdAct');
-    limpiarCampo('NombreCategoriaAct');
-    limpiarCampo('CategoriaIdAct');
-    limpiarCampo('NombrePresentacionAct');
-    limpiarCampo('PresentacionIdAct');
-    limpiarCampo('NombreProductoAct');
-    limpiarCampo('CantidadAplicarPorMayorAct');
-    limpiarCampo('DescuentoAplicarPorMayorAct');
-    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
-        element.textContent = ''
-    });
-
-    // Función auxiliar para limpiar un campo por su ID
-    function limpiarCampo(idCampo) {
-        document.getElementById(idCampo).value = '';
-    }
-
-    // Limpiar elementos adicionales
-    var elementos = document.getElementsByClassName('PorMayorAct');
-    for (var i = 0; i < elementos.length; i++) {
-        elementos[i].style.display = "none";
-        elementos[i].style.visibility = "hidden";
-    }
-
-    var mensajes = document.querySelectorAll('.Mensaje');
-    var mensajesText = document.querySelectorAll('.text-danger');
-
-
-    // Añadir texto a los últimos seis mensajes
-    for (var i = Math.max(0, mensajes.length - 6); i < mensajes.length; i++) {
-        mensajes[i].textContent = '';
-    }
-    for (var i = 6; i < mensajesText.length; i++) {
-        mensajesText[i].textContent = '';
-    }
-    document.getElementById('checkboxDescuentoPorMayorAct').checked = false; // Desmarcar el checkbox
-}
-
-// Función a llamar al perder el foco del modal
-function AlPerderFocoProducto() {
-    // Obtener el estilo de #FormActualizar
-    var displayFormActualizar = $('#FormActualizarProducto').css('display');
-    var displayModal = $('#ModalProducto').css('display');
-    if (displayFormActualizar == "block" && displayModal == "none") {
-        limpiarFormularioProductoAct();
-    }
-}

@@ -28,20 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (mostrarAlerta === 'true' && usuarioId) {
         mostrarModalSinRetrasoUsuario(usuarioId);
     }
-    //Evitar el envio de los formularios hasta que todo este validado
-    $('.modal-formulario-actualizar-usuario').on('submit', function (event) {
-        if (!NoCamposVaciosAct()) {
-            event.preventDefault();
-        } else {
-            // Obtener los valores de los campos del formulario
-            var rolId = $('#rolIdAct').val();
-
-            if (rolId === '') {
-                event.preventDefault();
-                mostrarAlertaDataList('rol');
-            }
-        }
-    });
+    //Evitar el envio de los formularios hasta que todo este validados
     $('.modal-formulario-crear-usuario').on('submit', function (event) {
         if (!NoCamposVacios()) {
             event.preventDefault();
@@ -55,6 +42,20 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     });
+    $('.modal-formulario-actualizar-usuario').on('submit', function (event) {
+        if (!NoCamposVaciosAct()) {
+            event.preventDefault();
+        } else {
+            // Obtener los valores de los campos del formulario
+            var rolId = $('#rolIdAct').val();
+
+            if (rolId === '') {
+                event.preventDefault();
+                mostrarAlertaDataList('rol');
+            }
+        }
+    });
+    // Confirmación de eliminación
     $('.delete-form-usuario').on('submit', function (event) {
         event.preventDefault(); // Evita que el formulario se envíe automáticamente
         // Mostrar el diálogo de confirmación
@@ -74,13 +75,14 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-    // Validar campos en cada cambio para eliminar o cambiar el mensaje inicial que aparece arriba de los botones del formulario
+
+    // Validar campos en cada cambio para cambiar el mensaje inicial que aparece arriba de los botones del formulario
     $('.modal-formulario-crear-usuario input, .modal-formulario-crear-usuario select').on('input', function () {
         NoCamposVaciosInicial();
     });
-    $('.modal-formulario-actualizar-usuario input, .modal-formulario-actualizar-usuario select').on('input', function () {
-        NoCamposVaciosInicialAct();
-    });
+        $('.modal-formulario-actualizar-usuario input, .modal-formulario-actualizar-usuario select').on('input', function () {
+            NoCamposVaciosInicialAct();
+        });
     // Asignar función de selección a los campos data-list
     $('#NombreRol').on('input', function () {
         clearTimeout(timeout);
@@ -96,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     //Este elimina el mensaje inicial u lo agrega de ser necesario el que aparece sobre los botones
-    function NoCamposVacios() {
+    function NoCamposVacios()    {
         const textDangerElements = $('.text-danger');
         const mensajeElements = $('.Mensaje');
 
@@ -206,7 +208,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-
 });
 
 
@@ -223,11 +224,11 @@ document.addEventListener('keydown', function (event) {
     // Verificar si se presionó Ctrl + Espacio
     if (event.ctrlKey && event.key === ' ') {
         // Ejecutar la función que deseas al presionar Ctrl + Espacio
-        abrirModal();
+        abrirModalUsuario();
     }
 });
 
-function abrirModal() {
+function abrirModalUsuario() {
     // Verificar si la modal está abierta
     if ($('#ModalUsuario').hasClass('show')) {
         $('#ModalUsuario').modal('hide'); // Cerrar la modal
@@ -322,7 +323,7 @@ function limpiarFormularioUsuarioAct() {
 
 }
 
-//Función para limpiuar la url si el usuario da fuera de ella 
+//Función para limpiar la url si el usuario da fuera de ella 
 $('.modal').on('click', function (e) {
     if (e.target === this) {
         // Limpiar la URL eliminando los parámetros de consulta
@@ -345,7 +346,6 @@ function mostrarModalConRetrasoUsuario(usuarioId) {
     setTimeout(function () {
         actualizarUsuario(usuarioId);
         setTimeout(function () {
-
             var myModal = new bootstrap.Modal(document.getElementById('ModalUsuario'));
             myModal.show();
             // Aquí puedes llamar a la función actualizarProducto si es necesario
@@ -514,12 +514,11 @@ function validarCampoUsuario(campo) {
     if (valor === '') {
         spanVacio.text('*');
         spanError.text('Este campo es obligatorio.');
-    }
+    } 
 
     if (input.is('#Nombre') || input.is('#Apellido') || input.is('#NombreAct') || input.is('#ApellidoAct')) {
         var campoNombre = input.is('#Nombre') ? $('#Nombre') : $('#NombreAct');
         var campoApellido = input.is('#Apellido') ? $('#Apellido') : $('#ApellidoAct');
-
         var spanErrorNombre = campoNombre.next('.text-danger');
         var spanErrorApellido = campoApellido.next('.text-danger');
         var valorNombre = campoNombre.val().trim();
@@ -531,45 +530,65 @@ function validarCampoUsuario(campo) {
         if (valorNombre === '') {
             spanErrorNombre.text('');
             spanVacioNombre.text('*');
-        } else if (valorNombre.length < 3) {
-            spanErrorNombre.text('Este campo debe tener un mínimo de 3 caracteres.');
-            spanVacioNombre.text('');
-        } else if (/^[a-zA-Z]+\s[a-zA-Z]+$/.test(valorNombre)) {
-            spanErrorNombre.text('El nombre no puede contener números ni caracteres especiales (excepto espacios en nombres compuestos).');
+            input.removeClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
+
         } else {
-            spanErrorNombre.text('');
-            spanVacioNombre.text('');
+            if (valorNombre.length < 3) {
+                spanErrorNombre.text('Este campo debe tener un mínimo de 3 caracteres.');
+                spanVacioNombre.text('');
+                input.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
+            } else if (/^[a-zA-Z]+\s[a-zA-Z]+$/.test(valorNombre)) {
+                spanErrorNombre.text('El nombre no puede contener números ni caracteres especiales (excepto espacios en nombres compuestos).');
+                input.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
+            } else {
+                spanErrorNombre.text('');
+                spanVacioNombre.text('');
+                input.removeClass('is-invalid');
+            }
         }
 
         // Validaciones de apellido
         if (valorApellido === '') {
             spanErrorApellido.text(' ');
             spanVacioApellido.text('*');
+            input.removeClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
         } else if (valorApellido.length < 3) {
             spanErrorApellido.text('Este campo debe tener un mínimo de 3 caracteres.');
             spanVacioApellido.text('');
+            input.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
         } else if (/^[a-zA-Z]+\s[a-zA-Z]+$/.test(valorApellido)) {
             spanErrorApellido.text('El apellido no puede contener números ni caracteres especiales (excepto espacios en apellidos compuestos).');
             spanVacioApellido.text('');
+            input.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
         } else {
             spanErrorApellido.text('');
             spanVacioApellido.text('');
+            input.removeClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
+
         }
     }
 
     // Validación de teléfono
-    if (input.is('#Telefono') || input.is('#TelefonoAct')) {
+    if (input.is('#TelefonoUsuario') || input.is('#TelefonoUsuarioActU')) {
         var telefonoValido = /^\d{7,}$/.test(valor); // Permite al menos 6 dígitos
 
         if (valor === '') {
             spanError.text('');
             spanVacio.text('*');
+            input.removeClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
         } else if (valor.length < 7 && valor.length > 0) {
             spanError.text('El teléfono debe tener mínimo 7 dígitos numéricos.');
             spanVacio.text('');
+            input.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
+
         } else if (!telefonoValido) {
             spanError.text('Este campo no permite letras o espacios.');
             spanVacio.text('');
+            input.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
+        } else {
+            spanErrorApellido.text('');
+            spanVacioApellido.text('');
+            input.removeClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
         }
     }
 
