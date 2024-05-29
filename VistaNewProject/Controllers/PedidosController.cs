@@ -362,6 +362,15 @@ namespace VistaNewProject.Controllers
             var detallepedidos = detallesTask.Result.Where(p => p.PedidoId == id).ToList();
             var domicilio = domicilios.Result.FirstOrDefault(d => d.PedidoId == id);
             ViewBag.Domicilio = domicilio;
+            if (domicilio != null && domicilio.UsuarioId != null)
+            {
+                var domiciliario = await _client.FindUsuarioAsync(domicilio.UsuarioId.Value);
+                ViewBag.NombreDomiciliario = domiciliario != null ? domiciliario.Nombre : "Domiciliario no encontrado";
+            }
+            else
+            {
+                ViewBag.NombreDomiciliario = "Domiciliario no encontrado";
+            }
 
             // Recuperar los productos y unidades correspondientes de manera asíncrona
             var productosTasks = detallepedidos.Select(async detalle =>

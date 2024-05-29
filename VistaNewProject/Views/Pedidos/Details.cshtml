@@ -6,6 +6,13 @@
 }
 
 <style>
+
+    .is-invalid {
+        border-color: #dc3545 !important; /* Cambiar el color del borde a rojo */
+    }
+
+</style>
+<style>
     .pagination {
         margin-top: 20px;
         text-align: center;
@@ -72,19 +79,28 @@
                         <th>Dirección:</th>
                         <th>Observacion:</th>
                         <th> FechaEntrega:</th>
+                        <th>Domiciliario</th>
                         <th> Acciones:</th>
                     </tr>
                     <tr style="background-color: white;">
                         <td>@ViewBag.Domicilio?.DireccionDomiciliario</td>
                         <td>@ViewBag.Domicilio?.Observacion </td>
                         <td>@ViewBag.Domicilio?.FechaEntrega </td>
+                        <td>@ViewBag.NombreDomiciliario</td>
+
+                      
+
                         <td>
-                            <button class="btn botonEditar" onclick="mostrarModalConRetrasoDomicilio(@ViewBag.Domicilio.DomicilioId)"><i class="fas fa-edit"></i></button>
+                            @if (ViewBag.Domicilio.EstadoDomicilio=="Pendiente")
+                            {
+                                <button class="btn botonEditar" onclick="mostrarModalConRetrasoDomicilio(@ViewBag.Domicilio.DomicilioId)"><i class="fas fa-edit"></i> </button>
+
+                            }
                         </td>
                     </tr>
                 </tbody>
             </table>
-        }
+         }
     </div>
 
     <br />
@@ -153,7 +169,7 @@
                 </div>
             </div>
             <div class="modal-cuerpo">
-                <form  method="post" class="modal-formulario-actualizar-domicilio">
+                <form method="post" class="modal-formulario-actualizar-domicilio" onsubmit="return validarcamposAct();">
                     <div class="modal-body">
                         <input type="hidden" id="DomicilioIdAct" name="domicilioId" class="form-control" value="@ViewBag.Domicilio.DomicilioId" />
                         <div class="row">
@@ -174,13 +190,13 @@
                                     }
                                 </datalist>
                                 <input id="UsuarioIdActHidden" type="hidden" name="usuarioId">
-                                <span class="text-danger"></span>
+                                <span id="usuarioError" class="text-danger"></span>
                             </div>
 
 
                             <div class="col-6">
                                 <label class="control-label"></label>
-                                <select id="EstadoDomicilioAct" class="form-control">
+                                <select id="EstadoDomicilioAct" class="form-control" disabled>
                                     @{
                                         var opciones = new List<SelectListItem>
                                     {
@@ -203,7 +219,7 @@
                                     <label for="ObservacionAct" class="control-label">Observacion</label>
                                     <span class="Mensaje"></span>
                                     <input type="text" id="ObservacionAct" name="observacion" class="form-control" autocomplete="off" />
-                                    <span id="MensajeObservacion" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
+                                    <span id="MensajeObservacion" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -219,8 +235,8 @@
                                 <div class="form-group">
                                     <label for="FechaEntregaAct" class="control-label">Usuario</label>
                                     <span class="Mensaje"></span>
-                                    <input type="datetime" id="FechaEntregaAct" name="fechaEntrega" class="form-control" />
-                                    <span id="MensajeUsuario" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
+                                    <input type="datetime-local" id="FechaEntregaAct" name="fechaEntrega" class="form-control" />
+                                    <span id="Mensajefechaerror" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                 </div>
                             </div>
 
