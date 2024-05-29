@@ -19,20 +19,24 @@
 </div>
 
 
-<form asp-action="Create" method="post">
+<form asp-action="Create" method="post" onsubmit="return validarpedido();">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="row">
         <div class="col-6">
-            <label asp-for="ClienteId" class="control-label"></label>
+            <label asp-for="ClienteId" class="control-label"> Cliente</label>
             <input type="text" id="ClienteIdTxt" class="form-control" list="clientesList" />
-            <input type="hidden" id="ClienteIdHidden" name="ClienteId" />
+            <input type="hidden" id="ClienteIdHidden" name="clienteId" />
             <datalist id="clientesList">
                 @foreach (var cliente in ViewBag.Clientes)
                 {
-                    <option value="@cliente.NombreEntidad" data-cliente-id="@cliente.ClienteId"></option>
+                    if (cliente.EstadoCliente != 0)
+                    {
+                        <option value="@cliente.NombreEntidad" data-id="@cliente.ClienteId">@cliente.NombreEntidad</option>
+                    }
                 }
             </datalist>
-            <span asp-validation-for="ClienteId" id="ClienteIdTspan" class="text-danger"></span>
+
+            <span  id="ClienteIdspan" class="text-danger"></span>
         </div>
 
 
@@ -47,8 +51,8 @@
         </div>
         <div class="col-6">
             <label asp-for="FechaPedido" class="control-label"></label>
-            <input asp-for="FechaPedido" id="FechaPedido" name="FechaPedido" class="form-control" />
-            <span asp-validation-for="FechaPedido" class="text-danger"></span>
+            <input type="datetime-local" id="FechaPedido" name="FechaPedido" class="form-control" />
+            <span id="FechaPedidoerror" class="text-danger"></span>
         </div>
         <div class="col-6">
             <label asp-for="EstadoPedido" class="control-label"></label>
@@ -78,13 +82,6 @@
 
 
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-
-
-}
 
 
 
