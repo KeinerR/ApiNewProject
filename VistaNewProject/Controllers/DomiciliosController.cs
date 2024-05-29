@@ -113,8 +113,58 @@ namespace VistaNewProject.Controllers
             return RedirectToAction("Index", "Pedidos");
 
         }
-          
+
+
+        [HttpPost]
+        public async Task<JsonResult> FindDomicilio(int domicilioId)
+        {
+            var domicilio = await _client.FindDomicilioAsync(domicilioId);
+            return Json(domicilio);
+        }
+
+
+
         
+        public async Task<IActionResult> Update([FromBody] Domicilio domicilio)
+        {
+            Console.WriteLine(domicilio);
+            var update = new Domicilio
+            {  DomicilioId=domicilio.DomicilioId,
+                PedidoId = domicilio.PedidoId,
+                UsuarioId=domicilio.UsuarioId,  
+                EstadoDomicilio=domicilio.EstadoDomicilio,
+                Observacion=domicilio.Observacion,
+                FechaEntrega=domicilio.FechaEntrega,
+                DireccionDomiciliario=domicilio.DireccionDomiciliario,
+
+            };
+
+            if (update == null)
+            {
+
+                TempData["SweetAlertIcon"] = "error";
+                TempData["SweetAlertTitle"] = "Error";
+                TempData["SweetAlertMessage"] = "¡No se Pudo Actualizar correctamente el Domicilio!";
+
+                return RedirectToAction("Index", "Pedidos");
+
+            }
+
+            var response = await _client.UpdateDomicilioAsync(update);
+
+            
+           
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Json(new { success = true, message = "Domicilio actualizado correctamente." });
+            }
+            else
+            {
+                return Json(new { success = false, message = "No se pudo actualizar el domicilio." });
+            }
+
+        }
 
     }
 }

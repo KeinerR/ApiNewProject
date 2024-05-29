@@ -240,12 +240,7 @@ namespace VistaNewProject.Controllers
             return Json(cliente);
         }
 
-        [HttpPost]
-        public async Task<JsonResult> FindClientes()
-        {
-            var clientes = await _client.GetClientesAsync();
-            return Json(clientes);
-        }
+      
 
         public async Task<IActionResult> Details(int? id, int? page)
         {

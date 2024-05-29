@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
@@ -332,8 +333,12 @@ namespace VistaNewProject.Controllers
                 return NotFound();
             }
 
+            var usuario = await  _client.GetUsuarioAsync();
+
             var pedidosTask = _client.GetPedidoAsync();
             var detallesTask = _client.GetDetallepedidoAsync();
+
+            var usuarios = usuario.Where(u => u.RolId == 3 && u.EstadoUsuario != 0).ToList(); // Filtrar usuarios por RolId y EstadoUsuario
 
             var domicilios = _client.GetDomicilioAsync();
 
@@ -347,6 +352,8 @@ namespace VistaNewProject.Controllers
             }
 
             ViewBag.Pedidos = pedido;
+
+            ViewBag.Usuarios = usuarios;
 
             // Obtener el nombre del cliente asociado al pedido
             var cliente = await _client.FindClienteAsync(pedido.ClienteId.Value);

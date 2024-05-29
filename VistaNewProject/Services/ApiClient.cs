@@ -845,6 +845,11 @@ namespace VistaNewProject.Services
             return response;
         }
 
+        public async Task<HttpResponseMessage> UpdateDomicilioAsync(Domicilio domicilio)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"Domicilios/UpdateDomicilios/", domicilio);
+            return response;
+        }
 
 
         public async Task<HttpResponseMessage> CreateDomicilioAsync(Domicilio domicilio)

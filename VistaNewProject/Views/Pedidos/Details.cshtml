@@ -72,11 +72,15 @@
                         <th>Dirección:</th>
                         <th>Observacion:</th>
                         <th> FechaEntrega:</th>
+                        <th> Acciones:</th>
                     </tr>
                     <tr style="background-color: white;">
                         <td>@ViewBag.Domicilio?.DireccionDomiciliario</td>
                         <td>@ViewBag.Domicilio?.Observacion </td>
                         <td>@ViewBag.Domicilio?.FechaEntrega </td>
+                        <td>
+                            <button class="btn botonEditar" onclick="mostrarModalConRetrasoDomicilio(@ViewBag.Domicilio.DomicilioId)"><i class="fas fa-edit"></i></button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -134,5 +138,104 @@
     </div>
 </div>
 
-<script src="~/js/Detalle.js"></script>
 
+
+<div class="modal fade GeneralModal" id="ModalDomicilio" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content noBe" id="FormActualiZarDomicilio">
+            <div class="modal-cabecera">
+                <div id="pibo"></div>
+                <div class="modal-header-view TituloModal">
+                    <h2 class="modal-title">Actualizar datos de Domicilio</h2>
+                </div>
+                <div class="moda-header-view" id="modal-cabecera-equis">
+                    <button type="button"  class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="modal-cuerpo">
+                <form  method="post" class="modal-formulario-actualizar-domicilio">
+                    <div class="modal-body">
+                        <input type="hidden" id="DomicilioIdAct" name="domicilioId" class="form-control" value="@ViewBag.Domicilio.DomicilioId" />
+                        <div class="row">
+                            <input type="hidden" id="PedidoIdAct" name="pedidoId" class="form-control" />
+
+
+
+                            <div class="form-group">
+                                <label for="UsuarioIdAct" class="control-label">Usuario</label><span class="Mensaje">*</span>
+                                <input list="usuarios" id="UsuarioIdActInput" name="usuario" class="form-control" placeholder="Escribe y/o selecciona..." />
+                                <datalist id="usuarios">
+                                    @foreach (var item in ViewBag.Usuarios)
+                                    {
+                                        if (item.EstadoUsuario != 0)
+                                        {
+                                            <option value="@item.Nombre" data-id="@item.UsuarioId">@item.Nombre</option>
+                                        }
+                                    }
+                                </datalist>
+                                <input id="UsuarioIdActHidden" type="hidden" name="usuarioId">
+                                <span class="text-danger"></span>
+                            </div>
+
+
+                            <div class="col-6">
+                                <label class="control-label"></label>
+                                <select id="EstadoDomicilioAct" class="form-control">
+                                    @{
+                                        var opciones = new List<SelectListItem>
+                                    {
+                                    new SelectListItem { Text = "Pendiente", Value = "Pendiente", Selected = false },
+                                    new SelectListItem { Text = "Realizado", Value = "Realizado", Selected = false },
+                                    new SelectListItem { Text = "Cancelado", Value = "Cancelado", Selected = false }
+                                    };
+                                    }
+                                    @foreach (var opcion in opciones)
+                                    {
+                                        <option value="@opcion.Value">@opcion.Text</option>
+                                    }
+                                </select>
+                                <input id="EstadoDomicilioHidden" name="estadoDomicilio" type="hidden" />
+                            </div>
+
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="ObservacionAct" class="control-label">Observacion</label>
+                                    <span class="Mensaje"></span>
+                                    <input type="text" id="ObservacionAct" name="observacion" class="form-control" autocomplete="off" />
+                                    <span id="MensajeObservacion" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="DireccionDomiciliarioAct" class="control-label">Direccion</label>
+                                    <span class="Mensaje"></span>
+                                    <input type="text" id="DireccionDomiciliarioAct" name="DireccionDomiciliario" class="form-control" autocomplete="off" />
+                                    <span id="MensajeDireccionDomiciliario" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="FechaEntregaAct" class="control-label">Usuario</label>
+                                    <span class="Mensaje"></span>
+                                    <input type="datetime" id="FechaEntregaAct" name="fechaEntrega" class="form-control" />
+                                    <span id="MensajeUsuario" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                        <div class="MensajeInicial"></div>
+                        <div class="modal-contenedor-footer">
+                            <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormularioUsuario();">Cancelar</button>
+                        <button type="button" onclick="actualizarDomi();" class="btn btn-primary ">Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/js/domicilios.js"></script>
