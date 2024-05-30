@@ -67,12 +67,12 @@ document.querySelectorAll('#btnEditar').forEach(button => {
 
 
 
-$('.modal').on('click', function (e) {
-    if (e.target === this) {
-        limpiarFormulario(); // Limpia el formulario si se hace clic fuera de la modal
-        $(this).modal('hide'); // Oculta la modal
-    }
-});
+//$('.modal').on('click', function (e) {
+//    if (e.target === this) {
+//        limpiarFormulario(); // Limpia el formulario si se hace clic fuera de la modal
+//        $(this).modal('hide'); // Oculta la modal
+//    }
+//});
 
 function actualizarEstadoProveedor(ProveedorId, EstadoProveedor) {
     fetch(`https://localhost:7013/api/Proveedores/UpdateEstadoProveedor/${ProveedorId}`, {

@@ -14,10 +14,11 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.7/dist/sweetalert2.all.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.7/dist/sweetalert2.min.css">
-
-
-
-
+    <script src="https://kit.fontawesome.com/822fe3c749.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     @RenderSection("Styles", required: false)
 </head>
 <body>
@@ -39,7 +40,7 @@
                     <img src="~/image/OPTIMUS/3-removebg-preview.png" />
                 </a>
             </div>
-            @if (User.Identity.IsAuthenticated)
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 <div class="cabeceraSalir">
                     <a class="nav-link dropdown-toggle Perfil" style="text-decoration: none; color: inherit;" onclick="opcionesDePerfil();" title="Hola @User.Identity.Name">
@@ -57,6 +58,8 @@
                     </a>
                 </div>
             }
+
+
         </div>
         <div id="cabeceraTitulo">
             <span class="tituloHeader">OPTIMUS</span>
@@ -136,13 +139,10 @@
             &copy; 2024 - Optimus - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="https://kit.fontawesome.com/822fe3c749.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  
+
     <script src="~/js/site.js"></script>
-    <script src="~/js/Productos.js"></script>
+    <script src="~/js/Productos.js"></script>   
     <script src="~/js/clientes.js"></script>
     <script src="~/js/Compras.js"></script>
     <script src="~/js/Detalle.js"></script>
@@ -155,40 +155,63 @@
             Swal.fire({
                 position: "center",
                 icon: "@TempData["SweetAlertIcon"]",
-                title: "@TempData["SweetAlertTitle"]",
-                text: "@TempData["SweetAlertMessage"]",
+                title: "@Html.Raw(TempData["SweetAlertTitle"])",
+                text: "@Html.Raw(@TempData["SweetAlertMessage"])",
                 showConfirmButton: "@TempData["EstadoAlerta"]" === "true" ? true : false,
                 timer: "@TempData["Tiempo"]" || 6000,
                 timerProgressBar: true
             });
-            console.log("@TempData["SweetAlertIcon"]");
-            console.log("@TempData["SweetAlertTitle"]");
-            console.log("@TempData["SweetAlertMessage"]");
-            console.log("@TempData["EstadoAlerta"]");
-            console.log("@TempData["Tiempo"]");
         </script>
     }
     @* Sweet alert para detalle de producto *@
     @if (TempData["SweetAlertMessageAct"] != null)
     {
-        <script>
-            Swal.fire({
-                position: "top",
-                icon: "@TempData["SweetAlertIconAct"]",
-                title: "@TempData["SweetAlertTitleAct"]",
-                text: " @Html.Raw(TempData["SweetAlertMessageAct"])",
-                html: `@Html.Raw(@TempData["SweetAlertContenedor"]) `,
-                showConfirmButton: "@TempData["EstadoAlertaAct"]" === "true" ? true : false,
-                timer: "@TempData["TiempoAct"]" || 20000,
-                timerProgressBar: true
-            });
-            console.log("@TempData["SweetAlertIconAct"]");
-            console.log("@TempData["SweetAlertTitleAct"]");
-            console.log("@TempData["SweetAlertMessageAct"]");
-            console.log("@TempData["EstadoAlertaAct"]");
-            console.log("@TempData["TiempoAct"]");
-        </script>
+        @if (decimal.TryParse(TempData["PrecioPorPresentacionRedondeado"]?.ToString(), out decimal precioPorPresentacion))
+        {
+            @if (decimal.TryParse(TempData["PrecioPorUnidadDeProductoRedondeado"]?.ToString(), out decimal precioPorUnidad))
+            {
+                <script>
+                    Swal.fire({
+                        position: 'top-start',
+                        showCloseButton: true,
+                        icon: '@TempData["SweetAlertIconAct"]',
+                        title: '@TempData["SweetAlertTitleAct"]',
+
+                        html: `<div class="contenedor-detalle-producto">
+                                                <h4>@TempData["SweetAlertMessageAct"]</h4>
+                                                <form asp-action="CambiarPrecios" id="formCambiarPrecios" asp-controller="Productos" method="post">
+                                                    <input type="hidden" value='@TempData["Producto"]'>
+                                                    <div>
+                                                        <label class="detalle-label" for="precioProducto">Precio por Producto:</label>
+                                                        <input readonly type="text" value="@precioPorPresentacion" id="precioProducto" name="precioProducto" class="detalle-input form-control">
+                                                    </div>
+                                                    <div>
+                                                        <label class="detalle-label" for="precioUnidad">Precio por Unidad de Producto:</label>
+                                                        <input readonly type="text" value="@precioPorUnidad" id="precioUnidad" name="precioUnidad" class="detalle-input form-control">
+                                                    </div>
+                                                </form>
+                                                 </div>
+                                                 <button id="btn-Detallecompra-producto" onclick="editarFuncion()"><i class="fas fa-edit"></i>Editar</button>`,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        timerProgressBar: true,
+                        showCancelButton: true, // Mostrar el botón de cancelar
+                        confirmButtonText: 'Continuar',
+                        cancelButtonText: 'Cancelar', // Texto del botón de cancelar
+                        preConfirm: () => {
+                            // Función que se ejecuta antes de enviar el formulario
+                            document.getElementById('formCambiarPrecios').submit(); // Enviar el formulario con el ID 'formCambiarPrecios'
+                        }
+                    });
+                </script>
+            }
+        }
     }
+
+
+
+    }
+   
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

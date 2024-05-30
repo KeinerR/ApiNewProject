@@ -1,5 +1,4 @@
 var productos = [];
-// Obtener productos al cargar la página
 function obtenerDatosProductos() {
     fetch('/Productos/FindProductos', {
         method: 'POST',
@@ -10,9 +9,92 @@ function obtenerDatosProductos() {
         .then(response => response.json())
         .then(data => {
             productos = data;
-            console.log(productos);
         })
         .catch(error => console.error('Error al obtener los productos:', error));
+}
+
+// Función para comparar productos durante la creación
+function compararProductos(nuevoProducto, productosExistentes) {
+    const nombreProductoNormalizado = normalizar(nuevoProducto.NombreProducto);
+    let productosDuplicados = [];
+
+    for (let i = 0; i < productosExistentes.length; i++) {
+        const productoExistente = productosExistentes[i];
+        const nombreProductoExistenteNormalizado = normalizar(productoExistente.nombreProducto);
+
+        if (
+            nombreProductoNormalizado === nombreProductoExistenteNormalizado &&
+            productoExistente.presentacionId == nuevoProducto.PresentacionId &&
+            productoExistente.categoriaId == nuevoProducto.CategoriaId
+        ) {
+            productosDuplicados.push(productoExistente.productoId);
+        }
+    }
+
+    if (productosDuplicados.length > 0) {
+        MostrarAlertaPersonalizada(`Ya existe un producto registrado con los mismos campos, Producto ID: ${productosDuplicados.join(', ')}`);
+        return true; // Se encontraron coincidencias
+    }
+
+    return false; // No se encontraron coincidencias
+}
+
+// Función para comparar productos durante la actualización
+function compararProductosAct(nuevoProducto, productosExistentes) {
+    const nombreProductoNormalizado = normalizar(nuevoProducto.NombreProductoAct);
+    let productosDuplicados = [];
+
+    for (let i = 0; i < productosExistentes.length; i++) {
+        const productoExistente = productosExistentes[i];
+        const nombreProductoExistenteNormalizado = normalizar(productoExistente.nombreProducto);
+
+        // Comprobamos si el producto existente coincide con el producto nuevo en todos los campos excepto en el ID
+        if (
+            nombreProductoNormalizado === nombreProductoExistenteNormalizado &&
+            productoExistente.presentacionId == nuevoProducto.PresentacionIdAct &&
+            productoExistente.categoriaId == nuevoProducto.CategoriaIdAct
+        ) {
+            if (productoExistente.productoId == nuevoProducto.ProductoIdAct) {
+                // Si es el mismo producto que se está actualizando, no lo consideramos duplicado
+                return false;
+            } else {
+                // Si es un producto diferente, lo añadimos a la lista de duplicados
+                productosDuplicados.push(productoExistente.productoId);
+            }
+        }
+    }
+
+    if (productosDuplicados.length > 0) {
+        MostrarAlertaPersonalizada(`Ya existe un producto registrado con los mismos campos, Producto ID: ${productosDuplicados.join(', ')}`);
+        return true; // Se encontraron coincidencias
+    }
+
+    return false; // No se encontraron coincidencias
+}
+
+function mostrarValoresFormularioInicialProducto() {
+    const idsCrear = [
+        'CategoriaId',
+        'NombreProducto',
+        'PresentacionId',
+        'MarcaId'
+    ];
+    const valoresCrear = obtenerValoresFormulario(idsCrear);
+    return valoresCrear;
+}
+
+function mostrarValoresFormularioProductoAct() {
+    const idsActualizar = [
+        'CategoriaIdAct',
+        'NombreProductoAct',
+        'PresentacionIdAct',
+        'MarcaIdAct',
+        'ProductoIdAct',
+        'CantidadAplicarPorMayorAct',
+        'DescuentoAplicarPorMayorAct'
+    ];
+    const valoresActualizar = obtenerValoresFormulario(idsActualizar);
+    return valoresActualizar;
 }
 
 //Funciones que se cargan al mismo tiempo que la pagina
@@ -20,55 +102,101 @@ document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const mostrarAlerta = urlParams.get('mostrarAlerta');
     const productoId = urlParams.get('productoId');
-
-
+ 
     if (mostrarAlerta === 'true' && productoId) {
         mostrarModalSinRetrasoProducto(productoId);
-    } 
-
-    // Evita el envío del formulario si no se cumplen con los requerimientos mínimos
+    }
+  
+    // Evita el envío de los formularios si no se cumplen los requerimientos mínimos
     $('.modal-formulario-crear-producto').on('submit', function (event) {
+        let datalist = [];
+        let campos = [];
+        const productoFinal = mostrarValoresFormularioInicialProducto();
+        const productosAll = productos;
+        const productoRepetido = compararProductos(productoFinal, productosAll);
+        campos = [
+            { id: 'NombreCategoria', nombre: 'Categor\u00EDa' },
+            { id: 'NombreProducto', nombre: 'Nombre Producto' },
+            { id: 'NombreMarca', nombre: 'Marca' },
+            { id: 'NombrePresentacion', nombre: 'Presentaci\u00F3n' },
+            { id: 'CantidadAplicarPorMayor', nombre: 'Cantidad a superar' },
+            { id: 'DescuentoAplicarPorMayor', nombre: 'Descuento por producto' }
+        ];
+
+     
         if (!NoCamposVacios()) {
             event.preventDefault();
-        } else {
-            // Obtener los valores de los campos del formulario
-            var categoriaId = $('#CategoriaId').val();
-            var presentacionId = $('#PresentacionId').val();
-            var marcaId = $('#MarcaId').val();
+            mostrarAlertaCampoVacioPersonalizada('Completa todos los campos');
 
-            if (categoriaId === '') {
+        } else if (!NoCamposConErrores()) {
+            event.preventDefault();
+            mostrarAlertaCampoVacioPersonalizada('Algunos campos contienen errores');
+        } else if (productoRepetido !== false) {
+            event.preventDefault();
+            return;
+        } else if (!verificarCampos(campos, mostrarAlertaCampoVacio)) {
+            return;
+        } else {
+            datalist = [
+                { id: 'CategoriaId', nombre: 'categoría' },
+                { id: 'MarcaId', nombre: 'marca' },
+                { id: 'PresentacionId', nombre: 'presentación' }
+            ];
+
+            if (!verificarCampos(datalist, mostrarAlertaDataList)) {
                 event.preventDefault();
-                mostrarAlertaDataList('categoria');
-            } else if (presentacionId === '') {
-                event.preventDefault();
-                mostrarAlertaDataList('presentación');
-            } else if (marcaId === '') {
-                event.preventDefault();
-                mostrarAlertaDataList('marca');
+                return;
             }
         }
     });
-    $('.modal-formulario-actualizar').on('submit', function (event) {
+
+    // Event handler para el formulario de actualización
+    $('.modal-formulario-actualizar-producto').on('submit', function (event) {
+        let datalist = [];
+        let campos = [];
+        const productoFinal = mostrarValoresFormularioProductoAct();
+        const productosAll = productos;
+        const productoRepetido = compararProductosAct(productoFinal, productosAll);
+
+        console.log(productosAll, productoRepetido, productoFinal);
+
         if (!NoCamposVaciosAct()) {
             event.preventDefault();
-        } else {
-            // Obtener los valores de los campos del formulario
-            var categoriaId = $('#CategoriaIdAct').val();
-            var presentacionId = $('#PresentacionIdAct').val();
-            var marcaId = $('#MarcaIdAct').val();
 
-            if (categoriaId === '') {
+            campos = [
+                { id: 'NombreCategoriaAct', nombre: 'Categoría' },
+                { id: 'NombreProductoAct', nombre: 'Nombre Producto' },
+                { id: 'NombreMarcaAct', nombre: 'Marca' },
+                { id: 'NombrePresentacionAct', nombre: 'Presentación' },
+                { id: 'CantidadAplicarPorMayorAct', nombre: 'Cantidad a superar' },
+                { id: 'DescuentoAplicarPorMayorAct', nombre: 'Descuento por producto' }
+            ];
+
+            if (!verificarCampos(campos, mostrarAlertaCampoVacio)) {
+                return;
+            }
+        } else if (!NoCamposConErroresAct()) {
+            event.preventDefault();
+            mostrarAlertaCampoVacioPersonalizada('Algunos campos contienen errores');
+        } else if (productoRepetido !== false) {
+            event.preventDefault();
+            return;
+        } else {
+            datalist = [
+                { id: 'CategoriaIdAct', nombre: 'categoría' },
+                { id: 'MarcaIdAct', nombre: 'marca' },
+                { id: 'PresentacionIdAct', nombre: 'presentación' }
+            ];
+
+            if (!verificarCampos(datalist, mostrarAlertaDataList)) {
                 event.preventDefault();
-                mostrarAlertaDataList('categoria');
-            } else if (presentacionId === '') {
-                event.preventDefault();
-                mostrarAlertaDataList('presentación');
-            } else if (marcaId === '') {
-                event.preventDefault();
-                mostrarAlertaDataList('marca');
+                return;
             }
         }
     });
+
+    
+
     // Confirmación de eliminación
     $('.delete-form').on('submit', function (event) {
         event.preventDefault(); // Evita que el formulario se envíe automáticamente
@@ -95,9 +223,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // Validar campos en cada cambio para cambiar el mensaje inicial que aparece arriba de los botones del formulario
     $('.modal-formulario-crear-producto input, .modal-formulario-crear-producto select').on('input', function () {
         NoCamposVaciosInicial();
+        NoCamposConErroresInicial();
+      
     });
-    $('.modal-formulario-actualizar input, .modal-formulario-actualizar select').on('input', function () {
+    $('.modal-formulario-actualizar-producto input, .modal-formulario-actualizar-producto select').on('input', function () {
         NoCamposVaciosInicialAct();
+        NoCamposConErroresInicialAct();
     });
 
     // Asignar función de selección a los campos
@@ -143,150 +274,184 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 650);
     });
 
-   
+
     function NoCamposVacios() {
-        const textDangerElements = $('.text-danger');
         const mensajeElements = $('.Mensaje');
-
-        const textDangerSlice = textDangerElements.slice(0, 6);
         const mensajeSlice = mensajeElements.slice(0, 6);
-        const todoValido = textDangerSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
         const todosLlenos = mensajeSlice.filter(function () {
             return $(this).text() !== '';
         }).length === 0;
 
-
-        console.log('Todos los campos son válidos:', todoValido);
         console.log('Todos los campos están llenos:', todosLlenos);
 
         if (!todosLlenos) {
             $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
             return false;
         }
-
-        if (!todoValido) {
-            $('.MensajeInicial').text('Algunos campos contienen errores.');
-            return false;
-        }
-
-        $('.MensajeInicial').text('');
         return true;
     }
+    function NoCamposConErrores() {
+        const textDangerElements = $('.text-danger');
+        const textDangerSlice = textDangerElements.slice(0, 6);
+        const todoValido = textDangerSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+        console.log('Todos los campos son válidos:', todoValido);
+        if (!todoValido) {
+            $('.MensajeErrores').text('Algunos campos contienen errores.');
+            return false;
+        }
+        return true;
+    }
+
     function NoCamposVaciosAct() {
-        const textDangerElements = $('.text-danger');
+    
         const mensajeElements = $('.Mensaje');
-
-        const textDangerSlice = textDangerElements.slice(-6);
+    
         const mensajeSlice = mensajeElements.slice(-6);
-
-        const todoValido = textDangerSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
+     
 
         const todosLlenos = mensajeSlice.filter(function () {
             return $(this).text() !== '';
         }).length === 0;
-
-        console.log('Todos los campos son válidos:', todoValido);
+     
         console.log('Todos los campos están llenos:', todosLlenos);
 
         if (!todosLlenos) {
             $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
             return false;
         }
-
-        if (!todoValido) {
-            $('.MensajeInicial').text('Algunos campos contienen errores.');
-            return false;
-        }
-
-        $('.MensajeInicial').text('');
+  
         return true;
     }
-    function NoCamposVaciosInicial()     {
+    function NoCamposConErroresAct() {
         const textDangerElements = $('.text-danger');
-        const mensajeElements = $('.Mensaje');
-
-        const textDangerSlice = textDangerElements.slice(0, 6);
-        const mensajeSlice = mensajeElements.slice(0, 6);
-
+        const textDangerSlice = textDangerElements.slice(-6);
         const todoValido = textDangerSlice.filter(function () {
             return $(this).text() !== '';
         }).length === 0;
+        console.log('Todos los campos son válidos:', todoValido);
+        if (todoValido) {
+            return true;
+        } else {
+            $('.MensajeErrores').text('Algunos campos contienen errores.');
+            return false;
+        }     
+
+    }
+
+    function NoCamposVaciosInicial() {
+        const mensajeElements = $('.Mensaje');
+        
+        const mensajeSlice = mensajeElements.slice(0, 6);
+     
 
         const todosLlenos = mensajeSlice.filter(function () {
             return $(this).text() !== '';
         }).length === 0;
 
+        
         if (todosLlenos) {
             $('.MensajeInicial').text('');
-            if (todoValido) {
-                $('.MensajeInicial').text('');
-            }
         }
 
     }
     function NoCamposVaciosInicialAct() {
-        const textDangerElements = $('.text-danger');
+
         const mensajeElements = $('.Mensaje');
 
-        const textDangerSlice = textDangerElements.slice(-6);
         const mensajeSlice = mensajeElements.slice(-6);
-
-        const todoValido = textDangerSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
 
         const todosLlenos = mensajeSlice.filter(function () {
             return $(this).text() !== '';
         }).length === 0;
+
         if (todosLlenos) {
             $('.MensajeInicial').text('');
-            if (todoValido) {
-                $('.MensajeInicial').text('');
-            }
         }
-        
-        
+
     }
+   
+
+
+    function NoCamposConErroresInicial() {
+        const textDangerElements = $('.text-danger');
+        const textDangerSlice = textDangerElements.slice(0, 6);
+        const todoValido = textDangerSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+
+        if (todoValido) {
+            $('.MensajeErrores').text('');
+        }
+
+    }
+    function NoCamposConErroresInicialAct() {
        
+        const textDangerElements = $('.text-danger');
+        const textDangerSlice = textDangerElements.slice(-6);
+        const todoValido = textDangerSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+        if (todoValido) {
+            $('.MensajeErrores').text('');
+        }
+
+    }
+
+   
 });
+
 
 
 /*---------------------------------------------------- Al dar click en el boton de agregar usuario  ---------------------------------------------------- */
 function simularClickProducto() {
+    obtenerDatosProductos();
     //ocultar formulario de actualizar  y mostrar el formulario principal
     $('#FormActualizarProducto').hide();
     $('#FormPrincipalProducto').show().css('visibility', 'visible');
-    limpiarFormularioProductoAct();
-    limpiarFormularioProductoAgregar();
     Llamar();
 }
-
+/*--------------------Atajao para abrir modal -------------------------------*/
 document.addEventListener('keydown', function (event) {
-    // Verificar si se presionó Ctrl + Espacio
-    if (event.ctrlKey && event.key === ' ') {
-        // Ejecutar la función que deseas al presionar Ctrl + Espacio
+    // Verificar si se presionó Ctrl + m y la URL actual es la deseada
+    if (event.ctrlKey && event.key === 'm' && esURLValida('Productos')) {
+        // Ejecutar la función que deseas al presionar Ctrl + m y la URL es válida
         abrirModalProducto();
+        console.log('here');
     }
 });
+
+// Función para verificar si la URL actual es válida para el parámetro especificado
+function esURLValida(parametro) {
+    var urlActual = window.location.href;
+    // Verificar si la URL contiene el parámetro deseado
+    return urlActual.includes(parametro);
+}
+
+
 function abrirModalProducto() {
-    // Verificar si la modal está abierta
-    if ($('#ModalProducto').hasClass('show')) {
-        $('#ModalProducto').modal('hide'); // Cerrar la modal
+    var modalProducto = $('#ModalProducto');
+    var botonAbrirModal = $('#botonabrirModalProducto');
+
+    if (modalProducto.hasClass('show')) {
+        modalProducto.modal('hide'); // Cerrar la modal
     } else {
-        simularClickProducto(); // Simular algún evento antes de abrir la modal
-        $('#ModalProducto').modal('show'); // Abrir la modal
+        botonAbrirModal.on('click', function () {
+            // Código para mostrar la modal
+            modalProducto.modal('show'); // Mostrar la modal
+        });
     }
 }
+
+
 
 /*------------------------------ Limpiar formularios y url ---------------------------------------------------------------------------------------------------- */
 
 //Se llama al daar click en la x
 function limpiarFormularioProducto() {
+    // Limpiar la URL eliminando los parámetros de consulta
+    history.replaceState(null, '', location.pathname);
     // Simular clic en el checkboxDescuentoPorMayor si está marcado
     var checkbox = document.getElementById('checkboxDescuentoPorMayor');
     if (checkbox.checked) {
@@ -317,6 +482,9 @@ function limpiarFormularioProducto() {
     document.querySelectorAll('.MensajeInicial').forEach(function (element) {
         element.textContent = '';
     });
+    document.querySelectorAll('.MensaErrores').forEach(function (element) {
+        element.textContent = '';
+    });
     // Limpiar elementos adicionales
     var elementos = document.getElementsByClassName('PorMayorAct');
     for (var i = 0; i < elementos.length; i++) {
@@ -340,17 +508,16 @@ function limpiarFormularioProducto() {
 }
 //Se llama al daar click en cancelar en la modal de agregar producto
 function limpiarFormularioProductoAgregar() {
+    // Limpiar la URL eliminando los parámetros de consulta
+    history.replaceState(null, '', location.pathname);
     // Limpiar mensajes de alerta y *
     var mensajes = document.querySelectorAll('.Mensaje');
     var mensajesText = document.querySelectorAll('.text-danger');
 
-    for (var i = Math.max(0, mensajes.length - 8); i < mensajes.length; i++) {
-        mensajes[i].textContent = '';
-    }
     for (var i = 0; i < mensajes.length - 6; i++) {
         mensajes[i].textContent = '*';
     }
-    for (var i = 0; i < mensajesText.length; i++) {
+    for (var i = 0; i < mensajesText.length - 6; i++) {
         mensajesText[i].textContent = '';
     }
 
@@ -365,6 +532,8 @@ function limpiarFormularioProductoAgregar() {
 }
 //Se llama al perder el foco de la modal para limpiar el formulario actualizar
 function limpiarFormularioProductoAct() {
+    // Limpiar la URL eliminando los parámetros de consulta
+    history.replaceState(null, '', location.pathname);
     document.querySelectorAll('.MensajeInicial').forEach(function (element) {
         element.textContent = '';
     });
@@ -390,10 +559,7 @@ function limpiarFormularioProductoAct() {
     for (var i = Math.max(0, mensajes.length - 8); i < mensajes.length; i++) {
         mensajes[i].textContent = '';
     }
-    for (var i = 0; i < mensajes.length - 6; i++) {
-        mensajes[i].textContent = '*';
-    }
-    for (var i = 0; i < mensajesText.length; i++) {
+    for (var i = Math.max(0, mensajesText.length - 8); i < mensajesText.length; i++) {
         mensajesText[i].textContent = '';
     }
 }
@@ -417,27 +583,33 @@ function AlPerderFocoProducto() {
     }
 }
 
+
 /*--------------------------------------------------------- Modal de actualizar usuario ---------------------------------------*/
 //Funcion que se activa al hacer clik en el boton de editar.
 function mostrarModalConRetrasoProducto(productoId) {
+    // Limpia el formulario del producto antes de cualquier otra acción
+    limpiarFormularioProductoAct();
+
+    actualizarProducto(productoId);
+   
     setTimeout(function () {
-        actualizarProducto(productoId);
-        setTimeout(function () {
-            var myModal = new bootstrap.Modal(document.getElementById('ModalProducto'));
-            myModal.show();
-            // Aquí puedes llamar a la función actualizarProducto si es necesario
-        }, 400); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
-    }, 0); // 0 milisegundos de retraso antes de llamar a actualizarProducto
+        var myModal = new bootstrap.Modal(document.getElementById('ModalProducto'));
+        myModal.show();
+    }, 400); // 400 milisegundos (0.4 segundos) de retraso antes de abrir la modal
 }
 function mostrarModalSinRetrasoProducto(productoId) {
+    
+    // Retrasa la apertura del modal para asegurar que los campos hayan sido poblados correctamente 
     setTimeout(function () {
+        // Limpia el formulario del producto antes de cualquier otra acción
+        limpiarFormularioProductoAct();
+
+        // Llama a la función de actualización del producto inmediatamente
         actualizarProducto(productoId);
-        setTimeout(function () {
-            var myModal = new bootstrap.Modal(document.getElementById('ModalProducto'));
-            myModal.show();
-            limpiarFormularioProductoAct(); // Limpia los campos después de llamar a las funciones
-        }, 40); // 40 milisegundos (0.04 segundos) de retraso antes de abrir la modal
-    }, 0); // 0 milisegundos de retraso antes de llamar a actualizarProducto
+
+        var myModal = new bootstrap.Modal(document.getElementById('ModalProducto'));
+        myModal.show();
+    }, 10000); // 40 milisegundos de retraso antes de abrir la modal
 }
 
 function actualizarProducto(campo) {
@@ -465,13 +637,15 @@ function actualizarProducto(campo) {
             } else {
                 $('#checkboxDescuentoPorMayorAct').prop('checked', false); // Desmarcar el checkbox
             }
+            limpiarFormularioProductoAct()
+            obtenerDatosProductos();
         },
         error: function () {
             alert('Error al obtener los datos del producto.');
         }
     });
     $('#FormPrincipalProducto').hide().css('visibility', 'hidden');
-    $('#FormActualizarProducto').show().css('visibility', 'visible');    
+    $('#FormActualizarProducto').show().css('visibility', 'visible');
 }
 
 /*------------------- Cambiar estado producto------------------------------------------*/
@@ -575,7 +749,7 @@ function searchProducto() {
             row.style.display = (productoId.includes(input) || nombreM.includes(input) || nombreC.includes(input) || nombreP.includes(input) || cantidadT.includes(input)) ? 'table-row' : 'none';
         }
     });
-    
+
 }
 //Funcion para hacer las respectivas validaciones a los campos
 
@@ -596,6 +770,7 @@ function showCategoriasAlert() {
 }
 
 /*------------------------ Validaciones---------------*/
+
 function validarCampoProducto(input) {
     console.log(input.id);
     const $input = $(input); // Convertir el input a objeto jQuery
@@ -682,8 +857,8 @@ function Llamar() {
             elementos[i].style.display = "none";
             elementos[i].style.visibility = "hidden";
         }
-        document.getElementById('CantidadAplicarPorMayor').value = '';
-        document.getElementById('DescuentoAplicarPorMayor').value = '';
+        document.getElementById('CantidadAplicarPorMayor').value = '0';
+        document.getElementById('DescuentoAplicarPorMayor').value = '0';
 
         console.log("El checkbox no está marcado");
     }
@@ -711,6 +886,8 @@ function Llamar2() {
             mensajesError.forEach(span => {
                 span.innerText = '';
             });
+            document.getElementById('CantidadAplicarPorMayorAct').value = '0';
+            document.getElementById('DescuentoAplicarPorMayorAct').value = '0';
         }
         // Mostrar los elementos con la clase 'PorMayor'
         var elementos = document.getElementsByClassName('PorMayorAct');

@@ -85,27 +85,10 @@ namespace VistaNewProject.Controllers
             ViewBag.Productos = Productos;
             ViewBag.Marcas = marcas;
 
-        
+            ViewData["Productos"] = productos;
+            return View(pageProducto);
+           
 
-            // Código del método Index que querías integrar
-            string mensaje = HttpContext.Session.GetString("Message");
-            TempData["Message"] = mensaje;
-
-            try
-            {
-                ViewData["Productos"] = productos;
-                return View(pageProducto);
-            }
-            catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
-            {
-                HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
-                return RedirectToAction("Index", "Home");
-            }
-            catch
-            {
-                HttpContext.Session.SetString("Message", "Error en el aplicativo");
-                return RedirectToAction("LogOut", "Accesos");
-            }
         }
 
         [HttpPost]
@@ -113,10 +96,28 @@ namespace VistaNewProject.Controllers
         {
             try
             {
+                // Verificar que todos los campos estén llenos
+                if (string.IsNullOrEmpty(producto.NombreProducto) ||
+                    producto.PresentacionId <= 0 ||
+                    producto.MarcaId <= 0 ||
+                    producto.CategoriaId <= 0)
+                {
+                    MensajeSweetAlert("error", "Error", "Por favor, complete todos los campos obligatorios con *.","false",null);  
+                    return RedirectToAction("Index");
+                }
+
                 var productos = await _client.GetProductoAsync();
 
                 // Normalizar el nombre del producto para la comparación
-                string Normalize(string input) => input?.ToLowerInvariant().Replace(" ", "");
+                string Normalize(string? input)
+                {
+                    if (input == null)
+                    {
+                        return string.Empty; // O cualquier otro valor predeterminado que desees
+                    }
+
+                    return input.ToLowerInvariant().Replace(" ", "");
+                }
 
                 var normalizedProductoNombre = Normalize(producto.NombreProducto);
                 var productExist = productos.FirstOrDefault(p =>
@@ -126,10 +127,7 @@ namespace VistaNewProject.Controllers
 
                 if (productExist != null)
                 {
-                    TempData["SweetAlertIcon"] = "error";
-                    TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = $"Ya hay un producto con los mismos datos. ID: {productExist.ProductoId}";
-                    TempData["EstadoAlerta"] = "false";
+                    MensajeSweetAlert("error", "Error", $"Ya hay un producto con los mismos datos. ID: {productExist.ProductoId}", "false",null);
                     return RedirectToAction("Index");
                 }
                 else
@@ -151,29 +149,12 @@ namespace VistaNewProject.Controllers
 
                     if (response.IsSuccessStatusCode)
                     {
-                        // Imprimir los valores por consola del servidor
-                        Console.WriteLine("Nuevo producto creado:");
-                        Console.WriteLine($"Nombre Producto: {producto.NombreProducto}");
-                        Console.WriteLine($"Presentacion ID: {producto.PresentacionId}");
-                        Console.WriteLine($"Producto ID: {producto.ProductoId}");
-                        Console.WriteLine($"Categoria ID: {producto.CategoriaId}");
-                        Console.WriteLine($"Cantidad Total: {producto.CantidadTotal}");
-                        Console.WriteLine($"Estado Producto: {producto.Estado}");
-
-                        TempData["SweetAlertIcon"] = "success";
-                        TempData["SweetAlertTitle"] = "Exito";
-                        TempData["SweetAlertMessage"] = "Se ha registrado exitosamente el producto";
-                        TempData["EstadoAlerta"] = "false";
-                        TempData["Tiempo"] = 2000;
+                        MensajeSweetAlert("success", "Exito", "Se ha registrado exitosamente el producto", "false",3000);
                         return RedirectToAction("Index");
                     }
                     else
                     {
-                        // Si hubo un error al crear el producto, mostrar un mensaje de error
-                        TempData["SweetAlertIcon"] = "error";
-                        TempData["SweetAlertTitle"] = "Error";
-                        TempData["SweetAlertMessage"] = "Hubo un problema al crear el producto.";
-                        TempData["EstadoAlerta"] = "false";
+                        MensajeSweetAlert("error", "Error", "Hubo un problema al crear el producto.", "false", null);
                         return RedirectToAction("Index");
                     }
                 }
@@ -222,23 +203,12 @@ namespace VistaNewProject.Controllers
             }
 
             var presentacionInfo = presentacion.FirstOrDefault(u => u.PresentacionId == productoInfo.PresentacionId);
+            var nombrePresentacion = presentacionInfo?.NombrePresentacion;
+            var cantidad = presentacionInfo?.CantidadPorPresentacion; // Valor predeterminado en caso de que CantidadPorPresentacion sea nulo
+            var contenido = presentacionInfo?.Contenido;
             var marcaInfo = marca.FirstOrDefault(u => u.MarcaId == productoInfo.MarcaId);
+            var nombreMarca = marcaInfo?.NombreMarca;
             var categoriaInfo = categoria.FirstOrDefault(u => u.CategoriaId == productoInfo.CategoriaId);
-
-            // Filtrar los lotes para obtener solo aquellos con una cantidad mayor que cero
-            var lotesInfo = lotes
-                .Where(u => u.ProductoId == productoInfo.ProductoId && u.Cantidad > 0 && u.EstadoLote == 1)
-                .ToList();
-            var pagedLote = lotesInfo.ToPagedList(pageNumber, pageSize);
-            var nombrePresentacion = presentacionInfo.NombrePresentacion;
-            var contenido = presentacionInfo.Contenido;
-            int cantidad = 0; // Valor predeterminado en caso de que CantidadPorPresentacion sea nulo
-            if (presentacionInfo.CantidadPorPresentacion.HasValue)
-            {
-                cantidad = presentacionInfo.CantidadPorPresentacion.Value;
-            }
-
-            var nombreMarca = marcaInfo.NombreMarca;
 
             if (cantidad > 1)
             {
@@ -246,9 +216,18 @@ namespace VistaNewProject.Controllers
             }
             else
             {
-                productoInfo.NombreCompleto = $"{nombrePresentacion} de {productoInfo.NombreProducto} {nombreMarca}  de {contenido}";
+                productoInfo.NombreCompleto = $"{nombrePresentacion} de {productoInfo.NombreProducto} {nombreMarca} de {contenido}";
             }
+         
+            // Filtrar los lotes para obtener solo aquellos con una cantidad mayor que cero
+            var lotesInfo = lotes
+                .Where(u => u.ProductoId == productoInfo.ProductoId && u.Cantidad > 0 && u.EstadoLote == 1)
+                .ToList();
+            var pagedLote = lotesInfo.ToPagedList(pageNumber, pageSize);
+         
 
+
+           
 
             ViewData["Producto"] = productoInfo;
             ViewData["Lotes"] = lotesInfo;
@@ -267,20 +246,36 @@ namespace VistaNewProject.Controllers
         {
             try
             {
+                // Verificar que todos los campos estén llenos
+                if (string.IsNullOrEmpty(producto.NombreProducto) ||
+                    producto.PresentacionId <= 0 ||
+                    producto.MarcaId <= 0 ||
+                    producto.CategoriaId <= 0)
+                {
+                    TempData["SweetAlertIcon"] = "error";
+                    TempData["SweetAlertTitle"] = "Error";
+                    TempData["SweetAlertMessage"] = "Por favor, complete todos los campos obligatorios con *.";
+                    TempData["EstadoAlerta"] = "false";
+                    return RedirectToAction("Index");
+                }
                 var productos = await _client.GetProductoAsync();
 
-                // Normalizar el nombre del producto para la comparación
-                string Normalize(string input) => input?.ToLowerInvariant().Replace(" ", "");
+                string Normalize(string? input)
+                {
+                    if (input == null)
+                    {
+                        return string.Empty; // O cualquier otro valor predeterminado que desees
+                    }
+
+                    return input.ToLowerInvariant().Replace(" ", "");
+                }
 
                 var normalizedProductoNombre = Normalize(producto.NombreProducto);
-                // Buscar productos que coincidan pero ignorar el producto actual por su ID
                 var productExist = productos.FirstOrDefault(p =>
-                    p.ProductoId != producto.ProductoId && // Ignorar el mismo producto por ID
+                    p.ProductoId != producto.ProductoId &&
                     Normalize(p.NombreProducto) == normalizedProductoNombre &&
                     p.PresentacionId == producto.PresentacionId &&
-                    p.ProductoId == producto.ProductoId &&
                     p.CategoriaId == producto.CategoriaId);
-
 
                 if (productExist != null)
                 {
@@ -416,86 +411,6 @@ namespace VistaNewProject.Controllers
             return false; // No tiene detalles asociados
         }
 
-        [HttpPost]
-        public async Task<IActionResult> RedondearPrecios(int id)
-        {
-            try
-            {
-                var producto = await _client.FindProductoAsync(id);
-
-                if (producto == null)
-                {
-                    TempData["SweetAlertIcon"] = "error";
-                    TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "El producto no existe.";
-                    TempData["Tiempo"] = 3000;
-                    return RedirectToAction("Index");
-                }
-
-                var lotes = await _client.GetLoteAsync();
-                var lotesFiltrados = lotes
-                    .Where(u => u.ProductoId == producto.ProductoId && u.Cantidad > 0 && u.EstadoLote == 1)
-                    .ToList();
-                if (lotesFiltrados.Any())
-                {
-                    decimal? precioPorPresentacionRedondeado;
-                    decimal? sumaPrecioPorPresentacion = lotesFiltrados.Sum(l => l.PrecioPorPresentacion);
-                    decimal? precioPorUnidadDeProductoRedondeado;
-                    decimal? sumaPrecioPorUnidadDeProducto = lotesFiltrados.Sum(l => l.PrecioPorUnidadProducto);
-
-                    if (sumaPrecioPorPresentacion != null)
-                    {
-                        precioPorPresentacionRedondeado = Math.Round((decimal)(sumaPrecioPorPresentacion / lotesFiltrados.Count));
-                        precioPorUnidadDeProductoRedondeado = Math.Round((decimal)(sumaPrecioPorUnidadDeProducto / lotesFiltrados.Count));
-                    }
-                    else
-                    {
-                        precioPorUnidadDeProductoRedondeado = 0;
-                        precioPorPresentacionRedondeado = 0; // O el valor por defecto que desees
-                    }
-
-                    TempData["SweetAlertIconAct"] = "info";
-                    TempData["SweetAlertTitleAct"] = "¡Atencion!";  
-                    TempData["SweetAlertMessageAct"] = $"El precio por producto será: {precioPorPresentacionRedondeado}. El precio por unidad de producto será: {precioPorUnidadDeProductoRedondeado}";
-                    TempData["SweetAlertContenedor"] = @"
-                        <div class=""contenedor-detalle-producto"">
-                            <h4>Detalle del Producto</h4>
-                            <div>
-                                <label class=""detalle-label"" for=""precioProducto"">Precio por Producto:</label>
-                                <input type=""text"" value=""" + precioPorPresentacionRedondeado + @""" id=""precioProducto"" name=""precioProducto"" class=""detalle-input form-control"">
-                            </div>
-                            <div>
-                                <label class=""detalle-label"" for=""precioUnidad"">Precio por Unidad de Producto:</label>
-                                <input type=""text"" value=""" + precioPorUnidadDeProductoRedondeado + @""" id=""precioUnidad"" name=""precioUnidad"" class=""detalle-input form-control"">
-                            </div>
-                        </div>";
-                    TempData["TiempoAct"] = 20000;
-                    TempData["EstadoAlertaAct"] = "true";
-                    Console.WriteLine(precioPorPresentacionRedondeado);
-                    Console.WriteLine(precioPorUnidadDeProductoRedondeado);
-                    return RedirectToAction("Details", "Productos", new { id = id });
-                }else
-                {
-                    TempData["SweetAlertIcon"] = "warning";
-                    TempData["SweetAlertTitle"] = "Advertencia";
-                    TempData["SweetAlertMessage"] = "El producto no tiene lotes válidos para calcular precios redondeados.";
-                    TempData["Tiempo"] = 3000;
-
-                    Console.WriteLine("fail");
-
-                    return RedirectToAction("Details", "Productos", new { id = id });
-
-                }
-            }
-            catch (Exception ex)
-            {
-                // Log the exception (consider using a logging framework)
-                Console.WriteLine($"An error occurred: {ex.Message}");
-                // Return a 500 Internal Server Error response with the error message
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
         [HttpPatch("Productos/UpdateEstadoProducto/{id}")]
         public async Task<IActionResult> CambiarEstadoProducto(int id)
         {
@@ -520,7 +435,105 @@ namespace VistaNewProject.Controllers
                 return StatusCode(500, $"Error al actualizar el estado del producto: {ex.Message}");
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> RedondearPrecios(int id)
+        {
+            try
+            {
+                var producto = await _client.FindProductoAsync(id);
 
+                if (producto == null)
+                {
+                    MensajeSweetAlert("error", "Error", "El producto no existe.", "false",null);
+                    return RedirectToAction("Index");
+                }
+
+                var lotes = await _client.GetLoteAsync();
+                var lotesFiltrados = lotes
+                    .Where(u => u.ProductoId == producto.ProductoId && u.Cantidad > 0 && u.EstadoLote == 1)
+                    .ToList();
+                if (lotesFiltrados.Any())
+                {
+                    decimal? precioPorPresentacionRedondeado;
+                    decimal? sumaPrecioPorPresentacion = lotesFiltrados.Sum(l => l.PrecioPorPresentacion);
+                    decimal? precioPorUnidadDeProductoRedondeado;
+                    decimal? sumaPrecioPorUnidadDeProducto = lotesFiltrados.Sum(l => l.PrecioPorUnidadProducto);
+
+                    if (sumaPrecioPorPresentacion != null && sumaPrecioPorPresentacion.HasValue && lotesFiltrados.Count > 0)
+                    {
+                        precioPorPresentacionRedondeado = Math.Round((decimal)(sumaPrecioPorPresentacion.Value / lotesFiltrados.Count));
+                    }
+                    else
+                    {
+                        precioPorPresentacionRedondeado = 0; // O el valor por defecto que desees
+                    }
+
+                    if (sumaPrecioPorUnidadDeProducto != null && sumaPrecioPorUnidadDeProducto.HasValue && lotesFiltrados.Count > 0)
+                    {
+                        precioPorUnidadDeProductoRedondeado = Math.Round((decimal)(sumaPrecioPorUnidadDeProducto.Value / lotesFiltrados.Count));
+                    }
+                    else
+                    {
+                        precioPorUnidadDeProductoRedondeado = 0; // O el valor por defecto que desees
+                    }
+
+                    TempData["Producto"] = producto.ProductoId;
+                    TempData["SweetAlertIconAct"] = "info";
+                    TempData["SweetAlertTitleAct"] = "¡Atencion!";
+                    TempData["SweetAlertMessageAct"] = "Valor Producto"; // Nuevo TempData para el mensaje
+                    TempData["PrecioPorPresentacionRedondeado"] = precioPorPresentacionRedondeado?.ToString(); // Convertir a string
+                    TempData["PrecioPorUnidadDeProductoRedondeado"] = precioPorUnidadDeProductoRedondeado?.ToString();
+                    TempData["TiempoAct"] = 20000;
+                    TempData["EstadoAlertaAct"] = "true";
+                    Console.WriteLine(precioPorPresentacionRedondeado);
+                    Console.WriteLine(precioPorUnidadDeProductoRedondeado);
+                    return RedirectToAction("Details", "Productos", new { id = id });
+
+
+                }
+                else
+                {
+                    TempData["SweetAlertIcon"] = "warning";
+                    TempData["SweetAlertTitle"] = "Advertencia";
+                    TempData["SweetAlertMessage"] = "El producto no tiene lotes válidos para calcular precios redondeados.";
+                    TempData["Tiempo"] = 3000;
+
+
+                    return RedirectToAction("Details", "Productos", new { id = id });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (consider using a logging framework)
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                // Return a 500 Internal Server Error response with the error message
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        //Pendiente
+        //[HttpPost]
+        //public async Task<IActionResult> CambiarPrecios(int id, decimal precioProducto, decimal precioUnidad)
+        //{
+        //    try
+        //    {
+        //        Console.WriteLine(precioProducto);
+        //        Console.WriteLine(precioProducto + 3444444444444);
+        //        // Aquí puedes utilizar el ID y los precios recibidos para realizar las operaciones necesarias
+
+        //        // Redireccionar a alguna acción después de procesar los datos
+        //        return RedirectToAction("Index");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Puedes registrar la excepción o mostrar detalles en un mensaje de error
+        //        Console.WriteLine($"Ocurrió una excepción: {ex.Message}");
+
+        //        // Puedes redirigir a una vista de error o mostrar un mensaje de error
+        //        return RedirectToAction("Error");
+        //    }
+
+        //}
 
         private void SetTempData(string icon, string title, string message)
         {
@@ -529,6 +542,17 @@ namespace VistaNewProject.Controllers
             TempData["SweetAlertMessage"] = message;
             TempData["Tiempo"] = 3000;
             TempData["EstadoAlerta"] = "false";
+        }
+
+        private void MensajeSweetAlert(string icon, string title, string message, string estado ,int ? tiempo)
+        {
+            TempData["SweetAlertIcon"] = icon;
+            TempData["SweetAlertTitle"] = title;
+            TempData["SweetAlertMessage"] = message; 
+            TempData["EstadoAlerta"] = estado;
+            TempData["Tiempo"] = tiempo.HasValue ? tiempo.Value:3000;
+            TempData["EstadoAlerta"] = "false";
+
         }
 
 

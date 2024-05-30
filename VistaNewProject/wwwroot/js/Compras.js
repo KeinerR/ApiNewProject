@@ -227,7 +227,7 @@ function mostrarAlerta(campo) {
     Swal.fire({
         position: "center",
         icon: 'warning',
-        title: '¡Atención!',
+        title: '\u00A1Atenci\u00F3n!',
         html: `<p>Completa el campo: ${campo}.</p>`,
         showConfirmButton: false,
         timer: 6000

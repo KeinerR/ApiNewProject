@@ -17,7 +17,7 @@
             </form>
         </div>
         <!-- Botón para abrir el modal -->
-        <button type="button" id="botonAbrirModal" onclick="simularClickProducto(); obtenerDatosProductos();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalProducto">
+        <button type="button" onclick="simularClickProducto(); obtenerDatosProductos();" id="botonabrirModalProducto" class="btn btn-primary botonAbrirModal" data-bs-toggle="modal" data-bs-target="#ModalProducto">
            <i class="fas fa-plus-circle"></i>  Agregar Producto
         </button>
     </div>
@@ -134,6 +134,7 @@
                             </div>
                         </div>
                             <div class="MensajeInicial"></div>
+                            <div class="MensajeErrores"></div>
                             <div class="modal-contenedor-footer">
                                 <button type="reset" class="btn btn-secondary" onclick="limpiarFormularioProductoAgregar();">Cancelar</button>
                                 <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
@@ -153,7 +154,7 @@
                         </div>
                     </div>
                     <div class="modal-cuerpo">
-                        <form asp-controller="Productos" asp-action="Update" class="modal-formulario-actualizar" method="post">
+                        <form asp-controller="Productos" asp-action="Update" class="modal-formulario-actualizar-producto" method="post">
                             <input id="ProductoIdAct" type="hidden" name="productoId" class="form-control" />
                             <input id="CantidadTotalAct" type="hidden" value="0" name="cantidadTotal" class="form-control" />
                             <div class="row">
@@ -254,6 +255,7 @@
                             
                             </div>
                             <div class="MensajeInicial"></div>
+                            <div class="MensajeErrores"></div>
                             <div class="modal-contenedor-footer">
                                 <button type="reset" onclick="limpiarFormularioProducto();" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                                 <button type="submit" class="btn btn-primary" id="btnGuardar">Actualizar</button>
@@ -395,12 +397,12 @@
 
                             <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                             <td class="botonesTabla">
-                                <button class="btn botonEditar" onclick="mostrarModalConRetraso(@producto.ProductoId);"><i class="fas fa-edit"></i></button>
+                                <button class="btn botonEditar" onclick="mostrarModalConRetrasoProducto(@producto.ProductoId);"><i class="fas fa-edit"></i></button>
                                 <a asp-action="Details" asp-controller="Productos" asp-route-id="@producto.ProductoId" class="btn botonDetalle"><i class="fas fa-file"></i></a>
                                 <form asp-controller="Productos" asp-action="Delete" method="post" class="delete-form" id="botonTrash">
-                                        <input type="hidden" value="@producto.ProductoId" name="productoId"/>
-                                        <button type="submit"  value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
-                                    </form>
+                                    <input type="hidden" value="@producto.ProductoId" name="productoId" />
+                                    <button type="submit" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                </form>
                             </td>
                         </tr>
                         contadorB++;

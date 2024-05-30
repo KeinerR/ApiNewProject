@@ -1,25 +1,4 @@
-﻿var usuarios = []; // Inicializamos la variable usuarios como un objeto vacío
-
-// Obtener usuarios al dar click en agregar usuario
-function obtenerDatosUsuarios() {
-    fetch('/Usuarios/FindUsuarios', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-        .then(response => response.json())
-        .then(data => {
-            productos = data;
-            console.log(productos);
-        })
-        .catch(error => console.error('Error al obtener los usuarios:', error));
-}
-
-
-
-/*------------------------------------- Al cargar la vista ------------------------------------------------------------------------------------------ */
-
+﻿/*------------------------------------- Al cargar la vista ------------------------------------------------------------------------------------------ */
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const mostrarAlerta = urlParams.get('mostrarAlerta');
@@ -43,6 +22,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
     $('.modal-formulario-actualizar-usuario').on('submit', function (event) {
+        event.preventDefault();
+
         if (!NoCamposVaciosAct()) {
             event.preventDefault();
         } else {
@@ -500,6 +481,17 @@ function showNoRolesAlert() {
 }
 
 /*------------------------ Validaciones---------------*/
+//Funciones para mostrar alerta
+function mostrarAlerta(campo) {
+    Swal.fire({
+        position: "center",
+        icon: 'warning',
+        title: '¡Atención!',
+        html: `<p>Completa el campo: ${campo}.</p>`,
+        showConfirmButton: false,
+        timer: 6000
+    });
+}
 function validarCampoUsuario(campo) {
     const input = $(campo); // Convertir el input a objeto jQuery
     var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final

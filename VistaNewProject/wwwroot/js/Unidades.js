@@ -16,12 +16,12 @@ function limpiarFormulario() {
 }
 
 // Cerrar la modal cuando se hace clic fuera de ella
-$('.modal').on('click', function (e) {
-    if (e.target === this) {
-        limpiarFormulario(); // Limpia el formulario si se hace clic fuera de la modal
-        $(this).modal('hide'); // Oculta la modal
-    }
-});
+//$('.modal').on('click', function (e) {
+//    if (e.target === this) {
+//        limpiarFormulario(); // Limpia el formulario si se hace clic fuera de la modal
+//        $(this).modal('hide'); // Oculta la modal
+//    }
+//});
 
 
 

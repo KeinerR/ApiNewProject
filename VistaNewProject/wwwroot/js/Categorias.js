@@ -98,26 +98,26 @@ function NoCamposVaciosAct() {
     });
 }
 
-function limpiarFormulario() {
-    // Limpiar los valores de los campos del formulario
-    $('#CategoriaId, #NombreCategoria, #EstadoCategoria, #CategoriaIdAct, #NombreCategoriaAct, #EstadoCategoriaAct').val('');
+//function limpiarFormulario() {
+//    // Limpiar los valores de los campos del formulario
+//    $('#CategoriaId, #NombreCategoria, #EstadoCategoria, #CategoriaIdAct, #NombreCategoriaAct, #EstadoCategoriaAct').val('');
 
-    // Restaurar mensajes de error
-    $('.Mensaje, .MensajeAct').text(' *');
-    $('.Mensaje, .MensajeAct').show(); // Mostrar mensajes de error
+//    // Restaurar mensajes de error
+//    $('.Mensaje, .MensajeAct').text(' *');
+//    $('.Mensaje, .MensajeAct').show(); // Mostrar mensajes de error
 
-    $('.text-danger, .text-dangerAct').text(''); // Limpiar mensajes de error
-    $('#CategoriaAgregar').show();
-    $('#FormActualizarCategoria').hide();
-}
+//    $('.text-danger, .text-dangerAct').text(''); // Limpiar mensajes de error
+//    $('#CategoriaAgregar').show();
+//    $('#FormActualizarCategoria').hide();
+//}
 
 
-$('.modal').on('click', function (e) {
-    if (e.target === this) {
-        limpiarFormulario(); // Limpia el formulario si se hace clic fuera de la modal
-        $(this).modal('hide'); // Oculta la modal
-    }
-});
+//$('.modal').on('click', function (e) {
+//    if (e.target === this) {
+//        limpiarFormulario(); // Limpia el formulario si se hace clic fuera de la modal
+//        $(this).modal('hide'); // Oculta la modal
+//    }
+//});
 
 function validarCampoCompra(input) {
     var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
