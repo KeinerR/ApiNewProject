@@ -259,9 +259,9 @@ namespace VistaNewProject.Controllers
                 return RedirectToAction("Create", "DetallePedidos");
             }
         }
-        public async Task<IActionResult> Cancelar(bool confirmarCancelacion)
+        public async Task<IActionResult> Cancelar()
         {
-            if (listaGlobalDetalles.Count > 0 && confirmarCancelacion)
+            if (listaGlobalDetalles.Count > 0 )
             {
                 listaGlobalDetalles.Clear();
             }

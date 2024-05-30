@@ -330,16 +330,6 @@ input[type="checkbox"]:checked + .sub-menu {
         position: relative; /* Asegura que el td tenga posición relativa */
         padding: 0; /* Elimina cualquier relleno interno del td */
     }
-
-        .table-custom td > div {
-            width: 100%; /* El div ocupa todo el ancho del td */
-            height: 100%; /* El div ocupa todo el alto del td */
-            display: flex; /* Usa flexbox para alinear elementos dentro del div */
-            align-items: center; /* Centra verticalmente los elementos dentro del div */
-            justify-content: center; /* Centra horizontalmente los elementos dentro del div */
-        }
-
-
     .table-custom thead th {
         background-color: #213b68; /* Color de fondo */
         color: white; /* Color del texto */
@@ -355,8 +345,7 @@ input[type="checkbox"]:checked + .sub-menu {
     }
 
         .table-custom tbody tr:hover {
-            transform: translateY(-1px); /* Levantar 3px al pasar el cursor */
-           
+            transform: translateY(-1px); /* Levantar 3px al pasar el cursor */  
         }
 
   
@@ -370,6 +359,11 @@ input[type="checkbox"]:checked + .sub-menu {
     }
     .table-custom .contenedorEstado{
         width: 50px; /* Establece el ancho deseado */
+    }
+    .table-custom .botonesTablaContenedor {
+        display: flex;
+        gap:5px;
+        justify-content: center;
     }
 
  
@@ -458,8 +452,9 @@ input:checked + .slider:before {
 /*}*/
 
 
-
-
+.botonesTabla i{
+    font-size:20px;
+}
 
 .btn-primary {
     border-radius: 30px; /* Sin bordes redondeados */
@@ -470,40 +465,76 @@ input:checked + .slider:before {
 
     .btn-primary:hover {
         background-color: #6bc7c8; /* Cambio de color al pasar el ratón */
-        color:black;
+        color: black;
     }
-  
-
-
-    /*Colores y diseño  de los Botones de las tablas*/
-.botonesTabla {
-    display: flex;  /*Permite que los botones se posicionen uno al lado del otro*/
-    gap: 4px;    /*Aumenta el espacio entre los botones*/
-}
 
 .botonEliminar {
+    height: 35px;
+    width: 35px;
     background: #DB5461;
     color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centra verticalmente el contenido */
 }
 
 .botonEditar {
+    height: 35px;
+    width: 35px;
     background: #F8D545;
     color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centra verticalmente el contenido */
 }
+    .btn-edit {
+    border: solid #D6B037 1px;
+}
+    .btn-edit:hover {
+        background: #D6B037;
+        color: white;
+    }
 
 .botonDetalle {
+    height: 35px;
+    width: 35px;
     background: #7ACBC4;
     color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centra verticalmente el contenido */
 }
+    .btn-detail {
+        border: solid #5FAFA1 1px;
 
-.select-input {
-    background: #61AFFE;
+    }
+    .btn-detail:hover {
+        background:#5FAFA1;
+        color:white;
+
+    }
+
+.botonEnviarDetalle {
+    margin-left:5px;
+    background: #F8D545;
+    border-radius: 50px;
 }
+    .botonEnviarDetalle:hover {
+        background: #F8D435;
+        border-radius: 50px;
+    }
 
-
-
+.botonVolver {
+    border-radius:50px;
+    color:white;
+    background-color: #213b68;
+}
+    .botonVolver:hover {
+        border-radius: 50px;
+        color: white;
+        background-color: #212b68;
+    }
 /*Estilo de Detalle de compra*/
-
 .detalle-compra {
     border: 1px solid #ccc;
     margin-bottom: 20px;
@@ -589,7 +620,6 @@ input:checked + .slider:before {
     pointer-events: none;
     opacity: 0.6;
 }
-
 
 /* Estilo para el icono de cierre (la "X") dentro de un botón con clase btn-close */
 .btn-close::before {

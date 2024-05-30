@@ -4,6 +4,7 @@
     ViewData["Title"] = "Create";
 }
 
+<div id="vista-domicilio">
 
 <h4 style="text-align:center">Agregar Domicilio</h4>
 <hr />
@@ -72,16 +73,21 @@
             <span asp-validation-for="EstadoDomicilio" class="text-danger"></span>
         </div>
 
-        <div class="col-6  mt-4">
-            <input type="submit" value="AgregarDomicilio" class="btn btn-primary" />
 
-        </div>
+
+            <div class="col-6 mt-4">
+
+               
+                <input type="submit" value="AgregarDomicilio" class="btn btn-primary" />
+
+               
+            </div>
+
+
     </div>
 </form>
 
 
-<div>
-    <a asp-action="Index" asp-controller="Pedidos">Back to List</a>
 </div>
 
 

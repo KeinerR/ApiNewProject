@@ -191,21 +191,11 @@ function actualizarDomi() {
 
 
 
+
 $('#NombreUsuario').on('input', function () {
     clearTimeout(timeout);
     timeout = setTimeout(() => {
-        // Obtener el valor seleccionado del domiciliario
-        var selectedValue = $(this).val();
-
-        // Buscar el ID correspondiente al valor seleccionado en la lista
-        var selectedUserId = $('#usuarioList').find('option[value="' + selectedValue + '"]').attr('data-id');
-
-        // Mostrar el valor seleccionado en la consola
-        console.log("Domiciliario seleccionado:", selectedValue);
-
-        // Asignar el ID del domiciliario al campo oculto
-        $('#UsuarioId').val(selectedUserId);
-        console.log("Id",selectedUserId)
+        seleccionarOpcion(this, document.getElementById('usuarioList'), document.getElementById('UsuarioId'));
     }, 650);
 });
 
@@ -292,12 +282,14 @@ $("#NombreUsuario").on("blur", function () {
 function validarUsuario(nombreUsuario) {
     var nombreUsuarioInput = document.getElementById("NombreUsuario");
     var nombreUsuarioError = document.getElementById("NombreUsuarioId");
+    var usuarioIdInput = document.getElementById("UsuarioId");
+
 
     // Eliminar espacios en blanco al principio y al final del valor
     nombreUsuario = nombreUsuario.trim();
 
-    if (nombreUsuario === "") {
-        mostrarError(nombreUsuarioInput, nombreUsuarioError, "El campo nombre del Domiciliario no puede estar vacío.");
+    if (!usuarioIdInput.value ||nombreUsuario === "" ) {
+        mostrarError(nombreUsuarioInput, nombreUsuarioError, "El Domiciliario no esta  registrado.");
         return false; // Indicar que la validación no pasó
     } else {
         quitarError(nombreUsuarioInput, nombreUsuarioError);
@@ -309,17 +301,17 @@ function validarUsuario(nombreUsuario) {
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    var fechaActual = document.getElementById("FechaEntrega");
-
-    var fechaActualDate = new Date();
-
-    var formateada = fechaActualDate.toISOString().slice(0, 16);
-
-    fechaActual.min = formateada;
-
-    fechaActual.value = formateada;
+    // Verificar si estamos en la vista de domicilio
+    var vistaDomicilio = document.getElementById("vista-domicilio");
+    if (vistaDomicilio) {
+        // Ejecutar el código JavaScript solo si estamos en la vista de domicilio
+        var fechaActual = document.getElementById("FechaEntrega");
+        var fechaActualDate = new Date();
+        var formateada = fechaActualDate.toISOString().slice(0, 16);
+        fechaActual.min = formateada;
+        fechaActual.value = formateada;
+    }
 });
-
 
 
 function validarcamposAct() {

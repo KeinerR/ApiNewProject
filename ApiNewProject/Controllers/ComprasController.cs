@@ -117,19 +117,6 @@ namespace ApiNewProject.Controllers
                                 Cantidad = lote.Cantidad,
                                 EstadoLote = lote.EstadoLote
                             });
-
-                            // Actualizar la cantidad total del producto en la compra
-                            var producto = await _context.Productos.FindAsync(lote.ProductoId);
-                            if (producto != null)
-                            {
-                                producto.CantidadTotal += lote.Cantidad.Value;
-                            }
-                            else
-                            {
-                                // Si el producto no existe, puedes crear uno nuevo o manejar el caso según tus requisitos
-                                // Aquí simplemente lanzaremos una excepción, pero puedes cambiar esto según tus necesidades
-                                throw new InvalidOperationException("El producto no existe.");
-                            }
                         }
                     }
 

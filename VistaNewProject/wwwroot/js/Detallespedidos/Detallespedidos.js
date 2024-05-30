@@ -70,7 +70,6 @@ function validarDetalle(detalle) {
 }
 
 
-
 function enviarDetallePedido(detalle, url) {
     fetch(url, {
         method: "POST",
@@ -88,16 +87,16 @@ function enviarDetallePedido(detalle, url) {
         })
         .then((data) => {
             console.log("Detalle del pedido enviado correctamente:", data.message);
-            // Limpiar los campos después de agregar el detalle
             document.getElementById("ProductoId").value = "";
             document.getElementById("Cantidad").value = "";
             document.getElementById("PrecioUnitario").value = "";
             document.getElementById("UnidadId").value = "";
             document.getElementById("LoteId").value = "";
 
+            document.getElementById("ProductoIdtxt").value = ""; // Limpiar el campo de entrada de texto
+            document.getElementById("ProductoId").value = ""; // Limpiar el campo oculto
 
-
-            mostrarDetallesPedido(); // Actualizar la tabla de detalles
+            mostrarDetallesPedido();
         })
         .catch((error) => {
             console.error("Error al enviar el detalle del pedido al servidor:", error);

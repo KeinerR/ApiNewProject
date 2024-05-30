@@ -225,10 +225,7 @@
                             <input type="radio" name="estado_@item.PedidoId" value="Realizado" onchange="actualizarEstadoPedido('@item.PedidoId', this.value)">
                             <span class="slider" style="background-color: #00215E;"></span>
                         </label>
-                        <label class="switch">
-                            <input type="radio" name="estado_@item.PedidoId" value="Anulado" onchange="actualizarEstadoPedido('@item.PedidoId', this.value)">
-                            <span class="slider" style="background-color: #615E5E;"></span>
-                        </label>
+                     
                     }
                     else if (item.EstadoPedido == "Realizado")
                     {
@@ -246,7 +243,15 @@
              
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
-                    <a asp-action="Details" asp-controller="Pedidos" asp-route-id="@item.PedidoId" class="btn" id="btnDetail"><i class="fa-solid fa-file"></i></a>
+                    <a asp-action="Details" asp-controller="Pedidos" asp-route-id="@item.PedidoId" class="btn botonDetalle"><i class="fa-solid fa-file"></i></a>
+
+
+                    @if (item.EstadoPedido=="Pendiente")
+                    {
+                        <input type="checkbox" name="estado_@item.PedidoId" value="Anulado"  onclick="actualizarEstadoPedido('@item.PedidoId', this.value)" />
+
+                    }
+
                 </td>
             </tr>
         }
@@ -277,10 +282,7 @@
                                     <input type="radio" name="estado_@pedido.PedidoId" value="Realizado" onchange="actualizarEstadoPedido('@pedido.PedidoId', this.value)">
                                     <span class="slider" style="background-color: #00215E;"></span>
                                 </label>
-                                <label class="switch">
-                                    <input type="radio" name="estado_@pedido.PedidoId" value="Anulado" onchange="actualizarEstadoPedido('@pedido.PedidoId', this.value)">
-                                    <span class="slider" style="background-color: #615E5E;"></span>
-                                </label>
+                               
                             }
                             else if (pedido.EstadoPedido == "Realizado")
                             {
@@ -299,7 +301,11 @@
                         <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                         <td>
                             <a asp-action="Details" asp-controller="Pedidos" asp-route-id="@pedido.PedidoId" class="btn" id="btnDetail"><i class="fa-solid fa-file"></i></a>
-                        </td>
+                            <label class="switch">
+                                <input type="checkbox" name="estado_@pedido.PedidoId" value="Anulado" onchange="actualizarEstadoPedido('@pedido.PedidoId', this.value)">
+                                <span class="slider" style="background-color: #615E5E;"></span>
+                            </label>
+                           </td>
                     </tr>
                     contadorDos++;
 

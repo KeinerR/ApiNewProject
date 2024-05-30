@@ -87,20 +87,27 @@ function validarpedido() {
     return validarCliente(cliente);
 }
 
+
+
+
+
 function validarCliente(cliente) {
     var nombreclienteInput = document.getElementById("ClienteIdTxt");
+    var clienteIdInput = document.getElementById("ClienteIdHidden");
     var nombreClienteError = document.getElementById("ClienteIdspan");
 
     cliente = cliente.trim();
 
-    if (cliente === "") {
-        mostrarError(nombreclienteInput, nombreClienteError, "El campo cliente no puede estar vacío.");
+    if (!clienteIdInput.value || cliente === "") {
+        mostrarError(nombreclienteInput, nombreClienteError, "El campo cliente no es el que esta registrardo ");
         return false;
     } else {
         quitarError(nombreclienteInput, nombreClienteError);
     }
+   
     return true;
 }
+
 
 function mostrarError(inputElement, errorElement, errorMessage) {
     inputElement.classList.add("is-invalid");
@@ -112,41 +119,42 @@ function quitarError(inputElement, errorElement) {
     errorElement.textContent = "";
 }
 
-$('#ClienteIdTxt').on('input', function () {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-        var selectedValue = $(this).val();
-        var selectedUserId = $('#clientesList').find('option[value="' + selectedValue + '"]').attr('data-id');
+//$('#ClienteIdTxt').on('input', function () {
+//    clearTimeout(timeout);
+//    timeout = setTimeout(() => {
+//        var selectedValue = $(this).val();
+//        var selectedUserId = $('#clientesList').find('option[value="' + selectedValue + '"]').attr('data-id');
 
-        console.log("cliente seleccionado:", selectedValue);
-        $('#ClienteIdHidden').val(selectedUserId);
-        console.log("Id", selectedUserId)
-    }, 650);
-});
+//        console.log("cliente seleccionado:", selectedValue);
+//        $('#ClienteIdHidden').val(selectedUserId);
+//        console.log("Id", selectedUserId)
+//    }, 650);
+//});
 
 
 document.addEventListener('DOMContentLoaded', function () {
     var fechaPedido = document.getElementById("FechaPedido");
-    var fechaPedidoError = document.getElementById("FechaPedidoerror");
 
     var fechaActual = new Date();
     var formateada = fechaActual.toISOString().slice(0, 16);
 
-    fechaPedido.min = formateada;
 
     fechaPedido.value = formateada;
 
-    fechaPedido.addEventListener('input', function () {
-        var fechaSeleccionada = new Date(fechaPedido.value);
 
-        if (fechaSeleccionada > fechaActual) {
-            mostrarError(fechaPedido, fechaPedidoError, "No se puede seleccionar una fecha posterior a la actual.");
-
-            fechaPedido.classList.add("is-invalid");
-            fechaPedidoError.classList.add("is-invalid");
-        } else {
-            quitarError(fechaPedido, fechaPedidoError);
+    $("#ClienteIdTxt").on("blur", function () {
+        var nombreCliente = $(this).val().trim();  // Obtener el valor del input y eliminar espacios en blanco
+        if (nombreCliente === "") {
+            $("#ClienteIdHidden").val("");  // Limpiar el campo oculto si el campo de texto está vacío
         }
+        validarCliente(nombreCliente);  // Llamar a la función de validación
+    });
+
+    $('#ClienteIdTxt').on('input', function () {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            seleccionarOpcion(this, document.getElementById('clientesList'), document.getElementById('ClienteIdHidden'));
+        }, 650);
     });
 });
 
@@ -202,6 +210,4 @@ function vaciarInput() {
         row.style.display = 'none';
     });
 }
-
-
 

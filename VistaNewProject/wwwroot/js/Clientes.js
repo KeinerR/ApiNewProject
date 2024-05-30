@@ -330,7 +330,7 @@ function validarNombreEntidadAct(nombreEntidadAct) {
         mostrarOcultarError("#MensajeNombreEntidadAct", "El campo Nombre de Entidad solo puede contener letras y espacios entre palabras.");
         return false;
     }
-   
+
 
     mostrarOcultarError("#MensajeNombreEntidadAct"); // Limpiar mensaje de error si pasa todas las validaciones
     return true;
@@ -362,7 +362,7 @@ function validarNombreCompletoAct(nombreCompletoAct) {
         mostrarOcultarError("#MensajeNombreCompletoAct", "El campo Nombre de Completo solo puede contener letras.");
         return false;
     }
-   
+
 
     mostrarOcultarError("#MensajeNombreCompletoAct"); // Limpiar mensaje de error si pasa todas las validaciones
     return true;
@@ -417,7 +417,7 @@ function validarDireccionAct(direccionAct) {
         mostrarOcultarError("#MensajeDireccionAct", "El campo tiene menos de 5 caracteres.");
         return false;
     }
-   
+
 
     mostrarOcultarError("#MensajeDireccionAct"); // Limpiar mensaje de error en el span
     return true;
@@ -440,9 +440,9 @@ function validarCorreoAct(correoAct) {
         return false;
     }
 
-  
 
- 
+
+
     mostrarOcultarError("#MensajeCorreoAct"); // Limpiar mensaje de error si pasa todas las validaciones
     return true;
 }
