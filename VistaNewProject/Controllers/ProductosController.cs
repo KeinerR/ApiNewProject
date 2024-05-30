@@ -26,69 +26,77 @@ namespace VistaNewProject.Controllers
             int pageNumber = page ?? 1;
 
             var productos = await _client.GetProductoAsync();
-
             var presentaciones = await _client.GetPresentacionAsync();
-            var Productos = await _client.GetProductoAsync();
+            var lotes = await _client.GetLoteAsync();
             var categorias = await _client.GetCategoriaAsync();
             var marcas = await _client.GetMarcaAsync();
 
-            // Concatenar nombre DEL PRODUCTO controlador
+            // Calcular cantidad total de lotes por ProductoId y estado activo
+            var cantidadTotalPorProducto = lotes
+                .Where(l => l.EstadoLote == 1) // Filtrar por estado activo
+                .GroupBy(l => l.ProductoId ?? 0) // Convertir ProductoId a int no anulable
+                .ToDictionary(
+                    grp => grp.Key,
+                    grp => grp.Sum(l => l.Cantidad) // Sumar la cantidad de cada grupo
+                );
+
+            Console.WriteLine(cantidadTotalPorProducto);
+            Console.WriteLine("SSSSSS");
+            // Concatenar nombre completo de presentaciones
             foreach (var presentacion in presentaciones)
             {
-                var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId== presentacion.PresentacionId);
-                var nombrepresentacion= presentacionEncontrada != null ? presentacionEncontrada.NombrePresentacion : "Sin nombre";
-                var contenido = presentacionEncontrada != null ? presentacionEncontrada.Contenido : "Sin contennido";
-                var cantidad = presentacionEncontrada != null ? presentacionEncontrada.CantidadPorPresentacion : 0;
+                var nombrePresentacion = presentacion.NombrePresentacion;
+                var contenido = presentacion.Contenido;
+                var cantidad = presentacion.CantidadPorPresentacion ?? 1;
 
-                if (cantidad > 1) {
-                    presentacion.NombreCompleto = $"{nombrepresentacion} x {cantidad} unidades de {contenido}";
-                } else {
-                    presentacion.NombreCompleto = $"{nombrepresentacion} de {contenido}";
-                }
-               
+                presentacion.NombreCompleto = cantidad > 1 ?
+                    $"{nombrePresentacion} x {cantidad} unidades de {contenido}" :
+                    $"{nombrePresentacion} de {contenido}";
             }
-            if (productos == null)
+
+            // Concatenar nombre completo de productos
+            foreach (var producto in productos)
             {
-                return NotFound("error");
-            }
+                // Obtener la cantidad total correspondiente al producto actual
+                if (cantidadTotalPorProducto.TryGetValue(producto.ProductoId, out var cantidadTotal))
+                {
+                    producto.CantidadTotal = cantidadTotal;
+                }
+                else
+                {
+                    // Si no hay cantidad total para este producto, asignar cero o un valor predeterminado según sea necesario
+                    producto.CantidadTotal = 0;
+                }
+                var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
+                var nombrePresentacion = presentacionEncontrada?.NombrePresentacion ?? "Sin presentación";
+                var contenido = presentacionEncontrada?.Contenido ?? "";
+                var cantidad = presentacionEncontrada?.CantidadPorPresentacion ?? 1;
+                var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
+                var nombreMarca = marcaEncontrada?.NombreMarca ?? "Sin marca";
 
+                producto.NombreCompleto = cantidad > 1 ?
+                    $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} {contenido}" :
+                    $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
+
+            }
+            // Paginar resultados
             var pageProducto = await productos.ToPagedListAsync(pageNumber, pageSize);
             if (!pageProducto.Any() && pageProducto.PageNumber > 1)
             {
                 pageProducto = await productos.ToPagedListAsync(pageProducto.PageCount, pageSize);
             }
-            // Concatenar nombre DEL PRODUCTO controlador
-            foreach (var producto in productos)
-            {
-                var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
-                var nombrePresentacion = presentacionEncontrada != null ? presentacionEncontrada.NombrePresentacion : "Sin presentación";
-                var contenido = presentacionEncontrada != null ? presentacionEncontrada.Contenido : "";
-                int cantidad = presentacionEncontrada != null ? presentacionEncontrada.CantidadPorPresentacion ?? 0 : 0;
 
-                var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
-                var nombreMarca = marcaEncontrada != null ? marcaEncontrada.NombreMarca : "Sin marca";
+            // Calcular contador
+            int contador = (pageNumber - 1) * pageSize + 1;
 
-               
-                if (cantidad > 1)
-                {
-                    producto.NombreCompleto = $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} {contenido}";
-                }
-                else {
-                    producto.NombreCompleto = $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca}  de {contenido}"; ;
-                }
-            }
-
-            int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
             ViewBag.Contador = contador;
             ViewBag.Presentaciones = presentaciones;
             ViewBag.Categorias = categorias;
-            ViewBag.Productos = Productos;
+            ViewBag.Productos = productos;
             ViewBag.Marcas = marcas;
-
             ViewData["Productos"] = productos;
-            return View(pageProducto);
-           
 
+            return View(pageProducto);
         }
 
         [HttpPost]

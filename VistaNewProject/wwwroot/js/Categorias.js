@@ -131,7 +131,7 @@ function validarCampoCompra(input) {
 
     // Validar el campo y mostrar mensaje de error si es necesario
     if (valor === '') {
-        spanVacio.text(' *obligatorio');
+        spanVacio.text('*');
         spanError.text('');
     } else if (input.is('#NombreCategoria')) {
         if (valor.length < 3) {
@@ -176,7 +176,7 @@ function validarCampoCompraAct(input) {
 
     // Validar el campo y mostrar mensaje de error si es necesario
     if (valor === '') {
-        spanVacio.text(' *obligatorio');
+        spanVacio.text('*');
         spanError.text('');
     } else if (input.is('#NombreCategoriaAct')) {
         if (valor.length < 3) {

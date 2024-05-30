@@ -122,23 +122,20 @@ document.addEventListener('DOMContentLoaded', function () {
             { id: 'CantidadAplicarPorMayor', nombre: 'Cantidad a superar' },
             { id: 'DescuentoAplicarPorMayor', nombre: 'Descuento por producto' }
         ];
-
-     
+        const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
         if (!NoCamposVacios()) {
             event.preventDefault();
-            mostrarAlertaCampoVacioPersonalizada('Completa todos los campos');
-
         } else if (!NoCamposConErrores()) {
             event.preventDefault();
             mostrarAlertaCampoVacioPersonalizada('Algunos campos contienen errores');
         } else if (productoRepetido !== false) {
             event.preventDefault();
             return;
-        } else if (!verificarCampos(campos, mostrarAlertaCampoVacio)) {
+        } else if (camposVacios != true) {
             return;
         } else {
             datalist = [
-                { id: 'CategoriaId', nombre: 'categoría' },
+                { id: 'CategoriaId', nombre: 'categor\u00EDa' },
                 { id: 'MarcaId', nombre: 'marca' },
                 { id: 'PresentacionId', nombre: 'presentación' }
             ];
@@ -157,29 +154,24 @@ document.addEventListener('DOMContentLoaded', function () {
         const productoFinal = mostrarValoresFormularioProductoAct();
         const productosAll = productos;
         const productoRepetido = compararProductosAct(productoFinal, productosAll);
-
-        console.log(productosAll, productoRepetido, productoFinal);
-
+        campos = [
+            { id: 'NombreCategoriaAct', nombre: 'Categor\u00EDa' },
+            { id: 'NombreProductoAct', nombre: 'Nombre Producto' },
+            { id: 'NombreMarcaAct', nombre: 'Marca' },
+            { id: 'NombrePresentacionAct', nombre: 'Presentaci\u00F3n' },
+            { id: 'CantidadAplicarPorMayorAct', nombre: 'Cantidad a superar' },
+            { id: 'DescuentoAplicarPorMayorAct', nombre: 'Descuento por producto' }
+        ];
+        const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
         if (!NoCamposVaciosAct()) {
             event.preventDefault();
-
-            campos = [
-                { id: 'NombreCategoriaAct', nombre: 'Categoría' },
-                { id: 'NombreProductoAct', nombre: 'Nombre Producto' },
-                { id: 'NombreMarcaAct', nombre: 'Marca' },
-                { id: 'NombrePresentacionAct', nombre: 'Presentación' },
-                { id: 'CantidadAplicarPorMayorAct', nombre: 'Cantidad a superar' },
-                { id: 'DescuentoAplicarPorMayorAct', nombre: 'Descuento por producto' }
-            ];
-
-            if (!verificarCampos(campos, mostrarAlertaCampoVacio)) {
-                return;
-            }
         } else if (!NoCamposConErroresAct()) {
             event.preventDefault();
             mostrarAlertaCampoVacioPersonalizada('Algunos campos contienen errores');
         } else if (productoRepetido !== false) {
             event.preventDefault();
+            return;
+        } else if (camposVacios != true) {
             return;
         } else {
             datalist = [
@@ -236,60 +228,66 @@ document.addEventListener('DOMContentLoaded', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
             seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaId'));
-        }, 650);
+        }, 590);
     });
 
     $('#NombreCategoria').on('input', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
             seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaId'));
-        }, 650);
+        }, 590);
     });
 
     $('#NombrePresentacion').on('input', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
             seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionId'));
-        }, 600);
+        }, 590);
     });
 
     $('#NombreMarcaAct').on('input', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
             seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaIdAct'));
-        }, 650);
+        }, 590);
     });
 
     $('#NombreCategoriaAct').on('input', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
             seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaIdAct'));
-        }, 650);
+        }, 590);
     });
 
     $('#NombrePresentacionAct').on('input', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
             seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'));
-        }, 650);
+        }, 590);
     });
 
 
     function NoCamposVacios() {
         const mensajeElements = $('.Mensaje');
         const mensajeSlice = mensajeElements.slice(0, 6);
-        const todosLlenos = mensajeSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
+        const camposConTexto = mensajeSlice.filter(function () {
+            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
+        }).length;
 
-        console.log('Todos los campos están llenos:', todosLlenos);
+        console.log('Número de campos con texto:', camposConTexto);
 
-        if (!todosLlenos) {
+        if (camposConTexto === 4 || camposConTexto === 6) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaCampoVacioPersonalizada('Completa todos los campos');
+            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+            return false;
+        }else if (camposConTexto !== 4 && camposConTexto !== 6 && camposConTexto !== 0) {
             $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
             return false;
         }
+
         return true;
-    }
+    } 
+
     function NoCamposConErrores() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(0, 6);
@@ -311,13 +309,17 @@ document.addEventListener('DOMContentLoaded', function () {
         const mensajeSlice = mensajeElements.slice(-6);
      
 
-        const todosLlenos = mensajeSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
+        const camposConTexto = mensajeSlice.filter(function () {
+            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
+        }).length;
      
-        console.log('Todos los campos están llenos:', todosLlenos);
+        console.log('Número de campos con texto:', camposConTexto);
 
-        if (!todosLlenos) {
+        if (camposConTexto === 4 || camposConTexto === 6) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaCampoVacioPersonalizada('Completa todos los campos');
+            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+            return false;
+        } else if (camposConTexto !== 4 && camposConTexto !== 6 && camposConTexto !== 0) {
             $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
             return false;
         }
@@ -418,7 +420,6 @@ document.addEventListener('keydown', function (event) {
     if (event.ctrlKey && event.key === 'm' && esURLValida('Productos')) {
         // Ejecutar la función que deseas al presionar Ctrl + m y la URL es válida
         abrirModalProducto();
-        console.log('here');
     }
 });
 
@@ -609,7 +610,7 @@ function mostrarModalSinRetrasoProducto(productoId) {
 
         var myModal = new bootstrap.Modal(document.getElementById('ModalProducto'));
         myModal.show();
-    }, 10000); // 40 milisegundos de retraso antes de abrir la modal
+    }, 400); // 40 milisegundos de retraso antes de abrir la modal
 }
 
 function actualizarProducto(campo) {

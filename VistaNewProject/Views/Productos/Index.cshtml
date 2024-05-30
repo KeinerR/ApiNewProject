@@ -348,12 +348,14 @@
                     </td>
                     <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                     <td class="botonesTabla">
-                            <button class="btn botonEditar" onclick="mostrarModalConRetrasoProducto(@item.ProductoId);"><i class="fas fa-edit"></i></button>
-                            <a asp-action="Details" asp-controller="Productos" asp-route-id="@item.ProductoId" class="btn botonDetalle"><i class="fas fa-file"></i></a>
-                        <form asp-controller="Productos" asp-action="Delete" method="post" class="delete-form" id="botonTrash">
-                            <input type="hidden" value="@item.ProductoId" name="productoId" />
-                            <button type="submit"  value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
-                        </form>
+                        <div class="botonesTablaContenedor">
+                            <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoProducto(@item.ProductoId);"><i class="fas fa-edit"></i></button>
+                            <a asp-action="Details" asp-controller="Productos" asp-route-id="@item.ProductoId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
+                            <form asp-controller="Productos" asp-action="Delete" method="post">
+                                <input type="hidden" value="@item.ProductoId" name="productoId" />
+                                <button type="submit" value="" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             }@{
@@ -397,12 +399,14 @@
 
                             <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                             <td class="botonesTabla">
-                                <button class="btn botonEditar" onclick="mostrarModalConRetrasoProducto(@producto.ProductoId);"><i class="fas fa-edit"></i></button>
-                                <a asp-action="Details" asp-controller="Productos" asp-route-id="@producto.ProductoId" class="btn botonDetalle"><i class="fas fa-file"></i></a>
-                                <form asp-controller="Productos" asp-action="Delete" method="post" class="delete-form" id="botonTrash">
-                                    <input type="hidden" value="@producto.ProductoId" name="productoId" />
-                                    <button type="submit" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
-                                </form>
+                                <div class="botonesTablaContenedor">
+                                    <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoProducto(@producto.ProductoId);"><i class="fas fa-edit"></i></button>
+                                    <a asp-action="Details" asp-controller="Productos" asp-route-id="@producto.ProductoId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
+                                    <form asp-controller="Productos" asp-action="Delete" method="post">
+                                        <input type="hidden" value="@producto.ProductoId" name="productoId" />
+                                        <button type="submit" value="" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         contadorB++;
