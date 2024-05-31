@@ -41,7 +41,6 @@ namespace VistaNewProject.Controllers
                 );
 
             Console.WriteLine(cantidadTotalPorProducto);
-            Console.WriteLine("SSSSSS");
             // Concatenar nombre completo de presentaciones
             foreach (var presentacion in presentaciones)
             {

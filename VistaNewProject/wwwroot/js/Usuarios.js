@@ -493,51 +493,7 @@ function abrirModalUsuario() {
 
 /*------------------------------ Limpiar formularios y url ---------------------------------------------------------------------------------------------------- */
 
-function limpiarFormularioUsuario() {
-    history.replaceState(null, '', location.pathname);
-    // Limpiar campos y elementos específicos
-    limpiarCampo('NombreRol');
-    limpiarCampo('RolId');
-    limpiarCampo('Nombre');
-    limpiarCampo('Apellido');
-    limpiarCampo('Usuario');
-    limpiarCampo('Contraseña');
-    limpiarCampo('RepetirContraseña');
-    limpiarCampo('Telefono');
-    limpiarCampo('CorreoUsuario');
 
-    // Limpiar campos y elementos específicos de la versión actualizada
-    limpiarCampo('UsuarioIdAct');
-    limpiarCampo('NombreRolAct');
-    limpiarCampo('RolIdAct');
-    limpiarCampo('NombreAct');
-    limpiarCampo('ApellidoAct');
-    limpiarCampo('ContraseñaAct');
-    limpiarCampo('TelefonoAct');
-    limpiarCampo('CorreoUsuarioAct');
-
-    // Limpiar mensajes de alerta y *
-    var mensajes = document.querySelectorAll('.Mensaje');
-    var mensajesText = document.querySelectorAll('.text-danger');
-
-    for (var i = Math.max(0, mensajes.length - 7); i < mensajes.length; i++) {
-        mensajes[i].textContent = '';
-    }
-    for (var i = 0; i < mensajes.length - 7; i++) {
-        mensajes[i].textContent = '*';
-    }
-    for (var i = 0; i < mensajesText.length; i++) {
-        mensajesText[i].textContent = '';
-    }
-
-    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
-        element.textContent = '';
-    });
-    document.querySelectorAll('.MensaErrores').forEach(function (element) {
-        element.textContent = '';
-    });
- 
-}
 function limpiarFormularioUsuarioAgregar() {
     history.replaceState(null, '', location.pathname);
     // Limpiar mensajes de alerta y *
@@ -558,7 +514,6 @@ function limpiarFormularioUsuarioAgregar() {
         element.textContent = '';
     });
 }
-
 function limpiarFormularioUsuarioAct() {
     history.replaceState(null, '', location.pathname);
     document.querySelectorAll('.MensajeInicial').forEach(function (element) {
@@ -583,6 +538,32 @@ function limpiarFormularioUsuarioAct() {
     }); 
 
 }
+function limpiarFormularioUsuario() {
+    history.replaceState(null, '', location.pathname);
+    // Limpiar campos y elementos específicos
+    limpiarCampo('NombreRol');
+    limpiarCampo('RolId');
+    limpiarCampo('Nombre');
+    limpiarCampo('Apellido');
+    limpiarCampo('Usuario');
+    limpiarCampo('Contraseña');
+    limpiarCampo('RepetirContraseña');
+    limpiarCampo('Telefono');
+    limpiarCampo('CorreoUsuario');
+
+    // Limpiar campos y elementos específicos de la versión actualizada
+    limpiarCampo('UsuarioIdAct');
+    limpiarCampo('NombreRolAct');
+    limpiarCampo('RolIdAct');
+    limpiarCampo('NombreAct');
+    limpiarCampo('ApellidoAct');
+    limpiarCampo('ContraseñaAct');
+    limpiarCampo('TelefonoUsuarioAct');
+    limpiarCampo('CorreoUsuarioAct');
+    limpiarFormularioUsuarioAgregar();
+    limpiarFormularioUsuarioAct();
+}
+
 
 //Función para limpiar la url si el usuario da fuera de ella 
 $('.modal').on('click', function (e) {
