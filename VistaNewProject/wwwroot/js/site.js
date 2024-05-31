@@ -150,6 +150,7 @@ function mostrarAlertaDataList(campo) {
 
     });
 }
+//Funciones para mostrar alerta
 
 
 // Función general para mostrar el Sweet Alert si no hay opciones disponibles
@@ -166,7 +167,6 @@ function showAlertIfNoOptions(elementId, alertTitle, alertText) {
     }
 }
 
-
 function mostrarAlertaCampoVacio(campo) {
     Swal.fire({
         position: "center",
@@ -177,6 +177,17 @@ function mostrarAlertaCampoVacio(campo) {
         timer: 6000
     });
 }
+function mostrarAlerta(campo) {
+    Swal.fire({
+        position: "center",
+        icon: 'warning',
+        title: '¡Atención!',
+        html: `<p>Completa el campo: ${campo}.</p>`,
+        showConfirmButton: false,
+        timer: 6000
+    });
+}
+
 function mostrarAlertaCampoVacioPersonalizada(mensaje) {
     Swal.fire({
         position: "center",
@@ -185,6 +196,15 @@ function mostrarAlertaCampoVacioPersonalizada(mensaje) {
         html: `<p>${mensaje}</p>`,
         showConfirmButton: false,
         timer: 6000
+    });
+}
+function mostrarAlertaAtencionPersonalizadaConBoton(mensaje) {
+    Swal.fire({
+        position: "center",
+        icon: 'warning',
+        title: '\u00A1Atención!',
+        html: `<p>${mensaje}</p>`,
+        showConfirmButton: true
     });
 }
 
@@ -199,6 +219,11 @@ window.verificarCampos = function (lista, mostrarAlerta) {
         }
     }
     return true;
+}
+window.esURLValida = function (parametro) {
+    var urlActual = window.location.href;
+    // Verificar si la URL contiene el parámetro deseado
+    return urlActual.includes(parametro);
 }
 
 function obtenerValoresFormulario(ids) {
@@ -236,6 +261,8 @@ function editarFuncion() {
         console.log(p, u);
     }
 }
+
+
 
 
 

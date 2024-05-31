@@ -152,8 +152,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         
     });
-
-    // Event handler para el formulario de actualización
     $('.modal-formulario-actualizar-producto').on('submit', function (event) {
         const productoFinal = mostrarValoresFormularioProductoAct();
         const productosAll = productos;
@@ -202,8 +200,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
     });
-
-    
 
     // Confirmación de eliminación
     $('.eliminarProducto').on('submit', function (event) {
@@ -453,16 +449,6 @@ document.addEventListener('keydown', function (event) {
         }
     }
 });
-
-// Función para verificar si la URL actual es válida para el parámetro especificado
-function esURLValida(parametro) {
-    var urlActual = window.location.href;
-    // Verificar si la URL contiene el parámetro deseado
-    return urlActual.includes(parametro);
-}
-
-
-
 
 
 /*------------------------------ Limpiar formularios y url ---------------------------------------------------------------------------------------------------- */

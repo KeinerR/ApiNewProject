@@ -50,19 +50,19 @@ function compararUsuarios(nuevoUsuario, usuariosExistentes) {
     });
 
     if (usuariosDuplicados.length > 0) {
-        MostrarAlertaPersonalizada(`Ya existe un usuario registrado con los mismos nombre y apellido, Usuario ID: ${usuariosDuplicados.join(', ')}`);
+        mostrarAlertaAtencionPersonalizadaConBoton(`Ya existe un usuario registrado con los mismos nombre y apellido, Usuario ID: ${usuariosDuplicados.join(', ')}`);
         return true; // Se encontraron coincidencias
     }
     if (telefonoDuplicado.length > 0) {
-        MostrarAlertaPersonalizada(`Ya existe un usuario registrado con el número de teléfono, Usuario ID: ${telefonoDuplicado.join(', ')}`);
+        mostrarAlertaAtencionPersonalizadaConBoton(`Ya existe un usuario registrado con el número de teléfono, Usuario ID: ${telefonoDuplicado.join(', ')}`);
         return true; // Se encontraron coincidencias
     }
     if (correoDuplicado.length > 0) {
-        MostrarAlertaPersonalizada(`Ya existe un usuario registrado con el correo electrónico, Usuario ID: ${correoDuplicado.join(', ')}`);
+        mostrarAlertaAtencionPersonalizadaConBoton(`Ya existe un usuario registrado con el correo electrónico, Usuario ID: ${correoDuplicado.join(', ')}`);
         return true; // Se encontraron coincidencias
     }
     if (usuarioDuplicado.length > 0) {
-        MostrarAlertaPersonalizada(`Ya existe un usuario registrado con el nombre de usuario, Usuario ID: ${usuarioDuplicado.join(', ')}`);
+        mostrarAlertaAtencionPersonalizadaConBoton(`Ya existe un usuario registrado con el nombre de usuario, Usuario ID: ${usuarioDuplicado.join(', ')}`);
         return true; // Se encontraron coincidencias
     }
 
@@ -71,11 +71,11 @@ function compararUsuarios(nuevoUsuario, usuariosExistentes) {
 
 // Función para comparar productos durante la actualización
 function compararUsuariosAct(nuevoUsuario, usuariosExistentes) {
-    const nombreUsuarioNormalizado = normalizar(nuevoUsuario.Nombre || '');
-    const apellidoUsuarioNormalizado = normalizar(nuevoUsuario.Apellido || '');
-    const telefonoUsuario = nuevoUsuario.TelefonoUsuario || '';
-    const correoUsuario = normalizar(nuevoUsuario.CorreoUsuario || '');
-    const usuarioAcesso = normalizar(nuevoUsuario.Usuario || '');
+    const nombreUsuarioNormalizado = normalizar(nuevoUsuario.NombreAct || '');
+    const apellidoUsuarioNormalizado = normalizar(nuevoUsuario.ApellidoAct || '');
+    const telefonoUsuario = nuevoUsuario.TelefonoUsuarioAct || '';
+    const correoUsuario = normalizar(nuevoUsuario.CorreoUsuarioAct || '');
+    const usuarioAcesso = normalizar(nuevoUsuario.UsuarioAct || '');
 
     const usuariosDuplicados = [];
     const telefonoDuplicado = [];
@@ -89,37 +89,55 @@ function compararUsuariosAct(nuevoUsuario, usuariosExistentes) {
         const correoExistente = normalizar(usuarioExistente.correo || '');
         const usuarioAcessoExistente = normalizar(usuarioExistente.usuario1 || '');
         const correoDefault = normalizar('correo@gmail.com');
-        if (
-            nombreUsuarioNormalizado === nombreUsuarioExistenteNormalizado &&
+        if (nombreUsuarioNormalizado === nombreUsuarioExistenteNormalizado &&
             apellidoUsuarioNormalizado === apellidoUsuarioExistenteNormalizado
         ) {
-            usuariosDuplicados.push(usuarioExistente.usuarioId);
+            if (usuarioExistente.usuarioId == nuevoUsuario.UsuarioIdAct) {
+                return false; // No es un duplicado si es el mismo usuario
+            } else {
+                usuariosDuplicados.push(usuarioExistente.usuarioId);
+            }
         }
+
         if (telefonoUsuario && telefonoUsuario === telefonoExistente) {
-            telefonoDuplicado.push(usuarioExistente.usuarioId);
+            if (usuarioExistente.usuarioId == nuevoUsuario.UsuarioIdAct) {
+                return false; // No es un duplicado si es el mismo usuario
+            } else {
+                telefonoDuplicado.push(usuarioExistente.usuarioId);
+            }
         }
-        if (correoUsuario && correoUsuario === correoExistente && correoUsuario && correoUsuario != correoDefault) {
-            correoDuplicado.push(usuarioExistente.usuarioId);
+
+        if (correoUsuario && correoUsuario === correoExistente && correoUsuario !== correoDefault) {
+            if (usuarioExistente.usuarioId == nuevoUsuario.UsuarioIdAct) {
+                return false; // No es un duplicado si es el mismo usuario
+            } else {
+                correoDuplicado.push(usuarioExistente.usuarioId);
+            }
         }
+
         if (usuarioAcesso && usuarioAcesso === usuarioAcessoExistente) {
-            usuarioDuplicado.push(usuarioExistente.usuarioId);
+            if (usuarioExistente.usuarioId == nuevoUsuario.UsuarioIdAct) {
+                return false; // No es un duplicado si es el mismo usuario
+            } else {
+                usuarioDuplicado.push(usuarioExistente.usuarioId);
+            }
         }
     });
 
     if (usuariosDuplicados.length > 0) {
-        MostrarAlertaPersonalizada(`Ya existe un usuario registrado con los mismos nombre y apellido, Usuario ID: ${usuariosDuplicados.join(', ')}`);
+        mostrarAlertaAtencionPersonalizadaConBoton(`Ya existe un usuario registrado con los mismos nombre y apellido, Usuario ID: ${usuariosDuplicados.join(', ')}`);
         return true; // Se encontraron coincidencias
     }
     if (telefonoDuplicado.length > 0) {
-        MostrarAlertaPersonalizada(`Ya existe un usuario registrado con el número de teléfono, Usuario ID: ${telefonoDuplicado.join(', ')}`);
+        mostrarAlertaAtencionPersonalizadaConBoton(`Ya existe un usuario registrado con el número de teléfono, Usuario ID: ${telefonoDuplicado.join(', ')}`);
         return true; // Se encontraron coincidencias
     }
     if (correoDuplicado.length > 0) {
-        MostrarAlertaPersonalizada(`Ya existe un usuario registrado con el correo electrónico, Usuario ID: ${correoDuplicado.join(', ')}`);
+        mostrarAlertaAtencionPersonalizadaConBoton(`Ya existe un usuario registrado con el correo electrónico, Usuario ID: ${correoDuplicado.join(', ')}`);
         return true; // Se encontraron coincidencias
     }
     if (usuarioDuplicado.length > 0) {
-        MostrarAlertaPersonalizada(`Ya existe un usuario registrado con el nombre de usuario, Usuario ID: ${usuarioDuplicado.join(', ')}`);
+        mostrarAlertaAtencionPersonalizadaConBoton(`Ya existe un usuario registrado con el nombre de usuario, Usuario ID: ${usuarioDuplicado.join(', ')}`);
         return true; // Se encontraron coincidencias
     }
 
@@ -141,12 +159,13 @@ function mostrarValoresFormularioInicialUsuario() {
 
 function mostrarValoresFormularioUsuarioAct() {
     const idsActualizar = [
+        'UsuarioIdAct',
         'RolIdAct',
         'NombreAct',
         'ApellidoAct',
         'UsuarioAct',
-        'TelefonoAct',
-        'CorreoAct'
+        'TelefonoUsuarioAct',
+        'CorreoUsuarioAct'
     ];
     const valoresActualizar = obtenerValoresFormulario(idsActualizar);
     return valoresActualizar;
@@ -163,7 +182,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     //Evitar el envio de los formularios hasta que todo este validados
     $('.modal-formulario-crear-usuario').on('submit', function (event) {
-        obtenerDatosUsuarios();
         const usuarioFinal = mostrarValoresFormularioInicialUsuario();
         const usuariosAll = usuarios;
         const usuarioRepetido = compararUsuarios(usuarioFinal, usuariosAll);
@@ -180,7 +198,6 @@ document.addEventListener('DOMContentLoaded', function () {
         ];
 
         const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
-        console.log(usuarioFinal,usuariosAll);
         if (!NoCamposVacios()) {
             event.preventDefault();
             return;
@@ -188,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!NoCamposConErrores()) {
             event.preventDefault();
-            mostrarAlertaCampoVacioPersonalizada('Algunos campos contienen errores');
+            mostrarAlertaAtencionPersonalizadaConBoton('Algunos campos contienen errores');
             return;
         }
 
@@ -212,19 +229,50 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
     $('.modal-formulario-actualizar-usuario').on('submit', function (event) {
-        event.preventDefault();
+        const usuarioFinal = mostrarValoresFormularioUsuarioAct();
+        const usuariosAll = usuarios;
+        const usuarioRepetido = compararUsuariosAct(usuarioFinal, usuariosAll);
 
+        const campos = [
+            { id: 'NombreRolAct', nombre: 'Rol' },
+            { id: 'NombreAct', nombre: 'Nombre' },
+            { id: 'ApellidoAct', nombre: 'Apellido' },
+            { id: 'UsuarioAct', nombre: 'Usuario' },
+            { id: 'ContraseñaAct', nombre: 'Contraseña' },
+            { id: 'TelefonoUsuarioAct', nombre: 'Telefono' },
+            { id: 'CorreoUsuarioAct', nombre: 'Correo' }
+        ];
+        const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
         if (!NoCamposVaciosAct()) {
             event.preventDefault();
-        } else {
-            // Obtener los valores de los campos del formulario
-            var rolId = $('#rolIdAct').val();
-
-            if (rolId === '') {
-                event.preventDefault();
-                mostrarAlertaDataList('rol');
-            }
+            return;
         }
+
+        if (!NoCamposConErroresAct()) {
+            event.preventDefault();
+            mostrarAlertaAtencionPersonalizadaConBoton('Algunos campos contienen errores');
+            return;
+        }
+
+        if (usuarioRepetido) {
+            event.preventDefault();
+            return;
+        }
+
+        if (!camposVacios) {
+            event.preventDefault();
+            return;
+        }
+
+        const datalist = [
+            { id: 'RolIdAct', nombre: 'Rol' }
+        ];
+
+        if (!verificarCampos(datalist, mostrarAlertaDataList)) {
+            event.preventDefault();
+            return;
+        }
+  
     });
     // Confirmación de eliminación
     $('.delete-form-usuario').on('submit', function (event) {
@@ -254,6 +302,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
         $('.modal-formulario-actualizar-usuario input, .modal-formulario-actualizar-usuario select').on('input', function () {
             NoCamposVaciosInicialAct();
+            NoCamposConErroresInicialAct();
+
         });
     // Asignar función de selección a los campos data-list
     $('#NombreRol').on('input', function () {
@@ -280,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('Número de campos sin texto:', camposConTexto);
 
         if (camposConTexto === 8) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaCampoVacioPersonalizada('Completa todos los campos');
+            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos');
             $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
             return false;
         } else if (camposConTexto != 0) { // Cambiamos la condición para verificar si hay campos sin texto.
@@ -305,62 +355,28 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function NoCamposVaciosAct() {
-        const textDangerElements = $('.text-danger');
         const mensajeElements = $('.Mensaje');
-
-        const textDangerSlice = textDangerElements.slice(-7);
         const mensajeSlice = mensajeElements.slice(-7);
+        const camposConTexto = mensajeSlice.filter(function () {
+            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
+        }).length;
 
-        const todoValido = textDangerSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
+        console.log('Número de campos sin texto:', camposConTexto);
 
-        const todosLlenos = mensajeSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
-
-        console.log('Todos los campos son válidos:', todoValido);
-        console.log('Todos los campos están llenos:', todosLlenos);
-
-        if (!todosLlenos) {
+        if (camposConTexto === 8) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos');
+            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+            return false;
+        } else if (camposConTexto != 0) { // Cambiamos la condición para verificar si hay campos sin texto.
             $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
             return false;
         }
 
-        if (!todoValido) {
-            $('.MensajeInicial').text('Algunos campos contienen errores.');
-            return false;
-        }
-
-        $('.MensajeInicial').text('');
         return true;
     }
-    function NoCamposVaciosInicial() {
+    function NoCamposConErroresAct() {
         const textDangerElements = $('.text-danger');
-        const mensajeElements = $('.Mensaje');
-
-        const textDangerSlice = textDangerElements.slice(0, 8);
-        const mensajeSlice = mensajeElements.slice(0, 8);
-
-        const todoValido = textDangerSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
-        const todosLlenos = mensajeSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
-        if (todosLlenos) {
-            $('.MensajeInicial').text('');
-            if (todoValido) {
-                $('.MensajeInicial').text('');
-            }
-        }
-    } 
-    function NoCamposConErroresInicial() {
-        const textDangerElements = $('.text-danger');
-        const textDangerSlice = textDangerElements.slice(0, 8);
+        const textDangerSlice = textDangerElements.slice(-7);
         const todoValido = textDangerSlice.filter(function () {
             return $(this).text() !== '';
         }).length === 0;
@@ -387,28 +403,48 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
     }
-
-    function NoCamposVaciosInicialAct() {
+    function NoCamposConErroresInicial() {
         const textDangerElements = $('.text-danger');
-        const mensajeElements = $('.Mensaje');
-
-        const textDangerSlice = textDangerElements.slice(-7);
-        const mensajeSlice = mensajeElements.slice(-7);
-
+        const textDangerSlice = textDangerElements.slice(0, 8);
         const todoValido = textDangerSlice.filter(function () {
             return $(this).text() !== '';
         }).length === 0;
+        console.log('Todos los campos son válidos:', todoValido);
+        if (!todoValido) {
+            $('.MensajeErrores').text('Algunos campos contienen errores.');
+            return false;
+        }
+        return true;
+    }
+
+    function NoCamposVaciosInicialAct() {
+        const mensajeElements = $('.Mensaje');
+
+        const mensajeSlice = mensajeElements.slice(-7);
+
 
         const todosLlenos = mensajeSlice.filter(function () {
             return $(this).text() !== '';
         }).length === 0;
 
+
         if (todosLlenos) {
             $('.MensajeInicial').text('');
-            if (todoValido) {
-                $('.MensajeInicial').text('');
-            }
         }
+
+    }
+    function NoCamposConErroresInicialAct() {
+        const textDangerElements = $('.text-danger');
+        const textDangerSlice = textDangerElements.slice(-7);
+        const todoValido = textDangerSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+        console.log('Todos los campos son válidos:', todoValido);
+        if (!todoValido) {
+            $('.MensajeErrores').text('Algunos campos contienen errores.');
+            return false;
+        }
+        return true;
     }
 
 });
@@ -419,18 +455,33 @@ function simularClickUsuario() {
     //ocultar formulario de actualizar  y mostrar el formulario principal
     $('#FormActualizarUsuario').hide();
     $('#FormPrincipalUsuario').show().css('visibility', 'visible');
-    limpiarFormularioUsuarioAct();
     obtenerDatosUsuarios();
-    limpiarFormularioUsuarioAgregar();
 }
 
+/*--------------------Atajo para abrir modal -------------------------------*/
 document.addEventListener('keydown', function (event) {
-    // Verificar si se presionó Ctrl + Espacio
-    if (event.ctrlKey && event.key === ' ') {
-        // Ejecutar la función que deseas al presionar Ctrl + Espacio
-        abrirModalUsuario();
+    if (event.ctrlKey && event.key === 'm') {
+        try {
+            if (esURLValida('Usuarios')) {
+                const modalProducto = $('#ModalUsuario');
+                const botonAbrirModal = $('#botonabrirModalUsuario');
+
+                if (modalProducto.length === 0 || botonAbrirModal.length === 0) {
+                    console.error('El modal o el botón para abrir el modal no se encontraron en el DOM.');
+                    return;
+                }
+                if (modalProducto.hasClass('show')) {
+                    modalProducto.modal('hide'); // Cerrar la modal
+                } else {
+                    botonAbrirModal.click();
+                }
+            }
+        } catch (error) {
+            console.error('Ocurrió un error al intentar abrir/cerrar la modal de producto:', error);
+        }
     }
 });
+
 
 function abrirModalUsuario() {
     // Verificar si la modal está abierta
@@ -445,6 +496,7 @@ function abrirModalUsuario() {
 /*------------------------------ Limpiar formularios y url ---------------------------------------------------------------------------------------------------- */
 
 function limpiarFormularioUsuario() {
+    history.replaceState(null, '', location.pathname);
     // Limpiar campos y elementos específicos
     limpiarCampo('NombreRol');
     limpiarCampo('RolId');
@@ -483,30 +535,40 @@ function limpiarFormularioUsuario() {
     document.querySelectorAll('.MensajeInicial').forEach(function (element) {
         element.textContent = '';
     });
-    // Limpiar la URL eliminando los parámetros de consulta
-    history.replaceState(null, '', location.pathname);
+    document.querySelectorAll('.MensaErrores').forEach(function (element) {
+        element.textContent = '';
+    });
+ 
 }
 function limpiarFormularioUsuarioAgregar() {
+    history.replaceState(null, '', location.pathname);
     // Limpiar mensajes de alerta y *
     var mensajes = document.querySelectorAll('.Mensaje');
     var mensajesText = document.querySelectorAll('.text-danger');
 
-    for (var i = Math.max(0, mensajes.length - 7); i < mensajes.length; i++) {
-        mensajes[i].textContent = '';
-    }
     for (var i = 0; i < mensajes.length - 7; i++) {
         mensajes[i].textContent = '*';
     }
-    for (var i = 0; i < mensajesText.length; i++) {
+    for (var i = 0; i < mensajesText.length - 7; i++) {
         mensajesText[i].textContent = '';
     }
 
     document.querySelectorAll('.MensajeInicial').forEach(function (element) {
         element.textContent = '';
-    }); 
+    });
+    document.querySelectorAll('.MensaErrores').forEach(function (element) {
+        element.textContent = '';
+    });
 }
 
 function limpiarFormularioUsuarioAct() {
+    history.replaceState(null, '', location.pathname);
+    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
+        element.textContent = '';
+    });
+    document.querySelectorAll('.MensaErrores').forEach(function (element) {
+        element.textContent = '';
+    });
     // Limpiar mensajes de alerta y *
     var mensajes = document.querySelectorAll('.Mensaje');
     var mensajesText = document.querySelectorAll('.text-danger');
@@ -514,10 +576,7 @@ function limpiarFormularioUsuarioAct() {
     for (var i = Math.max(0, mensajes.length - 7); i < mensajes.length; i++) {
         mensajes[i].textContent = '';
     }
-    for (var i = 0; i < mensajes.length - 7; i++) {
-        mensajes[i].textContent = '*';
-    }
-    for (var i = 0; i < mensajesText.length; i++) {
+    for (var i = Math.max(0, mensajesText.length - 7); i < mensajesText.length; i++) {
         mensajesText[i].textContent = '';
     }
 
@@ -547,25 +606,23 @@ function AlPerderFocoUsuario() {
 /*--------------------------------------------------------- Modal de actualizar usuario ---------------------------------------*/
 function mostrarModalConRetrasoUsuario(usuarioId) {
     limpiarFormularioUsuarioAct();
+    actualizarUsuario(usuarioId);
     setTimeout(function () {
-        actualizarUsuario(usuarioId);
-        setTimeout(function () {
-            var myModal = new bootstrap.Modal(document.getElementById('ModalUsuario'));
-            myModal.show();
-            // Aquí puedes llamar a la función actualizarProducto si es necesario
-        }, 500); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
-    }, 0); // 0 milisegundos de retraso antes de llamar a actualizarProducto
+        var myModal = new bootstrap.Modal(document.getElementById('ModalUsuario'));
+        myModal.show();
+        // Aquí puedes llamar a la función actualizarProducto si es necesario
+    }, 400); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
+
 }
 //Modal cuando se hace click en editar en el boton de detalle
 function mostrarModalSinRetrasoUsuario(usuarioId) {
+    obtenerDatosUsuarios();
+    actualizarUsuario(usuarioId);
     setTimeout(function () {
-        actualizarUsuario(usuarioId);
-        setTimeout(function () {
-            var myModal = new bootstrap.Modal(document.getElementById('ModalUsuario'));
-            myModal.show();
-            // Aquí puedes llamar a la función actualizarProducto si es necesario
-        }, 50); // 50 milisegundos (0.05 segundos) de retraso antes de abrir la modal
-    }, 0); // 0 milisegundos de retraso antes de llamar a actualizarProducto
+        var myModal = new bootstrap.Modal(document.getElementById('ModalUsuario'));
+        myModal.show();
+        // Aquí puedes llamar a la función actualizarProducto si es necesario
+    }, 50); // 50 milisegundos (0.05 segundos) de retraso antes de abrir la modal
 }
 
 function actualizarUsuario(campo) {
@@ -583,10 +640,12 @@ function actualizarUsuario(campo) {
             formActualizar.find('#UsuarioAct').val(data.usuario1);
             formActualizar.find('#ContraseñaAct').val(data.contraseña);
             formActualizar.find('#ApellidoAct').val(data.apellido);
-            formActualizar.find('#TelefonoAct').val(data.telefono);
+            formActualizar.find('#TelefonoUsuarioAct').val(data.telefono);
             formActualizar.find('#CorreoUsuarioAct').val(data.correo);
             formActualizar.find('#EstadoProductoAct').val(data.correo);
             seleccionarOpcion(document.getElementById('NombreRolAct'), document.getElementById('roles'), document.getElementById('RolIdAct'));
+            limpiarFormularioUsuarioAct()
+            obtenerDatosUsuarios();
         },
         error: function () {
             alert('Error al obtener los datos del usuario.');
@@ -704,17 +763,7 @@ function showNoRolesAlert() {
 }
 
 /*------------------------ Validaciones---------------*/
-//Funciones para mostrar alerta
-function mostrarAlerta(campo) {
-    Swal.fire({
-        position: "center",
-        icon: 'warning',
-        title: '¡Atención!',
-        html: `<p>Completa el campo: ${campo}.</p>`,
-        showConfirmButton: false,
-        timer: 6000
-    });
-}
+
 function validarCampoUsuario(campo) {
     const input = $(campo); // Convertir el input a objeto jQuery
     var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
