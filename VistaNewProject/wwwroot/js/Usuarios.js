@@ -1,4 +1,158 @@
-﻿/*------------------------------------- Al cargar la vista ------------------------------------------------------------------------------------------ */
+﻿var usuarios = []; 
+function obtenerDatosUsuarios() {
+    fetch('/Usuarios/FindUsuarios', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            usuarios = data;
+        })
+        .catch(error => console.error('Error al obtener los usuarios:', error));
+}
+// Función para comparar productos durante la creación
+function compararUsuarios(nuevoUsuario, usuariosExistentes) {
+    const nombreUsuarioNormalizado = normalizar(nuevoUsuario.Nombre || '');
+    const apellidoUsuarioNormalizado = normalizar(nuevoUsuario.Apellido || '');
+    const telefonoUsuario = nuevoUsuario.TelefonoUsuario || '';
+    const correoUsuario = normalizar(nuevoUsuario.CorreoUsuario || '');
+    const usuarioAcesso = normalizar(nuevoUsuario.Usuario || '');
+
+    const usuariosDuplicados = [];
+    const telefonoDuplicado = [];
+    const correoDuplicado = [];
+    const usuarioDuplicado = [];
+
+    usuariosExistentes.forEach(usuarioExistente => {
+        const nombreUsuarioExistenteNormalizado = normalizar(usuarioExistente.nombre || '');
+        const apellidoUsuarioExistenteNormalizado = normalizar(usuarioExistente.apellido || '');
+        const telefonoExistente = usuarioExistente.telefono || '';
+        const correoExistente = normalizar(usuarioExistente.correo || '');
+        const usuarioAcessoExistente = normalizar(usuarioExistente.usuario1 || '');
+        const correoDefault = normalizar('correo@gmail.com');
+        if (
+            nombreUsuarioNormalizado === nombreUsuarioExistenteNormalizado &&
+            apellidoUsuarioNormalizado === apellidoUsuarioExistenteNormalizado
+        ) {
+            usuariosDuplicados.push(usuarioExistente.usuarioId);
+        }
+        if (telefonoUsuario && telefonoUsuario === telefonoExistente) {
+            telefonoDuplicado.push(usuarioExistente.usuarioId);
+        }
+        if (correoUsuario && correoUsuario === correoExistente && correoUsuario && correoUsuario != correoDefault) {
+            correoDuplicado.push(usuarioExistente.usuarioId);
+        }
+        if (usuarioAcesso && usuarioAcesso === usuarioAcessoExistente) {
+            usuarioDuplicado.push(usuarioExistente.usuarioId);
+        }
+    });
+
+    if (usuariosDuplicados.length > 0) {
+        MostrarAlertaPersonalizada(`Ya existe un usuario registrado con los mismos nombre y apellido, Usuario ID: ${usuariosDuplicados.join(', ')}`);
+        return true; // Se encontraron coincidencias
+    }
+    if (telefonoDuplicado.length > 0) {
+        MostrarAlertaPersonalizada(`Ya existe un usuario registrado con el número de teléfono, Usuario ID: ${telefonoDuplicado.join(', ')}`);
+        return true; // Se encontraron coincidencias
+    }
+    if (correoDuplicado.length > 0) {
+        MostrarAlertaPersonalizada(`Ya existe un usuario registrado con el correo electrónico, Usuario ID: ${correoDuplicado.join(', ')}`);
+        return true; // Se encontraron coincidencias
+    }
+    if (usuarioDuplicado.length > 0) {
+        MostrarAlertaPersonalizada(`Ya existe un usuario registrado con el nombre de usuario, Usuario ID: ${usuarioDuplicado.join(', ')}`);
+        return true; // Se encontraron coincidencias
+    }
+
+    return false; // No se encontraron coincidencias
+}
+
+// Función para comparar productos durante la actualización
+function compararUsuariosAct(nuevoUsuario, usuariosExistentes) {
+    const nombreUsuarioNormalizado = normalizar(nuevoUsuario.Nombre || '');
+    const apellidoUsuarioNormalizado = normalizar(nuevoUsuario.Apellido || '');
+    const telefonoUsuario = nuevoUsuario.TelefonoUsuario || '';
+    const correoUsuario = normalizar(nuevoUsuario.CorreoUsuario || '');
+    const usuarioAcesso = normalizar(nuevoUsuario.Usuario || '');
+
+    const usuariosDuplicados = [];
+    const telefonoDuplicado = [];
+    const correoDuplicado = [];
+    const usuarioDuplicado = [];
+
+    usuariosExistentes.forEach(usuarioExistente => {
+        const nombreUsuarioExistenteNormalizado = normalizar(usuarioExistente.nombre || '');
+        const apellidoUsuarioExistenteNormalizado = normalizar(usuarioExistente.apellido || '');
+        const telefonoExistente = usuarioExistente.telefono || '';
+        const correoExistente = normalizar(usuarioExistente.correo || '');
+        const usuarioAcessoExistente = normalizar(usuarioExistente.usuario1 || '');
+        const correoDefault = normalizar('correo@gmail.com');
+        if (
+            nombreUsuarioNormalizado === nombreUsuarioExistenteNormalizado &&
+            apellidoUsuarioNormalizado === apellidoUsuarioExistenteNormalizado
+        ) {
+            usuariosDuplicados.push(usuarioExistente.usuarioId);
+        }
+        if (telefonoUsuario && telefonoUsuario === telefonoExistente) {
+            telefonoDuplicado.push(usuarioExistente.usuarioId);
+        }
+        if (correoUsuario && correoUsuario === correoExistente && correoUsuario && correoUsuario != correoDefault) {
+            correoDuplicado.push(usuarioExistente.usuarioId);
+        }
+        if (usuarioAcesso && usuarioAcesso === usuarioAcessoExistente) {
+            usuarioDuplicado.push(usuarioExistente.usuarioId);
+        }
+    });
+
+    if (usuariosDuplicados.length > 0) {
+        MostrarAlertaPersonalizada(`Ya existe un usuario registrado con los mismos nombre y apellido, Usuario ID: ${usuariosDuplicados.join(', ')}`);
+        return true; // Se encontraron coincidencias
+    }
+    if (telefonoDuplicado.length > 0) {
+        MostrarAlertaPersonalizada(`Ya existe un usuario registrado con el número de teléfono, Usuario ID: ${telefonoDuplicado.join(', ')}`);
+        return true; // Se encontraron coincidencias
+    }
+    if (correoDuplicado.length > 0) {
+        MostrarAlertaPersonalizada(`Ya existe un usuario registrado con el correo electrónico, Usuario ID: ${correoDuplicado.join(', ')}`);
+        return true; // Se encontraron coincidencias
+    }
+    if (usuarioDuplicado.length > 0) {
+        MostrarAlertaPersonalizada(`Ya existe un usuario registrado con el nombre de usuario, Usuario ID: ${usuarioDuplicado.join(', ')}`);
+        return true; // Se encontraron coincidencias
+    }
+
+    return false; // No se encontraron coincidencias
+}
+
+function mostrarValoresFormularioInicialUsuario() {
+    const idsCrear = [
+        'RolId',
+        'Nombre',   
+        'Apellido',
+        'Usuario',
+        'TelefonoUsuario',
+        'CorreoUsuario'
+    ];
+    const valoresCrear = obtenerValoresFormulario(idsCrear);
+    return valoresCrear;
+}
+
+function mostrarValoresFormularioUsuarioAct() {
+    const idsActualizar = [
+        'RolIdAct',
+        'NombreAct',
+        'ApellidoAct',
+        'UsuarioAct',
+        'TelefonoAct',
+        'CorreoAct'
+    ];
+    const valoresActualizar = obtenerValoresFormulario(idsActualizar);
+    return valoresActualizar;
+}
+
+/*------------------------------------- Al cargar la vista ------------------------------------------------------------------------------------------ */
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const mostrarAlerta = urlParams.get('mostrarAlerta');
@@ -9,16 +163,52 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     //Evitar el envio de los formularios hasta que todo este validados
     $('.modal-formulario-crear-usuario').on('submit', function (event) {
+        obtenerDatosUsuarios();
+        const usuarioFinal = mostrarValoresFormularioInicialUsuario();
+        const usuariosAll = usuarios;
+        const usuarioRepetido = compararUsuarios(usuarioFinal, usuariosAll);
+
+        const campos = [
+            { id: 'NombreRol', nombre: 'Rol' },
+            { id: 'Nombre', nombre: 'Nombre' },
+            { id: 'Apellido', nombre: 'Apellido' },
+            { id: 'Usuario', nombre: 'Usuario' },
+            { id: 'Contraseña', nombre: 'Contraseña' },
+            { id: 'RepetirContraseña', nombre: 'Repetir contraseña' },
+            { id: 'TelefonoUsuario', nombre: 'Telefono' },
+            { id: 'CorreoUsuario', nombre: 'Correo' }
+        ];
+
+        const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
+        console.log(usuarioFinal,usuariosAll);
         if (!NoCamposVacios()) {
             event.preventDefault();
-        } else {
-            // Obtener los valores de los campos del formulario
-            var rolId = $('#RolId').val();
+            return;
+        }
 
-            if (rolId === '') {
-                event.preventDefault();
-                mostrarAlertaDataList('rol');
-            }
+        if (!NoCamposConErrores()) {
+            event.preventDefault();
+            mostrarAlertaCampoVacioPersonalizada('Algunos campos contienen errores');
+            return;
+        }
+
+        if (usuarioRepetido) {
+            event.preventDefault();
+            return;
+        }
+
+        if (!camposVacios) {
+            event.preventDefault();
+            return;
+        }
+
+        const datalist = [
+            { id: 'RolId', nombre: 'Rol' }
+        ];
+
+        if (!verificarCampos(datalist, mostrarAlertaDataList)) {
+            event.preventDefault();
+            return;
         }
     });
     $('.modal-formulario-actualizar-usuario').on('submit', function (event) {
@@ -60,6 +250,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Validar campos en cada cambio para cambiar el mensaje inicial que aparece arriba de los botones del formulario
     $('.modal-formulario-crear-usuario input, .modal-formulario-crear-usuario select').on('input', function () {
         NoCamposVaciosInicial();
+        NoCamposConErroresInicial();
     });
         $('.modal-formulario-actualizar-usuario input, .modal-formulario-actualizar-usuario select').on('input', function () {
             NoCamposVaciosInicialAct();
@@ -79,36 +270,40 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     //Este elimina el mensaje inicial u lo agrega de ser necesario el que aparece sobre los botones
-    function NoCamposVacios()    {
-        const textDangerElements = $('.text-danger');
+    function NoCamposVacios() {
         const mensajeElements = $('.Mensaje');
-
-        const textDangerSlice = textDangerElements.slice(0, 8);
         const mensajeSlice = mensajeElements.slice(0, 8);
+        const camposConTexto = mensajeSlice.filter(function () {
+            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
+        }).length;
+
+        console.log('Número de campos sin texto:', camposConTexto);
+
+        if (camposConTexto === 8) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaCampoVacioPersonalizada('Completa todos los campos');
+            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+            return false;
+        } else if (camposConTexto != 0) { // Cambiamos la condición para verificar si hay campos sin texto.
+            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+            return false;
+        } 
+
+        return true;
+    } 
+    function NoCamposConErrores() {
+        const textDangerElements = $('.text-danger');
+        const textDangerSlice = textDangerElements.slice(0, 8);
         const todoValido = textDangerSlice.filter(function () {
             return $(this).text() !== '';
         }).length === 0;
-
-        const todosLlenos = mensajeSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
         console.log('Todos los campos son válidos:', todoValido);
-        console.log('Todos los campos están llenos:', todosLlenos);
-
-        if (!todosLlenos) {
-            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
-            return false;
-        }
-
         if (!todoValido) {
-            $('.MensajeInicial').text('Algunos campos contienen errores.');
+            $('.MensajeErrores').text('Algunos campos contienen errores.');
             return false;
         }
-
-        $('.MensajeInicial').text('');
         return true;
     }
+
     function NoCamposVaciosAct() {
         const textDangerElements = $('.text-danger');
         const mensajeElements = $('.Mensaje');
@@ -162,10 +357,37 @@ document.addEventListener('DOMContentLoaded', function () {
                 $('.MensajeInicial').text('');
             }
         }
+    } 
+    function NoCamposConErroresInicial() {
+        const textDangerElements = $('.text-danger');
+        const textDangerSlice = textDangerElements.slice(0, 8);
+        const todoValido = textDangerSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+        console.log('Todos los campos son válidos:', todoValido);
+        if (!todoValido) {
+            $('.MensajeErrores').text('Algunos campos contienen errores.');
+            return false;
+        }
+        return true;
+    }
+    function NoCamposVaciosInicial() {
+        const mensajeElements = $('.Mensaje');
+
+        const mensajeSlice = mensajeElements.slice(0, 8);
 
 
+        const todosLlenos = mensajeSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+
+
+        if (todosLlenos) {
+            $('.MensajeInicial').text('');
+        }
 
     }
+
     function NoCamposVaciosInicialAct() {
         const textDangerElements = $('.text-danger');
         const mensajeElements = $('.Mensaje');
@@ -198,6 +420,7 @@ function simularClickUsuario() {
     $('#FormActualizarUsuario').hide();
     $('#FormPrincipalUsuario').show().css('visibility', 'visible');
     limpiarFormularioUsuarioAct();
+    obtenerDatosUsuarios();
     limpiarFormularioUsuarioAgregar();
 }
 

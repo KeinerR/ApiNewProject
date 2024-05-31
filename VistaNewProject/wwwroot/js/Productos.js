@@ -109,12 +109,11 @@ document.addEventListener('DOMContentLoaded', function () {
   
     // Evita el envío de los formularios si no se cumplen los requerimientos mínimos
     $('.modal-formulario-crear-producto').on('submit', function (event) {
-        let datalist = [];
-        let campos = [];
         const productoFinal = mostrarValoresFormularioInicialProducto();
         const productosAll = productos;
         const productoRepetido = compararProductos(productoFinal, productosAll);
-        campos = [
+
+        const campos = [
             { id: 'NombreCategoria', nombre: 'Categor\u00EDa' },
             { id: 'NombreProducto', nombre: 'Nombre Producto' },
             { id: 'NombreMarca', nombre: 'Marca' },
@@ -122,39 +121,45 @@ document.addEventListener('DOMContentLoaded', function () {
             { id: 'CantidadAplicarPorMayor', nombre: 'Cantidad a superar' },
             { id: 'DescuentoAplicarPorMayor', nombre: 'Descuento por producto' }
         ];
+
         const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
+
         if (!NoCamposVacios()) {
             event.preventDefault();
-        } else if (!NoCamposConErrores()) {
+            return;
+        } 
+        if (!NoCamposConErrores()) {
             event.preventDefault();
             mostrarAlertaCampoVacioPersonalizada('Algunos campos contienen errores');
-        } else if (productoRepetido !== false) {
+            return;
+        }
+        if (productoRepetido !== false) {
             event.preventDefault();
             return;
-        } else if (camposVacios != true) {
-            return;
-        } else {
-            datalist = [
-                { id: 'CategoriaId', nombre: 'categor\u00EDa' },
-                { id: 'MarcaId', nombre: 'marca' },
-                { id: 'PresentacionId', nombre: 'presentación' }
-            ];
-
-            if (!verificarCampos(datalist, mostrarAlertaDataList)) {
-                event.preventDefault();
-                return;
-            }
         }
+        if (camposVacios != true) {
+            return;
+        } 
+        const datalist = [
+            { id: 'CategoriaId', nombre: 'categor\u00EDa' },
+            { id: 'MarcaId', nombre: 'marca' },
+            { id: 'PresentacionId', nombre: 'presentación' }
+        ];
+
+        if (!verificarCampos(datalist, mostrarAlertaDataList)) {
+            event.preventDefault();
+            return;
+        }
+        
     });
 
     // Event handler para el formulario de actualización
     $('.modal-formulario-actualizar-producto').on('submit', function (event) {
-        let datalist = [];
-        let campos = [];
         const productoFinal = mostrarValoresFormularioProductoAct();
         const productosAll = productos;
         const productoRepetido = compararProductosAct(productoFinal, productosAll);
-        campos = [
+
+        const campos = [
             { id: 'NombreCategoriaAct', nombre: 'Categor\u00EDa' },
             { id: 'NombreProductoAct', nombre: 'Nombre Producto' },
             { id: 'NombreMarcaAct', nombre: 'Marca' },
@@ -162,35 +167,46 @@ document.addEventListener('DOMContentLoaded', function () {
             { id: 'CantidadAplicarPorMayorAct', nombre: 'Cantidad a superar' },
             { id: 'DescuentoAplicarPorMayorAct', nombre: 'Descuento por producto' }
         ];
+
         const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
+
         if (!NoCamposVaciosAct()) {
             event.preventDefault();
-        } else if (!NoCamposConErroresAct()) {
+            return;
+        }
+
+        if (!NoCamposConErroresAct()) {
             event.preventDefault();
             mostrarAlertaCampoVacioPersonalizada('Algunos campos contienen errores');
-        } else if (productoRepetido !== false) {
+            return;
+        }
+
+        if (productoRepetido) {
             event.preventDefault();
             return;
-        } else if (camposVacios != true) {
-            return;
-        } else {
-            datalist = [
-                { id: 'CategoriaIdAct', nombre: 'categoría' },
-                { id: 'MarcaIdAct', nombre: 'marca' },
-                { id: 'PresentacionIdAct', nombre: 'presentación' }
-            ];
+        }
 
-            if (!verificarCampos(datalist, mostrarAlertaDataList)) {
-                event.preventDefault();
-                return;
-            }
+        if (!camposVacios) {
+            event.preventDefault();
+            return;
+        }
+
+        const datalist = [
+            { id: 'CategoriaIdAct', nombre: 'Categoría' },
+            { id: 'MarcaIdAct', nombre: 'Marca' },
+            { id: 'PresentacionIdAct', nombre: 'Presentación' }
+        ];
+
+        if (!verificarCampos(datalist, mostrarAlertaDataList)) {
+            event.preventDefault();
+            return;
         }
     });
 
     
 
     // Confirmación de eliminación
-    $('.delete-form').on('submit', function (event) {
+    $('.eliminarProducto').on('submit', function (event) {
         event.preventDefault(); // Evita que el formulario se envíe automáticamente
 
         // Mostrar el diálogo de confirmación
@@ -408,18 +424,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /*---------------------------------------------------- Al dar click en el boton de agregar usuario  ---------------------------------------------------- */
 function simularClickProducto() {
-    obtenerDatosProductos();
+    obtenerDatosUsuarios();
     //ocultar formulario de actualizar  y mostrar el formulario principal
     $('#FormActualizarProducto').hide();
     $('#FormPrincipalProducto').show().css('visibility', 'visible');
     Llamar();
 }
-/*--------------------Atajao para abrir modal -------------------------------*/
+/*--------------------Atajo para abrir modal -------------------------------*/
 document.addEventListener('keydown', function (event) {
-    // Verificar si se presionó Ctrl + m y la URL actual es la deseada
-    if (event.ctrlKey && event.key === 'm' && esURLValida('Productos')) {
-        // Ejecutar la función que deseas al presionar Ctrl + m y la URL es válida
-        abrirModalProducto();
+    if (event.ctrlKey && event.key === 'm') {
+        try {
+            if (esURLValida('Productos')) {
+                const modalProducto = $('#ModalProducto');
+                const botonAbrirModal = $('#botonabrirModalProducto');
+
+                if (modalProducto.length === 0 || botonAbrirModal.length === 0) {
+                    console.error('El modal o el botón para abrir el modal no se encontraron en el DOM.');
+                    return;
+                }
+                if (modalProducto.hasClass('show')) {
+                    modalProducto.modal('hide'); // Cerrar la modal
+                } else {
+                    botonAbrirModal.click();
+                }
+            }
+        } catch (error) {
+            console.error('Ocurrió un error al intentar abrir/cerrar la modal de producto:', error);
+        }
     }
 });
 
@@ -431,19 +462,6 @@ function esURLValida(parametro) {
 }
 
 
-function abrirModalProducto() {
-    var modalProducto = $('#ModalProducto');
-    var botonAbrirModal = $('#botonabrirModalProducto');
-
-    if (modalProducto.hasClass('show')) {
-        modalProducto.modal('hide'); // Cerrar la modal
-    } else {
-        botonAbrirModal.on('click', function () {
-            // Código para mostrar la modal
-            modalProducto.modal('show'); // Mostrar la modal
-        });
-    }
-}
 
 
 
@@ -842,8 +860,6 @@ function Llamar() {
         }
         document.getElementById('CantidadAplicarPorMayor').value = '';
         document.getElementById('DescuentoAplicarPorMayor').value = '';
-
-        console.log("El checkbox está marcado");
     } else {
         var mensajes = document.querySelectorAll('.Mensaje');
         // Iterar sobre los mensajes, omitiendo los primeros 3 y los últimos 3
@@ -860,8 +876,6 @@ function Llamar() {
         }
         document.getElementById('CantidadAplicarPorMayor').value = '0';
         document.getElementById('DescuentoAplicarPorMayor').value = '0';
-
-        console.log("El checkbox no está marcado");
     }
 }
 /*Mostrar o no las opciones de producto por mayor en la ventana modal de actualizar producto al hacer click en el checbox de la ventana modal producto*/
