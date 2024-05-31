@@ -30,27 +30,29 @@ namespace VistaNewProject.Controllers
             return View(detallepedido);
         }
 
-       
+
 
         [HttpGet]
         public async Task<IActionResult> ObtenerLotesDisponibles(int productoId)
         {
             var lotes = await _client.GetLoteAsync();
-            var lotesDisponibles = lotes.Where(l => l.ProductoId == productoId && l.Cantidad > 0)
-                                        .OrderBy(l => l.FechaVencimiento)
-                                        .ToList();
+            var lotesDisponibles = lotes.Where(l => l.ProductoId == productoId && l.Cantidad > 0 && l.EstadoLote != 0)
+                                         .OrderBy(l => l.FechaVencimiento)
+                                         .ToList();
             return Json(lotesDisponibles);
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int? pedidoId)
         {
             var producto = await _client.GetProductoAsync();
             var unidad = await _client.GetUnidadAsync();
             var pedidos = await _client.GetPedidoAsync();
 
             var ultimoPedido = pedidos.OrderByDescending(p => p.PedidoId).FirstOrDefault();
+
+            ViewBag.PedidoId = pedidoId ?? ultimoPedido?.PedidoId ?? 0;
             ViewBag.UltimoPedidoId = ultimoPedido?.PedidoId ?? 0;
 
             ViewBag.Producto = producto;
@@ -66,48 +68,74 @@ namespace VistaNewProject.Controllers
 
         public async Task<IActionResult> CrearDetalles([FromBody] Detallepedido detallePedido)
         {
-            // Agrega el detalle recibido a la lista global
-
-            // Buscar si ya existe un detalle con el mismo ProductoId en la lista
-            var detalleExistente = listaGlobalDetalles
-                .FirstOrDefault(d => d.ProductoId == detallePedido.ProductoId && d.PedidoId == detallePedido.PedidoId);
-            if (detalleExistente != null)
+            try
             {
-                // Si existe, solo actualiza la cantidad
-                detalleExistente.Cantidad += detallePedido.Cantidad;
-                detalleExistente.Subtotal += detallePedido.Cantidad * detallePedido.PrecioUnitario;  // Asumiendo que el subtotal se calcula así
-                Console.WriteLine("Producto actualizado en la lista. Nueva cantidad: " + detalleExistente.Cantidad);
-            }else {
-                // Si no existe, agrega el detalle recibido a la lista global
-                listaGlobalDetalles.Add(detallePedido);
-                Console.WriteLine("Nuevo producto agregado a la lista.");
+                // Buscar si ya existe un detalle con el mismo ProductoId en la lista
+                var detalleExistente = listaGlobalDetalles
+                    .FirstOrDefault(d => d.ProductoId == detallePedido.ProductoId && d.PedidoId == detallePedido.PedidoId);
+
+                if (detalleExistente != null)
+                {
+                    // Si existe, solo actualiza la cantidad
+                    detalleExistente.Cantidad += detallePedido.Cantidad;
+                    detalleExistente.Subtotal += detallePedido.Cantidad * detallePedido.PrecioUnitario;  // Asumiendo que el subtotal se calcula así
+                    Console.WriteLine("Producto actualizado en la lista. Nueva cantidad: " + detalleExistente.Cantidad);
+                }
+                else
+                {
+                    // Si no existe, agrega el detalle recibido a la lista global
+                    listaGlobalDetalles.Add(detallePedido);
+                    Console.WriteLine("Nuevo producto agregado a la lista.");
+                }
+
+                Console.WriteLine("Tamaño de la lista global de detalles: " + listaGlobalDetalles.Count);
+
+                var producto = await _client.FindProductoAsync(detallePedido.ProductoId.Value);
+
+                if (producto == null)
+                {
+                    return NotFound(new { message = "Producto no encontrado" });
+                }
+
+                // Actualizar la cantidad reservada
+                producto.CantidadReservada += detallePedido.Cantidad;
+
+                // Actualizar el producto en la base de datos
+                var updateProductResult = await _client.UpdateProductoAsync(producto);
+                if (updateProductResult.IsSuccessStatusCode)
+                {
+
+                    Console.WriteLine("Cantidad Resevada");
+                }
+
+                // Imprimir el tamaño actual de la lista global en la consola
+                Console.WriteLine("Tamaño de la lista global de detalles: " + listaGlobalDetalles.Count);
+
+                // Imprimir los valores de las propiedades del detalle recibido en la consola
+                Console.WriteLine("Detalle recibido:");
+                Console.WriteLine("PedidoId: " + detallePedido.PedidoId);
+                Console.WriteLine("ProductoId: " + detallePedido.ProductoId);
+                Console.WriteLine("Cantidad: " + detallePedido.Cantidad);
+                Console.WriteLine("UnidadId: " + detallePedido.UnidadId);
+                Console.WriteLine("LoteId: " + detallePedido.LoteId);
+                Console.WriteLine("PrecioUnitario: " + detallePedido.PrecioUnitario);
+
+                // Devuelve un mensaje de confirmación en forma de objeto JSON
+                return Ok(new { message = "Detalle del pedido recibido correctamente" });
             }
-
-            Console.WriteLine("Tamaño de la lista global de detalles: " + listaGlobalDetalles.Count);
-
-
-            // Imprimir el tamaño actual de la lista global en la consola
-            Console.WriteLine("Tamaño de la lista global de detalles: " + listaGlobalDetalles.Count);
-
-            // Imprimir los valores de las propiedades del detalle recibido en la consola
-            Console.WriteLine("Detalle recibido:");
-            Console.WriteLine("PedidoId: " + detallePedido.PedidoId);
-            Console.WriteLine("ProductoId: " + detallePedido.ProductoId);
-            Console.WriteLine("Cantidad: " + detallePedido.Cantidad);
-            Console.WriteLine("UnidadId: " + detallePedido.UnidadId);
-            Console.WriteLine("UnidadId: " + detallePedido.LoteId);
-            Console.WriteLine("PrecioUnitario: " + detallePedido.PrecioUnitario);
-
-
-
-            // Devuelve un mensaje de confirmación en forma de objeto JSON
-            return Ok(new { message = "Detalle del pedido recibido correctamente" });
+            catch (Exception ex)
+            {
+                // Log the exception (use a proper logging framework in a real application)
+                Console.WriteLine("Error: " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Ocurrió un error al procesar la solicitud", error = ex.Message });
+            }
         }
 
+
         [HttpPost]
-        public async Task<IActionResult> CreatePost()
+        public async Task<IActionResult> CreatePost( Detallepedido nuevoDetalle)
         {
-            if (listaGlobalDetalles.Count <= 0)
+            if (listaGlobalDetalles.Count <0)
             {
                 TempData["ErrorMessage"] = "Por favor agregue los productos para guardar el pedido correctamente.";
                 return RedirectToAction("Create", "DetallePedidos");
@@ -115,6 +143,10 @@ namespace VistaNewProject.Controllers
 
             try
             {
+
+             
+
+
                 decimal sumaSubtotales = listaGlobalDetalles.Sum(detalle => detalle.Subtotal ?? 0);
                 foreach (var detalle in listaGlobalDetalles)
                 {
@@ -144,40 +176,10 @@ namespace VistaNewProject.Controllers
 
                     var total = await _client.UpdatePedidoAsync(ultimoPedidoGuardado);
 
-                    // Si el pedido está pendiente
-                    if (ultimoPedidoGuardado.EstadoPedido == "Pendiente")
-                    {
-                        foreach (var detalle in listaGlobalDetalles)
-                        {
-                            // Reservar cantidad del producto
-                            var producto = await _client.FindProductoAsync(detalle.ProductoId.Value);
-                            if (producto != null)
-                            {
-                                if (detalle.Cantidad > producto.CantidadTotal - producto.CantidadReservada)
-                                {
-                                    // Configurar el mensaje de error en TempData
-                                    TempData["ErrorMessage"] = "No hay suficiente stock disponible para este producto";
-
-                                    // Retornar BadRequest para indicar el error
-                                    return RedirectToAction("Index", "Pedidos");
-                                }
-
-
-
-                                producto.CantidadReservada += detalle.Cantidad.Value;
-                                var updateProducto = await _client.UpdateProductoAsync(producto);
-                                if (!updateProducto.IsSuccessStatusCode)
-                                {
-                                    TempData["ErrorMessage"] = $"Error al reservar cantidad del producto: {updateProducto.ReasonPhrase}";
-                                    return RedirectToAction("Index", "Pedidos");
-                                }
-                            }
-
-                        }
-                    }
+                   
 
                     // Si el pedido está "Realizado" y es por caja
-                    else if (ultimoPedidoGuardado.EstadoPedido == "Realizado" && ultimoPedidoGuardado.TipoServicio == "Caja")
+                     if (ultimoPedidoGuardado.EstadoPedido == "Realizado" && ultimoPedidoGuardado.TipoServicio == "Caja")
                     {
                         // Iterar sobre los detalles del pedido para descontar el inventario y los lotes
 
@@ -189,7 +191,7 @@ namespace VistaNewProject.Controllers
 
                             if (productos != null)
                             {
-                                productos.CantidadTotal -= detalle.Cantidad;
+                                productos.CantidadReservada -= detalle.Cantidad;
                                 var updateProducto = await _client.UpdateProductoAsync(productos);
 
                                 if (!updateProducto.IsSuccessStatusCode)
@@ -238,7 +240,7 @@ namespace VistaNewProject.Controllers
                         TempData["SuccessMessage"] = "Pedido realizado con éxito.";
 
                         return RedirectToAction("Index", "Pedidos");
-                    }
+                     }
 
                         // Verifica el tipo de servicio para redireccionar apropiadamente
                         if (ultimoPedidoGuardado.TipoServicio == "Domicilio")
@@ -261,12 +263,27 @@ namespace VistaNewProject.Controllers
         }
         public async Task<IActionResult> Cancelar()
         {
-            if (listaGlobalDetalles.Count > 0 )
+            // Verificar si hay detalles en la lista global
+            if (listaGlobalDetalles.Count > 0)
             {
+                // Obtener los detalles del pedido que se desea cancelar
+                var ultimoPedidoId = listaGlobalDetalles.Max(d => d.PedidoId);
+                var detallesPedidoACancelar = listaGlobalDetalles.Where(d => d.PedidoId == ultimoPedidoId).ToList();
+
+                // Ajustar las cantidades reservadas
+                foreach (var detalle in detallesPedidoACancelar)
+                {
+                    var producto = await _client.FindProductoAsync(detalle.ProductoId.Value);
+                    if (producto != null)
+                    {
+                        producto.CantidadReservada -= detalle.Cantidad;
+                        await _client.UpdateProductoAsync(producto);
+                    }
+                }
+
+                // Limpiar la lista global de detalles
                 listaGlobalDetalles.Clear();
             }
-                // Verificar si hay detalles en la lista global
-            
 
             // Obtener la lista de pedidos
             var pedidos = await _client.GetPedidoAsync();
@@ -275,6 +292,8 @@ namespace VistaNewProject.Controllers
             var pedidosApi = pedidos.Max(p => p.PedidoId);
 
             Console.WriteLine(pedidosApi);
+
+            // Eliminar el último pedido
             var response = await _client.DeletePedidoAsync(pedidosApi);
 
             if (!response.IsSuccessStatusCode)
@@ -282,29 +301,43 @@ namespace VistaNewProject.Controllers
                 return NotFound("Error en la eliminación");
             }
 
-            // Resto del código para cancelar el último pedido...
-
+            // Redirigir a la página principal de pedidos
             return RedirectToAction("Index", "Pedidos");
         }
 
 
-
-        public IActionResult EliminarDetalle(int index)
+        public async Task<IActionResult> EliminarDetalle(int index)
         {
+            Console.WriteLine(index);
 
-            Console.WriteLine(Index);
             if (index >= 0 && index < listaGlobalDetalles.Count)
             {
+                var detalleAEliminar = listaGlobalDetalles[index];
 
+                // Encontrar el producto correspondiente para actualizar la cantidad reservada
+                var producto = await _client.FindProductoAsync(detalleAEliminar.ProductoId.Value);
 
+                if (producto == null)
+                {
+                    return NotFound(new { message = "Producto no encontrado" });
+                }
+
+                // Actualizar la cantidad reservada del producto
+                producto.CantidadReservada -= detalleAEliminar.Cantidad;
+
+                var updateProductResult = await _client.UpdateProductoAsync(producto);
+
+                
+                // Eliminar el detalle de la lista
                 listaGlobalDetalles.RemoveAt(index);
 
+                Console.WriteLine("Detalle eliminado correctamente");
 
                 return Ok(new { message = "Detalle eliminado correctamente" });
             }
             else
             {
-                return NotFound("No se encontró el detalle para eliminar");
+                return NotFound(new { message = "No se encontró el detalle para eliminar" });
             }
         }
 
@@ -316,16 +349,13 @@ namespace VistaNewProject.Controllers
 
 
 
-        [HttpPost]
-        public async Task<JsonResult> GetProductos([FromBody] string busqueda = null)
-        {
-            var productos = await _client.GetProductoAsync(busqueda);
-            return Json(productos);
-        }
+        
 
 
 
-
+      
+        
+        
 
     }
 }

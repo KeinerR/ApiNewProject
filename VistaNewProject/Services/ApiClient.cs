@@ -900,6 +900,12 @@ namespace VistaNewProject.Services
             return response;
         }
 
+        public async Task<HttpResponseMessage> UpdateDetallepedidosAsync(Detallepedido detallepedido)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"Detallepedidos/UpdateDetallepedidos/", detallepedido);
+            return response;
+        }
+
 
 
         //permiso

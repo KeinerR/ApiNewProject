@@ -353,6 +353,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return true;
     }
+
     function NoCamposVaciosAct() {
         const mensajeElements = $('.Mensaje');
         const mensajeSlice = mensajeElements.slice(-7);
@@ -415,6 +416,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return true;
     }
+
     function NoCamposVaciosInicialAct() {
         const mensajeElements = $('.Mensaje');
 
