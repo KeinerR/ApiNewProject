@@ -184,7 +184,6 @@ namespace VistaNewProject.Controllers
 
                                 if (producto != null)
                                 {
-                                    producto.CantidadTotal -= detallePedido.Cantidad;
                                     producto.CantidadReservada -= detallePedido.Cantidad;
                                     var updateProducto = await _client.UpdateProductoAsync(producto);
                                     if (updateProducto.IsSuccessStatusCode)
@@ -272,20 +271,7 @@ namespace VistaNewProject.Controllers
                         {
                             foreach (var detalleCancelado in detallesPedido)
                             {
-                                var productoId = detalleCancelado.ProductoId.Value;
-                                var producto = await _client.FindProductoAsync(productoId);
-
-                                if (producto != null)
-                                {
-                                    // Devolver la cantidad del detalle cancelado al producto
-                                    producto.CantidadTotal += detalleCancelado.Cantidad;
-                                    var updateProducto = await _client.UpdateProductoAsync(producto);
-
-                                    if (updateProducto.IsSuccessStatusCode)
-                                    {
-                                        Console.WriteLine("Cantidad devuelta al producto correctamente");
-                                    }
-                                }
+                               
 
                                 var loteId = detalleCancelado.LoteId.Value;
                                 if (loteId!=null)
