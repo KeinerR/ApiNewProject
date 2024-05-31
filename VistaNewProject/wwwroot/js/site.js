@@ -237,22 +237,5 @@ function editarFuncion() {
     }
 }
 
-// Obtener productos 
 
-var usuarios = []; // Inicializamos la variable usuarios como un objeto vacío
-// Obtener usuarios al dar click en agregar usuario
-function obtenerDatosUsuarios() {
-    fetch('/Usuarios/FindUsuarios', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-        .then(response => response.json())
-        .then(data => {
-            productos = data;
-            console.log(productos);
-        })
-        .catch(error => console.error('Error al obtener los usuarios:', error));
-}
 

@@ -92,6 +92,19 @@ namespace VistaNewProject.Controllers
         {
             try
             {
+                // Verificar que todos los campos estén llenos
+                if (string.IsNullOrEmpty(usuario.Nombre) ||
+                    usuario.RolId <= 0 ||
+                    string.IsNullOrEmpty(usuario.Apellido) ||
+                    string.IsNullOrEmpty(usuario.Usuario1) ||
+                    string.IsNullOrEmpty(usuario.Contraseña) ||
+                    string.IsNullOrEmpty(usuario.Telefono) ||
+                    string.IsNullOrEmpty(usuario.Correo))
+                {
+                    MensajeSweetAlert("error", "Error", "Por favor, complete todos los campos obligatorios con *.", "false", null);
+                    return RedirectToAction("Index");
+                }
+
                 var usuarios = await _client.GetUsuarioAsync();
 
                 // Verificar si hay algún usuario con el mismo nombre, apellido y usuario1
@@ -393,7 +406,16 @@ namespace VistaNewProject.Controllers
             }
         }
 
+        private void MensajeSweetAlert(string icon, string title, string message, string estado, int? tiempo)
+        {
+            TempData["SweetAlertIcon"] = icon;
+            TempData["SweetAlertTitle"] = title;
+            TempData["SweetAlertMessage"] = message;
+            TempData["EstadoAlerta"] = estado;
+            TempData["Tiempo"] = tiempo.HasValue ? tiempo.Value : 3000;
+            TempData["EstadoAlerta"] = "false";
 
+        }
 
 
 

@@ -22,7 +22,7 @@
 
 
         <!-- Botón para abrir el modal -->
-        <button type="button" id="botonAbrirModal" onclick="simularClickUsuario(); obtenerDatosUsuarios();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalUsuario">
+        <button type="button" id="botonAbrirModal" onclick="simularClickUsuario();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalUsuario">
             <i class="fas fa-plus-circle"></i> Agregar Usuario
         </button>
     </div>
@@ -312,12 +312,14 @@
                         </label>
                     </td>
                     <td class="botonesTabla">
-                        <button class="btn botonEditar" onclick="mostrarModalConRetrasoUsuario(@item.UsuarioId);"><i class="fas fa-edit"></i></button>
-                        <a asp-action="Details" asp-route-id="@item.UsuarioId" class="btn botonDetalle"><i class="fas fa-file"></i></a>
-                        <form asp-controller="Usuarios" asp-action="Delete" method="post" class="delete-form-usuario">
-                            <input type="hidden" value="@item.UsuarioId" name="usuarioId" />
-                            <button type="submit" class="btn botonEliminar"><i class="fas fa-trash-alt"></i></button>
-                        </form>
+                        <div class="botonesTablaContenedor">
+                            <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoUsuario(@item.UsuarioId);"><i class="fas fa-edit"></i></button>
+                            <a asp-action="Details" asp-controller="Usuarios" asp-route-id="@item.UsuarioId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
+                            <form asp-controller="Usuarios" class="eliminarUsuario" asp-action="Delete" method="post">
+                                <input type="hidden" value="@item.UsuarioId" name="usuarioId" />
+                                <button type="submit" value="" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             }
@@ -354,12 +356,14 @@
                                 </label>
                             </td>
                             <td class="botonesTabla">
-                                <button class="btn botonEditar" onclick="mostrarModalConRetrasoUsuario('@usuario.UsuarioId');"><i class="fas fa-edit"></i></button>
-                                <a asp-action="Details" asp-route-id="@usuario.UsuarioId" class="btn botonDetalle"><i class="fas fa-file"></i></a>
-                                <form asp-controller="Usuarios" asp-action="Delete" method="post" class="delete-form-usuario">
-                                    <input type="hidden" value="@usuario.UsuarioId" name="usuarioId" />
-                                    <button type="submit" value="" class="btn botonEliminar"><i class="fas fa-trash-alt"></i></button>
-                                </form>
+                                <div class="botonesTablaContenedor">
+                                    <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoUsuario(@usuario.UsuarioId);"><i class="fas fa-edit"></i></button>
+                                    <a asp-action="Details" asp-controller="Usuarios" asp-route-id="@usuario.UsuarioId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
+                                    <form asp-controller="Usuarios" class="eliminarUsuario" asp-action="Delete" method="post">
+                                        <input type="hidden" value="@usuario.UsuarioId" name="usuarioId" />
+                                        <button type="submit" value="" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         contadorC++;
