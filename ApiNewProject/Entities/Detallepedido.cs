@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ApiNewProject.Entities
 {
@@ -15,8 +16,11 @@ namespace ApiNewProject.Entities
         public decimal? PrecioUnitario { get; set; }
         public decimal? Subtotal { get; set; }
 
+        [JsonIgnore]
         public virtual Pedido? Pedido { get; set; }
+        [JsonIgnore]    
         public virtual Producto? Producto { get; set; }
+        [JsonIgnore]
         public virtual Unidad? Unidad { get; set; }
     }
 }

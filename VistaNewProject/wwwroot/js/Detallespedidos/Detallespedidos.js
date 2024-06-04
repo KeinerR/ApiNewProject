@@ -7,9 +7,10 @@ function agregarDetalle(url) {
     var unidadId = document.getElementById("UnidadId").value;
     var cantidad = document.getElementById("Cantidad").value;
     var precioUnitario = document.getElementById("PrecioUnitario").value;
-
+    var pedidoId = document.getElementById("PedidoId").value;
+    
     var detalle = {
-        PedidoId: document.getElementById("pedidoId").value,
+        PedidoId: pedidoId,
         LoteId: document.getElementById("LoteId").value,
         ProductoId: document.getElementById("ProductoId").value,
         Cantidad: cantidad,
@@ -206,17 +207,19 @@ function mostrarDetallesActuales() {
         tbody.empty();
 
         // Iterar sobre cada detalle recibido y agregarlo a la tabla
-        $.each(data, function (index, detalle) {
+        for (var i = 0; i < data.length; i++) {
+            var detalle = data[i];
             var row = $('<tr>').append(
                 $('<td>').text(detalle.productoId),
                 $('<td>').text(detalle.cantidad),
                 $('<td>').text(detalle.precioUnitario),
                 $('<td>').text(detalle.unidad),
                 $('<td>').text(detalle.cantidad * detalle.precioUnitario),
-                $('<td>').html('<button onclick="eliminarDetalle(' + detalle.id + ')"><i class="fas fa-trash-alt"></i></button>')            );
+                $('<td>').html('<button onclick="eliminarDetalle(' + detalle.id + ')"><i class="fas fa-trash-alt"></i></button>')
+            );
             // Agregar la fila creada al cuerpo de la tabla
             tbody.append(row);
-        });
+        }
     }).fail(function (jqXHR, textStatus, errorThrown) {
         console.error('Error al cargar los detalles:', textStatus, errorThrown);
     });
@@ -225,25 +228,40 @@ function mostrarDetallesActuales() {
 
 document.getElementById('ProductoId').addEventListener('change', async function () {
     var productoId = this.value;
-    var response = await fetch('/DetallePedidos/ObtenerLotesDisponibles?productoId=' + productoId);
-    var data = await response.json();
-    var datalist = document.getElementById('LoteList');
-    datalist.innerHTML = '';
+    console.log("ProductoId seleccionado:", productoId);  // Para depuración
 
-    // Actualizar el valor del campo PrecioUnitario con el precio del primer lote disponible
-    if (data.length > 0) {
-        document.getElementById('PrecioUnitario').value = data[0].precioUnitario;
-    } else {
-        document.getElementById('PrecioUnitario').value = ''; // Limpiar el campo si no hay lotes disponibles
+    try {
+        var response = await fetch('/DetallePedidos/ObtenerLotesDisponibles?productoId=' + productoId);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        var data = await response.json();
+
+        // Log the raw response and parsed data to the console
+        console.log('Raw response:', response);
+        console.log('Parsed data:', data);
+
+        var datalist = document.getElementById('LoteList');
+        datalist.innerHTML = '';
+
+        // Actualizar el valor del campo PrecioUnitario con el precio del primer lote disponible
+        if (data.length > 0) {
+            document.getElementById('PrecioUnitario').value = data[0].precioPorPresentacion;
+        } else {
+            document.getElementById('PrecioUnitario').value = ''; // Limpiar el campo si no hay lotes disponibles
+        }
+
+        // Agregar opciones al datalist
+        data.forEach(function (lote) {
+            var option = document.createElement('option');
+            option.value = lote.loteId;
+            option.textContent = lote.numeroLote;
+            datalist.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error fetching lotes disponibles:', error);
     }
-
-    // Agregar opciones al datalist
-    data.forEach(function (lote) {
-        var option = document.createElement('option');
-        option.value = lote.loteId;
-        option.textContent = lote.numeroLote;
-        datalist.appendChild(option);
-    });
 });
 
 
@@ -302,51 +320,50 @@ $(document).ready(function () {
 
     // Función para obtener y mostrar los detalles del producto seleccionado
     function obtenerDetallesProducto(productId) {
-        console.log('Obteniendo detalles del ProductoId:', productId);
 
-        //// Llamada a la API para obtener los lotes del producto
-        //fetch(`https://localhost:7013/api/Lotes/GetLotes`)
-        //    .then(response => {
-        //        if (!response.ok) {
-        //            throw new Error('Error al obtener los lotes del producto');
-        //        }
-        //        return response.json();
-        //    })
-        //    .then(data => {
-        //        // Filtrar los lotes por productId seleccionado
-        //        const lotesProducto = data.filter(lote => lote.productoId == productId);
-        //        console.log("Lotes del producto ID:", lotesProducto);
-        //        if (lotesProducto.length > 0) {
-        //            // Encontrar el lote con la fecha de vencimiento más próxima y con cantidad disponible mayor que cero
-        //            let loteProximoVencimiento = null;
-        //            for (const lote of lotesProducto) {
-        //                if (lote.cantidad > 0) {
-        //                    if (loteProximoVencimiento === null || new Date(lote.fechaVencimiento) < new Date(loteProximoVencimiento.fechaVencimiento)) {
-        //                        loteProximoVencimiento = lote;
-        //                    }
-        //                }
-        //            }
+        // Llamada a la API para obtener los lotes del producto
+        fetch(`https://localhost:7013/api/Lotes/GetLotes`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener los lotes del producto');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Filtrar los lotes por productId seleccionado
+                const lotesProducto = data.filter(lote => lote.productoId == productId);
+                console.log("Lotes del producto ID:", lotesProducto);
+                if (lotesProducto.length > 0) {
+                    // Encontrar el lote con la fecha de vencimiento más próxima y con cantidad disponible mayor que cero
+                    let loteProximoVencimiento = null;
+                    for (const lote of lotesProducto) {
+                        if (lote.cantidad > 0 && lote!=0) {
+                            if (loteProximoVencimiento === null || new Date(lote.fechaVencimiento) < new Date(loteProximoVencimiento.fechaVencimiento)) {
+                                loteProximoVencimiento = lote;
+                            }
+                        }
+                    }
 
-        //            if (loteProximoVencimiento !== null) {
-        //                console.log("Lote con la fecha de vencimiento más próxima y con cantidad disponible mayor que cero:", loteProximoVencimiento);
-        //                const precio = loteProximoVencimiento.precioPorPresentacion; // Ajusta esta propiedad según la estructura real
-        //                $('#PrecioUnitario').val(precio);
-        //                $('#LoteId').val(loteProximoVencimiento.loteId); // Asigna el ID del lote al campo LoteId
-        //            } else {
-        //                // Si no se encontró ningún lote con cantidad disponible mayor que cero
-        //                $('#PrecioUnitario').val('');
-        //                $('#LoteId').val('');
-        //            }
-        //        } else {
-        //            // Manejar el caso en que no se encuentren lotes
-        //            $('#PrecioUnitario').val('');
-        //            $('#LoteId').val('');
-        //        }
-        //    })
-        //    .catch(error => {
-        //        console.error('Error:', error);
-        //        alert('Error al obtener los lotes del producto');
-        //    });
+                    if (loteProximoVencimiento !== null) {
+                        console.log("Lote con la fecha de vencimiento más próxima y con cantidad disponible mayor que cero:", loteProximoVencimiento);
+                        const precio = loteProximoVencimiento.precioPorPresentacion; // Ajusta esta propiedad según la estructura real
+                        $('#PrecioUnitario').val(precio);
+                        $('#LoteId').val(loteProximoVencimiento.loteId); // Asigna el ID del lote al campo LoteId
+                    } else {
+                        // Si no se encontró ningún lote con cantidad disponible mayor que cero
+                        $('#PrecioUnitario').val('');
+                        $('#LoteId').val('');
+                    }
+                } else {
+                    // Manejar el caso en que no se encuentren lotes
+                    $('#PrecioUnitario').val('');
+                    $('#LoteId').val('');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al obtener los lotes del producto');
+            });
 
         // Llamada a la API de productos para obtener la cantidad total y establecer el marcador de posición
         fetch(`https://localhost:7013/api/Productos/GetProductos`)
@@ -359,7 +376,6 @@ $(document).ready(function () {
             .then(data => {
                 // Filtrar los productos por productId seleccionado
                 const productoSeleccionado = data.find(producto => producto.productoId == productId);
-                console.log(productoSeleccionado);
 
                 if (productoSeleccionado) {
 
@@ -368,7 +384,6 @@ $(document).ready(function () {
                     const cantidadDisponible = cantidadTotal - cantidadReservada;
                     const detalleExistente = detallesdepedidp.find(detalle => detalle.ProductoId === productId);
 
-                    console.log(detalleExistente);
 
 
                     if (cantidadDisponible > 0) {
@@ -402,9 +417,7 @@ $(document).ready(function () {
     // Evento input para el campo "Cantidad"
     $('#Cantidad').on('input', function () {
         const cantidadIngresada = parseFloat($(this).val()); // Convertir el valor a un número flotante
-        console.log(cantidadIngresada);
         const cantidadDisponible = parseFloat($('#Cantidad').attr('placeholder').split(':')[1].trim());
-        console.log("keienrrivamendoza", cantidadDisponible);
 
         if (isNaN(cantidadIngresada)) {
             // Si la cantidad ingresada no es un número válido, mostrar mensaje de error
@@ -440,10 +453,7 @@ $(document).ready(function () {
 
 
 })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error al obtener los productos');
-    });
+    
 
 
 // Evento input para el campo "ProductoId"

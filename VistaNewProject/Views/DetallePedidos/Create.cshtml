@@ -58,9 +58,10 @@
 
         <div class="d-none">
             <label asp-for="PedidoId" class="control-label"></label>
-            <input type="text" id="pedidoId" name="pedidoId" value="@ViewBag.UltimoPedidoId" />
+            <input type="text" id="PedidoId" name="pedidoId" value="@((int?)ViewBag.PedidoId ?? (int?)ViewBag.UltimoPedidoId)" />
             <span asp-validation-for="PedidoId" class="text-danger"></span>
         </div>
+
         <div class="row">
             <!-- Campo de búsqueda único -->
             <div class="col-6">

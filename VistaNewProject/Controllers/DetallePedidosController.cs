@@ -44,13 +44,15 @@ namespace VistaNewProject.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int? pedidoId)
         {
             var producto = await _client.GetProductoAsync();
             var unidad = await _client.GetUnidadAsync();
             var pedidos = await _client.GetPedidoAsync();
 
             var ultimoPedido = pedidos.OrderByDescending(p => p.PedidoId).FirstOrDefault();
+
+            ViewBag.PedidoId = pedidoId ?? ultimoPedido?.PedidoId ?? 0;
             ViewBag.UltimoPedidoId = ultimoPedido?.PedidoId ?? 0;
 
             ViewBag.Producto = producto;
@@ -71,6 +73,7 @@ namespace VistaNewProject.Controllers
                 // Buscar si ya existe un detalle con el mismo ProductoId en la lista
                 var detalleExistente = listaGlobalDetalles
                     .FirstOrDefault(d => d.ProductoId == detallePedido.ProductoId && d.PedidoId == detallePedido.PedidoId);
+
                 if (detalleExistente != null)
                 {
                     // Si existe, solo actualiza la cantidad
@@ -130,9 +133,9 @@ namespace VistaNewProject.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreatePost()
+        public async Task<IActionResult> CreatePost( Detallepedido nuevoDetalle)
         {
-            if (listaGlobalDetalles.Count <= 0)
+            if (listaGlobalDetalles.Count <0)
             {
                 TempData["ErrorMessage"] = "Por favor agregue los productos para guardar el pedido correctamente.";
                 return RedirectToAction("Create", "DetallePedidos");
@@ -140,6 +143,10 @@ namespace VistaNewProject.Controllers
 
             try
             {
+
+             
+
+
                 decimal sumaSubtotales = listaGlobalDetalles.Sum(detalle => detalle.Subtotal ?? 0);
                 foreach (var detalle in listaGlobalDetalles)
                 {
@@ -169,7 +176,6 @@ namespace VistaNewProject.Controllers
 
                     var total = await _client.UpdatePedidoAsync(ultimoPedidoGuardado);
 
-                    // Si el pedido está pendiente
                    
 
                     // Si el pedido está "Realizado" y es por caja
@@ -234,7 +240,7 @@ namespace VistaNewProject.Controllers
                         TempData["SuccessMessage"] = "Pedido realizado con éxito.";
 
                         return RedirectToAction("Index", "Pedidos");
-                    }
+                     }
 
                         // Verifica el tipo de servicio para redireccionar apropiadamente
                         if (ultimoPedidoGuardado.TipoServicio == "Domicilio")
@@ -343,12 +349,7 @@ namespace VistaNewProject.Controllers
 
 
 
-        [HttpPost]
-        public async Task<JsonResult> GetProductos([FromBody] string busqueda = null)
-        {
-            var productos = await _client.GetProductoAsync(busqueda);
-            return Json(productos);
-        }
+        
 
 
 
