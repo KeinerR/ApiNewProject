@@ -242,17 +242,15 @@
                
              
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
-                <td>
+                <td class="d-flex align-items-center justify-content-between">
                     <a asp-action="Details" asp-controller="Pedidos" asp-route-id="@item.PedidoId" class="btn botonDetalle"><i class="fa-solid fa-file"></i></a>
-
-
-                    @if (item.EstadoPedido=="Pendiente")
+                  
+                    @if (item.EstadoPedido == "Pendiente")
                     {
-                        <input type="checkbox" name="estado_@item.PedidoId" value="Anulado"  onclick="actualizarEstadoPedido('@item.PedidoId', this.value)" />
-
+                        <input type="checkbox" style="margin-right:20px" name="estado_@item.PedidoId" value="Anulado" onclick="actualizarEstadoPedido('@item.PedidoId', this.value)" />
                     }
-
                 </td>
+
             </tr>
         }
         @{

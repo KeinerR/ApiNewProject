@@ -133,7 +133,7 @@ namespace VistaNewProject.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreatePost( Detallepedido nuevoDetalle)
+        public async Task<IActionResult> CreatePost(  int ? pedidoId )
         {
             if (listaGlobalDetalles.Count <0)
             {
@@ -164,22 +164,38 @@ namespace VistaNewProject.Controllers
                     }
                 }
 
-                var ultimoPedido = await _client.GetPedidoAsync();
+            
+                    var ultimoPedido = await _client.GetPedidoAsync();
+                var ultimoPedidoGuardado = ultimoPedido.OrderByDescending(p => p.PedidoId).First();
+
                 if (ultimoPedido != null && ultimoPedido.Any())
-                {
-                    var ultimoPedidoGuardado = ultimoPedido.OrderByDescending(p => p.PedidoId).First();
+                    {
 
+                        // Usa el pedidoId proporcionado si es diferente de cero, de lo contrario, usa el PedidoId del último pedido guardado
+                        var pedidoIdUtilizar = pedidoId != 0 ? pedidoId : ultimoPedidoGuardado.PedidoId;
+                    // Actualizar el valor total del pedido utilizando el pedidoIdUtilizar
+                    var pedidoActualizar = await _client.FindPedidosAsync(pedidoIdUtilizar.Value);
+                    if (pedidoActualizar != null)
+                    {
+                        pedidoActualizar.ValorTotalPedido += sumaSubtotales;
+                        var updatevalortotal = await _client.UpdatePedidoAsync(pedidoActualizar);
 
+                        if (updatevalortotal.IsSuccessStatusCode)
+                        {
+                            TempData["SweetAlertIcon"] = "success";
+                            TempData["SweetAlertTitle"] = "Éxito";
+                            TempData["SweetAlertMessage"] = "Detalles Agregados correctamente.";
+                            return RedirectToAction("Index", "Pedidos");
 
-                    // Actualiza el campo ValorTotalPedido del pedido con la suma de los subtotales
-                    ultimoPedidoGuardado.ValorTotalPedido = sumaSubtotales;
+                        }
 
-                    var total = await _client.UpdatePedidoAsync(ultimoPedidoGuardado);
+                        
+                    }
 
-                   
+                
 
-                    // Si el pedido está "Realizado" y es por caja
-                     if (ultimoPedidoGuardado.EstadoPedido == "Realizado" && ultimoPedidoGuardado.TipoServicio == "Caja")
+                        // Si el pedido está "Realizado" y es por caja
+                        if (ultimoPedidoGuardado.EstadoPedido == "Realizado" && ultimoPedidoGuardado.TipoServicio == "Caja")
                     {
                         // Iterar sobre los detalles del pedido para descontar el inventario y los lotes
 
@@ -204,7 +220,7 @@ namespace VistaNewProject.Controllers
                             // Obtener los lotes disponibles para el producto actual
                             var lotes = await _client.GetLoteAsync();
                             var lotesFiltrados = lotes
-                                .Where(l => l.ProductoId == productoId && l.Cantidad > 0)
+                                .Where(l => l.ProductoId == productoId && l.Cantidad > 0 && l.EstadoLote!=0)
                                 .OrderBy(l => l.FechaVencimiento)
                                 .ThenByDescending(l => l.Cantidad);
 
@@ -349,13 +365,33 @@ namespace VistaNewProject.Controllers
 
 
 
-        
 
 
 
-      
-        
-        
+
+
+
+
+
+        public async Task<IActionResult> AgregarMaxDetalles(int? pedidoId)
+        {
+            var producto = await _client.GetProductoAsync();
+            var unidad = await _client.GetUnidadAsync();
+            var pedidos = await _client.GetPedidoAsync();
+
+            var ultimoPedido = pedidos.OrderByDescending(p => p.PedidoId).FirstOrDefault();
+
+            ViewBag.PedidoId = pedidoId ?? ultimoPedido?.PedidoId ?? 0;
+            ViewBag.UltimoPedidoId = ultimoPedido?.PedidoId ?? 0;
+
+            ViewBag.Producto = producto;
+            ViewBag.Unidad = unidad;
+
+            return View();
+        }
+
+
+
 
     }
 }

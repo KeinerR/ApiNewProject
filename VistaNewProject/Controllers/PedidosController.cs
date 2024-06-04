@@ -197,7 +197,7 @@ namespace VistaNewProject.Controllers
                                 // Obtener los lotes disponibles para el producto actual
                                 var lotes = await _client.GetLoteAsync();
                                 var lotesFiltrados = lotes
-                                    .Where(l => l.ProductoId == productoId && l.Cantidad > 0)
+                                    .Where(l => l.ProductoId == productoId && l.Cantidad > 0 && l.EstadoLote!=0)
                                     .OrderBy(l => l.FechaVencimiento)
                                     .ThenByDescending(l => l.Cantidad);
 
@@ -320,6 +320,7 @@ namespace VistaNewProject.Controllers
             }
 
             var usuario = await  _client.GetUsuarioAsync();
+            var unidad=  await _client.GetUnidadAsync();
 
             var pedidosTask = _client.GetPedidoAsync();
             var detallesTask = _client.GetDetallepedidoAsync();
@@ -338,6 +339,7 @@ namespace VistaNewProject.Controllers
             }
 
             ViewBag.Pedidos = pedido;
+            ViewBag.Unidad = unidad;
 
             ViewBag.Usuarios = usuarios;
 

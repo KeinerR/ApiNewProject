@@ -337,7 +337,7 @@ $(document).ready(function () {
                     // Encontrar el lote con la fecha de vencimiento más próxima y con cantidad disponible mayor que cero
                     let loteProximoVencimiento = null;
                     for (const lote of lotesProducto) {
-                        if (lote.cantidad > 0 && lote!=0) {
+                        if (lote.cantidad > 0 && lote.estadoLote!=0) {
                             if (loteProximoVencimiento === null || new Date(lote.fechaVencimiento) < new Date(loteProximoVencimiento.fechaVencimiento)) {
                                 loteProximoVencimiento = lote;
                             }
@@ -382,7 +382,6 @@ $(document).ready(function () {
                     const cantidadTotal = productoSeleccionado.cantidadTotal;
                     const cantidadReservada = productoSeleccionado.cantidadReservada;
                     const cantidadDisponible = cantidadTotal - cantidadReservada;
-                    const detalleExistente = detallesdepedidp.find(detalle => detalle.ProductoId === productId);
 
 
 

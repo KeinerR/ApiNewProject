@@ -220,10 +220,22 @@
                         <th>Cantidad</th>
                         <th>Precio Unitario</th>
                         <th>Subtotal</th>
-                        <th>Acciones</th>
+                        <td>
+                            @if (ViewBag.Pedidos.EstadoPedido == "Pendiente")
+                            {
+
+                                <a class="btn botonEditar" asp-action="AgregarMaxDetalles" asp-controller="DetallePedidos" asp-route-pedidoId="@ViewBag.Pedidos.PedidoId">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
+
+
+                            }
+                        </td>
                     </tr>
                 </thead>
                 <tbody>
+                
                     @foreach (var detallepedido in Model)
                     {
                         <tr style="text-align: center; background-color: white;">
@@ -232,18 +244,7 @@
                             <td>@String.Format("{0:N0}", detallepedido.Cantidad)</td>
                             <td>@String.Format("{0:N0}", detallepedido.PrecioUnitario)</td>
                             <td>@String.Format("{0:N0}", detallepedido.Subtotal)</td>
-                            <td>
-                                @if (ViewBag.Pedidos.EstadoPedido == "Pendiente")
-                                {
-
-                                    <a asp-action="Create" asp-controller="DetallePedidos" asp-route-pedidoId="@ViewBag.Pedidos.PedidoId">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-
-
-
-                                }
-                            </td>
+                          
                         </tr>
                     }
                 </tbody>
