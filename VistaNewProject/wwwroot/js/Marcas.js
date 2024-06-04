@@ -1,342 +1,568 @@
-
-
-// Función para verificar si hay conexión a Internet
 function checkInternetConnection() {
     return navigator.onLine;
 }
+var marcas = []; 
 
-// Función para establecer valores por defecto si no hay conexión
-function valoresPorDefaultSinConexion() {
-    if (!checkInternetConnection()) {
-        // Obtener todos los elementos de botón dentro de la tabla
-        const botonesEditar = document.querySelectorAll(".botonEditar");
-        const botonesEliminar = document.querySelectorAll(".botonEliminar");
-        const botonesDetalle = document.querySelectorAll(".botonDetalle");
+function obtenerDatosMarcas() {
+    fetch('/Marcas/FindMarcas', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            marcas = data;
+        })
+        .catch(error => console.error('Error al obtener los marcas:', error));
+}
+function compararMarcas(nuevaMarca, marcasExistentes) {
+    const nombreMarcaNormalizado = normalizar(nuevaMarca.NombreMarcaVista || '');
+   
+    const marcasDuplicadas = [];
 
-        // Iterar sobre cada elemento de botón y establecer su valor
-        botonesEditar.forEach(boton => {
-            boton.innerText = "Editar";
-        });
 
-        botonesEliminar.forEach(boton => {
-            boton.innerText = "Borrar";
-        });
+    marcasExistentes.forEach(marcaExistente => {
+        const nombreMarcaExistenteNormalizado = normalizar(marcaExistente.nombreMarca || '');
+       
+        if (
+            nombreMarcaNormalizado === nombreMarcaExistenteNormalizado 
+        ) {
+            marcasDuplicadas.push(marcaExistente.marcaId);
+        }
+    });
 
-        botonesDetalle.forEach(boton => {
-            boton.innerText = "Detalle";
-        });
+    if (marcasDuplicadas.length > 0) {
+        mostrarAlertaAtencionPersonalizadaConBoton(`Ya existe una marca registrada con el mismo nombre , Marca ID: ${marcasDuplicadas.join(', ')}`);
+        return true; // Se encontraron coincidencias
     }
+    
+    return false; // No se encontraron coincidencias
+}
+function compararMarcasAct(nuevaMarca, marcasExistentes) {
+    const nombreMarcaNormalizado = normalizar(nuevaMarca.NombreMarcaVistaAct || '');
+
+    const marcasDuplicadas = [];
+
+
+    marcasExistentes.forEach(marcaExistente => {
+        const nombreMarcaExistenteNormalizado = normalizar(marcaExistente.nombreMarca || '');
+
+        if (
+            nombreMarcaNormalizado === nombreMarcaExistenteNormalizado 
+        ) {
+            if (marcaExistente.marcaId == nuevaMarca.MarcaIdAct) {
+                return false; // No es un duplicado de alguna marca
+            } else {
+                marcasDuplicadas.push(marcaExistente.marcaId);
+            }
+        }
+    });
+
+    if (marcasDuplicadas.length > 0) {
+        mostrarAlertaAtencionPersonalizadaConBoton(`Ya existe una marca registrada con el mismo nombre , Marca ID: ${marcasDuplicadas.join(', ')}`);
+        return true; // Se encontraron coincidencias
+    }
+
+    return false; // No se encontraron coincidencias
+}
+
+
+function mostrarValoresFormularioInicialMarca() {
+    const idsCrear = [
+        'NombreMarcaVista'
+    ];
+    const valoresCrear = obtenerValoresFormulario(idsCrear);
+    return valoresCrear;
+}
+function mostrarValoresFormularioMarcaAct() {
+    const idsCrear = [
+        'NombreMarcaVistaAct',
+        'MarcaIdAct'
+    ];
+    const valoresCrear = obtenerValoresFormulario(idsCrear);
+    return valoresCrear;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const mostrarAlerta = urlParams.get('mostrarAlerta');
     const marcaId = urlParams.get('marcaId');
-    const API_URL = 'https://localhost:7013/api/Marcas';
-    var todoValido = true;
-    var marcas = [];
 
     if (mostrarAlerta === 'true' && marcaId) {
-        obtenerMarca(marcaId);
-
-        // Obtener el botón que activa la modal
-        const botonModal = document.querySelector('[data-bs-target="#MarcaModal"]');
-        document.getElementById('FormAgregar').style.display = 'none';
-        document.getElementById('FormActualizar').style.display = 'block';
-        if (botonModal) {
-            // Simular el clic en el botón para mostrar la modal
-            botonModal.click();
-        }
+        mostrarModalSinRetrasoMarca(marcaId);
     }
+    //Evitar el envio de los formularios hasta que todo este validados
+    $('.modal-formulario-crear-marca').on('submit', function (event) {
+        const marcaFinal = mostrarValoresFormularioInicialMarca();
+        const marcasAll = marcas;
+        const marcaRepetida = compararMarcas(marcaFinal, marcasAll);
+        const campos = [
+            { id: 'NombreMarcaVista', nombre: 'Nombre' }
+        ];
 
-    function MostrarTodasLasMarcas() {
-        fetch(`${API_URL}/GetMarcas`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener las marcas');
-                }
-                return response.json();
-            })
-            .then(data => {
-                marcas = data;
-                console.log(marcas);
-                NoCamposVacios();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-    MostrarTodasLasMarcas();
-
-    function NoCamposVacios() {
-        // Mostrar mensaje inicial de validación
-        $('#MensajeInicial').text(' Completa todos los campos con *');
-        $('.Mensaje').text(' *');
-        $('#NombreMarca').on('input', function () {
-            validarCampoCompra($(this));
-
-            // Validar si todos los campos son válidos antes de agregar el usuario
-            todoValido = $('.text-danger').filter(function () {
-                return $(this).text() !== '';
-            }).length === 0;
-
-            todolleno = $('.Mensaje ').filter(function () {
-                return $(this).text() !== '';
-            }).length === 0;
-            console.log('Todos los campos son válidos:', todoValido);
-
-            // Si todos los campos son válidos, ocultar el mensaje en todos los campos
-            if (todolleno) {
-                $('#MensajeInicial').hide();
-            } else {
-                $('#MensajeInicial').show(); // Mostrar el mensaje si no todos los campos son válidos
-            }
-        });
-    }
-
-    function NoCamposVaciosAct() {
-        // Mostrar mensaje inicial de validación
-        $('#NombreMarcaAct').on('input', function () {
-            validarCampoCompraAct($(this));
-
-            // Validar si todos los campos son válidos antes de agregar el usuario
-            todoValido = $('.text-dangerAct').filter(function () {
-                return $(this).text() !== '';
-            }).length === 0;
-
-            todolleno = $('.MensajeAct').filter(function () {
-                return $(this).text() !== '';
-            }).length === 0;
-            console.log('Todos los campos son válidos:', todoValido);
-
-        });
-    }
-
-    function validarCampoCompra(input) {
-        var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
-        var spanError = input.next('.text-danger'); // Obtener el elemento span de error asociado al input
-        var spanVacio = input.prev('.Mensaje'); // Obtener el elemento span vacío asociado al input
-
-        // Limpiar el mensaje de error previo
-        spanError.text('');
-        spanVacio.text('');
-
-        // Validar el campo y mostrar mensaje de error si es necesario
-        if (valor === '') {
-            spanVacio.text(' *');
-            spanError.text('');
-        } else if (input.is('#NombreMarca')) {
-            if (valor.length < 3) {
-                spanError.text('Este campo debe tener un mínimo de 3 caracteres.');
-                spanVacio.text('');
-            } else if (!/^(?!.*(\w)\1\1\1)[\w\s]+$/.test(valor)) {
-                spanError.text('Este nombre es redundante.');
-                spanVacio.text('');
-                todoValido = false;
-            } else if (/^\d+$/.test(valor)) {
-                spanError.text('Este campo no puede ser solo numérico.');
-                spanVacio.text('');
-                todoValido = false;
-            } else {
-                var nombreRepetido = marcas.some(function (marca) {
-                    return marca.nombreMarca.toLowerCase() === valor.toLowerCase() &&
-                        marca.marcaId != $('#MarcaId').val().trim();
-                });
-
-                if (nombreRepetido) {
-                    spanError.text('Esta marca ya se encuentra registrada.');
-                    spanVacio.text('');
-                    todoValido = false;
-                } else {
-                    spanError.text('');
-                    spanVacio.text('');
-                }
-            }
+        const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
+        if (!NoCamposVaciosMarca()) {
+            event.preventDefault();
+            return;
         }
 
-        return todoValido; // Devuelve el estado de validación al finalizar la función
-    }
-
-    function validarCampoCompraAct(input) {
-        var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
-        var spanError = input.next('.text-dangerAct'); // Obtener el elemento span de error asociado al input
-        var spanVacio = input.prev('.MensajeAct'); // Obtener el elemento span vacío asociado al input
-
-        // Limpiar el mensaje de error previo
-        spanError.text('');
-        spanVacio.text('');
-
-        // Validar el campo y mostrar mensaje de error si es necesario
-        if (valor === '') {
-            spanVacio.text(' *');
-            spanError.text('');
-        } else if (input.is('#NombreMarcaAct')) {
-            if (valor.length < 3) {
-                spanError.text('Este campo debe tener un mínimo de 3 caracteres.');
-                spanVacio.text('');
-            } else if (!/^(?!.*(\w)\1\1\1)[\w\s]+$/.test(valor)) {
-                spanError.text('Este nombre es redundante.');
-                spanVacio.text('');
-                todoValido = false;
-            } else if (/^\d+$/.test(valor)) {
-                spanError.text('Este campo no puede ser solo numérico.');
-                spanVacio.text('');
-                todoValido = false;
-            } else {
-                var nombreRepetido = marcas.some(function (marca) {
-                    return marca.nombreMarca.toLowerCase() === valor.toLowerCase() &&
-                        marca.marcaId != $('#MarcaId').val().trim();
-                });
-
-                if (nombreRepetido) {
-                    spanError.text('Esta marca ya se encuentra registrada.');
-                    spanVacio.text('');
-                    todoValido = false;
-                } else {
-                    spanError.text('');
-                    spanVacio.text('');
-                }
-            }
+        if (!NoCamposConErroresMarca()) {
+            event.preventDefault();
+            mostrarAlertaAtencionPersonalizadaConBoton('El campo no es valido');
+            return;
         }
 
-        return todoValido; // Devuelve el estado de validación al finalizar la función
-    }
-    // Función para obtener los datos de una marca por su ID
-    function obtenerMarca(Id) {
-        fetch(`${API_URL}/GetMarcaById?Id=${Id}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener los datos de la marca.');
-                }
-                return response.json();
-            })
-            .then(marca => {
-                document.getElementById('MarcaIdAct').value = marca.marcaId;
-                document.getElementById('NombreMarcaAct').value = marca.nombreMarca;
-                document.getElementById('EstadoMarcaAct').value = marca.estadoMarca; // Si EstadoMarcaAct es un elemento select
+        if (marcaRepetida) {
+            event.preventDefault();
+            return;
+        }
 
-                console.log(marca);
-                NoCamposVaciosAct();
-
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-    // Evento click en botones de editar
-    document.querySelectorAll('#botonEditar').forEach(button => {
-        button.addEventListener('click', function () {
-            const Id = this.getAttribute('data-marca-id');
-            document.getElementById('FormAgregar').style.display = 'none';
-            document.getElementById('FormActualizar').style.display = 'block';
-            obtenerMarca(Id);
-        });
+        if (!camposVacios) {
+            event.preventDefault();
+            return;
+        }
     });
-    $('.delete-button').on('click', function (event) {
-        event.preventDefault(); // Prevenir el comportamiento predeterminado del botón
+    $('.modal-formulario-actualizar-marca').on('submit', function (event) {
+        event.preventDefault();
+        const marcaFinal = mostrarValoresFormularioMarcaAct();
+        const marcasAll = marcas;
+        const marcaRepetida = compararMarcasAct(marcaFinal, marcasAll);
+        console.log(marcasAll, marcaFinal);
 
-        var form = $(this).closest('form');
+        const campos = [
+            { id: 'NombreMarcaVistaAct', nombre: 'Marca'}
+        ];
+        const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
+        if (!NoCamposVaciosMarcaAct()) {
+            event.preventDefault();
+            return;
+        }
+
+        if (!NoCamposConErroresMarcaAct()) {
+            event.preventDefault();
+            mostrarAlertaAtencionPersonalizadaConBoton('Algunos campos contienen errores');
+            return;
+        }
+
+        if (marcaRepetida) {
+            event.preventDefault();
+            return;
+        }
+
+        if (!camposVacios) {
+            event.preventDefault();
+            return;
+        }
+
+    });
+    // Confirmación de eliminación
+    $('.eliminarMarca').on('submit', function (event) {
+        event.preventDefault(); // Evita que el formulario se envíe automáticamente
+        // Mostrar el diálogo de confirmación
         Swal.fire({
-            title: '¿Estás seguro?',
-            text: '¿Quieres eliminar esta marca?',
+            title: '\u00BFEst\u00E1s seguro?',
+            text: '\u00A1Esta acci\u00F3n no se puede deshacer.',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, eliminar',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'S\u00ED, eliminar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                form[0].submit(); // Enviar el formulario manualmente
+                // Si el usuario confirma, enviar el formulario
+                event.target.submit();
             }
         });
     });
+
+    // Validar campos en cada cambio para cambiar el mensaje inicial que aparece arriba de los botones del formulario
+    $('.modal-formulario-crear-marca input').on('input', function () {
+        NoCamposVaciosInicialMarca();
+        NoCamposConErroresInicialMarca();
+    });
+    $('.modal-formulario-actualizar-marca input, .modal-formulario-actualizar-marca select').on('input', function () {
+        NoCamposVaciosInicialMarcaAct();
+        NoCamposConErroresInicialMarcaAct();
+
+    });
+    
+    //Este elimina el mensaje inicial u lo agrega de ser necesario el que aparece sobre los botones
+    function NoCamposVaciosMarca() {
+        const mensajeElements = $('.Mensaje');
+        const mensajeSlice = mensajeElements.slice(0,1);
+        const camposConTexto = mensajeSlice.filter(function () {
+            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
+        }).length;
+
+        console.log('Número de campos sin texto:', camposConTexto);
+
+        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos');
+            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+            return false;
+        } else if (camposConTexto != 0) { // Cambiamos la condición para verificar si hay campos sin texto.
+            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+            return false;
+        }
+
+        return true;
+    }
+    function NoCamposConErroresMarca() {
+        const textDangerElements = $('.text-danger');
+        const textDangerSlice = textDangerElements.slice(0, 1);
+        const todoValido = textDangerSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+        console.log('Todos los campos son válidos:', todoValido);
+        if (!todoValido) {
+            $('.MensajeErrores').text('Este nombre no es valido..');
+            return false;
+        }
+        return true;
+    }
+
+    function NoCamposVaciosMarcaAct() {
+        const mensajeElements = $('.Mensaje');
+        const mensajeSlice = mensajeElements.slice(-1);
+        const camposConTexto = mensajeSlice.filter(function () {
+            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
+        }).length;
+
+        console.log('Número de campos sin texto:', camposConTexto);
+
+        if (camposConTexto === 8) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos');
+            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+            return false;
+        } else if (camposConTexto != 0) { // Cambiamos la condición para verificar si hay campos sin texto.
+            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+            return false;
+        }
+
+        return true;
+    }
+    function NoCamposConErroresMarcaAct() {
+        const textDangerElements = $('.text-danger');
+        const textDangerSlice = textDangerElements.slice(-1);
+        const todoValido = textDangerSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+        console.log('Todos los campos son válidos:', todoValido);
+        if (!todoValido) {
+            $('.MensajeErrores').text('Este nombre no es valido.');
+            return false;
+        }
+        return true;
+    }
+    function NoCamposVaciosInicialMarca() {
+        const mensajeElements = $('.Mensaje');
+
+        const mensajeSlice = mensajeElements.slice(0, 1);
+
+
+        const todosLlenos = mensajeSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+
+
+        if (todosLlenos) {
+            $('.MensajeInicial').text('');
+        }
+
+    }
+    function NoCamposConErroresInicialMarca() {
+        const textDangerElements = $('.text-danger');
+        const textDangerSlice = textDangerElements.slice(0, 1);
+        const todoValido = textDangerSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+        if (todoValido) {
+            $('.MensajeErrores').text('');
+            
+        }
+        return true;
+    }
+
+    function NoCamposVaciosInicialMarcaAct() {
+        const mensajeElements = $('.Mensaje');
+
+        const mensajeSlice = mensajeElements.slice(-1);
+
+
+        const todosLlenos = mensajeSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+
+
+        if (todosLlenos) {
+            $('.MensajeInicial').text('');
+        }
+
+    }
+    function NoCamposConErroresInicialMarcaAct() {
+        const textDangerElements = $('.text-danger');
+        const textDangerSlice = textDangerElements.slice(-1);
+        const todoValido = textDangerSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+        console.log('Todos los campos son válidos:', todoValido);
+        if (todoValido) {
+            $('.MensajeErrores').text('');
+        }
+        return true;
+    }
+
+});
+
+
+
+function simularClickMarca() {
+    //ocultar formulario de actualizar  y mostrar el formulario principal
+    $('#FormActualizarMarca').hide();
+    $('#FormPrincipalMarca').show().css('visibility', 'visible');
+    obtenerDatosMarcas();
 }
 
+/*--------------------Atajo para abrir modal -------------------------------*/
+document.addEventListener('keydown', function (event) {
+    if (event.ctrlKey && event.key === 'm') {
+        try {
+            if (esURLValida('Marcas')) {
+                const modalMarca = $('#ModalMarca');
+                const botonAbrirModal = $('#botonabrirModalMarca');
 
-// Llamar a la función al cargar la página
-window.onload = function () {
-    valoresPorDefaultSinConexion();
+                if (modalMarca.length === 0 || botonAbrirModal.length === 0) {
+                    console.error('El modal o el botón para abrir el modal no se encontraron en el DOM.');
+                    return;
+                }
+                if (modalMarca.hasClass('show')) {
+                    modalMarca.modal('hide'); // Cerrar la modal
+                } else {
+                    botonAbrirModal.click();
+                }
+            }
+        } catch (error) {
+            console.error('Ocurrió un error al intentar abrir/cerrar la modal de marca:', error);
+        }
+    }
+});
 
-};
+
+function abrirModalMarca() {
+    // Verificar si la modal está abierta
+    if ($('#ModalMarca').hasClass('show')) {
+        $('#ModalMarca').modal('hide'); // Cerrar la modal
+    } else {
+        simularClickMarca(); // Simular algún evento antes de abrir la modal
+        $('#ModalMarca').modal('show'); // Abrir la modal
+    }
+}
+
+function limpiarFormularioMarca() {
+    limpiarFormularioMarcaAgregar();
+    limpiarFormularioMarcaAct();
+    history.replaceState(null, '', location.pathname);
+    // Limpiar campos y elementos específicos
+    limpiarCampo('NombreMarcaVista');
 
 
-
-function limpiarFormulario() {
-    // Limpiar los valores de los campos del formulario
-    document.getElementById('MarcaId').value = '';
-    document.getElementById('NombreMarca').value = '';
-    document.getElementById('EstadoMarca').value = '';
-    document.getElementById('MarcaIdAct').value = '';
-    document.getElementById('NombreMarcaAct').value = '';
-    document.getElementById('EstadoMarcaAct').value = '';
+    // Limpiar campos y elementos específicos de la versión actualizada
+    limpiarCampo('NombreMarcaVistaAct');
 
 
-    document.getElementById('FormActualizar').style.display = 'none';
-    document.getElementById('FormAgregar').style.display = 'block';
-
+}
+function limpiarFormularioMarcaAgregar() {
+    // Limpiar la URL eliminando los parámetros de consulta
+    history.replaceState(null, '', location.pathname);
+    // Limpiar mensajes de alerta y *
     var mensajes = document.querySelectorAll('.Mensaje');
-    mensajes.forEach(function (mensaje) {
-        mensaje.textContent = ' *'; // Restaurar mensajes de error
-        mensaje.style.display = 'inline-block'; // Establecer estilo si es necesario
+    var mensajesText = document.querySelectorAll('.text-danger');
+
+    for (var i = 0; i < mensajes.length - 1; i++) {
+        mensajes[i].textContent = '*';
+    }
+    for (var i = 0; i < mensajesText.length - 1; i++) {
+        mensajesText[i].textContent = '';
+    }
+
+    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
+        element.textContent = '';
     });
-    const mensajesError = document.querySelectorAll('.text-danger');
-    mensajesError.forEach(span => {
-        span.innerText = ''; // Limpiar contenido del mensaje
+    document.querySelectorAll('.MensaErrores').forEach(function (element) {
+        element.textContent = '';
     });
-    var mensajesAct = document.querySelectorAll('.MensajeAct');
-    mensajesAct.forEach(function (mensajeAct) {
-        mensajeAct.textContent = ''; // Restaurar mensajes de error
-        mensajeAct.style.display = 'inline-block'; // Establecer estilo si es necesario
+    
+}
+function limpiarFormularioMarcaAct() {
+    history.replaceState(null, '', location.pathname);
+    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
+        element.textContent = '';
     });
-    const mensajesErrorAct = document.querySelectorAll('.text-dangerAct');
-    mensajesErrorAct.forEach(span => {
-        span.innerText = ''; // Limpiar contenido del mensaje
+    document.querySelectorAll('.MensaErrores').forEach(function (element) {
+        element.textContent = '';
     });
 
-    $('#FormAgregar').show();
-    $('#FormActualizar').hide();
+    // Limpiar mensajes de alerta y asteriscos
+    var mensajes = document.querySelectorAll('.Mensaje');
+    var mensajesText = document.querySelectorAll('.text-danger');
+
+    for (var i = Math.max(0, mensajes.length - 1); i < mensajes.length; i++) {
+        mensajes[i].textContent = '';
+    }
+    for (var i = Math.max(0, mensajesText.length - 1); i < mensajesText.length; i++) {
+        mensajesText[i].textContent = '';
+    }
+}
+
+
+//Función para limpiar la url si el usuario da fuera de ella 
+$('.modal').on('click', function (e) {
+    if (e.target === this) {
+        // Limpiar la URL eliminando los parámetros de consulta
+        history.replaceState(null, '', location.pathname);
+        $(this).modal('hide'); // Oculta la modal
+    }
+});
+
+function AlPerderFocoMarca() {
+    var displayFormActualizar = $('#FormActualizarMarca').css('display');
+    var displayModal = $('#ModalMarca').css('display');
+    if (displayFormActualizar == "block" && displayModal == "none") {
+        limpiarFormularioMarcaAct();
+    }
 }
 
 
 
-document.getElementById('buscarMarca').addEventListener('input', function () {
-    var input = this.value.trim().toLowerCase();
-    var rows = document.querySelectorAll('.marcasPaginado');
 
+/*--------------------------------------------------------- Modal de actualizar usuario ---------------------------------------*/
+function mostrarModalConRetrasoMarca(marcaId) {
+    limpiarFormularioMarcaAct();
+    actualizarMarca(marcaId);
+    setTimeout(function () {
+        var myModal = new bootstrap.Modal(document.getElementById('ModalMarca'));
+        myModal.show();
+        // Aquí puedes llamar a la función actualizarProducto si es necesario
+    }, 400); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
+
+}
+//Modal cuando se hace click en editar en el boton de detalle
+function mostrarModalSinRetrasoMarca(marcaId) {
+    obtenerDatosMarcas();
+    actualizarMarca(marcaId);
+    setTimeout(function () {
+        var myModal = new bootstrap.Modal(document.getElementById('ModalMarca'));
+        limpiarFormularioMarcaAct();
+        myModal.show();
+        // Aquí puedes llamar a la función actualizarProducto si es necesario
+    }, 600); // 50 milisegundos (0.05 segundos) de retraso antes de abrir la modal
+}
+
+
+function actualizarMarca(campo) {
+    var marcaId = campo;
+    $.ajax({
+        url: '/Marcas/FindMarca', // Ruta relativa al controlador y la acción
+        type: 'POST',
+        data: { marcaId: marcaId },
+        success: function (data) {
+            var formActualizar = $('#FormActualizarMarca');
+            formActualizar.find('#MarcaIdAct').val(data.marcaId);
+            formActualizar.find('#NombreMarcaVistaAct').val(data.nombreMarca);
+            formActualizar.find('#EstadoMarcaAct').val(data.estadoMarca);
+            limpiarFormularioMarcaAct()
+            obtenerDatosMarcas();
+        },
+        error: function () {
+            alert('Error al obtener los datos de la  marca.');
+        }
+    });
+    $('#FormPrincipalMarca').hide().css('visibility', 'hidden');
+    $('#FormActualizarMarca').show().css('visibility', 'visible');
+}
+function actualizarEstadoMarca(MarcaId) {
+    $.ajax({
+        url: `/Marcas/UpdateEstadoMarca/${MarcaId}`,
+        type: 'PATCH',
+        contentType: 'application/json',
+        success: function (response) {
+            console.log("Estado actualizado:", EstadoMarca);
+            // Mostrar SweetAlert
+            Swal.fire({
+                icon: 'success',
+                title: '¡Estado actualizado!',
+                showConfirmButton: false,
+                timer: 1500 // Duración del SweetAlert en milisegundos
+            })
+        },
+        error: function (xhr, status, error) {
+            console.error('Error al actualizar el estado del marca:', xhr.responseText);
+            // Mostrar SweetAlert de error si es necesario
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Hubo un error al actualizar el estado del marca. Por favor, inténtalo de nuevo.'
+            });
+        }
+    });
+}
+
+
+function searchMarca() {
+    var input = $('#buscarMarca').val().trim().toLowerCase();    //Obtiene el valor del buscadpor
+    var rows = document.querySelectorAll('.marcasPaginado');    //Obtiene el tr de Usuario Paginado.
+    var rowsTodos = document.querySelectorAll('.Marcas');      //Obtiene el tr de Usuario que esta en none
+    var icon = document.querySelector('#btnNavbarSearch i');    //Obtiene el icino de buscar
+    var contador = document.querySelector('.contador');        //Obtiene la columna que tiene el # 
+    var contadores = document.querySelectorAll('.contadorB'); //Obtiene el contadorB que esta en none y lo hace visible para mostrar el consecutivo y el ID
     if (input === "") {
-        rows.forEach(function (row) {
+        rows.forEach(function (row) { //Esconde los usuarios paginado
             row.style.display = '';
         });
-        var icon = document.querySelector('#btnNavbarSearch i');
+        contadores.forEach(function (contador) {
+            contador.classList.add('noIs'); // Removemos la clase 'noIs' para mostrar la columna
+        });
         icon.className = 'fas fa-search';
-        icon.style.color = 'gray';
+        icon.style.color = 'white';
+        contador.innerText = '#';
     } else {
         rows.forEach(function (row) {
             row.style.display = 'none';
         });
-        var icon = document.querySelector('#btnNavbarSearch i');
+        contadores.forEach(function (contador) {
+            contador.classList.remove('noIs'); // Removemos la clase 'noIs'
+        });
         icon.className = 'fas fa-times';
-        icon.style.color = 'gray';
+        icon.style.color = 'white';
+        contador.innerText = 'ID';
+
     }
-    var rowsTodos = document.querySelectorAll('.Marcas');
 
     rowsTodos.forEach(function (row) {
         if (input === "") {
             row.style.display = 'none';
         } else {
-            var marcaId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
-            var nombreM = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-
-            row.style.display = (marcaId.includes(input) || nombreM.includes(input)) ? 'table-row' : 'none';
+            var marcaId = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var nombreC = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+            row.style.display = (input === "" || marcaId.includes(input) || nombreC.includes(input)) ? 'table-row' : 'none';
         }
     });
-});
+}
 
-function vaciarInput() {
+function vaciarInputMarca() {
     document.getElementById('buscarMarca').value = "";
     var icon = document.querySelector('#btnNavbarSearch i');
     icon.className = 'fas fa-search';
-    icon.style.color = 'gray';
+    icon.style.color = 'white';
+
+    var contador = document.querySelector('.contador');
+    contador.innerText = '#';
+    var contadores = document.querySelectorAll('.contadorB');
+    contadores.forEach(function (contador) {
+        contador.classList.add('noIs'); // Removemos la clase 'noIs'
+    });
 
     var rows = document.querySelectorAll('.marcasPaginado');
     rows.forEach(function (row) {
@@ -351,31 +577,42 @@ function vaciarInput() {
 }
 
 
+function validarCampoMarca(campo) {
+    const input = $(campo); // Convertir el input a objeto jQuery
+    var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
+    var spanError = input.next('.text-danger'); // Obtener el elemento span de error asociado al input
+    var spanVacio = input.prev('.Mensaje'); // Obtener el elemento span vacío asociado al input
 
+    // Limpiar el mensaje de error previo
+    spanError.text('');
+    spanVacio.text('');
 
+    // Validar el campo y mostrar mensaje de error si es necesario
+    if (valor === '') {
+        spanVacio.text('*');
+        spanError.text('');
+    }
+    
 
-
-function actualizarEstadoMarca(MarcaId, EstadoMarca) {
-    fetch(`https://localhost:7013/api/Marcas/UpdateEstadoMarca/${MarcaId}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ EstadoMarca: EstadoMarca ? 1 : 0 })
-    })
-        .then(response => {
-            if (response.ok) {
-                setTimeout(() => {
-                    location.reload(); // Recargar la página
-                }, 500);
-            } else {
-                console.error('Error al actualizar el estado del cliente');
-            }
-        })
-        .catch(error => {
-            console.error('Error de red:', error);
-        });
+    // Validación de usuario
+    if (input.is('#NombreMarcaVista') || input.is('#NombreMarcaVistaAct')) {
+        const nombreValido = /^[a-zA-Z]{3,}[a-zA-Z0-9_-]{0,16}$/.test(valor); // Verifica que el usuario cumpla con el formato especificado
+        if (valor === '') {
+            spanVacio.text('*');
+        } else if (valor.length < 4 && valor.length > 1) {
+            spanVacio.text('');
+            spanError.text('El usuario debe contener entre 4 y 16 caracteres y empezar con letras. Ejemplo: juan123');
+        } else if (!nombreValido) {
+            spanVacio.text('');
+            spanError.text('El usuario debe contener entre 4 y 16 caracteres alfanuméricos, guiones bajos (_) o guiones medios (-).');
+        } else {
+            spanError.text('');
+            spanVacio.text('');
+        }
+    }
+    return true; // Devuelve el estado de validación al finalizar la función
 }
+
 
 
 

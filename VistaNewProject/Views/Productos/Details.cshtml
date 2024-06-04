@@ -1,5 +1,5 @@
 ﻿@using X.PagedList.Mvc.Core
-@model X.PagedList.IPagedList<VistaNewProject.Models.Lote>
+@model X.PagedList.IPagedList<VistaNewProject.Models.LoteVista>
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Detalle de producto";
@@ -48,30 +48,35 @@
 {
     <div id="contenedor-datos-lote" class="text-center">
         <!-- Agregamos la clase text-center para centrar la tabla -->
-        <table class="table table-striped tableDetalle" style="width: 80%; margin: 0 auto;">
-            <!-- Ajustamos el estilo de la tabla para centrarla -->
-            <thead class="tableDetalle-thead">
-                <tr>
-                    <th>Lote ID</th>
-                    <th>Lote</th>
-                    <th>Cantidad en lote</th>
-                    <th>Precio por producto</th>
-                    <th>Precio por unidad de producto</th>
-                </tr>
-            </thead>
-            <tbody class="tableDetalle-tbody">
-                @foreach (var lote in Model)
-                {
+        <div class="pedido-info">
+            <h2 style="text-align:center;">Información del Usuario</h2>
+            <table class="table tablaDetalle">
+                <thead>
                     <tr>
-                        <td>@lote.LoteId</td>
-                        <td>@lote.NumeroLote</td>
-                        <td>@lote.Cantidad</td>
-                        <td>@lote.PrecioPorPresentacion</td>
-                        <td>@lote.PrecioPorUnidadProducto</td>
+                        <th scope="col">Lote ID</th>
+                        <th scope="col"># de Lote</th>
+                        <th scope="col">Cantidad en lote</th>
+                        <th scope="col">Precio por producto</th>
+                        <th scope="col">Precio por unidad de producto</th>
+                        <th scope="col" class="fechaVencimientoTabla">Fecha de vencimiento</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var lote in Model)
+                    {
+                        <tr>
+                            <td>@lote.LoteId</td>
+                            <td>@lote.NumeroLote</td>
+                            <td>@lote.Cantidad</td>
+                            <td>@(lote.PrecioPorPresentacion)</td>
+                            <td>@(lote.PrecioPorUnidadProducto)</td>
+                            <td>@(lote.FechaCaducidad)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
     <div class="pagination-detail">
         <a href="@Url.Action("Details", new { id = Model.First().ProductoId, page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 })" class="prev-next @(Model.HasPreviousPage ? "" : "disabled")">Anterior</a>

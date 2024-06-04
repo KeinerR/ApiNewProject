@@ -88,7 +88,6 @@ function reiniciarFormulario() {
     location.reload(); //quitar despues de berig¿ficar que no se usa
 }
 
-
 function mostrarOcultarContrasena(idCampo) {
     var inputContrasena = document.getElementById(idCampo);
     /*var iconoOjo = document.getElementById("MostrarOcultar" + idCampo.charAt(idCampo.length - 1)).querySelector("img");*/

@@ -167,7 +167,7 @@ namespace VistaNewProject.Services
 
 
 
-        public async Task<HttpResponseMessage> UpdatePresentacionAsync(Presentacion presentacion)
+        public async Task<HttpResponseMessage> UpdatePresentacionAsync(PresentacionUpdate presentacion)
         {
             var response = await _httpClient.PutAsJsonAsync($"Presentaciones/UpdatePresentaciones/", presentacion);
             return response;
@@ -178,6 +178,16 @@ namespace VistaNewProject.Services
             var response = await _httpClient.DeleteAsync($"Presentaciones/DeletePresentacion/{id}");
             return response;
         }
+
+        public async Task<HttpResponseMessage> CambiarEstadoPresentacionAsync(int id)
+        {
+            // Realiza la solicitud PATCH a la API
+            var response = await _httpClient.PatchAsync($"Presentaciones/UpdateEstadoPresentacion/{id}");
+
+            // Retorna la respuesta de la solicitud
+            return response;
+        }
+
 
 
         /// COMPRA
@@ -223,7 +233,7 @@ namespace VistaNewProject.Services
             }
             return response;
         }
-        public async Task<HttpResponseMessage> CreateMarcaAsync( Marca marca)
+        public async Task<HttpResponseMessage> CreateMarcaAsync(Marca marca)
         {
             var response = await _httpClient.PostAsJsonAsync("Marcas/InsertarMarca", marca);
 
@@ -271,7 +281,7 @@ namespace VistaNewProject.Services
         }
 
 
-        public async Task<HttpResponseMessage> UpdateMarcaAsync(Marca marca)
+        public async Task<HttpResponseMessage> UpdateMarcaAsync(MarcaUpdate marca)
         {
             try
             {
@@ -354,6 +364,14 @@ namespace VistaNewProject.Services
         }
 
 
+        public async Task<HttpResponseMessage> CambiarEstadoMarcaAsync(int id)
+        {
+            // Realiza la solicitud PATCH a la API
+            var response = await _httpClient.PatchAsync($"Marcas/UpdateEstadoMarca/{id}");
+
+            // Retorna la respuesta de la solicitud
+            return response;
+        }
 
 
 
@@ -423,7 +441,7 @@ namespace VistaNewProject.Services
             }
         }
 
-        public async Task<HttpResponseMessage> UpdateCategoriaAsync(Categoria categoria)
+        public async Task<HttpResponseMessage> UpdateCategoriaAsync(CategoriaUpdate categoria)
         {
             var response = await _httpClient.PutAsJsonAsync($"Categorias/UpdateCategorias/", categoria);
             return response;
@@ -432,6 +450,14 @@ namespace VistaNewProject.Services
         public async Task<HttpResponseMessage> DeleteCategoriaAsync(int id)
         {
             var response = await _httpClient.DeleteAsync($"Categorias/DeleteCategoria/{id}");
+            return response;
+        }
+        public async Task<HttpResponseMessage> CambiarEstadoCategoriaAsync(int id)
+        {
+            // Realiza la solicitud PATCH a la API
+            var response = await _httpClient.PatchAsync($"Categorias/UpdateEstadoCategoria/{id}");
+
+            // Retorna la respuesta de la solicitud
             return response;
         }
 

@@ -20,16 +20,34 @@ namespace VistaNewProject.Controllers
             _client = client;
         }
 
-        public async Task<IActionResult> Index(int? page)
+        public async Task<ActionResult> Index(int? page, string order = "default")
         {
             int pageSize = 5; // Número máximo de elementos por página
             int pageNumber = page ?? 1;
-
             var productos = await _client.GetProductoAsync();
             var presentaciones = await _client.GetPresentacionAsync();
             var lotes = await _client.GetLoteAsync();
             var categorias = await _client.GetCategoriaAsync();
             var marcas = await _client.GetMarcaAsync();
+
+            // Filtrar y ordenar productos
+            productos = productos.Where(p => p.Estado == 1).ToList(); // Filtrar productos activos
+
+            switch (order.ToLower())
+            {
+                case "first":
+                    productos = productos.Reverse().ToList();
+                    break;
+                case "alfabetico":
+                    productos = productos.OrderBy(p => p.NombreCompleto).ToList();
+                    break;
+                case "name_desc":
+                    productos = productos.OrderByDescending(p => p.NombreCompleto).ToList();
+                    break;
+                default:
+                    break;
+            }
+
 
             // Calcular cantidad total de lotes por ProductoId y estado activo
             var cantidadTotalPorProducto = lotes
@@ -40,7 +58,7 @@ namespace VistaNewProject.Controllers
                     grp => grp.Sum(l => l.Cantidad) // Sumar la cantidad de cada grupo
                 );
 
-            Console.WriteLine(cantidadTotalPorProducto);
+
             // Concatenar nombre completo de presentaciones
             foreach (var presentacion in presentaciones)
             {
@@ -66,6 +84,7 @@ namespace VistaNewProject.Controllers
                     // Si no hay cantidad total para este producto, asignar cero o un valor predeterminado según sea necesario
                     producto.CantidadTotal = 0;
                 }
+
                 var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
                 var nombrePresentacion = presentacionEncontrada?.NombrePresentacion ?? "Sin presentación";
                 var contenido = presentacionEncontrada?.Contenido ?? "";
@@ -76,27 +95,125 @@ namespace VistaNewProject.Controllers
                 producto.NombreCompleto = cantidad > 1 ?
                     $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} {contenido}" :
                     $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
-
             }
-            // Paginar resultados
-            var pageProducto = await productos.ToPagedListAsync(pageNumber, pageSize);
-            if (!pageProducto.Any() && pageProducto.PageNumber > 1)
+
+            var pageProductos= await productos.ToPagedListAsync(pageNumber, pageSize);
+
+            // Si la página solicitada no tiene elementos y no es la primera página, redirigir a la última página
+            if (!pageProductos.Any() && pageProductos.PageNumber > 1)
             {
-                pageProducto = await productos.ToPagedListAsync(pageProducto.PageCount, pageSize);
+                return RedirectToAction("Index", new { page = pageProductos.PageCount });
             }
 
-            // Calcular contador
-            int contador = (pageNumber - 1) * pageSize + 1;
+            int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
 
             ViewBag.Contador = contador;
             ViewBag.Presentaciones = presentaciones;
             ViewBag.Categorias = categorias;
-            ViewBag.Productos = productos;
+            ViewBag.Productos = productos; // Pasar la lista paginada y ordenada a la vista
             ViewBag.Marcas = marcas;
+            ViewBag.Order = order; // Pasar el criterio de orden a la vista
             ViewData["Productos"] = productos;
-
-            return View(pageProducto);
+            return View(pageProductos);
         }
+        public async Task<ActionResult> ProductosInactivos(int? page, string order = "default")
+        {
+            int pageSize = 5; // Número máximo de elementos por página
+            int pageNumber = page ?? 1;
+            var productos = await _client.GetProductoAsync();
+            var presentaciones = await _client.GetPresentacionAsync();
+            var lotes = await _client.GetLoteAsync();
+            var categorias = await _client.GetCategoriaAsync();
+            var marcas = await _client.GetMarcaAsync();
+
+            // Filtrar y ordenar productos
+            productos = productos.Where(p => p.Estado == 0).ToList(); // Filtrar productos activos
+
+            switch (order.ToLower())
+            {
+                case "first":
+                    productos = productos.Reverse().ToList();
+                    break;
+                case "alfabetico":
+                    productos = productos.OrderBy(p => p.NombreCompleto).ToList();
+                    break;
+                case "name_desc":
+                    productos = productos.OrderByDescending(p => p.NombreCompleto).ToList();
+                    break;
+                default:
+                    break;
+            }
+
+
+            // Calcular cantidad total de lotes por ProductoId y estado activo
+            var cantidadTotalPorProducto = lotes
+                .Where(l => l.EstadoLote == 1) // Filtrar por estado activo
+                .GroupBy(l => l.ProductoId ?? 0) // Convertir ProductoId a int no anulable
+                .ToDictionary(
+                    grp => grp.Key,
+                    grp => grp.Sum(l => l.Cantidad) // Sumar la cantidad de cada grupo
+                );
+
+
+            // Concatenar nombre completo de presentaciones
+            foreach (var presentacion in presentaciones)
+            {
+                var nombrePresentacion = presentacion.NombrePresentacion;
+                var contenido = presentacion.Contenido;
+                var cantidad = presentacion.CantidadPorPresentacion ?? 1;
+
+                presentacion.NombreCompleto = cantidad > 1 ?
+                    $"{nombrePresentacion} x {cantidad} unidades de {contenido}" :
+                    $"{nombrePresentacion} de {contenido}";
+            }
+
+            // Concatenar nombre completo de productos
+            foreach (var producto in productos)
+            {
+                // Obtener la cantidad total correspondiente al producto actual
+                if (cantidadTotalPorProducto.TryGetValue(producto.ProductoId, out var cantidadTotal))
+                {
+                    producto.CantidadTotal = cantidadTotal;
+                }
+                else
+                {
+                    // Si no hay cantidad total para este producto, asignar cero o un valor predeterminado según sea necesario
+                    producto.CantidadTotal = 0;
+                }
+
+                var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
+                var nombrePresentacion = presentacionEncontrada?.NombrePresentacion ?? "Sin presentación";
+                var contenido = presentacionEncontrada?.Contenido ?? "";
+                var cantidad = presentacionEncontrada?.CantidadPorPresentacion ?? 1;
+                var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
+                var nombreMarca = marcaEncontrada?.NombreMarca ?? "Sin marca";
+
+                producto.NombreCompleto = cantidad > 1 ?
+                    $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} {contenido}" :
+                    $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
+            }
+
+            var pageProductos= await productos.ToPagedListAsync(pageNumber, pageSize);
+
+            // Si la página solicitada no tiene elementos y no es la primera página, redirigir a la última página
+            if (!pageProductos.Any() && pageProductos.PageNumber > 1)
+            {
+                return RedirectToAction("Index", new { page = pageProductos.PageCount });
+            }
+
+            int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
+
+            ViewBag.Contador = contador;
+            ViewBag.Presentaciones = presentaciones;
+            ViewBag.Categorias = categorias;
+            ViewBag.Productos = productos; // Pasar la lista paginada y ordenada a la vista
+            ViewBag.Marcas = marcas;
+            ViewBag.Order = order; // Pasar el criterio de orden a la vista
+            ViewData["Productos"] = productos;
+            return View(pageProductos);
+        }
+     
+
 
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] ProductoEnd producto)
@@ -185,7 +302,7 @@ namespace VistaNewProject.Controllers
 
         public async Task<IActionResult> Details(int? id, int? page)
         {
-            int pageSize = 5; // Número máximo de elementos por página
+            int pageSize = 4; // Número máximo de elementos por página
             int pageNumber = page ?? 1;
             if (id == null)
             {
@@ -225,23 +342,43 @@ namespace VistaNewProject.Controllers
             {
                 productoInfo.NombreCompleto = $"{nombrePresentacion} de {productoInfo.NombreProducto} {nombreMarca} de {contenido}";
             }
-         
-            // Filtrar los lotes para obtener solo aquellos con una cantidad mayor que cero
+
             var lotesInfo = lotes
                 .Where(u => u.ProductoId == productoInfo.ProductoId && u.Cantidad > 0 && u.EstadoLote == 1)
                 .ToList();
-            var pagedLote = lotesInfo.ToPagedList(pageNumber, pageSize);
-         
 
+        
+            // Crear una lista de LoteVista y asignar los valores de lotesInfo
+            List<LoteVista> listaLotesVista = new List<LoteVista>();
+            foreach (var loteInfo in lotesInfo)
+            {
+                listaLotesVista.Add(new LoteVista
+                {
+                    LoteId = loteInfo.LoteId,
+                    DetalleCompraId = loteInfo.DetalleCompraId,
+                    ProductoId = loteInfo.ProductoId,
+                    NumeroLote = loteInfo.NumeroLote,
+                    PrecioCompra = loteInfo.PrecioCompra,
+                    PrecioPorPresentacion = loteInfo.PrecioPorPresentacion,
+                    PrecioPorUnidadProducto = loteInfo.PrecioPorUnidadProducto,
+                    FechaVencimiento = loteInfo.FechaVencimiento,
+                    Cantidad = loteInfo.Cantidad,
+                    EstadoLote = loteInfo.EstadoLote,
+                    DetalleCompra = loteInfo.DetalleCompra,
+                    Producto = loteInfo.Producto
+                });
+            }
+            foreach (var lote in listaLotesVista)
+            {
+                lote.FechaCaducidad = FormatearFechaVencimiento(lote.FechaVencimiento);
+            }
 
-           
-
+            var pagedLote = listaLotesVista.ToPagedList(pageNumber, pageSize);
             ViewData["Producto"] = productoInfo;
-            ViewData["Lotes"] = lotesInfo;
+            ViewData["Lotes"] = listaLotesVista; // Ahora pasamos la lista de LoteVista a la vista
 
             return View(pagedLote);
         }
-
         [HttpPost]
         public async Task<JsonResult> FindProductos()
         {
@@ -561,6 +698,30 @@ namespace VistaNewProject.Controllers
             TempData["EstadoAlerta"] = "false";
 
         }
+        private string FormatearFechaVencimiento(DateTime? fechaVencimiento)
+        {
+            if (fechaVencimiento.HasValue)
+            {
+                DateTime fechaSinHora = fechaVencimiento.Value.Date; // Obtiene solo la fecha sin la hora
+
+                // Verifica si el día es menor que 10 y agrega un cero al principio si es así
+                string diaFormateado = fechaSinHora.Day < 10 ? $"0{fechaSinHora.Day}" : fechaSinHora.Day.ToString();
+                
+                string mesFormateado = fechaSinHora.Month < 10 ? $"0{fechaSinHora.Month}" : fechaSinHora.Month.ToString();
+
+                // Formatea la fecha sin la hora en el formato "yyyyMMdd"
+                string fechaFormateada = $"{fechaSinHora.Year}/{mesFormateado}/{diaFormateado}";
+
+                return fechaFormateada;
+            }
+            else
+            {
+                return string.Empty; // Si la fecha es nula, retorna una cadena vacía o puedes manejarlo de otra manera
+            }
+        }
+
+
+
 
 
 

@@ -72,60 +72,71 @@
     <div id="Cuerpo">
         <div id="Menu" class="sidebar">
             <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Usuarios" asp-action="Index">
-                <i class="fa-solid fa-users icononosMenu"></i><span class="TextoMenu " >Usuarios</span>
+                <i class="fa-solid fa-users iconosMenu"></i><span class="TextoMenu " >Usuarios</span>
             </a>
             <label for="opcion1" class="sidebar-label TextoMenu">
-                <i class="fa-solid fa-gears icononosMenu"></i><span class="TextoMenu " >Configuración</span>
+                <i class="fa-solid fa-gears iconosMenu"></i><span class="TextoMenu " >Configuración</span>
             </label>
             <input type="checkbox" id="opcion1" >
             <div class="sub-menu">
                 <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Rols" asp-action="Index">
-                    <i class="fa-solid fa-users-gear icononosMenu"></i><span class="TextoMenu " >Roles</span>
+                    <i class="fa-solid fa-users-gear iconosMenu"></i><span class="TextoMenu " >Roles</span>
                 </a>
             </div>
             <label for="opcion2" class="sidebar-label TextoMenu">
-                <i class="fa-solid fa-cart-shopping icononosMenu"></i><span class="TextoMenu " >Compras</span>
+                <i class="fa-solid fa-cart-shopping iconosMenu"></i><span class="TextoMenu " >Compras</span>
             </label>
             <input type="checkbox" id="opcion2" >
             <div class="sub-menu">
                 <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Compras" asp-action="Index">
-                    <i class="fa-solid fa-cart-shopping icononosMenu"></i><span class="TextoMenu " >Compras</span>
+                    <i class="fa-solid fa-cart-shopping iconosMenu"></i><span class="TextoMenu " >Compras</span>
                 </a>
                 <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Productos" asp-action="Index">
-                    <i class="fa-solid fa-bag-shopping icononosMenu"></i> <span class="TextoMenu " >Productos</span>
+                    <i class="fa-solid fa-bag-shopping iconosMenu"></i> <span class="TextoMenu " >Productos</span>
                 </a>
                 <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Presentaciones" asp-action="Index">
-                    <i class="fa-solid fa-folder-open icononosMenu"></i> <span class="TextoMenu " >Presentaciones</span>
+                    <i class="fa-solid fa-cubes-stacked iconosMenu"></i>
+                    <span class="TextoMenu">Presentaciones</span>
                 </a>
-                <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-controller="Marcas" asp-action="Index"><span class="TextoMenu " >Marcas</span></a>
-                <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Categorias" asp-action="Index"><span class="TextoMenu " >Categorias</span></a>
-                <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Unidades" asp-action="Index"><span class="TextoMenu " >Unidades</span></a>
+                <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-controller="Marcas" asp-action="Index">
+                    <i class="fa-solid fa-folder-open iconosMenu"></i>
+                    <span class="TextoMenu">Marcas</span>
+                </a>
+                <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Categorias" asp-action="Index">
+                    <i class="fa-solid fa-box-archive iconosMenu"></i>
+                    <span class="TextoMenu">Categorias</span>
+                </a>
+                <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Unidades" asp-action="Index">
+                    <i class="fa-solid fa-truck-ramp-box iconosMenu"></i>
+                    <span class="TextoMenu">Unidades</span>
+                </a>
                 <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Proveedores" asp-action="Index">
-                    <i class="fa-solid fa-truck-field icononosMenu"></i><span class="TextoMenu " >Proveedores</span>
+                    <i class="fa-solid fa-truck-field iconosMenu"></i>
+                    <span class="TextoMenu">Proveedores</span>
                 </a>
             </div>
             <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Movimientos" asp-action="Index">
-                <i class="fa-solid fa-arrows-turn-to-dots icononosMenu"></i><span class="TextoMenu " >Movimientos</span>
+                <i class="fa-solid fa-arrows-turn-to-dots iconosMenu"></i><span class="TextoMenu " >Movimientos</span>
             </a>
             <label for="opcion3" class="sidebar-label TextoMenu">
-                <i class="fa-solid fa-sack-dollar icononosMenu"></i><span class="TextoMenu " >Pedidos</span>
+                <i class="fa-solid fa-sack-dollar iconosMenu"></i><span class="TextoMenu " >Pedidos</span>
             </label>
             <input type="checkbox" id="opcion3">
             <div class="sub-menu d-flex flex-column">
                 <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Pedidos" asp-action="Index">
-                    <i class="fa-solid fa-sack-dollar icononosMenu"></i><span class="TextoMenu " >Pedidos</span>
+                    <i class="fa-solid fa-sack-dollar iconosMenu"></i><span class="TextoMenu " >Pedidos</span>
                 </a>
                 @* <a class="sidebar-label TextoMenu submenu" asp-area="" asp-controller="DetallePedidos" asp-action="Index" style="display: none;">Detalle Pedidos</a> *@
                 <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Domicilios" asp-action="Index">
-                    <i class="fa-solid fa-motorcycle icononosMenu"></i><span class="TextoMenu " >Domicilios</span>
+                    <i class="fa-solid fa-motorcycle iconosMenu"></i><span class="TextoMenu " >Domicilios</span>
                 </a>
                 <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Clientes" asp-action="Index">
-                    <i class="fa-solid fa-people-group icononosMenu d-flex align-items-center justify-content-center"></i>
+                    <i class="fa-solid fa-people-group iconosMenu d-flex align-items-center justify-content-center"></i>
                     <span class="TextoMenu ">Clientes</span>
                 </a>
             </div>
             <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Lotes" asp-action="Index">
-                <i class="fas fa-cubes icononosMenu"></i><span class="TextoMenu">Lotes</span>
+                <i class="fas fa-cubes iconosMenu"></i><span class="TextoMenu">Lotes</span>
             </a>
         </div>
     <div class="container">
@@ -139,16 +150,18 @@
             &copy; 2024 - Optimus - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-  
 
     <script src="~/js/site.js"></script>
-    <script src="~/js/Productos.js"></script>   
+    <script src="~/js/Productos.js"></script>
     <script src="~/js/clientes.js"></script>
     <script src="~/js/Compras.js"></script>
     <script src="~/js/Detalle.js"></script>
     <script src="~/js/Usuarios.js"></script>
     <script src="~/js/proveedor.js"></script>
     <script src="~/js/categorias.js"></script>
+    <script src="~/js/marcas.js"></script>
+    <script src="~/js/presentaciones.js"></script>
+
     @if (TempData["SweetAlertMessage"] != null)
     {
         <script>
@@ -156,14 +169,14 @@
                 position: "center",
                 icon: "@TempData["SweetAlertIcon"]",
                 title: "@Html.Raw(TempData["SweetAlertTitle"])",
-                text: "@Html.Raw(@TempData["SweetAlertMessage"])",
+                html: `<div id="MensajeAlertaGeneral"'>@Html.Raw(TempData["SweetAlertMessage"])</div>`,
                 showConfirmButton: "@TempData["EstadoAlerta"]" === "true" ? true : false,
                 timer: "@TempData["Tiempo"]" || 6000,
                 timerProgressBar: true
             });
+
         </script>
     }
-    @* Sweet alert para detalle de producto *@
     @if (TempData["SweetAlertMessageAct"] != null)
     {
         @if (decimal.TryParse(TempData["PrecioPorPresentacionRedondeado"]?.ToString(), out decimal precioPorPresentacion))
@@ -176,31 +189,29 @@
                         showCloseButton: true,
                         icon: '@TempData["SweetAlertIconAct"]',
                         title: '@TempData["SweetAlertTitleAct"]',
-
                         html: `<div class="contenedor-detalle-producto">
-                                                <h4>@TempData["SweetAlertMessageAct"]</h4>
-                                                <form asp-action="CambiarPrecios" id="formCambiarPrecios" asp-controller="Productos" method="post">
-                                                    <input type="hidden" value='@TempData["Producto"]'>
-                                                    <div>
-                                                        <label class="detalle-label" for="precioProducto">Precio por Producto:</label>
-                                                        <input readonly type="text" value="@precioPorPresentacion" id="precioProducto" name="precioProducto" class="detalle-input form-control">
-                                                    </div>
-                                                    <div>
-                                                        <label class="detalle-label" for="precioUnidad">Precio por Unidad de Producto:</label>
-                                                        <input readonly type="text" value="@precioPorUnidad" id="precioUnidad" name="precioUnidad" class="detalle-input form-control">
-                                                    </div>
-                                                </form>
+                                                    <h4>@TempData["SweetAlertMessageAct"]</h4>
+                                                    <form asp-action="CambiarPrecios" id="formCambiarPrecios" asp-controller="Productos" method="post">
+                                                        <input type="hidden" value='@TempData["Producto"]'>
+                                                        <div>
+                                                            <label class="detalle-label" for="precioProducto">Precio por Producto:</label>
+                                                            <input readonly type="text" value="@precioPorPresentacion" id="precioProducto" name="precioProducto" class="detalle-input form-control">
+                                                        </div>
+                                                        <div>
+                                                            <label class="detalle-label" for="precioUnidad">Precio por Unidad de Producto:</label>
+                                                            <input readonly type="text" value="@precioPorUnidad" id="precioUnidad" name="precioUnidad" class="detalle-input form-control">
+                                                        </div>
+                                                    </form>
                                                  </div>
                                                  <button id="btn-Detallecompra-producto" onclick="editarFuncion()"><i class="fas fa-edit"></i>Editar</button>`,
                         allowOutsideClick: false,
                         allowEscapeKey: false,
                         timerProgressBar: true,
-                        showCancelButton: true, // Mostrar el botón de cancelar
+                        showCancelButton: true,
                         confirmButtonText: 'Continuar',
-                        cancelButtonText: 'Cancelar', // Texto del botón de cancelar
+                        cancelButtonText: 'Cancelar',
                         preConfirm: () => {
-                            // Función que se ejecuta antes de enviar el formulario
-                            document.getElementById('formCambiarPrecios').submit(); // Enviar el formulario con el ID 'formCambiarPrecios'
+                            document.getElementById('formCambiarPrecios').submit();
                         }
                     });
                 </script>
@@ -208,10 +219,11 @@
         }
     }
 
-
-
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
     }
-   
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

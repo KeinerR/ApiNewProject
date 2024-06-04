@@ -128,3 +128,15 @@
     width:450px;
  
 }
+
+/*ajustar tamaño para la modal de categoria*/
+#ContenedorMarca .modal-dialog {
+    width: 450px;
+}
+
+/*ajustar tamaño para la modal de categoria*/
+#ContenedorPresentacion .modal-dialog {
+    min-width: 690px;
+}
+   
+

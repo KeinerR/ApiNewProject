@@ -165,19 +165,20 @@ namespace ApiNewProject.Controllers
 
 
         [HttpPatch("UpdateEstadoMarca/{id}")]
-        public async Task<IActionResult> UpdateEstadoMarca(int id, [FromBody] Marca EstadoMarca)
+        public async Task<IActionResult> UpdateEstadoMarca(int id)
         {
             try
             {
-                var marca = await _context.Marcas.FindAsync(id);
+                // Buscar el categoria por su ID
+                var categoria = await _context.Marcas.FindAsync(id);
 
-                             if (marca == null)
+                // Si no se encuentra el categoria, devolver un error 404 Not Found
+                if (categoria == null)
                 {
                     return NotFound();
                 }
 
-                // Actualizar el estado del cliente con el nuevo valor
-                marca.EstadoMarca = EstadoMarca.EstadoMarca;
+                categoria.EstadoMarca = categoria.EstadoMarca == 0 ? 1UL : 0UL;
 
                 // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
@@ -188,10 +189,10 @@ namespace ApiNewProject.Controllers
             catch (Exception ex)
             {
                 // Si ocurre algún error, devolver un error 500 Internal Server Error
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el estado del cliente: " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el estado del categoria: " + ex.Message);
             }
         }
 
-     
+
     }
 }

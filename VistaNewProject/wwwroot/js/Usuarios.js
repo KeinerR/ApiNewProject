@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', function () {
   
     });
     // Confirmación de eliminación
-    $('.delete-form-usuario').on('submit', function (event) {
+    $('.eliminarUsuario').on('submit', function (event) {
         event.preventDefault(); // Evita que el formulario se envíe automáticamente
         // Mostrar el diálogo de confirmación
         Swal.fire({
@@ -410,9 +410,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return $(this).text() !== '';
         }).length === 0;
         console.log('Todos los campos son válidos:', todoValido);
-        if (!todoValido) {
-            $('.MensajeErrores').text('Algunos campos contienen errores.');
-            return false;
+        if (todoValido) {
+            $('.MensajeErrores').text('');
         }
         return true;
     }
@@ -439,10 +438,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const todoValido = textDangerSlice.filter(function () {
             return $(this).text() !== '';
         }).length === 0;
-        console.log('Todos los campos son válidos:', todoValido);
         if (!todoValido) {
-            $('.MensajeErrores').text('Algunos campos contienen errores.');
-            return false;
+            $('.MensajeErrores').text('');
         }
         return true;
     }
@@ -505,10 +502,9 @@ function limpiarFormularioUsuarioAgregar() {
     for (var i = 0; i < mensajes.length - 7; i++) {
         mensajes[i].textContent = '*';
     }
-    for (var i = 0; i < mensajesText.length - 7; i++) {
+    for (var i = 0; i < mensajesText.length - 6; i++) {
         mensajesText[i].textContent = '';
     }
-
     document.querySelectorAll('.MensajeInicial').forEach(function (element) {
         element.textContent = '';
     });
@@ -541,6 +537,8 @@ function limpiarFormularioUsuarioAct() {
 
 }
 function limpiarFormularioUsuario() {
+    limpiarFormularioUsuarioAgregar();
+    limpiarFormularioUsuarioAct();
     history.replaceState(null, '', location.pathname);
     // Limpiar campos y elementos específicos
     limpiarCampo('NombreRol');
@@ -550,7 +548,7 @@ function limpiarFormularioUsuario() {
     limpiarCampo('Usuario');
     limpiarCampo('Contraseña');
     limpiarCampo('RepetirContraseña');
-    limpiarCampo('Telefono');
+    limpiarCampo('TelefonoUsuario');
     limpiarCampo('CorreoUsuario');
 
     // Limpiar campos y elementos específicos de la versión actualizada
@@ -562,8 +560,7 @@ function limpiarFormularioUsuario() {
     limpiarCampo('ContraseñaAct');
     limpiarCampo('TelefonoUsuarioAct');
     limpiarCampo('CorreoUsuarioAct');
-    limpiarFormularioUsuarioAgregar();
-    limpiarFormularioUsuarioAct();
+  
 }
 
 
@@ -600,6 +597,7 @@ function mostrarModalSinRetrasoUsuario(usuarioId) {
     obtenerDatosUsuarios();
     actualizarUsuario(usuarioId);
     setTimeout(function () {
+        limpiarFormularioUsuarioAct();
         var myModal = new bootstrap.Modal(document.getElementById('ModalUsuario'));
         myModal.show();
         // Aquí puedes llamar a la función actualizarProducto si es necesario
@@ -830,10 +828,6 @@ function validarCampoUsuario(campo) {
             spanError.text('Este campo no permite letras o espacios.');
             spanVacio.text('');
             input.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
-        } else {
-            spanErrorApellido.text('');
-            spanVacioApellido.text('');
-            input.removeClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
         }
     }
 

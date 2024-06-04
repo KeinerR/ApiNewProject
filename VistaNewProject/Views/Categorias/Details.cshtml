@@ -4,50 +4,68 @@
 @{
     ViewData["Title"] = "Detalles de Categoria";
 }
-
-<h1>Detalles de Categoria</h1>
-<a asp-action="Index" class="btn btn-primary btn-sm">
-    <i class="fas fa-arrow-left"></i> Volver
-</a>
-<!-- Agrega esto en tu enlace de "Editar" en Details.cshtml -->
-@if (ViewBag.Categoria != null && ViewBag.Categoria.CategoriaId != null)
-{
-    <a href="#" onclick="redireccionarYEditar('@ViewBag.Categoria.CategoriaId', 'Categorias','marca')" class="btn btn-warning"><i class="fa-solid fa-pen"></i> Editar</a>
-}
-else
-{
-    <p>El objeto ViewBag.Categoria es nulo o su propiedad CategoriaId es nula.</p>
-}
-
-
+<br />
 <div>
-    <h3>Categoria ID:</h3> <p>@ViewBag.Categoria.CategoriaId</p>
-    <h3>Nombre de la Categoria:</h3><p>@ViewBag.Categoria.NombreCategoria</p>
+    <a asp-action="Index" class="btn botonVolver">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+    <a href="#" onclick="redireccionarYEditar('@ViewBag.Categoria.CategoriaId', 'Categorias', 'categoria')" class="btn botonEnviarDetalle">
+        <i class="fa-solid fa-pen"></i> Editar
+    </a>
 </div>
-
-<h4>Productos asociados:</h4>
-
-@if (Model.Any())
-{
-    <table class="table">
+<br />
+<br />
+<br />
+<div class="pedido-info">
+    <table class="table tablaDetalle">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>Categoria ID</th>
                 <th>Nombre</th>
-                <th>Cantidad</th>
+                <th>Cantidad de productos asociados</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var producto in Model)
-            {
-                <tr>
-                    <td>@producto.ProductoId</td>
-                    <td>@producto.NombreProducto</td>
-                    <td>@producto.CantidadTotal</td>
-                </tr>
-            }
+            <tr>
+                <td>@ViewBag.Categoria.CategoriaId</td>
+                <td>@ViewBag.Categoria.NombreCategoria</td>
+                <td>@ViewBag.CantidadProductosAsociados</td> <!-- Mostrar la cantidad de productos asociados -->
+            </tr>
         </tbody>
     </table>
+</div>
+<h2 class="TituloSobreTabladetalle">Productos asociados</h2>
+@if (Model.Any())
+{
+    <div class="pedido-info">
+        <table class="table tablaDetalle">
+            <thead>
+                <tr>
+                    <th>Producto ID</th>
+                    <th>Nombre Completo</th>
+                    <th>Cantidad</th>
+                    <th>Estado</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var producto in Model)
+                {
+                    <tr>
+                        <td>@producto.ProductoId</td>
+                        <td>@producto.NombreCompleto</td>
+                        <td>@producto.CantidadTotal</td>
+                        <td>
+                            @{
+                                string estado = producto.Estado == 1 ? "Activo" : "Inactivo";
+                            }
+                            @estado
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
     <div class="pagination-detail">
         @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Categoria.CategoriaId, page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 }) + "' class='prev-next " + (Model.HasPreviousPage ? "" : "disabled") + "'>Anterior</a>")
 
@@ -59,11 +77,11 @@ else
         @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Categoria.CategoriaId, page = Model.HasNextPage ? Model.PageNumber + 1 : Model.PageCount }) + "' class='prev-next " + (Model.HasNextPage ? "" : "disabled") + "'>Siguiente</a>")
     </div>
 
-
 }
 else
 {
-    <p>No se encontraron productos asociados a esta categoria.</p>
-}
+    <div class="MensajeNoDetalles">
+        <p>@ViewBag.Message</p>
+    </div>
 
-<script src="~/js/Detalle.js"></script>
+}

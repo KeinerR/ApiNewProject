@@ -17,6 +17,9 @@ namespace ApiNewProject.Entities
         }
 
         public virtual DbSet<Categoria> Categorias { get; set; } = null!;
+        public virtual DbSet<CategoriaxPresentacion> CategoriaxPresentaciones { get; set; } = null!;
+        public virtual DbSet<CategoriaxMarca> CategoriaxMarcas{ get; set; } = null!;
+        public virtual DbSet<CategoriaxUnidad> CategoriaxUnidades{ get; set; } = null!;
         public virtual DbSet<Cliente> Clientes { get; set; } = null!;
         public virtual DbSet<Compra> Compras { get; set; } = null!;
         public virtual DbSet<Detallecompra> Detallecompras { get; set; } = null!;
@@ -53,6 +56,44 @@ namespace ApiNewProject.Entities
                 entity.Property(e => e.NombreCategoria).HasMaxLength(100);
             });
 
+            modelBuilder.Entity<CategoriaxPresentacion>(entity =>
+            {
+                entity.HasKey(e => new { e.CategoriaId, e.PresentacionId });
+
+                entity.ToTable("categoriaxpresentacion");
+
+                entity.Property(e => e.CategoriaId).HasColumnName("CategoriaID");
+                entity.Property(e => e.PresentacionId).HasColumnName("PresentacionID");
+
+                entity.HasIndex(e => e.CategoriaId).HasDatabaseName("IX_CategoriaID");
+                entity.HasIndex(e => e.PresentacionId).HasDatabaseName("IX_PresentacionID");
+            });
+
+            modelBuilder.Entity<CategoriaxMarca>(entity =>
+            {
+                entity.HasKey(e => new { e.CategoriaId, e.MarcaId });
+
+                entity.ToTable("categoriaxmarca");
+
+                entity.Property(e => e.CategoriaId).HasColumnName("CategoriaID");
+                entity.Property(e => e.MarcaId).HasColumnName("MarcaID");
+
+                entity.HasIndex(e => e.CategoriaId).HasDatabaseName("IX_CategoriaID");
+                entity.HasIndex(e => e.MarcaId).HasDatabaseName("IX_MarcaID");
+            });
+            modelBuilder.Entity<CategoriaxUnidad>(entity =>
+            {
+                entity.HasKey(e => new { e.CategoriaId, e.UnidadId });
+
+                entity.ToTable("categoriaxunidad");
+
+                entity.Property(e => e.CategoriaId).HasColumnName("CategoriaID");
+                entity.Property(e => e.UnidadId).HasColumnName("UnidadID");
+
+                entity.HasIndex(e => e.CategoriaId).HasDatabaseName("IX_CategoriaID");
+                entity.HasIndex(e => e.UnidadId).HasDatabaseName("IX_UnidadID");
+            });
+           
             modelBuilder.Entity<Cliente>(entity =>
             {
                 entity.ToTable("cliente");

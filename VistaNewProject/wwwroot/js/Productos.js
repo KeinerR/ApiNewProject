@@ -457,12 +457,8 @@ document.addEventListener('keydown', function (event) {
 function limpiarFormularioProducto() {
     // Limpiar la URL eliminando los parámetros de consulta
     history.replaceState(null, '', location.pathname);
-    // Simular clic en el checkboxDescuentoPorMayor si está marcado
-    var checkbox = document.getElementById('checkboxDescuentoPorMayor');
-    if (checkbox.checked) {
-        checkbox.click();
-    }
-
+    limpiarFormularioProductoAgregar();
+    limpiarFormularioProductoAct();
     // Limpiar campos y elementos específicos
     limpiarCampo('NombreMarca');
     limpiarCampo('MarcaId');
@@ -484,32 +480,10 @@ function limpiarFormularioProducto() {
     limpiarCampo('NombreProductoAct');
     limpiarCampo('CantidadAplicarPorMayorAct');
     limpiarCampo('DescuentoAplicarPorMayorAct');
-    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
-        element.textContent = '';
-    });
-    document.querySelectorAll('.MensaErrores').forEach(function (element) {
-        element.textContent = '';
-    });
-    // Limpiar elementos adicionales
-    var elementos = document.getElementsByClassName('PorMayorAct');
-    for (var i = 0; i < elementos.length; i++) {
-        elementos[i].style.display = "none";
-        elementos[i].style.visibility = "hidden";
-    }
+   
+   
 
-    var mensajes = document.querySelectorAll('.Mensaje');
-    var mensajesText = document.querySelectorAll('.text-danger');
-
-    for (var i = Math.max(0, mensajes.length - 6); i < mensajes.length; i++) {
-        mensajes[i].textContent = '';
-    }
-    for (var i = 0; i < mensajes.length - 8; i++) {
-        mensajes[i].textContent = '*';
-    }
-    for (var i = 0; i < mensajesText.length; i++) {
-        mensajesText[i].textContent = '';
-    }
-    document.getElementById('checkboxDescuentoPorMayorAct').checked = false; // Desmarcar el checkbox
+   
 }
 //Se llama al daar click en cancelar en la modal de agregar producto
 function limpiarFormularioProductoAgregar() {
@@ -529,6 +503,9 @@ function limpiarFormularioProductoAgregar() {
     document.querySelectorAll('.MensajeInicial').forEach(function (element) {
         element.textContent = '';
     });
+    document.querySelectorAll('.MensaErrores').forEach(function (element) {
+        element.textContent = '';
+    });
     // Simular clic en el checkboxDescuentoPorMayor si está marcado
     var checkbox = document.getElementById('checkboxDescuentoPorMayor');
     if (checkbox.checked) {
@@ -542,6 +519,9 @@ function limpiarFormularioProductoAct() {
     document.querySelectorAll('.MensajeInicial').forEach(function (element) {
         element.textContent = '';
     });
+    document.querySelectorAll('.MensaErrores').forEach(function (element) {
+        element.textContent = '';
+    });
 
     // Marcar el checkbox DescuentoPorMayorAct como no seleccionado
     document.getElementById('checkboxDescuentoPorMayorAct').checked = false;
@@ -549,6 +529,7 @@ function limpiarFormularioProductoAct() {
     // Limpiar campos específicos
     $('#DescuentoAplicarPorMayorAct').val(0);
     $('#CantidadAplicarPorMayorAct').val(0);
+
 
     // Ocultar y ocultar elementos adicionales
     var elementos = document.getElementsByClassName('PorMayorAct');
@@ -668,6 +649,9 @@ function actualizarEstadoProducto(ProductoId) {
                 title: '\u00A1Estado actualizado!',
                 showConfirmButton: false,
                 timer: 1500 // Duración del SweetAlert en milisegundos
+            }).then(() => {
+                // Recargar la página después de que la alerta se haya cerrado
+                location.reload();
             });
         },
         error: function (xhr, status, error) {
@@ -712,6 +696,7 @@ function vaciarInputProducto() {
 }
 
 function searchProducto() {
+    console.log('Here2');
     var input = $('#buscarProducto').val().trim().toLowerCase();    //Obtiene el valor del buscadpor
     var rows = document.querySelectorAll('.productosPaginado');    //Obtiene el tr de Usuario Paginado.
     var rowsTodos = document.querySelectorAll('.Productos');      //Obtiene el tr de Usuario que esta en none

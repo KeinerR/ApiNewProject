@@ -30,7 +30,7 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Presentacion>> GetPresentacionAsync();
         Task<HttpResponseMessage> CreatePresentacionAsync(Presentacion presentacion);
         Task<Presentacion> FindPresentacionAsync(int id);
-        Task<HttpResponseMessage> UpdatePresentacionAsync(Presentacion presentacion);
+        Task<HttpResponseMessage> UpdatePresentacionAsync(PresentacionUpdate presentacion);
         Task<HttpResponseMessage> DeletePresentacionAsync(int id);
 
 
@@ -48,7 +48,8 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> CreateMarcaAsync( Marca marca);
         Task<Marca> FindMarcasAsync(int id);
         Task<Marca> FindnombreMarcasAsync(string nombreMarca);
-        Task<HttpResponseMessage> UpdateMarcaAsync(Marca marca);
+        Task<HttpResponseMessage> UpdateMarcaAsync(MarcaUpdate marca);
+        Task<HttpResponseMessage> CambiarEstadoMarcaAsync(int id);
         Task<HttpResponseMessage> DeleteMarcaAsync(int id);
 
         // categoria
@@ -58,7 +59,8 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> CreateCategoriaAsync(Categoria categoria);
         Task<Categoria> FindCategoriaAsync(int id);
         Task<Categoria> FindnombreCategoriaAsync(string nombreCategoria);
-        Task<HttpResponseMessage> UpdateCategoriaAsync(Categoria categoria);
+        Task<HttpResponseMessage> UpdateCategoriaAsync(CategoriaUpdate categoria);
+        Task<HttpResponseMessage> CambiarEstadoCategoriaAsync(int id);
         Task<HttpResponseMessage> DeleteCategoriaAsync(int id);
 
 

@@ -16,16 +16,39 @@ namespace VistaNewProject.Controllers
             _client = client;
         }
 
-        public async Task<IActionResult> Index(int? page)
+        public async Task<IActionResult> Index(int? page, string order = "default")
         {
             int pageSize = 5; // Cambiado a 5 para que la paginación se haga cada 5 registros
             int pageNumber = page ?? 1; // Número de página actual (si no se especifica, es 1)
 
             var presentaciones = await _client.GetPresentacionAsync(); // Obtener todas las marcas
-
-            if (presentaciones == null)
+            presentaciones = presentaciones.Reverse().ToList();
+            // Asegurarse de que 'order' no sea nulo antes de llamar a 'ToLower()'
+            order = order?.ToLower() ?? "default";
+            // Ordenar las presentacións según el criterio seleccionado
+            switch (order)
             {
-                return NotFound("error");
+                case "first":
+                    presentaciones = presentaciones.Reverse().ToList();
+                    break;
+                case "alfabetico":
+                    presentaciones = presentaciones.OrderBy(p => p.NombreCompleto).ToList();
+                    break;
+                case "name_desc":
+                    presentaciones = presentaciones.OrderByDescending(p => p.NombreCompleto).ToList();
+                    break;
+                default:
+                    break;
+            }
+            foreach (var presentacion in presentaciones)
+            {
+                var nombrePresentacion = presentacion.NombrePresentacion;
+                var contenido = presentacion.Contenido;
+                var cantidad = presentacion.CantidadPorPresentacion ?? 1;
+
+                presentacion.NombreCompleto = cantidad > 1 ?
+                    $"{nombrePresentacion} x {cantidad} unidades de {contenido}" :
+                    $"{nombrePresentacion} de {contenido}";
             }
 
             var pagePresentacion = await presentaciones.ToPagedListAsync(pageNumber, pageSize);
@@ -37,47 +60,102 @@ namespace VistaNewProject.Controllers
             int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
 
             ViewBag.Contador = contador;
-
-            // Código del método Index que querías integrar
-            string mensaje = HttpContext.Session.GetString("Message");
-            TempData["Message"] = mensaje;
-
-            try
-            {
-                ViewData["Presentaciones"] = presentaciones;
-                return View(pagePresentacion);
-            }
-            catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
-            {
-                HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
-                return RedirectToAction("Index", "Home");
-            }
-            catch
-            {
-                HttpContext.Session.SetString("Message", "Error en el aplicativo");
-                return RedirectToAction("LogOut", "Accesos");
-            }
+            ViewBag.Order = order; // Pasar el criterio de orden a la vista
+            ViewData["Presentaciones"] = presentaciones;
+            return View(pagePresentacion);
         }
-        public async Task<IActionResult> Details(int? id, int? page)
+        [HttpPost]
+        public async Task<JsonResult> FindPresentacion(int presentacionId)
+        {
+            var presentacion = await _client.FindPresentacionAsync(presentacionId);
+            return Json(presentacion);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> FindPresentaciones()
+        {
+            var presentaciones = await _client.GetPresentacionAsync();
+            return Json(presentaciones);
+        }
+
+        public async Task<IActionResult> Details(int id, int? page)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
+            var productos = await _client.GetProductoAsync();
             var presentaciones = await _client.GetPresentacionAsync();
-            var presentacion = presentaciones.FirstOrDefault(u => u.PresentacionId == id);
-            if (presentacion == null)
+            var lotes = await _client.GetLoteAsync();
+            var marcas = await _client.GetMarcaAsync();
+
+            // Calcular cantidad total de lotes por ProductoId y estado activo
+            var cantidadTotalPorProducto = lotes
+                .Where(l => l.EstadoLote == 1) // Filtrar por estado activo
+                .GroupBy(l => l.ProductoId ?? 0) // Convertir ProductoId a int no anulable
+                .ToDictionary(
+                    grp => grp.Key,
+                    grp => grp.Sum(l => l.Cantidad) // Sumar la cantidad de cada grupo
+                );
+
+            // Concatenar nombre completo de presentaciones
+            foreach (var presentacion in presentaciones)
+            {
+                var nombrePresentacion = presentacion.NombrePresentacion;
+                var contenido = presentacion.Contenido;
+                var cantidad = presentacion.CantidadPorPresentacion ?? 1;
+
+                presentacion.NombreCompleto = cantidad > 1 ?
+                    $"{nombrePresentacion} x {cantidad} unidades de {contenido}" :
+                    $"{nombrePresentacion} de {contenido}";
+            }
+
+            // Concatenar nombre completo de productos
+            foreach (var producto in productos)
+            {
+                // Obtener la cantidad total correspondiente al producto actual
+                if (cantidadTotalPorProducto.TryGetValue(producto.ProductoId, out var cantidadTotal))
+                {
+                    producto.CantidadTotal = cantidadTotal;
+                }
+                else
+                {
+                    // Si no hay cantidad total para este producto, asignar cero o un valor predeterminado según sea necesario
+                    producto.CantidadTotal = 0;
+                }
+                var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
+                var nombrePresentacion = presentacionEncontrada?.NombrePresentacion ?? "Sin presentación";
+                var contenido = presentacionEncontrada?.Contenido ?? "";
+                var cantidad = presentacionEncontrada?.CantidadPorPresentacion ?? 1;
+                var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
+                var nombreMarca = marcaEncontrada?.NombreMarca ?? "Sin marca";
+
+                producto.NombreCompleto = cantidad > 1 ?
+                    $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} {contenido}" :
+                    $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
+            }
+            var presentacionDatos = presentaciones.FirstOrDefault(p => p.PresentacionId == id);
+
+            if (presentacionDatos == null)
             {
                 return NotFound();
             }
 
-            ViewBag.Presentacion = presentacion;
+            ViewBag.Presentacion = presentacionDatos;
+            ViewBag.Productos = productos;
+            var productosDePresentacion = productos.Where(p => p.PresentacionId == id).ToList();
 
-            var productos = await _client.GetProductoAsync();
-            var productosDePresentacion = productos.Where(p => p.PresentacionId == id);
+            ViewBag.CantidadProductosAsociados = productosDePresentacion.Count; // Guardar la cantidad de productos asociados
 
-            int pageSize = 1; // Número máximo de elementos por página
+            if (!productosDePresentacion.Any())
+            {
+                // Si no hay productos, establecer ViewBag.Message
+                ViewBag.Message = "No se encontraron productos asociados a esta presentación.";
+                return View(productosDePresentacion.ToPagedList(1, 1)); // Devuelve un modelo paginado vacío
+            }
+
+            int pageSize = 5;
             int pageNumber = page ?? 1;
 
             var pagedProductos = productosDePresentacion.ToPagedList(pageNumber, pageSize);
@@ -86,168 +164,164 @@ namespace VistaNewProject.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] string nombrePresentacion,string contenido,int cantidadPorPresentacion, string descripcionPresentacion)
+        public async Task<IActionResult> Create([FromForm] Presentacion presentacion)
         {
             if (ModelState.IsValid)
             {
                 var presentaciones = await _client.GetPresentacionAsync();
-                var presentacionesexist = presentaciones.FirstOrDefault(c => string.Equals(c.NombrePresentacion, nombrePresentacion, StringComparison.OrdinalIgnoreCase));
+                var presentacionExistente = presentaciones.FirstOrDefault(c => string.Equals(c.NombrePresentacion, presentacion.NombrePresentacion, StringComparison.OrdinalIgnoreCase) && string.Equals(c.Contenido, presentacion.Contenido, StringComparison.OrdinalIgnoreCase) && c.CantidadPorPresentacion == presentacion.CantidadPorPresentacion);
 
-                // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
-                if (presentacionesexist != null)
+                // Si ya existe una presentación con el mismo nombre, mostrar un mensaje de error
+                if (presentacionExistente != null)
                 {
-                    TempData["SweetAlertIcon"] = "error";
-                    TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "Ya hay una presentacion registrada con ese nombre.";
+                    MensajeSweetAlert("error", "Error", "Ya hay una presentación registrada con ese nombre.", "true", null);
                     return RedirectToAction("Index");
                 }
 
-                var presentacion = new Presentacion
-                {
-                    NombrePresentacion=nombrePresentacion,  
-                    Contenido=contenido,
-                    CantidadPorPresentacion= cantidadPorPresentacion,
-                    DescripcionPresentacion= descripcionPresentacion
-
-                    
-                };
-                var response= await _client.CreatePresentacionAsync(presentacion);
+                var response = await _client.CreatePresentacionAsync(presentacion);
 
                 if (response.IsSuccessStatusCode)
                 {
-
-                    TempData["Mensaje"] = "¡Registro guardado correctamente!";
+                    MensajeSweetAlert("success", "Éxito", "¡Presentación registrada correctamente!", "false", null);
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    ViewBag.MensajeError = "No se pudieron guardar los datos.";
-                    return View("Index");
+                    MensajeSweetAlert("error", "Error", "¡Problemas al registrar la presentación!", "true", null);
+                    return RedirectToAction("Index");
                 }
-
             }
-
-            ViewBag.Mensaje = TempData["Mensaje"]; ViewBag.Mensaje = TempData["Mensaje"];
-            return View("Index");
-        }
-
-
-        public async Task<IActionResult> Update([FromForm] int presentacionIdAct, string nombrepresentacionAct, string contenidoAct, int cantidadPorPresentacionAct, string descripcionPresentacionAct , ulong estadoPresentacionAct)
-        {
-
-            var presentaciones = await _client.GetPresentacionAsync();
-            var presentacionesExis = presentaciones.FirstOrDefault(c =>
-            string.Equals(c.NombrePresentacion, nombrepresentacionAct, StringComparison.OrdinalIgnoreCase)
-            && c.PresentacionId != presentacionIdAct);
-            // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
-            if (presentacionesExis != null)
+            else
             {
-                TempData["SweetAlertIcon"] = "error";
-                TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "Ya hay una presentacion registrada con ese nombre.";
+                // Devolver los errores de validación al cliente
+                foreach (var modelState in ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        MensajeSweetAlert("error", "Error de validación", error.ErrorMessage, "true", null);
+                    }
+                }
                 return RedirectToAction("Index");
             }
+        }
 
-
-            var presentacion = new Presentacion
+        public async Task<IActionResult> Update([FromForm] PresentacionUpdate presentacion)
+        {
+            if (ModelState.IsValid)
             {
-                PresentacionId=presentacionIdAct,
-                NombrePresentacion=nombrepresentacionAct,
-                Contenido=contenidoAct,
-                CantidadPorPresentacion=cantidadPorPresentacionAct,
-                DescripcionPresentacion=descripcionPresentacionAct,
-                EstadoPresentacion = estadoPresentacionAct == 1 ? 1ul : 0ul
-
-            };
-
-            var response= await _client.UpdatePresentacionAsync(presentacion);
-
-            if (response!=null){
+                Console.WriteLine(presentacion.PresentacionId);
 
 
-                if (response.IsSuccessStatusCode)
+                var presentaciones = await _client.GetPresentacionAsync();
+                int contadorPresentacionesIguales = 0;
+
+                foreach (var presentacionC in presentaciones)
+                {
+                    if (presentacionC.PresentacionId != presentacionC.PresentacionId &&
+                        string.Equals(presentacionC.NombrePresentacion, presentacionC.NombrePresentacion, StringComparison.OrdinalIgnoreCase) &&
+                        string.Equals(presentacionC.Contenido, presentacionC.Contenido, StringComparison.OrdinalIgnoreCase) &&
+                        presentacionC.CantidadPorPresentacion == presentacionC.CantidadPorPresentacion)
+                    {
+                        contadorPresentacionesIguales++;
+                    }
+                }
+
+                if (contadorPresentacionesIguales > 0)
+                {
+                    MensajeSweetAlert("error", "Error", $"Ya hay {contadorPresentacionesIguales} presentaciónes registradas con ese nombre.", "true", null);
+                    return RedirectToAction("Index");
+                }
+                var catehgoriaantesdeenviar = presentacion;
+                var response = await _client.UpdatePresentacionAsync(presentacion);
+
+                if (response != null)
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        TempData["SweetAlertIcon"] = "success";
-                        TempData["SweetAlertTitle"] = "Éxito";
-                        TempData["SweetAlertMessage"] = "Presentacion actualizada correctamente.";
+                        MensajeSweetAlert("success", "Éxito", "Presentación actualizada correctamente.", "false", null);
                         return RedirectToAction("Index");
                     }
                     else if (response.StatusCode == HttpStatusCode.NotFound)
                     {
-                        TempData["SweetAlertIcon"] = "error";
-                        TempData["SweetAlertTitle"] = "Error";
-                        TempData["SweetAlertMessage"] = "La Presentacion no se encontró en el servidor.";
+                        MensajeSweetAlert("error", "Error", "La presentación no se encontró en el servidor.", "true", null);
                         return RedirectToAction("Index");
                     }
-                   
+                    else if (response.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        MensajeSweetAlert("error", "Error", "Nombre de presentación duplicado.", "true", null);
+                        return RedirectToAction("Index");
+                    }
                     else
                     {
-                        TempData["SweetAlertIcon"] = "error";
-                        TempData["SweetAlertTitle"] = "Error";
-                        TempData["SweetAlertMessage"] = "Error al actualizar la Presentacion.";
+                        MensajeSweetAlert("error", "Error", "Error al actualizar la presentación.", "true", null);
                         return RedirectToAction("Index");
                     }
-                    
-                    
-               
                 }
+                else
+                {
 
+                    MensajeSweetAlert("error", "Error", "Error al realizar la solicitud de actualización.", "true", null);
+                    return RedirectToAction("Index");
+                }
             }
-            return RedirectToAction("Index");
+            else
+            {
+                // Devolver los errores de validación al cliente
+                foreach (var modelState in ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        MensajeSweetAlert("error", "Error de validación", error.ErrorMessage, "true", null);
+                    }
+                }
+                return RedirectToAction("Index");
+            }
 
         }
 
-     public async Task<IActionResult> Delete(int id)
-{
-    // Verificar si hay datos asociados antes de intentar eliminar la presentación
-    var productos = await _client.GetProductoAsync();
-    var productosDePresentacion = productos.Where(p => p.PresentacionId == id);
-    
-    if (productosDePresentacion.Any())
-    {
-        // Si hay productos asociados, redirigir con un mensaje de error
-        TempData["SweetAlertIcon"] = "error";
-        TempData["SweetAlertTitle"] = "Error";
-        TempData["SweetAlertMessage"] = "No se puede eliminar la Presentación porque tiene productos asociados.";
-        return RedirectToAction("Index");
-    }
+        public async Task<IActionResult> Delete(int presentacionId)
+        {
+            var productos = await _client.GetProductoAsync();
+            var productosDePresentacion = productos.Where(p => p.PresentacionId == presentacionId);
 
-    // Si no hay productos asociados, proceder con la eliminación de la presentación
-    var response = await _client.DeletePresentacionAsync(id);
-    if (response == null)
-    {
-        // No se recibió una respuesta válida del servidor
-        TempData["SweetAlertIcon"] = "error";
-        TempData["SweetAlertTitle"] = "Error";
-        TempData["SweetAlertMessage"] = "Error al eliminar la Presentación.";
-    }
-    else if (response.IsSuccessStatusCode)
-    {
-        // La solicitud fue exitosa (código de estado 200 OK)
-        TempData["SweetAlertIcon"] = "success";
-        TempData["SweetAlertTitle"] = "Éxito";
-        TempData["SweetAlertMessage"] = "Presentación eliminada correctamente.";
-    }
-    else if (response.StatusCode == HttpStatusCode.NotFound)
-    {
-        // La marca no se encontró en el servidor
-        TempData["SweetAlertIcon"] = "error";
-        TempData["SweetAlertTitle"] = "Error";
-        TempData["SweetAlertMessage"] = "La Presentación no se encontró en el servidor.";
-    }
-    else
-    {
-        // Otro tipo de error no manejado específicamente
-        TempData["SweetAlertIcon"] = "error";
-        TempData["SweetAlertTitle"] = "Error";
-        TempData["SweetAlertMessage"] = "Error desconocido al eliminar la Presentación.";
-    }
+            if (productosDePresentacion.Any())
+            {
+                MensajeSweetAlert("error", "Error", "No se puede eliminar la Presentación porque tiene productos asociados.", "true", null);
 
-    return RedirectToAction("Index");
-}
+            }
+            else
+            {
+                var response = await _client.DeletePresentacionAsync(presentacionId);
+                if (response.IsSuccessStatusCode)
+                {
+                    MensajeSweetAlert("success", "Éxito", "Presentación eliminada correctamente.", "true", 3000);
 
+                }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    MensajeSweetAlert("error", "Error", "La Presentación no se encontró en el servidor.", "true", null);
+
+                }
+                else
+                {
+                    MensajeSweetAlert("error", "Error", "Error desconocido al eliminar la Presentación.", "true", null);
+
+                }
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        private void MensajeSweetAlert(string icon, string title, string message, string estado, int? tiempo)
+        {
+            TempData["SweetAlertIcon"] = icon;
+            TempData["SweetAlertTitle"] = title;
+            TempData["SweetAlertMessage"] = message;
+            TempData["EstadoAlerta"] = estado;
+            TempData["Tiempo"] = tiempo.HasValue ? tiempo.Value : 3000;
+            TempData["EstadoAlerta"] = "false";
+
+        }
     }
 
 }

@@ -1,0 +1,88 @@
+﻿.contenedor-datos-detalle {
+    display: flex; /* Convertir el contenedor en un flex container */
+    align-items: center; /* Centrar verticalmente los elementos hijos */
+    justify-content: center;
+}
+.tablaDetalle {
+    margin: 0 auto;
+    width: 60%;
+    border-collapse: collapse;
+}
+
+    .tablaDetalle th,
+    .tablaDetalle td {
+        text-align: center;
+        white-space: nowrap; 
+        padding: 5px;
+        border: 1px solid #ddd; /* Añadimos bordes a las celdas */
+    }
+
+    .tablaDetalle thead tr {
+        background-color: lightgray;
+    }
+
+    .tablaDetalle tbody tr {
+        padding: 0px;
+        background-color: white;
+    }
+
+        /* Efecto hover al pasar el ratón sobre las filas */
+        .tablaDetalle tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+.pedido-info {
+    text-align: center;
+}
+
+
+
+
+
+
+
+/*Estilos para Detalle de producto*/
+#contenedor-datos-producto {
+    display: flex; /* Convertir el contenedor en un flex container */
+    align-items: center; /* Centrar verticalmente los elementos hijos */
+    justify-content: center;
+}
+
+#contenedor-datos-lote table td {
+    padding: 4px;
+}
+
+.contenedor-detalle-producto {
+    margin-top: 0px;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.detalle-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.detalle-input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.1rem rgba(0, 0, 255, 0.25); /* Cambia el color de la sombra a azul */
+}
+
+.TituloSobreTabladetalle {
+    text-align: center;
+    padding-top: 20px;
+}
+.MensajeNoDetalles {
+    padding-top: 20px;
+    text-align: center;
+    font-size: 20px;
+}

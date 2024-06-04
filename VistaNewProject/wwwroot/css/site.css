@@ -192,9 +192,9 @@ header {
 
 
 /*Tamaño de los iconos del menu*/
-#Menu .icononosMenu {
+#Menu .iconosMenu {
     justify-content: center;
-    font-size: 1.5em;
+    font-size: 1.4em;
     color: white;
 }
 /*Se usa con el JS para darle el efecto de aprecer y desaparecer al menu*/
@@ -354,16 +354,21 @@ input[type="checkbox"]:checked + .sub-menu {
         align-content:center;
         padding:4px;
     }
+    .table-custom .consecutivo {
+        width: 50px; /* Establece el ancho deseado */
+    }
     .table-custom .contenedorCantidad {
         width: 50px; /* Establece el ancho deseado */
     }
     .table-custom .contenedorEstado{
         width: 50px; /* Establece el ancho deseado */
     }
+
     .table-custom .botonesTablaContenedor {
         display: flex;
         gap:5px;
         justify-content: center;
+        min-width:150px;
     }
 
  
@@ -732,6 +737,11 @@ input:checked + .slider:before {
         display: none;
     }
 
+    /*ajustar tamaño para la modal de categoria*/
+    #ContenedorPresentacion .modal-dialog {
+        width: auto;
+    }
+
     
 
 }
@@ -895,41 +905,10 @@ input:checked + .slider:before {
 
 
 
-/*Estilos para Detalle de producto*/
-#contenedor-datos-producto {
-    display: flex; /* Convertir el contenedor en un flex container */
-    align-items: center; /* Centrar verticalmente los elementos hijos */
-    justify-content: center;
-}
-#contenedor-datos-lote table td{
-    padding:4px;
-  
 
+/*Texto alerta general*/
+#MensajeAlertaGeneral {
+    font-size:20px;
+    text-align:center;
+ 
 }
-
-.contenedor-detalle-producto {
-    margin-top:0px;
-    padding: 20px;
-    border-radius: 5px;
-}
-
-.detalle-label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: bold;
-}
-
-.detalle-input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom:10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-.form-control:focus {
-    box-shadow: 0 0 0 0.1rem rgba(0, 0, 255, 0.25); /* Cambia el color de la sombra a azul */
-}
-
-
-   

@@ -1,39 +1,68 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Linq;
+using System.Threading.Tasks;
 using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
 
+
 namespace VistaNewProject.Controllers
 {
-
     public class UsuariosController : Controller
     {
         private readonly IApiClient _client;
+        private readonly PasswordHasherService _passwordHasherService;
 
-
-        public UsuariosController(IApiClient client)
+        public UsuariosController(IApiClient client, PasswordHasherService passwordHasherService)
         {
             _client = client;
+            _passwordHasherService = passwordHasherService;
         }
 
 
-        public async Task<ActionResult> Index(int? page)
+        public async Task<ActionResult> Index(int? page, string order = "default")
         {
             int pageSize = 5; // Número máximo de elementos por página
             int pageNumber = page ?? 1;
 
             var roles = await _client.GetRolAsync();
-
+            if (roles == null)
+            {
+                roles = new List<Rol>(); // O maneja el caso donde roles es null según tus necesidades
+            }
             var usuarios = await _client.GetUsuarioAsync();
 
-            //if (usuarios == null || !usuarios.Any()) // Verificar si la lista de usuarios está vacía
-            //{
-            //    return NotFound("No se encontraron usuarios.");
-            //}
+            usuarios = usuarios.Reverse().ToList();
+            // Ordenar los productos según el criterio seleccionado
+            switch (order.ToLower())
+            {
+                case "first":
+                    usuarios = usuarios.Reverse();
+                    break;
+                case "reverse":
+                    usuarios = usuarios;
+                    break;
+                case "alfabetico":
+                    usuarios = usuarios
+                        .OrderBy(p => p.Nombre)
+                        .ThenBy(p => p.Apellido)
+                        .ToList();
+                    break;
+
+                case "name_desc":
+                    usuarios = usuarios
+                        .OrderByDescending(p => p.Nombre)
+                        .ThenByDescending(p => p.Apellido)
+                        .ToList();
+                    break;
+
+                default:
+                    break;
+            }
 
             var pageUsuarios = await usuarios.ToPagedListAsync(pageNumber, pageSize);
 
@@ -48,9 +77,7 @@ namespace VistaNewProject.Controllers
             ViewBag.Contador = contador;
             ViewBag.Roles = roles;
             ViewData["Usuarios"] = usuarios;
-
-
-
+            ViewBag.Order = order; // Pasar el criterio de orden a la vista
             return View(pageUsuarios);
         }
 
@@ -159,6 +186,10 @@ namespace VistaNewProject.Controllers
                     return RedirectToAction("Index");
                 }
 
+                //encriptar la contraseña antes de guardarla
+                byte[] salt = _passwordHasherService.GenerateSalt();
+                string hashedPassword = _passwordHasherService.HashPassword(usuario.Contraseña, salt);
+
                 // Si no hay usuarios con los mismos datos, proceder con el registro
                 var nuevoUsuario = new Usuario
                 {
@@ -166,26 +197,24 @@ namespace VistaNewProject.Controllers
                     Nombre = usuario.Nombre,
                     Apellido = usuario.Apellido,
                     Usuario1 = usuario.Usuario1,
-                    Contraseña = usuario.Contraseña,
+                    Contraseña = hashedPassword, // Guardar la contraseña hasheada
                     Telefono = usuario.Telefono,
                     Correo = usuario.Correo,
                     EstadoUsuario = usuario.EstadoUsuario
                 };
-
+               
                 var response = await _client.CreateUsuarioAsync(nuevoUsuario);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    TempData["SweetAlertIcon"] = "sucess";
-                    TempData["SweetAlertTitle"] = "Exito";
-                    TempData["EstadoAlerta"] = "true";
-                    TempData["SweetAlertMessage"] = "¡Usuario guardado correctamente!";
+                    MensajeSweetAlert("sucess", "Exito", "¡Usuario guardado correctamente!", "false", null);
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    ViewBag.MensajeError = "No se pudieron guardar los datos.";
-                    return View("Index");
+                    MensajeSweetAlert("error", "Error", "¡Problemas al registrar el usuario!", "true", null);
+
+                    return RedirectToAction("Index");
                 }
             }
             catch (Exception ex)

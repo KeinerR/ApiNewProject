@@ -12,11 +12,12 @@ namespace VistaNewProject.Controllers
     public class LoginController : Controller
     {
         private readonly IApiClient _client;
+        private readonly PasswordHasherService _passwordHasherService;
 
-
-        public LoginController(IApiClient client)
+        public LoginController(IApiClient client, PasswordHasherService passwordHasherService)
         {
             _client = client;
+            _passwordHasherService = passwordHasherService;
         }
 
         [AllowAnonymous]
@@ -37,25 +38,19 @@ namespace VistaNewProject.Controllers
 
             var usuarios = await _client.GetUsuarioAsync(); // Obtener todos los usuarios
 
-            var usuarioValido = usuarios.FirstOrDefault(u =>
-                u.Usuario1 == model.Usuario1 && u.Contraseña == model.Contraseña);
+            var usuarioValido = usuarios.FirstOrDefault(u => u.Usuario1 == model.Usuario1);
 
-            if (usuarioValido == null)
-            {
-                ViewData["MostrarAlerta"] = "El usuario o contraseña son incorrectos, intentalo de nuevo";
-                return View("Index", model);
-            }
-            else
+            if (usuarioValido != null && _passwordHasherService.VerifyPassword(model.Contraseña, usuarioValido.Contraseña))
             {
                 // Crear identidad del usuario
                 var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, usuarioValido.Usuario1),
-                    new Claim("RolId", usuarioValido.RolId.ToString()),
-                    new Claim(ClaimTypes.NameIdentifier, usuarioValido.UsuarioId.ToString()) // Identificador único del usuario
-                    // Otros claims según la lógica de tu aplicación
-                    // Agrega más claims según tus necesidades (roles, etc.)
-                };
+        {
+            new Claim(ClaimTypes.Name, usuarioValido.Usuario1),
+            new Claim("RolId", usuarioValido.RolId.ToString()),
+            new Claim(ClaimTypes.NameIdentifier, usuarioValido.UsuarioId.ToString()) // Identificador único del usuario
+            // Otros claims según la lógica de tu aplicación
+            // Agrega más claims según tus necesidades (roles, etc.)
+        };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -67,13 +62,17 @@ namespace VistaNewProject.Controllers
 
                 // Iniciar sesión con la cookie de autenticación
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-                
+
                 ViewData["UserName"] = usuarioValido.Usuario1;
                 ViewData["Nombre"] = usuarioValido.UsuarioId;
 
-
                 // Redirigir al controlador "Home" después del inicio de sesión
                 return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                ViewData["MostrarAlerta"] = "El usuario o contraseña son incorrectos, intentalo de nuevo";
+                return View("Index", model);
             }
         }
 
