@@ -4,7 +4,7 @@
 var detallesdepedidp = [];
 
 function agregarDetalle(url) {
-    var unidadId = document.getElementById("UnidadId").value;
+    var unidadId = document.getElementById("unidadHidden").value;
     var cantidad = document.getElementById("Cantidad").value;
     var precioUnitario = document.getElementById("PrecioUnitario").value;
     var pedidoId = document.getElementById("PedidoId").value;
@@ -50,6 +50,10 @@ function enviarDetallePedido(detalle, url) {
             document.getElementById("PrecioUnitario").value = "";
             document.getElementById("UnidadId").value = "";
             document.getElementById("LoteId").value = "";
+            document.getElementById("Cantidad").placeholder = "Ingrese cantidad"; // Aquí pones el placeholder que desees
+            document.getElementById("unidadHidden").value = "";
+
+            
 
             document.getElementById("ProductoIdtxt").value = ""; // Limpiar el campo de entrada de texto
             document.getElementById("ProductoId").value = ""; // Limpiar el campo oculto
@@ -401,7 +405,56 @@ $(document).ready(function () {
                 console.error('Error:', error);
                 alert('Error al obtener los productos');
             });
+
+
+
+
+
+        fetch(`https://localhost:7013/api/Unidades/GetUnidades`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener los productos');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Unidades:", data);  // Verifica los datos recibidos
+                const dataList = document.getElementById('UnidadIdList');
+                dataList.innerHTML = ''; // Limpiar opciones existentes
+
+
+
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.nombreUnidad; // Utiliza el nombre de la unidad para el valor visible
+                    option.setAttribute('data-id', item.unidadId); // Guarda el ID de la unidad como un atributo data-id
+                    dataList.appendChild(option);
+                });
+
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al obtener los productos');
+            });
+
     }
+
+
+    $(document).ready(function () {
+        $('#UnidadId').on('input', function () {
+            var selectedValue = $(this).val();
+            var selectedOption = $('#UnidadIdList option').filter(function () {
+                return $(this).val() === selectedValue;
+            }).first();
+
+            if (selectedOption.length > 0) {
+                var unidadId = selectedOption.attr('data-id'); // Asegúrate de que las opciones tengan un atributo data-id
+                $('#unidadHidden').val(unidadId); // Almacena el ID en el campo oculto
+            } else {
+                $('#unidadHidden').val(''); // Limpia el campo si no hay coincidencia
+            }
+        });
+    });
 
     // Función para limpiar los detalles del producto
     function limpiarDetallesProducto() {

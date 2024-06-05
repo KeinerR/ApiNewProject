@@ -41,19 +41,13 @@
     <hr />
     <br />
 
-    <div>
-        <form id="cancelForm" asp-action="Cancelar" method="post">
-            <button type="submit" class=" btn btn-primary"> <i class="fas fa-arrow-left"></i> Cancelar</button>
-
-
-        </form>
-    </div>
+  
 
 
     <br />
 
 
-    <form asp-action="CreatePost" method="post">
+    <form asp-action="AgregarMaxDetallesPost" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <div class="d-none">
@@ -87,16 +81,13 @@
             </div>
 
             <div class="col-4">
-                <label asp-for="UnidadId" class="control-label"></label>
-                <input asp-for="UnidadId" name="UnidadId" id="UnidadId" class="form-control" list="UnidadIdList" />
-                <datalist id="UnidadIdList">
-                    @foreach (var unidad in ViewBag.Unidad)
-                    {
-                        <option value="@unidad.UnidadId">@unidad.NombreUnidad</option>
-                    }
-                </datalist>
+                <label for="UnidadId" class="control-label">Unidad de Presentación</label>
+                <input id="UnidadId" class="form-control" list="UnidadIdList" autocomplete="off" />
+                <datalist id="UnidadIdList"></datalist>
+                <input id="unidadHidden" name="unidadId" type="hidden" />
                 <span id="UnidadError" class="text-danger"></span>
             </div>
+
             <div class="col-4">
                 <label asp-for="PrecioUnitario" class="control-label"></label>
                 <input asp-for="PrecioUnitario" class="form-control" id="PrecioUnitario" readonly>
@@ -110,7 +101,7 @@
             </div>
 
             <div class="col-4 mt-4">
-                <button type="button" id="btnEnviar" class="btn btn-primary p-2" onclick="agregarDetalle('@Url.Action("CrearDetalles", "DetallePedidos")')">
+                <button type="button" id="btnEnviar" class="btn btn-primary p-2" onclick="agregarDetalle('@Url.Action("CrearDetallesMax", "DetallePedidos")')">
                     <i class="fas fa-plus-circle"></i> Agregar
                 </button>
             </div>

@@ -87,16 +87,13 @@
             </div>
 
             <div class="col-4">
-                <label asp-for="UnidadId" class="control-label"></label>
-                <input asp-for="UnidadId" name="UnidadId" id="UnidadId" class="form-control" list="UnidadIdList" />
-                <datalist id="UnidadIdList">
-                    @foreach (var unidad in ViewBag.Unidad)
-                    {
-                        <option value="@unidad.UnidadId">@unidad.NombreUnidad</option>
-                    }
-                </datalist>
+                <label for="UnidadId" class="control-label">Unidad de Presentación</label>
+                <input id="UnidadId" class="form-control" list="UnidadIdList" autocomplete="off" />
+                <datalist id="UnidadIdList"></datalist>
+                <input id="unidadHidden" name="unidadId" type="" />
                 <span id="UnidadError" class="text-danger"></span>
             </div>
+
             <div class="col-4">
                 <label asp-for="PrecioUnitario" class="control-label"></label>
                 <input asp-for="PrecioUnitario" class="form-control" id="PrecioUnitario" readonly>

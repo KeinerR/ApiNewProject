@@ -47,7 +47,6 @@ namespace VistaNewProject.Controllers
         public async Task<IActionResult> Create(int? pedidoId)
         {
             var producto = await _client.GetProductoAsync();
-            var unidad = await _client.GetUnidadAsync();
             var pedidos = await _client.GetPedidoAsync();
 
             var ultimoPedido = pedidos.OrderByDescending(p => p.PedidoId).FirstOrDefault();
@@ -56,7 +55,6 @@ namespace VistaNewProject.Controllers
             ViewBag.UltimoPedidoId = ultimoPedido?.PedidoId ?? 0;
 
             ViewBag.Producto = producto;
-            ViewBag.Unidad = unidad;
 
             return View();
         }
@@ -68,6 +66,11 @@ namespace VistaNewProject.Controllers
 
         public async Task<IActionResult> CrearDetalles([FromBody] Detallepedido detallePedido)
         {
+            if (detallePedido == null)
+            {
+                return BadRequest(new { message = "El detalle del pedido no puede ser nulo" });
+            }
+
             try
             {
                 // Buscar si ya existe un detalle con el mismo ProductoId en la lista
@@ -104,12 +107,12 @@ namespace VistaNewProject.Controllers
                 var updateProductResult = await _client.UpdateProductoAsync(producto);
                 if (updateProductResult.IsSuccessStatusCode)
                 {
-
-                    Console.WriteLine("Cantidad Resevada");
+                    Console.WriteLine("Cantidad reservada actualizada en el producto.");
                 }
-
-                // Imprimir el tamaño actual de la lista global en la consola
-                Console.WriteLine("Tamaño de la lista global de detalles: " + listaGlobalDetalles.Count);
+                else
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Error al actualizar el producto en la base de datos" });
+                }
 
                 // Imprimir los valores de las propiedades del detalle recibido en la consola
                 Console.WriteLine("Detalle recibido:");
@@ -119,6 +122,9 @@ namespace VistaNewProject.Controllers
                 Console.WriteLine("UnidadId: " + detallePedido.UnidadId);
                 Console.WriteLine("LoteId: " + detallePedido.LoteId);
                 Console.WriteLine("PrecioUnitario: " + detallePedido.PrecioUnitario);
+
+                // Llamar al método ObtenerDetalles
+                ObtenerDetalles();
 
                 // Devuelve un mensaje de confirmación en forma de objeto JSON
                 return Ok(new { message = "Detalle del pedido recibido correctamente" });
@@ -133,7 +139,7 @@ namespace VistaNewProject.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreatePost(  int ? pedidoId )
+        public async Task<IActionResult> CreatePost(  )
         {
             if (listaGlobalDetalles.Count <0)
             {
@@ -171,31 +177,17 @@ namespace VistaNewProject.Controllers
                 if (ultimoPedido != null && ultimoPedido.Any())
                     {
 
-                        // Usa el pedidoId proporcionado si es diferente de cero, de lo contrario, usa el PedidoId del último pedido guardado
-                        var pedidoIdUtilizar = pedidoId != 0 ? pedidoId : ultimoPedidoGuardado.PedidoId;
-                    // Actualizar el valor total del pedido utilizando el pedidoIdUtilizar
-                    var pedidoActualizar = await _client.FindPedidosAsync(pedidoIdUtilizar.Value);
-                    if (pedidoActualizar != null)
+                    ultimoPedidoGuardado.ValorTotalPedido += sumaSubtotales;
+
+                    var updatevalortotal = await _client.UpdatePedidoAsync(ultimoPedidoGuardado);
+                    if (updatevalortotal.IsSuccessStatusCode)
                     {
-                        pedidoActualizar.ValorTotalPedido += sumaSubtotales;
-                        var updatevalortotal = await _client.UpdatePedidoAsync(pedidoActualizar);
-
-                        if (updatevalortotal.IsSuccessStatusCode)
-                        {
-                            TempData["SweetAlertIcon"] = "success";
-                            TempData["SweetAlertTitle"] = "Éxito";
-                            TempData["SweetAlertMessage"] = "Detalles Agregados correctamente.";
-                            return RedirectToAction("Index", "Pedidos");
-
-                        }
-
-                        
+                        Console.WriteLine("Actualizacion Crrecta");
                     }
 
-                
 
-                        // Si el pedido está "Realizado" y es por caja
-                        if (ultimoPedidoGuardado.EstadoPedido == "Realizado" && ultimoPedidoGuardado.TipoServicio == "Caja")
+                    // Si el pedido está "Realizado" y es por caja
+                    if (ultimoPedidoGuardado.EstadoPedido == "Realizado" && ultimoPedidoGuardado.TipoServicio == "Caja")
                     {
                         // Iterar sobre los detalles del pedido para descontar el inventario y los lotes
 
@@ -392,6 +384,127 @@ namespace VistaNewProject.Controllers
 
 
 
+        public async Task<IActionResult> CrearDetallesMax([FromBody] Detallepedido detallePedido)
+        {
+            if (detallePedido == null)
+            {
+                return BadRequest(new { message = "El detalle del pedido no puede ser nulo" });
+            }
+
+            try
+            {
+                // Buscar si ya existe un detalle con el mismo ProductoId en la lista
+                var detalleExistente = listaGlobalDetalles
+                    .FirstOrDefault(d => d.ProductoId == detallePedido.ProductoId && d.PedidoId == detallePedido.PedidoId);
+
+                if (detalleExistente != null)
+                {
+                    // Si existe, solo actualiza la cantidad
+                    detalleExistente.Cantidad += detallePedido.Cantidad;
+                    detalleExistente.Subtotal += detallePedido.Cantidad * detallePedido.PrecioUnitario;  // Asumiendo que el subtotal se calcula así
+                    Console.WriteLine("Producto actualizado en la lista. Nueva cantidad: " + detalleExistente.Cantidad);
+                }
+                else
+                {
+                    // Si no existe, agrega el detalle recibido a la lista global
+                    listaGlobalDetalles.Add(detallePedido);
+                    Console.WriteLine("Nuevo producto agregado a la lista.");
+                }
+
+                Console.WriteLine("Tamaño de la lista global de detalles: " + listaGlobalDetalles.Count);
+
+                var producto = await _client.FindProductoAsync(detallePedido.ProductoId.Value);
+
+                if (producto == null)
+                {
+                    return NotFound(new { message = "Producto no encontrado" });
+                }
+
+                // Actualizar la cantidad reservada
+                producto.CantidadReservada += detallePedido.Cantidad;
+
+                // Actualizar el producto en la base de datos
+                var updateProductResult = await _client.UpdateProductoAsync(producto);
+                if (updateProductResult.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Cantidad reservada actualizada en el producto.");
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Error al actualizar el producto en la base de datos" });
+                }
+
+                // Imprimir los valores de las propiedades del detalle recibido en la consola
+                Console.WriteLine("Detalle recibido:");
+                Console.WriteLine("PedidoId: " + detallePedido.PedidoId);
+                Console.WriteLine("ProductoId: " + detallePedido.ProductoId);
+                Console.WriteLine("Cantidad: " + detallePedido.Cantidad);
+                Console.WriteLine("UnidadId: " + detallePedido.UnidadId);
+                Console.WriteLine("LoteId: " + detallePedido.LoteId);
+                Console.WriteLine("PrecioUnitario: " + detallePedido.PrecioUnitario);
+
+                // Llamar al método ObtenerDetalles
+                ObtenerDetalles();
+
+                // Devuelve un mensaje de confirmación en forma de objeto JSON
+                return Ok(new { message = "Detalle del pedido recibido correctamente" });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (use a proper logging framework in a real application)
+                Console.WriteLine("Error: " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Ocurrió un error al procesar la solicitud", error = ex.Message });
+            }
+        }
+
+
+
+        public async Task<IActionResult> AgregarMaxDetallesPost(int ? pedidoId)
+        {
+
+            decimal sumaSubtotales = listaGlobalDetalles.Sum(detalle => detalle.Subtotal ?? 0);
+            foreach (var detalle in listaGlobalDetalles)
+            {
+                if (detalle != null)
+                {
+                    Console.WriteLine($"ID: {detalle.PedidoId}, Nombre: {detalle.ProductoId}, Cantidad: {detalle.Cantidad}");
+
+                    var response = await _client.CreateDetallesPedidosAsync(detalle);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        TempData["ErrorMessage"] = $"Error al guardar el detalle del pedido: {response.ReasonPhrase}";
+                        return RedirectToAction("Create", "DetallePedidos");
+                    }
+
+                }
+            }
+
+
+
+            // Actualizar el valor total del pedido utilizando el pedidoIdUtilizar
+            var pedidoActualizar = await _client.FindPedidosAsync(pedidoId.Value);
+
+            if (pedidoActualizar != null)
+            {
+                pedidoActualizar.ValorTotalPedido += sumaSubtotales;
+                var updatevalortotal = await _client.UpdatePedidoAsync(pedidoActualizar);
+                listaGlobalDetalles.Clear();
+
+                if (updatevalortotal.IsSuccessStatusCode)
+                {
+                    TempData["SweetAlertIcon"] = "success";
+                    TempData["SweetAlertTitle"] = "Éxito";
+                    TempData["SweetAlertMessage"] = "Detalles Agregados correctamente.";
+                    return RedirectToAction("Index", "Pedidos");
+
+                }
+
+
+            }
+            return RedirectToAction("Index","Pedidos");
+
+        }
+      
 
     }
 }
