@@ -482,7 +482,6 @@ function actualizarEstadoCategoria(CategoriaId) {
         type: 'PATCH',
         contentType: 'application/json',
         success: function (response) {
-            console.log("Estado actualizado:", EstadoCategoria);
             // Mostrar SweetAlert
             Swal.fire({
                 icon: 'success',

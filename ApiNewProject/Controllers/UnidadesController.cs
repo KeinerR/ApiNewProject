@@ -120,19 +120,20 @@ namespace ApiNewProject.Controllers
 
 
         [HttpPatch("UpdateEstadoUnidad/{id}")]
-        public async Task<IActionResult> UpdateEstadoUnidad(int id, [FromBody] Unidad EstadoUnidad)
+        public async Task<IActionResult> UpdateEstadoUnidad(int id)
         {
             try
             {
+                // Buscar el unidad por su ID
                 var unidad = await _context.Unidades.FindAsync(id);
 
+                // Si no se encuentra el unidad, devolver un error 404 Not Found
                 if (unidad == null)
                 {
                     return NotFound();
                 }
 
-                // Actualizar el estado del cliente con el nuevo valor
-                unidad.EstadoUnidad = EstadoUnidad.EstadoUnidad;
+                unidad.EstadoUnidad = unidad.EstadoUnidad == 0 ? 1UL : 0UL;
 
                 // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
@@ -143,9 +144,8 @@ namespace ApiNewProject.Controllers
             catch (Exception ex)
             {
                 // Si ocurre algún error, devolver un error 500 Internal Server Error
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el estado del cliente: " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el estado del unidad: " + ex.Message);
             }
         }
-
     }
 }

@@ -85,16 +85,9 @@ namespace VistaNewProject.Controllers
             var categorias = await _client.GetCategoriaAsync();
             return Json(categorias);
         }
-        public async Task<IActionResult> Details(int id, int? page)
+        public async Task<IActionResult> Details(int? id, int? page)
         {
-            if (id == 0)
-            {
-                return NotFound();
-            }
-
-            var categoria = await _client.FindCategoriaAsync(id);
-
-            if (categoria == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -139,6 +132,7 @@ namespace VistaNewProject.Controllers
                     $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
             }
 
+            var categoria = categorias.FirstOrDefault(u => u.CategoriaId == id);
             if (categoria == null)
             {
                 return NotFound();
