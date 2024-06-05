@@ -16,13 +16,15 @@ namespace VistaNewProject.Controllers
         }
         public async Task<IActionResult> Index(int? page, string order = "default")
         {
-            int pageSize = 5; 
-            int pageNumber = page ?? 1; 
+            int pageSize = 5;
+            int pageNumber = page ?? 1;
 
             var marcas = await _client.GetMarcaAsync(); // Obtener todas las marcas
+
             marcas = marcas.Reverse().ToList();
             marcas = marcas.OrderByDescending(c => c.EstadoMarca == 1).ToList();
             order = order?.ToLower() ?? "default";
+
             switch (order)
             {
                 case "first":
@@ -48,12 +50,14 @@ namespace VistaNewProject.Controllers
                 default:
                     break;
             }
+
             if (marcas == null)
             {
                 return NotFound("error");
             }
 
             var pageMarca = await marcas.ToPagedListAsync(pageNumber, pageSize);
+
             if (!pageMarca.Any() && pageMarca.PageNumber > 1)
             {
                 pageMarca = await marcas.ToPagedListAsync(pageMarca.PageCount, pageSize);
@@ -62,14 +66,15 @@ namespace VistaNewProject.Controllers
             int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
 
             ViewBag.Contador = contador;
-            ViewBag.Order = order; // Pasar el criterio de orden a la vista
+            ViewBag.Order = order; // Pasar el criterio de orden a la vistav
             ViewData["Marcas"] = marcas;
             return View(pageMarca);
+
         }
         [HttpPost]
         public async Task<JsonResult> FindMarca(int marcaId)
         {
-            var marca = await _client.FindMarcasAsync(marcaId);
+            var marca = await _client.FindMarcaAsync(marcaId);
             return Json(marca);
         }
         [HttpPost]
@@ -161,8 +166,6 @@ namespace VistaNewProject.Controllers
 
             return View(pagedProductos);
         }
-
-
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] Marca marca)
         {
@@ -226,7 +229,6 @@ namespace VistaNewProject.Controllers
                     MensajeSweetAlert("error", "Error", $"Ya hay {contadorMarcasIguales} categorías registradas con ese nombre.", "true", null);
                     return RedirectToAction("Index");
                 }
-                var catehgoriaantesdeenviar = marca;
                 var response = await _client.UpdateMarcaAsync(marca);
 
                 if (response != null)

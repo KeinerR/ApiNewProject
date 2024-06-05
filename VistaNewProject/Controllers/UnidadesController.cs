@@ -15,12 +15,42 @@ namespace VistaNewProject.Controllers
         {
             _client = client;
         }
-        public async Task<IActionResult> Index(int? page)
+        public async Task<IActionResult> Index(int? page, string order = "default")
         {
-            int pageSize = 5; // Cambiado a 5 para que la paginación se haga cada 5 registros
-            int pageNumber = page ?? 1; // Número de página actual (si no se especifica, es 1)
+            int pageSize = 5;
+            int pageNumber = page ?? 1;
 
-            var unidades = await _client.GetUnidadAsync(); // Obtener todas las marcas
+            var unidades = await _client.GetUnidadAsync(); // Obtener todas las unidades
+
+            unidades = unidades.Reverse().ToList();
+            unidades = unidades.OrderByDescending(c => c.EstadoUnidad == 1).ToList();
+            order = order?.ToLower() ?? "default";
+
+            switch (order)
+            {
+                case "first":
+                    unidades = unidades.Reverse(); // Se invierte el orden de las unidades
+                    unidades = unidades
+                   .OrderByDescending(p => p.EstadoUnidad == 1)
+                   .ToList();
+                    break;
+                case "reverse":
+                    break;
+                case "alfabetico":
+                    unidades = unidades.OrderBy(p => p.NombreUnidad).ToList(); // Se ordenan alfabéticamente por el nombre de la presentación
+                    unidades = unidades
+                    .OrderByDescending(p => p.EstadoUnidad == 1)
+                    .ToList();
+                    break;
+                case "name_desc":
+                    unidades = unidades.OrderByDescending(p => p.EstadoUnidad).ToList(); // Se ordenan alfabéticamente descendente por el nombre de la presentación
+                    unidades = unidades
+                    .OrderByDescending(p => p.EstadoUnidad == 1)
+                    .ToList();
+                    break;
+                default:
+                    break;
+            }
 
             if (unidades == null)
             {
@@ -28,6 +58,7 @@ namespace VistaNewProject.Controllers
             }
 
             var pageUnidad = await unidades.ToPagedListAsync(pageNumber, pageSize);
+
             if (!pageUnidad.Any() && pageUnidad.PageNumber > 1)
             {
                 pageUnidad = await unidades.ToPagedListAsync(pageUnidad.PageCount, pageSize);
@@ -36,28 +67,25 @@ namespace VistaNewProject.Controllers
             int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
 
             ViewBag.Contador = contador;
+            ViewBag.Order = order; // Pasar el criterio de orden a la vistav
+            ViewData["Unidades"] = unidades;
+            return View(pageUnidad);
 
-            // Código del método Index que querías integrar
-            string mensaje = HttpContext.Session.GetString("Message");
-            TempData["Message"] = mensaje;
-
-            try
-            {
-                ViewData["Unidades"] = unidades;
-                return View(pageUnidad);
-            }
-            catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
-            {
-                HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
-                return RedirectToAction("Index", "Home");
-            }
-            catch
-            {
-                HttpContext.Session.SetString("Message", "Error en el aplicativo");
-                return RedirectToAction("LogOut", "Accesos");
-            }
         }
 
+        [HttpPost]
+        public async Task<JsonResult> FindUnidad(int unidadId)
+        {
+            var unidad = await _client.FindUnidadAsync(unidadId);
+            return Json(unidad);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> FindUnidades()
+        {
+            var unidades = await _client.GetUnidadAsync();
+            return Json(unidades);
+        }
         public async Task<IActionResult> Details(int? id, int? page)
         {
             if (id == null)
@@ -85,133 +113,161 @@ namespace VistaNewProject.Controllers
             return View(pagedProductos);
         }
 
-       [HttpPost]
-public async Task<IActionResult> Create([FromForm] string nombreUnidad, int cantidadPorUnidad, string descripcionUnidad, ulong estadoUnidad)
-{
-    if (ModelState.IsValid)
-    {
-        var unidad = new Unidad
+        public async Task<IActionResult> Create([FromForm] Unidad unidad)
         {
-            NombreUnidad = nombreUnidad,
-            CantidadPorUnidad = cantidadPorUnidad,
-            DescripcionUnidad = descripcionUnidad,
-            EstadoUnidad = estadoUnidad
-        };
+            if (ModelState.IsValid)
+            {
+                var unidades = await _client.GetUnidadAsync();
+                var unidadExistente = unidades.FirstOrDefault(c => string.Equals(c.NombreUnidad, unidad.NombreUnidad, StringComparison.OrdinalIgnoreCase));
 
-        var response = await _client.CreateUnidadAsync(unidad);
-
-        if (response.IsSuccessStatusCode)
-        {
-                  
-                    TempData["Mensaje"] = "¡Registro guardado correctamente!";
+                // Si ya existe una unidad con el mismo nombre, mostrar un mensaje de error
+                if (unidadExistente != null)
+                {
+                    MensajeSweetAlert("error", "Error", "Ya hay una unidad registrada con ese nombre.", "true", null);
                     return RedirectToAction("Index");
                 }
-        else
-        {
-            TempData["MensajeError"] = "No se pudieron guardar los datos.";
-        }
-    }
-    else
-    {
-        // Manejar errores de validación del modelo aquí, si es necesario
-    }
 
-    return RedirectToAction("Index");
-}
-
-
-        public async Task<IActionResult> Update([FromForm] int unidadesIdAct,string nombreUnidadAct , int cantidadUnidadAct ,string descripcionUnidadAct, ulong estadoUnidadAct)
-        {
-
-            var unidades = new Unidad
-            {
-                UnidadId = unidadesIdAct,
-                NombreUnidad= nombreUnidadAct,  
-                CantidadPorUnidad= cantidadUnidadAct,
-                DescripcionUnidad= descripcionUnidadAct,
-                EstadoUnidad=estadoUnidadAct
-            };
-
-
-            var response= await _client.UpdateUnidadAsync(unidades);
-            if(response !=null) {
+                var response = await _client.CreateUnidadAsync(unidad);
 
                 if (response.IsSuccessStatusCode)
                 {
-
-
-                    TempData["SweetAlertIcon"] = "success";
-                    TempData["SweetAlertTitle"] = "Éxito";
-                    TempData["SweetAlertMessage"] = "Unidad actualizada correctamente.";
-                    return RedirectToAction("Index");
-                }
-                else if (response.StatusCode == HttpStatusCode.NotFound)
-                {
-                    TempData["SweetAlertIcon"] = "error";
-                    TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "La Unidad no se encontró en el servidor.";
-                    return RedirectToAction("Index");
-                }
-                else if (response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    TempData["SweetAlertIcon"] = "error";
-                    TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "Nombre de Unidad duplicado.";
+                    MensajeSweetAlert("success", "Éxito", "¡Unidad registrada correctamente!", "false", null);
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    TempData["SweetAlertIcon"] = "error";
-                    TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "Error al actualizar la Unidad.";
+                    MensajeSweetAlert("error", "Error", "¡Problemas al registrar la unidad!", "true", null);
                     return RedirectToAction("Index");
                 }
             }
-
-            return RedirectToAction("Index");
-           
-        }
-
-        public async Task<IActionResult> Delete(int id)
-        {
-            var detalles = await _client.GetDetallecompraAsync();
-            var detallesDeUnidad = detalles.Where(p => p.UnidadId == id);
-
-            if (detallesDeUnidad.Any())
+            else
             {
-                TempData["SweetAlertIcon"] = "error";
-                TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "No se puede eliminar la Unidad porque tiene detalles de compra y productos asociados.";
+                // Devolver los errores de validación al cliente
+                foreach (var modelState in ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        MensajeSweetAlert("error", "Error de validación", error.ErrorMessage, "true", null);
+                    }
+                }
                 return RedirectToAction("Index");
             }
+        }
+        public async Task<IActionResult> Update([FromForm] UnidadUpdate unidad)
+        {
+            if (ModelState.IsValid)
+            {
+                var unidades = await _client.GetUnidadAsync();
+                List<int> unidadesIgualesIds = new List<int>();
 
-            var response = await _client.DeleteUnidadAsync(id);
-            if (response == null)
-            {
-                TempData["SweetAlertIcon"] = "error";
-                TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "Error al eliminar la Unidad.";
-            }
-            else if (response.IsSuccessStatusCode)
-            {
-                TempData["SweetAlertIcon"] = "success";
-                TempData["SweetAlertTitle"] = "Éxito";
-                TempData["SweetAlertMessage"] = "Unidad eliminada correctamente.";
-            }
-            else if (response.StatusCode == HttpStatusCode.NotFound)
-            {
-                TempData["SweetAlertIcon"] = "error";
-                TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "La Unidad no se encontró en el servidor.";
+                foreach (var unidadC in unidades)
+                {
+                    if (unidadC.UnidadId != unidad.UnidadId &&
+                        string.Equals(unidadC.NombreUnidad, unidad.NombreUnidad, StringComparison.OrdinalIgnoreCase))
+                    {
+                        unidadesIgualesIds.Add(unidadC.UnidadId);
+                    }
+                }
+
+                if (unidadesIgualesIds.Count > 0)
+                {
+                    string unidadesIdsStr = string.Join(", ", unidadesIgualesIds);
+                    MensajeSweetAlert("error", "Error", $"Ya hay una unidad registrada con ese nombre. Unidad ID: {unidadesIdsStr}", "true", null);
+                    return RedirectToAction("Index");
+                }
+
+                var response = await _client.UpdateUnidadAsync(unidad);
+
+                if (response != null)
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        MensajeSweetAlert("success", "Éxito", "Unidad actualizada correctamente.", "false", null);
+                        return RedirectToAction("Index");
+                    }
+                    else if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        MensajeSweetAlert("error", "Error", "La unidad no se encontró en el servidor.", "true", null);
+                        return RedirectToAction("Index");
+                    }
+                    else if (response.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        MensajeSweetAlert("error", "Error", "Nombre de unidad duplicado.", "true", null);
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        MensajeSweetAlert("error", "Error", "Error al actualizar la unidad.", "true", null);
+                        return RedirectToAction("Index");
+                    }
+                }
+                else
+                {
+
+                    MensajeSweetAlert("error", "Error", "Error al realizar la solicitud de actualización.", "true", null);
+                    return RedirectToAction("Index");
+                }
             }
             else
             {
-                TempData["SweetAlertIcon"] = "error";
-                TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "Error desconocido al eliminar la Unidad.";
+                // Devolver los errores de validación al cliente
+                foreach (var modelState in ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        MensajeSweetAlert("error", "Error de validación", error.ErrorMessage, "true", null);
+                    }
+                }
+                return RedirectToAction("Index");
             }
+        }
+        public async Task<IActionResult> Delete(int unidadId)
+        {
+            
+            var response = await _client.DeleteUnidadAsync(unidadId);
+            if (response.IsSuccessStatusCode)
+            {
+                MensajeSweetAlert("success", "Éxito", "Unidad eliminada correctamente.", "true", 3000);
 
+            }
+            else if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                MensajeSweetAlert("error", "Error", "La Unidad no se encontró en el servidor.", "true", null);
+
+            }
+            else
+            {
+                MensajeSweetAlert("error", "Error", "Error desconocido al eliminar la Unidad.", "true", null);
+
+            }
             return RedirectToAction("Index");
+        }
+
+        [HttpPatch("Unidads/UpdateEstadoUnidad/{id}")]
+        public async Task<IActionResult> CambiarEstadoUnidad(int id)
+        {
+            // Llama al método del servicio para cambiar el estado del usuario
+            var response = await _client.CambiarEstadoUnidadAsync(id);
+
+            // Devuelve una respuesta adecuada en función de la respuesta del servicio
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok();
+            }
+            else
+            {
+                return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+            }
+        }
+        private void MensajeSweetAlert(string icon, string title, string message, string estado, int? tiempo)
+        {
+            TempData["SweetAlertIcon"] = icon;
+            TempData["SweetAlertTitle"] = title;
+            TempData["SweetAlertMessage"] = message;
+            TempData["EstadoAlerta"] = estado;
+            TempData["Tiempo"] = tiempo.HasValue ? tiempo.Value : 3000;
+            TempData["EstadoAlerta"] = "false";
+
         }
     }
 }
