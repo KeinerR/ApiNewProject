@@ -40,7 +40,7 @@ function compararCategorias(nuevaCategoria, categoriasExistentes) {
     return false; // No se encontraron coincidencias
 }
 function compararCategoriasAct(nuevaCategoria, categoriasExistentes) {
-    const nombreCategoriaNormalizado = normalizar(nuevaCategoria.NombreCategoriaVista || '');
+    const nombreCategoriaNormalizado = normalizar(nuevaCategoria.NombreCategoriaVistaAct || '');
 
     const categoriasDuplicadas = [];
 
@@ -66,8 +66,6 @@ function compararCategoriasAct(nuevaCategoria, categoriasExistentes) {
 
     return false; // No se encontraron coincidencias
 }
-
-
 function mostrarValoresFormularioInicialCategoria() {
     const idsCrear = [
         'NombreCategoriaVista'
@@ -97,7 +95,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const categoriaFinal = mostrarValoresFormularioInicialCategoria();
         const categoriasAll = categorias;
         const categoriaRepetida = compararCategorias(categoriaFinal, categoriasAll);
-        console.log(categoriasAll,categoriaFinal);
         const campos = [
             { id: 'NombreCategoriaVista', nombre: 'Nombre' }
         ];
@@ -128,7 +125,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const categoriaFinal = mostrarValoresFormularioCategoriaAct();
         const categoriasAll = categorias;
         const categoriaRepetida = compararCategoriasAct(categoriaFinal, categoriasAll);
-
         const campos = [
             { id: 'NombreCategoriaVistaAct', nombre: 'Categoria'}
         ];
@@ -140,7 +136,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!NoCamposConErroresCategoriaAct()) {
             event.preventDefault();
-            mostrarAlertaAtencionPersonalizadaConBoton('Algunos campos contienen errores');
             return;
         }
 
@@ -198,25 +193,25 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('Número de campos sin texto:', camposConTexto);
 
         if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos');
-            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+            mostrarAlertaAtencionPersonalizadaConBoton('Completa el campo');
+            $('.MensajeInicial').text('Por favor, complete el campo obligatorio(*).');
             return false;
-        } else if (camposConTexto != 0) { // Cambiamos la condición para verificar si hay campos sin texto.
-            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
-            return false;
-        }
+        } 
 
         return true;
     }
     function NoCamposConErroresCategoria() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(0, 1);
-        const todoValido = textDangerSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-        console.log('Todos los campos son válidos:', todoValido);
-        if (!todoValido) {
-            $('.MensajeErrores').text('Este nombre no es valido..');
+        const camposConTexto = textDangerSlice.filter(function () {
+            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
+        }).length;
+
+        console.log('Número de campos sin texto:', camposConTexto);
+
+        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('El campo contiene errores');
+            $('.MensajeInicial').text('El campo contiene errores.');
             return false;
         }
         return true;
@@ -231,26 +226,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
         console.log('Número de campos sin texto:', camposConTexto);
 
-        if (camposConTexto === 8) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos');
-            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Completa el campo');
+            $('.MensajeInicial').text('Por favor, complete el campo obligatorio(*).');
             return false;
-        } else if (camposConTexto != 0) { // Cambiamos la condición para verificar si hay campos sin texto.
-            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
-            return false;
-        }
+        } 
 
         return true;
     }
     function NoCamposConErroresCategoriaAct() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(-1);
-        const todoValido = textDangerSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-        console.log('Todos los campos son válidos:', todoValido);
-        if (!todoValido) {
-            $('.MensajeErrores').text('Este nombre no es valido.');
+        const camposConTexto = textDangerSlice.filter(function () {
+            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
+        }).length;
+
+        console.log('Número de campos sin texto:', camposConTexto);
+
+        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('El campo contiene errores');
+            $('.MensajeInicial').text('El campo contiene errores.');
             return false;
         }
         return true;
@@ -494,8 +489,11 @@ function actualizarEstadoCategoria(CategoriaId) {
                 title: '¡Estado actualizado!',
                 showConfirmButton: false,
                 timer: 1500 // Duración del SweetAlert en milisegundos
-            })
+            }).then(() => {
+                location.reload(); // Recargar la página después de que la alerta haya terminado
+            });
         },
+
         error: function (xhr, status, error) {
             console.error('Error al actualizar el estado del categoria:', xhr.responseText);
             // Mostrar SweetAlert de error si es necesario
@@ -576,11 +574,14 @@ function vaciarInputCategoria() {
 }
 
 
-function validarCampoCategoria(campo) {
-    const input = $(campo); // Convertir el input a objeto jQuery
-    var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
-    var spanError = input.next('.text-danger'); // Obtener el elemento span de error asociado al input
-    var spanVacio = input.prev('.Mensaje'); // Obtener el elemento span vacío asociado al input
+
+function validarCampoCategoria(input) {
+    const inputElement = $(input); // Convertir el input a objeto jQuery
+    const campo = inputElement.attr('id'); // Obtener el id del input actual como nombre de campo
+    const valor = inputElement.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
+    const spanError = inputElement.next('.text-danger'); // Obtener el elemento span de error asociado al input
+    const labelForCampo = $('label[for="' + campo + '"]');
+    const spanVacio = labelForCampo.find('.Mensaje');
 
     // Limpiar el mensaje de error previo
     spanError.text('');
@@ -589,12 +590,12 @@ function validarCampoCategoria(campo) {
     // Validar el campo y mostrar mensaje de error si es necesario
     if (valor === '') {
         spanVacio.text('*');
-        spanError.text('Este campo es obligatorio.');
+        spanError.text('');
     }
     
 
     // Validación de usuario
-    if (input.is('#NombreCategoriaVista') || input.is('#NombreCategoriaVistaAct')) {
+    if (inputElement.is('#NombreCategoriaVista') || inputElement.is('#NombreCategoriaVistaAct')) {
         const nombreValido = /^[a-zA-Z]{3,}[a-zA-Z0-9_-]{0,16}$/.test(valor); // Verifica que el usuario cumpla con el formato especificado
         if (valor === '') {
             spanVacio.text('*');

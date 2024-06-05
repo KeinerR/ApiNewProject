@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <div class="modal-cuerpo">
-                    <form asp-controller="Presentaciones" asp-action="Create" method="post" class="modal-formulario-crear-categoria">
+                    <form asp-controller="Presentaciones" asp-action="Create" method="post" class="modal-formulario-crear-presentacion">
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-6">
@@ -91,7 +91,7 @@
                     </div>
                 </div>
                 <div class="modal-cuerpo">
-                    <form asp-controller="Presentaciones" asp-action="Update" method="post">
+                    <form asp-controller="Presentaciones" asp-action="Update" method="post" class="modal-formulario-actualizar-presentacion">
                         @Html.AntiForgeryToken()
                         <div class="modal-body">
                             <div class="form-group">
@@ -118,7 +118,7 @@
                                     <div class="form-group">
                                         <label for="CantidadPorPresentacionAct" class="control-label">Cantidad de productos x Presentación<span class="Mensaje"></span></label>
                                         <input type="text" id="CantidadPorPresentacionAct" oninput="validarCampoPresentacion(this);" name="cantidadPorPresentacion" class="form-control" />
-                                        <span class="text-danger" id="mensajeCantidadpresentacionAct"></span>
+                                        <span class="text-danger"></span>
                                     </div>
                                 </div>     
                                 <div class="col-md-6">
@@ -185,7 +185,7 @@
                         }
                     </td>
                     <td class="d-none">@Html.DisplayFor(modelItem => item.PresentacionId)</td>
-                    <td>@Html.DisplayFor(modelItem => item.NombrePresentacion) @Html.DisplayFor(modelItem => item.Contenido)</td>
+                    <td>@Html.DisplayFor(modelItem => item.NombreCompleto)</td>
                     <td>@Html.DisplayFor(modelItem => item.CantidadPorPresentacion)</td>
                     <td class="text-center align-middle">
                         <label class="switch">
@@ -217,7 +217,7 @@
                                 @contadorC <!-- Muestra el valor del contador -->
                             </td>
                             <td>@presentacion.PresentacionId</td>
-                            <td>@presentacion.NombrePresentacion @presentacion.Contenido</td>
+                            <td>@presentacion.NombreCompleto</td>
                             <td>@presentacion.CantidadPorPresentacion</td>
                             <td class="text-center align-middle">
                                 <label class="switch">

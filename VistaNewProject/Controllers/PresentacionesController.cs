@@ -18,28 +18,16 @@ namespace VistaNewProject.Controllers
 
         public async Task<IActionResult> Index(int? page, string order = "default")
         {
-            int pageSize = 5; // Cambiado a 5 para que la paginación se haga cada 5 registros
-            int pageNumber = page ?? 1; // Número de página actual (si no se especifica, es 1)
+            int pageSize = 5;
+            int pageNumber = page ?? 1;
 
             var presentaciones = await _client.GetPresentacionAsync(); // Obtener todas las marcas
-            presentaciones = presentaciones.Reverse().ToList();
-            // Asegurarse de que 'order' no sea nulo antes de llamar a 'ToLower()'
-            order = order?.ToLower() ?? "default";
-            // Ordenar las presentacións según el criterio seleccionado
-            switch (order)
-            {
-                case "first":
-                    presentaciones = presentaciones.Reverse().ToList();
-                    break;
-                case "alfabetico":
-                    presentaciones = presentaciones.OrderBy(p => p.NombreCompleto).ToList();
-                    break;
-                case "name_desc":
-                    presentaciones = presentaciones.OrderByDescending(p => p.NombreCompleto).ToList();
-                    break;
-                default:
-                    break;
-            }
+            presentaciones = presentaciones.Reverse().ToList();                                    // Ordenar por estado primero (activas primero, inactivas al final)
+            presentaciones = presentaciones
+                .OrderByDescending(p => p.EstadoPresentacion == 1)
+                .ToList(); 
+            // Modificación en la ordenación de las presentaciones
+           
             foreach (var presentacion in presentaciones)
             {
                 var nombrePresentacion = presentacion.NombrePresentacion;
@@ -51,7 +39,37 @@ namespace VistaNewProject.Controllers
                     $"{nombrePresentacion} de {contenido}";
             }
 
+            order = order?.ToLower() ?? "default";
+            switch (order)
+            {
+                case "first":
+                    presentaciones = presentaciones.Reverse(); // Se invierte el orden de las presentaciones
+                    presentaciones = presentaciones
+                   .OrderByDescending(p => p.EstadoPresentacion == 1)
+                   .ToList();
+                    break;
+                case "reverse":
+                    break;
+                case "alfabetico":
+                    presentaciones = presentaciones.OrderBy(p => p.NombreCompleto).ToList(); // Se ordenan alfabéticamente por el nombre de la presentación
+                    presentaciones = presentaciones
+                    .OrderByDescending(p => p.EstadoPresentacion == 1)
+                    .ToList();
+                    break;
+                case "name_desc":
+                    presentaciones = presentaciones.OrderByDescending(p => p.NombreCompleto).ToList(); // Se ordenan alfabéticamente descendente por el nombre de la presentación
+                    presentaciones = presentaciones
+                   .OrderByDescending(p => p.EstadoPresentacion == 1)
+                   .ToList();
+                    break;
+                default:
+                    break;
+            }
+
+           
             var pagePresentacion = await presentaciones.ToPagedListAsync(pageNumber, pageSize);
+
+            // Verificación si la página no tiene elementos y se encuentra en una página mayor a 1
             if (!pagePresentacion.Any() && pagePresentacion.PageNumber > 1)
             {
                 pagePresentacion = await presentaciones.ToPagedListAsync(pagePresentacion.PageCount, pageSize);
@@ -64,6 +82,7 @@ namespace VistaNewProject.Controllers
             ViewData["Presentaciones"] = presentaciones;
             return View(pagePresentacion);
         }
+
         [HttpPost]
         public async Task<JsonResult> FindPresentacion(int presentacionId)
         {
@@ -80,7 +99,7 @@ namespace VistaNewProject.Controllers
 
         public async Task<IActionResult> Details(int id, int? page)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return NotFound();
             }
@@ -88,6 +107,7 @@ namespace VistaNewProject.Controllers
             var productos = await _client.GetProductoAsync();
             var presentaciones = await _client.GetPresentacionAsync();
             var lotes = await _client.GetLoteAsync();
+            var categorias = await _client.GetCategoriaAsync();
             var marcas = await _client.GetMarcaAsync();
 
             // Calcular cantidad total de lotes por ProductoId y estado activo
@@ -98,18 +118,6 @@ namespace VistaNewProject.Controllers
                     grp => grp.Key,
                     grp => grp.Sum(l => l.Cantidad) // Sumar la cantidad de cada grupo
                 );
-
-            // Concatenar nombre completo de presentaciones
-            foreach (var presentacion in presentaciones)
-            {
-                var nombrePresentacion = presentacion.NombrePresentacion;
-                var contenido = presentacion.Contenido;
-                var cantidad = presentacion.CantidadPorPresentacion ?? 1;
-
-                presentacion.NombreCompleto = cantidad > 1 ?
-                    $"{nombrePresentacion} x {cantidad} unidades de {contenido}" :
-                    $"{nombrePresentacion} de {contenido}";
-            }
 
             // Concatenar nombre completo de productos
             foreach (var producto in productos)
@@ -132,18 +140,21 @@ namespace VistaNewProject.Controllers
                 var nombreMarca = marcaEncontrada?.NombreMarca ?? "Sin marca";
 
                 producto.NombreCompleto = cantidad > 1 ?
-                    $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} {contenido}" :
+                    $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} x {cantidad} {contenido}" :
                     $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
             }
-            var presentacionDatos = presentaciones.FirstOrDefault(p => p.PresentacionId == id);
-
-            if (presentacionDatos == null)
+            var presentacion = presentaciones.FirstOrDefault(p => p.PresentacionId == id);
+            if (presentacion != null)
             {
-                return NotFound();
+                // Concatenación del nombre de la presentación
+                string nombreCompleto = presentacion.CantidadPorPresentacion > 1 ?
+                 $"{presentacion.NombrePresentacion} x {presentacion.CantidadPorPresentacion} unidades de {presentacion.Contenido}" : $"{presentacion.NombrePresentacion} de {presentacion.Contenido}";
+                // Pasar el nombre completo a la vista
+                ViewBag.NombreCompletoPresentacion = nombreCompleto;
             }
-
-            ViewBag.Presentacion = presentacionDatos;
+            ViewBag.Presentacion = presentacion;
             ViewBag.Productos = productos;
+
             var productosDePresentacion = productos.Where(p => p.PresentacionId == id).ToList();
 
             ViewBag.CantidadProductosAsociados = productosDePresentacion.Count; // Guardar la cantidad de productos asociados
@@ -162,6 +173,10 @@ namespace VistaNewProject.Controllers
 
             return View(pagedProductos);
         }
+
+
+
+
 
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] Presentacion presentacion)
@@ -209,9 +224,6 @@ namespace VistaNewProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                Console.WriteLine(presentacion.PresentacionId);
-
-
                 var presentaciones = await _client.GetPresentacionAsync();
                 int contadorPresentacionesIguales = 0;
 
@@ -310,6 +322,23 @@ namespace VistaNewProject.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        [HttpPatch("Presentaciones/UpdateEstadoPresentacion/{id}")]
+        public async Task<IActionResult> CambiarEstadoPresentacion(int id)
+        {
+            // Llama al método del servicio para cambiar el estado del usuario
+            var response = await _client.CambiarEstadoPresentacionAsync(id);
+
+            // Devuelve una respuesta adecuada en función de la respuesta del servicio
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok();
+            }
+            else
+            {
+                return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+            }
         }
 
         private void MensajeSweetAlert(string icon, string title, string message, string estado, int? tiempo)

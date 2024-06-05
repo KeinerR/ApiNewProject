@@ -10,45 +10,41 @@ namespace VistaNewProject.Controllers
     public class MarcasController : Controller
     {
         private readonly IApiClient _client;
-
-
         public MarcasController(IApiClient client)
         {
             _client = client;
         }
-
-
-
         public async Task<IActionResult> Index(int? page, string order = "default")
         {
-            int pageSize = 5; // Cambiado a 5 para que la paginación se haga cada 5 registros
-            int pageNumber = page ?? 1; // Número de página actual (si no se especifica, es 1)
+            int pageSize = 5; 
+            int pageNumber = page ?? 1; 
 
             var marcas = await _client.GetMarcaAsync(); // Obtener todas las marcas
-
             marcas = marcas.Reverse().ToList();
-            switch (order.ToLower())
+            marcas = marcas.OrderByDescending(c => c.EstadoMarca == 1).ToList();
+            order = order?.ToLower() ?? "default";
+            switch (order)
             {
                 case "first":
+                    marcas = marcas.Reverse(); // Se invierte el orden de las marcas
                     marcas = marcas
-                        .OrderBy(p => p.MarcaId)
-                        .ToList();
+                   .OrderByDescending(p => p.EstadoMarca == 1)
+                   .ToList();
                     break;
                 case "reverse":
-                    marcas = marcas;
                     break;
                 case "alfabetico":
+                    marcas = marcas.OrderBy(p => p.NombreMarca).ToList(); // Se ordenan alfabéticamente por el nombre de la presentación
                     marcas = marcas
-                        .OrderBy(p => p.NombreMarca)
-                        .ToList();
+                    .OrderByDescending(p => p.EstadoMarca == 1)
+                    .ToList();
                     break;
-
                 case "name_desc":
+                    marcas = marcas.OrderByDescending(p => p.EstadoMarca).ToList(); // Se ordenan alfabéticamente descendente por el nombre de la presentación
                     marcas = marcas
-                        .OrderByDescending(p => p.NombreMarca)
-                        .ToList();
+                    .OrderByDescending(p => p.EstadoMarca == 1)
+                    .ToList();
                     break;
-
                 default:
                     break;
             }
@@ -67,27 +63,8 @@ namespace VistaNewProject.Controllers
 
             ViewBag.Contador = contador;
             ViewBag.Order = order; // Pasar el criterio de orden a la vista
-            // Código del método Index que querías integrar
-            string mensaje = HttpContext.Session.GetString("Message");
-            TempData["Message"] = mensaje;
-
-            try
-            {
-                ViewData["Marcas"] = marcas;
-                return View(pageMarca);
-            }
-
-            catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
-            {
-                HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
-                return RedirectToAction("Index", "Home");
-            }
-            catch
-            {
-                HttpContext.Session.SetString("Message", "Error en el aplicativo");
-                return RedirectToAction("LogOut", "Accesos");
-            }
-
+            ViewData["Marcas"] = marcas;
+            return View(pageMarca);
         }
         [HttpPost]
         public async Task<JsonResult> FindMarca(int marcaId)
@@ -166,6 +143,7 @@ namespace VistaNewProject.Controllers
             }
 
             ViewBag.Marca = marca;
+            
 
             var productosDeMarca = productos.Where(p => p.MarcaId == id).ToList();
             ViewBag.CantidadProductosAsociados = productosDeMarca.Count;

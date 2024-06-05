@@ -16,43 +16,48 @@ namespace VistaNewProject.Controllers
         }
         public async Task<IActionResult> Index(int? page, string order = "default")
         {
-            int pageSize = 5; // Cambiado a 5 para que la paginación se haga cada 5 registros
-            int pageNumber = page ?? 1; // Número de página actual (si no se especifica, es 1)
+            int pageSize = 5;
+            int pageNumber = page ?? 1; 
 
             var categorias = await _client.GetCategoriaAsync(); // Obtener todas las categorias
-
+                                                             
             categorias = categorias.Reverse().ToList();
-            switch (order.ToLower())
+            categorias = categorias.OrderByDescending(c => c.EstadoCategoria == 1).ToList();
+            order = order?.ToLower() ?? "default";
+
+            switch (order)
             {
                 case "first":
+                    categorias = categorias.Reverse(); // Se invierte el orden de las categorias
                     categorias = categorias
-                        .OrderBy(p => p.CategoriaId)
-                        .ToList();
+                   .OrderByDescending(p => p.EstadoCategoria == 1)
+                   .ToList();
                     break;
                 case "reverse":
-                    categorias = categorias;
                     break;
                 case "alfabetico":
+                    categorias = categorias.OrderBy(p => p.NombreCategoria).ToList(); // Se ordenan alfabéticamente por el nombre de la presentación
                     categorias = categorias
-                        .OrderBy(p => p.NombreCategoria)
-                        .ToList();
+                    .OrderByDescending(p => p.EstadoCategoria == 1)
+                    .ToList();
                     break;
-
                 case "name_desc":
+                    categorias = categorias.OrderByDescending(p => p.EstadoCategoria).ToList(); // Se ordenan alfabéticamente descendente por el nombre de la presentación
                     categorias = categorias
-                        .OrderByDescending(p => p.NombreCategoria)
-                        .ToList();
+                    .OrderByDescending(p => p.EstadoCategoria == 1)
+                    .ToList();
                     break;
-
                 default:
                     break;
             }
+
             if (categorias == null)
             {
                 return NotFound("error");
             }
 
             var pageCategoria = await categorias.ToPagedListAsync(pageNumber, pageSize);
+
             if (!pageCategoria.Any() && pageCategoria.PageNumber > 1)
             {
                 pageCategoria = await categorias.ToPagedListAsync(pageCategoria.PageCount, pageSize);
@@ -61,28 +66,10 @@ namespace VistaNewProject.Controllers
             int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
 
             ViewBag.Contador = contador;
-            ViewBag.Order = order; // Pasar el criterio de orden a la vista
-            // Código del método Index que querías integrar
-            string mensaje = HttpContext.Session.GetString("Message");
-            TempData["Message"] = mensaje;
-
-            try
-            {
-                ViewData["Categorias"] = categorias;
-                return View(pageCategoria);
-            }
-
-            catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
-            {
-                HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
-                return RedirectToAction("Index", "Home");
-            }
-            catch
-            {
-                HttpContext.Session.SetString("Message", "Error en el aplicativo");
-                return RedirectToAction("LogOut", "Accesos");
-            }
-
+            ViewBag.Order = order; // Pasar el criterio de orden a la vistav
+            ViewData["Categorias"] = categorias;
+            return View(pageCategoria);
+           
         }
 
         [HttpPost]
@@ -98,10 +85,9 @@ namespace VistaNewProject.Controllers
             var categorias = await _client.GetCategoriaAsync();
             return Json(categorias);
         }
-
         public async Task<IActionResult> Details(int id, int? page)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return NotFound();
             }
@@ -128,18 +114,6 @@ namespace VistaNewProject.Controllers
                     grp => grp.Sum(l => l.Cantidad) // Sumar la cantidad de cada grupo
                 );
 
-            // Concatenar nombre completo de presentaciones
-            foreach (var presentacion in presentaciones)
-            {
-                var nombrePresentacion = presentacion.NombrePresentacion;
-                var contenido = presentacion.Contenido;
-                var cantidad = presentacion.CantidadPorPresentacion ?? 1;
-
-                presentacion.NombreCompleto = cantidad > 1 ?
-                    $"{nombrePresentacion} x {cantidad} {contenido}" :
-                    $"{nombrePresentacion} de {contenido}";
-            }
-
             // Concatenar nombre completo de productos
             foreach (var producto in productos)
             {
@@ -161,7 +135,7 @@ namespace VistaNewProject.Controllers
                 var nombreMarca = marcaEncontrada?.NombreMarca ?? "Sin marca";
 
                 producto.NombreCompleto = cantidad > 1 ?
-                    $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} {contenido}" :
+                    $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} x {cantidad} {contenido}" :
                     $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
             }
 
@@ -171,10 +145,8 @@ namespace VistaNewProject.Controllers
             }
 
             ViewBag.Categoria = categoria;
-            ViewBag.Presentaciones = presentaciones;
-            ViewBag.Categorias = categorias;
             ViewBag.Productos = productos;
-            ViewBag.Marcas = marcas;
+
             var productosDeCategoria = productos.Where(p => p.CategoriaId == id).ToList();
 
             ViewBag.CantidadProductosAsociados = productosDeCategoria.Count; // Guardar la cantidad de productos asociados
@@ -238,25 +210,25 @@ namespace VistaNewProject.Controllers
         {
             if (ModelState.IsValid)
             {
-
                 var categorias = await _client.GetCategoriaAsync();
-                int contadorCategoriasIguales = 0;
+                List<int> categoriasIgualesIds = new List<int>();
 
                 foreach (var categoriaC in categorias)
                 {
-                    if (categoriaC.CategoriaId != categoriaC.CategoriaId &&
-                        string.Equals(categoriaC.NombreCategoria, categoriaC.NombreCategoria, StringComparison.OrdinalIgnoreCase))
+                    if (categoriaC.CategoriaId != categoria.CategoriaId &&
+                        string.Equals(categoriaC.NombreCategoria, categoria.NombreCategoria, StringComparison.OrdinalIgnoreCase))
                     {
-                        contadorCategoriasIguales++;
+                        categoriasIgualesIds.Add(categoriaC.CategoriaId);
                     }
                 }
 
-                if (contadorCategoriasIguales > 0)
+                if (categoriasIgualesIds.Count > 0)
                 {
-                    MensajeSweetAlert("error", "Error", $"Ya hay {contadorCategoriasIguales} categorías registradas con ese nombre.", "true", null);
+                    string categoriasIdsStr = string.Join(", ", categoriasIgualesIds);
+                    MensajeSweetAlert("error", "Error", $"Ya hay una categoría registrada con ese nombre. Categoria ID: {categoriasIdsStr}", "true", null);
                     return RedirectToAction("Index");
                 }
-                var catehgoriaantesdeenviar = categoria;
+
                 var response = await _client.UpdateCategoriaAsync(categoria);
 
                 if (response != null)
@@ -334,7 +306,6 @@ namespace VistaNewProject.Controllers
 
             return RedirectToAction("Index");
         }
-
 
         [HttpPatch("Categorias/UpdateEstadoCategoria/{id}")]
         public async Task<IActionResult> CambiarEstadoCategoria(int id)

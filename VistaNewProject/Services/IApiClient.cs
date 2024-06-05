@@ -31,6 +31,8 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> CreatePresentacionAsync(Presentacion presentacion);
         Task<Presentacion> FindPresentacionAsync(int id);
         Task<HttpResponseMessage> UpdatePresentacionAsync(PresentacionUpdate presentacion);
+        Task<HttpResponseMessage> CambiarEstadoPresentacionAsync(int id);
+
         Task<HttpResponseMessage> DeletePresentacionAsync(int id);
 
 
