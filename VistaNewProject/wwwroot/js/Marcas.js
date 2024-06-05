@@ -109,7 +109,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!NoCamposConErroresMarca()) {
             event.preventDefault();
-            mostrarAlertaAtencionPersonalizadaConBoton('El campo no es valido');
             return;
         }
 
@@ -124,12 +123,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
     $('.modal-formulario-actualizar-marca').on('submit', function (event) {
-        event.preventDefault();
         const marcaFinal = mostrarValoresFormularioMarcaAct();
         const marcasAll = marcas;
         const marcaRepetida = compararMarcasAct(marcaFinal, marcasAll);
-        console.log(marcasAll, marcaFinal);
-
         const campos = [
             { id: 'NombreMarcaVistaAct', nombre: 'Marca'}
         ];
@@ -141,7 +137,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!NoCamposConErroresMarcaAct()) {
             event.preventDefault();
-            mostrarAlertaAtencionPersonalizadaConBoton('Algunos campos contienen errores');
             return;
         }
 
@@ -191,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
     //Este elimina el mensaje inicial u lo agrega de ser necesario el que aparece sobre los botones
     function NoCamposVaciosMarca() {
         const mensajeElements = $('.Mensaje');
-        const mensajeSlice = mensajeElements.slice(0,1);
+        const mensajeSlice = mensajeElements.slice(0, 1);
         const camposConTexto = mensajeSlice.filter(function () {
             return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
         }).length;
@@ -199,25 +194,22 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('Número de campos sin texto:', camposConTexto);
 
         if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos');
-            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
-            return false;
-        } else if (camposConTexto != 0) { // Cambiamos la condición para verificar si hay campos sin texto.
-            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+            mostrarAlertaAtencionPersonalizadaConBoton('Completa el campo con *');
+            $('.MensajeInicial').text('Por favor, complete el campo con *.');
             return false;
         }
-
         return true;
     }
     function NoCamposConErroresMarca() {
         const textDangerElements = $('.text-danger');
-        const textDangerSlice = textDangerElements.slice(0, 1);
-        const todoValido = textDangerSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-        console.log('Todos los campos son válidos:', todoValido);
-        if (!todoValido) {
-            $('.MensajeErrores').text('Este nombre no es valido..');
+        const textDangerSlice = textDangerElements.slice(0,1);
+        const camposConTexto = textDangerSlice.filter(function () {
+            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
+        }).length;
+
+        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente el campo');
+            $('.MensajeErrores').text('El campo es invalido.');
             return false;
         }
         return true;
@@ -232,28 +224,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
         console.log('Número de campos sin texto:', camposConTexto);
 
-        if (camposConTexto === 8) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos');
-            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
-            return false;
-        } else if (camposConTexto != 0) { // Cambiamos la condición para verificar si hay campos sin texto.
-            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Completa el campo con *');
+            $('.MensajeInicial').text('Por favor, complete el campo con *.');
             return false;
         }
-
         return true;
+
     }
     function NoCamposConErroresMarcaAct() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(-1);
-        const todoValido = textDangerSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-        console.log('Todos los campos son válidos:', todoValido);
-        if (!todoValido) {
-            $('.MensajeErrores').text('Este nombre no es valido.');
+        const camposConTexto = textDangerSlice.filter(function () {
+            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
+        }).length;
+
+        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente el campo');
+            $('.MensajeErrores').text('El campo es invalido.');
             return false;
-        }
+        } 
         return true;
     }
     function NoCamposVaciosInicialMarca() {
@@ -361,6 +351,12 @@ function abrirModalMarca() {
 }
 
 function limpiarFormularioMarca() {
+    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
+        element.textContent = '';
+    });
+    document.querySelectorAll('.MensaErrores').forEach(function (element) {
+        element.textContent = '';
+    });
     limpiarFormularioMarcaAgregar();
     limpiarFormularioMarcaAct();
     history.replaceState(null, '', location.pathname);
@@ -495,7 +491,9 @@ function actualizarEstadoMarca(MarcaId) {
                 title: '¡Estado actualizado!',
                 showConfirmButton: false,
                 timer: 1500 // Duración del SweetAlert en milisegundos
-            })
+            }).then(() => {
+                location.reload(); // Recargar la página después de que la alerta haya terminado
+            });
         },
         error: function (xhr, status, error) {
             console.error('Error al actualizar el estado del marca:', xhr.responseText);

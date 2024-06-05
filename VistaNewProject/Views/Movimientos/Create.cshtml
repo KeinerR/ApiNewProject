@@ -1,0 +1,56 @@
+﻿@model VistaNewProject.Models.Movimiento
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Movimiento</h4>
+<hr />
+   <form asp-action="CreatePost" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+
+             <div class="col-6">
+                <label asp-for="TipoAccion" class="control-label"></label>
+
+                <select  id="TipoAccion" name="tipoAccion"  class="form-control">
+                   <option value="Pedido">Pedido</option>
+                <option value="Compra">Compra</option>
+
+
+
+                </select>
+                <span id="TipoAccionError" class="text-danger"></span>
+            </div>
+        <div class="col-6">
+            <label asp-for="TipoMovimiento" class="control-label"></label>
+            <select id="TipoMovimiento" name="tipoMovimiento" class="form-control">
+                <option value="Entrada" data-icon="fa-brands fa-get-pocket">Entrada</option>
+                <option value="Salida" data-icon="fa-solid fa-circle-xmark">Salidad</option>
+            </select>
+                <span id="TipoMovimientoError" class="text-danger"></span>
+            </div>
+        <div class="col-6">
+                <label asp-for="BuscarId" class="control-label"></label>
+                <input asp-for="BuscarId" class="form-control" />
+                <span asp-validation-for="BuscarId" class="text-danger"></span>
+            </div>
+        <div class="col-6">
+                <label asp-for="FechaMovimiento" class="control-label"></label>
+                <input asp-for="FechaMovimiento" class="form-control" />
+                <span asp-validation-for="FechaMovimiento" class="text-danger"></span>
+            </div>
+            <div class="col-6">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+    </div>
+        </form>
+   
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<script src="~/js/movimientos.js"></script>

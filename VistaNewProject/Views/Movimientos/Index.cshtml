@@ -1,242 +1,59 @@
-﻿@using X.PagedList
-@model X.PagedList.IPagedList<VistaNewProject.Models.Movimiento>
+﻿@model IEnumerable<VistaNewProject.Models.Movimiento>
+
 @{
     ViewData["Title"] = "Index";
 }
 
-<br />
+<h1>Index</h1>
 
-<div class="d-flex justify-content-between">
-    <!-- Formulario de búsqueda a la izquierda -->
-    <div class="mr-auto">
-        <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
-            <div class="input-group">
-                <input id="buscarMovimiento" type="text" class="form-control" placeholder="Buscar movimiento" aria-label="Search" aria-describedby="button-addon2">
-                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Botón para abrir el modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#MovimientoModal">
-       <i class="fas fa-plus-circle"></i>  Agregar Movimiento
-    </button>
-</div>
-
-
-
-<!-- Modal -->
-<div class="modal fade" id="MovimientoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="TituloModal">Agregar Movimiento</h5>
-                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-
-            </div>
-            <form asp-controller="Movimientos" asp-action="" method="post">
-                <div class="modal-body">
-
-                    <div class="form-group">
-                        <input type="hidden" id="MovimientoId" name="movimientoId" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="ProductoId" class="control-label">Producto Id</label>
-                        <input type="text" id="ProductoId" name="productoId" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="TipoMovimiento" class="control-label">Tipo Movimiento</label>
-                        <select id="TipoMovimiento" name="tipoMovimiento" class="form-control">
-                            <option value="">Selecciona una opción</option>
-                            <option value="Compra">Compra</option>
-                            <option value="Venta">Venta</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="TipoAccion" class="control-label">Tipo Acción</label>
-                        <select id="TipoAccion" name="tipoAccion" class="form-control">
-                            <option value="">Selecciona una opción</option>
-                            <option value="Entrada">Entrada</option>
-                            <option value="Salida">Salida</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="CantidadMovimiento" class="control-label">Cantidad movimiento</label>
-                        <input type="text" id="CantidadMovimiento" name="cantidadMovimiento" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="DescripcionMovimiento" class="control-label">Descripcion Movimiento</label>
-                        <input type="text" id="DescripcionMovimiento" name="descripcionMovimiento" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="FechaMovimiento" class="control-label">Fecha Movimiento</label>
-                        <input type="datetime-local" id="FechaMovimiento" name="fechaMovimiento" class="form-control" />
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
-                    <button type="button" onclick="agregarMovimiento()" class="btn btn-primary" id="btnGuardar">Agregar</button>
-                    <button type="button" onclick="ActualizarMovimiento()" class="btn btn-primary" id="botonEditarar" style="display: none;">Actualizar Movimiento</button>
-                </div>
-
-
-
-            </form>
-
-        </div>
-    </div>
-</div>
-
-<br />
-<hr>
-
-<table class="table table-custom text-center">
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
     <thead>
         <tr>
-            <th> #</th>
-            <th class="d-none">
-                movimiento Id
+            <th>
+                @Html.DisplayNameFor(model => model.MovimientoId)
             </th>
             <th>
-                PRODUCTO ID
-            </th>
-             <th>
-                TIPO ACCION
-            </th>
-             <th>
-                TIPO MOVIMIENTO
-            </th>
-             <th>
-                CANTIDAD
+                @Html.DisplayNameFor(model => model.TipoAccion)
             </th>
             <th>
-                DESCRIPCION
+                @Html.DisplayNameFor(model => model.TipoMovimiento)
             </th>
             <th>
-                FECHA
+                @Html.DisplayNameFor(model => model.BuscarId)
             </th>
             <th>
-                ACCION
+                @Html.DisplayNameFor(model => model.FechaMovimiento)
             </th>
+            <th></th>
         </tr>
     </thead>
-    <tbody class="text-center">
-        @{
-            int contador = ViewBag.Contador ?? 1;
-        }
-        @foreach (var item in Model)
-        {
-            <tr class="movimientosPaginado">
-                <td>
-                    @contador
-                    @{
-                        contador++;
-                    }
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.MovimientoId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProductoId)
-                </td>
-                 <td>
-                    @Html.DisplayFor(modelItem => item.TipoAccion)
-                </td>
-                 <td>
-                    @Html.DisplayFor(modelItem => item.TipoMovimiento)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CantidadMovimiento)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Descripcion)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FechaMovimiento)
-                </td>
-                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
-                <td>
-                    <button class="btn btn-warning" onclick="obtenerDatosMovimiento('@item.MovimientoId')" data-cliente-id="@item.MovimientoId" data-bs-toggle="modal" data-bs-target="#MovimientoModal">Editar</button>
-                    <button class="btn btn-danger" onclick="eliminarMovimiento('@item.MovimientoId')">Eliminar</button>
-                </td>
-            </tr>
-        } @{
-            var movimientos = ViewData["Movimientos"] as List<Movimiento>;
-            if (movimientos != null)
-            {
-                foreach (var movimiento in movimientos)
-                {
-                    <tr class="Movimientos" style="display:none;">
-                        <td>@movimiento.MovimientoId</td>
-                        <td>@movimiento.ProductoId</td>
-                        <td>@movimiento.TipoAccion</td>
-                        <td>@movimiento.TipoMovimiento</td>
-                        <td>@movimiento.CantidadMovimiento</td>
-                        <td>@movimiento.Descripcion</td>
-                        <td>@movimiento.FechaMovimiento</td>
-                        <td>
-                            <button class="btn btn-warning" onclick="obtenerDatosMovimiento('@movimiento.MovimientoId')" data-cliente-id="@movimiento.MovimientoId" data-bs-toggle="modal" data-bs-target="#MovimientoModal">Editar</button>
-                            <button class="btn btn-danger" onclick="eliminarMovimiento('@movimiento.MovimientoId')">Eliminar</button>
-                        </td>
-                      
-                    </tr>
-                }
-            }
-        }
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.MovimientoId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TipoAccion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TipoMovimiento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BuscarId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaMovimiento)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
     </tbody>
 </table>
-
-<div class="pagination-container mt-2">
-    @if (Model != null && Model.PageCount > 1)
-    {
-        <div class="d-flex justify-content-center mb-5">
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
-                    <!-- Botón para ir a la primera página -->
-                    @if (Model.PageNumber > 1)
-                    {
-                        <li class="page-item">
-                            <a class="page-link" href="?page=1" aria-label="First">
-                                <span aria-hidden="true">Primero</span>
-                            </a>
-                        </li>
-                    }
-                    <!-- Botón para la página anterior (oculto en la página 1) -->
-                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                        <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
-                            <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
-                        </a>
-                    </li>
-                    <!-- Iterar sobre las páginas disponibles -->
-                    @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
-                    {
-                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                            <a class="page-link" href="?page=@i">@i</a>
-                        </li>
-                    }
-                    <!-- Botón para la página siguiente (oculto en la última página) -->
-                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                        <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
-                            <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
-                        </a>
-                    </li>
-                    <!-- Botón para ir a la última página -->
-                    @if (Model.PageNumber < Model.PageCount)
-                    {
-                        <li class="page-item">
-                            <a class="page-link" href="?page=@Model.PageCount" aria-label="Last">
-                                <span aria-hidden="true">Último</span>
-                            </a>
-                        </li>
-                    }
-                </ul>
-            </nav>
-        </div>
-    }
-</div>
-
-
-
-<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="~/js/movimientos.js"></script>

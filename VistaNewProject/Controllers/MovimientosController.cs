@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
 
@@ -55,6 +56,85 @@ namespace VistaNewProject.Controllers
             }
 
         }
+
+        public async Task<IActionResult> Create()
+        {
+            
+
+
+            return View();
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreatePost([FromForm] Movimiento movimiento)
+        {
+            var movimientos = new Movimiento
+            {
+                TipoAccion = movimiento.TipoAccion,
+                TipoMovimiento = movimiento.TipoMovimiento,
+                BuscarId = movimiento.BuscarId,
+                FechaMovimiento = movimiento.FechaMovimiento
+            };
+
+            var response = await _client.CreateMovimientoAsync(movimientos);
+
+            if (response.IsSuccessStatusCode)
+            {
+
+                Console.WriteLine(movimiento.TipoAccion);
+                if (movimiento.TipoAccion == "Pedido"  && movimiento.TipoMovimiento=="Entrada" || movimiento.TipoAccion == "Compra" && movimiento.TipoMovimiento == "Salida")
+                {
+                    var pedidoId = movimiento.BuscarId.Value;
+                    return RedirectToAction("Detalles", "Movimientos", new { pedidoId  , tipoMovimiento = movimiento.TipoMovimiento });
+                }
+            }
+
+            return Ok();
+        }
+
+        public async Task<IActionResult> Detalles(int pedidoId , int? page , string tipoMovimiento)
+        {
+            var pedido = await _client.FindPedidosAsync(pedidoId);
+
+            ViewBag.pedidos = pedido;
+            if (pedido == null)
+            {
+                return NotFound();
+            }
+
+               
+              ViewBag.movimiento= tipoMovimiento;
+            
+
+            var detallesPeidos = await _client.GetDetallepedidoAsync();
+            var detallepedidos = detallesPeidos.Where(p => p.PedidoId == pedidoId).ToList();
+
+            var productosTasks = detallepedidos.Select(async detalle =>
+            {
+                detalle.Producto = await _client.FindProductoAsync(detalle.ProductoId.Value);
+                detalle.Unidad = await _client.FindUnidadAsync(detalle.UnidadId.Value);
+            });
+            await Task.WhenAll(productosTasks);
+
+            var clienetId =pedido.ClienteId;
+            var cliente = await _client.FindClienteAsync(clienetId.Value);
+
+            var nombreCliente=cliente.NombreEntidad;
+            ViewBag.Cliente = nombreCliente;
+
+
+            int pageSize = 4; // Tamaño de página deseado
+            int pageNumber = page ?? 1;
+
+            var pagedProductos = detallepedidos.ToPagedList(pageNumber, pageSize);
+
+            return View(pagedProductos);
+        }
+
+
+     
+        
 
     }
 }

@@ -504,7 +504,18 @@ namespace VistaNewProject.Controllers
             return RedirectToAction("Index","Pedidos");
 
         }
-      
+
+        public async Task<IActionResult> Edit(int detalleId)
+        {
+            var detalles = await _client.FindDetallesPedidoAsync(detalleId);
+            if (detalles == null)
+            {
+                return NotFound();
+            }
+            return View(detalles);
+        }
+
+
 
     }
 }

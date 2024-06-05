@@ -44,12 +44,10 @@ namespace VistaNewProject.Services
        
 
         // marca
-
         Task<IEnumerable<Marca>> GetMarcaAsync();
-
         Task<HttpResponseMessage> CreateMarcaAsync( Marca marca);
-        Task<Marca> FindMarcasAsync(int id);
-        Task<Marca> FindnombreMarcasAsync(string nombreMarca);
+        Task<Marca> FindMarcaAsync(int id);
+        Task<Marca> FindNombreMarcasAsync(string nombreMarca);
         Task<HttpResponseMessage> UpdateMarcaAsync(MarcaUpdate marca);
         Task<HttpResponseMessage> CambiarEstadoMarcaAsync(int id);
         Task<HttpResponseMessage> DeleteMarcaAsync(int id);
@@ -70,11 +68,11 @@ namespace VistaNewProject.Services
         // unidad
 
         Task<IEnumerable<Unidad>> GetUnidadAsync();
-
         Task<HttpResponseMessage> CreateUnidadAsync(Unidad unidad);
         Task<Unidad> FindUnidadAsync(int id);
-        Task<HttpResponseMessage> UpdateUnidadAsync(Unidad unidad);
+        Task<HttpResponseMessage> UpdateUnidadAsync(UnidadUpdate unidad);
         Task<HttpResponseMessage> DeleteUnidadAsync(int id);
+        Task<HttpResponseMessage> CambiarEstadoUnidadAsync(int id);
 
 
 
@@ -114,6 +112,10 @@ namespace VistaNewProject.Services
         // movimiento
 
         Task<IEnumerable<Movimiento>> GetMovimientoAsync();
+        Task<HttpResponseMessage> CreateMovimientoAsync(Movimiento movimiento);
+        Task<Movimiento> FindMoviminetoAsync(int id);
+        Task<HttpResponseMessage> UpdateMovimientoAsync(Movimiento movimiento);
+        Task<HttpResponseMessage> DeleteMovimientoAsync(int id);
 
 
 
@@ -143,6 +145,8 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> CreateDetallesPedidosAsync(Detallepedido detallepedido);
         Task<Detallepedido> FindDetallesPedidoAsync(int id);
         Task<HttpResponseMessage> UpdateDetallepedidosAsync(Detallepedido detallepedido);
+        Task<HttpResponseMessage> DeleteDetallePedidoAsync(int id);
+
 
 
 

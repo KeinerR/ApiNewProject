@@ -97,9 +97,9 @@ namespace VistaNewProject.Controllers
             return Json(presentaciones);
         }
 
-        public async Task<IActionResult> Details(int id, int? page)
+        public async Task<IActionResult> Details(int? id, int? page)
         {
-            if (id == 0)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -144,6 +144,9 @@ namespace VistaNewProject.Controllers
                     $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
             }
             var presentacion = presentaciones.FirstOrDefault(p => p.PresentacionId == id);
+            if (presentacion == null) {
+                return NotFound();
+            }
             if (presentacion != null)
             {
                 // Concatenación del nombre de la presentación

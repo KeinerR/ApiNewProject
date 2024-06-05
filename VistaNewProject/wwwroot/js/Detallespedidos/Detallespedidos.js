@@ -378,8 +378,10 @@ $(document).ready(function () {
                 return response.json();
             })
             .then(data => {
+
                 // Filtrar los productos por productId seleccionado
                 const productoSeleccionado = data.find(producto => producto.productoId == productId);
+                const unidadId = productoSeleccionado.unidadId;
 
                 if (productoSeleccionado) {
 
@@ -400,6 +402,7 @@ $(document).ready(function () {
                     // Si no se encuentra ningún producto con el productId seleccionado, mostrar un mensaje
                     $('#Cantidad').attr('placeholder', '');
                 }
+
             })
             .catch(error => {
                 console.error('Error:', error);
