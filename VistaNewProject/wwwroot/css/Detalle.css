@@ -139,19 +139,28 @@
 
     .botonVolver:hover {
         color: white;
-        background-color: #212b68;
     }
 
 .botonAsociar {
     border-radius: 50px;
     color: white;
     background-color: #213b68;
+    justify-content:center;
+    vertical-align:central;
+    display:flex;
 }
 
     .botonAsociar:hover {
-        color: white;
         background-color: #212b68;
+        border-radius: 50px;
+        color:white;
     }
+
+.manoAsociasion {
+    font-size: 20px;
+    margin-left: 3px;
+    padding-top: 5px;
+} 
 
 /*-----------------------------------------------------------*/
 /*Estilo de Detalle de compra*/
