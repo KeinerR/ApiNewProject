@@ -583,6 +583,35 @@ namespace VistaNewProject.Services
         }
 
 
+        public async Task<HttpResponseMessage> CreateMovimientoAsync(Movimiento movimiento)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Movimientos/InsertarMovimiento", movimiento);
+            return response;
+        }
+
+        public async Task<Movimiento> FindMoviminetoAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Movimiento>($"Movimientos/GetMovimientoById?id={id}");
+            return response;
+        }
+
+
+
+
+        public async Task<HttpResponseMessage> UpdateMovimientoAsync(Movimiento movimiento)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"Movimientos/UpdateMovimientos/", movimiento);
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> DeleteMovimientoAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"Movimientos/DeleteMovimiento/{id}");
+            return response;
+        }
+
+
+
         //producto
         public async Task<IEnumerable<Producto>> GetProductoAsync(string? busqueda = "")
         {
@@ -941,6 +970,12 @@ namespace VistaNewProject.Services
         public async Task<HttpResponseMessage> UpdateDetallepedidosAsync(Detallepedido detallepedido)
         {
             var response = await _httpClient.PutAsJsonAsync($"Detallepedidos/UpdateDetallepedidos/", detallepedido);
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> DeleteDetallePedidoAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"Detallepedidos/DeleteDetallepedido/{id}");
             return response;
         }
 

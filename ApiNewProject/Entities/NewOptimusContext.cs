@@ -306,26 +306,21 @@ namespace ApiNewProject.Entities
             {
                 entity.ToTable("movimientos");
 
-                entity.HasIndex(e => e.ProductoId, "ProductoID");
 
                 entity.Property(e => e.MovimientoId).HasColumnName("MovimientoID");
 
-                entity.Property(e => e.Descripcion).HasMaxLength(250);
+                entity.Property(e => e.BuscarId).HasColumnName("BuscarId");
 
                 entity.Property(e => e.FechaMovimiento)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                entity.Property(e => e.ProductoId).HasColumnName("ProductoID");
 
                 entity.Property(e => e.TipoAccion).HasMaxLength(50);
 
                 entity.Property(e => e.TipoMovimiento).HasMaxLength(50);
 
-                entity.HasOne(d => d.Producto)
-                    .WithMany(p => p.Movimientos)
-                    .HasForeignKey(d => d.ProductoId)
-                    .HasConstraintName("movimientos_ibfk_1");
+             
             });
 
             modelBuilder.Entity<Pedido>(entity =>

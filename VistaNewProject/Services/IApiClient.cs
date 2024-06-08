@@ -115,6 +115,10 @@ namespace VistaNewProject.Services
         // movimiento
 
         Task<IEnumerable<Movimiento>> GetMovimientoAsync();
+        Task<HttpResponseMessage> CreateMovimientoAsync(Movimiento movimiento);
+        Task<Movimiento> FindMoviminetoAsync(int id);
+        Task<HttpResponseMessage> UpdateMovimientoAsync(Movimiento movimiento);
+        Task<HttpResponseMessage> DeleteMovimientoAsync(int id);
 
 
 
@@ -144,6 +148,8 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> CreateDetallesPedidosAsync(Detallepedido detallepedido);
         Task<Detallepedido> FindDetallesPedidoAsync(int id);
         Task<HttpResponseMessage> UpdateDetallepedidosAsync(Detallepedido detallepedido);
+        Task<HttpResponseMessage> DeleteDetallePedidoAsync(int id);
+
 
 
 

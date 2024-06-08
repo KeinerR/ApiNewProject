@@ -25,11 +25,9 @@ namespace ApiNewProject.Controllers
                 s => new Movimiento
                 {
                     MovimientoId = s.MovimientoId,
-                    ProductoId = s.ProductoId,
                     TipoAccion = s.TipoAccion,
                     TipoMovimiento = s.TipoMovimiento,
-                    CantidadMovimiento = s.CantidadMovimiento,
-                    Descripcion = s.Descripcion,
+                    BuscarId=s.BuscarId,
                     FechaMovimiento = s.FechaMovimiento,
                 }
             ).ToListAsync();
@@ -48,11 +46,10 @@ namespace ApiNewProject.Controllers
                     s => new Movimiento
                     {
                         MovimientoId = s.MovimientoId,
-                        ProductoId = s.ProductoId,
                         TipoAccion = s.TipoAccion,
                         TipoMovimiento = s.TipoMovimiento,
-                        CantidadMovimiento = s.CantidadMovimiento,
-                        Descripcion = s.Descripcion,
+                        BuscarId = s.BuscarId,
+
                         FechaMovimiento = s.FechaMovimiento,
                     })
                 .FirstOrDefaultAsync(s => s.MovimientoId == Id);
@@ -100,11 +97,9 @@ namespace ApiNewProject.Controllers
                 return NotFound();
             }
             movimientos.MovimientoId = movimiento.MovimientoId;
-            movimientos.ProductoId = movimiento.ProductoId;
             movimientos.TipoAccion = movimiento.TipoAccion;
             movimientos.TipoMovimiento = movimiento.TipoMovimiento;
-            movimientos.CantidadMovimiento = movimiento.CantidadMovimiento;
-            movimientos.Descripcion = movimiento.Descripcion;
+          movimiento.BuscarId=movimiento.BuscarId;
             movimientos.FechaMovimiento = movimiento.FechaMovimiento;
 
             await _context.SaveChangesAsync();
