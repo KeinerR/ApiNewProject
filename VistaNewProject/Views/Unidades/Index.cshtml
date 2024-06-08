@@ -11,7 +11,7 @@
         <div class="mr-auto">
             <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
                 <div class="input-group">
-                    <input id="buscarUnidad" type="text" class="form-control" oninput="searchUnidad();" placeholder="Buscar Unidad" aria-label="Search" aria-describedby="button-addon2">
+                    <input id="buscarUnidad" type="text" class="form-control" oninput="searchUnidad();" placeholder="Buscar unidad" aria-label="Search" aria-describedby="button-addon2">
                     <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputUnidad();" type="button"><i class="fas fa-search"></i></button>
                 </div>
             </form>
@@ -19,10 +19,9 @@
 
         <!-- Botón para abrir el modal -->
         <button type="button" id="botonabrirModalUnidad" onclick="simularClickUnidad();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalUnidad">
-            <i class="fas fa-plus-circle"></i> Agregar Unidad
+            <i class="fas fa-plus-circle"></i> Agregar unidad
         </button>
     </div>
-
     <!-- Modal -->
     <div class="modal fade GeneralModal" id="ModalUnidad" tabindex="-1" aria-labelledby="exampleModalLabel" onblur="AlPerderFocoUnidad();" aria-hidden="true">
         <div class="modal-dialog">
@@ -30,7 +29,7 @@
                 <div class="modal-cabecera">
                     <div id="pibo"></div>
                     <div class="modal-header-view TituloModal">
-                        <h2 class="modal-title">Agregar Unidad</h2>
+                        <h2 class="modal-title">Agregar unidad</h2>
                     </div>
                     <div class="modal-header-view" id="modal-cabecera-equis">
                         <button type="button" onclick="limpiarFormularioUnidad();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -39,17 +38,10 @@
                 <div class="modal-cuerpo">
                     <form asp-controller="Unidades" asp-action="Create" method="post" class="modal-formulario-crear-unidad">
                         <div class="modal-body">
-                            <div class="d-none">
-                                <input type="hidden" id="UnidadId" name="unidadId" class="form-control" />
-                                <select id="EstadoUnidad" name="estadoUnidad" class="form-control">
-                                    <option value="1">Activo</option>
-                                    <option value="0">Inactivo</option>
-                                </select>
-                            </div>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="NombreUnidadVista" class="control-label">Nombre Unidad<span class="Mensaje">*</span></label>
+                                        <label for="NombreUnidadVista" class="control-label">Nombre unidad<span class="Mensaje">*</span></label>
                                         <input type="text" oninput="validarCampoUnidad(this);" id="NombreUnidadVista" name="nombreUnidad" class="form-control" />
                                         <span class="text-danger"></span>
                                     </div>
@@ -64,7 +56,7 @@
                             </div>
                             <div class="row">
                                 <div class="form-group">
-                                    <label for="DescripcionUnidad" class="control-label">DescripcionUnidad</label>
+                                    <label for="DescripcionUnidad" class="control-label">Descripcion unidad</label>
                                     <input type="text" oninput="validarCampoUnidad(this);" id="DescripcionUnidad" name="descripcionUnidad" class="form-control" />
                                     <span class="text-danger"></span>
                                 </div>
@@ -85,7 +77,7 @@
                 <div class="modal-cabecera">
                     <div id="pibo"></div>
                     <div class="modal-header-view TituloModal">
-                        <h2 class="modal-title">Actualizar Unidad</h2>
+                        <h2 class="modal-title">Actualizar unidad</h2>
                     </div>
                     <div class="modal-header-view" id="modal-cabecera-equis">
                         <button type="button" onclick="limpiarFormularioUnidad();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -99,14 +91,14 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="NombreUnidadVistaAct" class="control-label">Nombre Unidad<span class="Mensaje"></span></label>
+                                        <label for="NombreUnidadVistaAct" class="control-label">Nombre unidad<span class="Mensaje"></span></label>
                                         <input type="text" id="NombreUnidadVistaAct" oninput="validarCampoUnidad(this);" name="nombreUnidad" class="form-control" autocomplete="off" />
                                         <span class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="CantidadPorUnidadAct" class="control-label">Cantidad Unidad<span class="Mensaje"></span> </label>
+                                        <label for="CantidadPorUnidadAct" class="control-label">Cantidad por unidad<span class="Mensaje"></span> </label>
                                         <input type="number" id="CantidadPorUnidadAct" oninput="validarCampoUnidad(this);" name="cantidadPorUnidad" class="form-control" autocomplete="off" />
                                         <span class="text-danger" id="mensajeCantidadUnidadAct"></span>
                                     </div>
@@ -115,7 +107,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <label for="EstadoUnidadAct" class="control-label">Estado</label>
-                                    <select id="EstadoUnidadAct" name="estadoUnidadAct" class="form-control">
+                                    <select id="EstadoUnidadAct" name="estadoUnidad" class="form-control">
                                         <option value="1">Activo</option>
                                         <option value="0">Inactivo</option>
                                     </select>
@@ -123,8 +115,8 @@
                             </div>
                             <div class="row">
                                 <div class="form-group">
-                                    <label for="DescripcionUnidadAct" class="control-label">Descripcion</label>
-                                    <input type="text" id="DescripcionUnidadAct" name="descripcionUnidadAct" class="form-control" />
+                                    <label for="DescripcionUnidadAct" class="control-label">Descripcion unidad</label>
+                                    <input type="text" id="DescripcionUnidadAct" name="descripcionUnidad" class="form-control" />
                                     <span class="text-danger" id="mensajeDescripcionAct"></span>
                                 </div>
                             </div>
@@ -140,17 +132,18 @@
             </div>
         </div>
     </div>
-
-    <br />
-    <hr>
-    <div class="mt-3">
-        <!-- Enlaces de ordenamiento -->
-        <a href="?order=alfabetico">Ordenar por nombre (A-Z)</a> |
-        <a href="?order=name_desc">Ordenar por nombre (Z-A)</a> |
-        <a href="?order=first">Ordenar por más antiguo</a> |
-        <a href="?order=reverse">Ordenar por más reciente</a>
+    <div class="contenedor-filtro">
+        <select name="order" class="input-sm empSelect" onchange="redirectToOrder(this)">
+            <option selected disabled>
+                Ordenar por
+            </option>
+            <option data-url="?order=alfabetico">Ordenar por nombre (A-Z)</option>
+            <option data-url="?order=name_desc">Ordenar por nombre (Z-A)</option>
+            <option data-url="?order=first">Ordenar por más antiguo</option>
+            <option data-url="?order=reverse">Ordenar por más reciente</option>
+        </select>
     </div>
-
+    <hr>
     <!-- Tabla de unidades -->
     <table class="table table-custom text-center">
         <thead>
@@ -163,16 +156,13 @@
                     unidad Id
                 </th>
                 <th>
-                    NOMBRE UNIDAD
-                </th>
-                <th>
-                    CANTIDAD POR UNIDAD
+                    Nombre completo
                 </th>
                 <th class="contenedorEstado">
-                    ESTADO
+                    Estado
                 </th>
                 <th>
-                    ACCIONES
+                    Acciones
                 </th>
             </tr>
         </thead>
@@ -194,9 +184,6 @@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.NombreUnidad)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.CantidadPorUnidad)
                     </td>
                     <td class="text-center align-middle">
                         <label class="switch">
@@ -221,13 +208,16 @@
                 var unidades = ViewData["Unidades"] as List<Unidad>;
                 if (unidades != null)
                 {
+                    int contadorC = 1;
                     foreach (var unidad in unidades)
                     {
                         <tr class="Unidades noIs">
+                            <td class="contadorB noIs">
+                                @contadorC <!-- Muestra el valor del contador -->
+                            </td>
                             <td>@unidad.UnidadId</td>
                             <td>@unidad.NombreUnidad</td>
-                            <td>@unidad.CantidadPorUnidad</td>
-
+                    
                             <td class="text-center align-middle">
                                 <label class="switch">
                                     <input type="checkbox" @(unidad.EstadoUnidad != 0 ? "checked" : "") onchange="actualizarEstadoUnidad('@unidad.UnidadId', this.checked)">
@@ -252,7 +242,7 @@
         </tbody>
     </table>
     <!-- Contenedor de paginación -->
-    <div class="pagination-container mt-2">
+    <div class="pagination-container mt-2" id="paginationContainer">
         @if (Model != null && Model.PageCount > 1)
         {
             <div class="d-flex justify-content-center mb-5">

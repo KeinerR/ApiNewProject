@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const marcasAll = marcas;
         const marcaRepetida = compararMarcas(marcaFinal, marcasAll);
         const campos = [
-            { id: 'NombreMarcaVista', nombre: 'Nombre' }
+            { id: 'NombreMarcaVista', nombre: 'Nombre marca' }
         ];
 
         const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const marcasAll = marcas;
         const marcaRepetida = compararMarcasAct(marcaFinal, marcasAll);
         const campos = [
-            { id: 'NombreMarcaVistaAct', nombre: 'Marca'}
+            { id: 'NombreMarcaVistaAct', nombre: 'Nombre marca'}
         ];
         const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
         if (!NoCamposVaciosMarcaAct()) {
@@ -194,7 +194,6 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('Número de campos sin texto:', camposConTexto);
 
         if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa el campo con *');
             $('.MensajeInicial').text('Por favor, complete el campo con *.');
             return false;
         }
@@ -225,7 +224,6 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('Número de campos sin texto:', camposConTexto);
 
         if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa el campo con *');
             $('.MensajeInicial').text('Por favor, complete el campo con *.');
             return false;
         }
@@ -515,6 +513,7 @@ function searchMarca() {
     var icon = document.querySelector('#btnNavbarSearch i');    //Obtiene el icino de buscar
     var contador = document.querySelector('.contador');        //Obtiene la columna que tiene el # 
     var contadores = document.querySelectorAll('.contadorB'); //Obtiene el contadorB que esta en none y lo hace visible para mostrar el consecutivo y el ID
+    var paginationContainer = document.getElementById('paginationContainer');
     if (input === "") {
         rows.forEach(function (row) { //Esconde los usuarios paginado
             row.style.display = '';
@@ -525,6 +524,8 @@ function searchMarca() {
         icon.className = 'fas fa-search';
         icon.style.color = 'white';
         contador.innerText = '#';
+        paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
+
     } else {
         rows.forEach(function (row) {
             row.style.display = 'none';
@@ -535,6 +536,7 @@ function searchMarca() {
         icon.className = 'fas fa-times';
         icon.style.color = 'white';
         contador.innerText = 'ID';
+        paginationContainer.classList.add('noBe'); // Oculta el contenedor de paginación
 
     }
 
@@ -550,6 +552,7 @@ function searchMarca() {
 }
 
 function vaciarInputMarca() {
+    var paginationContainer = document.getElementById('paginationContainer');
     document.getElementById('buscarMarca').value = "";
     var icon = document.querySelector('#btnNavbarSearch i');
     icon.className = 'fas fa-search';
@@ -572,6 +575,8 @@ function vaciarInputMarca() {
     rowsTodos.forEach(function (row) {
         row.style.display = 'none';
     });
+    paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
+
 }
 
 

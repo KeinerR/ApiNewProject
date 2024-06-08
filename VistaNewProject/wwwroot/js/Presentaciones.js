@@ -213,17 +213,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (camposConTexto === 3) { // Cambiamos la condición para verificar si hay campos sin texto.
             mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos obligatorios(*).');
+            $('.MensajeInicial').text('Por favor, complete los campos con *.');
             return false;
         }
         if (camposConTexto > 1 && camposConTexto < 3) { // Cambiamos la condición para verificar si hay campos sin texto.
             mostrarAlertaAtencionPersonalizadaConBoton('Completa los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos obligatorios(*).');
+            $('.MensajeInicial').text('Por favor, complete los campos con *.');
             return false;
         }
         if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa el campo con *');
-            $('.MensajeInicial').text('Por favor, complete el campo obligatorio(*).');
+            $('.MensajeInicial').text('Por favor, complete el campo con *.');
             return false;
         }
 
@@ -264,20 +263,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (camposConTexto === 3) { // Cambiamos la condición para verificar si hay campos sin texto.
             mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos obligatorios(*).');
+            $('.MensajeInicial').text('Por favor, complete los campos con *.');
             return false;
         }
         if (camposConTexto > 1 && camposConTexto < 3) { // Cambiamos la condición para verificar si hay campos sin texto.
             mostrarAlertaAtencionPersonalizadaConBoton('Completa los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos obligatorios(*).');
+            $('.MensajeInicial').text('Por favor, complete los campos con *.');
             return false;
         }
         if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa el campo con *');
-            $('.MensajeInicial').text('Por favor, complete el campo obligatorio(*).');
+            $('.MensajeInicial').text('Por favor, complete el campo con *.');
             return false;
         }
-
         return true;
     }
     function NoCamposConErroresPresentacionAct() {
@@ -571,6 +568,7 @@ function searchPresentacion() {
     var icon = document.querySelector('#btnNavbarSearch i');    //Obtiene el icino de buscar
     var contador = document.querySelector('.contador');        //Obtiene la columna que tiene el # 
     var contadores = document.querySelectorAll('.contadorB'); //Obtiene el contadorB que esta en none y lo hace visible para mostrar el consecutivo y el ID
+    var paginationContainer = document.getElementById('paginationContainer');
     if (input === "") {
         rows.forEach(function (row) { //Esconde los usuarios paginado
             row.style.display = '';
@@ -581,6 +579,7 @@ function searchPresentacion() {
         icon.className = 'fas fa-search';
         icon.style.color = 'white';
         contador.innerText = '#';
+        paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
     } else {
         rows.forEach(function (row) {
             row.style.display = 'none';
@@ -591,6 +590,7 @@ function searchPresentacion() {
         icon.className = 'fas fa-times';
         icon.style.color = 'white';
         contador.innerText = 'ID';
+        paginationContainer.classList.add('noBe'); // Oculta el contenedor de paginación
 
     }
 
@@ -606,6 +606,7 @@ function searchPresentacion() {
 }
 
 function vaciarInputPresentacion() {
+    var paginationContainer = document.getElementById('paginationContainer');
     document.getElementById('buscarPresentacion').value = "";
     var icon = document.querySelector('#btnNavbarSearch i');
     icon.className = 'fas fa-search';
@@ -628,6 +629,8 @@ function vaciarInputPresentacion() {
     rowsTodos.forEach(function (row) {
         row.style.display = 'none';
     });
+    paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
+
 }
 
 function validarCampoPresentacion(input) {

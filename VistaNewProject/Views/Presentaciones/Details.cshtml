@@ -4,41 +4,53 @@
 @{
     ViewData["Title"] = "Detalles de Presentación";
 }
+
 <br />
-<div>
+<div class="contenedor-botones-detalle">
     <a asp-action="Index" class="btn botonVolver">
         <i class="fas fa-arrow-left"></i> Volver
     </a>
-    <a href="#" onclick="redireccionarYEditar('@ViewBag.Presentacion.PresentacionId', 'Presentaciones', 'presentacion')" class="btn botonEnviarDetalle">
+    <a href="#" onclick="redireccionarYEditar('@(ViewBag.Presentacion?.PresentacionId ?? 0)', 'Presentaciones', 'presentacion')" class="btn botonEnviarDetalle">
         <i class="fa-solid fa-pen"></i> Editar
     </a>
+    <a asp-action="CategoriasAsociadasxPresentacion" asp-controller="Presentaciones" asp-route-id="@ViewBag.Presentacion.PresentacionId" class="btn botonAsociar">
+        Categorias asociadas<i class="fa-solid fa-ban"></i>
+    </a>
 </div>
-<br />
 <br />
 <div class="pedido-info">
     <table class="table tablaDetalle">
         <thead>
             <tr>
                 <th>Presentacion ID</th>
-                <th>Nombre</th>
+                <th>Tipo presentacion</th>
+                <th>Contenido</th>
+                <th>Cantidad por presentacion</th>
                 <th>Cantidad de productos asociados</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>@ViewBag.Presentacion.PresentacionId</td>
-                <td>
-                    @ViewBag.NombreCompletoPresentacion
-                </td>
-                <td>@ViewBag.CantidadProductosAsociados</td> <!-- Mostrar la cantidad de productos asociados -->
+                <td>@(ViewBag.Presentacion?.PresentacionId ?? 0)</td>
+                <td>@(ViewBag.Presentacion?.NombrePresentacion ?? "N/A")</td>
+                <td>@(ViewBag.Presentacion?.Contenido ?? "N/A")</td>
+                <td>@(ViewBag.Presentacion?.CantidadPorPresentacion ?? "N/A")</td>
+                <td>@(ViewBag.CantidadProductosAsociados ?? 0)</td>
             </tr>
         </tbody>
     </table>
+    <div class="contenedorDescripcion">
+        <p class="tituloDescripcion">Descripcion</p>
+        <p class="textoDescripcion">@ViewBag.Presentacion.DescripcionPresentacion</p>
+    </div>
 </div>
-<h2 class="TituloSobreTabladetalle">Productos asociados</h2>
-@if (Model.Any())
+
+
+
+@if (Model != null && Model.Any())
 {
     <div class="pedido-info">
+        <h4 class="TituloSobreTabladetalle">Productos asociados</h4>
         <table class="table tablaDetalle">
             <thead>
                 <tr>
@@ -46,7 +58,6 @@
                     <th>Nombre Completo</th>
                     <th>Cantidad</th>
                     <th>Estado</th>
-
                 </tr>
             </thead>
             <tbody>
@@ -56,36 +67,64 @@
                         <td>@producto.ProductoId</td>
                         <td>@producto.NombreCompleto</td>
                         <td>@producto.CantidadTotal</td>
-                        <td>
-                            @{
-                                string estado = producto.Estado == 1 ? "Activo" : "Inactivo";
-                            }
-                            @estado
-                        </td>
+                        <td>@(producto.Estado == 1 ? "Activo" : "Inactivo")</td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
-    <div class="pagination-detail">
-        @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Presentacion.PresentacionId, page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 }) + "' class='prev-next " + (Model.HasPreviousPage ? "" : "disabled") + "'>Anterior</a>")
-
-        @for (int i = 1; i <= Model.PageCount; i++)
+    <div class="pagination-container mt-2">
+        @if (Model != null && Model.PageCount > 1)
         {
-            <a href="@Url.Action("Details", new { id = ViewBag.Presentacion.PresentacionId, page = i })" class="@(i == Model.PageNumber ? "active" : "")">@i</a>
+            <div class="d-flex justify-content-center mb-5">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <!-- Botón para ir a la primera página -->
+                        @if (Model.PageNumber > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Presentacion.PresentacionId, page = 1, order = ViewBag.CurrentOrder })" aria-label="First">
+                                    <span aria-hidden="true">Primero</span>
+                                </a>
+                            </li>
+                        }
+                        <!-- Botón para la página anterior (oculto en la página 1) -->
+                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                            <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Presentacion.PresentacionId, page = Model.PageNumber - 1, order = ViewBag.CurrentOrder })" aria-label="Previous">
+                                <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                            </a>
+                        </li>
+                        <!-- Iterar sobre las páginas disponibles -->
+                        @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                        {
+                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Presentacion.PresentacionId, page = i, order = ViewBag.CurrentOrder })">@i</a>
+                            </li>
+                        }
+                        <!-- Botón para la página siguiente (oculto en la última página) -->
+                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                            <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Presentacion.PresentacionId, page = Model.PageNumber + 1, order = ViewBag.CurrentOrder })" aria-label="Next">
+                                <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                            </a>
+                        </li>
+                        <!-- Botón para ir a la última página -->
+                        @if (Model.PageNumber < Model.PageCount)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Presentacion.PresentacionId, page = Model.PageCount, order = ViewBag.CurrentOrder })" aria-label="Last">
+                                    <span aria-hidden="true">Último</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
         }
-
-        @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Presentacion.PresentacionId, page = Model.HasNextPage ? Model.PageNumber + 1 : Model.PageCount }) + "' class='prev-next " + (Model.HasNextPage ? "" : "disabled") + "'>Siguiente</a>")
     </div>
-
 }
 else
 {
     <div class="MensajeNoDetalles">
         <p>@ViewBag.Message</p>
     </div>
-
 }
-
-
-

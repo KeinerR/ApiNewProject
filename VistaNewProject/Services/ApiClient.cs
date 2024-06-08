@@ -49,6 +49,11 @@ namespace VistaNewProject.Services
         public async Task<Cliente> FindClienteAsync(int id)
         {
             var response = await _httpClient.GetFromJsonAsync<Cliente>($"Clientes/GetClienetById?id={id}");
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la unidad con el ID especificado.");
+            }
             return response;
         }
 
@@ -96,6 +101,11 @@ namespace VistaNewProject.Services
         public async Task<Pedido> FindPedidosAsync(int id)
         {
             var response = await _httpClient.GetFromJsonAsync<Pedido>($"Pedidos/GetPedidos?id={id}");
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la unidad con el ID especificado.");
+            }
             return response;
         }
         public async Task<HttpResponseMessage> CreatePediiosAsync(Pedido pedido)
@@ -160,8 +170,13 @@ namespace VistaNewProject.Services
         public async Task<Presentacion> FindPresentacionAsync(int id)
         {
             var response = await _httpClient.GetFromJsonAsync<Presentacion>($"Presentaciones/GetPresentacionById?id={id}");
+            if (response == null)
+            {
+                throw new InvalidOperationException($"No se encontró la presentación con ID {id}");
+            }
             return response;
         }
+
 
 
 
@@ -262,23 +277,21 @@ namespace VistaNewProject.Services
             {
                 var response = await _httpClient.GetFromJsonAsync<Marca>($"Marcas/GetNombreMarcaById?nombreMarca={nombreMarca}");
 
-                // Verificar si la respuesta es null, lo cual podría indicar un error en la solicitud
-                if (response != null)
+                // Verificar si la respuesta es null
+                if (response == null)
                 {
-                    return response;
+                    throw new InvalidOperationException($"No se encontró la marca con nombre {nombreMarca}");
                 }
-                else
-                {
-                    // Marca no encontrada u otro tipo de error
-                    return null;
-                }
+
+                return response;
             }
-            catch (HttpRequestException)
+            catch (HttpRequestException ex)
             {
                 // Error al hacer la solicitud HTTP
-                return null;
+                throw new InvalidOperationException("Error al hacer la solicitud HTTP", ex);
             }
         }
+
 
 
         public async Task<HttpResponseMessage> UpdateMarcaAsync(MarcaUpdate marca)
@@ -288,38 +301,45 @@ namespace VistaNewProject.Services
                 // Hacer la solicitud PUT al servidor para actualizar la marca
                 var response = await _httpClient.PutAsJsonAsync("Marcas/UpdateMarca", marca);
 
-                // Verificar si la solicitud fue exitosa (código de estado 200 OK)
+                // Verificar si la solicitud fue exitosa
                 if (response.IsSuccessStatusCode)
                 {
                     return response;
                 }
-                else if (response.StatusCode == HttpStatusCode.NotFound)
-                {
-                    // La marca no se encontró en el servidor
-                    return response;
-                }
-                else if (response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    // Error debido a una solicitud incorrecta (por ejemplo, nombre de marca duplicado)
-                    return response;
-                }
                 else
                 {
-                    // Otro tipo de error no manejado específicamente
-                    // Puedes retornar un mensaje genérico o lanzar una excepción
-                    return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                    // Manejar los diferentes tipos de errores específicos
+                    switch (response.StatusCode)
                     {
-                        Content = new StringContent("Error al actualizar la marca")
-                    };
+                        case HttpStatusCode.NotFound:
+                            return new HttpResponseMessage(HttpStatusCode.NotFound)
+                            {
+                                Content = new StringContent("Marca no encontrada")
+                            };
+                        case HttpStatusCode.BadRequest:
+                            return new HttpResponseMessage(HttpStatusCode.BadRequest)
+                            {
+                                Content = new StringContent("Solicitud incorrecta")
+                            };
+                        default:
+                            return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                            {
+                                Content = new StringContent("Error al actualizar la marca")
+                            };
+                    }
                 }
             }
             catch (HttpRequestException ex)
             {
-                // Manejar errores de solicitud HTTP (por ejemplo, error de conexión)
+                // Manejar errores de solicitud HTTP
                 Console.WriteLine($"Error en la solicitud HTTP: {ex.Message}");
-                return null; // Otra opción es lanzar una excepción para notificar el error
+                return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                {
+                    Content = new StringContent("Error en la solicitud HTTP")
+                };
             }
         }
+
 
 
 
@@ -337,31 +357,22 @@ namespace VistaNewProject.Services
                     // Marca eliminada correctamente
                     return response;
                 }
-                else if (response.StatusCode == HttpStatusCode.NotFound)
-                {
-                    // La marca no se encontró en el servidor
-                    // Puedes manejar este caso específico según tus necesidades
-                    return response;
-                }
-                else if (response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    // La solicitud fue incorrecta debido a una restricción (por ejemplo, marca asociada a un producto)
-                    // Puedes manejar este caso específico según tus necesidades
-                    return response;
-                }
-                else
-                {
-                    // Otro tipo de error no manejado específicamente
-                    // Puedes registrar el error o manejarlo según tus necesidades
-                    return new HttpResponseMessage(HttpStatusCode.InternalServerError) { Content = new StringContent("Error al eliminar la marca") };
-                }
+
+                // Retornar la respuesta aunque no sea exitosa
+                return response;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error en la solicitud HTTP: {ex.Message}");
-                return null;
+
+                // Puedes retornar una respuesta de error o lanzar la excepción de nuevo
+                return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                {
+                    ReasonPhrase = ex.Message
+                };
             }
         }
+
 
 
         public async Task<HttpResponseMessage> CambiarEstadoMarcaAsync(int id)
@@ -376,20 +387,17 @@ namespace VistaNewProject.Services
 
 
         /// CATEGORIA
-        /// 
+
         public async Task<IEnumerable<Categoria>> GetCategoriaAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Categoria>>("Categorias/GetCategorias");
 
             if (response == null)
             {
-                // Manejar el caso en el que response sea nulo
-                throw new Exception("No se encontró la categoria con el ID especificado.");
+                throw new Exception("No se encontraron categorías.");
             }
             return response;
         }
-
-
 
         public async Task<HttpResponseMessage> CreateCategoriaAsync(Categoria categoria)
         {
@@ -397,8 +405,7 @@ namespace VistaNewProject.Services
 
             if (response == null)
             {
-                // Manejar el caso en el que response sea nulo
-                throw new Exception("No se encontró la categoria con el ID especificado.");
+                throw new Exception("Error al crear la categoría.");
             }
             return response;
         }
@@ -409,41 +416,26 @@ namespace VistaNewProject.Services
 
             if (response == null)
             {
-                // Manejar el caso en el que response sea nulo
-                throw new Exception("No se encontró la categoria con el ID especificado.");
+                throw new Exception("No se encontró la categoría con el ID especificado.");
             }
             return response;
         }
 
-
-
         public async Task<Categoria> FindnombreCategoriaAsync(string nombreCategoria)
-        {
-            try
+        { 
+             var response = await _httpClient.GetFromJsonAsync<Categoria>($"Categorias/GetNombreCategoriaById?nombreCategoria={nombreCategoria}");
+            if (response == null)
             {
-                var response = await _httpClient.GetFromJsonAsync<Categoria>($"Categorias/GetNombreCategoriaById?nombreCategoria={nombreCategoria}");
-
-                // Verificar si la respuesta es null, lo cual podría indicar un error en la solicitud
-                if (response != null)
-                {
-                    return response;
-                }
-                else
-                {
-                    // Marca no encontrada u otro tipo de error
-                    return null;
-                }
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la categoria con el ID especificado.");
             }
-            catch (HttpRequestException)
-            {
-                // Error al hacer la solicitud HTTP
-                return null;
-            }
+            return response;
+    
         }
 
         public async Task<HttpResponseMessage> UpdateCategoriaAsync(CategoriaUpdate categoria)
         {
-            var response = await _httpClient.PutAsJsonAsync($"Categorias/UpdateCategorias/", categoria);
+            var response = await _httpClient.PutAsJsonAsync("Categorias/UpdateCategorias/", categoria);
             return response;
         }
 
@@ -452,16 +444,12 @@ namespace VistaNewProject.Services
             var response = await _httpClient.DeleteAsync($"Categorias/DeleteCategoria/{id}");
             return response;
         }
+
         public async Task<HttpResponseMessage> CambiarEstadoCategoriaAsync(int id)
         {
-            // Realiza la solicitud PATCH a la API
-            var response = await _httpClient.PatchAsync($"Categorias/UpdateEstadoCategoria/{id}");
-
-            // Retorna la respuesta de la solicitud
+            var response = await _httpClient.PatchAsync($"Categorias/UpdateEstadoCategoria/{id}", null);
             return response;
         }
-
-
 
 
         //usuario
@@ -547,6 +535,11 @@ namespace VistaNewProject.Services
         public async Task<Unidad> FindUnidadAsync(int id)
         {
             var response = await _httpClient.GetFromJsonAsync<Unidad>($"Unidades/GetUnidadById?id={id}");
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la unidad con el ID especificado.");
+            }
             return response;
         }
 
@@ -738,63 +731,56 @@ namespace VistaNewProject.Services
         }
 
 
-        //proveedor
+        /// PROVEEDOR
+
         public async Task<IEnumerable<Proveedor>> GetProveedorAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Proveedor>>("Proveedores/GetProveedores");
 
             if (response == null)
             {
-                // Manejar el caso en el que response sea nulo
-                throw new Exception("No se encontró la compra con el ID especificado.");
+                throw new Exception("No se encontraron proveedores.");
             }
             return response;
         }
 
-
-        public async Task<HttpResponseMessage> CreateProveedorAsync(Proveedor prooveedor)
+        public async Task<HttpResponseMessage> CreateProveedorAsync(Proveedor proveedor)
         {
-            var response = await _httpClient.PostAsJsonAsync("Proveedores/InsertarProveedor", prooveedor);
+            var response = await _httpClient.PostAsJsonAsync("Proveedores/InsertarProveedor", proveedor);
+
+            if (response == null)
+            {
+                throw new Exception("Error al crear el proveedor.");
+            }
             return response;
         }
 
         public async Task<Proveedor> FindProveedorAsync(int id)
         {
-            var response = await _httpClient.GetFromJsonAsync<Proveedor>($"?id={id}");
+            var response = await _httpClient.GetFromJsonAsync<Proveedor>($"Proveedores/GetProveedorById?id={id}");
+
+            if (response == null)
+            {
+                throw new Exception("No se encontró el proveedor con el ID especificado.");
+            }
             return response;
         }
 
-
         public async Task<Proveedor> FindnombreProveedorAsync(string nombreEmpresa)
         {
-            try
+            var response = await _httpClient.GetFromJsonAsync<Proveedor>($"Proveedores/GetNombreProveedorById?nombreEmpresa={nombreEmpresa}");
+            if (response == null)
             {
-                var response = await _httpClient.GetFromJsonAsync<Proveedor>($"Proveedores/GetNombreProveedorById?nombreEmpresa={nombreEmpresa}");
-
-                // Verificar si la respuesta es null, lo cual podría indicar un error en la solicitud
-                if (response != null)
-                {
-                    return response;
-                }
-                else
-                {
-                    // Marca no encontrada u otro tipo de error
-                    return null;
-                }
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la unidad con el ID especificado.");
             }
-            catch (HttpRequestException)
-            {
-                // Error al hacer la solicitud HTTP
-                return null;
-            }
+            return response;
+               
         }
 
-
-
-
-        public async Task<HttpResponseMessage> UpdateProveedorAsync(Proveedor proveedor)
+        public async Task<HttpResponseMessage> UpdateProveedorAsync(ProveedorUpdate proveedor)
         {
-            var response = await _httpClient.PutAsJsonAsync($"Proveedores/UpdateProveedores/", proveedor);
+            var response = await _httpClient.PutAsJsonAsync("Proveedores/UpdateProveedores/", proveedor);
             return response;
         }
 
@@ -804,9 +790,11 @@ namespace VistaNewProject.Services
             return response;
         }
 
-
-
-
+        public async Task<HttpResponseMessage> CambiarEstadoProveedorAsync(int id)
+        {
+            var response = await _httpClient.PatchAsync($"Proveedores/UpdateEstadoProveedor/{id}", null);
+            return response;
+        }
         //lote
         public async Task<IEnumerable<Lote>> GetLoteAsync()
         {
@@ -855,6 +843,11 @@ namespace VistaNewProject.Services
         public async Task<Lote> FindLotesAsync(int id)
         {
             var response = await _httpClient.GetFromJsonAsync<Lote>($"Lotes/GetLoteById?id={id}");
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la unidad con el ID especificado.");
+            }
             return response;
         }
 
@@ -893,6 +886,7 @@ namespace VistaNewProject.Services
             if (response == null)
             {
                 // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la unidad con el ID especificado.");
             }
             return response;
         }
@@ -900,6 +894,11 @@ namespace VistaNewProject.Services
         public async Task<Domicilio> FindDomicilioAsync(int id)
         {
             var response = await _httpClient.GetFromJsonAsync<Domicilio>($"Domicilios/GetDomicilioById?id={id}");
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la unidad con el ID especificado.");
+            }
             return response;
         }
 
@@ -922,6 +921,11 @@ namespace VistaNewProject.Services
         public async Task<Detallepedido> FindDetallesPedidoAsync(int id)
         {
             var response = await _httpClient.GetFromJsonAsync<Detallepedido>($"Detallepedidos/GetDetallepedidoById?id={id}");
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la unidad con el ID especificado.");
+            }
             return response;
         }
 
@@ -972,6 +976,147 @@ namespace VistaNewProject.Services
         {
             throw new NotImplementedException();
         }
+
+        public async Task<IEnumerable<CategoriaxUnidad>> GetCategoriaxUnidadesAsync()
+        {
+        
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxUnidad>>("CategoriaxUnidad/GetCategoriasxUnidades");
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la unidad con el ID especificado.");
+            }
+            return response;
+
+        }
+
+        public async Task<HttpResponseMessage> CreateCategoriaxUnidadAsync(CategoriaxUnidad categoriaxunidad)
+        {
+            var response = await _httpClient.PostAsJsonAsync("CategoriaxUnidad/InsertarCategoria", categoriaxunidad);
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> DeleteCategoriaxUnidadAsync(int categoriaId, int unidadId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"CategoriaxUnidad/DeleteCategoriaxUnidad/{categoriaId}/{unidadId}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    // Log or handle the response status code
+                }
+
+                return response;
+            }
+            catch (HttpRequestException ex)
+            {
+                // Log or handle HTTP request exceptions
+                throw new Exception($"Error en la solicitud HTTP: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                // Log or handle any other exceptions
+                throw new Exception($"Error inesperado: {ex.Message}", ex);
+            }
+        }
+
+        
+
+
+        public async Task<IEnumerable<CategoriaxPresentacion>> GetCategoriaxPresentacionesAsync()
+        {
+
+                var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxPresentacion>>("CategoriaxPresentacion/GetCategoriasxPresentaciones");
+
+                if (response == null)
+                {
+                    // Manejar el caso en el que response sea nulo
+                    throw new Exception("No se encontró la unidad con el ID especificado.");
+                }
+                return response;
+         
+        }
+        public async Task<HttpResponseMessage> CreateCategoriaxPresentacionAsync(CategoriaxPresentacion categoriaxpresentacion)
+        {
+            var response = await _httpClient.PostAsJsonAsync("CategoriaxPresentacion/InsertarCategoria", categoriaxpresentacion);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeleteCategoriaxPresentacionAsync(int categoriaId, int presentacionId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"CategoriaxPresentacion/DeleteCategoriaxPresentacion/{categoriaId}/{presentacionId}"
+);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    // Log or handle the response status code
+                }
+
+                return response;
+            }
+            catch (HttpRequestException ex)
+            {
+                // Log or handle HTTP request exceptions
+                throw new Exception($"Error en la solicitud HTTP: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                // Log or handle any other exceptions
+                throw new Exception($"Error inesperado: {ex.Message}", ex);
+            }
+        }
+
+
+        public async Task<IEnumerable<CategoriaxMarca>> GetCategoriaxMarcasAsync()
+        {    
+           var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxMarca>>("CategoriaxMarca/GetCategoriasxMarcaes");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la unidad con el ID especificado.");
+            }
+            return response;
+        
+        }
+        public async Task<HttpResponseMessage> CreateCategoriaxMarcaAsync(CategoriaxMarca categoriaxmarca)
+        {
+            var response = await _httpClient.PostAsJsonAsync("CategoriaxMarca/InsertarCategoria", categoriaxmarca);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeleteCategoriaxMarcaAsync(int categoriaId, int marcaId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"CategoriaxMarca/DeleteCategoriaxMarca/{categoriaId}/{marcaId}"
+);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    // Log or handle the response status code
+                }
+
+                return response;
+            }
+            catch (HttpRequestException ex)
+            {
+                // Log or handle HTTP request exceptions
+                throw new Exception($"Error en la solicitud HTTP: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                // Log or handle any other exceptions
+                throw new Exception($"Error inesperado: {ex.Message}", ex);
+            }
+        }
+
+
+
+
+
+
     }
 }
 

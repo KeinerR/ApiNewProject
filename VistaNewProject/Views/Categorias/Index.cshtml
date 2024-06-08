@@ -1,7 +1,7 @@
 ﻿@using X.PagedList
 @model X.PagedList.IPagedList<VistaNewProject.Models.Categoria>
 @{
-    ViewData["Title"] = "Categorias";
+    ViewData["Title"] = "Categorías";
 }
 <div class="ContenedorVista" id="ContenedorCategoria">
     <br />
@@ -10,7 +10,7 @@
         <div class="mr-auto">
             <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
                 <div class="input-group">
-                    <input id="buscarCategoria" type="text" class="form-control" oninput="searchCategoria();" placeholder="Buscar categoria" aria-label="Search" aria-describedby="button-addon2">
+                    <input id="buscarCategoria" type="text" class="form-control" oninput="searchCategoria();" placeholder="Buscar categoría" aria-label="Search" aria-describedby="button-addon2">
                     <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputCategoria();" type="button"><i class="fas fa-search"></i></button>
                 </div>
             </form>
@@ -18,7 +18,7 @@
 
         <!-- Botón para abrir el modal -->
             <button type="button" id="botonabrirModalCategoria" onclick="simularClickCategoria();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalCategoria">
-            <i class="fas fa-plus-circle"></i> Agregar Categoria
+            <i class="fas fa-plus-circle"></i> Agregar categoría
         </button>
     </div>
 
@@ -31,7 +31,7 @@
                 <div class="modal-cabecera">
                     <div id="pibo"></div>
                     <div class="modal-header-view TituloModal">
-                        <h2 class="modal-title">Agregar Categoria</h2>
+                        <h2 class="modal-title">Agregar categoría</h2>
                     </div>
                     <div class="modal-header-view" id="modal-cabecera-equis">
                         <button type="button" onclick="limpiarFormularioCategoria();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -40,16 +40,9 @@
                 <div class="modal-cuerpo">
                     <form asp-controller="Categorias" asp-action="Create" method="post" class="modal-formulario-crear-categoria">
                         <div class="modal-body">
-                            <div class="d-none">
-                                <input type="hidden" id="CategoriaId" name="categoriaId" class="form-control" />
-                                <select id="EstadoCategoria" name="estadoCategoria" class="form-control">
-                                    <option selected value="1">Activo</option>
-                                    <option value="0">Inactivo</option>
-                                </select>
-                            </div>
                             <div class="row">
                                 <div class="form-group">
-                                    <label for="NombreCategoriaVista" class="control-label">Nombre Categoria<span class="Mensaje">*</span></label>
+                                    <label for="NombreCategoriaVista" class="control-label">Nombre categoría<span class="Mensaje">*</span></label>
                                     <input type="text" id="NombreCategoriaVista" oninput="validarCampoCategoria(this,'NombreCategoriaVista');" name="nombreCategoria" class="form-control" />
                                     <span class="text-danger"></span>
                                 </div>
@@ -71,7 +64,7 @@
                        <div class="modal-cabecera">
                             <div id="pibo"></div>
                             <div class="modal-header-view TituloModal">
-                                <h2 class="modal-title">Actualizar Categoria</h2>
+                                <h2 class="modal-title">Actualizar categoría</h2>
                             </div>
                             <div class="moda-header-view" id="modal-cabecera-equis">
                                 <button type="button" onclick="limpiarFormularioCategoria();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -111,15 +104,19 @@
                 </div>
             </div>
 
-        </div>
-    <br />
-    <hr>
-    <div class="mt-3">
-        <a href="?order=alfabetico">Ordenar por nombre (A-Z)</a> |
-        <a href="?order=name_desc">Ordenar por nombre (Z-A)</a> |
-        <a href="?order=first">Ordenar por más antiguo</a> |
-        <a href="?order=reverse">Ordenar por más reciente</a>
     </div>
+    <div class="contenedor-filtro">
+        <select name="order" class="input-sm empSelect" onchange="redirectToOrder(this)">
+            <option selected disabled>
+                Ordenar por
+            </option>
+            <option data-url="?order=alfabetico">Ordenar por nombre (A-Z)</option>
+            <option data-url="?order=name_desc">Ordenar por nombre (Z-A)</option>
+            <option data-url="?order=first">Ordenar por más antiguo</option>
+            <option data-url="?order=reverse">Ordenar por más reciente</option>
+        </select>
+    </div>
+    <hr>
     <table class="table table-custom text-center">
         <thead>
             <tr>
@@ -131,13 +128,13 @@
                     categoria Id
                 </th>
                 <th>
-                    NOMBRE CATEGORIA
+                    Nombre categoría
                 </th>
             <th class="contenedorEstado">
-                    ESTADO
+                    Estado
                 </th>
                 <th>
-                    ACCIONES
+                    Acciones
                 </th>
             </tr>
         </thead>
@@ -214,7 +211,7 @@
             }
         </tbody>
     </table>
-    <div class="pagination-container mt-2">
+    <div class="pagination-container mt-2" id="paginationContainer">
         @if (Model != null && Model.PageCount > 1)
         {
             <div class="d-flex justify-content-center mb-5">

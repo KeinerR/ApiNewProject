@@ -18,7 +18,7 @@
 
         <!-- Botón para abrir el modal -->
         <button type="button" id="botonabrirModalMarca" onclick="simularClickMarca();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalMarca">
-            <i class="fas fa-plus-circle"></i> Agregar Marca
+            <i class="fas fa-plus-circle"></i> Agregar marca
         </button>
     </div>
 
@@ -31,7 +31,7 @@
                  <div class="modal-cabecera">
                     <div id="pibo"></div>
                     <div class="modal-header-view TituloModal">
-                        <h2 class="modal-title">Agregar Marca</h2>
+                        <h2 class="modal-title">Agregar marca</h2>
                     </div>
                     <div class="modal-header-view" id="modal-cabecera-equis">
                         <button type="button" onclick="limpiarFormularioMarca();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -40,13 +40,6 @@
                 <div class="modal-cuerpo">
                     <form asp-controller="Marcas" asp-action="Create" method="post" class="modal-formulario-crear-marca">
                         <div class="modal-body">
-                            <div class="d-none">
-                                <input type="hidden" id="MarcaId" name="marcaId" class="form-control" />
-                                <select id="EstadoMarca" name="estadoMarca" class="form-control">
-                                    <option value="1">Activo</option>
-                                    <option value="0">Inactivo</option>
-                                </select>
-                            </div>
                             <div class="form-group">
                                 <label for="NombreMarcaVista" class="control-label">Nombre marca</label>
                                 <span class="Mensaje">*</span>
@@ -64,11 +57,11 @@
                 </div>
             </div>
             <div class="modal-dialog">
-                <div class="modal-content" id="FormActualizarMarca">
+                <div class="modal-content noIs" id="FormActualizarMarca">
                     <div class="modal-cabecera">
                         <div id="pibo"></div>
                         <div class="modal-header-view TituloModal">
-                            <h2 class="modal-title">Actualizar Marca</h2>
+                            <h2 class="modal-title">Actualizar marca</h2>
                         </div>
                         <div class="moda-header-view" id="modal-cabecera-equis">
                             <button type="button" onclick="limpiarFormularioMarca();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -109,14 +102,18 @@
             </div>
         </div>
     </div>
-    <br />
-    <hr>
-    <div class="mt-3">
-        <a href="?order=alfabetico">Ordenar por nombre (A-Z)</a> |
-        <a href="?order=name_desc">Ordenar por nombre (Z-A)</a> |
-        <a href="?order=first">Ordenar por más antiguo</a> |
-        <a href="?order=reverse">Ordenar por más reciente</a>
+    <div class="contenedor-filtro">
+        <select name="order" class="input-sm empSelect" onchange="redirectToOrder(this)">
+            <option selected disabled>
+                Ordenar por
+            </option>
+            <option data-url="?order=alfabetico">Ordenar por nombre (A-Z)</option>
+            <option data-url="?order=name_desc">Ordenar por nombre (Z-A)</option>
+            <option data-url="?order=first">Ordenar por más antiguo</option>
+            <option data-url="?order=reverse">Ordenar por más reciente</option>
+        </select>
     </div>
+    <hr>
     <table class="table table-custom text-center">
         <thead>
             <tr>
@@ -128,7 +125,7 @@
                     Marca Id
                 </th>
                 <th>
-                    Nombre Marca
+                    Nombre marca
                 </th>
                 <th class="contenedorEstado">
                     Estado
@@ -213,7 +210,7 @@
         </tbody>
     </table>
 
-    <div class="pagination-container mt-2">
+    <div class="pagination-container mt-2" id="paginationContainer">
         @if (Model != null && Model.PageCount > 1)
         {
             <div class="d-flex justify-content-center mb-5">

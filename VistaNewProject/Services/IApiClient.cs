@@ -95,8 +95,11 @@ namespace VistaNewProject.Services
         Task<Proveedor> FindProveedorAsync(int id);
         Task<Proveedor> FindnombreProveedorAsync(string nombreEmpresa);
 
-        Task<HttpResponseMessage> UpdateProveedorAsync(Proveedor proveedor);
+        Task<HttpResponseMessage> UpdateProveedorAsync(ProveedorUpdate proveedor);
+        Task<HttpResponseMessage> CambiarEstadoProveedorAsync(int id);
+
         Task<HttpResponseMessage> DeleteProveedorAsync(int id);
+
 
 
         // usuario
@@ -165,7 +168,27 @@ namespace VistaNewProject.Services
 
         Task<IEnumerable<Rolxpermiso>> GetRolxpermisoAsync();
 
-      
+        // categoria x unidad
+        Task<IEnumerable<CategoriaxUnidad>> GetCategoriaxUnidadesAsync();
+        Task<HttpResponseMessage> CreateCategoriaxUnidadAsync(CategoriaxUnidad categoriaxunidad);
+        Task<HttpResponseMessage> DeleteCategoriaxUnidadAsync(int categoriaId, int unidadId);
+
+        // categoria x presentacion
+        Task<IEnumerable<CategoriaxPresentacion>> GetCategoriaxPresentacionesAsync();
+        Task<HttpResponseMessage> CreateCategoriaxPresentacionAsync(CategoriaxPresentacion categoriaxpresentacion);
+
+        Task<HttpResponseMessage> DeleteCategoriaxPresentacionAsync(int categoriaId, int presentacionId);
+
+
+        // categoria x marca
+        Task<IEnumerable<CategoriaxMarca>> GetCategoriaxMarcasAsync();
+        Task<HttpResponseMessage> CreateCategoriaxMarcaAsync(CategoriaxMarca categoriaxmarca);
+
+        Task<HttpResponseMessage> DeleteCategoriaxMarcaAsync(int categoriaId, int marcaId);
+
+
+
+
 
     }
 }

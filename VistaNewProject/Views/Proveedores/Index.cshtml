@@ -1,334 +1,360 @@
 ﻿@using X.PagedList
 @model X.PagedList.IPagedList<VistaNewProject.Models.Proveedor>
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Proveedores";
 }
-
-<br />
-
-<div class="d-flex justify-content-between">
-    <!-- Formulario de búsqueda a la izquierda -->
-    <div class="mr-auto">
-        <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
-            <div class="input-group">
-                <input id="buscarProveedor" type="text" class="form-control" placeholder="Buscar proveedor" aria-label="Search" aria-describedby="button-addon2">
-                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Botón para abrir el modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ProveedorModal">
-        Agregar Proveedor
-    </button>
-</div>
-
-
-<!-- Modal -->
-<div class="modal fade" id="ProveedorModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content" id="FormularioAgregar">
-            <div class="modal-header">
-                <h5 class="modal-title" id="TituloModal">Agregar Proveedor</h5>
-                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-
-            </div>
-            <div id="MensajeInicial"></div>
-            <form asp-controller="Proveedores" asp-action="Create" method="post">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <input type="hidden" id="ProveedorId" name="proveedorId" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="NombreEmpresa" class="control-label">Nombre empresa</label>
-                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
-                        <input type="text" id="NombreEmpresa" name="nombreEmpresa" class="form-control" />
-                        <span class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="NombreContacto" class="control-label">Nombre contacto</label>
-                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
-                        <input type="text" id="NombreContacto" name="nombreContacto" class="form-control" />
-                        <span class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="Direccion" class="control-label">Direccion</label>
-                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
-                        <input type="text" id="Direccion" name="direccion" class="form-control" />
-                        <span class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="Telefono" class="control-label">Telefono</label>
-                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
-                        <input type="text" id="Telefono" name="telefono" class="form-control" />
-                        <span class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="Correo" class="control-label">Correo</label>
-                        <span style="color:red;display:inline-block;" class="Mensaje">*</span>
-                        <input type="text" id="Correo" name="correo" class="form-control" />
-                        <span class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group " style="display:none">
-                        <label for="EstadoProveedor" class="control-label">Estado Proveedor</label>
-
-                        <select id=" EstadoProveedor" name=" estadoProveedor" class=" form-control">
-                            <option value="1">Activo</option>
-                            <option value="0">Inactivo</option>
-
-
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
-                   
-                </div>
-
-
-
-            </form>
-
-        </div>
-
-
-        <div class="modal-content" id="FormActualizarProveedor" style="display:none;">
-            <div class="modal-header">
-                <h5 class="modal-title" id="TituloModalPresentacion">Actualizar Proveedor</h5>
-                <button type="button" class="btn-close" onclick="limpiarFormulario()" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div id="MensajeInicialActPresentacion"></div>
-            <form asp-controller="Proveedores" asp-action="Update" method="post">
-                @Html.AntiForgeryToken()
-                <div class="modal-body">
-                    <div class="form-group">
-                        <input id="ProveedorIdAct" name="proveedorIdAct" class="form-control" type="hidden" />
-                    </div>
-                    <div class="form-group">
-                        <label for="NombreEmpresaAct" class="control-label">Nombre Empresa</label>
-                        <input type="text" id="NombreEmpresaAct" name="nombreEmpresaAct" class="form-control" autocomplete="off" />
-                        <span class="text-danger" id="mensajeNombreEmpresaAct"></span>
-
-
-
-                    </div>
-
-                    <div class="form-group">
-                        <label for="NombreContactoAct" class="control-label">Nombre Contacto</label>
-                        <input type="text" id="NombreContactoAct" name="nombreContactoAct" class="form-control" autocomplete="off" />
-                        <span class="text-danger" id="mensajeNombrecontactoAct"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="DireccionAct" class="control-label">Direccion</label>
-                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
-                        <input type="text" id="DireccionAct" name="direccionAct" class="form-control" />
-                        <span class="text-danger" id="mensajeDireccionAct"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="TelefonoAct" class="control-label">Telefono</label>
-                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
-                        <input type="text" id="TelefonoAct" name="telefonoAct" placeholder="" class="form-control" />
-                        <span class="text-danger" id="mensajeTelefonoAct"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="CorreoAct" class="control-label">Correro</label>
-                        <span class="Mensaje" style="color:red;display:inline-block;">*</span>
-                        <input type="text" id="CorreoAct" name="correoAct" placeholder="" class="form-control" />
-                        <span class="text-danger" id="mensajeCorreoAct"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="EstadoProveedorAct" class="control-label">Estado</label>
-                        <select id="EstadoProveedorAct" name="estadoProveedorAct" class="form-control">
-                            <option value="1">Activo</option>
-                            <option value="0">Inactivo</option>
-                        </select>
-                        <span class="text-danger" id="mensajeEstadoProveedorAct"></span>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="botonEditararProveeor">Actualizar</button>
+<div class="ContenedorVista" id="ContenedorProveedor">
+    <br />
+    <div class="d-flex justify-content-between">
+        <!-- Formulario de búsqueda a la izquierda -->
+        <div class="mr-auto">
+            <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
+                <div class="input-group">
+                    <input id="buscarProveedor" type="text" class="form-control" oninput="searchProveedor();" placeholder="Buscar proveedor" aria-label="Search" aria-describedby="button-addon2">
+                    <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputProveedor();" type="button"><i class="fas fa-search"></i></button>
                 </div>
             </form>
         </div>
+        <!-- Botón para abrir el modal -->
+        <button type="button" id="botonabrirModalProveedor" onclick="simularClickProveedor();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalProveedor">
+            <i class="fas fa-plus-circle"></i> Agregar proveedor
+        </button>
     </div>
-</div>
 
-<br />
-<hr>
 
-<table class="table table-custom text-center">
-    <thead>
-        <tr>
-            <th>
-              #
-            </th>
-            <th class="d-none">
-                Proveedor Id
-            </th>
-            <th>
-                NOMBRE EMPRESA
-            </th>
-            <th>
-                NOMBRE CONTACTO
-            </th>
-            <th>
-                DIRECCION
-            </th>
-            <th>
-                TELEFONO
-            </th>
-            <th>
-                CORREO
-            </th>
-            <th>
-                ESTADO PROVEEDOR
-            </th>
-            <th>
-                ACCIONES
-            </th>
-        </tr>
-    </thead>
-    <tbody class="text-center">
-        @{
-            int contador = ViewBag.Contador; // Obtener el valor del contador desde la ViewBag
-        }
-        @foreach (var item in Model)
-        {
-
-            <tr class="proveedoresPaginado">
-                <td>
-                    @contador
-                    @{
-                        contador++;
-
-                    }
-                <td class="d-none proveedor-id">
-                    @Html.DisplayFor(modelItem => item.ProveedorId)
-                </td>
-                <td class="nombre-empresa">
-                    @Html.DisplayFor(modelItem => item.NombreEmpresa)
-                </td>
-                <td class="nombre-contacto">
-                    @Html.DisplayFor(modelItem => item.NombreContacto)
-                </td>
-
-                <td class="direccion">
-                    @Html.DisplayFor(modelItem => item.Direccion)
-                </td>
-                <td class="telefono">
-                    @Html.DisplayFor(modelItem => item.Telefono)
-                </td>
-                <td class="correo">
-                    @Html.DisplayFor(modelItem => item.Correo)
-                </td>
-                <td class="text-center align-middle contenedorEstadoTabla">
-                    <label class="switch">
-                        <input type="checkbox" @(item.EstadoProveedor != 0 ? "checked" : "") onchange="actualizarEstadoProveedor('@item.ProveedorId', this.checked)">
-                        <span class="slider"></span>
-                    </label>
-                </td>
-
-                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
-                <td class="contenedorBotonesTabla">
-                    <button class="btn" id="botonEditar" data-proveedor-id="@item.ProveedorId" data-bs-toggle="modal" data-bs-target="#ProveedorModal"><i class="fas fa-edit"></i></button>
-                    <a asp-action="Details" asp-route-id="@item.ProveedorId" class="btn" ><i class="fas fa-file"></i></a>
-                    <form style="display:inline-block;" asp-controller="Proveedores" asp-action="Delete" method="post" class="delete-form">
-                            @Html.Hidden("id", item.ProveedorId)
-                        <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
-                        <button type="button" onclick="confirmarEliminacion()"  value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+    <!-- Modal -->
+    <div class="modal fade GeneralModal" onblur="AlPerderFocoProveedor();" id="ModalProveedor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" id="FormPrincipalProveedor">
+                <div class="modal-cabecera">
+                    <div id="pibo"></div>
+                    <div class="modal-header-view TituloModal">
+                        <h2 class="modal-title">Agregar proveedor</h2>
+                    </div>
+                    <div class="modal-header-view" id="modal-cabecera-equis">
+                        <button type="button" onclick="limpiarFormularioProveedor();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="modal-cuerpo">
+                    <form asp-controller="Proveedores" asp-action="Create" class="modal-formulario-crear-proveedor" method="post">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="NombreEmpresa" class="control-label">Nombre empresa<span class="Mensaje">*</span></label>
+                                        <input type="text" id="NombreEmpresa" oninput="validarCampoProveedor(this);" name="nombreEmpresa" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="DireccionProveedor" class="control-label">
+                                            Direccion<span class="Mensaje">*</span>
+                                        </label>
+                                        <input type="text" id="DireccionProveedor" oninput="validarCampoProveedor(this);" name="direccion" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="NombreContacto" class="control-label">
+                                            Nombre contacto<span class="Mensaje">*</span>
+                                        </label>
+                                        <input type="text" id="NombreContacto" oninput="validarCampoProveedor(this);" name="nombreContacto" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="TelefonoProveedor" class="control-label">
+                                            Telefono<span class="Mensaje">*</span>
+                                        </label>
+                                        <input type="text" id="TelefonoProveedor" oninput="validarCampoProveedor(this);" name="telefono" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="CorreoProveedor" class="control-label">
+                                            Correo
+                                            <span class="Mensaje">*</span>
+                                        </label>
+                                        <input type="text" id="CorreoProveedor" oninput="validarCampoProveedor(this);" name="correo" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="MensajeInicial"></div>
+                        <div class="MensajeErrores"></div>
+                        <div class="modal-contenedor-footer">
+                            <button type="reset" class="btn btn-secondary" onclick="limpiarFormularioProveedor();">Cancelar</button>
+                            <button type="submit" class="btn btn-primary btnGuardar">Agregar</button>
+                        </div>
                     </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-dialog">
+            <div class="modal-content noBe" id="FormActualizarProveedor">
+                <div class="modal-cabecera">
+                    <div id="pibo"></div>
+                    <div class="modal-header-view TituloModal">
+                        <h2 class="modal-title">Actualizar proveedor</h2>
+                    </div>
+                    <div class="modal-header-view" id="modal-cabecera-equis">
+                        <button type="button" onclick="limpiarFormularioProveedor();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="modal-cuerpo">
+                    <form asp-controller="Proveedores" asp-action="Update" class="modal-formulario-actualizar-proveedor" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <input id="ProveedorIdAct" name="proveedorId" class="form-control" type="hidden" />
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="NombreEmpresaAct" class="control-label">Nombre empresa  <span class="Mensaje"></span></label>
+                                        <input type="text" id="NombreEmpresaAct" oninput="validarCampoProveedor(this);" name="nombreEmpresa" class="form-control" autocomplete="off" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="DireccionProveedorAct" class="control-label">Direccion  <span class="Mensaje"></span></label>
+                                        <input type="text" id="DireccionProveedorAct" oninput="validarCampoProveedor(this);" name="direccion" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="NombreContactoAct" class="control-label">Nombre contacto<span class="Mensaje"></span></label>
+                                        <input type="text" id="NombreContactoAct" oninput="validarCampoProveedor(this);" name="nombreContacto" class="form-control" autocomplete="off" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="TelefonoProveedorAct" class="control-label">Telefono <span class="Mensaje"></span></label>
+                                        <input type="text" id="TelefonoProveedorAct" oninput="validarCampoProveedor(this);" name="telefono" placeholder="" class="form-control" />
+                                        <span class="text-danger" id="mensajeTelefonoAct"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="CorreoProveedorAct" class="control-label">
+                                            Correo
+                                            <span class="Mensaje"></span>
+                                        </label>
+                                        <input type="text" id="CorreoProveedorAct" oninput="validarCampoProveedor(this);" name="correo" placeholder="" class="form-control" />
+                                        <span class="text-danger" id="mensajeCorreoAct"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="EstadoProveedorAct" class="control-label">Estado</label>
+                                        <select id="EstadoProveedorAct" name="estadoProveedor" class="form-control">
+                                            <option value="1">Activo</option>
+                                            <option value="0">Inactivo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="MensajeInicial"></div>
+                        <div class="MensajeErrores"></div>
+                        <div class="modal-contenedor-footer">
+                            <button type="reset" data-bs-dismiss="modal" class="btn btn-secondary" onclick="limpiarFormularioProveedor();">Cancelar</button>
+                            <button type="submit" class="btn btn-primary btnGuardar">Actualizar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
 
-                </td>
+
+    </div>
+
+    <div class="contenedor-filtro">
+        <select name="order" class="input-sm empSelect" onchange="redirectToOrder(this)">
+            <option selected disabled>
+                Ordenar por
+            </option>
+            <option data-url="?order=alfabetico">Ordenar por nombre (A-Z)</option>
+            <option data-url="?order=name_desc">Ordenar por nombre (Z-A)</option>
+            <option data-url="?order=first">Ordenar por más antiguo</option>
+            <option data-url="?order=reverse">Ordenar por más reciente</option>
+        </select>
+    </div>
+    <hr>
+    <table class="table table-custom text-center">
+        <thead>
+            <tr>
+                <th class="contadorB consecutivo noIs">#</th>
+                <th class="contador consecutivo">#</th>
+                <th class="d-none">Proveedor Id</th>
+                <th>
+                    Nombre empresa
+                </th>
+                <th>
+                    Nombre contacto
+                </th>
+                <th>
+                    Telefono
+                </th>
+                <th class="contenedorEstado">
+                    Estado
+                </th>
+                <th>
+                    Acciones
+                </th>
             </tr>
-        }
-        @{
-            var proveedores = ViewData["Proveedores"] as List<Proveedor>;
-            if (proveedores != null)
+        </thead>
+        <tbody class="text-center">
+            @{
+                int contador = ViewBag.Contador; // Obtener el valor del contador desde la ViewBag
+            }
+            @foreach (var item in Model)
             {
-                foreach (var proveedor in proveedores)
-                {
-                    <tr class="Proveedores" style="display:none;">
-                        <td>@proveedor.ProveedorId</td>
-                        <td>@proveedor.NombreEmpresa</td>
-                        <td>@proveedor.NombreContacto</td>
-                        <td>@proveedor.Direccion</td>
-                        <td>@proveedor.Telefono</td>
-                        <td>@proveedor.Correo</td>
 
-                        <td class="text-center align-middle contenedorEstadoTabla">
-                            <label class="switch">
-                                <input type="checkbox" @(proveedor.EstadoProveedor != 0 ? "checked" : "") onchange="actualizarEstadoProveedor('@proveedor.ProveedorId', this.checked)">
-                                <span class="slider"></span>
-                            </label>
-                        </td>
+                <tr class="proveedoresPaginado">
+                    <td>
+                        @contador
+                        @{
+                            contador++;
 
-                        <!-- Agrega esto a tu tabla dentro de la sección tbody -->
-                        <td class="contenedorBotonesTabla">
-                            <button class="btn" id="botonEditar" data-proveedor-id="@proveedor.ProveedorId" data-bs-toggle="modal" data-bs-target="#ProveedorModal"><i class="fas fa-edit"></i></button>
-                            <a asp-action="Details" asp-route-id="@proveedor.ProveedorId" class="btn" ><i class="fas fa-file"></i></a>
-                            <form style="display:inline-block;" asp-controller="Proveedores" asp-action="Delete" method="post" class="delete-form">
-                                @Html.Hidden("id", proveedor.ProveedorId)
-                                <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
-                                <button type="button" onclick="confirmarEliminacion()"  value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                        }
+                    <td class="d-none proveedor-id">
+                            @Html.DisplayFor(modelItem => item.ProveedorId)
+                    </td>
+                    <td class="nombre-empresa">
+                            @Html.DisplayFor(modelItem => item.NombreEmpresa)
+                    </td>
+                    <td class="nombre-contacto">
+                            @Html.DisplayFor(modelItem => item.NombreContacto)
+                    </td>
+                    <td class="telefono">
+                            @Html.DisplayFor(modelItem => item.Telefono)
+                    </td>
+                    <td class="text-center align-middle">
+                        <label class="switch">
+                            <input type="checkbox" @(item.EstadoProveedor != 0 ? "checked" : "") onchange="actualizarEstadoProveedor('@item.ProveedorId', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+
+                    <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                    <td class="botonesTabla">
+                        <div class="botonesTablaContenedor">
+                            <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoProveedor(@item.ProveedorId);"><i class="fas fa-edit"></i></button>
+                            <a asp-action="Details" asp-controller="Proveedores" asp-route-id="@item.ProveedorId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
+                            <form asp-controller="Proveedores" class="eliminarProveedor" asp-action="Delete" method="post">
+                                <input type="hidden" value="@item.ProveedorId" oninput="validarCampoProveedor(this);" name="proveedorId" />
+                                <button type="submit" value="" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
                             </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @{
+                var proveedores = ViewData["Proveedores"] as List<Proveedor>;
+                if (proveedores != null)
+                {
+                    int contadorC = 1;
+                    foreach (var proveedor in proveedores)
+                    {
+                        <tr class="Proveedores noIs">
+                            <td class="contadorB noIs">
+                                @contadorC <!-- Muestra el valor del contador -->
+                            </td>
+                            <td>@proveedor.ProveedorId</td>
+                            <td>@proveedor.NombreEmpresa</td>
+                            <td>@proveedor.NombreContacto</td>
+                            <td>@proveedor.Telefono</td>
+                            <td class="text-center align-middle contenedorEstadoTabla">
+                                <label class="switch">
+                                    <input type="checkbox" @(proveedor.EstadoProveedor != 0 ? "checked" : "") onchange="actualizarEstadoProveedor('@proveedor.ProveedorId', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </td>
 
-
-                        </td>
-                    </tr>
+                            <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                            <td class="botonesTabla">
+                                <div class="botonesTablaContenedor">
+                                    <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoProveedor(@proveedor.ProveedorId);"><i class="fas fa-edit"></i></button>
+                                    <a asp-action="Details" asp-controller="Proveedores" asp-route-id="@proveedor.ProveedorId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
+                                    <form asp-controller="Proveedores" class="eliminarProveedor" asp-action="Delete" method="post">
+                                        <input type="hidden" value="@proveedor.ProveedorId" oninput="validarCampoProveedor(this);" name="proveedorId" />
+                                        <button type="submit" value="" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        contadorC++;
+                    }
                 }
             }
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
 
-<div class="pagination-container mt-2">
-    @if (Model != null && Model.PageCount > 1)
-    {
-        <div class="d-flex justify-content-center mb-5">
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
-                    <!-- Botón para ir a la primera página -->
-                    @if (Model.PageNumber > 1)
-                    {
-                        <li class="page-item">
-                            <a class="page-link" href="?page=1" aria-label="First">
-                                <span aria-hidden="true">Primero</span>
+    <div class="pagination-container mt-2" id="paginationContainer">
+        @if (Model != null && Model.PageCount > 1)
+        {
+            <div class="d-flex justify-content-center mb-5">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <!-- Botón para ir a la primera página -->
+                        @if (Model.PageNumber > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1&order=@ViewBag.Order" aria-label="First">
+                                    <span aria-hidden="true">Primero</span>
+                                </a>
+                            </li>
+                        }
+                        <!-- Botón para la página anterior (oculto en la página 1) -->
+                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.PageNumber - 1)&order=@ViewBag.Order" aria-label="Previous">
+                                <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
                             </a>
                         </li>
-                    }
-                    <!-- Botón para la página anterior (oculto en la página 1) -->
-                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                        <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
-                            <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
-                        </a>
-                    </li>
-                    <!-- Iterar sobre las páginas disponibles -->
-                    @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
-                    {
-                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                            <a class="page-link" href="?page=@i">@i</a>
-                        </li>
-                    }
-                    <!-- Botón para la página siguiente (oculto en la última página) -->
-                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                        <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
-                            <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
-                        </a>
-                    </li>
-                    <!-- Botón para ir a la última página -->
-                    @if (Model.PageNumber < Model.PageCount)
-                    {
-                        <li class="page-item">
-                            <a class="page-link" href="?page=@Model.PageCount" aria-label="Last">
-                                <span aria-hidden="true">Último</span>
+                        <!-- Iterar sobre las páginas disponibles -->
+                        @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                        {
+                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                <a class="page-link" href="?page=@i&order=@ViewBag.Order">@i</a>
+                            </li>
+                        }
+                        <!-- Botón para la página siguiente (oculto en la última página) -->
+                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.PageNumber + 1)&order=@ViewBag.Order" aria-label="Next">
+                                <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
                             </a>
                         </li>
-                    }
-                </ul>
-            </nav>
-        </div>
-    }
+                        <!-- Botón para ir a la última página -->
+                        @if (Model.PageNumber < Model.PageCount)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?page=@Model.PageCount&order=@ViewBag.Order" aria-label="Last">
+                                    <span aria-hidden="true">Último</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
 </div>

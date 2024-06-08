@@ -1,62 +1,37 @@
 ﻿@using X.PagedList.Mvc.Core
-@model X.PagedList.IPagedList<VistaNewProject.Models.Producto>
+@model X.PagedList.IPagedList<VistaNewProject.Models.Categoria>
 
 @{
-    ViewData["Title"] = "Detalles de Marca";
+    ViewData["Title"] = "Asociar categorías";
 }
 
 <br />
 <div class="contenedor-botones-detalle">
-    <a asp-action="Index" class="btn botonVolver">
+    <a asp-action="Details" asp-controller="Marcas" asp-route-id="@ViewBag.Marca.MarcaId" class="btn botonAsociar">
         <i class="fas fa-arrow-left"></i> Volver
     </a>
-    <a href="#" onclick="redireccionarYEditar('@(ViewBag.Marca?.MarcaId ?? 0)', 'Marcas', 'marca')" class="btn botonEnviarDetalle">
-        <i class="fa-solid fa-pen"></i> Editar
-    </a>
-    <a asp-action="CategoriasAsociadasxMarca" asp-controller="Marcas" asp-route-id="@ViewBag.Marca.MarcaId" class="btn botonAsociar">
-        Categorías asociadas<i class="fa-solid fa-ban"></i>
+    <a asp-action="MarcaxCategoriasAsociadas" asp-controller="Marcas" asp-route-id="@ViewBag.Marca.MarcaId" class="btn botonVolver">
+        Categorias asociadas<i class="fa-solid fa-ban"></i>
     </a>
 </div>
 <br />
-<div class="pedido-info">
-    <table class="table tablaDetalle">
-        <thead>
-            <tr>
-                <th>Marca ID</th>
-                <th>Nombre</th>
-                <th>Cantidad de productos asociados</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>@(ViewBag.Marca?.MarcaId ?? 0)</td>
-                <td>@(ViewBag.Marca?.NombreMarca ?? "N/A")</td>
-                <td>@(ViewBag.CantidadProductosAsociados ?? 0)</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
 @if (Model != null && Model.Any())
 {
-    <h4 class="TituloSobreTabladetalle">Productos asociados</h4>
     <div class="pedido-info">
+        <h4 class="TituloSobreTabladetalle">Categorías asociadas</h4>
         <table class="table tablaDetalle">
             <thead>
                 <tr>
-                    <th>Producto ID</th>
-                    <th>Nombre Completo</th>
-                    <th>Cantidad</th>
-                    <th>Estado</th>
+                    <th>ID</th>
+                    <th>Nombre Categoría</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var producto in Model)
+                @foreach (var categoria in Model)
                 {
                     <tr>
-                        <td>@producto.ProductoId</td>
-                        <td>@producto.NombreCompleto</td>
-                        <td>@producto.CantidadTotal</td>
-                        <td>@(producto.Estado == 1 ? "Activo" : "Inactivo")</td>
+                        <td>@categoria.CategoriaId</td>
+                        <td>@categoria.NombreCategoria</td>
                     </tr>
                 }
             </tbody>
@@ -110,10 +85,14 @@
             </div>
         }
     </div>
+
+
 }
 else
 {
     <div class="MensajeNoDetalles">
-        <p>@ViewBag.Message</p>
+        <p>No se encontraron categorías asociadas.</p>
     </div>
 }
+
+

@@ -37,20 +37,22 @@ namespace VistaNewProject.Controllers
             var usuarios = await _client.GetUsuarioAsync();
 
             usuarios = usuarios.Reverse().ToList();
-            // Ordenar los productos según el criterio seleccionado
+            usuarios = usuarios.OrderByDescending(c => c.EstadoUsuario == 1).ToList();
+
             switch (order.ToLower())
             {
                 case "first":
                     usuarios = usuarios.Reverse();
+                    usuarios = usuarios.OrderByDescending(c => c.EstadoUsuario == 1).ToList();
                     break;
                 case "reverse":
-                    usuarios = usuarios;
                     break;
                 case "alfabetico":
                     usuarios = usuarios
                         .OrderBy(p => p.Nombre)
                         .ThenBy(p => p.Apellido)
                         .ToList();
+                    usuarios = usuarios.OrderByDescending(c => c.EstadoUsuario == 1).ToList();
                     break;
 
                 case "name_desc":
@@ -58,6 +60,7 @@ namespace VistaNewProject.Controllers
                         .OrderByDescending(p => p.Nombre)
                         .ThenByDescending(p => p.Apellido)
                         .ToList();
+                    usuarios = usuarios.OrderByDescending(c => c.EstadoUsuario == 1).ToList();
                     break;
 
                 default:

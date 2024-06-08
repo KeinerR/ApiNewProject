@@ -5,7 +5,6 @@
 }
 <div class="ContenedorVista" id="ContenedorProducto">
     <br />
-
     <div class="d-flex justify-content-between" id="ContenedorOpciones">
         <!-- Formulario de búsqueda a la izquierda -->
         <div class="mr-auto">
@@ -267,18 +266,22 @@
         </div>
 
     </div>
-    <br />
+    <div class="contenedor-filtro">
+        <select name="order" class="input-sm empSelect" onchange="redirectToOrder(this)">
+            <option selected disabled>
+                Ordenar por
+            </option>
+            <option data-url="?order=alfabetico">Ordenar por nombre (A-Z)</option>
+            <option data-url="?order=name_desc">Ordenar por nombre (Z-A)</option>
+            <option data-url="?order=first">Ordenar por más antiguo</option>
+            <option data-url="?order=reverse">Ordenar por más reciente</option>
+        </select>
+    </div>
     <hr>
     <div>
         <a asp-action="ProductosInactivos" asp-controller="Productos" class="btn btn-primary-custom btn btn-primary">
             Productos Inactivos <i class="fa-solid fa-ban"></i>
         </a>
-    </div>
-    <div class="mt-3">
-        <a href="?order=alfabetico">Ordenar por nombre (A-Z)</a> |
-        <a href="?order=name_desc">Ordenar por nombre (Z-A)</a> |
-        <a href="?order=first">Ordenar por más antiguo</a> |
-        <a href="?order=reverse">Ordenar por más reciente</a>
     </div>
     <table class="table table-custom text-center">
         <thead>

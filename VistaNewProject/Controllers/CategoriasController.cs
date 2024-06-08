@@ -92,62 +92,29 @@ namespace VistaNewProject.Controllers
                 return NotFound();
             }
 
-            var productos = await _client.GetProductoAsync();
-            var presentaciones = await _client.GetPresentacionAsync();
-            var lotes = await _client.GetLoteAsync();
             var categorias = await _client.GetCategoriaAsync();
-            var marcas = await _client.GetMarcaAsync();
+            var categoriaExiste = categorias.FirstOrDefault(p => p.CategoriaId == id);
 
-            // Calcular cantidad total de lotes por ProductoId y estado activo
-            var cantidadTotalPorProducto = lotes
-                .Where(l => l.EstadoLote == 1) // Filtrar por estado activo
-                .GroupBy(l => l.ProductoId ?? 0) // Convertir ProductoId a int no anulable
-                .ToDictionary(
-                    grp => grp.Key,
-                    grp => grp.Sum(l => l.Cantidad) // Sumar la cantidad de cada grupo
-                );
-
-            // Concatenar nombre completo de productos
-            foreach (var producto in productos)
+            if (categoriaExiste == null)
             {
-                // Obtener la cantidad total correspondiente al producto actual
-                if (cantidadTotalPorProducto.TryGetValue(producto.ProductoId, out var cantidadTotal))
-                {
-                    producto.CantidadTotal = cantidadTotal;
-                }
-                else
-                {
-                    // Si no hay cantidad total para este producto, asignar cero o un valor predeterminado según sea necesario
-                    producto.CantidadTotal = 0;
-                }
-                var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
-                var nombrePresentacion = presentacionEncontrada?.NombrePresentacion ?? "Sin presentación";
-                var contenido = presentacionEncontrada?.Contenido ?? "";
-                var cantidad = presentacionEncontrada?.CantidadPorPresentacion ?? 1;
-                var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
-                var nombreMarca = marcaEncontrada?.NombreMarca ?? "Sin marca";
-
-                producto.NombreCompleto = cantidad > 1 ?
-                    $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} x {cantidad} {contenido}" :
-                    $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
+                return NotFound();
             }
 
-            var categoria = categorias.FirstOrDefault(u => u.CategoriaId == id);
+            var categoria = await _client.FindCategoriaAsync(id.Value);
             if (categoria == null)
             {
                 return NotFound();
             }
 
             ViewBag.Categoria = categoria;
-            ViewBag.Productos = productos;
 
+            var productos = await _client.GetProductoAsync();
             var productosDeCategoria = productos.Where(p => p.CategoriaId == id).ToList();
 
-            ViewBag.CantidadProductosAsociados = productosDeCategoria.Count; // Guardar la cantidad de productos asociados
+            ViewBag.CantidadProductosAsociados = productosDeCategoria.Count;
 
             if (!productosDeCategoria.Any())
             {
-                // Si no hay productos, establecer ViewBag.Message
                 ViewBag.Message = "No se encontraron productos asociados a esta categoría.";
                 return View(productosDeCategoria.ToPagedList(1, 1)); // Devuelve un modelo paginado vacío
             }
@@ -155,10 +122,20 @@ namespace VistaNewProject.Controllers
             int pageSize = 5;
             int pageNumber = page ?? 1;
 
-            var pagedProductos = productosDeCategoria.ToPagedList(pageNumber, pageSize);
+            var pagedProductos = new List<Producto>();
 
-            return View(pagedProductos);
+            foreach (var producto in productosDeCategoria)
+            {
+                var productoConNombreCompleto = await ConcatenarNombreCompletoProducto(producto.ProductoId);
+                pagedProductos.Add(productoConNombreCompleto);
+            }
+
+            var pagedProductosPagedList = pagedProductos.ToPagedList(pageNumber, pageSize);
+
+            return View(pagedProductosPagedList);
         }
+
+
 
         public async Task<IActionResult> Create([FromForm] Categoria categoria)
         {
@@ -327,5 +304,37 @@ namespace VistaNewProject.Controllers
             TempData["EstadoAlerta"] = "false";
 
         }
+
+        private async Task<Producto> ConcatenarNombreCompletoProducto(int productoId)
+        {
+            var producto = (await _client.GetProductoAsync()).FirstOrDefault(p => p.ProductoId == productoId);
+            var presentaciones = await _client.GetPresentacionAsync();
+            var lotes = await _client.GetLoteAsync();
+            var marcas = await _client.GetMarcaAsync();
+
+            // Calcular cantidad total de lotes por ProductoId y estado activo
+            var cantidadTotalPorProducto = lotes
+                .Where(l => l.EstadoLote == 1 && l.ProductoId == productoId)
+                .Sum(l => l.Cantidad);
+
+            producto.CantidadTotal = cantidadTotalPorProducto;
+
+            // Concatenar nombre completo de presentaciones
+            var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
+            var nombrePresentacion = presentacionEncontrada?.NombrePresentacion ?? "Sin presentación";
+            var contenido = presentacionEncontrada?.Contenido ?? "";
+            var cantidad = presentacionEncontrada?.CantidadPorPresentacion ?? 1;
+            var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
+            var nombreMarca = marcaEncontrada?.NombreMarca ?? "Sin marca";
+
+            producto.NombreCompleto = cantidad > 1 ?
+                $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} unidades de {contenido}" :
+                $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
+
+            return producto;
+        }
+     
+
+
     }
 }

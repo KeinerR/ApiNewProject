@@ -18,15 +18,17 @@ function obtenerDatosUnidades() {
 }
 function compararUnidades(nuevaUnidad, unidadesExistentes) {
     const nombreUnidadNormalizado = normalizar(nuevaUnidad.NombreUnidadVista || '');
-
+    const cantidad = parseInt(nuevaUnidad.CantidadPorUnidad)
     const unidadesDuplicadas = [];
 
 
     unidadesExistentes.forEach(unidadExistente => {
         const nombreUnidadExistenteNormalizado = normalizar(unidadExistente.nombreUnidad || '');
+        const cantidadExistente= unidadExistente.cantidadPorUnidad;
 
         if (
-            nombreUnidadNormalizado === nombreUnidadExistenteNormalizado
+            nombreUnidadNormalizado === nombreUnidadExistenteNormalizado &&
+            cantidad === cantidadExistente                       
         ) {
             unidadesDuplicadas.push(unidadExistente.unidadId);
         }
@@ -41,15 +43,17 @@ function compararUnidades(nuevaUnidad, unidadesExistentes) {
 }
 function compararUnidadesAct(nuevaUnidad, unidadesExistentes) {
     const nombreUnidadNormalizado = normalizar(nuevaUnidad.NombreUnidadVistaAct || '');
-
+    const cantidad = parseInt(nuevaUnidad.CantidadPorUnidadAct);
     const unidadesDuplicadas = [];
 
 
     unidadesExistentes.forEach(unidadExistente => {
         const nombreUnidadExistenteNormalizado = normalizar(unidadExistente.nombreUnidad || '');
+        const cantidadExistente = unidadExistente.cantidadPorUnidad;
 
         if (
-            nombreUnidadNormalizado === nombreUnidadExistenteNormalizado
+            nombreUnidadNormalizado === nombreUnidadExistenteNormalizado &&
+            cantidad === cantidadExistente 
         ) {
             if (unidadExistente.unidadId == nuevaUnidad.UnidadIdAct) {
                 return false; // No es un duplicado de alguna unidad
@@ -68,7 +72,8 @@ function compararUnidadesAct(nuevaUnidad, unidadesExistentes) {
 }
 function mostrarValoresFormularioInicialUnidad() {
     const idsCrear = [
-        'NombreUnidadVista'
+        'NombreUnidadVista',
+        'CantidadPorUnidad'
     ];
     const valoresCrear = obtenerValoresFormulario(idsCrear);
     return valoresCrear;
@@ -76,7 +81,8 @@ function mostrarValoresFormularioInicialUnidad() {
 function mostrarValoresFormularioUnidadAct() {
     const idsCrear = [
         'NombreUnidadVistaAct',
-        'UnidadIdAct'
+        'UnidadIdAct',
+        'CantidadPorUnidadAct'
     ];
     const valoresCrear = obtenerValoresFormulario(idsCrear);
     return valoresCrear;
@@ -130,6 +136,8 @@ document.addEventListener('DOMContentLoaded', function () {
             { id: 'NombreUnidadVistaAct', nombre: 'Unidad' },
             { id: 'CantidadPorUnidadAct', nombre: 'Cantidad por Unidad' }
         ];
+        console.log(unidadFinal, unidadesAll);
+
         const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
         if (!NoCamposVaciosUnidadAct()) {
             event.preventDefault();
@@ -192,17 +200,16 @@ document.addEventListener('DOMContentLoaded', function () {
             return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
         }).length;
 
-        console.log('Número de campos sin texto:', camposConTexto);
         if (camposConTexto === 2) { // Cambiamos la condición para verificar si hay campos sin texto.
             mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos obligatorios(*).');
+            $('.MensajeInicial').text('Por favor, complete todos los campos con *.');
             return false;
         }
         if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa el campo con *');
-            $('.MensajeInicial').text('Por favor, complete el campo obligatorio(*).');
+            $('.MensajeInicial').text('Por favor, complete el campo con *.');
             return false;
         }
+
   
         return true;
     }
@@ -237,15 +244,13 @@ document.addEventListener('DOMContentLoaded', function () {
             return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
         }).length;
 
-        console.log('Número de campos sin texto:', camposConTexto);
         if (camposConTexto === 2) { // Cambiamos la condición para verificar si hay campos sin texto.
             mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos obligatorios(*).');
+            $('.MensajeInicial').text('Por favor, complete todos los campos con *.');
             return false;
         }
         if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa el campo con *');
-            $('.MensajeInicial').text('Por favor, complete el campo obligatorio(*).');
+            $('.MensajeInicial').text('Por favor, complete el campo con *.');
             return false;
         }
   
@@ -493,7 +498,7 @@ function actualizarUnidad(campo) {
             formActualizar.find('#UnidadIdAct').val(data.unidadId);
             formActualizar.find('#NombreUnidadVistaAct').val(data.nombreUnidad);
             formActualizar.find('#CantidadPorUnidadAct').val(data.cantidadPorUnidad);
-            formActualizar.find('#DescripcionUnidadAct').val(data.nombreUnidad);
+            formActualizar.find('#DescripcionUnidadAct').val(data.descripcionUnidad);
             formActualizar.find('#EstadoUnidadAct').val(data.estadoUnidad);
             limpiarFormularioUnidadAct()
             obtenerDatosUnidades();
@@ -514,7 +519,7 @@ function actualizarEstadoUnidad(UnidadId) {
             // Mostrar SweetAlert
             Swal.fire({
                 icon: 'success',
-                title: '¡Estado actualizado!',
+                title: '\u00A1Estado actualizado!',
                 showConfirmButton: false,
                 timer: 1500 // Duración del SweetAlert en milisegundos
             }).then(() => {
@@ -542,6 +547,7 @@ function searchUnidad() {
     var icon = document.querySelector('#btnNavbarSearch i');    //Obtiene el icino de buscar
     var contador = document.querySelector('.contador');        //Obtiene la columna que tiene el # 
     var contadores = document.querySelectorAll('.contadorB'); //Obtiene el contadorB que esta en none y lo hace visible para mostrar el consecutivo y el ID
+    var paginationContainer = document.getElementById('paginationContainer');
     if (input === "") {
         rows.forEach(function (row) { //Esconde los usuarios paginado
             row.style.display = '';
@@ -552,6 +558,8 @@ function searchUnidad() {
         icon.className = 'fas fa-search';
         icon.style.color = 'white';
         contador.innerText = '#';
+        paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
+
     } else {
         rows.forEach(function (row) {
             row.style.display = 'none';
@@ -562,6 +570,7 @@ function searchUnidad() {
         icon.className = 'fas fa-times';
         icon.style.color = 'white';
         contador.innerText = 'ID';
+        paginationContainer.classList.add('noBe'); // Oculta el contenedor de paginación
 
     }
 
@@ -577,6 +586,8 @@ function searchUnidad() {
 }
 
 function vaciarInputUnidad() {
+    var paginationContainer = document.getElementById('paginationContainer');
+    
     document.getElementById('buscarUnidad').value = "";
     var icon = document.querySelector('#btnNavbarSearch i');
     icon.className = 'fas fa-search';
@@ -599,6 +610,8 @@ function vaciarInputUnidad() {
     rowsTodos.forEach(function (row) {
         row.style.display = 'none';
     });
+
+    paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
 }
 
 

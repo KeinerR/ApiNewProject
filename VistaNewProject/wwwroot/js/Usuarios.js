@@ -205,7 +205,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!NoCamposConErrores()) {
             event.preventDefault();
-            mostrarAlertaAtencionPersonalizadaConBoton('Algunos campos contienen errores');
             return;
         }
 
@@ -250,7 +249,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!NoCamposConErroresAct()) {
             event.preventDefault();
-            mostrarAlertaAtencionPersonalizadaConBoton('Algunos campos contienen errores');
             return;
         }
 
@@ -330,25 +328,43 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('Número de campos sin texto:', camposConTexto);
 
         if (camposConTexto === 8) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos');
-            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos con *');
+            $('.MensajeInicial').text('Por favor, complete los campos con *.');
             return false;
-        } else if (camposConTexto != 0) { // Cambiamos la condición para verificar si hay campos sin texto.
-            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+        }
+        if (camposConTexto > 1 && camposConTexto < 8) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Completa los campos con *');
+            $('.MensajeInicial').text('Por favor, complete los campos con *.');
             return false;
-        } 
+        }
+        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Completa el campo con *');
+            $('.MensajeInicial').text('Por favor, complete el campo con *.');
+            return false;
+        }
 
         return true;
     } 
     function NoCamposConErrores() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(0, 8);
-        const todoValido = textDangerSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-        console.log('Todos los campos son válidos:', todoValido);
-        if (!todoValido) {
-            $('.MensajeErrores').text('Algunos campos contienen errores.');
+        const camposConTexto = textDangerSlice.filter(function () {
+            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
+        }).length;
+
+        if (camposConTexto === 8) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente todos los campos');
+            $('.MensajeErrores').text('Todos los campos son invalidos.');
+            return false;
+        }
+        if (camposConTexto > 1 && camposConTexto < 7) {
+            mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente los campos');
+            $('.MensajeErrores').text('Hay campos invalidos.');
+            return false;
+        }
+        if (camposConTexto === 1) {
+            mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente el campo');
+            $('.MensajeErrores').text('Un campo es invalido.');
             return false;
         }
         return true;
@@ -361,14 +377,19 @@ document.addEventListener('DOMContentLoaded', function () {
             return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
         }).length;
 
-        console.log('Número de campos sin texto:', camposConTexto);
-
-        if (camposConTexto === 8) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos');
-            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+        if (camposConTexto === 7) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos con *');
+            $('.MensajeInicial').text('Por favor, complete los campos con *.');
             return false;
-        } else if (camposConTexto != 0) { // Cambiamos la condición para verificar si hay campos sin texto.
-            $('.MensajeInicial').text('Por favor, complete todos los campos obligatorios(*).');
+        }
+        if (camposConTexto > 1 && camposConTexto < 7) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Completa los campos con *');
+            $('.MensajeInicial').text('Por favor, complete los campos con *.');
+            return false;
+        }
+        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Completa el campo con *');
+            $('.MensajeInicial').text('Por favor, complete el campo con *.');
             return false;
         }
 
@@ -377,12 +398,23 @@ document.addEventListener('DOMContentLoaded', function () {
     function NoCamposConErroresAct() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(-7);
-        const todoValido = textDangerSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-        console.log('Todos los campos son válidos:', todoValido);
-        if (!todoValido) {
-            $('.MensajeErrores').text('Algunos campos contienen errores.');
+        const camposConTexto = textDangerSlice.filter(function () {
+            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
+        }).length;
+
+        if (camposConTexto === 7) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente todos los campos');
+            $('.MensajeErrores').text('Todos los campos son invalidos.');
+            return false;
+        }
+        if (camposConTexto > 1 && camposConTexto < 7) {
+            mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente los campos');
+            $('.MensajeErrores').text('Hay campos invalidos.');
+            return false;
+        }
+        if (camposConTexto === 1) {
+            mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente el campo');
+            $('.MensajeErrores').text('Un campo es invalido.');
             return false;
         }
         return true;
@@ -649,7 +681,9 @@ function actualizarEstadoUsuario(UsuarioId) {
                 title: '¡Estado actualizado!',
                 showConfirmButton: false,
                 timer: 1500 // Duración del SweetAlert en milisegundos
-            })
+            }).then(() => {
+                location.reload(); // Recargar la página después de que la alerta haya terminado
+            });
         },
         error: function (xhr, status, error) {
             console.error('Error al actualizar el estado del usuario:', xhr.responseText);
@@ -673,6 +707,7 @@ function searchUsuario() {
     var icon = document.querySelector('#btnNavbarSearch i');    //Obtiene el icino de buscar
     var contador = document.querySelector('.contador');        //Obtiene la columna que tiene el # 
     var contadores = document.querySelectorAll('.contadorB'); //Obtiene el contadorB que esta en none y lo hace visible para mostrar el consecutivo y el ID
+    var paginationContainer = document.getElementById('paginationContainer');
     if (input === "") {
         rows.forEach(function (row) { //Esconde los usuarios paginado
             row.style.display = '';
@@ -683,6 +718,8 @@ function searchUsuario() {
         icon.className = 'fas fa-search';  
         icon.style.color = 'white';
         contador.innerText = '#';
+        paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
+
     } else {
         rows.forEach(function (row) {
             row.style.display = 'none';
@@ -693,6 +730,8 @@ function searchUsuario() {
         icon.className = 'fas fa-times';
         icon.style.color = 'white';
         contador.innerText = 'ID';
+        paginationContainer.classList.add('noBe'); // Oculta el contenedor de paginación
+
        
     }
   
@@ -712,6 +751,7 @@ function searchUsuario() {
 }
 
 function vaciarInputUsuario() {
+    var paginationContainer = document.getElementById('paginationContainer');
     document.getElementById('buscarUsuario').value = "";
     var icon = document.querySelector('#btnNavbarSearch i');
     icon.className = 'fas fa-search';
@@ -734,6 +774,8 @@ function vaciarInputUsuario() {
     rowsTodos.forEach(function (row) {
         row.style.display = 'none';
     });
+    paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
+
 }
 
 /*---------------------- Llama a la funcion en site.js  ---------------------------*/
@@ -743,11 +785,13 @@ function showNoRolesAlert() {
 
 /*------------------------ Validaciones---------------*/
 
-function validarCampoUsuario(campo) {
-    const input = $(campo); // Convertir el input a objeto jQuery
-    var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
-    var spanError = input.next('.text-danger'); // Obtener el elemento span de error asociado al input
-    var spanVacio = input.prev('.Mensaje'); // Obtener el elemento span vacío asociado al input
+function validarCampoUsuario(input) {
+    const inputElement = $(input); // Convertir el input a objeto jQuery
+    const campo = inputElement.attr('id'); // Obtener el id del input actual como nombre de campo
+    const valor = inputElement.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
+    const spanError = inputElement.next('.text-danger'); // Obtener el elemento span de error asociado al input
+    const labelForCampo = $('label[for="' + campo + '"]');
+    const spanVacio = labelForCampo.find('.Mensaje');
 
     // Limpiar el mensaje de error previo
     spanError.text('');
@@ -759,9 +803,9 @@ function validarCampoUsuario(campo) {
         spanError.text('Este campo es obligatorio.');
     } 
 
-    if (input.is('#Nombre') || input.is('#Apellido') || input.is('#NombreAct') || input.is('#ApellidoAct')) {
-        var campoNombre = input.is('#Nombre') ? $('#Nombre') : $('#NombreAct');
-        var campoApellido = input.is('#Apellido') ? $('#Apellido') : $('#ApellidoAct');
+    if (inputElement.is('#Nombre') || inputElement.is('#Apellido') || inputElement.is('#NombreAct') || inputElement.is('#ApellidoAct')) {
+        var campoNombre = inputElement.is('#Nombre') ? $('#Nombre') : $('#NombreAct');
+        var campoApellido = inputElement.is('#Apellido') ? $('#Apellido') : $('#ApellidoAct');
         var spanErrorNombre = campoNombre.next('.text-danger');
         var spanErrorApellido = campoApellido.next('.text-danger');
         var valorNombre = campoNombre.val().trim();
@@ -773,20 +817,20 @@ function validarCampoUsuario(campo) {
         if (valorNombre === '') {
             spanErrorNombre.text('');
             spanVacioNombre.text('*');
-            input.removeClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
+            inputElement.removeClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
 
         } else {
             if (valorNombre.length < 3) {
                 spanErrorNombre.text('Este campo debe tener un mínimo de 3 caracteres.');
                 spanVacioNombre.text('');
-                input.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
+                inputElement.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
             } else if (/^[a-zA-Z]+\s[a-zA-Z]+$/.test(valorNombre)) {
                 spanErrorNombre.text('El nombre no puede contener números ni caracteres especiales (excepto espacios en nombres compuestos).');
-                input.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
+                inputElement.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
             } else {
                 spanErrorNombre.text('');
                 spanVacioNombre.text('');
-                input.removeClass('is-invalid');
+                inputElement.removeClass('is-invalid');
             }
         }
 
@@ -794,45 +838,45 @@ function validarCampoUsuario(campo) {
         if (valorApellido === '') {
             spanErrorApellido.text(' ');
             spanVacioApellido.text('*');
-            input.removeClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
+            inputElement.removeClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
         } else if (valorApellido.length < 3) {
             spanErrorApellido.text('Este campo debe tener un mínimo de 3 caracteres.');
             spanVacioApellido.text('');
-            input.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
+            inputElement.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
         } else if (/^[a-zA-Z]+\s[a-zA-Z]+$/.test(valorApellido)) {
             spanErrorApellido.text('El apellido no puede contener números ni caracteres especiales (excepto espacios en apellidos compuestos).');
             spanVacioApellido.text('');
-            input.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
+            inputElement.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
         } else {
             spanErrorApellido.text('');
             spanVacioApellido.text('');
-            input.removeClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
+            inputElement.removeClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
 
         }
     }
 
     // Validación de teléfono
-    if (input.is('#TelefonoUsuario') || input.is('#TelefonoUsuarioActU')) {
+    if (inputElement.is('#TelefonoUsuario') || inputElement.is('#TelefonoUsuarioActU')) {
         var telefonoValido = /^\d{7,}$/.test(valor); // Permite al menos 6 dígitos
 
         if (valor === '') {
             spanError.text('');
             spanVacio.text('*');
-            input.removeClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
+            inputElement.removeClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
         } else if (valor.length < 7 && valor.length > 0) {
             spanError.text('El teléfono debe tener mínimo 7 dígitos numéricos.');
             spanVacio.text('');
-            input.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
+            inputElement.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
 
         } else if (!telefonoValido) {
             spanError.text('Este campo no permite letras o espacios.');
             spanVacio.text('');
-            input.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
+            inputElement.addClass('is-invalid'); // Agregar la clase de Bootstrap para resaltar el campo vacío
         }
     }
 
     // Validación de correo electrónico
-    if (input.is('#CorreoUsuario') || input.is('#CorreoUsuarioAct')) {
+    if (inputElement.is('#CorreoUsuario') || inputElement.is('#CorreoUsuarioAct')) {
         const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor); // Verifica el formato de correo electrónico
         if (valor === '') {
             spanError.text('Este campo es necesario. Si desea omitirlo, use: correo@gmail.com');
@@ -847,7 +891,7 @@ function validarCampoUsuario(campo) {
     }
 
     // Validación de usuario
-    if (input.is('#Usuario') || input.is('#UsuarioAct')) {
+    if (inputElement.is('#Usuario') || inputElement.is('#UsuarioAct')) {
         const usuarioValido = /^[a-zA-Z]{3,}[a-zA-Z0-9_-]{0,16}$/.test(valor); // Verifica que el usuario cumpla con el formato especificado
         if (valor === '') {
             spanVacio.text('*');
@@ -864,7 +908,7 @@ function validarCampoUsuario(campo) {
     }
 
     // Validación de contraseña
-    if (input.is('#Contraseña') || input.is('#ContraseñaAct')) {
+    if (inputElement.is('#Contraseña') || inputElement.is('#ContraseñaAct')) {
         var spanErrorContraseña = $('#Contraseña').next('.text-danger'); // Obtén el elemento span correspondiente al campo Contraseña
         var spanErrorRepetir = $('#RepetirContraseña').next('.text-danger'); // Obtén el elemento span correspondiente al campo Repetir Contraseña
         var spanVacioContraseña = $('#Contraseña').prev('.text-danger'); // Obtén el elemento span correspondiente al campo Contraseña vacía
@@ -895,7 +939,7 @@ function validarCampoUsuario(campo) {
         }
     }
 
-    if (input.is('#RepetirContraseña')) {
+    if (inputElement.is('#RepetirContraseña')) {
         const contraseña = $('#Contraseña').val();
         const repetirContraseña = valor;
 

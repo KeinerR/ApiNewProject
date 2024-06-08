@@ -144,8 +144,6 @@ namespace ApiNewProject.Controllers
         [HttpGet("GetNombreCategoriaById")]
         public async Task<ActionResult<Categoria>> GetNombreCategoriaById(string nombreCategoria)
         {
-
-
             Categoria categoria = await _context.Categorias.Select(
                     s => new Categoria
                     {

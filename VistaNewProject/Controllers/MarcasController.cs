@@ -83,89 +83,161 @@ namespace VistaNewProject.Controllers
             var marcas = await _client.GetMarcaAsync();
             return Json(marcas);
         }
-
         public async Task<IActionResult> Details(int? id, int? page)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            var productos = await _client.GetProductoAsync();
-            var presentaciones = await _client.GetPresentacionAsync();
-            var lotes = await _client.GetLoteAsync();
-            var categorias = await _client.GetCategoriaAsync();
             var marcas = await _client.GetMarcaAsync();
+            var marcaExiste = marcas.FirstOrDefault(m => m.MarcaId == id);
+            if (marcaExiste == null) {
+                return NotFound();
 
-            // Calcular cantidad total de lotes por ProductoId y estado activo
-            var cantidadTotalPorProducto = lotes
-                .Where(l => l.EstadoLote == 1)
-                .GroupBy(l => l.ProductoId ?? 0)
-                .ToDictionary(
-                    grp => grp.Key,
-                    grp => grp.Sum(l => l.Cantidad)
-                );
-
-            // Concatenar nombre completo de presentaciones
-            foreach (var presentacion in presentaciones)
-            {
-                var nombrePresentacion = presentacion.NombrePresentacion;
-                var contenido = presentacion.Contenido;
-                var cantidad = presentacion.CantidadPorPresentacion ?? 1;
-
-                presentacion.NombreCompleto = cantidad > 1 ?
-                    $"{nombrePresentacion} x {cantidad} {contenido}" :
-                    $"{nombrePresentacion} de {contenido}";
             }
-
-            // Concatenar nombre completo de productos
-            foreach (var producto in productos)
-            {
-                if (cantidadTotalPorProducto.TryGetValue(producto.ProductoId, out var cantidadTotal))
-                {
-                    producto.CantidadTotal = cantidadTotal;
-                }
-                else
-                {
-                    producto.CantidadTotal = 0;
-                }
-                var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
-                var nombrePresentacion = presentacionEncontrada?.NombrePresentacion ?? "Sin presentación";
-                var contenido = presentacionEncontrada?.Contenido ?? "";
-                var cantidad = presentacionEncontrada?.CantidadPorPresentacion ?? 1;
-                var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
-                var nombreMarca = marcaEncontrada?.NombreMarca ?? "Sin marca";
-
-                producto.NombreCompleto = cantidad > 1 ?
-                    $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} {contenido}" :
-                    $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
-            }
-
-            var marca = marcas.FirstOrDefault(u => u.MarcaId == id);
+            var marca = await _client.FindMarcaAsync(id.Value);
             if (marca == null)
             {
                 return NotFound();
             }
 
             ViewBag.Marca = marca;
-            
 
+            var productos = await _client.GetProductoAsync();
             var productosDeMarca = productos.Where(p => p.MarcaId == id).ToList();
+
             ViewBag.CantidadProductosAsociados = productosDeMarca.Count;
 
             if (!productosDeMarca.Any())
             {
                 ViewBag.Message = "No se encontraron productos asociados a esta marca.";
-                return View(productosDeMarca.ToPagedList(1, 1));
+                return View(productosDeMarca.ToPagedList(1, 1)); // Devuelve un modelo paginado vacío
             }
 
-            int pageSize = 5; //registros por pagina
+            int pageSize = 5; // registros por página
             int pageNumber = page ?? 1;
 
-            var pagedProductos = productosDeMarca.ToPagedList(pageNumber, pageSize);
+            var pagedProductos = new List<Producto>();
 
-            return View(pagedProductos);
+            foreach (var producto in productosDeMarca)
+            {
+                var productoConNombreCompleto = await ConcatenarNombreCompletoProducto(producto.ProductoId);
+                pagedProductos.Add(productoConNombreCompleto);
+            }
+
+            var pagedProductosPagedList = pagedProductos.ToPagedList(pageNumber, pageSize);
+
+            return View(pagedProductosPagedList);
         }
+
+        public async Task<IActionResult> MarcaxCategoriasAsociadas(int? id, int? page, string order = "default")
+        {
+            if (id == null)
+            {
+                return BadRequest();
+            }
+            var marcas = await _client.GetMarcaAsync();
+
+            var marcaExiste = marcas.FirstOrDefault(p => p.MarcaId == id);
+            if (marcaExiste == null)
+            {
+                return NotFound();
+            }
+            var unidad = await _client.FindMarcaAsync(id.Value);
+            if (unidad == null)
+            {
+                return NotFound();
+            }
+
+            var categorias = await _client.GetCategoriaAsync();
+            var categoriasxmarcas = await _client.GetCategoriaxMarcasAsync();
+
+            var categoriasAsociadasIds = categoriasxmarcas
+                .Where(cu => cu.MarcaId == id.Value)
+                .Select(cu => cu.CategoriaId)
+                .ToList();
+
+            var categoriasAsociadas = categorias
+                .Select(c => new CategoriaxMarca
+                {
+                    CategoriaId = c.CategoriaId,
+                    NombreCategoria = c.NombreCategoria,
+                    MarcaId = id.Value,
+                    EstaAsociada = categoriasAsociadasIds.Contains(c.CategoriaId)
+                })
+                .ToList();
+
+            order = order?.ToLower() ?? "default";
+
+            switch (order)
+            {
+                case "alfabetico":
+                    categoriasAsociadas = categoriasAsociadas.OrderBy(c => c.NombreCategoria).ToList();
+                    break;
+                case "name_desc":
+                    categoriasAsociadas = categoriasAsociadas.OrderByDescending(c => c.NombreCategoria).ToList();
+                    break;
+                case "first":
+                    categoriasAsociadas = categoriasAsociadas.OrderBy(c => c.CategoriaId).ToList(); // assuming CategoriaId represents the order of creation
+                    break;
+                case "reverse":
+                    categoriasAsociadas = categoriasAsociadas.OrderByDescending(c => c.CategoriaId).ToList(); // assuming CategoriaId represents the order of creation
+                    break;
+                default:
+                    break;
+            }
+
+            int pageNumber = page ?? 1;
+            int pageSize = 6;
+            var pagedCategorias = categoriasAsociadas.ToPagedList(pageNumber, pageSize);
+
+            ViewBag.Marca = unidad;
+            ViewBag.CurrentOrder = order;
+
+            return View(pagedCategorias);
+        }
+
+        public async Task<IActionResult> CategoriasAsociadasxMarca(int? id, int? page)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var marcas = await _client.GetMarcaAsync();
+
+            var marcaExiste = marcas.FirstOrDefault(p => p.MarcaId == id);
+            if (marcaExiste == null)
+            {
+                return NotFound();
+            }
+            var marca = await _client.FindMarcaAsync(id.Value); // Obtener la unidad directamente como int
+
+            var categorias = await _client.GetCategoriaAsync();
+            var categoriasxmarcas = await _client.GetCategoriaxMarcasAsync();
+
+            // Filtrar categorías asociadas a la unidad específica
+            var categoriasAsociadasIds = categoriasxmarcas
+                .Where(cu => cu.MarcaId == id.Value) // Utilizar id.Value directamente
+                .Select(cu => cu.CategoriaId)
+                .ToList();
+
+            var categoriasAsociadas = categorias.Where(c => categoriasAsociadasIds.Contains(c.CategoriaId)).ToList();
+            // Concatenar el nombre de la unidad con su cantidad si está disponible
+
+            ViewBag.Marca = marca;
+            if (!categoriasAsociadas.Any())
+            {
+                return View(categoriasAsociadas.ToPagedList(1, 1)); // Devuelve un modelo paginado vacío
+            }
+
+            int pageSize = 4; // Número máximo de elementos por página
+            int pageNumber = page ?? 1;
+
+            var pagedCategorias = categoriasAsociadas.ToPagedList(pageNumber, pageSize);
+
+            return View(pagedCategorias);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] Marca marca)
         {
@@ -332,6 +404,35 @@ namespace VistaNewProject.Controllers
             TempData["Tiempo"] = tiempo.HasValue ? tiempo.Value : 3000;
             TempData["EstadoAlerta"] = "false";
 
+        }
+
+        private async Task<Producto> ConcatenarNombreCompletoProducto(int productoId)
+        {
+            var producto = (await _client.GetProductoAsync()).FirstOrDefault(p => p.ProductoId == productoId);
+            var presentaciones = await _client.GetPresentacionAsync();
+            var lotes = await _client.GetLoteAsync();
+            var marcas = await _client.GetMarcaAsync();
+
+            // Calcular cantidad total de lotes por ProductoId y estado activo
+            var cantidadTotalPorProducto = lotes
+                .Where(l => l.EstadoLote == 1 && l.ProductoId == productoId)
+                .Sum(l => l.Cantidad);
+
+            producto.CantidadTotal = cantidadTotalPorProducto;
+
+            // Concatenar nombre completo de presentaciones
+            var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
+            var nombrePresentacion = presentacionEncontrada?.NombrePresentacion ?? "Sin presentación";
+            var contenido = presentacionEncontrada?.Contenido ?? "";
+            var cantidad = presentacionEncontrada?.CantidadPorPresentacion ?? 1;
+            var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
+            var nombreMarca = marcaEncontrada?.NombreMarca ?? "Sin marca";
+
+            producto.NombreCompleto = cantidad > 1 ?
+                $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} unidades de {contenido}" :
+                $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
+
+            return producto;
         }
 
 

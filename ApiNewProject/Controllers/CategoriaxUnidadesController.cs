@@ -33,7 +33,7 @@ namespace ApiNewProject.Controllers
             return list;
         }
 
-        // GET: api/CategoriaxUnidad/GetCategoriaxUnidad/5
+        // GET: api/CategoriaxUnidad/GetCategoriaxUnidad/
         [HttpGet("GetCategoriaxUnidad/{categoriaId}/{UnidadId}")]
         public async Task<ActionResult<CategoriaxUnidad>> GetCategoriaxUnidad(int categoriaId, int UnidadId)
         {
@@ -46,7 +46,7 @@ namespace ApiNewProject.Controllers
 
             return CategoriaxUnidad;
         }
-
+      
         // POST: api/CategoriaxUnidad/InsertarCategoria
         [HttpPost("InsertarCategoria")]
         public async Task<ActionResult<CategoriaxUnidad>> InsertarCategoria(CategoriaxUnidad CategoriaxUnidad)
@@ -68,8 +68,6 @@ namespace ApiNewProject.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar la categoria en la base de datos: " + ex.Message);
             }
         }
-
-
         // DELETE: api/CategoriaxUnidad/DeleteCategoriaxUnidad/5
         [HttpDelete("DeleteCategoriaxUnidad/{categoriaId}/{UnidadId}")]
         public async Task<IActionResult> DeleteCategoriaxUnidad(int categoriaId, int UnidadId)

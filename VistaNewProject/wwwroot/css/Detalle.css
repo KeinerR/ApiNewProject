@@ -1,8 +1,4 @@
-﻿.contenedor-datos-detalle {
-    display: flex; /* Convertir el contenedor en un flex container */
-    align-items: center; /* Centrar verticalmente los elementos hijos */
-    justify-content: center;
-}
+﻿
 .tablaDetalle {
     margin: 0 auto;
     width: 60%;
@@ -12,9 +8,9 @@
     .tablaDetalle th,
     .tablaDetalle td {
         text-align: center;
-        white-space: nowrap; 
-        padding: 5px;
-        border: 1px solid #ddd; /* Añadimos bordes a las celdas */
+        white-space: nowrap;
+        padding: 4px; /* Ajusté el padding para mayor espacio */
+        border: 1px solid #ddd;
     }
 
     .tablaDetalle thead tr {
@@ -22,24 +18,19 @@
     }
 
     .tablaDetalle tbody tr {
-        padding: 0px;
         background-color: white;
     }
 
-        /* Efecto hover al pasar el ratón sobre las filas */
         .tablaDetalle tbody tr:hover {
             background-color: #f5f5f5;
         }
 
 .pedido-info {
     text-align: center;
+    padding: 10px; /* Ajuste de padding */  
 }
 
-
-
-
-
-
+/*-------------------------Contenedor de datos d producto------------------------------------------------------------------------------*/
 
 /*Estilos para Detalle de producto*/
 #contenedor-datos-producto {
@@ -77,12 +68,126 @@
     box-shadow: 0 0 0 0.1rem rgba(0, 0, 255, 0.25); /* Cambia el color de la sombra a azul */
 }
 
+
+/*-------------------------------------------------------------------------------------------------------*/
+
+
 .TituloSobreTabladetalle {
     text-align: center;
-    padding-top: 20px;
 }
+
 .MensajeNoDetalles {
     padding-top: 20px;
     text-align: center;
-    font-size: 20px;
+    font-size: 18px;
 }
+
+/*-------------------------------------------------------------------------------------------------------*/
+
+.contenedorDescripcion {
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+}
+    .contenedorDescripcion .tituloDescripcion {
+        margin: 0px;
+        font-size: 20px;
+        font-weight: bold;
+        padding: 0px;
+    }
+    .contenedorDescripcion .textoDescripcion {
+        margin: 0px;
+        font-size: 16px;
+        padding: 0px;
+    }
+
+/*-------------------------------------------------------------------------------------------------------*/
+.contenedorChecboxDeAsociacion {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.contenedorChecboxDeAsociacionUnico {
+    display: flex;
+    gap:10px;
+}
+
+/*------------------------------------Botones-------------------------------------------------------------------*/
+
+.contenedor-botones-detalle {
+    display:flex;
+    gap:10px;
+}
+.botonEnviarDetalle {
+    background: #F8D545;
+    border-radius: 50px;
+}
+
+    .botonEnviarDetalle:hover {
+        background: #F8D435;
+        border-radius: 50px;
+    }
+
+.botonVolver {
+    border-radius: 50px;
+    color: white;
+    background-color: #213b68;
+}
+
+    .botonVolver:hover {
+        color: white;
+        background-color: #212b68;
+    }
+
+.botonAsociar {
+    border-radius: 50px;
+    color: white;
+    background-color: #213b68;
+}
+
+    .botonAsociar:hover {
+        color: white;
+        background-color: #212b68;
+    }
+
+/*-----------------------------------------------------------*/
+/*Estilo de Detalle de compra*/
+.detalle-compra {
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: solid red 2px;
+}
+
+    .detalle-compra header {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .detalle-compra .detalle-info {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+        .detalle-compra .detalle-info .info-label {
+            font-weight: bold;
+        }
+
+    .detalle-compra .info-label {
+        margin-left: 10px;
+    }
+
+
+    .detalle-compra .info-value {
+        display: inline-block;
+        margin-left: 5px;
+    }
+
+
+    .detalle-compra .detalle-info .info-value {
+        flex-grow: 1;
+    }

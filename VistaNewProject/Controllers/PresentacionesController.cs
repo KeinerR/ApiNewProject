@@ -35,7 +35,7 @@ namespace VistaNewProject.Controllers
                 var cantidad = presentacion.CantidadPorPresentacion ?? 1;
 
                 presentacion.NombreCompleto = cantidad > 1 ?
-                    $"{nombrePresentacion} x {cantidad} unidades de {contenido}" :
+                    $"{nombrePresentacion} x {cantidad} presentaciones de {contenido}" :
                     $"{nombrePresentacion} de {contenido}";
             }
 
@@ -104,45 +104,8 @@ namespace VistaNewProject.Controllers
                 return NotFound();
             }
 
-            var productos = await _client.GetProductoAsync();
             var presentaciones = await _client.GetPresentacionAsync();
-            var lotes = await _client.GetLoteAsync();
-            var categorias = await _client.GetCategoriaAsync();
-            var marcas = await _client.GetMarcaAsync();
-
-            // Calcular cantidad total de lotes por ProductoId y estado activo
-            var cantidadTotalPorProducto = lotes
-                .Where(l => l.EstadoLote == 1) // Filtrar por estado activo
-                .GroupBy(l => l.ProductoId ?? 0) // Convertir ProductoId a int no anulable
-                .ToDictionary(
-                    grp => grp.Key,
-                    grp => grp.Sum(l => l.Cantidad) // Sumar la cantidad de cada grupo
-                );
-
-            // Concatenar nombre completo de productos
-            foreach (var producto in productos)
-            {
-                // Obtener la cantidad total correspondiente al producto actual
-                if (cantidadTotalPorProducto.TryGetValue(producto.ProductoId, out var cantidadTotal))
-                {
-                    producto.CantidadTotal = cantidadTotal;
-                }
-                else
-                {
-                    // Si no hay cantidad total para este producto, asignar cero o un valor predeterminado según sea necesario
-                    producto.CantidadTotal = 0;
-                }
-                var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
-                var nombrePresentacion = presentacionEncontrada?.NombrePresentacion ?? "Sin presentación";
-                var contenido = presentacionEncontrada?.Contenido ?? "";
-                var cantidad = presentacionEncontrada?.CantidadPorPresentacion ?? 1;
-                var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
-                var nombreMarca = marcaEncontrada?.NombreMarca ?? "Sin marca";
-
-                producto.NombreCompleto = cantidad > 1 ?
-                    $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} x {cantidad} {contenido}" :
-                    $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
-            }
+            
             var presentacion = presentaciones.FirstOrDefault(p => p.PresentacionId == id);
             if (presentacion == null) {
                 return NotFound();
@@ -151,34 +114,144 @@ namespace VistaNewProject.Controllers
             {
                 // Concatenación del nombre de la presentación
                 string nombreCompleto = presentacion.CantidadPorPresentacion > 1 ?
-                 $"{presentacion.NombrePresentacion} x {presentacion.CantidadPorPresentacion} unidades de {presentacion.Contenido}" : $"{presentacion.NombrePresentacion} de {presentacion.Contenido}";
+                 $"{presentacion.NombrePresentacion} x {presentacion.CantidadPorPresentacion} presentaciones de {presentacion.Contenido}" : $"{presentacion.NombrePresentacion} de {presentacion.Contenido}";
                 // Pasar el nombre completo a la vista
                 ViewBag.NombreCompletoPresentacion = nombreCompleto;
             }
             ViewBag.Presentacion = presentacion;
-            ViewBag.Productos = productos;
-
+            var productos = await _client.GetProductoAsync();
             var productosDePresentacion = productos.Where(p => p.PresentacionId == id).ToList();
 
             ViewBag.CantidadProductosAsociados = productosDePresentacion.Count; // Guardar la cantidad de productos asociados
 
             if (!productosDePresentacion.Any())
             {
-                // Si no hay productos, establecer ViewBag.Message
                 ViewBag.Message = "No se encontraron productos asociados a esta presentación.";
                 return View(productosDePresentacion.ToPagedList(1, 1)); // Devuelve un modelo paginado vacío
             }
 
-            int pageSize = 5;
+            int pageSize = 4;
             int pageNumber = page ?? 1;
 
-            var pagedProductos = productosDePresentacion.ToPagedList(pageNumber, pageSize);
+            var pagedProductos = new List<Producto>();
 
-            return View(pagedProductos);
+            foreach (var producto in productosDePresentacion)
+            {
+                var productoConNombreCompleto = await ConcatenarNombreCompletoProducto(producto.ProductoId);
+                pagedProductos.Add(productoConNombreCompleto);
+            }
+
+            var pagedProductosPagedList = pagedProductos.ToPagedList(pageNumber, pageSize);
+
+            return View(pagedProductosPagedList);
+        }
+        public async Task<IActionResult> PresentacionxCategoriasAsociadas(int? id, int? page, string order = "default")
+        {
+            if (id == null)
+            {
+                return BadRequest();
+            }
+            var presentaciones = await _client.GetPresentacionAsync();
+
+            var presentacionExiste = presentaciones.FirstOrDefault(p => p.PresentacionId == id);
+            if (presentacionExiste == null)
+            {
+                return NotFound();
+            }
+            var unidad = await _client.FindPresentacionAsync(id.Value);
+            if (unidad == null)
+            {
+                return NotFound();
+            }
+
+            var categorias = await _client.GetCategoriaAsync();
+            var categoriasxpresentaciones = await _client.GetCategoriaxPresentacionesAsync();
+
+            var categoriasAsociadasIds = categoriasxpresentaciones
+                .Where(cu => cu.PresentacionId == id.Value)
+                .Select(cu => cu.CategoriaId)
+                .ToList();
+
+            var categoriasAsociadas = categorias
+                .Select(c => new CategoriaxPresentacion
+                {
+                    CategoriaId = c.CategoriaId,
+                    NombreCategoria = c.NombreCategoria,
+                    PresentacionId = id.Value,
+                    EstaAsociada = categoriasAsociadasIds.Contains(c.CategoriaId)
+                })
+                .ToList();
+
+            order = order?.ToLower() ?? "default";
+
+            switch (order)
+            {
+                case "alfabetico":
+                    categoriasAsociadas = categoriasAsociadas.OrderBy(c => c.NombreCategoria).ToList();
+                    break;
+                case "name_desc":
+                    categoriasAsociadas = categoriasAsociadas.OrderByDescending(c => c.NombreCategoria).ToList();
+                    break;
+                case "first":
+                    categoriasAsociadas = categoriasAsociadas.OrderBy(c => c.CategoriaId).ToList(); // assuming CategoriaId represents the order of creation
+                    break;
+                case "reverse":
+                    categoriasAsociadas = categoriasAsociadas.OrderByDescending(c => c.CategoriaId).ToList(); // assuming CategoriaId represents the order of creation
+                    break;
+                default:
+                    break;
+            }
+
+            int pageNumber = page ?? 1;
+            int pageSize = 6;
+            var pagedCategorias = categoriasAsociadas.ToPagedList(pageNumber, pageSize);
+
+            ViewBag.Presentacion = unidad;
+            ViewBag.CurrentOrder = order;
+
+            return View(pagedCategorias);
         }
 
+        public async Task<IActionResult> CategoriasAsociadasxPresentacion(int? id, int? page)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var presentaciones = await _client.GetPresentacionAsync();
 
+            var presentacionExiste = presentaciones.FirstOrDefault(p => p.PresentacionId == id);
+            if (presentacionExiste == null)
+            {
+                return NotFound();
+            }
+            var presentacion = await _client.FindPresentacionAsync(id.Value); // Obtener la unidad directamente como int
 
+            var categorias = await _client.GetCategoriaAsync();
+            var categoriasxpresentaciones = await _client.GetCategoriaxPresentacionesAsync();
+
+            // Filtrar categorías asociadas a la unidad específica
+            var categoriasAsociadasIds = categoriasxpresentaciones
+                .Where(cu => cu.PresentacionId == id.Value) // Utilizar id.Value directamente
+                .Select(cu => cu.CategoriaId)
+                .ToList();
+
+            var categoriasAsociadas = categorias.Where(c => categoriasAsociadasIds.Contains(c.CategoriaId)).ToList();
+            // Concatenar el nombre de la unidad con su cantidad si está disponible
+
+            ViewBag.Presentacion = presentacion;
+            if (!categoriasAsociadas.Any())
+            {
+                return View(categoriasAsociadas.ToPagedList(1, 1)); // Devuelve un modelo paginado vacío
+            }
+
+            int pageSize = 4; // Número máximo de elementos por página
+            int pageNumber = page ?? 1;
+
+            var pagedCategorias = categoriasAsociadas.ToPagedList(pageNumber, pageSize);
+
+            return View(pagedCategorias);
+        }
 
 
         [HttpPost]
@@ -343,6 +416,36 @@ namespace VistaNewProject.Controllers
                 return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
             }
         }
+
+        private async Task<Producto> ConcatenarNombreCompletoProducto(int productoId)
+        {
+            var producto = (await _client.GetProductoAsync()).FirstOrDefault(p => p.ProductoId == productoId);
+            var presentaciones = await _client.GetPresentacionAsync();
+            var lotes = await _client.GetLoteAsync();
+            var marcas = await _client.GetMarcaAsync();
+
+            // Calcular cantidad total de lotes por ProductoId y estado activo
+            var cantidadTotalPorProducto = lotes
+                .Where(l => l.EstadoLote == 1 && l.ProductoId == productoId)
+                .Sum(l => l.Cantidad);
+
+            producto.CantidadTotal = cantidadTotalPorProducto;
+
+            // Concatenar nombre completo de presentaciones
+            var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
+            var nombrePresentacion = presentacionEncontrada?.NombrePresentacion ?? "Sin presentación";
+            var contenido = presentacionEncontrada?.Contenido ?? "";
+            var cantidad = presentacionEncontrada?.CantidadPorPresentacion ?? 1;
+            var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
+            var nombreMarca = marcaEncontrada?.NombreMarca ?? "Sin marca";
+
+            producto.NombreCompleto = cantidad > 1 ?
+                $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} presentaciones de {contenido}" :
+                $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
+
+            return producto;
+        }
+
 
         private void MensajeSweetAlert(string icon, string title, string message, string estado, int? tiempo)
         {

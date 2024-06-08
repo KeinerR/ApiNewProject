@@ -18,7 +18,7 @@
 
         <!-- Botón para abrir el modal -->
         <button type="button" id="botonabrirModalPresentacion" onclick="simularClickPresentacion();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalPresentacion">
-            <i class="fas fa-plus-circle"></i> Agregar Presentacin
+            <i class="fas fa-plus-circle"></i> Agregar presentación
         </button>
     </div>
     <!-- Modal -->
@@ -28,7 +28,7 @@
                 <div class="modal-cabecera">
                     <div id="pibo"></div>
                     <div class="modal-header-view TituloModal">
-                        <h2 class="modal-title">Agregar Presentación</h2>
+                        <h2 class="modal-title">Agregar presentación</h2>
                     </div>
                     <div class="modal-header-view" id="modal-cabecera-equis">
                         <button type="button" onclick="limpiarFormularioPresentacion();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -48,26 +48,27 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="Contenido" class="control-label">Contenido<span class="Mensaje">*</span></label>
-                                        <input type="text" id="Contenido" oninput="validarCampoPresentacion(this);"  name="contenido" class="form-control" />
+                                        <input type="text" id="Contenido" oninput="validarCampoPresentacion(this);" name="contenido" class="form-control" />
                                         <span class="text-danger"></span>
                                     </div>
                                 </div>
                             </div>
-                           <div class="row">
-                               <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="CantidadPorPresentacion" class="control-label">Cantidad de productos x presentacion<span class="Mensaje">*</span></label>
                                         <input type="number" id="CantidadPorPresentacion" oninput="validarCampoPresentacion(this);" name="cantidadPorPresentacion" class="form-control" />
                                         <span class="text-danger"></span>
                                     </div>
-                               </div>
-                           </div>
-                           <div class="row">
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="form-group">
-                                    <label for="DescripcionPresentacion" oninput="validarCampoPresentacion(this);" class="control-label">Descripcion Presentacion</label>                            <input type="text" id="DescripcionPresentacion" name="descripcionPresentacion" placeholder="" class="form-control" />
+                                    <label for="DescripcionPresentacion" class="control-label">Descripcion Presentacion</label>
+                                    <input type="text" id="DescripcionPresentacion" oninput="validarCampoPresentacion(this);" name="descripcionPresentacion" class="form-control" />
                                     <span class="text-danger"></span>
                                 </div>
-                           </div>
+                            </div>
                         </div>
                         <div class="MensajeInicial"></div>
                         <div class="MensajeErrores"></div>
@@ -76,15 +77,15 @@
                             <button type="submit" class="btn btn-primary btnGuardar">Agregar</button>
                         </div>
                     </form>
-                </div> 
+                </div>
             </div>
         </div>
         <div class="modal-dialog">
-            <div class="modal-content" id="FormActualizarPresentacion">
+            <div class="modal-content noBe" id="FormActualizarPresentacion">
                 <div class="modal-cabecera">
                     <div id="pibo"></div>
                     <div class="modal-header-view TituloModal">
-                        <h2 class="modal-title">Actualizar Presentación</h2>
+                        <h2 class="modal-title">Actualizar presentación</h2>
                     </div>
                     <div class="modal-header-view" id="modal-cabecera-equis">
                         <button type="button" onclick="limpiarFormularioPresentacion();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -92,7 +93,6 @@
                 </div>
                 <div class="modal-cuerpo">
                     <form asp-controller="Presentaciones" asp-action="Update" method="post" class="modal-formulario-actualizar-presentacion">
-                        @Html.AntiForgeryToken()
                         <div class="modal-body">
                             <div class="form-group">
                                 <input id="PresentacionIdAct" name="presentacionId" class="form-control" type="hidden" />
@@ -100,14 +100,14 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="NombrePresentacionVistaAct" class="control-label">Tipo de presentacion<span class="Mensaje"></span></label>
+                                        <label for="NombrePresentacionVistaAct" class="control-label">Tipo de presentacion<span class="Mensaje">*</span></label>
                                         <input type="text" id="NombrePresentacionVistaAct" oninput="validarCampoPresentacion(this);" name="nombrePresentacion" class="form-control" autocomplete="off" />
                                         <span class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="ContenidoAct" class="control-label">Contenido<span class="Mensaje"></span></label>
+                                        <label for="ContenidoAct" class="control-label">Contenido<span class="Mensaje">*</span></label>
                                         <input type="text" id="ContenidoAct" oninput="validarCampoPresentacion(this);" name="contenido" class="form-control" autocomplete="off" />
                                         <span class="text-danger"></span>
                                     </div>
@@ -116,11 +116,11 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="CantidadPorPresentacionAct" class="control-label">Cantidad de productos x Presentación<span class="Mensaje"></span></label>
+                                        <label for="CantidadPorPresentacionAct" class="control-label">Cantidad de productos x Presentación<span class="Mensaje">*</span></label>
                                         <input type="text" id="CantidadPorPresentacionAct" oninput="validarCampoPresentacion(this);" name="cantidadPorPresentacion" class="form-control" />
                                         <span class="text-danger"></span>
                                     </div>
-                                </div>     
+                                </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="EstadoPresentacionAct" class="control-label">Estado<span class="noSee">Buscando Igualar longitud</span></label>
@@ -134,10 +134,10 @@
                             <div class="row">
                                 <div class="form-group">
                                     <label for="DescripcionPresentacionAct" class="control-label">Descripcion Presentacion</label>
-                                    <input type="text" id="DescripcionPresentacionAct" oninput="validarCampoPresentacion(this);" name="descripcionPresentacion" placeholder="" class="form-control" />
+                                    <input type="text" id="DescripcionPresentacionAct" oninput="validarCampoPresentacion(this);" name="descripcionPresentacion" class="form-control" />
                                     <span class="text-danger"></span>
                                 </div>
-                            </div> 
+                            </div>
                         </div>
                         <div class="MensajeInicial"></div>
                         <div class="MensajeErrores"></div>
@@ -150,25 +150,25 @@
             </div>
         </div>
     </div>
-    <br />
-    <hr>
-    <div class="mt-3">
-        <a href="?order=alfabetico">Ordenar por nombre (A-Z)</a> |
-        <a href="?order=name_desc">Ordenar por nombre (Z-A)</a> |
-        <a href="?order=first">Ordenar por más antiguo</a> |
-        <a href="?order=reverse">Ordenar por más reciente</a>
+    <div class="contenedor-filtro">
+        <select name="order" class="input-sm empSelect" onchange="redirectToOrder(this)">
+            <option selected disabled>Ordenar por</option>
+            <option data-url="?order=alfabetico">Ordenar por nombre (A-Z)</option>
+            <option data-url="?order=name_desc">Ordenar por nombre (Z-A)</option>
+            <option data-url="?order=first">Ordenar por más antiguo</option>
+            <option data-url="?order=reverse">Ordenar por más reciente</option>
+        </select>
     </div>
+    <hr>
     <table class="table table-custom text-center">
         <thead>
             <tr>
                 <th class="contadorB consecutivo noIs">#</th>
-                <th class="consecutivo contador">
-                    #
-                </th>
-                <th>NOMBRE PRESENTACION</th>
-                <th>CANTIDAD X PRESENTACION</th>
-                <th class="contenedorEstado">ESTADO</th>
-                <th>ACCIONES</th>
+                <th class="consecutivo contador">#</th>
+                <th>Nombre Completo</th>
+                <th>Cantidad x presentacion</th>
+                <th class="contenedorEstado">Estado</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody class="text-center">
@@ -205,43 +205,9 @@
                     </td>
                 </tr>
             }
-            @{
-                var presentaciones = ViewData["Presentaciones"] as List<Presentacion>;
-                if (presentaciones != null)
-                {
-                    int contadorC = 1;
-                    foreach (var presentacion in presentaciones)
-                    {
-                        <tr class="Presentaciones noIs">
-                            <td class="contadorB noIs">
-                                @contadorC <!-- Muestra el valor del contador -->
-                            </td>
-                            <td>@presentacion.PresentacionId</td>
-                            <td>@presentacion.NombreCompleto</td>
-                            <td>@presentacion.CantidadPorPresentacion</td>
-                            <td class="text-center align-middle">
-                                <label class="switch">
-                                    <input type="checkbox" @(presentacion.EstadoPresentacion != 0 ? "checked" : "") onchange="actualizarEstadoPresentacion('@presentacion.PresentacionId', this.checked)">
-                                    <span class="slider"></span>
-                                </label>
-                            </td>
-                            <td class="botonesTabla">
-                                <div class="botonesTablaContenedor">
-                                    <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoPresentacion(@presentacion.PresentacionId);"><i class="fas fa-edit"></i></button>
-                                    <a asp-action="Details" asp-controller="Presentaciones" asp-route-id="@presentacion.PresentacionId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
-                                    <form asp-controller="Presentaciones" class="eliminarPresentacion" asp-action="Delete" method="post">
-                                        <input type="hidden" value="@presentacion.PresentacionId" name="presentacionId" />
-                                        <button type="submit" value="" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                }
-            }
         </tbody>
     </table>
-    <div class="pagination-container mt-2">
+    <div class="pagination-container mt-2" id="paginationContainer">
         @if (Model != null && Model.PageCount > 1)
         {
             <div class="d-flex justify-content-center mb-5">

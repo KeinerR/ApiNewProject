@@ -31,10 +31,11 @@ namespace VistaNewProject.Controllers
                 case "first":
                     unidades = unidades.Reverse(); // Se invierte el orden de las unidades
                     unidades = unidades
-                   .OrderByDescending(p => p.EstadoUnidad == 1)
-                   .ToList();
+                    .OrderByDescending(p => p.EstadoUnidad == 1)
+                    .ToList();
                     break;
                 case "reverse":
+                    unidades = unidades.OrderByDescending(c => c.EstadoUnidad == 1).ToList();
                     break;
                 case "alfabetico":
                     unidades = unidades.OrderBy(p => p.NombreUnidad).ToList(); // Se ordenan alfabéticamente por el nombre de la presentación
@@ -57,6 +58,12 @@ namespace VistaNewProject.Controllers
                 return NotFound("error");
             }
 
+            // Concatenar nombre de unidad con cantidad
+            foreach (var unidad in unidades)
+            {
+                unidad.NombreUnidad = $"{unidad.NombreUnidad} x {unidad.CantidadPorUnidad}";
+            }
+
             var pageUnidad = await unidades.ToPagedListAsync(pageNumber, pageSize);
 
             if (!pageUnidad.Any() && pageUnidad.PageNumber > 1)
@@ -67,11 +74,11 @@ namespace VistaNewProject.Controllers
             int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
 
             ViewBag.Contador = contador;
-            ViewBag.Order = order; // Pasar el criterio de orden a la vistav
+            ViewBag.Order = order; // Pasar el criterio de orden a la vista
             ViewData["Unidades"] = unidades;
             return View(pageUnidad);
-
         }
+
 
         [HttpPost]
         public async Task<JsonResult> FindUnidad(int unidadId)
@@ -92,38 +99,121 @@ namespace VistaNewProject.Controllers
             {
                 return NotFound();
             }
-
             var unidades = await _client.GetUnidadAsync();
-            var unidad = unidades.FirstOrDefault(u => u.UnidadId == id);
+
+            var unidadExiste = unidades.FirstOrDefault(p => p.UnidadId == id);
+            if (unidadExiste == null)
+            {
+                return NotFound();
+            }
+            var unidad = await _client.FindUnidadAsync(id.Value); // Obtener la unidad directamente como int
+
+            var categorias = await _client.GetCategoriaAsync();
+            var categoriasxunidades = await _client.GetCategoriaxUnidadesAsync();
+
+            // Filtrar categorías asociadas a la unidad específica
+            var categoriasAsociadasIds = categoriasxunidades
+                .Where(cu => cu.UnidadId == id.Value) // Utilizar id.Value directamente
+                .Select(cu => cu.CategoriaId)
+                .ToList();
+
+            var categoriasAsociadas = categorias.Where(c => categoriasAsociadasIds.Contains(c.CategoriaId)).ToList();
+            // Concatenar el nombre de la unidad con su cantidad si está disponible
+
+            ViewBag.Unidad = unidad;
+            if (!categoriasAsociadas.Any())
+            {
+                return View(categoriasAsociadas.ToPagedList(1, 1)); // Devuelve un modelo paginado vacío
+            }
+
+            int pageSize = 4; // Número máximo de elementos por página
+            int pageNumber = page ?? 1;
+
+            var pagedCategorias = categoriasAsociadas.ToPagedList(pageNumber, pageSize);
+
+            return View(pagedCategorias);
+        }
+
+        public async Task<IActionResult> UnidadxCategoriasAsociadas(int? id, int? page, string order = "default")
+        {
+            if (id == null)
+            {
+                return BadRequest();
+            }
+            var unidades = await _client.GetUnidadAsync();
+
+            var unidadExiste = unidades.FirstOrDefault(p => p.UnidadId == id);
+            if (unidadExiste == null)
+            {
+                return NotFound();
+            }
+            var unidad = await _client.FindUnidadAsync(id.Value);
             if (unidad == null)
             {
                 return NotFound();
             }
 
-            ViewBag.Unidad = unidad;
+            var categorias = await _client.GetCategoriaAsync();
+            var categoriasxunidades = await _client.GetCategoriaxUnidadesAsync();
 
-            var productos = await _client.GetProductoAsync();
-            var productosDeMarca = productos.Where(p => p.MarcaId == id);
+            var categoriasAsociadasIds = categoriasxunidades
+                .Where(cu => cu.UnidadId == id.Value)
+                .Select(cu => cu.CategoriaId)
+                .ToList();
 
-            int pageSize = 1; // Número máximo de elementos por página
+            var categoriasAsociadas = categorias
+                .Select(c => new CategoriaxUnidad
+                {
+                    CategoriaId = c.CategoriaId,
+                    NombreCategoria = c.NombreCategoria,
+                    UnidadId = id.Value,
+                    EstaAsociada = categoriasAsociadasIds.Contains(c.CategoriaId)
+                })
+                .ToList();
+
+            order = order?.ToLower() ?? "default";
+
+            switch (order)
+            {
+                case "alfabetico":
+                    categoriasAsociadas = categoriasAsociadas.OrderBy(c => c.NombreCategoria).ToList();
+                    break;
+                case "name_desc":
+                    categoriasAsociadas = categoriasAsociadas.OrderByDescending(c => c.NombreCategoria).ToList();
+                    break;
+                case "first":
+                    categoriasAsociadas = categoriasAsociadas.OrderBy(c => c.CategoriaId).ToList(); // assuming CategoriaId represents the order of creation
+                    break;
+                case "reverse":
+                    categoriasAsociadas = categoriasAsociadas.OrderByDescending(c => c.CategoriaId).ToList(); // assuming CategoriaId represents the order of creation
+                    break;
+                default:
+                    break;
+            }
+
             int pageNumber = page ?? 1;
+            int pageSize = 6;
+            var pagedCategorias = categoriasAsociadas.ToPagedList(pageNumber, pageSize);
 
-            var pagedProductos = productosDeMarca.ToPagedList(pageNumber, pageSize);
+            ViewBag.Unidad = unidad;
+            ViewBag.CurrentOrder = order;
 
-            return View(pagedProductos);
+            return View(pagedCategorias);
         }
+
+
 
         public async Task<IActionResult> Create([FromForm] Unidad unidad)
         {
             if (ModelState.IsValid)
             {
                 var unidades = await _client.GetUnidadAsync();
-                var unidadExistente = unidades.FirstOrDefault(c => string.Equals(c.NombreUnidad, unidad.NombreUnidad, StringComparison.OrdinalIgnoreCase));
+                var unidadExistente = unidades.FirstOrDefault(c => string.Equals(c.NombreUnidad, unidad.NombreUnidad, StringComparison.OrdinalIgnoreCase) && c.CantidadPorUnidad == unidad.CantidadPorUnidad);
 
                 // Si ya existe una unidad con el mismo nombre, mostrar un mensaje de error
                 if (unidadExistente != null)
                 {
-                    MensajeSweetAlert("error", "Error", "Ya hay una unidad registrada con ese nombre.", "true", null);
+                    MensajeSweetAlert("error", "Error", $"Ya hay una unidad registrada con esos datos ID {unidadExistente.UnidadId}.", "true", null);
                     return RedirectToAction("Index");
                 }
 
@@ -163,7 +253,7 @@ namespace VistaNewProject.Controllers
                 foreach (var unidadC in unidades)
                 {
                     if (unidadC.UnidadId != unidad.UnidadId &&
-                        string.Equals(unidadC.NombreUnidad, unidad.NombreUnidad, StringComparison.OrdinalIgnoreCase))
+                        string.Equals(unidadC.NombreUnidad, unidad.NombreUnidad, StringComparison.OrdinalIgnoreCase) && unidadC.UnidadId != unidad.UnidadId && unidadC.CantidadPorUnidad == unidad.CantidadPorUnidad)
                     {
                         unidadesIgualesIds.Add(unidadC.UnidadId);
                     }
@@ -172,7 +262,7 @@ namespace VistaNewProject.Controllers
                 if (unidadesIgualesIds.Count > 0)
                 {
                     string unidadesIdsStr = string.Join(", ", unidadesIgualesIds);
-                    MensajeSweetAlert("error", "Error", $"Ya hay una unidad registrada con ese nombre. Unidad ID: {unidadesIdsStr}", "true", null);
+                    MensajeSweetAlert("error", "Error", $"Ya hay una unidad registrada con esos datos. Unidad ID: {unidadesIdsStr}", "true", null);
                     return RedirectToAction("Index");
                 }
 
@@ -243,7 +333,7 @@ namespace VistaNewProject.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpPatch("Unidads/UpdateEstadoUnidad/{id}")]
+        [HttpPatch("Unidades/UpdateEstadoUnidad/{id}")]
         public async Task<IActionResult> CambiarEstadoUnidad(int id)
         {
             // Llama al método del servicio para cambiar el estado del usuario

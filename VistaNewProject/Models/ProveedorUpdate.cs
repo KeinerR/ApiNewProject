@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VistaNewProject.Models
 {
-    public class Proveedor
+    public class ProveedorUpdate
     {
         public int ProveedorId { get; set; }
 
@@ -27,7 +27,7 @@ namespace VistaNewProject.Models
         [StringLength(40, ErrorMessage = "El correo no puede exceder los 40 caracteres.")]
         public string? Correo { get; set; }
 
-        [BindNever]
         public ulong? EstadoProveedor { get; set; }
+
     }
 }

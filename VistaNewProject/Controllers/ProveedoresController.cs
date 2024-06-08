@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Net;
+using System.Numerics;
 using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
@@ -14,12 +16,42 @@ namespace VistaNewProject.Controllers
             _client = client;
         }
 
-        public async Task<IActionResult> Index(int? page)
+        public async Task<IActionResult> Index(int? page, string order = "default")
         {
-            int pageSize = 5; // Cambiado a 5 para que la paginación se haga cada 5 registros
-            int pageNumber = page ?? 1; // Número de página actual (si no se especifica, es 1)
+            int pageSize = 5;
+            int pageNumber = page ?? 1;
 
-            var proveedores = await _client.GetProveedorAsync(); // Obtener todas las marcas
+            var proveedores = await _client.GetProveedorAsync(); // Obtener todas las proveedores
+
+            proveedores = proveedores.Reverse().ToList();
+            proveedores = proveedores.OrderByDescending(c => c.EstadoProveedor == 1).ToList();
+            order = order?.ToLower() ?? "default";
+
+            switch (order)
+            {
+                case "first":
+                    proveedores = proveedores.Reverse(); // Se invierte el orden de las proveedores
+                    proveedores = proveedores
+                   .OrderByDescending(p => p.EstadoProveedor == 1)
+                   .ToList();
+                    break;
+                case "reverse":
+                    break;
+                case "alfabetico":
+                    proveedores = proveedores.OrderBy(p => p.NombreEmpresa).ToList(); // Se ordenan alfabéticamente por el nombre de la presentación
+                    proveedores = proveedores
+                    .OrderByDescending(p => p.EstadoProveedor == 1)
+                    .ToList();
+                    break;
+                case "name_desc":
+                    proveedores = proveedores.OrderByDescending(p => p.NombreEmpresa).ToList(); // Se ordenan alfabéticamente por el nombre de la presentación
+                    proveedores = proveedores
+                    .OrderByDescending(p => p.EstadoProveedor == 1)
+                    .ToList();
+                    break;
+                default:
+                    break;
+            }
 
             if (proveedores == null)
             {
@@ -27,6 +59,7 @@ namespace VistaNewProject.Controllers
             }
 
             var pageProveedor = await proveedores.ToPagedListAsync(pageNumber, pageSize);
+
             if (!pageProveedor.Any() && pageProveedor.PageNumber > 1)
             {
                 pageProveedor = await proveedores.ToPagedListAsync(pageProveedor.PageCount, pageSize);
@@ -35,29 +68,28 @@ namespace VistaNewProject.Controllers
             int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
 
             ViewBag.Contador = contador;
+            ViewBag.Order = order; // Pasar el criterio de orden a la vistav
+            ViewData["Proveedores"] = proveedores;
+            return View(pageProveedor);
 
-            // Código del método Index que querías integrar
-            string mensaje = HttpContext.Session.GetString("Message");
-            TempData["Message"] = mensaje;
+        }
 
-            try
-            {
-                ViewData["Proveedores"] = proveedores;
-                return View(pageProveedor);
-            }
-            catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
-            {
-                HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
-                return RedirectToAction("Index", "Home");
-            }
-            catch
-            {
-                HttpContext.Session.SetString("Message", "Error en el aplicativo");
-                return RedirectToAction("LogOut", "Accesos");
-            }
+        [HttpPost]
+        public async Task<JsonResult> FindProveedor(int proveedorId)
+        {
+            var proveedor = await _client.FindProveedorAsync(proveedorId);
+            return Json(proveedor);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> FindProveedores()
+        {
+            var proveedores = await _client.GetProveedorAsync();
+            return Json(proveedores);
         }
         public async Task<IActionResult> Details(int? id, int? page)
         {
+            // Obtener todos los proveedores y filtrar por el proveedor específico
             var proveedores = await _client.GetProveedorAsync();
             var proveedor = proveedores.FirstOrDefault(u => u.ProveedorId == id);
             if (proveedor == null)
@@ -65,37 +97,27 @@ namespace VistaNewProject.Controllers
                 return NotFound();
             }
 
-            // Obtener las compras del proveedor específico
-            var comprasProveedor = await _client.GetCompraAsync();
-            var comprasProveedorFiltradas = comprasProveedor.Where(c => c.ProveedorId == proveedor.ProveedorId);
+            // Obtener todas las compras y filtrar por el proveedor específico
+            var comprasProveedor = (await _client.GetCompraAsync())
+                                   .Where(c => c.ProveedorId == proveedor.ProveedorId);
 
-            // Obtener los detalles de compra de las compras del proveedor específico
-            var detallesCompras = new List<Detallecompra>();
-            foreach (var compra in comprasProveedorFiltradas)
-            {
-                var detalles = await _client.GetDetallecompraAsync();
-                var detallesCompraPorCompra = detalles.Where(u => u.CompraId == compra.CompraId);
-                detallesCompras.AddRange(detallesCompraPorCompra);
-            }
+            // Obtener todos los detalles de compra
+            var detallesCompras = await _client.GetDetallecompraAsync();
 
-            var cantidadTotalProductosDict = new Dictionary<int, int>(); // Clave: ID del producto, Valor: Cantidad total
-            foreach (var detalleCompra in detallesCompras)
-            {
-                if (!cantidadTotalProductosDict.ContainsKey(detalleCompra.ProductoId ?? 0)) // Utiliza el valor predeterminado 0 si detalleCompra.ProductoId es nulo
-                {
-                    cantidadTotalProductosDict[detalleCompra.ProductoId ?? 0] = detalleCompra.Cantidad ?? 0; // Utiliza el valor predeterminado 0 si detalleCompra.Cantidad es nulo
-                }
-                else
-                {
-                    cantidadTotalProductosDict[detalleCompra.ProductoId ?? 0] += detalleCompra.Cantidad ?? 0; // Utiliza el valor predeterminado 0 si detalleCompra.Cantidad es nulo
-                }
+            // Filtrar los detalles de compra por las compras del proveedor
+            var detallesComprasFiltrados = detallesCompras
+                                           .Where(d => comprasProveedor.Any(c => c.CompraId == d.CompraId))
+                                           .ToList();
 
-            }
+            // Calcular la cantidad total de productos
+            var cantidadTotalProductosDict = detallesComprasFiltrados
+                .GroupBy(d => d.ProductoId)
+                .ToDictionary(g => g.Key ?? 0, g => g.Sum(d => d.Cantidad ?? 0));
 
+            // Obtener todos los productos
+            var productos = await _client.GetProductoAsync();
 
-
-            var productos = await _client.GetProductoAsync(); // Obtener todos los productos
-
+            // Crear la lista de productos con cantidad
             var productosConCantidad = new List<ProductoConCantidad>();
             foreach (var kvp in cantidadTotalProductosDict)
             {
@@ -103,10 +125,13 @@ namespace VistaNewProject.Controllers
                 var producto = productos.FirstOrDefault(p => p.ProductoId == kvp.Key);
                 if (producto != null)
                 {
+                    // Concatenar el nombre completo del producto
+                    producto = await ConcatenarNombreCompletoProducto(producto.ProductoId);
+
                     productosConCantidad.Add(new ProductoConCantidad
                     {
                         ProductoId = kvp.Key,
-                        NombreProducto = producto,
+                        NombreCompleto = producto,
                         Cantidad = kvp.Value
                     });
                 }
@@ -114,11 +139,16 @@ namespace VistaNewProject.Controllers
 
             // Convertir la lista de productos con cantidad a IPagedList
             var pageNumber = page ?? 1;
-            var pageSize = 10;
+            var pageSize = 4;
             var pagedProductos = productosConCantidad.ToPagedList(pageNumber, pageSize);
 
             // Actualizar la cantidad total de productos comprados en el proveedor
             ViewBag.CantidadTotalProductos = productosConCantidad.Sum(p => p.Cantidad);
+            ViewBag.CantidadProductosAsociados = productosConCantidad.Count;
+            if (productosConCantidad.Count == 0)
+            {
+                ViewBag.Message = "No hay productos adquiridos mediante este proveedor.";
+            }
 
             ViewBag.Proveedor = proveedor;
             return View(pagedProductos);
@@ -127,159 +157,253 @@ namespace VistaNewProject.Controllers
         public class ProductoConCantidad
         {
             public int ? ProductoId { get; set; }
-            public Producto ? NombreProducto { get; set; }
+            public Producto ? NombreCompleto { get; set; }
             public int ? Cantidad { get; set; }
         }
 
-
-
-        [HttpPost]
-        public async Task<IActionResult> Create([FromForm] string nombreEmpresa, string nombreContacto, string direccion, string telefono, string correo)
+        public async Task<IActionResult> Create([FromForm] Proveedor proveedor)
         {
             if (ModelState.IsValid)
             {
-                var provedores = await _client.GetProveedorAsync();
-                var provedoresexis = provedores.FirstOrDefault(c => string.Equals(c.NombreEmpresa, nombreEmpresa, StringComparison.OrdinalIgnoreCase));
+                var nombreEmpresaNormalizado = proveedor.NombreEmpresa?.Trim().ToLower();
+                var nombreContactoNormalizado = proveedor.NombreContacto?.Trim().ToLower();
+                var correoNormalizado = proveedor.Correo?.Trim().ToLower();
+                var telefonoNormalizado = proveedor.Telefono?.Trim().ToLower();
+                var direccionNormalizada = proveedor.Direccion?.Trim().ToLower();
 
-                // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
-                if (provedoresexis != null)
+                var correoPorDefault = "correo@gmail.com";
+                var proveedores = await _client.GetProveedorAsync();
+                var proveedorExistente = proveedores.FirstOrDefault(c =>
+                    c.NombreEmpresa.Trim().ToLower() == nombreEmpresaNormalizado &&
+                    c.NombreContacto.Trim().ToLower() == nombreContactoNormalizado &&
+                    c.Correo.Trim().ToLower() == correoNormalizado &&
+                    c.Telefono.Trim().ToLower() == telefonoNormalizado &&
+                    c.Direccion.Trim().ToLower() == direccionNormalizada
+                );
+
+                var correoExistente = proveedores.FirstOrDefault(c =>
+                    c.Correo.Trim().ToLower() == correoNormalizado &&
+                    c.NombreEmpresa.Trim().ToLower() != nombreEmpresaNormalizado &&
+                    c.Correo.Trim().ToLower() != correoPorDefault
+                );
+
+                var telefonoExistente = proveedores.FirstOrDefault(c =>
+                    c.Telefono.Trim().ToLower() == telefonoNormalizado &&
+                    c.NombreEmpresa.Trim().ToLower() != nombreEmpresaNormalizado
+                );
+
+                if (correoExistente != null)
                 {
-                    TempData["SweetAlertIcon"] = "error";
-                    TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "Ya hay un Proveedor registrada con ese nombre.";
+                    // El correo ya está siendo utilizado por otro proveedor con un nombre de empresa diferente
+                    MensajeSweetAlert("error", "Error", "Ya hay un proveedor registrado con ese correo electrónico.", "true", null);
                     return RedirectToAction("Index");
                 }
 
-                var proveedor = new Proveedor
+                if (telefonoExistente != null)
                 {
-                    NombreEmpresa = nombreEmpresa,
-                    NombreContacto = nombreContacto,
-                    Direccion = direccion,
-                    Telefono = telefono,
-                    Correo = correo
-                };
+                    // El teléfono ya está siendo utilizado por otro proveedor con un nombre de empresa diferente
+                    MensajeSweetAlert("error", "Error", "Ya hay un proveedor registrado con ese número de teléfono.", "true", null);
+                    return RedirectToAction("Index");
+                }
+
+                if (proveedorExistente != null)
+                {
+                    // Ya existe un proveedor registrado con estos datos
+                    MensajeSweetAlert("error", "Error", $"Ya hay un proveedor registrado con estos datos. ID: {proveedorExistente.ProveedorId}", "true", null);
+                    return RedirectToAction("Index");
+                }
 
                 var response = await _client.CreateProveedorAsync(proveedor);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    // Guardar un mensaje en TempData para mostrar en el Index
-                    TempData["SweetAlertIcon"] = "success";
-                    TempData["SweetAlertTitle"] = "Exito";
-                    TempData["SweetAlertMessage"] = "Registro Registrado Correctamente.";
+                    MensajeSweetAlert("success", "Éxito", "¡Proveedor registrado correctamente!", "false", null);
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    ViewBag.MensajeError = "No se pudieron guardar los datos.";
+                    MensajeSweetAlert("error", "Error", "¡Problemas al registrar la proveedor!", "true", null);
+                    return RedirectToAction("Index");
                 }
             }
             else
             {
-                ViewBag.MensajeError = "Los datos proporcionados no son válidos.";
-            }
-
-            // Si hay un error en la validación del modelo, vuelve a mostrar el formulario con los mensajes de error
-            return RedirectToAction("Index");
-        }
-
-        public async Task<IActionResult> Update([FromForm]  int proveedorIdAct, string nombreEmpresaAct, string nombreContactoAct, string direccionAct,string telefonoAct, string correoAct, ulong estadoProveedorAct)
-        {
-            var proveedores = await _client.GetProveedorAsync();
-            var proveedoresexist = proveedores.FirstOrDefault(c =>
-                string.Equals(c.NombreEmpresa, nombreEmpresaAct, StringComparison.OrdinalIgnoreCase)
-                && c.ProveedorId != proveedorIdAct);
-
-            // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
-            if (proveedoresexist != null)
-            {
-                TempData["SweetAlertIcon"] = "error";
-                TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "Ya hay un Proveedor registrada con ese nombre.";
+                // Devolver los errores de validación al cliente
+                foreach (var modelState in ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        MensajeSweetAlert("error", "Error de validación", error.ErrorMessage, "true", null);
+                    }
+                }
                 return RedirectToAction("Index");
             }
-            var proveedor = new Proveedor
+        }
+        public async Task<IActionResult> Update([FromForm] ProveedorUpdate proveedor)
+        {
+            if (ModelState.IsValid)
             {
-                ProveedorId = proveedorIdAct,
-                NombreEmpresa = nombreEmpresaAct,
-                NombreContacto = nombreContactoAct,
-                Direccion = direccionAct,
-                Telefono = telefonoAct,
-                Correo = correoAct,
-                EstadoProveedor = estadoProveedorAct
+                var nombreEmpresaNormalizado = proveedor.NombreEmpresa?.Trim().ToLower();
+                var nombreContactoNormalizado = proveedor.NombreContacto?.Trim().ToLower();
+                var correoNormalizado = proveedor.Correo?.Trim().ToLower();
+                var telefonoNormalizado = proveedor.Telefono?.Trim().ToLower();
+                var direccionNormalizada = proveedor.Direccion?.Trim().ToLower();
 
-            };
+                var correoPorDefault = "correo@gmail.com";
+                var proveedores = await _client.GetProveedorAsync();
 
-            var response = await _client.UpdateProveedorAsync(proveedor);
-            if(response != null) { 
-             
-                if(response.IsSuccessStatusCode)
+                var proveedorExistente = proveedores.FirstOrDefault(c =>
+             c.NombreEmpresa.Trim().ToLower() == nombreEmpresaNormalizado &&
+             c.NombreContacto.Trim().ToLower() == nombreContactoNormalizado &&
+             c.Correo.Trim().ToLower() == correoNormalizado &&
+             c.Telefono.Trim().ToLower() == telefonoNormalizado &&
+             c.Direccion.Trim().ToLower() == direccionNormalizada &&
+             c.ProveedorId != proveedor.ProveedorId
+         );
+
+                var correoExistente = proveedores.FirstOrDefault(c =>
+                    c.Correo.Trim().ToLower() == correoNormalizado &&
+                    c.NombreEmpresa.Trim().ToLower() != nombreEmpresaNormalizado &&
+                    c.Correo.Trim().ToLower() != correoPorDefault &&
+                    c.ProveedorId != proveedor.ProveedorId
+                );
+
+                var telefonoExistente = proveedores.FirstOrDefault(c =>
+                    c.Telefono.Trim().ToLower() == telefonoNormalizado &&
+                    c.NombreEmpresa.Trim().ToLower() != nombreEmpresaNormalizado &&
+                    c.ProveedorId != proveedor.ProveedorId
+                );
+
+                if (correoExistente != null)
                 {
-                    if (response.IsSuccessStatusCode)
+                    // El correo ya está siendo utilizado por otro proveedor con un nombre de empresa diferente
+                    MensajeSweetAlert("error", "Error", "Ya hay un proveedor registrado con ese correo electrónico.", "true", null);
+                    return RedirectToAction("Index");
+                }
+
+                if (telefonoExistente != null)
+                {
+                    // El teléfono ya está siendo utilizado por otro proveedor con un nombre de empresa diferente
+                    MensajeSweetAlert("error", "Error", "Ya hay un proveedor registrado con ese número de teléfono.", "true", null);
+                    return RedirectToAction("Index");
+                }
+
+                if (proveedorExistente != null)
+                {
+                    // Ya existe un proveedor registrado con estos datos
+                    MensajeSweetAlert("error", "Error", $"Ya hay un proveedor registrado con estos datos. ID: {proveedorExistente.ProveedorId}", "true", null);
+                    return RedirectToAction("Index");
+                }
+
+                var response = await _client.UpdateProveedorAsync(proveedor);
+
+                if (response == null)
+                {
+                    MensajeSweetAlert("error", "Error", "Error al realizar la solicitud de actualización.", "true", null);
+                    return RedirectToAction("Index");
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    MensajeSweetAlert("success", "Éxito", "¡Proveedor actualizado correctamente!", "false", null);
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    MensajeSweetAlert("error", "Error", "¡Problemas al actualizar el proveedor!", "true", null);
+                    return RedirectToAction("Index");
+                }
+            }
+            else
+            {
+                foreach (var modelState in ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
                     {
-                        TempData["SweetAlertIcon"] = "success";
-                        TempData["SweetAlertTitle"] = "Éxito";
-                        TempData["SweetAlertMessage"] = "Proveedor actualizada correctamente.";
-                        return RedirectToAction("Index");
+                        MensajeSweetAlert("error", "Error de validación", error.ErrorMessage, "true", null);
                     }
-                    else if (response.StatusCode == HttpStatusCode.NotFound)
-                    {
-                        TempData["SweetAlertIcon"] = "error";
-                        TempData["SweetAlertTitle"] = "Error";
-                        TempData["SweetAlertMessage"] = "La marca no se encontró en el servidor.";
-                        return RedirectToAction("Index");
-                    }
-                    else if (response.StatusCode == HttpStatusCode.BadRequest)
-                    {
-                        TempData["SweetAlertIcon"] = "error";
-                        TempData["SweetAlertTitle"] = "Error";
-                        TempData["SweetAlertMessage"] = "Nombre de marca duplicado.";
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        TempData["SweetAlertIcon"] = "error";
-                        TempData["SweetAlertTitle"] = "Error";
-                        TempData["SweetAlertMessage"] = "Error al actualizar la marca.";
-                        return RedirectToAction("Index");
-                    }
+                }
+                return RedirectToAction("Index");
+            }
+        }
+
+        public async Task<IActionResult> Delete(int proveedorId)
+        {
+                var response = await _client.DeleteProveedorAsync(proveedorId);
+                if (response.IsSuccessStatusCode)
+                {
+                    MensajeSweetAlert("success", "Éxito", "Proveedor eliminado correctamente.", "true", 3000);
 
                 }
-                
-             
-            
-            
-            
-            }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    MensajeSweetAlert("error", "Error", "La Proveedor no se encontró en el servidor.", "true", null);
+
+                }
+                else
+                {
+                    MensajeSweetAlert("error", "Error", "Error desconocido al eliminar la Proveedor.", "true", null);
+
+                }
+
             return RedirectToAction("Index");
-
-
         }
-
-         public async Task<IActionResult> Delete(int id)
+        [HttpPatch("Proveedores/UpdateEstadoProveedor/{id}")]
+        public async Task<IActionResult> CambiarEstadoProveedor(int id)
         {
-            var response= await _client.DeleteProveedorAsync(id);
+            // Llama al método del servicio para cambiar el estado del usuario
+            var response = await _client.CambiarEstadoProveedorAsync(id);
 
-            if (response.IsSuccessStatusCode) {
-
-                // La solicitud fue exitosa (código de estado 200 OK)
-                TempData["SweetAlertIcon"] = "success";
-                TempData["SweetAlertTitle"] = "Éxito";
-                TempData["SweetAlertMessage"] = "Proveedor eliminada correctamente";
-            }
-            else if (response.StatusCode == HttpStatusCode.BadRequest)
+            // Devuelve una respuesta adecuada en función de la respuesta del servicio
+            if (response.IsSuccessStatusCode)
             {
-                // La solicitud fue incorrecta debido a una restricción
-                TempData["SweetAlertIcon"] = "error";
-                TempData["SweetAlertTitle"] = "Error";
-                TempData["SweetAlertMessage"] = "No se puede eliminar el Proveedor debido a una restricción (Proveedor asociada a una Compra).";
+                return Ok();
             }
+            else
+            {
+                return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+            }
+        }
 
-
-            return RedirectToAction("Index");
+        private void MensajeSweetAlert(string icon, string title, string message, string estado, int? tiempo)
+        {
+            TempData["SweetAlertIcon"] = icon;
+            TempData["SweetAlertTitle"] = title;
+            TempData["SweetAlertMessage"] = message;
+            TempData["EstadoAlerta"] = estado;
+            TempData["Tiempo"] = tiempo.HasValue ? tiempo.Value : 3000;
+            TempData["EstadoAlerta"] = "false";
 
         }
 
+        private async Task<Producto> ConcatenarNombreCompletoProducto(int productoId)
+        {
+            var producto = (await _client.GetProductoAsync()).FirstOrDefault(p => p.ProductoId == productoId);
+            var presentaciones = await _client.GetPresentacionAsync();
+            var lotes = await _client.GetLoteAsync();
+            var marcas = await _client.GetMarcaAsync();
+
+            // Calcular cantidad total de lotes por ProductoId y estado activo
+            var cantidadTotalPorProducto = lotes
+                .Where(l => l.EstadoLote == 1 && l.ProductoId == productoId)
+                .Sum(l => l.Cantidad);
+
+            producto.CantidadTotal = cantidadTotalPorProducto;
+
+            // Concatenar nombre completo de presentaciones
+            var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
+            var nombrePresentacion = presentacionEncontrada?.NombrePresentacion ?? "Sin presentación";
+            var contenido = presentacionEncontrada?.Contenido ?? "";
+            var cantidad = presentacionEncontrada?.CantidadPorPresentacion ?? 1;
+            var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
+            var nombreMarca = marcaEncontrada?.NombreMarca ?? "Sin marca";
+
+            producto.NombreCompleto = cantidad > 1 ?
+                $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} unidades de {contenido}" :
+                $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
+
+            return producto;
+        }
 
 
     }
