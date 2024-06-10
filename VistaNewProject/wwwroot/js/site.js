@@ -149,8 +149,6 @@ function mostrarAlertaDataList(campo) {
 
     });
 }
-//Funciones para mostrar alerta
-
 
 // Función general para mostrar el Sweet Alert si no hay opciones disponibles
 function showAlertIfNoOptions(elementId, alertTitle, alertText) {
@@ -165,6 +163,20 @@ function showAlertIfNoOptions(elementId, alertTitle, alertText) {
         });
     }
 }
+
+//function showNoMarcasAlert(input) {
+
+//    showAlertIfNoOptions("marcas", "No hay marcas activas", "No hay marcas disponibles en este momento.");
+//}
+
+//function showNoPresentacionesAlert(input) {
+//    showAlertIfNoOptions("presentaciones", "No hay presentaciones activas", "No hay presentaciones disponibles en este momento.");
+//}
+
+//function showNoCategoriasAlert(input) {
+//    showAlertIfNoOptions("categorias", "No hay categorias ", "No hay categorias disponibles en este momento.");
+//}
+
 
 function mostrarAlertaCampoVacio(campo) {
     Swal.fire({
@@ -254,6 +266,10 @@ function editarFuncion() {
         // Quita el atributo readonly de los campos de entrada
         $('#precioProducto').removeAttr('readonly');
         $('#precioUnidad').removeAttr('readonly');
+        // Cambia el icono de candado a candado abierto en los inputs
+        $('.icono-input i').removeClass('fa-lock').addClass('fa-lock-open');
+        // Oculta el botón de desbloqueo
+        $('#desbloquearPrecios').hide();
         // Otro código que desees ejecutar después de quitar el atributo readonly
         var p = $('#precioProducto').val();
         var u = $('#precioUnidad').val();
@@ -262,6 +278,133 @@ function editarFuncion() {
 }
 
 
+    
 
+// Función para limpiar y rellenar las listas
+function fillList(selector, data, nameKey, idKey, stateKey, emptyMessage) {
+    const $list = $(selector).empty(); // Limpia la lista
+
+    if (data && data.length > 0) {
+        data.forEach(item => {
+            const option = `<option value="${item[nameKey]}" data-id="${item[idKey]}" data-estado="${item[stateKey]}">${item[nameKey]}</option>`;
+            $list.append(option);
+        });
+    } else {
+        // Si no hay datos, muestra un mensaje
+        const option = `<option>${emptyMessage}</option>`;
+        $list.append(option);
+    }
+}
+
+async function checkboxFiltrar() {
+    try {
+        const filtrar = document.getElementById('filtrarActivos').checked ? 1 : 0;
+        const asociar = document.getElementById('filtrarxCategoria').checked ? 1 : 0;
+        const filtro = $('#CategoriaId').val(); // Este es el filtro adicional para la categoría
+
+        let url = `/Productos/filtrarDataList/${filtrar}/${asociar}`;
+
+        // Si asociar es 1 y hay un filtro, añadir el filtro a la URL
+        if (asociar === 1 && filtro !== "") {
+            url += `/${filtro}`;
+        }
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ filtrar: filtrar })
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al cargar los productos');
+        }
+
+        const data = await response.json();
+        console.log(data);
+
+        // Limpia y rellena las listas utilizando la función fillList
+        fillList('#marcas', data.marcas, 'nombreMarca', 'marcaId', 'estadoMarca', 'No hay marcas disponibles');
+        fillList('#presentaciones', data.presentaciones, 'nombrePresentacion', 'presentacionId', 'estadoPresentacion', 'No hay presentaciones disponibles');
+        fillList('#categorias', data.categorias, 'nombreCategoria', 'categoriaId', 'estadoCategoria', 'No hay categorías disponibles');
+
+    } catch (error) {
+        console.error(error); // Muestra el error en la consola
+    }
+}
+async function checkboxFiltrarAct() {
+    try {
+        const filtrar = document.getElementById('filtrarActivosAct').checked ? 1 : 0;
+        const asociar = document.getElementById('filtrarxCategoriaAct').checked ? 1 : 0;
+        const filtro = $('#CategoriaIdAct').val(); // Este es el filtro adicional para la categoría
+
+        let url = `/Productos/filtrarDataList/${filtrar}/${asociar}`;
+
+        // Si asociar es 1 y hay un filtro, añadir el filtro a la URL
+        if (asociar === 1 && filtro !== "") {
+            url += `/${filtro}`;
+        }
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ filtrar: filtrar })
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al cargar los productos');
+        }
+
+        const data = await response.json();
+        console.log(data);
+
+        // Limpia y rellena las listas utilizando la función fillList
+        fillList('#marcas', data.marcas, 'nombreMarca', 'marcaId', 'estadoMarca', 'No hay marcas disponibles');
+        fillList('#presentaciones', data.presentaciones, 'nombrePresentacion', 'presentacionId', 'estadoPresentacion', 'No hay presentaciones disponibles');
+        fillList('#categorias', data.categorias, 'nombreCategoria', 'categoriaId', 'estadoCategoria', 'No hay categorías disponibles');
+
+    } catch (error) {
+        console.error(error); // Muestra el error en la consola
+    }
+}
+
+
+
+async function checkboxFiltrarActPasanddvariables(filtrar, asociar, filtro) {
+    try {
+        let url = `/Productos/filtrarDataList/${filtrar}/${asociar}`;
+
+        // Si asociar es 1 y hay un filtro, añadir el filtro a la URL
+        if (asociar === 1 && filtro !== "") {
+            url += `/${filtro}`;
+        }
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ filtrar: filtrar })
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al cargar los productos');
+        }
+
+        const data = await response.json();
+        console.log(data);
+
+        // Limpia y rellena las listas utilizando la función fillList
+        fillList('#marcas', data.marcas, 'nombreMarca', 'marcaId', 'estadoMarca', 'No hay marcas disponibles');
+        fillList('#presentaciones', data.presentaciones, 'nombrePresentacion', 'presentacionId', 'estadoPresentacion', 'No hay presentaciones disponibles');
+        fillList('#categorias', data.categorias, 'nombreCategoria', 'categoriaId', 'estadoCategoria', 'No hay categorías disponibles');
+
+    } catch (error) {
+        console.error(error); // Muestra el error en la consola
+    }
+}
 
 

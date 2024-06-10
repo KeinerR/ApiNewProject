@@ -7,17 +7,20 @@ using Microsoft.AspNetCore.Http;
 using System.Net;
 using Microsoft.CodeAnalysis.Operations;
 using System.Collections.Immutable;
+using System.Net.Http;
 
 
 namespace VistaNewProject.Controllers
 {
     public class ProductosController : Controller
     {
-
         private readonly IApiClient _client;
-        public ProductosController(IApiClient client)
+        private readonly ProductoService _productoService; // Agrega ProductoService como campo privado
+
+        public ProductosController(IApiClient client, ProductoService productoService) // Añade ProductoService al constructor
         {
             _client = client;
+            _productoService = productoService; // Inicializa ProductoService
         }
 
         public async Task<ActionResult> Index(int? page, string order = "default")
@@ -25,38 +28,38 @@ namespace VistaNewProject.Controllers
             int pageSize = 5; // Número máximo de elementos por página
             int pageNumber = page ?? 1;
             var productos = await _client.GetProductoAsync();
+            productos = productos.Reverse().ToList();
+            productos = productos.OrderByDescending(c => c.Estado == 1).ToList();
+
             var presentaciones = await _client.GetPresentacionAsync();
-            var lotes = await _client.GetLoteAsync();
             var categorias = await _client.GetCategoriaAsync();
             var marcas = await _client.GetMarcaAsync();
-
-            // Filtrar y ordenar productos
-            productos = productos.Where(p => p.Estado == 1).ToList(); // Filtrar productos activos
 
             switch (order.ToLower())
             {
                 case "first":
                     productos = productos.Reverse().ToList();
+                    productos = productos.OrderByDescending(c => c.Estado == 1).ToList();
                     break;
                 case "alfabetico":
                     productos = productos.OrderBy(p => p.NombreCompleto).ToList();
+                    productos = productos.OrderByDescending(c => c.Estado == 1).ToList();
                     break;
                 case "name_desc":
                     productos = productos.OrderByDescending(p => p.NombreCompleto).ToList();
+                    productos = productos.OrderByDescending(c => c.Estado == 1).ToList();
                     break;
                 default:
                     break;
             }
 
-
-            // Calcular cantidad total de lotes por ProductoId y estado activo
-            var cantidadTotalPorProducto = lotes
-                .Where(l => l.EstadoLote == 1) // Filtrar por estado activo
-                .GroupBy(l => l.ProductoId ?? 0) // Convertir ProductoId a int no anulable
-                .ToDictionary(
-                    grp => grp.Key,
-                    grp => grp.Sum(l => l.Cantidad) // Sumar la cantidad de cada grupo
-                );
+            // Concatenar nombres completos y calcular cantidad total
+            var productosConcatenados = new List<Producto>();
+            foreach (var producto in productos)
+            {
+                var productoConcatenado = await _productoService.ConcatenarNombreCompletoProducto(producto.ProductoId);
+                productosConcatenados.Add(productoConcatenado);
+            }
 
 
             // Concatenar nombre completo de presentaciones
@@ -70,34 +73,7 @@ namespace VistaNewProject.Controllers
                     $"{nombrePresentacion} x {cantidad} unidades de {contenido}" :
                     $"{nombrePresentacion} de {contenido}";
             }
-
-            // Concatenar nombre completo de productos
-            foreach (var producto in productos)
-            {
-                // Obtener la cantidad total correspondiente al producto actual
-                if (cantidadTotalPorProducto.TryGetValue(producto.ProductoId, out var cantidadTotal))
-                {
-                    producto.CantidadTotal = cantidadTotal;
-                }
-                else
-                {
-                    // Si no hay cantidad total para este producto, asignar cero o un valor predeterminado según sea necesario
-                    producto.CantidadTotal = 0;
-                }
-
-                var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
-                var nombrePresentacion = presentacionEncontrada?.NombrePresentacion ?? "Sin presentación";
-                var contenido = presentacionEncontrada?.Contenido ?? "";
-                var cantidad = presentacionEncontrada?.CantidadPorPresentacion ?? 1;
-                var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
-                var nombreMarca = marcaEncontrada?.NombreMarca ?? "Sin marca";
-
-                producto.NombreCompleto = cantidad > 1 ?
-                    $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} {contenido}" :
-                    $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
-            }
-
-            var pageProductos= await productos.ToPagedListAsync(pageNumber, pageSize);
+            var pageProductos = productosConcatenados.ToPagedList(pageNumber, pageSize);
 
             // Si la página solicitada no tiene elementos y no es la primera página, redirigir a la última página
             if (!pageProductos.Any() && pageProductos.PageNumber > 1)
@@ -113,107 +89,53 @@ namespace VistaNewProject.Controllers
             ViewBag.Productos = productos; // Pasar la lista paginada y ordenada a la vista
             ViewBag.Marcas = marcas;
             ViewBag.Order = order; // Pasar el criterio de orden a la vista
-            ViewData["Productos"] = productos;
+            ViewData["Productos"] = productosConcatenados;
             return View(pageProductos);
         }
-        public async Task<ActionResult> ProductosInactivos(int? page, string order = "default")
+
+        [HttpPost("Productos/filtrarDataList/{filtrar}/{asociar}/{asociarcategoria?}")]
+        public async Task<ActionResult> filtrarDataList(int? filtrar, int? asociar, int? asociarcategoria = null)
         {
-            int pageSize = 5; // Número máximo de elementos por página
-            int pageNumber = page ?? 1;
-            var productos = await _client.GetProductoAsync();
-            var presentaciones = await _client.GetPresentacionAsync();
-            var lotes = await _client.GetLoteAsync();
             var categorias = await _client.GetCategoriaAsync();
             var marcas = await _client.GetMarcaAsync();
-
-            // Filtrar y ordenar productos
-            productos = productos.Where(p => p.Estado == 0).ToList(); // Filtrar productos activos
-
-            switch (order.ToLower())
+            var presentaciones = await _client.GetPresentacionAsync();
+            var categoriasxpresentaciones = await _client.GetCategoriaxPresentacionesAsync();
+            var categoriasxmarcas = await _client.GetCategoriaxMarcasAsync();
+            // Verificar si se debe filtrar por elementos activos
+            if (filtrar == 0)
             {
-                case "first":
-                    productos = productos.Reverse().ToList();
-                    break;
-                case "alfabetico":
-                    productos = productos.OrderBy(p => p.NombreCompleto).ToList();
-                    break;
-                case "name_desc":
-                    productos = productos.OrderByDescending(p => p.NombreCompleto).ToList();
-                    break;
-                default:
-                    break;
+                // Filtrar por elementos activos
+                categorias = categorias.Where(c => c.EstadoCategoria == 1).ToList();
+                marcas = marcas.Where(m => m.EstadoMarca == 1).ToList();
+                presentaciones = presentaciones.Where(p => p.EstadoPresentacion == 1).ToList();
             }
-
-
-            // Calcular cantidad total de lotes por ProductoId y estado activo
-            var cantidadTotalPorProducto = lotes
-                .Where(l => l.EstadoLote == 1) // Filtrar por estado activo
-                .GroupBy(l => l.ProductoId ?? 0) // Convertir ProductoId a int no anulable
-                .ToDictionary(
-                    grp => grp.Key,
-                    grp => grp.Sum(l => l.Cantidad) // Sumar la cantidad de cada grupo
-                );
-
-
-            // Concatenar nombre completo de presentaciones
-            foreach (var presentacion in presentaciones)
+            if (asociarcategoria != null)
             {
-                var nombrePresentacion = presentacion.NombrePresentacion;
-                var contenido = presentacion.Contenido;
-                var cantidad = presentacion.CantidadPorPresentacion ?? 1;
-
-                presentacion.NombreCompleto = cantidad > 1 ?
-                    $"{nombrePresentacion} x {cantidad} unidades de {contenido}" :
-                    $"{nombrePresentacion} de {contenido}";
-            }
-
-            // Concatenar nombre completo de productos
-            foreach (var producto in productos)
-            {
-                // Obtener la cantidad total correspondiente al producto actual
-                if (cantidadTotalPorProducto.TryGetValue(producto.ProductoId, out var cantidadTotal))
+                if (asociar == 1)
                 {
-                    producto.CantidadTotal = cantidadTotal;
-                }
-                else
-                {
-                    // Si no hay cantidad total para este producto, asignar cero o un valor predeterminado según sea necesario
-                    producto.CantidadTotal = 0;
+                    // Filtrar categorías asociadas a la unidad específica
+                    var marcasAsociadasIds = categoriasxmarcas
+                        .Where(cu => cu.CategoriaId == asociarcategoria.Value)
+                        .Select(cu => cu.MarcaId)
+                        .ToList();
+
+                    marcas = marcas.Where(c => marcasAsociadasIds.Contains(c.MarcaId)).ToList();
+
+                    var presentacionesAsociadasIds = categoriasxpresentaciones
+                        .Where(cu => cu.CategoriaId == asociarcategoria.Value)
+                        .Select(cu => cu.PresentacionId)
+                        .ToList();
+
+                    presentaciones = presentaciones.Where(c => presentacionesAsociadasIds.Contains(c.PresentacionId)).ToList();
                 }
 
-                var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
-                var nombrePresentacion = presentacionEncontrada?.NombrePresentacion ?? "Sin presentación";
-                var contenido = presentacionEncontrada?.Contenido ?? "";
-                var cantidad = presentacionEncontrada?.CantidadPorPresentacion ?? 1;
-                var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
-                var nombreMarca = marcaEncontrada?.NombreMarca ?? "Sin marca";
-
-                producto.NombreCompleto = cantidad > 1 ?
-                    $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} {contenido}" :
-                    $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
             }
+          
+            
 
-            var pageProductos= await productos.ToPagedListAsync(pageNumber, pageSize);
-
-            // Si la página solicitada no tiene elementos y no es la primera página, redirigir a la última página
-            if (!pageProductos.Any() && pageProductos.PageNumber > 1)
-            {
-                return RedirectToAction("Index", new { page = pageProductos.PageCount });
-            }
-
-            int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
-
-            ViewBag.Contador = contador;
-            ViewBag.Presentaciones = presentaciones;
-            ViewBag.Categorias = categorias;
-            ViewBag.Productos = productos; // Pasar la lista paginada y ordenada a la vista
-            ViewBag.Marcas = marcas;
-            ViewBag.Order = order; // Pasar el criterio de orden a la vista
-            ViewData["Productos"] = productos;
-            return View(pageProductos);
+            // Retornar los registros filtrados o todos los registros según corresponda
+            return Json(new { Categorias = categorias, Marcas = marcas, Presentaciones = presentaciones });
         }
-     
-
 
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] ProductoEnd producto)
@@ -247,6 +169,7 @@ namespace VistaNewProject.Controllers
                 var productExist = productos.FirstOrDefault(p =>
                     Normalize(p.NombreProducto) == normalizedProductoNombre &&
                     p.PresentacionId == producto.PresentacionId &&
+                    p.MarcaId == producto.MarcaId &&
                     p.CategoriaId == producto.CategoriaId);
 
                 if (productExist != null)
@@ -300,85 +223,60 @@ namespace VistaNewProject.Controllers
         }
 
 
-        public async Task<IActionResult> Details(int? id, int? page)
+        public async Task<IActionResult> Details(int? id, int? page)    
         {
             int pageSize = 4; // Número máximo de elementos por página
             int pageNumber = page ?? 1;
+
             if (id == null)
             {
                 return NotFound();
             }
 
-            var producto = await _client.GetProductoAsync();
-            var presentacion = await _client.GetPresentacionAsync();
-            var marca = await _client.GetMarcaAsync();
-            var categoria = await _client.GetCategoriaAsync();
+            var productos = await _client.GetProductoAsync();
             var lotes = await _client.GetLoteAsync();
 
-            if (producto == null || presentacion == null || marca == null || categoria == null || lotes == null)
-            {
-                return NotFound();
-            }
-
-            var productoInfo = producto.FirstOrDefault(u => u.ProductoId == id);
+            var productoInfo = productos.FirstOrDefault(u => u.ProductoId == id);
             if (productoInfo == null)
             {
                 return NotFound();
             }
 
-            var presentacionInfo = presentacion.FirstOrDefault(u => u.PresentacionId == productoInfo.PresentacionId);
-            var nombrePresentacion = presentacionInfo?.NombrePresentacion;
-            var cantidad = presentacionInfo?.CantidadPorPresentacion; // Valor predeterminado en caso de que CantidadPorPresentacion sea nulo
-            var contenido = presentacionInfo?.Contenido;
-            var marcaInfo = marca.FirstOrDefault(u => u.MarcaId == productoInfo.MarcaId);
-            var nombreMarca = marcaInfo?.NombreMarca;
-            var categoriaInfo = categoria.FirstOrDefault(u => u.CategoriaId == productoInfo.CategoriaId);
-
-            if (cantidad > 1)
-            {
-                productoInfo.NombreCompleto = $"{nombrePresentacion} de {productoInfo.NombreProducto} x {cantidad} {contenido}";
-            }
-            else
-            {
-                productoInfo.NombreCompleto = $"{nombrePresentacion} de {productoInfo.NombreProducto} {nombreMarca} de {contenido}";
-            }
+            // Concatenar nombres completos y calcular cantidad total
+            var productoConcatenado = await _productoService.ConcatenarNombreCompletoProducto(productoInfo.ProductoId);
 
             var lotesInfo = lotes
                 .Where(u => u.ProductoId == productoInfo.ProductoId && u.Cantidad > 0 && u.EstadoLote == 1)
                 .ToList();
 
-        
             // Crear una lista de LoteVista y asignar los valores de lotesInfo
-            List<LoteVista> listaLotesVista = new List<LoteVista>();
-            foreach (var loteInfo in lotesInfo)
+            var listaLotesVista = lotesInfo.Select(loteInfo => new LoteVista
             {
-                listaLotesVista.Add(new LoteVista
-                {
-                    LoteId = loteInfo.LoteId,
-                    DetalleCompraId = loteInfo.DetalleCompraId,
-                    ProductoId = loteInfo.ProductoId,
-                    NumeroLote = loteInfo.NumeroLote,
-                    PrecioCompra = loteInfo.PrecioCompra,
-                    PrecioPorPresentacion = loteInfo.PrecioPorPresentacion,
-                    PrecioPorUnidadProducto = loteInfo.PrecioPorUnidadProducto,
-                    FechaVencimiento = loteInfo.FechaVencimiento,
-                    Cantidad = loteInfo.Cantidad,
-                    EstadoLote = loteInfo.EstadoLote,
-                    DetalleCompra = loteInfo.DetalleCompra,
-                    Producto = loteInfo.Producto
-                });
-            }
-            foreach (var lote in listaLotesVista)
-            {
-                lote.FechaCaducidad = FormatearFechaVencimiento(lote.FechaVencimiento);
-            }
+                LoteId = loteInfo.LoteId,
+                DetalleCompraId = loteInfo.DetalleCompraId,
+                ProductoId = loteInfo.ProductoId,
+                NumeroLote = loteInfo.NumeroLote,
+                PrecioCompra = loteInfo.PrecioCompra,
+                PrecioPorPresentacion = loteInfo.PrecioPorPresentacion,
+                PrecioPorUnidadProducto = loteInfo.PrecioPorUnidadProducto,
+                FechaVencimiento = loteInfo.FechaVencimiento,
+                Cantidad = loteInfo.Cantidad,
+                EstadoLote = loteInfo.EstadoLote,
+                DetalleCompra = loteInfo.DetalleCompra,
+                Producto = loteInfo.Producto,
+                FechaCaducidad = FormatearFechaVencimiento(loteInfo.FechaVencimiento)
+            }).ToList();
 
             var pagedLote = listaLotesVista.ToPagedList(pageNumber, pageSize);
-            ViewData["Producto"] = productoInfo;
-            ViewData["Lotes"] = listaLotesVista; // Ahora pasamos la lista de LoteVista a la vista
 
-            return View(pagedLote);
+            ViewData["Producto"] = productoConcatenado;
+            ViewData["Lotes"] = pagedLote; // Se cambia a pagedLote para reflejar paginación
+
+            return View(pagedLote); // Se pasa pagedLote a la vista en lugar de listaLotesVista
         }
+
+
+
         [HttpPost]
         public async Task<JsonResult> FindProductos()
         {
@@ -622,15 +520,10 @@ namespace VistaNewProject.Controllers
                     }
 
                     TempData["Producto"] = producto.ProductoId;
-                    TempData["SweetAlertIconAct"] = "info";
-                    TempData["SweetAlertTitleAct"] = "¡Atencion!";
-                    TempData["SweetAlertMessageAct"] = "Valor Producto"; // Nuevo TempData para el mensaje
                     TempData["PrecioPorPresentacionRedondeado"] = precioPorPresentacionRedondeado?.ToString(); // Convertir a string
                     TempData["PrecioPorUnidadDeProductoRedondeado"] = precioPorUnidadDeProductoRedondeado?.ToString();
-                    TempData["TiempoAct"] = 20000;
+                    TempData["TiempoAct"] = false;
                     TempData["EstadoAlertaAct"] = "true";
-                    Console.WriteLine(precioPorPresentacionRedondeado);
-                    Console.WriteLine(precioPorUnidadDeProductoRedondeado);
                     return RedirectToAction("Details", "Productos", new { id = id });
 
 
@@ -655,29 +548,38 @@ namespace VistaNewProject.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        //Pendiente
-        //[HttpPost]
-        //public async Task<IActionResult> CambiarPrecios(int id, decimal precioProducto, decimal precioUnidad)
-        //{
-        //    try
-        //    {
-        //        Console.WriteLine(precioProducto);
-        //        Console.WriteLine(precioProducto + 3444444444444);
-        //        // Aquí puedes utilizar el ID y los precios recibidos para realizar las operaciones necesarias
+        
+        [HttpPost]
+        public async Task<IActionResult> CambiarPrecios(int productoId, decimal precioProducto, decimal precioUnidad)
+        {
+            try
+            {
+                // Consumir el servicio para actualizar los precios de los lotes
+                var response = await _client.UpdatePrecioLotesAsync(productoId, precioUnidad, precioProducto);
 
-        //        // Redireccionar a alguna acción después de procesar los datos
-        //        return RedirectToAction("Index");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Puedes registrar la excepción o mostrar detalles en un mensaje de error
-        //        Console.WriteLine($"Ocurrió una excepción: {ex.Message}");
+                // Verificar si la solicitud fue exitosa
+                if (response.IsSuccessStatusCode)
+                {
+                    // Redirigir a la acción Index
+                    return RedirectToAction("Details", new { id = productoId });
+                }
+                else
+                {
+                    // Si la solicitud no fue exitosa, manejar el error aquí
+                    // Por ejemplo, puedes mostrar un mensaje de error
+                    MensajeSweetAlert("error", "Error", "Por favor, complete todos los campos obligatorios con *.", "false", null);
+                    return RedirectToAction("Details", new { id = productoId });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Puedes registrar la excepción o mostrar detalles en un mensaje de error
+                Console.WriteLine($"Ocurrió una excepción: {ex.Message}");
 
-        //        // Puedes redirigir a una vista de error o mostrar un mensaje de error
-        //        return RedirectToAction("Error");
-        //    }
-
-        //}
+                // Puedes redirigir a una vista de error o mostrar un mensaje de error
+                return RedirectToAction("Error");
+            }
+        }
 
         private void SetTempData(string icon, string title, string message)
         {
@@ -719,13 +621,6 @@ namespace VistaNewProject.Controllers
                 return string.Empty; // Si la fecha es nula, retorna una cadena vacía o puedes manejarlo de otra manera
             }
         }
-
-
-
-
-
-
-
 
     }
 }

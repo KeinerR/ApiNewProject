@@ -120,8 +120,51 @@ namespace ApiNewProject.Controllers
 
             return Ok();
         }
+        [HttpPut("UpdatePrecioLotes")]
+        public async Task<ActionResult> UpdatePreciosLotes(int productoId, decimal precioPorUnidadProducto, decimal precioPorPresentacion)
+        {
+            // Buscar todos los lotes activos asociados al productoId
+            var lotes = await _context.Lotes.Where(l => l.ProductoId == productoId && l.EstadoLote == 1).ToListAsync();
+
+            if (lotes == null || !lotes.Any())
+            {
+                return NotFound($"No se encontraron lotes activos para el producto con ID {productoId}");
+            }
+
+            // Actualizar los precios en todos los lotes encontrados
+            foreach (var lote in lotes)
+            {
+                lote.PrecioPorUnidadProducto = precioPorUnidadProducto;
+                lote.PrecioPorPresentacion = precioPorPresentacion;
+            }
+
+            // Guardar los cambios en la base de datos
+            await _context.SaveChangesAsync();
+
+            return Ok($"Se actualizaron los precios en {lotes.Count} lotes asociados al producto con ID {productoId}");
+        }
 
 
+        [HttpPut("UpdatePrecioLote")]
+        public async Task<ActionResult> UpdatePrecioLote(int loteId,string numeroLote, decimal precioPorUnidadProducto, decimal precioPorPresentacion)
+        {
+            // Buscar el lote con el ID proporcionado
+            var loteExistente = await _context.Lotes.FirstOrDefaultAsync(s => s.LoteId == loteId && s.NumeroLote == numeroLote);
+
+            if (loteExistente == null)
+            {
+                return NotFound($"No se encontró un lote con ID {loteId}");
+            }
+
+            // Actualizar los precios del lote
+            loteExistente.PrecioPorUnidadProducto = precioPorUnidadProducto;
+            loteExistente.PrecioPorPresentacion = precioPorPresentacion;
+
+            // Guardar los cambios en la base de datos
+            await _context.SaveChangesAsync();
+
+            return Ok($"Se actualizó el precio del lote con ID {loteId}");
+        }
         [HttpDelete("DeleteLote/{Id}")]
         public async Task<HttpStatusCode> DeleteLote(int Id)
         {

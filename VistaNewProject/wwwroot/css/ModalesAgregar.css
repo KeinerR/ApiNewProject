@@ -57,6 +57,15 @@
     border: solid red dashed;
     margin: 0; /* Eliminar márgenes para un mejor ajuste */
 }
+.MensajeInicial {
+    text-align: center;
+    justify-content: center;
+}
+
+.MensajeErrores {
+    text-align: center;
+    justify-content: center;
+}
 
 /* Media queries para adaptabilidad */
 @media (max-width: 768px) {
@@ -114,14 +123,8 @@
     display: block;  
     max-width: 100%
 }
-.MensajeInicial {
-    text-align: center; 
-    justify-content:center;
-}
-.MensajeErrores{
-    text-align: center; 
-    justify-content:center;
-}
+
+
 
 /*ajustar tamaño para la modal de categoria*/
 #ContenedorCategoria .modal-dialog {

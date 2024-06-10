@@ -25,6 +25,7 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 // Registrar el servicio de hashing de contraseñas
 builder.Services.AddSingleton<PasswordHasherService>();
+builder.Services.AddScoped<ProductoService>();
 
 // Configurar autenticación basada en cookies
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

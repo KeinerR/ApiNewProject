@@ -129,7 +129,8 @@ namespace VistaNewProject.Services
         Task<Lote> FindLoteAsync(int id);
         Task<HttpResponseMessage> UpdateLoteAsync(Lote lote);
         Task<HttpResponseMessage> DeleteLoteAsync(int id);
-
+        Task<HttpResponseMessage> UpdatePrecioLotesAsync(int productoId, decimal precioxunidad, decimal precioxproducto );
+        Task<HttpResponseMessage> UpdatePrecioLoteAsync(int productoId, string numeroLote, decimal precioxunidad, decimal precioxproducto );
 
 
 
@@ -193,6 +194,8 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> DeleteCategoriaxMarcaAsync(int categoriaId, int marcaId);
 
 
+
+       
 
 
 

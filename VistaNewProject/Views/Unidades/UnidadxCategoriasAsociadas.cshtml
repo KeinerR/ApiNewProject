@@ -1,11 +1,9 @@
 ﻿@using X.PagedList
 @using X.PagedList.Mvc.Core
 @model IPagedList<VistaNewProject.Models.CategoriaxUnidad>
-@{   
+@{
     ViewData["Title"] = "Asociar categorías";
 }
-
-
 <br />
 <div class="contenedor-botones-detalle">
     <a asp-action="Details" asp-route-id="@ViewBag.Unidad.UnidadId" class="btn botonVolver">
@@ -14,17 +12,17 @@
 </div>
 <h2 class="TituloSobreTabladetalle">Asociar categorías</h2>
 
-    <div class="contenedor-filtro col-2">
+<div class="contenedor-filtro col-2">
     <select id="order" name="order" class="input-sm empSelect" onchange="redirectToOrder(this)">
         <option selected disabled>
             Ordenar por
-       </option>
-            <option data-url="?order=alfabetico">Ordenar por nombre (A-Z)</option>
-            <option data-url="?order=name_desc">Ordenar por nombre (Z-A)</option>
-            <option data-url="?order=first">Ordenar por más antiguo</option>
-            <option data-url="?order=reverse">Ordenar por más reciente</option>
-        </select>
-    </div>
+        </option>
+        <option data-url="?order=alfabetico">Ordenar por nombre (A-Z)</option>
+        <option data-url="?order=name_desc">Ordenar por nombre (Z-A)</option>
+        <option data-url="?order=first">Ordenar por más antiguo</option>
+        <option data-url="?order=reverse">Ordenar por más reciente</option>
+    </select>
+</div>
 <br />
 <br />
 <div class="contenedorChecboxDeAsociacion">
@@ -40,7 +38,6 @@
                 </label>
             </div>
         }
-
     }
     else
     {

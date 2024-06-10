@@ -178,7 +178,7 @@
 
         </script>
     }
-    @if (TempData["SweetAlertMessageAct"] != null)
+    @if (TempData["Producto"] != null)
     {
         @if (decimal.TryParse(TempData["PrecioPorPresentacionRedondeado"]?.ToString(), out decimal precioPorPresentacion))
         {
@@ -186,36 +186,43 @@
             {
                 <script>
                     Swal.fire({
-                        position: 'top-start',
+                        position: 'top', 
+                        customClass: {
+                            popup: 'popup-style' 
+                        },
                         showCloseButton: true,
-                        icon: '@TempData["SweetAlertIconAct"]',
-                        title: '@TempData["SweetAlertTitleAct"]',
                         html: `<div class="contenedor-detalle-producto">
-                                                    <h4>@TempData["SweetAlertMessageAct"]</h4>
-                                                    <form asp-action="CambiarPrecios" id="formCambiarPrecios" asp-controller="Productos" method="post">
-                                                        <input type="hidden" value='@TempData["Producto"]'>
-                                                        <div>
-                                                            <label class="detalle-label" for="precioProducto">Precio por Producto:</label>
-                                                            <input readonly type="text" value="@precioPorPresentacion" id="precioProducto" name="precioProducto" class="detalle-input form-control">
-                                                        </div>
-                                                        <div>
-                                                            <label class="detalle-label" for="precioUnidad">Precio por Unidad de Producto:</label>
-                                                            <input readonly type="text" value="@precioPorUnidad" id="precioUnidad" name="precioUnidad" class="detalle-input form-control">
-                                                        </div>
-                                                    </form>
-                                                 </div>
-                                                 <button id="btn-Detallecompra-producto" onclick="editarFuncion()"><i class="fas fa-edit"></i>Editar</button>`,
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                        timerProgressBar: true,
+                        <h4 class="text-center">Precio redondeado</h4>
+                        <form id="formCambiarPrecios" action="/Productos/CambiarPrecios" method="post">
+                            <input type="hidden" name="productoId" value="@TempData["Producto"]">
+                            <div class="icono-input">
+                                <label class="detalle-label" for="precioProducto">Por producto:</label>
+                                                                        <input readonly type="text" value="@TempData["PrecioPorPresentacionRedondeado"]" id="precioProducto" name="precioProducto" class="detalle-input form-control">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <div class="icono-input">
+                                <label class="detalle-label" for="precioUnidad">Por unidad de producto:</label>
+                                                                        <input readonly type="text" value="@TempData["PrecioPorUnidadDeProductoRedondeado"]" id="precioUnidad" name="precioUnidad" class="detalle-input form-control">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                        </form>
+                        <div id="contenedorRedondearPrecios">
+                            <button id="desbloquearPrecios" class="btn" onclick="editarFuncion()">
+                                <i id="iconoEditar" class="fas fa-edit"></i>Editar
+                            </button>
+                        </div>
+                    </div>`,
                         showCancelButton: true,
                         confirmButtonText: 'Continuar',
-                        cancelButtonText: 'Cancelar',
-                        preConfirm: () => {
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
                             document.getElementById('formCambiarPrecios').submit();
                         }
                     });
                 </script>
+
+
             }
         }
     }

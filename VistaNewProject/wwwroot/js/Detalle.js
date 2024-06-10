@@ -111,7 +111,6 @@ async function actualizarEstadoCategoriaxPresentacion(presentacionId, categoriaI
     }
 }
 
-
 async function actualizarEstadoCategoriaxMarca(marcaId, categoriaId, isChecked) {
     console.log(marcaId, categoriaId);
     // Validación básica

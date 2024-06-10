@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -865,6 +866,46 @@ namespace VistaNewProject.Services
             var response = await _httpClient.DeleteAsync($"Lotes/DeleteLote/{id}");
             return response;
         }
+
+        public async Task<HttpResponseMessage> UpdatePrecioLotesAsync(int productoId, decimal precioxunidad, decimal precioxproducto)
+        {
+            // Crear el objeto con los datos a enviar en la solicitud
+            var data = new
+            {
+                productoId,
+                precioxunidad,
+                precioxproducto
+            };
+
+            // Serializar el objeto a JSON
+            var json = JsonConvert.SerializeObject(data);
+
+            // Crear el contenido JSON
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            // Enviar la solicitud HTTP PUT con los datos proporcionados
+            var response = await _httpClient.PutAsync($"Lotes/UpdatePrecioLotes?productoId={productoId}&precioPorUnidadProducto={precioxunidad}&precioPorPresentacion={precioxproducto}", content);
+
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdatePrecioLoteAsync(int loteId, string numeroLote, decimal precioxunidad, decimal precioxproducto)
+        {
+            // Crear objeto con los datos a enviar en la solicitud
+            var data = new
+            {
+                LoteId = loteId,
+                NumeroLote = numeroLote,
+                PrecioPorUnidadProducto = precioxunidad,
+                PrecioPorPresentacion = precioxproducto
+            };
+
+            // Enviar la solicitud HTTP PUT con los datos proporcionados
+            var response = await _httpClient.PutAsJsonAsync("Lotes/UpdatePrecioLote", data);
+
+            return response;
+        }
+
 
 
 

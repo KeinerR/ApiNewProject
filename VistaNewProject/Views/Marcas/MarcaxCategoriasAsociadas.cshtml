@@ -4,12 +4,8 @@
 @{
     ViewData["Title"] = "Asociar categorías";
 }
-
 <br />
-<div class="contenedor-botones-detalle">
-    <a asp-action="CategoriasAsociadasxMarca" asp-controller="Marcas" asp-route-id="@ViewBag.Marca.MarcaId" class="btn botonAsociar">
-        <i class="fas fa-arrow-left"></i> Volver
-    </a>
+<div class="contenedor-botones-detalle"><a asp-action="CategoriasAsociadasxMarca" asp-controller="Marcas" asp-route-id="@ViewBag.Marca.MarcaId" class="btn botonVolver"><i class="fas fa-arrow-left"></i> Volver</a>
 </div>
 <h2 class="TituloSobreTabladetalle">Asociar categorías</h2>
 @if (Model != null && Model.PageCount > 1)
