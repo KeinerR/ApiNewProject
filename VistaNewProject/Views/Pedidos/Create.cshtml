@@ -25,13 +25,16 @@
         <div class="col-6">
             <label asp-for="ClienteId" class="control-label"> Cliente</label>
             <input type="text" id="ClienteIdTxt" class="form-control" list="clientesList" />
-            <input type="hidden" id="ClienteIdHidden" name="clienteId" />
+            <input type="" id="ClienteIdHidden" name="clienteId" />
             <datalist id="clientesList">
                 @foreach (var cliente in ViewBag.Clientes)
                 {
                     if (cliente.EstadoCliente != 0)
                     {
                         <option value="@cliente.NombreEntidad" data-id="@cliente.ClienteId">@cliente.NombreEntidad</option>
+                        <text>
+                            clientesMap["@cliente.NombreEntidad"] = "@cliente.ClienteId";
+                        </text>
                     }
                 }
             </datalist>
@@ -80,7 +83,58 @@
 
 
 
+<script>
+    // Crear un objeto para mapear IDs de cliente con nombres de entidad
+    var clientesNombreEntidadMap = {};
+    var clientesMap = {};
 
+    // Iterar sobre los clientes y agregarlos al mapa de nombres de entidad y al mapa de IDs de cliente
+    @foreach (var cliente in ViewBag.Clientes)
+    {
+        <text>
+            clientesNombreEntidadMap["@cliente.ClienteId"] = "@cliente.NombreEntidad";
+        clientesMap["@cliente.NombreEntidad"] = "@cliente.ClienteId";
+        </text>
+    }
+
+        // Función para actualizar el campo ClienteIdHidden con el ID correspondiente
+        $("#ClienteIdTxt").on("change", function () {
+            var selectedOption = $("#clientesList option[value='" + $(this).val() + "']");
+            if (selectedOption.length) {
+                $("#ClienteIdHidden").val(selectedOption.data("id"));
+                actualizarNombreEntidad();
+                quitarError(this, document.getElementById("ClienteIdspan"));
+            } else {
+                // Verificar si el valor ingresado es un número
+                var valor = $(this).val();
+                if (!isNaN(parseFloat(valor)) && isFinite(valor)) {
+                    $("#ClienteIdHidden").val(valor);
+                    actualizarNombreEntidad();
+                } else {
+                    $("#ClienteIdHidden").val("");
+                    $("#ClienteIdTxt").val(""); // Limpiar el campo ClienteIdTxt si no se encuentra una entidad
+                }
+            }
+        });
+
+    // Función para actualizar el campo ClienteIdTxt con el nombre de entidad correspondiente
+    function actualizarNombreEntidad() {
+        var clienteId = $("#ClienteIdHidden").val().trim();
+        var nombreEntidad = clientesNombreEntidadMap[clienteId];
+        if (nombreEntidad) {
+            $("#ClienteIdTxt").val(nombreEntidad);
+            quitarError(document.getElementById("ClienteIdTxt"), document.getElementById("ClienteIdspan"));
+        }
+    }
+
+    // Llamar a la función para establecer el nombre de entidad inicialmente
+    actualizarNombreEntidad();
+
+    // Escuchar cambios en el campo oculto ClienteIdHidden para actualizar el nombre de entidad
+    $("#ClienteIdHidden").on("change", function () {
+        actualizarNombreEntidad();
+    });
+</script>
 
 
 

@@ -20,16 +20,35 @@ namespace VistaNewProject.Controllers
         }
 
 
-        public async Task<IActionResult> Index(int? page)
+        public async Task<IActionResult> Index(string order, int? page)
         {
             int pageSize = 5; // Cambiado a 5 para que la paginación se haga cada 5 registros
             int pageNumber = page ?? 1; // Número de página actual (si no se especifica, es 1)
 
-            var clientes = await _client.GetClientesAsync(); // Obtener todas las marcas
+            var clientes = await _client.GetClientesAsync(); // Obtener todos los clientes
 
             if (clientes == null)
             {
-                return NotFound("error");
+                return NotFound("Error");
+            }
+
+            // Aplicar ordenamiento según la opción seleccionada
+            switch (order)
+            {
+                case "alfabetico":
+                    clientes = clientes.OrderBy(c => c.NombreEntidad);
+                    break;
+                case "name_desc":
+                    clientes = clientes.OrderByDescending(c => c.NombreEntidad);
+                    break;
+                case "first":
+                    clientes = clientes.OrderBy(c => c.EstadoCliente != 0).ThenBy(c => c.NombreEntidad);
+                    break;
+                case "reverse":
+                    clientes = clientes.OrderByDescending(c => c.EstadoCliente != 0).ThenBy(c => c.NombreEntidad);
+                    break;
+                default:
+                    break;
             }
 
             var pageCliente = await clientes.ToPagedListAsync(pageNumber, pageSize);
@@ -51,7 +70,6 @@ namespace VistaNewProject.Controllers
                 ViewData["Clientes"] = clientes;
                 return View(pageCliente);
             }
-
             catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
             {
                 HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
@@ -62,8 +80,8 @@ namespace VistaNewProject.Controllers
                 HttpContext.Session.SetString("Message", "Error en el aplicativo");
                 return RedirectToAction("LogOut", "Accesos");
             }
-
         }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] Cliente cliente)
         {

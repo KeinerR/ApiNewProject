@@ -299,8 +299,19 @@
     </div>
 </div>
     <br />
-    <hr>
 
+<div class="contenedor-filtro">
+    <select name="order" class="input-sm empSelect" onchange="redirectToOrder(this)">
+        <option selected disabled>
+            Ordenar por
+        </option>
+        <option data-url="?order=alfabetico">Ordenar por nombre (A-Z)</option>
+        <option data-url="?order=name_desc">Ordenar por nombre (Z-A)</option>
+        <option data-url="?order=first">Ordenar por más antiguo</option>
+        <option data-url="?order=reverse">Ordenar por más reciente</option>
+    </select>
+</div>
+<br />
     <table class="table table-custom text-center">
         <thead>
             <tr>
@@ -308,7 +319,7 @@
                 <th class="d-none">
                     ClienteId
                 </th>
-                <th>
+            <th class="d-none">
                     Identificacion
                 </th>
                 <th>
@@ -317,7 +328,7 @@
                 <th>
                     NombreCompleto
                 </th>
-                <th>
+                <th class="d-none">
                     TipoCliente
                 </th>
                 <th>
@@ -354,7 +365,7 @@
                     <td class="d-none cliente-id">
                         @Html.DisplayFor(modelItem => item.ClienteId)
                     </td>
-                    <td>
+                    <td class="d-none">
                         @Html.DisplayFor(modelItem => item.Identificacion)
                     </td>
                     <td>
@@ -363,7 +374,7 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.NombreCompleto)
                     </td>
-                    <td>
+                    <td class="d-none">
                         @Html.DisplayFor(modelItem => item.TipoCliente)
                     </td>
                     <td>
@@ -386,16 +397,19 @@
                     </td>
 
                 <td class="botonesTabla">
-                    <button class="btn botonEditar" onclick="mostrarModalConRetrasoCliente(@item.ClienteId)"><i class="fas fa-edit"></i></button>
+                    <div class="botonesTablaContenedor">
+                        <button class="btn botonEditar" onclick="mostrarModalConRetrasoCliente(@item.ClienteId)"><i class="fas fa-edit"></i></button>
 
                         <a asp-action="Details" asp-route-id="@item.ClienteId" class="btn botonDetalle"><i class="fas fa-file"></i></a>
-                   
 
-                    <form asp-controller="Clientes" asp-action="Delete" method="post" class="delete-form-cliente">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@item.ClienteId" />
-                        <button type="submit" class="btn botonEliminar"><i class="fas fa-trash-alt"></i></button>
-                    </form>
+
+                        <form asp-controller="Clientes" asp-action="Delete" method="post" class="delete-form-cliente">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@item.ClienteId" />
+                            <button type="submit" class="btn botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                        </form>
+                    </div>
+                  
 
 
                     </td>
