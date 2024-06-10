@@ -141,7 +141,7 @@ namespace VistaNewProject.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePost(  )
         {
-            if (listaGlobalDetalles.Count <0)
+            if (listaGlobalDetalles.Count ==0)
             {
                 TempData["ErrorMessage"] = "Por favor agregue los productos para guardar el pedido correctamente.";
                 return RedirectToAction("Create", "DetallePedidos");

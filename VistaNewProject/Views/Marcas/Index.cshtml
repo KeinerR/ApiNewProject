@@ -165,7 +165,7 @@
                     <td class="botonesTabla">
                         <div class="botonesTablaContenedor">
                             <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoMarca(@item.MarcaId);"><i class="fas fa-edit"></i></button>
-                            <a asp-action="Details" asp-controller="Marcas" asp-route-id="@item.MarcaId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
+                            <a asp-action="Details" asp-controller="Marcas" asp-route-id="@item.MarcaId" class="btn btn-detail botonDetalle"> <i class="fas fa-file"></i> </a>
                             <form asp-controller="Marcas" class="eliminarMarca" asp-action="Delete" method="post">
                                 <input type="hidden" value="@item.MarcaId" name="marcaId" />
                                 <button type="submit" value="" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>

@@ -7,22 +7,28 @@
 
 
 <br />
-<a asp-action="Index" class="btn btn-primary btn-sm">
-    <i class="fas fa-arrow-left"></i> Volver
-</a>
 
-@if (ViewBag.Clientes != null && ViewBag.Clientes.ClienteId != null)
-{
-    <a href="#" onclick="redireccionarYEditar('@ViewBag.Clientes.ClienteId', 'Clientes','cliente')" class="btn botonEditar">
-        <i class="fa-solid fa-pen"></i> Editar
+<div class="contenedor-botones-detalle">
+    <a asp-action="Index" class="btn btn-primary btn-sm">
+        <i class="fas fa-arrow-left"></i> Volver
     </a>
 
+    @if (ViewBag.Clientes != null && ViewBag.Clientes.ClienteId != null)
+    {
+        <a href="#" onclick="redireccionarYEditar('@ViewBag.Clientes.ClienteId', 'Clientes','cliente')" class="btn botonEnviarDetalle">
+            <i class="fa-solid fa-pen"></i> Editar
+        </a>
 
-}
-else
-{
-    <p>El objeto ViewBag.Clientes es nulo o su propiedad ClienteId es nula.</p>
-}
+     
+
+
+    }
+    else
+    {
+        <p>El objeto ViewBag.Clientes es nulo o su propiedad ClienteId es nula.</p>
+    }
+</div>
+
 
 <div>
     <br />
@@ -34,10 +40,16 @@ else
                 <tr style="background-color: lightgray;">
                     <th>Cliente ID:</th>
                     <th>Nombre del Cliente:</th>
+                    <th>Identificacion:</th>
+                    <th>TipoCliente:</th>
                 </tr>
                 <tr style="background-color: white;">
                     <td>@ViewBag.Clientes.ClienteId</td>
                     <td>@ViewBag.Clientes.NombreEntidad</td>
+                    <td>@ViewBag.Clientes.Identificacion</td>
+                    <td>@ViewBag.Clientes.TipoCliente</td>
+
+
                 </tr>
             </tbody>
         </table>
@@ -51,7 +63,7 @@ else
             <table class="table" style="margin: 0 auto; width: 60%;">
                 <thead style="background-color: lightgray;">
                     <tr style="text-align: center;">
-                        <th>ID</th>
+                        <th>PeidoID</th>
                         <th>Cliente</th>
                         <th>Fecha</th>
                     </tr>

@@ -147,5 +147,31 @@ namespace ApiNewProject.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el estado del unidad: " + ex.Message);
             }
         }
+
+
+        [HttpGet("GetunidadPorId/{id}")]
+        public async Task<ActionResult<string>> GetunidadPorId(int id)
+        {
+            try
+            {
+                // Buscar el producto por su ID
+                var unidad = await _context.Unidades.FindAsync(id);
+
+                // Verificar si el producto existe
+                if (unidad == null)
+                {
+                    // Devolver un error 404 Not Found si el producto no se encuentra
+                    return NotFound("Producto no encontrado");
+                }
+
+                // Devolver el nombre del producto
+                return Ok(unidad.NombreUnidad);
+            }
+            catch (Exception ex)
+            {
+                // Si ocurre algún error, devolver un error 500 Internal Server Error
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al obtener el nombre del producto: " + ex.Message);
+            }
+        }
     }
 }

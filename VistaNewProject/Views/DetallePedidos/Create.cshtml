@@ -69,8 +69,8 @@
 
             <div class="col-4">
                 <label for="ProductoIdtxt" class="control-label">Productos</label>
-                <input name="ProductoIdtxt" id="ProductoIdtxt" class="form-control" list="ProductosList" />
-                <input type="hidden" id="ProductoId" name="productoId" class="form-control" />
+                <input id="ProductoIdtxt" class="form-control" list="ProductosList" />
+                <input type="" id="ProductoId" name="productoId" class="form-control" />
                 <datalist id="ProductosList"></datalist>
                 <span id="ProductoIdError" class="text-danger"></span>
             </div>
@@ -100,7 +100,7 @@
 
             <div class="col-4">
                 <label asp-for="Cantidad" class="control-label"></label>
-                <input asp-for="Cantidad" class="form-control" />
+                <input asp-for="Cantidad" id="CantidadTxt" class="form-control" />
                 <span id="CantidadError" class="text-danger"></span>
             </div>
 
