@@ -260,7 +260,7 @@ namespace VistaNewProject.Services
             }
             return response;
         }
-        public async Task< Marca> FindMarcaAsync(int id)
+        public async Task< Marca> FindMarcasAsync(int? id)
         {
             var response = await _httpClient.GetFromJsonAsync<Marca>($"Marcas/GetMarcaById?id={id}");
 
@@ -785,14 +785,9 @@ namespace VistaNewProject.Services
             return response;
         }
 
-        public async Task<Proveedor> FindProveedorAsync(int id)
+        public async Task<Proveedor> FindProveedorAsync(int? id)
         {
             var response = await _httpClient.GetFromJsonAsync<Proveedor>($"Proveedores/GetProveedorById?id={id}");
-
-            if (response == null)
-            {
-                throw new Exception("No se encontró el proveedor con el ID especificado.");
-            }
             return response;
         }
 

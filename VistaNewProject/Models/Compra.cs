@@ -10,5 +10,7 @@
         public ulong? EstadoCompra { get; set; }
 
         public virtual Proveedor? Proveedor { get; set; }
+        public virtual Lote? Lotes { get; set; } = null;
+
     }
 }
