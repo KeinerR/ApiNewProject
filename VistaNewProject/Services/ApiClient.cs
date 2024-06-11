@@ -234,7 +234,7 @@ namespace VistaNewProject.Services
             }
             return response;
         }
-        public async Task< Marca> FindMarcasAsync(int id)
+        public async Task< Marca> FindMarcasAsync(int? id)
         {
             var response = await _httpClient.GetFromJsonAsync<Marca>($"Marcas/GetMarcaById?id={id}");
 
@@ -724,9 +724,9 @@ namespace VistaNewProject.Services
             return response;
         }
 
-        public async Task<Proveedor> FindProveedorAsync(int id)
+        public async Task<Proveedor> FindProveedorAsync(int? id)
         {
-            var response = await _httpClient.GetFromJsonAsync<Proveedor>($"?id={id}");
+            var response = await _httpClient.GetFromJsonAsync<Proveedor>($"Proveedores/GetProveedorById?id={id}");
             return response;
         }
 

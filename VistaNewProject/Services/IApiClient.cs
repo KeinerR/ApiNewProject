@@ -46,7 +46,7 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Marca>> GetMarcaAsync();
 
         Task<HttpResponseMessage> CreateMarcaAsync( Marca marca);
-        Task<Marca> FindMarcasAsync(int id);
+        Task<Marca> FindMarcasAsync(int? id);
         Task<Marca> FindnombreMarcasAsync(string nombreMarca);
         Task<HttpResponseMessage> UpdateMarcaAsync(Marca marca);
         Task<HttpResponseMessage> DeleteMarcaAsync(int id);
@@ -90,7 +90,7 @@ namespace VistaNewProject.Services
 
         Task<IEnumerable<Proveedor>> GetProveedorAsync();
         Task<HttpResponseMessage> CreateProveedorAsync(Proveedor proveedor);
-        Task<Proveedor> FindProveedorAsync(int id);
+        Task<Proveedor> FindProveedorAsync(int? id);
         Task<Proveedor> FindnombreProveedorAsync(string nombreEmpresa);
 
         Task<HttpResponseMessage> UpdateProveedorAsync(Proveedor proveedor);
