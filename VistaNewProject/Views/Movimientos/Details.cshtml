@@ -74,16 +74,18 @@
                 </table>
 
 
+               
                 <div class="pagination-detail">
-                    @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Pedidos.PedidoId, page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 }) + "' class='prev-next " + (Model.HasPreviousPage ? "" : "disabled") + "'>Anterior</a>")
+                    @Html.Raw("<a href='" + Url.Action("Details", new { pedidoId = ViewBag.Pedidos.PedidoId, page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 }) + "' class='prev-next " + (Model.HasPreviousPage ? "" : "disabled") + "'>Anterior</a>")
 
                     @for (int i = 1; i <= Model.PageCount; i++)
                     {
-                        <a href="@Url.Action("Details", new { id =  ViewBag.Pedidos.PedidoId, page = i })" class="@(i == Model.PageNumber ? "active" : "")">@i</a>
+                        <a href="@Url.Action("Details", new { pedidoId =  ViewBag.Pedidos.PedidoId, page = i })" class="@(i == Model.PageNumber ? "active" : "")">@i</a>
                     }
 
-                    @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Pedidos.PedidoId, page = Model.HasNextPage ? Model.PageNumber + 1 : Model.PageCount }) + "' class='prev-next " + (Model.HasNextPage ? "" : "disabled") + "'>Siguiente</a>")
+                    @Html.Raw("<a href='" + Url.Action("Details", new { pedidoId = ViewBag.Pedidos.PedidoId, page = Model.HasNextPage ? Model.PageNumber + 1 : Model.PageCount }) + "' class='prev-next " + (Model.HasNextPage ? "" : "disabled") + "'>Siguiente</a>")
                 </div>
+
             }
             else
             {

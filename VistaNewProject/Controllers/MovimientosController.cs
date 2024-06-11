@@ -15,7 +15,7 @@ namespace VistaNewProject.Controllers
 
         public async Task<IActionResult> Index(int? page)
         {
-            int pageSize = 5; // Cambiado a 5 para que la paginación se haga cada 5 registros
+            int pageSize = 4; // Cambiado a 5 para que la paginación se haga cada 5 registros
             int pageNumber = page ?? 1; // Número de página actual (si no se especifica, es 1)
 
             var movimientos = await _client.GetMovimientoAsync(); // Obtener todas las marcas
@@ -86,7 +86,7 @@ namespace VistaNewProject.Controllers
                 if (movimiento.TipoAccion == "Pedido"   )
                 {
                     var pedidoId = movimiento.BuscarId.Value;
-                    return RedirectToAction("Detalles", "Movimientos", new { pedidoId });
+                    return RedirectToAction("Details", "Movimientos", new { pedidoId });
                 }
 
                 else if (movimiento.TipoAccion == "Compra"  )
@@ -99,7 +99,7 @@ namespace VistaNewProject.Controllers
             return Ok();
         }
 
-        public async Task<IActionResult> Detalles(int pedidoId , int? page )
+        public async Task<IActionResult> Details(int pedidoId , int? page )
         {
             var pedido = await _client.FindPedidosAsync(pedidoId);
 
@@ -142,8 +142,7 @@ namespace VistaNewProject.Controllers
             var compra = await _client.FinComprasAsync(CompraId);
 
             var proveedor = await _client.FindProveedorAsync(compra.CompraId);
-
-            ViewBag.Proveedor = proveedor;
+              ViewBag.Proveedor = proveedor;
 
             // 2. Asignar la compra a ViewBag para usar en la vista
             ViewBag.compras = compra;
@@ -156,23 +155,26 @@ namespace VistaNewProject.Controllers
             }
 
             // 4. Obtener todos los lotes de compras
-            var lotesCompras = await _client.GetLoteAsync();
+            var detalles = await _client.GetDetallecompraAsync();
 
             // 5. Filtrar los lotes para obtener solo los que corresponden a la compra actual
-            var detallecompras = lotesCompras.Where(p => p.DetalleCompraId == CompraId).ToList();
+            var detallecompras = detalles.Where(p => p.CompraId == CompraId).ToList();
 
             // 6. Para cada detalle de compra, obtener el producto y el detalle de la compra asociados
             var productosTasks = detallecompras.Select(async detalle =>
             {
                 detalle.Producto = await _client.FindProductoAsync(detalle.ProductoId.Value);
-                detalle.DetalleCompra = await _client.FindDetallesComprasAsync(detalle.DetalleCompraId.Value);
+                detalle.Compra = await _client.FinComprasAsync(detalle.CompraId.Value);
+                detalle.lote = await _client.FindLoteAsync(detalle.DetalleCompraId);
+
+                detalle.Unidad = await _client.FindUnidadAsync(detalle.UnidadId.Value);
             });
 
             // 7. Esperar a que todas las tareas asíncronas de obtención de productos y detalles de compras finalicen
             await Task.WhenAll(productosTasks);
 
             // 8. Configurar la paginación: definir el tamaño de página y el número de página actual
-            int pageSize = 4; // Tamaño de página deseado
+            int pageSize = 3; // Tamaño de página deseado
             int pageNumber = page ?? 1; // Si 'page' es nulo, usar 1 como valor predeterminado
 
             // 9. Aplicar la paginación a la lista de detalles de compra

@@ -1,10 +1,11 @@
-﻿@model VistaNewProject.Models.Pedido
+﻿
+@model VistaNewProject.Models.Pedido
 
 @{
     ViewData["Title"] = "Create";
     var successMessage = TempData["successMessage"] as string;
 }
-
+<div id="containepedido">
 
 <h4 style="text-align:center">Agregar Pedidos</h4>
 <hr />
@@ -82,7 +83,7 @@
 
 
 
-
+</div>
 <script>
     // Crear un objeto para mapear IDs de cliente con nombres de entidad
     var clientesNombreEntidadMap = {};
@@ -134,6 +135,58 @@
     $("#ClienteIdHidden").on("change", function () {
         actualizarNombreEntidad();
     });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        var fechaPedido = document.getElementById("FechaPedido");
+
+        var fechaActual = new Date();
+        var formateada = fechaActual.toISOString().slice(0, 16);
+
+
+        fechaPedido.value = formateada;
+
+
+
+    });
+
+
+    function updateEstadoPedido() {
+        var tipo = document.getElementById("TipoServicio").value;
+        var estado = document.getElementById("EstadoPedido");
+
+        if (tipo === "Caja") {
+            estado.value = "Realizado";
+            for (var i = 0; i < estado.options.length; i++) {
+                if (estado.options[i].value !== "Realizado") {
+                    estado.options[i].style.display = 'none';
+                } else {
+                    estado.options[i].style.display = 'block';
+                }
+            }
+        } else if (tipo === "Domicilio") {
+            estado.value = "Pendiente";
+            for (var i = 0; i < estado.options.length; i++) {
+                if (estado.options[i].value !== "Pendiente") {
+                    estado.options[i].style.display = 'none';
+                } else {
+                    estado.options[i].style.display = 'block';
+                }
+            }
+        } else {
+            for (var i = 0; i < estado.options.length; i++) {
+                estado.options[i].style.display = 'block';
+            }
+            estado.value = ""; // Reset to default or desired value if needed
+        }
+    }
+
+    // Run the function on page load to ensure the correct state if the form is pre-filled
+    document.addEventListener("DOMContentLoaded", function () {
+        updateEstadoPedido();
+    });
+
 </script>
 
 
@@ -149,5 +202,7 @@
         });
     </script>
 }
+
+
 
 <script src="~/js/pedidos.js"></script>

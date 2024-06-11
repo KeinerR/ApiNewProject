@@ -14,6 +14,7 @@
         public ulong? EstadoLote { get; set; }
 
         public virtual Detallecompra? DetalleCompra { get; set; }
+        public virtual Unidad? Unidades { get; set; }
 
 
         public virtual Producto? Producto { get; set; }

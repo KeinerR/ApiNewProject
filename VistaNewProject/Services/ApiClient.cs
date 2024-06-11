@@ -222,7 +222,7 @@ namespace VistaNewProject.Services
 
         public async Task<HttpResponseMessage> CreateComprasAsync(Compra compra)
         {
-            var response = await _httpClient.PostAsJsonAsync("", compra);
+            var response = await _httpClient.PostAsJsonAsync("Compras/InsertCompras", compra);
 
             if (response == null)
             {
@@ -233,7 +233,7 @@ namespace VistaNewProject.Services
         }
         public async Task<Compra> FinComprasAsync(int id)
         {
-            var response = await _httpClient.GetFromJsonAsync<Compra>($"?id={id}");
+            var response = await _httpClient.GetFromJsonAsync<Compra>($"Compras/GetCompraById?Id={id}");
 
             if (response == null)
             {
@@ -251,7 +251,7 @@ namespace VistaNewProject.Services
             try
             {
                 // Hacer la solicitud PUT al servidor para actualizar la marca
-                var response = await _httpClient.PutAsJsonAsync("", compra);
+                var response = await _httpClient.PutAsJsonAsync("Compras/UpdateCompras", compra);
 
                 // Verificar si la solicitud fue exitosa
                 if (response.IsSuccessStatusCode)
@@ -301,7 +301,7 @@ namespace VistaNewProject.Services
             try
             {
                 // Hacer la solicitud DELETE al servidor
-                var response = await _httpClient.DeleteAsync($"/{id}");
+                var response = await _httpClient.DeleteAsync($"Compras/DeleteCompra/{id}");
 
                 // Verificar si la solicitud fue exitosa (código de estado 200 OK)
                 if (response.IsSuccessStatusCode)
@@ -344,7 +344,7 @@ namespace VistaNewProject.Services
 
         public async Task<HttpResponseMessage> CreateDetallesComprasAsync(Detallecompra detallecompra)
         {
-            var response = await _httpClient.PostAsJsonAsync("", detallecompra);
+            var response = await _httpClient.PostAsJsonAsync("Detallecompras/InsertarDetallecompra", detallecompra);
 
             if (response == null)
             {
@@ -355,7 +355,7 @@ namespace VistaNewProject.Services
         }
         public async Task<Detallecompra> FindDetallesComprasAsync(int id)
         {
-            var response = await _httpClient.GetFromJsonAsync<Detallecompra>($"?id={id}");
+            var response = await _httpClient.GetFromJsonAsync<Detallecompra>($"Detallecompras/GetDetallecompraById?id={id}");
 
             if (response == null)
             {
@@ -373,7 +373,7 @@ namespace VistaNewProject.Services
             try
             {
                 // Hacer la solicitud PUT al servidor para actualizar la marca
-                var response = await _httpClient.PutAsJsonAsync("", detallecompra);
+                var response = await _httpClient.PutAsJsonAsync("Detallecompras/UpdateDetallecompras", detallecompra);
 
                 // Verificar si la solicitud fue exitosa
                 if (response.IsSuccessStatusCode)
@@ -423,7 +423,7 @@ namespace VistaNewProject.Services
             try
             {
                 // Hacer la solicitud DELETE al servidor
-                var response = await _httpClient.DeleteAsync($"/{id}");
+                var response = await _httpClient.DeleteAsync($"Detallecompras/DeleteDetallecompra/{id}");
 
                 // Verificar si la solicitud fue exitosa (código de estado 200 OK)
                 if (response.IsSuccessStatusCode)

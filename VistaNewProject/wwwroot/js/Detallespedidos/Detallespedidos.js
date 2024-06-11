@@ -165,7 +165,7 @@ function validarProducto(producto) {
         mostrarError(productoInput, productoError, "El campo Producto no puede estar vacío.");
         return false;
     }
-    if (!prod.value {
+    if (!prod.value ){
         mostrarError(productoInput, productoError, "El  Producto no es el que esta registrado de datos.");
         return false;
     } else {
