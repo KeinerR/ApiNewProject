@@ -220,6 +220,113 @@ namespace VistaNewProject.Services
             return response;
         }
 
+        public async Task<HttpResponseMessage> CreateComprasAsync(Compra compra)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", compra);
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la marca con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<Compra> FinComprasAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Compra>($"?id={id}");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la marca con el ID especificado.");
+            }
+            return response;
+        }
+
+
+
+
+        public async Task<HttpResponseMessage> UpdateComprasAsync(Compra compra)
+        {
+            try
+            {
+                // Hacer la solicitud PUT al servidor para actualizar la marca
+                var response = await _httpClient.PutAsJsonAsync("", compra);
+
+                // Verificar si la solicitud fue exitosa
+                if (response.IsSuccessStatusCode)
+                {
+                    return response;
+                }
+                else
+                {
+                    // Manejar los diferentes tipos de errores específicos
+                    switch (response.StatusCode)
+                    {
+                        case HttpStatusCode.NotFound:
+                            return new HttpResponseMessage(HttpStatusCode.NotFound)
+                            {
+                                Content = new StringContent("Marca no encontrada")
+                            };
+                        case HttpStatusCode.BadRequest:
+                            return new HttpResponseMessage(HttpStatusCode.BadRequest)
+                            {
+                                Content = new StringContent("Solicitud incorrecta")
+                            };
+                        default:
+                            return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                            {
+                                Content = new StringContent("Error al actualizar la marca")
+                            };
+                    }
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // Manejar errores de solicitud HTTP
+                Console.WriteLine($"Error en la solicitud HTTP: {ex.Message}");
+                return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                {
+                    Content = new StringContent("Error en la solicitud HTTP")
+                };
+            }
+        }
+
+
+
+
+
+        public async Task<HttpResponseMessage> DeleteComprasAsync(int id)
+        {
+            try
+            {
+                // Hacer la solicitud DELETE al servidor
+                var response = await _httpClient.DeleteAsync($"/{id}");
+
+                // Verificar si la solicitud fue exitosa (código de estado 200 OK)
+                if (response.IsSuccessStatusCode)
+                {
+                    // Marca eliminada correctamente
+                    return response;
+                }
+
+                // Retornar la respuesta aunque no sea exitosa
+                return response;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en la solicitud HTTP: {ex.Message}");
+
+                // Puedes retornar una respuesta de error o lanzar la excepción de nuevo
+                return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                {
+                    ReasonPhrase = ex.Message
+                };
+            }
+        }
+
+
+
 
         //detallecompra
 
@@ -233,6 +340,111 @@ namespace VistaNewProject.Services
                 throw new Exception("No se encontró nada error faltal.");
             }
             return response;
+        }
+
+        public async Task<HttpResponseMessage> CreateDetallesComprasAsync(Detallecompra detallecompra)
+        {
+            var response = await _httpClient.PostAsJsonAsync("", detallecompra);
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la marca con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<Detallecompra> FindDetallesComprasAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Detallecompra>($"?id={id}");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la marca con el ID especificado.");
+            }
+            return response;
+        }
+
+       
+
+
+        public async Task<HttpResponseMessage> UpdateDetallesComprasAsync(Detallecompra detallecompra)
+        {
+            try
+            {
+                // Hacer la solicitud PUT al servidor para actualizar la marca
+                var response = await _httpClient.PutAsJsonAsync("", detallecompra);
+
+                // Verificar si la solicitud fue exitosa
+                if (response.IsSuccessStatusCode)
+                {
+                    return response;
+                }
+                else
+                {
+                    // Manejar los diferentes tipos de errores específicos
+                    switch (response.StatusCode)
+                    {
+                        case HttpStatusCode.NotFound:
+                            return new HttpResponseMessage(HttpStatusCode.NotFound)
+                            {
+                                Content = new StringContent("Marca no encontrada")
+                            };
+                        case HttpStatusCode.BadRequest:
+                            return new HttpResponseMessage(HttpStatusCode.BadRequest)
+                            {
+                                Content = new StringContent("Solicitud incorrecta")
+                            };
+                        default:
+                            return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                            {
+                                Content = new StringContent("Error al actualizar la marca")
+                            };
+                    }
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // Manejar errores de solicitud HTTP
+                Console.WriteLine($"Error en la solicitud HTTP: {ex.Message}");
+                return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                {
+                    Content = new StringContent("Error en la solicitud HTTP")
+                };
+            }
+        }
+
+
+
+
+
+        public async Task<HttpResponseMessage> DeleteDetalleComprasAsync(int id)
+        {
+            try
+            {
+                // Hacer la solicitud DELETE al servidor
+                var response = await _httpClient.DeleteAsync($"/{id}");
+
+                // Verificar si la solicitud fue exitosa (código de estado 200 OK)
+                if (response.IsSuccessStatusCode)
+                {
+                    // Marca eliminada correctamente
+                    return response;
+                }
+
+                // Retornar la respuesta aunque no sea exitosa
+                return response;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en la solicitud HTTP: {ex.Message}");
+
+                // Puedes retornar una respuesta de error o lanzar la excepción de nuevo
+                return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                {
+                    ReasonPhrase = ex.Message
+                };
+            }
         }
 
 

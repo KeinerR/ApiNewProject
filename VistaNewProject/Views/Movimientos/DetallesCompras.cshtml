@@ -1,0 +1,99 @@
+﻿@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<VistaNewProject.Models.Lote>
+
+@{
+    ViewData["Title"] = "Detalles del Pedido";
+}
+
+<table class="table table-bordered table-striped">
+    <div class="pedido-info">
+        <h2 style="text-align:center;">Información del Pedido</h2>
+        <table class="table" style="margin: 0 auto; width: 60%;">
+            <tbody style="text-align: center;">
+                <tr style="background-color: lightgray;">
+                    <th>Codigo:</th>
+                    <th>Proveedor:</th>
+                    <th>#Factura:</th>
+                    <th>Valor Total:</th>
+                    <th>Fecha Compra:</th>
+                    <th>Estado:</th>
+
+                </tr>
+                <tr style="background-color: white;">
+                    <td>@(ViewBag.compras.CompraId)</td>
+                    <td>@(ViewBag.Proveedor.NombreEmpresa)</td>
+                    <td>@(ViewBag.compras.NumeroFactura)</td>
+                    <td>@(ViewBag.compras.ValorTotalCompra)</td>
+                    <td>@(ViewBag.compras.FechaCompra)</td>
+                    <td>@(ViewBag.compras.EstadoCompra)</td>
+                   
+                   
+                </tr>
+            </tbody>
+        </table>
+
+
+
+        <br />
+        <div style="margin:auto; text-align:center;">
+            <h2>Detalles del Pedido</h2>
+        </div>
+
+        <div>
+            @if (Model.Any())
+            {
+                <table class="table" style="margin: 0 auto; width: 60%;">
+                    <thead style="background-color: lightgray;">
+                        <tr style="text-align: center;">
+                            <th>Producto</th>
+                            <th>Unidad</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Subtotal</th>
+                            <td>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var lote in Model)
+                        {
+                            <tr style="text-align: center; background-color: white;">
+                                <td>@lote.Producto?.NombreProducto </td>
+                                <td>@lote.NumeroLote?</td>
+                                <td>@lote.DetalleCompra.Unidad.NombreUnidad?</td>
+                                <td>@String.Format("{0:N0}", lote.Cantidad)</td>
+                                <td>@String.Format("{0:N0}", lote.PrecioPorPresentacion)</td>
+                                <td>@String.Format("{0:N0}", lote.PrecioPorUnidadProducto)</td>
+                                <td>@String.Format("{0:N0}", lote.PrecioCompra)</td>
+                                @if (ViewBag.movimiento == "Entrada")
+                                {
+
+                                    <a class="btn botonEditar" asp-action="Edit" asp-controller="DetallePedidos" asp-route-detalleId="@lote.LoteId">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+
+                <div class="pagination-detail">
+                    @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Pedidos.PedidoId, page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 }) + "' class='prev-next " + (Model.HasPreviousPage ? "" : "disabled") + "'>Anterior</a>")
+
+                    @for (int i = 1; i <= Model.PageCount; i++)
+                    {
+                        <a href="@Url.Action("Details", new { id =  ViewBag.Pedidos.PedidoId, page = i })" class="@(i == Model.PageNumber ? "active" : "")">@i</a>
+                    }
+
+                    @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Pedidos.PedidoId, page = Model.HasNextPage ? Model.PageNumber + 1 : Model.PageCount }) + "' class='prev-next " + (Model.HasNextPage ? "" : "disabled") + "'>Siguiente</a>")
+                </div>
+            }
+            else
+            {
+                <p style="text-align:center">No se encontraron pedidos asociados a este cliente.</p>
+            }
+        </div>
+    </div>

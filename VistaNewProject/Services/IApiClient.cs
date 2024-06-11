@@ -40,8 +40,13 @@ namespace VistaNewProject.Services
         // compra
 
         Task<IEnumerable<Compra>> GetCompraAsync();
+        Task<HttpResponseMessage> CreateComprasAsync(Compra compra);
+        Task<Compra> FinComprasAsync(int id);
+        Task<HttpResponseMessage> UpdateComprasAsync(Compra compra);
 
-       
+        Task<HttpResponseMessage> DeleteComprasAsync(int id);
+
+
 
         // marca
         Task<IEnumerable<Marca>> GetMarcaAsync();
@@ -158,8 +163,12 @@ namespace VistaNewProject.Services
         // detallecompra
 
         Task<IEnumerable<Detallecompra>> GetDetallecompraAsync();
+        Task<HttpResponseMessage> CreateDetallesComprasAsync(Detallecompra detallecompra);
+        Task<Detallecompra> FindDetallesComprasAsync(int id);
+        Task<HttpResponseMessage> UpdateDetallesComprasAsync(Detallecompra detallecompra);
+        Task<HttpResponseMessage> DeleteDetalleComprasAsync(int id);
 
-        
+
 
         // permiso
 
