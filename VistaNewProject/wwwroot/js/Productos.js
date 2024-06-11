@@ -227,13 +227,13 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-
     // Validar campos en cada cambio para cambiar el mensaje inicial que aparece arriba de los botones del formulario
     $('.modal-formulario-crear-producto input, .modal-formulario-crear-producto select').on('input', function () {
         NoCamposVaciosProductoInicial();
         NoCamposConErroresProductoInicial();
       
     });
+
     $('.modal-formulario-actualizar-producto input, .modal-formulario-actualizar-producto select').on('input', function () {
         NoCamposVaciosProductoInicialAct();
         NoCamposConErroresProductoInicialAct();
@@ -316,8 +316,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 590);
         }
     });
-
-
 
     function NoCamposVaciosProducto() {
         const mensajeElements = $('.Mensaje');
@@ -513,10 +511,7 @@ document.addEventListener('keydown', function (event) {
 
 //Se llama al daar click en la x
 function limpiarFormularioProducto() {
-    limpiarFormularioProductoAgregar();
-    // Limpiar la URL eliminando los parámetros de consulta
-    history.replaceState(null, '', location.pathname);
-    limpiarFormularioProductoAct();
+    limpiarDatosFormularioProductoAgregar();
     // Limpiar campos y elementos específicos
     limpiarCampo('NombreMarca');
     limpiarCampo('MarcaId');
@@ -527,6 +522,12 @@ function limpiarFormularioProducto() {
     limpiarCampo('NombreProducto');
     limpiarCampo('CantidadAplicarPorMayor');
     limpiarCampo('DescuentoAplicarPorMayor');
+
+}
+function limpiarFormularioProductoAct() {
+    limpiarDatosFormularioProductoAct
+    // Limpiar la URL eliminando los parámetros de consulta
+    history.replaceState(null, '', location.pathname);
 
     // Limpiar campos y elementos específicos de la versión actualizada
     limpiarCampo('NombreMarcaAct');
@@ -540,7 +541,7 @@ function limpiarFormularioProducto() {
     limpiarCampo('DescuentoAplicarPorMayorAct');
 }
 //Se llama al daar click en cancelar en la modal de agregar producto
-function limpiarFormularioProductoAgregar() {
+function limpiarDatosFormularioProductoAgregar() {
     limpiarFiltroProductoAgregar();
     history.replaceState(null, '', location.pathname);
     var mensajes = document.querySelectorAll('.Mensaje');
@@ -567,7 +568,7 @@ function limpiarFormularioProductoAgregar() {
     }
   
 }
-function limpiarFormularioProductoAct() {
+function limpiarDatosFormularioProductoAct() {
     // Limpiar la URL eliminando los parámetros de consulta
     history.replaceState(null, '', location.pathname);
     document.querySelectorAll('.MensajeInicial').forEach(function (element) {
@@ -641,19 +642,6 @@ $('.modal').on('click', function (e) {
 
 /*--------------------------------------------------------- Modal de actualizar usuario ---------------------------------------*/
 //Funcion que se activa al hacer clik en el boton de editar.
-function mostrarModalConRetrasoProducto(productoId) {
-        // Limpia el formulario del producto antes de cualquier otra acción
-        limpiarFormularioProductoAct();
-        limpiarFiltroProductoAct();
-        setTimeout(function () {
-            actualizarProducto(productoId);
-        }, 400); // 400 milisegundos (0.4 segundos) de retraso antes de abrir la modal
-        setTimeout(function () {
-            var myModal = new bootstrap.Modal(document.getElementById('ModalProductoAct'));
-            myModal.show();
-        }, 500); // 400 milisegundos (0.4 segundos) de retraso antes de abrir la modal
-      
-}
 function mostrarModalSinRetrasoProducto(productoId) {
     limpiarFormularioProductoAct();
     actualizarProducto(productoId);
@@ -666,47 +654,42 @@ function mostrarModalSinRetrasoProducto(productoId) {
 }
 
 function actualizarProducto(campo) {
-    llamadasFuncion++; // Incrementar el contador de llamadas
-    if (llamadasFuncion == 1) {
-        console.log("La función ha sido llamada " + llamadasFuncion + " veces.");
-        var productoId = campo;
-        $.ajax({
-            url: '/Productos/FindProducto', // Ruta relativa al controlador y la acción
-            type: 'POST',
-            data: { productoId: productoId },
-            success: function (data) {
-                var formActualizar = $('#FormActualizarProducto');
-                formActualizar.find('#ProductoIdAct').val(data.productoId);
-                formActualizar.find('#EstadoAct').val(data.estado);
-                formActualizar.find('#NombreMarcaAct').val(data.marcaId);
-                formActualizar.find('#NombreProductoAct').val(data.nombreProducto);
-                formActualizar.find('#NombrePresentacionAct').val(data.presentacionId);
-                formActualizar.find('#NombreCategoriaAct').val(data.categoriaId);
-                seleccionarOpcion(document.getElementById('NombreMarcaAct'), document.getElementById('marcas'), document.getElementById('MarcaIdAct'));
-                seleccionarOpcion(document.getElementById('NombreCategoriaAct'), document.getElementById('categorias'), document.getElementById('CategoriaIdAct'));
-                seleccionarOpcion(document.getElementById('NombrePresentacionAct'), document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'));
-                if (data.cantidadAplicarPorMayor > 0) {
-                    var button = document.getElementById("checkboxDescuentoPorMayorAct");
-                    button.click();   // Simular el clic en el botón
-                    Llamar2();
-                    $('#DescuentoAplicarPorMayorAct').val(data.descuentoAplicarPorMayor);
-                    $('#CantidadAplicarPorMayorAct').val(data.cantidadAplicarPorMayor);
-                } else {
-                    $('#checkboxDescuentoPorMayorAct').prop('checked', false); // Desmarcar el checkbox
-                }
-                obtenerDatosProductos();
-            },
-            error: function () {
-                alert('Error al obtener los datos del producto.');
+    var productoId = campo;
+    $.ajax({
+        url: '/Productos/FindProducto', // Ruta relativa al controlador y la acción
+        type: 'POST',
+        data: { productoId: productoId },
+        success: function (data) {
+            var formActualizar = $('#FormActualizarProducto');
+            formActualizar.find('#ProductoIdAct').val(data.productoId);
+            formActualizar.find('#EstadoAct').val(data.estado);
+            formActualizar.find('#NombreMarcaAct').val(data.marcaId);
+            formActualizar.find('#NombreProductoAct').val(data.nombreProducto);
+            formActualizar.find('#NombrePresentacionAct').val(data.presentacionId);
+            formActualizar.find('#NombreCategoriaAct').val(data.categoriaId);
+            seleccionarOpcion(document.getElementById('NombreMarcaAct'), document.getElementById('marcas'), document.getElementById('MarcaIdAct'));
+            seleccionarOpcion(document.getElementById('NombreCategoriaAct'), document.getElementById('categorias'), document.getElementById('CategoriaIdAct'));
+            seleccionarOpcion(document.getElementById('NombrePresentacionAct'), document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'));
+            if (data.cantidadAplicarPorMayor > 0) {
+                var button = document.getElementById("checkboxDescuentoPorMayorAct");
+                button.click();   // Simular el clic en el botón
+                Llamar2();
+                $('#DescuentoAplicarPorMayorAct').val(data.descuentoAplicarPorMayor);
+                $('#CantidadAplicarPorMayorAct').val(data.cantidadAplicarPorMayor);
+            } else {
+                $('#checkboxDescuentoPorMayorAct').prop('checked', false); // Desmarcar el checkbox
             }
-        });
-    } else {
+            obtenerDatosProductos();
 
-        alert('Uno solo click por favor');
-        return;
-    }
-    
+            // Abrir la modal después de completar la actualización del producto
+            $('#ModalProductoAct').modal('show');
+        },
+        error: function () {
+            alert('Error al obtener los datos del producto.');
+        }
+    });
 }
+
 
 /*------------------- Cambiar estado producto------------------------------------------*/
 
@@ -907,8 +890,7 @@ function Llamar() {
         document.getElementById('DescuentoAplicarPorMayor').value = '0';
     }
 }
-/*Mostrar o no las opciones de producto por mayor en la ventana modal de actualizar producto al hacer click en el checbox de la ventana modal producto*/
-function Llamar2() {
+function LlamarActualizado() {
     var checkbox = document.getElementById('checkboxDescuentoPorMayorAct');
     var cantidadElement = document.getElementById('CantidadAplicarPorMayorAct');
     var descuentoElement = document.getElementById('DescuentoAplicarPorMayorAct');
@@ -920,7 +902,7 @@ function Llamar2() {
         if (cantidad === '' || descuento === '') {
             // Mostrar mensajes de error si los campos están vacíos
             mensajes.forEach((mensaje, index) => {
-                if (index >= 7 && index < mensajes.length) {
+                if (index >= 11 && index < mensajes.length) {
                     mensaje.textContent = '*';
                 }
             });
