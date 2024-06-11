@@ -59,7 +59,7 @@ namespace VistaNewProject.Services
         }
 
 
-        public async Task<HttpResponseMessage> CambiarEstadoClienteAsync(int id)
+        public async Task<HttpResponseMessage> CambiarEstadoClienteAsync(int  id)
         {
             // Realiza la solicitud PATCH a la API
             var response = await _httpClient.PatchAsync($"Clientes/UpdateEstadoCliente/{id}");
@@ -260,7 +260,7 @@ namespace VistaNewProject.Services
             }
             return response;
         }
-        public async Task< Marca> FindMarcasAsync(int? id)
+        public async Task< Marca> FindMarcaAsync(int ? id)
         {
             var response = await _httpClient.GetFromJsonAsync<Marca>($"Marcas/GetMarcaById?id={id}");
 
@@ -1183,11 +1183,7 @@ namespace VistaNewProject.Services
             }
         }
 
-
-
-
-
-
+       
     }
 }
 
