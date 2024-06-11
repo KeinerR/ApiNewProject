@@ -1,169 +1,690 @@
-﻿
-
-function checkInternetConnection() {
+﻿function checkInternetConnection() {
     return navigator.onLine;
+}
+var presentaciones = []; 
+function obtenerDatosPresentaciones() {
+    fetch('/Presentaciones/FindPresentaciones', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            presentaciones = data;
+        })
+        .catch(error => console.error('Error al obtener los presentaciones:', error));
+}
+function compararPresentaciones(nuevaPresentacion, presentacionesExistentes) {
+    const nombrePresentacionNormalizado = normalizar(nuevaPresentacion.NombrePresentacionVista || '');
+    const contenidoPresentacionNormalizado = normalizar(nuevaPresentacion.Contenido || '');
+    const cantidad = parseInt(nuevaPresentacion.CantidadPorPresentacion);
+
+    const presentacionesDuplicadas = [];
+
+    presentacionesExistentes.forEach(presentacionExistente => {
+        const nombrePresentacionExistenteNormalizado = normalizar(presentacionExistente.nombrePresentacion || '');
+        const contenidoPresentacionExistenteNormalizado = normalizar(presentacionExistente.contenido || '');
+        const cantidadExistente = presentacionExistente.cantidadPorPresentacion || 0;
+
+        // Verificar si la presentación ya existe con los mismos atributos
+        if (
+            nombrePresentacionNormalizado === nombrePresentacionExistenteNormalizado &&
+            contenidoPresentacionNormalizado === contenidoPresentacionExistenteNormalizado &&
+            cantidad === cantidadExistente
+        ) {
+            presentacionesDuplicadas.push(presentacionExistente.presentacionId);
+
+        }
+    });
+
+    if (presentacionesDuplicadas.length > 0) {
+        mostrarAlertaAtencionPersonalizadaConBoton(`Ya existe una presentacion registrada con el mismo nombre, Presentacion ID: ${presentacionesDuplicadas.join(', ')}`);
+        return true; // Se encontraron coincidencias
+    }
+
+    return false; // No se encontraron coincidencias
+}
+
+function compararPresentacionesAct(nuevaPresentacion, presentacionesExistentes) {
+    const nombrePresentacionNormalizado = normalizar(nuevaPresentacion.NombrePresentacionVistaAct || '');
+    const contenidoPresentacionNormalizado = normalizar(nuevaPresentacion.ContenidoAct || '');
+    const cantidad = parseInt(nuevaPresentacion.CantidadPorPresentacionAct);
+    const presentacionesDuplicadas = [];
+
+    presentacionesExistentes.forEach(presentacionExistente => {
+        const nombrePresentacionExistenteNormalizado = normalizar(presentacionExistente.nombrePresentacion || '');
+        const contenidoPresentacionExistenteNormalizado = normalizar(presentacionExistente.contenido || '');
+        const cantidadExistente = presentacionExistente.cantidadPorPresentacion || 0;
+
+        // Verificar si la presentación ya existe con los mismos atributos
+        if (
+            nombrePresentacionNormalizado === nombrePresentacionExistenteNormalizado &&
+            contenidoPresentacionNormalizado === contenidoPresentacionExistenteNormalizado &&
+            cantidad === cantidadExistente
+        ) {
+            if (nuevaPresentacion.PresentacionIdAct == presentacionExistente.presentacionId) {
+                return false;
+            } else {
+                presentacionesDuplicadas.push(presentacionExistente.presentacionId);
+            }
+        }
+    });
+
+    if (presentacionesDuplicadas.length > 0) {
+        mostrarAlertaAtencionPersonalizadaConBoton(`Ya existe una presentacion registrada con el mismo nombre, Presentacion ID: ${presentacionesDuplicadas.join(', ')}`);
+        return true; // Se encontraron coincidencias
+    }
+
+    return false; // No se encontraron coincidencias
+}
+
+function mostrarValoresFormularioInicialPresentacion() {
+    const idsCrear = [
+        'NombrePresentacionVista',
+        'CantidadPorPresentacion',
+        'Contenido'
+    ];
+    const valoresCrear = obtenerValoresFormulario(idsCrear);
+    return valoresCrear;
+}
+function mostrarValoresFormularioPresentacionAct() {
+    const idsCrear = [
+        'PresentacionIdAct',
+        'NombrePresentacionVistaAct',
+        'PresentacionIdAct',
+        'CantidadPorPresentacionAct',
+        'ContenidoAct'
+    ];
+    const valoresCrear = obtenerValoresFormulario(idsCrear);
+    return valoresCrear;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const mostrarAlerta = urlParams.get('mostrarAlerta');
+    const presentacionId = urlParams.get('presentacionId');
+
+    if (mostrarAlerta === 'true' && presentacionId) {
+        mostrarModalSinRetrasoPresentacion(presentacionId);
+    }
+    //Evitar el envio de los formularios hasta que todo este validados
+    $('.modal-formulario-crear-presentacion').on('submit', function (event) {
+        const presentacionFinal = mostrarValoresFormularioInicialPresentacion();
+        const presentacionesAll = presentaciones;
+        const presentacionRepetida = compararPresentaciones(presentacionFinal, presentacionesAll);
+        const campos = [
+            { id: 'NombrePresentacionVista', nombre: 'Tipo presentación' },
+            { id: 'Contenido', nombre: 'Contenido' },
+            { id: 'CantidadPorPresentacion', nombre: 'Cantidad de productos x presentacion' }
+        ];
+
+        const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
+        if (!NoCamposVaciosPresentacion()) {
+            event.preventDefault();
+            return;
+        }
+
+        if (!NoCamposConErroresPresentacion()) {
+            event.preventDefault();
+            return;
+        }
+
+        if (presentacionRepetida) {
+            event.preventDefault();
+            return;
+        }
+
+        if (!camposVacios) {
+            event.preventDefault();
+            return;
+        }
+    });
+    $('.modal-formulario-actualizar-presentacion').on('submit', function (event) {
+        const presentacionFinal = mostrarValoresFormularioPresentacionAct();
+        const presentacionesAll = presentaciones;
+        const presentacionRepetida = compararPresentacionesAct(presentacionFinal, presentacionesAll);
+        const campos = [
+            { id: 'NombrePresentacionVistaAct', nombre: 'Presentacion' }
+        ];
+        const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
+        if (!NoCamposVaciosPresentacionAct()) {
+            event.preventDefault();
+            return;
+        }
+
+        if (!NoCamposConErroresPresentacionAct()) {
+            event.preventDefault();
+            return;
+        }
+
+        if (presentacionRepetida) {
+            event.preventDefault();
+            return;
+        }
+
+        if (!camposVacios) {
+            event.preventDefault();
+            return;
+        }
+
+    });
+    // Confirmación de eliminación
+    $('.eliminarPresentacion').on('submit', function (event) {
+        event.preventDefault(); // Evita que el formulario se envíe automáticamente
+        // Mostrar el diálogo de confirmación
+        Swal.fire({
+            title: '\u00BFEst\u00E1s seguro?',
+            text: '\u00A1Esta acci\u00F3n no se puede deshacer.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'S\u00ED, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, enviar el formulario
+                event.target.submit();
+            }
+        });
+    });
+
+    // Validar campos en cada cambio para cambiar el mensaje inicial que aparece arriba de los botones del formulario
+    $('.modal-formulario-crear-presentacion input').on('input', function () {
+        NoCamposVaciosInicialPresentacion();
+        NoCamposConErroresInicialPresentacion();
+    });
+    $('.modal-formulario-actualizar-presentacion input, .modal-formulario-actualizar-presentacion select').on('input', function () {
+        NoCamposVaciosInicialPresentacionAct();
+        NoCamposConErroresInicialPresentacionAct();
+
+    });
+
+    //Este elimina el mensaje inicial u lo agrega de ser necesario el que aparece sobre los botones
+    function NoCamposVaciosPresentacion() {
+        const mensajeElements = $('.Mensaje');
+        const mensajeSlice = mensajeElements.slice(0, 3);
+        const camposConTexto = mensajeSlice.filter(function () {
+            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
+        }).length;
+
+        console.log('Número de campos sin texto:', camposConTexto);
+
+        if (camposConTexto === 3) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos con *');
+            $('.MensajeInicial').text('Por favor, complete los campos con *.');
+            return false;
+        }
+        if (camposConTexto > 1 && camposConTexto < 3) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Completa los campos con *');
+            $('.MensajeInicial').text('Por favor, complete los campos con *.');
+            return false;
+        }
+        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
+            $('.MensajeInicial').text('Por favor, complete el campo con *.');
+            return false;
+        }
+
+        return true;
+    }
+    function NoCamposConErroresPresentacion() {
+        const textDangerElements = $('.text-danger');
+        const textDangerSlice = textDangerElements.slice(0, 4);
+        const camposConTexto = textDangerSlice.filter(function () {
+            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
+        }).length;
+
+        if (camposConTexto === 4) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente todos los campos');
+            $('.MensajeErrores').text('Todos los campos son invalidos.');
+            return false;
+        }
+        if (camposConTexto > 1 && camposConTexto < 4) {
+            mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente los campos');
+            $('.MensajeErrores').text('Hay campos invalidos.');
+            return false;
+        }
+        if (camposConTexto === 1) {
+            mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente el campo');
+            $('.MensajeErrores').text('Un campo es invalido.');
+            return false;
+        }
+        return true;
+    }
+
+    function NoCamposVaciosPresentacionAct() {
+        const mensajeElements = $('.Mensaje');
+        const mensajeSlice = mensajeElements.slice(-3);
+        const camposConTexto = mensajeSlice.filter(function () {
+            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
+        }).length;
+
+
+        if (camposConTexto === 3) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos con *');
+            $('.MensajeInicial').text('Por favor, complete los campos con *.');
+            return false;
+        }
+        if (camposConTexto > 1 && camposConTexto < 3) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Completa los campos con *');
+            $('.MensajeInicial').text('Por favor, complete los campos con *.');
+            return false;
+        }
+        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
+            $('.MensajeInicial').text('Por favor, complete el campo con *.');
+            return false;
+        }
+        return true;
+    }
+    function NoCamposConErroresPresentacionAct() {
+        const textDangerElements = $('.text-danger');
+        const textDangerSlice = textDangerElements.slice(-4);
+        const camposConTexto = textDangerSlice.filter(function () {
+            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
+        }).length;
+
+
+
+        if (camposConTexto === 4) { // Cambiamos la condición para verificar si hay campos sin texto.
+            mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente todos los campos');
+            $('.MensajeErrores').text('Todos los campos son invalidos.');
+            return false;
+        }
+        if (camposConTexto > 1 && camposConTexto < 4) {
+            mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente los campos');
+            $('.MensajeErrores').text('Hay campos invalidos.');
+            return false;
+        }
+        if (camposConTexto === 1) {
+            mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente el campo');
+            $('.MensajeErrores').text('Un campo es invalido.');
+            return false;
+        }
+        return true;
+    }
+    function NoCamposVaciosInicialPresentacion() {
+        const mensajeElements = $('.Mensaje');
+
+        const mensajeSlice = mensajeElements.slice(0, 3);
+
+
+        const todosLlenos = mensajeSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+
+
+        if (todosLlenos) {
+            $('.MensajeInicial').text('');
+        }
+
+    }
+    function NoCamposConErroresInicialPresentacion() {
+        const textDangerElements = $('.text-danger');
+        const textDangerSlice = textDangerElements.slice(0, 4);
+        const todoValido = textDangerSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+        if (todoValido) {
+            $('.MensajeErrores').text('');
+
+        }
+        return true;
+    }
+
+    function NoCamposVaciosInicialPresentacionAct() {
+        const mensajeElements = $('.Mensaje');
+
+        const mensajeSlice = mensajeElements.slice(-3);
+
+
+        const todosLlenos = mensajeSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+
+
+        if (todosLlenos) {
+            $('.MensajeInicial').text('');
+        }
+
+    }
+    function NoCamposConErroresInicialPresentacionAct() {
+        const textDangerElements = $('.text-danger');
+        const textDangerSlice = textDangerElements.slice(-4);
+        const todoValido = textDangerSlice.filter(function () {
+            return $(this).text() !== '';
+        }).length === 0;
+        console.log('Todos los campos son válidos:', todoValido);
+        if (todoValido) {
+            $('.MensajeErrores').text('');
+        }
+        return true;
+    }
+
+});
+function simularClickPresentacion() {
+    //ocultar formulario de actualizar  y mostrar el formulario principal
+    $('#FormActualizarPresentacion').hide();
+    $('#FormPrincipalPresentacion').show().css('visibility', 'visible');
+    obtenerDatosPresentaciones();
+}
+
+/*--------------------Atajo para abrir modal -------------------------------*/
+document.addEventListener('keydown', function (event) {
+    if (event.ctrlKey && event.key === 'm') {
+        try {
+            if (esURLValida('Presentaciones')) {
+                const modalPresentacion = $('#ModalPresentacion');
+                const botonAbrirModal = $('#botonabrirModalPresentacion');
+
+                if (modalPresentacion.length === 0 || botonAbrirModal.length === 0) {
+                    console.error('El modal o el botón para abrir el modal no se encontraron en el DOM.');
+                    return;
+                }
+                if (modalPresentacion.hasClass('show')) {
+                    modalPresentacion.modal('hide'); // Cerrar la modal
+                } else {
+                    botonAbrirModal.click();
+                }
+            }
+        } catch (error) {
+            console.error('Ocurrió un error al intentar abrir/cerrar la modal de presentacion:', error);
+        }
+    }
+});
+
+function abrirModalPresentacion() {
+    // Verificar si la modal está abierta
+    if ($('#ModalPresentacion').hasClass('show')) {
+        $('#ModalPresentacion').modal('hide'); // Cerrar la modal
+    } else {
+        simularClickPresentacion(); // Simular algún evento antes de abrir la modal
+        $('#ModalPresentacion').modal('show'); // Abrir la modal
+    }
+}
+
+function limpiarFormularioPresentacion() {
+    limpiarFormularioPresentacionAgregar();
+    limpiarFormularioPresentacionAct();
+    history.replaceState(null, '', location.pathname);
+    // Limpiar campos y elementos específicos
+    limpiarCampo('NombrePresentacionVista');
+    limpiarCampo('Contenido');
+    limpiarCampo('CantidadPorPresentacion');
+    limpiarCampo('DescripcionPresentacion');
+
+    // Limpiar campos y elementos específicos de la versión actualizada
+    limpiarCampo('NombrePresentacionVistaAct');
+    limpiarCampo('ContenidoAct');
+    limpiarCampo('CantidadPorPresentacionAct');
+    limpiarCampo('DescripcionPresentacionAct');
+
+
+}
+function limpiarFormularioPresentacionAgregar() {
+    // Limpiar la URL eliminando los parámetros de consulta
+    history.replaceState(null, '', location.pathname);
+    // Limpiar mensajes de alerta y *
+    var mensajes = document.querySelectorAll('.Mensaje');
+    var mensajesText = document.querySelectorAll('.text-danger');
+
+    for (var i = 0; i < mensajes.length - 3; i++) {
+        mensajes[i].textContent = '*';
+    }
+    for (var i = 0; i < mensajesText.length - 4; i++) {
+        mensajesText[i].textContent = '';
+    }
+
+    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
+        element.textContent = '';
+    });
+    document.querySelectorAll('.MensaErrores').forEach(function (element) {
+        element.textContent = '';
+    });
+
+}
+function limpiarFormularioPresentacionAct() {
+    history.replaceState(null, '', location.pathname);
+    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
+        element.textContent = '';
+    });
+    document.querySelectorAll('.MensaErrores').forEach(function (element) {
+        element.textContent = '';
+    });
+
+    // Limpiar mensajes de alerta y asteriscos
+    var mensajes = document.querySelectorAll('.Mensaje');
+    var mensajesText = document.querySelectorAll('.text-danger');
+
+    for (var i = Math.max(0, mensajes.length - 3); i < mensajes.length; i++) {
+        mensajes[i].textContent = '';
+    }
+    for (var i = Math.max(0, mensajesText.length - 4); i < mensajesText.length; i++) {
+        mensajesText[i].textContent = '';
+    }
 }
 
 
-  
-    function NoCamposVacios() {
-        // Mostrar mensaje inicial de validación
-        $('#MensajeInicial').text('Completa todos los campos con *');
-        $('.Mensaje').text('*');
-
-        $('#NombrePresentacion, #DescripcionPresentacion, #Contenido, #CantidadPorPresentacion').on('input', function () {
-            validarCampoCompra($(this));
-
-            // Validar si todos los campos son válidos antes de agregar la presentación
-            todoValido = $('.text-danger').filter(function () {
-                return $(this).text() !== '';
-            }).length === 0;
-
-            const todosLlenos = $('.Mensaje').filter(function () {
-                return $(this).text() !== '';
-            }).length === 0;
-
-            console.log('Todos los campos son válidos:', todoValido);
-
-            // Si todos los campos son válidos, ocultar el mensaje inicial en todos los campos
-            if (todosLlenos) {
-                $('#MensajeInicial').hide();
-            } else {
-                $('#MensajeInicial').show(); // Mostrar el mensaje si no todos los campos son válidos
-            }
-        });
+//Función para limpiar la url si el usuario da fuera de ella 
+$('.modal').on('click', function (e) {
+    if (e.target === this) {
+        // Limpiar la URL eliminando los parámetros de consulta
+        history.replaceState(null, '', location.pathname);
+        $(this).modal('hide'); // Oculta la modal
     }
+});
 
-    function validarCampoCompra(input) {
-        const valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
-        const spanError = input.next('.text-danger'); // Obtener el elemento span de error asociado al input
-        const spanVacio = input.prev('.Mensaje'); // Obtener el elemento span vacío asociado al input
+function AlPerderFocoPresentacion() {
+    var displayFormActualizar = $('#FormActualizarPresentacion').css('display');
+    var displayModal = $('#ModalPresentacion').css('display');
+    if (displayFormActualizar == "block" && displayModal == "none") {
+        limpiarFormularioPresentacionAct();
+    }
+}
 
-        // Limpiar el mensaje de error previo
-        spanError.text('');
-        spanVacio.text('');
+/*--------------------------------------------------------- Modal de actualizar usuario ---------------------------------------*/
+function mostrarModalConRetrasoPresentacion(presentacionId) {
+    limpiarFormularioPresentacionAct();
+    actualizarPresentacion(presentacionId);
+    setTimeout(function () {
+        var myModal = new bootstrap.Modal(document.getElementById('ModalPresentacion'));
+        myModal.show();
+        // Aquí puedes llamar a la función actualizarProducto si es necesario
+    }, 400); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
 
-        // Validar el campo y mostrar mensaje de error si es necesario
-        if (valor === '') {
-            spanVacio.text('* Obligatorio');
-            spanError.text('');
-        } if (input.is('#NombrePresentacion') || input.is('#Contenido')) {
-            var spanErrorNombre = $('#NombrePresentacion').next('.text-danger'); // Obtén el elemento span correspondiente al campo NombrePresentacion
-            var spanErrorContenido = $('#Contenido').next('.text-danger'); // Obtén el elemento span correspondiente al campo Contenido
-            var valorNombre = $('#NombrePresentacion').val().trim(); // Obtén el valor del campo Nombre
-            var valorContenido = $('#Contenido').val().trim(); // Obtén el valor del campo Contenido
-            var spanVacioNombre = $('#NombrePresentacion').prev('.Mensaje');
-            var spanVacioContenido = $('#Contenido').prev('.Mensaje');
-            const redundante = /^(?!.*(\w)\1\1\1)[\w\s]+$/;
+}
+//Modal cuando se hace click en editar en el boton de detalle
+function mostrarModalSinRetrasoPresentacion(presentacionId) {
+    obtenerDatosPresentaciones();
+    actualizarPresentacion(presentacionId);
+    setTimeout(function () {
+        var myModal = new bootstrap.Modal(document.getElementById('ModalPresentacion'));
+        limpiarFormularioPresentacionAct();
+        myModal.show();
+        // Aquí puedes llamar a la función actualizarProducto si es necesario
+    }, 600); // 50 milisegundos (0.05 segundos) de retraso antes de abrir la modal
+}
 
 
-            if (valorNombre === '') {
-                spanErrorNombre.text(' ');
-                spanVacioNombre.text(' *');
-            } else if ($('#NombrePresentacion').val().trim().length < 3) {
-                spanErrorNombre.text('Este campo debe tener un mínimo de 3 caracteres.');
-                spanVacioNombre.text('');
-            } else if (/^\d+$/.test(valorNombre)) {
-                spanErrorNombre.text('Este campo no puede ser solo numérico.');
-                spanVacioNombre.text('');
-            } else {
-                if (redundante.test(valorNombre)) {
-                    spanErrorNombre.text('');
-                    spanVacioNombre.text('');
-                } else {
-                    spanErrorNombre.text('Esta descripción es redundante');
-                    spanVacioNombre.text('');
-                }
-            }
-
-            if (valorContenido === '') {
-                spanErrorContenido.text(' ');
-                spanVacioContenido.text(' *');
-            } else if ($('#Contenido').val().trim().length < 3) {
-                spanErrorContenido.text('Este campo debe tener un mínimo de 3 caracteres.');
-                spanVacioContenido.text('');
-            } else if (/^\d+$/.test(valorContenido)) {
-                spanErrorContenido.text('Este campo no puede ser solo numerico');
-                spanVacioContenido.text('');
-            } else {
-                spanError.text('');
-                spanVacio.text('');
-            }
-
-            var nombreRepetido = presentaciones.some(function (presentacion) {
-                return presentacion.nombrePresentacion.toLowerCase() === valorNombre.toLowerCase() &&
-                    presentacion.contenido.toLowerCase() === valorContenido.toLowerCase() &&
-                    presentacion.p != $('#PresentacionId').val().trim();
-            });
-
-            if (nombreRepetido) {
-                spanErrorNombre.text('Se encontro una presentacion igual ya registrada.');
-                spanErrorContenido.text('Se encontro una presentacion igual ya registrada.');
-                spanVacio.text('');
-            }
+function actualizarPresentacion(campo) {
+    var presentacionId = campo;
+    $.ajax({
+        url: '/Presentaciones/FindPresentacion', // Ruta relativa al controlador y la acción
+        type: 'POST',
+        data: { presentacionId: presentacionId },
+        success: function (data) {
+            console.log(data);
+            var formActualizar = $('#FormActualizarPresentacion');
+            formActualizar.find('#PresentacionIdAct').val(data.presentacionId);
+            formActualizar.find('#NombrePresentacionVistaAct').val(data.nombrePresentacion);
+            formActualizar.find('#ContenidoAct').val(data.contenido);
+            formActualizar.find('#CantidadPorPresentacionAct').val(data.cantidadPorPresentacion);
+            formActualizar.find('#DescripcionPresentacionAct').val(data.descripcionPresentacion);
+            formActualizar.find('#EstadoPresentacionAct').val(data.estadoPresentacion);
+            limpiarFormularioPresentacionAct()
+            obtenerDatosPresentaciones();
+        },
+        error: function () {
+            alert('Error al obtener los datos de la  presentacion.');
         }
-        return todoValido; // Devuelve el estado de validación al finalizar la función
-    }
+    });
+    $('#FormPrincipalPresentacion').hide().css('visibility', 'hidden');
+    $('#FormActualizarPresentacion').show().css('visibility', 'visible');
+}
+function actualizarEstadoPresentacion(PresentacionId) {
+    $.ajax({
+        url: `/Presentaciones/UpdateEstadoPresentacion/${PresentacionId}`,
+        type: 'PATCH',
+        contentType: 'application/json',
+        success: function (response) {
+            // Mostrar SweetAlert
+            Swal.fire({
+                icon: 'success',
+                title: '¡Estado actualizado!',
+                showConfirmButton: false,
+                timer: 1500 // Duración del SweetAlert en milisegundos
+            }).then(() => {
+                location.reload(); // Recargar la página después de que la alerta haya terminado
+            });
+        },
+
+        error: function (xhr, status, error) {
+            console.error('Error al actualizar el estado del presentacion:', xhr.responseText);
+            // Mostrar SweetAlert de error si es necesario
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Hubo un error al actualizar el estado del presentacion. Por favor, inténtalo de nuevo.'
+            });
+        }
+    });
+}
 
 
-
-
-
-
-    // Modificar la función buscarPresentaciones() para incluir campos ocultos en la búsqueda
-document.getElementById('buscarPresentacion').addEventListener('input', function () {
-    var input = this.value.trim().toLowerCase();
-    var rows = document.querySelectorAll('.presentacionesPaginado');
-
+function searchPresentacion() {
+    var input = $('#buscarPresentacion').val().trim().toLowerCase();    //Obtiene el valor del buscadpor
+    var rows = document.querySelectorAll('.presentacionesPaginado');    //Obtiene el tr de Usuario Paginado.
+    var rowsTodos = document.querySelectorAll('.Presentaciones');      //Obtiene el tr de Usuario que esta en none
+    var icon = document.querySelector('#btnNavbarSearch i');    //Obtiene el icino de buscar
+    var contador = document.querySelector('.contador');        //Obtiene la columna que tiene el # 
+    var contadores = document.querySelectorAll('.contadorB'); //Obtiene el contadorB que esta en none y lo hace visible para mostrar el consecutivo y el ID
+    var paginationContainer = document.getElementById('paginationContainer');
     if (input === "") {
-        rows.forEach(function (row) {
+        rows.forEach(function (row) { //Esconde los usuarios paginado
             row.style.display = '';
         });
-        var icon = document.querySelector('#btnNavbarSearch i');
+        contadores.forEach(function (contador) {
+            contador.classList.add('noIs'); // Removemos la clase 'noIs' para mostrar la columna
+        });
         icon.className = 'fas fa-search';
-        icon.style.color = 'gray';
+        icon.style.color = 'white';
+        contador.innerText = '#';
+        paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
     } else {
         rows.forEach(function (row) {
             row.style.display = 'none';
         });
-        var icon = document.querySelector('#btnNavbarSearch i');
+        contadores.forEach(function (contador) {
+            contador.classList.remove('noIs'); // Removemos la clase 'noIs'
+        });
         icon.className = 'fas fa-times';
-        icon.style.color = 'gray';
+        icon.style.color = 'white';
+        contador.innerText = 'ID';
+        paginationContainer.classList.add('noBe'); // Oculta el contenedor de paginación
+
     }
-    var rowsTodos = document.querySelectorAll('.Presentacion');
 
     rowsTodos.forEach(function (row) {
         if (input === "") {
             row.style.display = 'none';
         } else {
-            var presentacionId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
-            var nombreP = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-            var contenido = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
-            var cantidadporP = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
-            var descripcionP = row.querySelector('td:nth-child(6)').textContent.trim().toLowerCase();
-           
-
-            row.style.display = (presentacionId.includes(input) || nombreP.includes(input) || contenido.includes(input) || cantidadporP.includes(input) || descripcionP.includes(input)) ? 'table-row' : 'none';
+            var presentacionId = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var nombreC = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+            row.style.display = (input === "" || presentacionId.includes(input) || nombreC.includes(input)) ? 'table-row' : 'none';
         }
     });
-});
+}
 
-function vaciarInput() {
+function vaciarInputPresentacion() {
+    var paginationContainer = document.getElementById('paginationContainer');
     document.getElementById('buscarPresentacion').value = "";
     var icon = document.querySelector('#btnNavbarSearch i');
     icon.className = 'fas fa-search';
-    icon.style.color = 'gray';
+    icon.style.color = 'white';
+
+    var contador = document.querySelector('.contador');
+    contador.innerText = '#';
+    var contadores = document.querySelectorAll('.contadorB');
+    contadores.forEach(function (contador) {
+        contador.classList.add('noIs'); // Removemos la clase 'noIs'
+    });
 
     var rows = document.querySelectorAll('.presentacionesPaginado');
     rows.forEach(function (row) {
         row.style.display = 'table-row';
     });
 
-    var rowsTodos = document.querySelectorAll('.Presentacion');
+    var rowsTodos = document.querySelectorAll('.Presentaciones');
 
     rowsTodos.forEach(function (row) {
         row.style.display = 'none';
     });
+    paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
+
+}
+
+function validarCampoPresentacion(input) {
+    const inputElement = $(input); // Convertir el input a objeto jQuery
+    const campo = inputElement.attr('id'); // Obtener el id del input actual como nombre de campo
+    const valor = inputElement.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
+    const spanError = inputElement.next('.text-danger'); // Obtener el elemento span de error asociado al input
+    const labelForCampo = $('label[for="' + campo + '"]');
+    const spanVacio = labelForCampo.find('.Mensaje');
+
+    // Limpiar el mensaje de error previo
+    spanError.text('');
+    spanVacio.text('');
+
+    // Validar el campo y mostrar mensaje de error si es necesario
+    if (valor === '') {
+        spanVacio.text('*');
+        spanError.text('');
+    }
+
+
+    // Validación de usuario
+    if (inputElement.is('#NombrePresentacionVista') || inputElement.is('#NombrePresentacionVistaAct')) {
+        const nombreValido = /^[a-zA-Z]{3,}[a-zA-Z0-9_-]{0,16}$/.test(valor); // Verifica que el usuario cumpla con el formato especificado
+        if (valor === '') {
+            spanVacio.text('*');
+        } else if (valor.length < 4 && valor.length > 1) {
+            spanVacio.text('');
+            spanError.text('El usuario debe contener entre 4 y 16 caracteres y empezar con letras. Ejemplo: juan123');
+        } else if (!nombreValido) {
+            spanVacio.text('');
+            spanError.text('El usuario debe contener entre 4 y 16 caracteres alfanuméricos, guiones bajos (_) o guiones medios (-).');
+        } else {
+            spanError.text('');
+            spanVacio.text('');
+        }
+    }
+    if (inputElement.is('#Contenido') || inputElement.is('#ContenidoAct')) {
+        const nombreValido = /^[a-zA-Z0-9\s]{2,}$/.test(valor); 
+
+        if (valor === '') {
+            spanVacio.text('*');
+        } else if (valor.length < 2 && valor.length > 1) {
+            spanVacio.text('');
+            spanError.text('El contenido debe contener entre 2 y 16 caracteres y empezar con letras. Ejemplo: 2L');
+        } else if (!nombreValido) {
+            spanVacio.text('');
+            spanError.text('El contenido debe contener entre 2 y 16 caracteres y empezar con letras. Ejemplo: 2L');
+        } else {
+            spanError.text('');
+            spanVacio.text('');
+        }
+    }
+    return true; // Devuelve el estado de validación al finalizar la función
 }
 
 
@@ -172,89 +693,3 @@ function vaciarInput() {
 
 
 
-function limpiarFormulario() {
-    // Limpiar los valores de los campos del formulario
-    $('#PresentacionIdId, #NombrePresentacion, #Contenido, #CantidadPorPresentacion,#DescripcionPresentacion,#EstadoPresentacion, #PresentacionIdIdAct, #NombrePresentacionAct, #ContenidoAct, #CantidadPorPresentacionAct,#DescripcionPorPresentacionAct,#EstadoPresentacionAct').val('');
-
-    // Restaurar mensajes de error
-    $('.Mensaje, .MensajeAct').text(' *');
-    $('.Mensaje, .MensajeAct').show(); // Mostrar mensajes de error
-
-    $('.text-danger, .text-dangerAct').text(''); // Limpiar mensajes de error
-
-    $('#btnModalAgregarPresentacion').show();
-    $('#FormActualizarPresentacion').hide();
-}
-
-
-//$('.modal').on('click', function (e) {
-//    if (e.target === this) {
-//        limpiarFormulario(); // Limpia el formulario si se hace clic fuera de la modal
-//        $(this).modal('hide'); // Oculta la modal
-//    }
-//});
-function obtenerPresentacionId(PresentacionId) {
-
-    fetch(`https://localhost:7013/api/Presentaciones/GetPresentacionById?Id=${PresentacionId}`)
-        .then(response => {
-
-            if (!response.ok) {
-                throw new Error('Error al obtner los datos');
-            }
-
-            return response.json();
-
-        })
-        .then(presentacion => {
-            document.getElementById('PresentacionIdAct').value = presentacion.presentacionId;
-            document.getElementById('NombrePresntacionAct').value = presentacion.nombrePresentacion;
-            document.getElementById('ContenidoAct').value = presentacion.contenido;
-            document.getElementById('CantidadPorPresentacionAct').value = presentacion.cantidadPorPresentacion;
-            document.getElementById('DescripcionPresentacionAct').value = presentacion.descripcionPresentacion;
-            document.getElementById('EstadoPresentacionAct').value = presentacion.estadoPresentacion;
-
-            console.log(presentacion);
-        })
-        .catch(error => {
-            console.error("Error al pintar los datos ", error)
-        });
-    
-
-}
-
-document.querySelectorAll('#btnEditar').forEach(button => {
-    button.addEventListener('click', function () {
-        const Id = this.getAttribute('data-presentacion-id');
-
-        document.getElementById('btnModalAgregarPresentacion').style.display = 'none';
-        document.getElementById('FormActualizarPresentacion').style.display = 'block';
-
-        obtenerPresentacionId(Id);
-    });
-});
-
-
-
-
-function actualizarEstadoPresentacion(PresentacionId, EstadoPresentacion) {
-    fetch(`https://localhost:7013/api/Presentaciones/UpdateEstadoPresentacion/${PresentacionId}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ EstadoPresentacion: EstadoPresentacion ? 1 : 0 })
-    })
-        .then(response => {
-            if (response.ok) {
-                console.log(EstadoPresentacion);
-                setTimeout(() => {
-                    location.reload(); // Recargar la página
-                }, 500);
-            } else {
-                console.error('Error al actualizar el estado del cliente');
-            }
-        })
-        .catch(error => {
-            console.error('Error de red:', error);
-        });
-}

@@ -128,22 +128,22 @@ namespace ApiNewProject.Controllers
 
 
 
+
         [HttpPatch("UpdateEstadoProveedor/{id}")]
-        public async Task<IActionResult> UpdateEstadoProveedor(int id, [FromBody] Proveedor EstadoProveedor)
+        public async Task<IActionResult> UpdateEstadoProveedor(int id)
         {
             try
             {
-                // Buscar el cliente por su ID
+                // Buscar el proveedor por su ID
                 var proveedor = await _context.Proveedores.FindAsync(id);
 
-                // Si no se encuentra el cliente, devolver un error 404 Not Found
+                // Si no se encuentra el proveedor, devolver un error 404 Not Found
                 if (proveedor == null)
                 {
                     return NotFound();
                 }
 
-                // Actualizar el estado del cliente con el nuevo valor
-                proveedor.EstadoProveedor = EstadoProveedor.EstadoProveedor;
+                proveedor.EstadoProveedor = proveedor.EstadoProveedor == 0 ? 1UL : 0UL;
 
                 // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
@@ -154,9 +154,10 @@ namespace ApiNewProject.Controllers
             catch (Exception ex)
             {
                 // Si ocurre algún error, devolver un error 500 Internal Server Error
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el estado del cliente: " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el estado del proveedor: " + ex.Message);
             }
         }
+
 
         [HttpGet("GetNombreProveedorById")]
         public async Task<ActionResult<Proveedor>> GetNombreProveedorById(string nombreEmpresa)

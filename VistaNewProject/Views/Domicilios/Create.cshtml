@@ -10,85 +10,125 @@
 <hr />
 
 
-<form asp-controller="Domicilios" asp-action="Create" method="post" onsubmit="return validarcampos();">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-    <div class="row">
-        <div class=" d-none">
-            <label asp-for="PedidoId" class="control-label"></label>
-            <input asp-for="PedidoId" name="PedidoId" class="form-control" value="@ViewBag.UltimoPedidoId" />
-            <span asp-validation-for="PedidoId" class="text-danger"></span>
-        </div>
-        <div class="col-6">
-            <label asp-for="UsuarioId" class="control-label"> Domiciliario</label>
-            <input id="NombreUsuario"   class="form-control" list="usuarioList" />
-            <datalist id="usuarioList">
-                @foreach (var usuario in ViewBag.Usuarios)
-                {
-                    if (usuario.EstadoUsuario != 0)
-                    {
-                    <option value="@usuario.Nombre" data-id="@usuario.UsuarioId">@usuario.Nombre</option>
-                    }
-                }
-            </datalist>
-            <input type="hidden" id="UsuarioId" name="usuarioId" value="" />
-
-            <span id="NombreUsuarioId" class="text-danger"></span>
-        </div>
-        <div class="col-6">
-            <label asp-for="Observacion" class="control-label">Observación</label>
-            <input id="ObservacionInput" name="Observacion" class="form-control" />
-            <span id="ObservacionError" class="text-danger"></span> <!-- Mensaje de advertencia -->
-        </div>
-
-        <div class="col-6">
-            <label asp-for="FechaEntrega" class="control-label"></label>
-
-            <input type="datetime-local" id="FechaEntrega" name="fechaEntrega" class="form-control" />
-            <span asp-validation-for="FechaEntrega" class="text-danger"></span>
-        </div>
-        <div class="col-6">
-            <label asp-for="DireccionDomiciliario" class="control-label"></label>
-            <input id="DireccionDomiciliario" name="direccionDomiciliario" class="form-control" />
-            <span id="DireccionDomiciliariospan" class="text-danger"></span>
-        </div>
-        <div class="col-6">
-            <label asp-for="EstadoDomicilio" class="control-label"></label>
-            <select asp-for="EstadoDomicilio" class="form-control" disabled>
-                @{
-                    var estadoDomicilio = Model.EstadoDomicilio;
-                    var opciones = new List<SelectListItem>
-                {
-                new SelectListItem { Text = "Pendiente", Value = "Pendiente", Selected = estadoDomicilio == "Pendiente" },
-                new SelectListItem { Text = "Realizado", Value = "Realizado", Selected = estadoDomicilio == "Realizado" },
-                new SelectListItem { Text = "Cancelado", Value = "Cancelado", Selected = estadoDomicilio == "Cancelado" }
-                };
-                }
-                @foreach (var opcion in opciones)
-                {
-                    <option value="@opcion.Value" selected="@opcion.Selected">@opcion.Text</option>
-                }
-            </select>
-            <input asp-for="EstadoDomicilio" type="hidden" />
-            <span asp-validation-for="EstadoDomicilio" class="text-danger"></span>
-        </div>
-
-
-
-            <div class="col-6 mt-4">
-
-               
-                <input type="submit" value="AgregarDomicilio" class="btn btn-primary" />
-
-               
+    <form asp-controller="Domicilios" asp-action="Create" method="post" onsubmit="return validarcampos();">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row">
+            <div class=" d-none">
+                <label asp-for="PedidoId" class="control-label"></label>
+                <input asp-for="PedidoId" name="PedidoId" class="form-control" value="@ViewBag.UltimoPedidoId" />
+                <span asp-validation-for="PedidoId" class="text-danger"></span>
             </div>
+            <div class="col-6">
+                <label asp-for="UsuarioId" class="control-label"> Domiciliario</label>
+                <input id="NombreUsuario" class="form-control" list="usuarioList" />
+                <datalist id="usuarioList">
+                    @foreach (var usuario in ViewBag.Usuarios)
+                    {
+                        if (usuario.EstadoUsuario != 0)
+                        {
+                            <option value="@usuario.Nombre" data-id="@usuario.UsuarioId">@usuario.Nombre</option>
+                        }
+                    }
+                </datalist>
+                <input type="" id="UsuarioId" name="UsuarioId" value="" />
+                <span id="NombreUsuarioError" class="text-danger"></span>
+            </div>
+            <div class="col-6">
+                <label asp-for="Observacion" class="control-label">Observación</label>
+                <input id="ObservacionInput" name="Observacion" class="form-control" />
+                <span id="ObservacionError" class="text-danger"></span>
+            </div>
+            <div class="col-6">
+                <label asp-for="FechaEntrega" class="control-label"></label>
+                <input type="datetime-local" id="FechaEntrega" name="FechaEntrega" class="form-control" />
+                <span asp-validation-for="FechaEntrega" class="text-danger"></span>
+            </div>
+            <div class="col-6">
+                <label asp-for="DireccionDomiciliario" class="control-label"></label>
+                <input id="DireccionDomiciliario" name="DireccionDomiciliario" class="form-control" />
+                <span id="DireccionDomiciliariospan" class="text-danger"></span>
+            </div>
+            <div class="col-6 d-none">
+                <label asp-for="EstadoDomicilio" class="control-label"></label>
+                <select asp-for="EstadoDomicilio" class="form-control " disabled>
+                    @{
+                        var estadoDomicilio = Model.EstadoDomicilio;
+                        var opciones = new List<SelectListItem>
+                    {
+                    new SelectListItem { Text = "Pendiente", Value = "Pendiente", Selected = estadoDomicilio == "Pendiente" },
+                    new SelectListItem { Text = "Realizado", Value = "Realizado", Selected = estadoDomicilio == "Realizado" },
+                    new SelectListItem { Text = "Cancelado", Value = "Cancelado", Selected = estadoDomicilio == "Cancelado" }
+                    };
+                    }
+                    @foreach (var opcion in opciones)
+                    {
+                        <option value="@opcion.Value" selected="@opcion.Selected">@opcion.Text</option>
+                    }
+                </select>
+                <input asp-for="EstadoDomicilio" type="hidden" />
+                <span asp-validation-for="EstadoDomicilio" class="text-danger"></span>
+            </div>
+            <div class="col-6 mt-4">
+                <input type="submit" value="AgregarDomicilio" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
 
-
-    </div>
-</form>
 
 
 </div>
+<script>
+    // Crear un objeto para mapear IDs de usuario con nombres
+    var usuariosNombreMap = {};
+    var usuariosMap = {};
+
+    // Iterar sobre los usuarios y agregarlos al mapa de nombres y al mapa de IDs
+    @foreach (var usuario in ViewBag.Usuarios)
+    {
+        <text>
+            usuariosNombreMap["@usuario.UsuarioId"] = "@usuario.Nombre";
+        usuariosMap["@usuario.Nombre"] = "@usuario.UsuarioId";
+        </text>
+    }
+
+        // Función para actualizar el campo UsuarioId con el ID correspondiente
+        $("#NombreUsuario").on("change", function () {
+            var selectedOption = $("#usuarioList option[value='" + $(this).val() + "']");
+            if (selectedOption.length) {
+                $("#UsuarioId").val(selectedOption.data("id"));
+                actualizarNombreUsuario();
+                quitarError(this, document.getElementById("NombreUsuarioError"));
+            } else {
+                // Verificar si el valor ingresado es un ID
+                var valor = $(this).val();
+                if (!isNaN(parseFloat(valor)) && isFinite(valor)) {
+                    $("#UsuarioId").val(valor);
+                    actualizarNombreUsuario();
+                } else {
+                    $("#UsuarioId").val("");
+                    $("#NombreUsuario").val(""); // Limpiar el campo NombreUsuario si no se encuentra un usuario
+                }
+            }
+        });
+
+    // Función para actualizar el campo NombreUsuario con el nombre correspondiente
+    function actualizarNombreUsuario() {
+        var usuarioId = $("#UsuarioId").val().trim();
+        var nombreUsuario = usuariosNombreMap[usuarioId];
+        if (nombreUsuario) {
+            $("#NombreUsuario").val(nombreUsuario);
+            quitarError(document.getElementById("NombreUsuario"), document.getElementById("NombreUsuarioError"));
+        }
+    }
+
+    // Llamar a la función para establecer el nombre de usuario inicialmente
+    actualizarNombreUsuario();
+
+    // Escuchar cambios en el campo oculto UsuarioId para actualizar el nombre de usuario
+    $("#UsuarioId").on("change", function () {
+        actualizarNombreUsuario();
+    });
+</script>
 
 
 <script src="~/js/domicilios.js"></script>

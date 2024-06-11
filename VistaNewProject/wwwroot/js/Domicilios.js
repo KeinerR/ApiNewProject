@@ -191,45 +191,67 @@ function actualizarDomi() {
 
 
 
-
-$('#NombreUsuario').on('input', function () {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-        seleccionarOpcion(this, document.getElementById('usuarioList'), document.getElementById('UsuarioId'));
-    }, 650);
+document.addEventListener('DOMContentLoaded', function () {
+    // Verificar si estamos en la vista de domicilio
+    var vistaDomicilio = document.getElementById("vista-domicilio");
+    if (vistaDomicilio) {
+        // Ejecutar el código JavaScript solo si estamos en la vista de domicilio
+        var fechaActual = document.getElementById("FechaEntrega");
+        var fechaActualDate = new Date();
+        var formateada = fechaActualDate.toISOString().slice(0, 16);
+        fechaActual.min = formateada;
+        fechaActual.value = formateada;
+    }
 });
-
-
 
 function validarcampos() {
     var observacion = document.getElementById("ObservacionInput").value;
     var nombreUsuario = document.getElementById("NombreUsuario").value;
     var domiciliario = document.getElementById("DireccionDomiciliario").value;
+
+    var isValid = true;
+
     if (!validarUsuario(nombreUsuario)) {
-        return false;
+        isValid = false;
     }
-   
 
     if (!validarObservacion(observacion)) {
-        return false;
+        isValid = false;
     }
+
     if (!validarDomiciliario(domiciliario)) {
+        isValid = false;
+    }
+
+    if (!validarFechaEntrega()) {
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+function validarUsuario(nombreUsuario) {
+    var nombreUsuarioInput = document.getElementById("NombreUsuario");
+    var nombreUsuarioError = document.getElementById("NombreUsuarioError");
+    var usuarioIdInput = document.getElementById("UsuarioId");
+
+    nombreUsuario = nombreUsuario.trim();
+
+    if (!usuarioIdInput.value || nombreUsuario === "") {
+        mostrarError(nombreUsuarioInput, nombreUsuarioError, "El Domiciliario no está registrado.");
         return false;
+    } else {
+        quitarError(nombreUsuarioInput, nombreUsuarioError);
     }
     return true;
 }
-$("#ObservacionInput").on("blur", function () {
-    var observacionValue = $(this).val();
-    validarObservacion(observacionValue); // Llamar a la función de validación cuando el usuario deje el campo
-});
-function validarObservacion(observacion) {
-    // Expresión regular para validar la observación
-    var regex = /^(?!\s{4,})(?![\s\S]*\s{5,})[\w\s]+(?<!\s{4,})(?<![.,]{2,})$/;
 
+
+function validarObservacion(observacion) {
+    var regex = /^(?!\s{4,})(?![\s\S]*\s{5,})[\w\s]+(?<!\s{4,})(?<![.,]{2,})$/;
     var observacionInput = document.getElementById("ObservacionInput");
     var observacionError = document.getElementById("ObservacionError");
 
-    // Eliminar espacios en blanco al principio y al final del valor
     observacion = observacion.trim();
 
     if (!regex.test(observacion)) {
@@ -246,17 +268,11 @@ function validarObservacion(observacion) {
     return true;
 }
 
-
-$("#DireccionDomiciliario").on("blur", function () {
-    var observacionValue = $(this).val();
-    validarDomiciliario(observacionValue); // Llamar a la función de validación cuando el usuario deje el campo
-});
 function validarDomiciliario(domiciliario) {
-    var regex = /^(?!\s{4,})(?![\s\S]*\s{5,})[\w\s]+(?<!\s{4,})(?<![.,]{2,})$/;
+    var regex = /^(calle|cr)\d+([#]\d+[a-zA-Z]*)?( numero\d+)?$/;
     var domiciliarioInput = document.getElementById("DireccionDomiciliario");
     var domiciliarioError = document.getElementById("DireccionDomiciliariospan");
 
-    // Eliminar espacios en blanco al principio y al final del valor
     domiciliario = domiciliario.trim();
 
     if (!regex.test(domiciliario)) {
@@ -265,7 +281,7 @@ function validarDomiciliario(domiciliario) {
     }
 
     if (domiciliario.length < 4 || domiciliario.length > 60) {
-        mostrarError(domiciliarioInput, domiciliarioError, "El campo no puede tener menos de 3 letras o más de 60.");
+        mostrarError(domiciliarioInput, domiciliarioError, "El campo no puede tener menos de 4 letras o más de 60.");
         return false;
     }
 
@@ -273,44 +289,57 @@ function validarDomiciliario(domiciliario) {
     return true;
 }
 
+function validarFechaEntrega() {
+    var fechaActual = new Date();
+    var fechaEntrega = new Date(document.getElementById("FechaEntrega").value);
+    var fechaEntregaError = document.getElementById("FechaEntrega").nextElementSibling;
 
-$("#NombreUsuario").on("blur", function () {
-    validarUsuario($(this).val()); // Llamar a la función de validación cuando el usuario termina de ingresar datos
-});
+    var fechaMaxima = new Date();
+    fechaMaxima.setDate(fechaMaxima.getDate() + 30);
 
-
-function validarUsuario(nombreUsuario) {
-    var nombreUsuarioInput = document.getElementById("NombreUsuario");
-    var nombreUsuarioError = document.getElementById("NombreUsuarioId");
-    var usuarioIdInput = document.getElementById("UsuarioId");
-
-
-    // Eliminar espacios en blanco al principio y al final del valor
-    nombreUsuario = nombreUsuario.trim();
-
-    if (!usuarioIdInput.value ||nombreUsuario === "" ) {
-        mostrarError(nombreUsuarioInput, nombreUsuarioError, "El Domiciliario no esta  registrado.");
-        return false; // Indicar que la validación no pasó
+    if (fechaEntrega < fechaActual) {
+        mostrarError(document.getElementById("FechaEntrega"), fechaEntregaError, "La fecha de entrega no puede ser anterior a la fecha actual.");
+        return false;
+    } else if (fechaEntrega > fechaMaxima) {
+        mostrarError(document.getElementById("FechaEntrega"), fechaEntregaError, "La fecha de entrega no puede ser mayor a 30 días a partir de la fecha actual.");
+        return false;
     } else {
-        quitarError(nombreUsuarioInput, nombreUsuarioError);
+        quitarError(document.getElementById("FechaEntrega"), fechaEntregaError);
     }
-    return true; // Indicar que la validación pasó
+
+    return true;
+}
+function mostrarError(inputElement, errorElement, errorMessage) {
+    inputElement.classList.add("is-invalid");
+    errorElement.textContent = errorMessage;
+}
+
+function quitarError(inputElement, errorElement) {
+    inputElement.classList.remove("is-invalid");
+    errorElement.textContent = "";
 }
 
 
-
-
-document.addEventListener('DOMContentLoaded', function () {
-    // Verificar si estamos en la vista de domicilio
-    var vistaDomicilio = document.getElementById("vista-domicilio");
-    if (vistaDomicilio) {
-        // Ejecutar el código JavaScript solo si estamos en la vista de domicilio
-        var fechaActual = document.getElementById("FechaEntrega");
-        var fechaActualDate = new Date();
-        var formateada = fechaActualDate.toISOString().slice(0, 16);
-        fechaActual.min = formateada;
-        fechaActual.value = formateada;
+$("#NombreUsuario").on("change", function () {
+    var selectedOption = $("#usuarioList option[value='" + $(this).val() + "']");
+    if (selectedOption.length) {
+        $("#UsuarioId").val(selectedOption.data("id"));
+        quitarError(this, document.getElementById("NombreUsuarioError"));
+    } else {
+        $("#UsuarioId").val("");
     }
+});
+
+$("#ObservacionInput").on("input", function () {
+    validarObservacion(this.value);
+});
+
+$("#DireccionDomiciliario").on("input", function () {
+    validarDomiciliario(this.value);
+});
+
+$("#FechaEntrega").on("change", function () {
+    validarFechaEntrega();
 });
 
 
@@ -319,142 +348,126 @@ function validarcamposAct() {
     var nombreUsuario = document.getElementById("UsuarioIdActInput").value;
     var domiciliario = document.getElementById("DireccionDomiciliarioAct").value;
 
+
+    var isValid = true;
+
     if (!validarUsuarioAct(nombreUsuario)) {
-        return false;
+        isValid = false;
     }
 
-    if (!validarObervacioAct(observacion)) {
-        return false;
+    if (!validarObservacionAct(observacion)) {
+        isValid = false;
     }
 
     if (!validarDomiciliarioAct(domiciliario)) {
-        return false;
+        isValid = false;
     }
 
-    // Llamar a la función para validar la fecha
-    if (!validarfecha()) {
-        return false;
+    if (!validarFechaEntregaAct()) {
+        isValid = false;
     }
 
+    return isValid;
+}
+
+function validarUsuarioAct(nombreUsuario) {
+    var nombreUsuarioInput = document.getElementById("UsuarioIdActInput");
+    var usuarioError = document.getElementById("usuarioError");
+    var usuarioIdInput = document.getElementById("UsuarioIdActHidden");
+usuarioError
+    nombreUsuario = nombreUsuario.trim();
+
+    if (!usuarioIdInput.value || nombreUsuario === "") {
+        mostrarError(nombreUsuarioInput, usuarioError, "El Domiciliario no está registrado.");
+        return false;
+    } else {
+        quitarError(nombreUsuarioInput, usuarioError);
+    }
     return true;
 }
 
-
-$("#ObservacionAct").on("blur", function () {
-    var observacionValue = $(this).val();
-    validarObervacioAct(observacionValue); // Llamar a la función de validación cuando el usuario deje el campo
-});
-function validarObervacioAct(observacion) {
+function validarObservacionAct(observacion) {
     var regex = /^(?!\s{4,})(?![\s\S]*\s{5,})[\w\s]+(?<!\s{4,})(?<![.,]{2,})$/;
     var observacionInput = document.getElementById("ObservacionAct");
     var observacionError = document.getElementById("MensajeObservacion");
 
+    observacion = observacion.trim();
+
     if (!regex.test(observacion)) {
-        // Si la expresión regular no coincide, mostrar un mensaje de error
         mostrarError(observacionInput, observacionError, "El campo no cumple con los requisitos.");
         return false;
     }
+
     if (observacion.length < 4 || observacion.length > 60) {
-        // Si la longitud de la observación está fuera del rango, mostrar un mensaje de error
-        mostrarError(observacionInput, observacionError, "El campo no puede tener menos de 3 letras o más de 60.");
+        mostrarError(observacionInput, observacionError, "El campo no puede tener menos de 4 letras o más de 60.");
         return false;
     }
 
-    // Si la validación pasa, quitar la clase de error y limpiar el mensaje de error
     quitarError(observacionInput, observacionError);
     return true;
 }
 
-$("#DireccionDomiciliarioAct").on("blur", function () {
-    var observacionValue = $(this).val();
-    validarDomiciliarioAct(observacionValue); // Llamar a la función de validación cuando el usuario deje el campo
-});
-
 function validarDomiciliarioAct(domiciliario) {
-    var regex = /^(?!\s{4,})(?![\s\S]*\s{5,})[\w\s]+(?<!\s{4,})(?<![.,]{2,})$/;
+    var regex = /^(calle|cr)\d+([#]\d+[a-zA-Z]*)?( numero\d+)?$/;
     var domiciliarioInput = document.getElementById("DireccionDomiciliarioAct");
     var domiciliarioError = document.getElementById("MensajeDireccionDomiciliario");
 
+    domiciliario = domiciliario.trim();
+
     if (!regex.test(domiciliario)) {
-        // Si la expresión regular no coincide, mostrar un mensaje de error
         mostrarError(domiciliarioInput, domiciliarioError, "El campo no cumple con los requisitos.");
         return false;
     }
+
     if (domiciliario.length < 4 || domiciliario.length > 60) {
-        // Si la longitud del domiciliario está fuera del rango, mostrar un mensaje de error
-        mostrarError(domiciliarioInput, domiciliarioError, "El campo no puede tener menos de 3 letras o más de 60.");
+        mostrarError(domiciliarioInput, domiciliarioError, "El campo no puede tener menos de 4 letras o más de 60.");
         return false;
     }
 
-    // Si la validación pasa, quitar la clase de error y limpiar el mensaje de error
     quitarError(domiciliarioInput, domiciliarioError);
     return true;
 }
 
-
-$("#NombreUsuario").on("blur", function () {
-    validarUsuarioAct($(this).val()); // Llamar a la función de validación cuando el usuario termina de ingresar datos
-});
-
-
-function validarUsuarioAct(nombreUsuario) {
-    var nombreUsuarioInput = document.getElementById("UsuarioIdActInput");
-    var nombreUsuarioError = document.getElementById("usuarioError");
-
-    // Eliminar espacios en blanco al principio y al final del valor
-    nombreUsuario = nombreUsuario.trim();
-
-    if (nombreUsuario === "") {
-        // Si el valor está vacío, mostrar un mensaje de advertencia
-        mostrarError(nombreUsuarioInput, nombreUsuarioError, "El campo nombre del Domiciliario no puede estar vacío.");
-        return false; // Indicar que la validación no pasó
-    } else {
-        // Si el valor no está vacío, quitar la clase de error y limpiar el mensaje de advertencia
-        quitarError(nombreUsuarioInput, nombreUsuarioError);
-    }
-
-    return true; // Indicar que la validación pasó
-}
-
-// Función para mostrar un mensaje de error y resaltar el campo
-function mostrarError(inputElement, errorElement, errorMessage) {
-    inputElement.classList.add("is-invalid"); // Agregar clase para resaltar el campo en rojo
-    errorElement.textContent = errorMessage; // Mostrar el mensaje de error
-    inputElement.value = ''; // Limpiar el valor del campo
-}
-
-// Función para quitar la clase de error y el mensaje de error
-function quitarError(inputElement, errorElement) {
-    inputElement.classList.remove("is-invalid"); // Quitar la clase de error si la validación pasa
-    errorElement.textContent = ""; // Limpiar el mensaje de advertencia
-}
-
-
-
-function validarfecha() {
+function validarFechaEntregaAct() {
     var fechaActual = new Date();
     var fechaEntrega = new Date(document.getElementById("FechaEntregaAct").value);
-    var domiciliarioError = document.getElementById("Mensajefechaerror");
+    var fechaEntregaError = document.getElementById("Mensajefechaerror");
 
-    // Obtener la fecha máxima permitida (30 días después de la fecha actual)
     var fechaMaxima = new Date();
     fechaMaxima.setDate(fechaMaxima.getDate() + 30);
 
-    // Comparar la fecha seleccionada con la fecha actual y la fecha máxima permitida
     if (fechaEntrega < fechaActual) {
-        domiciliarioError.textContent = "La fecha de entrega no puede ser anterior a la fecha actual.";
-        document.getElementById("FechaEntregaAct").classList.add("is-invalid");
+        mostrarError(document.getElementById("FechaEntregaAct"), fechaEntregaError, "La fecha de entrega no puede ser anterior a la fecha actual.");
         return false;
     } else if (fechaEntrega > fechaMaxima) {
-        domiciliarioError.textContent = "La fecha de entrega no puede ser mayor a 30 días a partir de la fecha actual.";
-        document.getElementById("FechaEntregaAct").classList.add("is-invalid");
+        mostrarError(document.getElementById("FechaEntregaAct"), fechaEntregaError, "La fecha de entrega no puede ser mayor a 30 días a partir de la fecha actual.");
         return false;
     } else {
-        domiciliarioError.textContent = "";
-        document.getElementById("FechaEntregaAct").classList.remove("is-invalid");
+        quitarError(document.getElementById("FechaEntregaAct"), fechaEntregaError);
     }
 
     return true;
 }
 
+
+$("#UsuarioIdActInput").on("change", function () {
+    var selectedOption = $("#usuarios option[value='" + $(this).val() + "']");
+    if (selectedOption.length) {
+        $("#UsuarioIdActHidden").val(selectedOption.data("id"));
+        quitarError(this, document.getElementById("usuarioError"));
+    } else {
+        $("#UsuarioIdActHidden").val("");
+    }
+});
+$("#ObservacionAct").on("input", function () {
+    validarObservacionAct(this.value);
+});
+
+$("#DireccionDomiciliarioAct").on("input", function () {
+    validarDomiciliarioAct(this.value);
+});
+
+$("#FechaEntregaAct").on("change", function () {
+    validarFechaEntregaAct();
+});
 

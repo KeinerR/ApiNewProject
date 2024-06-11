@@ -1,5 +1,5 @@
 ﻿@using X.PagedList.Mvc.Core
-@model X.PagedList.IPagedList<VistaNewProject.Models.Lote>
+@model X.PagedList.IPagedList<VistaNewProject.Models.LoteVista>
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Detalle de producto";
@@ -13,75 +13,172 @@
     <!-- Agrega esto en tu enlace de "Editar" en Details.cshtml -->
     <a href="#" onclick="redireccionarYEditar('@ViewBag.Producto.ProductoId ', 'Productos','producto')" class="btn botonEnviarDetalle"><i class="fa-solid fa-pen"></i> Editar</a>
 </div>
-<hr />
-
-<div id="contenedor-datos-producto" class="text-center">
-    <!-- Agregamos la clase text-center para centrar el contenido -->
-    <div class="card mb-3">
-        <div class="row g-0">
-            <div class="col-md-4">
-                <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAJcBBAMBIgACEQEDEQH/xAAbAAEAAgMBAQAAAAAAAAAAAAAABQYDBAcCAf/EAEMQAAEDAwIEAwQGBgcJAAAAAAEAAgMEBRESIQYTMUEiUWEUMnGBFUJikZKhBxYjcoLBQ1Jzg7Gy8CQzNERlorPC0//EABsBAQACAwEBAAAAAAAAAAAAAAAEBQECAwYH/8QALREAAgIBAwIEBQQDAAAAAAAAAAECAxEEEjETIQVBUYEiMmFxkRUzwfAUseH/2gAMAwEAAhEDEQA/AO4oiIAiIgCIiAIiIAiIgCIiAIiIAiLy54a0uOwAzlAelo3O72+1NjNwqooTIdMbXHxSHya3q4/BRc3FlNIHfRFJVXQjpJAAyH4815a0j1aXKCtdTdLfI6tntFNWXGdo9oq3V2lx8mMHLIawZ2aD6nJJJ4W6mmr55pe5soSlwiwDi+zjBndWUsfUy1lvngjA8y97A0D4lTccrJI2yRkOY4Za5pyCO2CqPceK6+aZtK6kqrVBpJnq2RNqZNu0bBk98lxa4DppOcjVoqCmo66hjsHENYygrpJIjypY3cuqAMnuFukamtk1NwMEDGCSukLYWLMGmYcWuUdFyvqg7TcayOvNqvDYva+XzIKiFpbHUsGA7DSTpc0kZbk7EEE74nFuYCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiA+ZVNrqhvEM8nOBdZ4HujZD9WtkacOc7zjactA6OcCTtpUzxXWS0lmmbSOLKupc2mp3ge7JIdIdj7OS4+jSoqGGKnghpoGBkEDGxxsH1WtGAFUeL616apKHzSJGnq3yy+EZHHV5Y8sbei+Ii8VKTk8vks0kjFU07J2aXfI9wVULiyRl8tjopDDWRSulM7ANQa1jm43G41PGx8yrooO4tDa2THkCp2gulXPKMSipLDN4Xr6Rms/tTGw3OluDNmZDJo3MkYXt+yWk5ad2kfAm9LlJBgudtuuWH6Nn1aXNG7ZC2N5z1GGucceYG+2/Vl7PRajr1bnz5lVdX054CIilnIIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCFFF3y6/RlIx8cHtFTPIIaaAP0815yeuNgAC4nBwGnYnZM4BX6muffK2jrWRtZb6R0klMXOy+Z5aWCTHRrNJfjcl2oHA75/q+vRRtmtX0bSU1P7bLU8iJsbB7sbWgacNaNyNuriT6r1e56qkoXVNGYy6HxOjm2Y8dxq7Hyd0HdeG8Qulq9TjPbhFpTHpwJHtnGEB9NvMKGo57jdYm1ALrdSyNDo2uYDO4dQTnLWd/CQcgjJB2G/PBI4iSGT9qBg6j73xUCdWx7W+/8AfY7RluNrO2enxUFcXaqqUjtgLJFfWNrBSVcbo5HtJik+q8j3m+jh5d/kcajnFziT3OVJppnCWZIymad1jdNZrjEzaR9K+Nh+04aR88kLri5jDTmrrLbSaTieuiJI7NiJmOfT9m1v8S6cvVeERxTKXqyu1bzPAREVqRQiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAKs3eio7nxXQ01yhiqIGUNRKyGYBzS7XE0uIOxIBx6ayrMqvxzzqako7lQS8mvhqo4I5THrAZM9sbgR3G7XD7TG9RkLDxjuDSvPDkUd4tMdq4VsE1vfI4V8stNGHwtA2LNuvXz7dOq0eKeF7eaq30kXtNPS11RHFLFHUyBhaDqc3GcDIGNsdVn+i48mT2+7mTqZDdKgEn90PDB8AMLWudqrakNljvFdLNA5stPHOYzHrYQ5oc4M1YJAz4lT/rOim9rz7ok/wCNYixfqVaNi19za4bgi61X/wBN1XH8s8XT8N2y5XOKtipBUYrIGTUzgcd9pCdxvqxnI6q5WW+0t3hcYg6KoiOmopZNpIHeTh/gRsRuMhbVXOynic8jU76rR9Y+WFZS09Fq+KKfscVOUeGcl4gFfC2N9RSsyytgImgdluTK1hBB3aSHOHcb9dwFm+kI/pYW8NJfyDM5/Zu4AHxOc/DHmst/ucMpdHG/m0tG/n1ckXiEkrchkTeziHbnH1g0b7hRDpIrM+lq7o48xwmmqeX4nPcQ06WjvgNDR6NCqNVRUpbILhPt9cZ/v3J1VksbmXfhGnbLf5p36f8AYaZsDN/6SQh8m3owQ/DUryud8E2eanvlLcqx8hrKyhnqqiJ52g50kJjjA+yGOBPU432AA6IrfTVdGmMPQg2S3ybCIi7mgREQBERAEREAREQBERAEREAREQBERAERRl+vdLYre+srNRA2ZGzGqR3Zozj7zsACSQAgJHUE1D/RXE73xrdLhWnm1jaeldpMMVNI+MDPm/YuPXyBx7qm/wBG3GdTVVsdoudYyZxEjY3SvxK1zTtnfxggHcjO3U52y4tcnezTTrgpS/HmdTRfM+i+rBwCrfG9TTts7qCWAVM9fmKKDVp3G5eSN2hnvahuCABuQDZFQrpMariK4zHJbScuijyOnhbK8t+OuMH+zC52y2xbNoR3SwQUc3E1vjZHmkuIaMGVzzC4+unS4Z+GB6LL9L8RAgi10zgP61Zj/wBFJjO2e3ovoOFRy0mnk8uCLHMvUh6y4818c94sFWx8YwKyhm1uiHkHMLZAP3QtqigtN7hBjudxrIwNLoZrhM4fB7C7c+jhlbu4yQTlQV4tMslUy4W6VtLVxkZlbHkuaPquGRqHX4dsHdYem+DbTNw93g188tZJGopoaaUwU8bWwsADGgABox0AChKmOorMRVL7ZCZSWxUlS3U+RpOC3mB2GFzdjhrsAnqtmnuL5p3wVkfLqgC8aXahM0bam9+4yMZGe43WAttbqqnupq4dXNzzGuD5JBpLREwA5OSR4BnxDpndRqoWUyxP5vtnv/06zalHtwdH4ec251Ul/ZljaqlipvZne9A+KSXmAnoTqfpOP6isCg+D6KagsEEdSwxTyPkqJYiQTG+R7pC3bbYuxt5KcXqI5aWSpYREWwCIiAIiIAiIgCIiAIiIAiIgCIiAIiIDVuFwprbSPqqyQRwsxqcfMkAAAbkkkAAbk7AFcs/SHeamqqIqr2GuprdHBpjmmiLcOeSXlzc5bs1gBcPrOG2Vd+KXYudmMmDGJZjGD3mEZ0/9vMVH45vggoqq0tpJTJVwPaZ3loYGHwuLd8l2/THUj4Kvv1ltephTVDLfd/YlaaHfeuUUqOH2kxsllbqgbz3zvGCxm3bpk79dhjuQskVTDCXl0Z9mnjex+YNRy2QjLoiMncHoNvTqPFFUVNC50sLIHf7RFOJJxkAs0ublgwSNum3dY7jW6XGZ0s75Wvc2VoA8TzqLiexcTnp3JwN1ZuMpuW7gspKVkpb3iP54x+fv9Tt36PbpHceGabRUxzSwl0bw1+osaHODM98FgaQT1ByrQuTfozglpb7RUznPdy7bK2Q5yMNMAb/Mj4uwusrjCW6OSlksPB4eXBhLBqIGwzjK5jYJ+faKdz3udO4aqov2eZz/AL3UOztWRjtsNl1D5qDuvCVoudSauSB8FW73qimldE9/YasHD/4gVrbX1I4ybVz2PJWvv+5DgdSFp8V8PXGyQw1dBebpNSaiKnVFDI6IbaXACPJGdj1xkE4AJUdS0FXVwMlZxNXSwvGpromQgEeYwxQZ0uHLJUbFLgl5KmNlXHSnVzZWOe3bbDcZ+fiH5+SzEHYgZP5KGPDlKcSGqrjUtdqjqHVDi6N3m0Hwjv23yQcglSc0vs8OXHU4jHkT6n0XNqPkzdZ8yAvAEDWyMGHQVcPLx5vkbG4fhe5WvgqngfxLXyGCISRUFOQ8MGrL5Jw7fr0Y37lUYH/StWQxj/Z6WfVM97S3mSN3a0A/VBOrPchuM4KuXBG3EV1H/T6P/wAlSlUl/lRj5pM52/ttl20+XRekRW5CCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgIDjQH9X6hzSWyB8XLkH9C8yNDZPXTnOOhxjBzhV6Xh60yN01VvirSNjLWs573efidnHwGB5YU1xu8S0VFa3lwhudSaaYtODyhFJI5o/eEenPUatt1CCxWHWXMtVvbKDnmNgaJAT9seLPzyvP+M3KEopTcX9F/OUS9NFtPtkpfFtjitNZSi0xOc2ra8ezudnlkY8TS7JDPFgg5xkbbqKgpxHJF7bLFLKwgxUVNlxOD7xAySRsR0A7kqeuFstlHd6iKrYyspzAJ+ZWjnvhAOC0udk6dwRnceJWN1qpqClaacMaCcYjY1rfuCfqsqqY1yblnz4yS07JLbu7ehrfo5oauHiV9RMSZJKJ5qWg+GMF7OS34+GY7dMY32J6kqxwJC0Weeflhr6iuqHEgY1NbI6Nh/Axv3BWdXVCfTWeSrm8yeAi+ZWpdbjFa7fPWzglkTNWlvVx7NHqTgD1IXY1Nk9c/euR1Rr6S6XOutcTKi3yV0zeREWtcxzXEOLScA5cHEjI3JO+cKXoKeimujG8WUlHXOrIny82pia9sUzcuLBqHu6M6dukR7nfzZZKe1cK088kApo3s53IjZjDpXaxG1o6nL9IA8wFWeKamVNcdiy28YJGnj8TyRZ4lha4sko69rxtp9jmP8Agzf5LxLVXC4eGnp3UjMg86YYLR5tZ1JH2sAHfDuisVLa7xcp6iJ0ttopYHMEkMtG6c4cwOBDmytyNy3OBu13bdbsnB1W+BwluwbIBkGkpGx5Pb3y9clVqmvkS98nXrV+pWqSmipIGQQgtYzoSckk9SSepJOSVKcO3OgtN9qZrlW09LHUW+IMdPIGA8uWbO5/tGrSjsbcZnuFfP8AvSMZ/ka1bdus1tpqynm9lEsjJGlslQ90rm7+bicfLC20uhsqu6k5ZMXXRnDakdDa8OAc3BaRkEFelC8IOZ+r9LC0kikL6Tfzhe6I/wCRTStiGEREAREQBERAEREAREQBERAEREAREQBERAQPFtHNUW2OopIzLVUEzamKNo3fgFr2j1cxzwPUhVea02q8ltewuPNjBZPTSvic8dsuaQT8Cui6fVUqanjouJ7hSU8Yip5IIqoNacDmPdIHkDtnQ0nHck9SVSeNUy6XXg8OP+mStNP4tj4ZoQ2OgttNM+GOSRzm5c6V7pXvx0BJyT16LBDT1NFY7ZSzEskggYx7/e0uDf5FWBY54hNE6N31u5C8utVN/O898lhtSZI8FVEEnDlJBTtLXUjBTSxl2otkaMHfvn3s9wQe62au/wBJDM+mpo566qYSHQUbNZaR2c7ZjD+84Kj0c11oa6Q2lsWqpj5dQJgSGFudMgGRvvpPnlvZuFpW+2XPhsx1NBVYmY3S6LSGQ1J780DJLj2eSSCc7jIPsa/E9PtjvliT8iulpp7njg6C2ov9TvHQ0VFGRkGpnMrwfIsYA0fJ5VR4uuFfSV1NBfKgT0FNE6tmfR2yZrA5uzAXanjAw52CRghhVztV6pLhaI7gwujY4EPZJgPjeDhzCB3ByNu/TKgKmZ/EfEVNbSMUFLirqWA7OAP7Jrvi8F392R0JVlkjng8NVN44OqIa4OjuNUTURMcS32d2PBGSO2kBr8ddT1tcP2moq6iK6XemNOYf+EonODjCcYMj8HGsgkAD3Wk9ycWvTgYB2TT6lcpUwlOM2u64MqTSaIOqxRcV0U7i0MuFO6kce7pI8yRj8PP/ACU7n5LRu1qgutO2GodKzRI2RkkMhY9jh3DgcjuPgSqjdOHqejqAx9Tcqlrm6h7TcJ5O/TBfj8l0MI2Lry7dLK+qliggBJa+V4Y3ST5lRX01TPIFAyornnxN9liLmn+8OGfe5eHUVFbnMZa7VTGtqpNELGRNY6R/XLnY6AAlzjnAHc7KWq+DWOofaLrM+5VAGZIpR+wA7hsW4/FqPqhtnyJTgyo9ptlVU6GxtmrZnth1BzoTrOprsbatYf0yN+pVh1ehXOm2e1MIey20cbgMNkhhbHIB6Pbhw+RClaG51drDnSyT11AwZex/jqIG9y1w3laOuPfAycv6IatYLkixRTsnhZNC5skcjQ5j2uyHA9CD5LKsmAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAKp8UMMXEFqqcgNnjmpT9p+GyN+4Ml+9WxQfF1HNWWaU0bS+spnNqado2L3sOdGftAFp9HFR9VT1qZV+qN65bZJkeiw0tVDV00VTTvD4ZWB7HDuDuFmXztxcXhlwnkwspmMndNk5cMEdl6nY2aNzCBu1ZPitatqGwQnOzyMABbRcpSWDJB2mYUtwqqMuaIqqMVTARgCSMhkh+bXRfhJVs4FgJtDrnICJLlIagZzkRYAiH4A1xHm4qhXGlmrrhaKKDZ1ZVmmlIJBELo3mQj1DWk/JdfZG1jGsYMNaMADsPRe98Pm56eLf2KrULFjPaIimnAKD4kZmKGTycW/wCvuU4oviFubfnyeFhmVyQHCUArL7ca5wBFExlHFt7rnBskh+YMQ/hPmrkWgjB6eqrfA7QKCueAA59fKXeuNIH5AKx6t8YRGGVCvg9lrpIm9M5b8CsDHOY9r2OLXNwQWnGFL8TtYzl1LnsY0Ah7nOAx5dfmqn+sdiB0m9W7V5CqYf5obruWWwVIorl7CMtpawOmpm42ikaRzYx5A5D2jfq/oGgK0Lmj75bTRvq6W40kr6BwrAIpWucNGdYAB6uiMjfmulBwcARuD0RGrWGfURFkwEREAREQBERAEREAREQBERAEREAXzHqiICjXaNvC9TJLISLTVTao3N3NNK84LdPXS5xyMdCT0GMZp6yGncWyag4dQAiLyvi+kqV0Zrtu5LHSzbjhmlNdtbcQMIPm7qou7VkdtpzXXSblRb+Mgu6DPQZ7Iih6KmE7VD1O903COUT/AAnZaiSshvVb+yiEZ9lp8hzvEB43kbA6cgNGdicnOwuyIvZU1xrgox4KmcnKWWERF0NQoi/TsNHJCM626XEehK+osMyuSpUfEDuHbbfphSPrJGVJnigY8MGj2dhJLj0GY39ATuNlmkZerlk3K7yQRn/lrdmFuDuMybvJ9QWj0RFR+N6u7Twj0njOf4JWmrjJvcjRqeHrbAHVbKdrqkY/bSgPeR+8d/zWDoMDb4IioKbZ2RzN5LBRS4RjbbqO5Xu1QV7HyQVEstO9odjWDGZNLsdWnkjIXVQ0NAAGAOiIvWeGNvTrJWar9w+oiKwI4REQBERAEREAREQH/9k=" class="img-fluid rounded-start" alt="...">
-
-            </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <p class="card-text">Producto ID: @ViewBag.Producto.ProductoId </p>
-                    <p class="card-text">Nombre: @ViewBag.Producto.NombreCompleto</p>
+<br />
+<button type="button" id="botonEditarLote" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModaLote">
+    <i class="fas fa-plus-circle"></i> EDFE categoría
+</button>
+<div class="modal fade GeneralModal" id="ModaLote" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-cabecera">
+                <div id="pibo"></div>
+                <div class="modal-header-view TituloModal">
+                    <h2 class="modal-title">Actualizar lote</h2>
                 </div>
+                <div class="modal-header-view" id="modal-cabecera-equis">
+                    <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="modal-cuerpo">
+                <form id="formCambiarPrecio" asp-action="" asp-controller="" method="post">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="icono-input">
+                                <label class="detalle-label" for="precioProducto">Por producto:</label>
+                                <input readonly type="text" id="precioProducto" name="precioProducto" class="detalle-input form-control">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+
+                            <div class="icono-input">
+                                <label class="detalle-label" for="precioUnidad">Por unidad de producto:</label>
+                                <input readonly type="text" id="precioUnidad" name="precioUnidad" class="detalle-input form-control">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="productoId"]">
+
+                    <div class="modal-contenedor-footer">
+                        <button type="reset"  class="btn btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn btn-primary btnGuardar">Actualizar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-@if (ViewBag.Lotes.Count > 1)
-{
-    <div id="contenedor-redondear" class="text-center d-flex justify-content-center align-items-center">
-        <form asp-action="RedondearPrecios" asp-controller="Productos">
-            <input type="hidden" name="id" value="@ViewBag.Producto.ProductoId"/>
-            <button type="submit">Redonderar precios</button>
-        </form>
-    </div>
+<h4 class="TituloSobreTabladetalle">Datos de producto</h4>
+<div class="pedido-info">
+    <table class="table tablaDetalle">
+        <thead>
+            <tr>
+                <th>Producto ID</th>
+                <th>Nombre</th>
+                <th>Marca</th>
+                <th>Presentacion</th>
+                <th>Categoria</th>
+                <th>Cantidad total de productos</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@(ViewBag.Producto.ProductoId)</td>
+                <td>@(ViewBag.Producto.NombreProducto)</td>
+                <td>@(ViewBag.Producto.MarcaId)</td> 
+                <td>@(ViewBag.Producto.PresentacionId)</td>
+                <td>@(ViewBag.Producto.CategoriaId)</td>
+                <td>@(ViewBag.Producto.CantidadTotal)</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
-}
 
 @if (Model.Any())
 {
     <div id="contenedor-datos-lote" class="text-center">
         <!-- Agregamos la clase text-center para centrar la tabla -->
-        <table class="table table-striped tableDetalle" style="width: 80%; margin: 0 auto;">
-            <!-- Ajustamos el estilo de la tabla para centrarla -->
-            <thead class="tableDetalle-thead">
-                <tr>
-                    <th>Lote ID</th>
-                    <th>Lote</th>
-                    <th>Cantidad en lote</th>
-                    <th>Precio por producto</th>
-                    <th>Precio por unidad de producto</th>
-                </tr>
-            </thead>
-            <tbody class="tableDetalle-tbody">
-                @foreach (var lote in Model)
-                {
+        <div class="pedido-info">
+            <h4 class="TituloSobreTabladetalle">Lotes asociados</h4>
+            @if (ViewBag.Lotes.Count > 1)
+            {
+                <div id="contenedor-redondear" class="text-center d-flex justify-content-center align-items-center">
+                    <form asp-action="RedondearPrecios" asp-controller="Productos">
+                        <input type="hidden" name="id" value="@ViewBag.Producto.ProductoId" />
+                        <button type="submit">Redonderar precios</button>
+                    </form>
+                </div>
+
+            }
+            <table class="table tablaDetalle">
+                <thead>
                     <tr>
-                        <td>@lote.LoteId</td>
-                        <td>@lote.NumeroLote</td>
-                        <td>@lote.Cantidad</td>
-                        <td>@lote.PrecioPorPresentacion</td>
-                        <td>@lote.PrecioPorUnidadProducto</td>
+                        <th scope="col">Lote ID</th>
+                        <th scope="col"># de Lote</th>
+                        <th scope="col">Cantidad en lote</th>
+                        <th scope="col">Precio por producto</th>
+                        <th scope="col">Precio por unidad de producto</th>
+                        <th scope="col" class="fechaVencimientoTabla">Fecha de vencimiento</th>
+                        <th>Accion</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var lote in Model)
+                    {
+                        <tr>
+                            <td>@lote.LoteId</td>
+                            <td>@lote.NumeroLote</td>
+                            <td>@lote.Cantidad</td>
+                            <td>@(lote.PrecioPorPresentacion)</td>
+                            <td>@(lote.PrecioPorUnidadProducto)</td>
+                            <td>@(lote.FechaCaducidad)</td>
+                            <td>Editar</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
-    <div class="pagination-detail">
-        <a href="@Url.Action("Details", new { id = Model.First().ProductoId, page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 })" class="prev-next @(Model.HasPreviousPage ? "" : "disabled")">Anterior</a>
-
-        @for (int i = 1; i <= Model.PageCount; i++)
+    <div class="pagination-container mt-2">
+        @if (Model != null && Model.PageCount > 1)
         {
-            <a href="@Url.Action("Details", new { id = Model.First().ProductoId, page = i })" class="@(i == Model.PageNumber ? "active" : "")">@i</a>
+            <div class="d-flex justify-content-center mb-5">
+                <nav aria-label="Page navig ation">
+                    <ul class="pagination justify-content-center">
+                        <!-- Botón para ir a la primera página -->
+                        @if (Model.PageNumber > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Producto.ProductoId, page = 1, order = ViewBag.CurrentOrder })" aria-label="First">
+                                    <span aria-hidden="true">Primero</span>
+                                </a>
+                            </li>
+                        }
+                        <!-- Botón para la página anterior (oculto en la página 1) -->
+                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                            <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Producto.ProductoId, page = Model.PageNumber - 1, order = ViewBag.CurrentOrder })" aria-label="Previous">
+                                <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                            </a>
+                        </li>
+                        <!-- Iterar sobre las páginas disponibles -->
+                        @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                        {
+                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Producto.ProductoId, page = i, order = ViewBag.CurrentOrder })">@i</a>
+                            </li>
+                        }
+                        <!-- Botón para la página siguiente (oculto en la última página) -->
+                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                            <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Producto.ProductoId, page = Model.PageNumber + 1, order = ViewBag.CurrentOrder })" aria-label="Next">
+                                <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                            </a>
+                        </li>
+                        <!-- Botón para ir a la última página -->
+                        @if (Model.PageNumber < Model.PageCount)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Producto.ProductoId, page = Model.PageCount, order = ViewBag.CurrentOrder })" aria-label="Last">
+                                    <span aria-hidden="true">Último</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
         }
-
-        <a href="@Url.Action("Details", new { id = Model.First().ProductoId, page = Model.HasNextPage ? Model.PageNumber + 1 : Model.PageCount })" class="prev-next @(Model.HasNextPage ? "" : "disabled")">Siguiente</a>
     </div>
 }
 else

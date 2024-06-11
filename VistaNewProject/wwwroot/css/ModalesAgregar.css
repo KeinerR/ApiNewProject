@@ -38,7 +38,7 @@
     right: 10px;
     transform: translateY(-50%);
     z-index: 2; /* Permite la interacción con el botón de cierre */
-}
+}   
 
 .ContenedorVista .modal-dialog {
     width: 100%;
@@ -56,6 +56,15 @@
 .row {
     border: solid red dashed;
     margin: 0; /* Eliminar márgenes para un mejor ajuste */
+}
+.MensajeInicial {
+    text-align: center;
+    justify-content: center;
+}
+
+.MensajeErrores {
+    text-align: center;
+    justify-content: center;
 }
 
 /* Media queries para adaptabilidad */
@@ -114,17 +123,23 @@
     display: block;  
     max-width: 100%
 }
-.MensajeInicial {
-    text-align: center; 
-    justify-content:center;
-}
-.MensajeErrores{
-    text-align: center; 
-    justify-content:center;
-}
+
+
 
 /*ajustar tamaño para la modal de categoria*/
 #ContenedorCategoria .modal-dialog {
     width:450px;
  
 }
+
+/*ajustar tamaño para la modal de categoria*/
+#ContenedorMarca .modal-dialog {
+    width: 450px;
+}
+
+/*ajustar tamaño para la modal de categoria*/
+#ContenedorPresentacion .modal-dialog {
+    min-width: 690px;
+}
+   
+

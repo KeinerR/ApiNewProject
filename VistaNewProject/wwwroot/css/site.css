@@ -192,9 +192,9 @@ header {
 
 
 /*Tamaño de los iconos del menu*/
-#Menu .icononosMenu {
+#Menu .iconosMenu {
     justify-content: center;
-    font-size: 1.5em;
+    font-size: 1.4em;
     color: white;
 }
 /*Se usa con el JS para darle el efecto de aprecer y desaparecer al menu*/
@@ -354,16 +354,21 @@ input[type="checkbox"]:checked + .sub-menu {
         align-content:center;
         padding:4px;
     }
+    .table-custom .consecutivo {
+        width: 50px; /* Establece el ancho deseado */
+    }
     .table-custom .contenedorCantidad {
         width: 50px; /* Establece el ancho deseado */
     }
     .table-custom .contenedorEstado{
         width: 50px; /* Establece el ancho deseado */
     }
+
     .table-custom .botonesTablaContenedor {
         display: flex;
         gap:5px;
         justify-content: center;
+        min-width:150px;
     }
 
  
@@ -514,64 +519,9 @@ input:checked + .slider:before {
 
     }
 
-.botonEnviarDetalle {
-    margin-left:5px;
-    background: #F8D545;
-    border-radius: 50px;
-}
-    .botonEnviarDetalle:hover {
-        background: #F8D435;
-        border-radius: 50px;
-    }
 
-.botonVolver {
-    border-radius:50px;
-    color:white;
-    background-color: #213b68;
-}
-    .botonVolver:hover {
-        border-radius: 50px;
-        color: white;
-        background-color: #212b68;
-    }
-/*Estilo de Detalle de compra*/
-.detalle-compra {
-    border: 1px solid #ccc;
-    margin-bottom: 20px;
-    padding: 10px;
-}
+/*--------------------------------------Estilos del paginador-----------------------------------------------------------*/
 
-.detalle-compra header {
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.detalle-compra .detalle-info {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-    .detalle-compra .detalle-info .info-label {
-        font-weight: bold;
-    }
-
-    .detalle-compra .info-label {
-        margin-left: 10px;
-    }
-    
-
-    .detalle-compra .info-value {
-        display: inline-block;
-        margin-left: 5px;
-    }
-
-
-.detalle-compra .detalle-info .info-value {
-    flex-grow: 1;
-}
-
-/* Estilos para el contenedor de paginación genetal By:Esteban*/
 .pagination-detail {
     display: flex;
     justify-content: center;
@@ -600,31 +550,21 @@ input:checked + .slider:before {
         font-weight: bold;
     }
 
-/* Estilos para el ícono de paginado */
-#iconoDePaginado {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-}
+    /* Estilos para la paginación de color */
+    .pagination-container .page-item.active .page-link {
+        background-color: #213b68; /* Cambia el color de fondo del enlace activo */
+        color: white; /* Cambia el color del texto del enlace activo */
+        border-color: #213b68; /* Cambia el color del borde del enlace activo */
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6); /* Sombra negra */
+    }
 
-/* Estilos para la paginación de color */
-.pagination-container .page-item.active .page-link {
-    background-color: #213b68; /* Cambia el color de fondo del enlace activo */
-    color: white; /* Cambia el color del texto del enlace activo */
-    border-color: #213b68; /* Cambia el color del borde del enlace activo */
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6); /* Sombra negra */
-}
+    /* Estilos para enlaces de paginación deshabilitados */
+    .pagination-detail a.disabled {
+        pointer-events: none;
+        opacity: 0.6;
+    }
 
-/* Estilos para enlaces de paginación deshabilitados */
-.pagination-detail a.disabled {
-    pointer-events: none;
-    opacity: 0.6;
-}
 
-/* Estilo para el icono de cierre (la "X") dentro de un botón con clase btn-close */
-.btn-close::before {
-    color: red; /* Cambia el color a rojo (o el color que desees) */
-}
 
 
 /*Mas pequeño que el maximo zoom de pantalla*/
@@ -730,6 +670,11 @@ input:checked + .slider:before {
     }
     .cabeceraSalir .Perfil span {
         display: none;
+    }
+
+    /*ajustar tamaño para la modal de categoria*/
+    #ContenedorPresentacion .modal-dialog {
+        width: auto;
     }
 
     
@@ -852,6 +797,7 @@ input:checked + .slider:before {
 }
 
 
+
 /* Media queries para hacer la tabla responsive */
 @media screen and (max-width: 400px) {
     .table-custom tbody tr {
@@ -895,41 +841,59 @@ input:checked + .slider:before {
 
 
 
-/*Estilos para Detalle de producto*/
-#contenedor-datos-producto {
-    display: flex; /* Convertir el contenedor en un flex container */
-    align-items: center; /* Centrar verticalmente los elementos hijos */
-    justify-content: center;
-}
-#contenedor-datos-lote table td{
-    padding:4px;
-  
 
-}
 
-.contenedor-detalle-producto {
-    margin-top:0px;
-    padding: 20px;
-    border-radius: 5px;
+
+
+
+
+/*Texto alerta general*/
+#MensajeAlertaGeneral {
+    font-size:20px;
+    text-align:center;
+ 
 }
 
-.detalle-label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: bold;
-}
-
-.detalle-input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom:10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
 .form-control:focus {
     box-shadow: 0 0 0 0.1rem rgba(0, 0, 255, 0.25); /* Cambia el color de la sombra a azul */
 }
 
 
-   
+
+
+/*----------------------------------------Estillos para el filtro---------------------------------------------------------------*/
+.contenedor-filtro {
+    padding:20px 0px 0px 10px;
+}
+
+.input-sm {
+    font-size: 16px;
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+    .input-sm:hover {
+        background-color: #f1f1f1;
+        border-color: #b3b3b3;
+    }
+
+    .input-sm:focus {
+        outline: none;
+        border-color: #007bff;
+        background-color: #fff;
+    }
+
+
+/* Estilo para el icono */
+.icono-input {
+    position: relative;
+}
+    .icono-input i {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(50%);
+    }

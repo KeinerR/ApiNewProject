@@ -1,7 +1,7 @@
 ﻿@using X.PagedList
 @model X.PagedList.IPagedList<VistaNewProject.Models.Categoria>
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Categorías";
 }
 <div class="ContenedorVista" id="ContenedorCategoria">
     <br />
@@ -10,117 +10,131 @@
         <div class="mr-auto">
             <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
                 <div class="input-group">
-                    <input id="buscarCategoria" type="text" class="form-control" oninput="searchCategoria();" placeholder="Buscar categoria" aria-label="Search" aria-describedby="button-addon2">
+                    <input id="buscarCategoria" type="text" class="form-control" oninput="searchCategoria();" placeholder="Buscar categoría" aria-label="Search" aria-describedby="button-addon2">
                     <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputCategoria();" type="button"><i class="fas fa-search"></i></button>
                 </div>
             </form>
         </div>
 
         <!-- Botón para abrir el modal -->
-        <button type="button" id="botonAbrirModal" onclick="simularClickCategoria(); obtenerDatosCategorias();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalCategoria">
-            <i class="fas fa-plus-circle"></i> Agregar Categoria
+        <button type="button" id="botonabrirModalCategoria" onclick="simularClickCategoria();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalCategoria">
+            <i class="fas fa-plus-circle"></i> Agregar categoría
         </button>
     </div>
 
 
 
     <!-- Modal -->
-    <div class="modal fade GeneralModal" id="ModalCategoria" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade GeneralModal" id="ModalCategoria" tabindex="-1" aria-labelledby="exampleModalLabel" onblur="AlPerderFocoCategoria();" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content" id="FormPrincipalCategoria">
                 <div class="modal-cabecera">
                     <div id="pibo"></div>
                     <div class="modal-header-view TituloModal">
-                        <h2 class="modal-title">Agregar Categoria</h2>
+                        <h2 class="modal-title">Agregar categoría</h2>
                     </div>
-                    <div class="moda-header-view" id="modal-cabecera-equis">
+                    <div class="modal-header-view" id="modal-cabecera-equis">
                         <button type="button" onclick="limpiarFormularioCategoria();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                 </div>
-               <div class=modal-cuerpo>
+                <div class="modal-cuerpo">
                     <form asp-controller="Categorias" asp-action="Create" method="post" class="modal-formulario-crear-categoria">
                         <div class="modal-body">
-                            <div class="d-none">
-                                <input type="hidden" id="CategoriaId" name="categoriaId" class="form-control" />
-                                <select id="EstadoCategoria" name="estadoCategoria" class="form-control">
-                                    <option selected value="1">Activo</option>
-                                    <option value="0">Inactivo</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="NombreCategoria" class="control-label">Nombre Categoria</label>
-                                <span class="Mensaje">*</span>
-                                <input type="text" id="NombreCategoria" name="nombreCategoria" class="form-control" />
-                                <span id="NombreMarca" class="text-danger"></span>
+                            <div class="row">
+                                <div class="form-group">
+                                    <label for="NombreCategoriaVista" class="control-label">Nombre categoría<span class="Mensaje">*</span></label>
+                                    <input type="text" id="NombreCategoriaVista" oninput="validarCampoCategoria(this,'NombreCategoriaVista');" name="nombreCategoria" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+
                             </div>
                         </div>
                         <div class="MensajeInicial"></div>
+                        <div class="MensajeErrores"></div>
                         <div class="modal-contenedor-footer">
                             <button type="reset" onclick="limpiarFormularioCategoriaAgregar();" class="btn btn-secondary">Cancelar</button>
                             <button type="submit" class="btn btn-primary btnGuardar">Agregar</button>
                         </div>
                     </form>
-               </div>
-            </div>
-
-            <div class="modal-dialog">
-            <div class="modal-content" id="FormActualizarCategoria" style="display:none;">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="TituloModalCategoria">Actualizar Categoría</h5>
-                    <button type="button" class="btn-close" onclick="limpiarFormularioCategoria()" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div id="MensajeInicialActCategoria"></div>
-                <form asp-controller="Categorias" asp-action="Update" method="post">
-                    @Html.AntiForgeryToken()
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <input id="CategoriaIdAct" name="categoriaIdAct" class="form-control" type="hidden" />
-                        </div>
-                        <div class="form-group">
-                            <label for="NombreCategoriaAct" class="control-label">Nombre categoría</label>
-                            <input type="text" id="NombreCategoriaAct" name="nombreCategoriaAct" class="form-control" autocomplete="off" />
-                            <span class="text-danger" id="mensajeNombreCategoriaAct"></span>
-                        </div>
-                        <div class="form-group">
-                            <label for="EstadoCategoriaAct" class="control-label">Estado</label>
-                            <select id="EstadoCategoriaAct" name="estadoCategoriaAct" class="form-control">
-                                <option value="1">Activo</option>
-                                <option value="0">Inactivo</option>
-                            </select>
-                            <span class="text-danger" id="mensajeEstadoCategoriaAct"></span>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary" id="botonEditararCategoria">Actualizar</button>
-                    </div>
-                </form>
             </div>
-            </div>
-
         </div>
+            <div class="modal-dialog">
+                <div class="modal-content noBe" id="FormActualizarCategoria">
+                       <div class="modal-cabecera">
+                            <div id="pibo"></div>
+                            <div class="modal-header-view TituloModal">
+                                <h2 class="modal-title">Actualizar categoría</h2>
+                            </div>
+                            <div class="moda-header-view" id="modal-cabecera-equis">
+                                <button type="button" onclick="limpiarFormularioCategoria();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                        </div>
+                        <div class="modal-cuerpo">
+                            <form asp-controller="Categorias" asp-action="Update" method="post" class="modal-formulario-actualizar-categoria">
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal-body">
+                                        <div class="noBe">
+                                            <input id="CategoriaIdAct" name="categoriaId" class="form-control" type="hidden" />
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group">
+                                    <label for="NombreCategoriaVistaAct" class="control-label">Nombre categoría<span class="Mensaje"></span></label>
+                                                <input type="text" id="NombreCategoriaVistaAct" oninput="validarCampoCategoria(this);" name="nombreCategoria" class="form-control" autocomplete="off" />
+                                                <span class="text-danger"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="EstadoCategoriaAct" class="control-label">Estado</label>
+                                                <select id="EstadoCategoriaAct" name="estadoCategoria" class="form-control">
+                                                    <option value="1">Activo</option>
+                                                    <option value="0">Inactivo</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="MensajeInicial"></div>
+                                    <div class="MensajeErrores"></div>
+                                    <div class="modal-contenedor-footer">
+                                        <button type="reset" onclick="limpiarFormularioCategoriaAct();" data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
+                                        <button type="submit" class="btn btn-primary btnGuardar">Actualizar</button>
+                                    </div>
+                                </form>
+
+                        </div>
+                </div>
+            </div>
+
     </div>
-
-
-    <br />
+    <div class="contenedor-filtro">
+        <select name="order" class="input-sm empSelect" onchange="redirectToOrder(this)">
+            <option selected disabled>
+                Ordenar por
+            </option>
+            <option data-url="?order=alfabetico">Ordenar por nombre (A-Z)</option>
+            <option data-url="?order=name_desc">Ordenar por nombre (Z-A)</option>
+            <option data-url="?order=first">Ordenar por más antiguo</option>
+            <option data-url="?order=reverse">Ordenar por más reciente</option>
+        </select>
+    </div>
     <hr>
-
     <table class="table table-custom text-center">
         <thead>
             <tr>
-                <th>
+                <th class="contadorB consecutivo noIs">#</th>
+                <th class="consecutivo contador">
                     #
                 </th>
                 <th class="d-none">
                     categoria Id
                 </th>
                 <th>
-                    NOMBRE CATEGORIA
+                    Nombre categoría
+                </th>
+            <th class="contenedorEstado">
+                    Estado
                 </th>
                 <th>
-                    ESTADO
-                </th>
-                <th>
-                    ACCIONES
+                    Acciones
                 </th>
             </tr>
         </thead>
@@ -148,19 +162,16 @@
                             <input type="checkbox" @(item.EstadoCategoria != 0 ? "checked" : "") onchange="actualizarEstadoCategoria('@item.CategoriaId',this.checked)">
                             <span class="slider"></span>
                         </label>
-                        @Html.DisplayFor(modelItem => item.EstadoCategoria)
                     </td>
-                    <!-- Agrega esto a tu tabla dentro de la sección tbody -->
-                    <td class="contenedorBotonesTabla" >
-                        <button class="btn botonEditarCategoria" id="botonEditar" data-categoria-id="@item.CategoriaId" data-bs-toggle="modal" data-bs-target="#CategoriaModal"><i class="fas fa-edit"></i></button>
-                        <a asp-action="Details botonDetalleCategoria" asp-route-id="@item.CategoriaId" class="btn btnDetalle"><i class="fa-solid fa-file"></i></a>
-                        <!-- Dentro del bucle foreach en tu vista Razor -->
-                        <form style="display:inline-block;" asp-controller="Categorias" asp-action="Delete" method="post" class="delete-form">
-                            @Html.Hidden("id", item.CategoriaId)
-                            <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
-                            <button type="button" onclick="confirmarEliminacion()"  value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
-                        </form>
-
+                      <td class="botonesTabla">
+                            <div class="botonesTablaContenedor">
+                                <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoCategoria(@item.CategoriaId);"><i class="fas fa-edit"></i></button>
+                                <a asp-action="Details" asp-controller="Categorias" asp-route-id="@item.CategoriaId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
+                                <form asp-controller="Categorias" class="eliminarCategoria" asp-action="Delete" method="post">
+                                    <input type="hidden" value="@item.CategoriaId" name="categoriaId" />
+                                    <button type="submit" value="" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                </form>
+                            </div>
                     </td>
                 </tr>
             }
@@ -168,38 +179,39 @@
                 var categorias = ViewData["Categorias"] as List<Categoria>;
                 if (categorias != null)
                 {
+                     int contadorC = 1;
                     foreach (var categoria in categorias)
                     {
-                        <tr class="Categorias" style="display:none;">
+                        <tr class="Categorias noIs" >
+                             <td class="contadorB noIs">
+                                @contadorC <!-- Muestra el valor del contador -->
+                            </td>
                             <td>@categoria.CategoriaId</td>
                             <td>@categoria.NombreCategoria</td>
-
-                            <td class="text-center align-middle ">
+                            <td class="text-center align-middle">
                                 <label class="switch">
                                     <input type="checkbox" @(categoria.EstadoCategoria != 0 ? "checked" : "") onchange="actualizarEstadoCategoria('@categoria.CategoriaId',this.checked)">
                                     <span class="slider"></span>
                                 </label>
-                                @Html.DisplayFor(modelItem => categoria.EstadoCategoria)
                             </td>
                             <!-- Agrega esto a tu tabla dentro de la sección tbody -->
-                            <td class="botonesTabla">
-                                <button class="btn botonEditar" data-categoria-id="@categoria.CategoriaId" data-bs-toggle="modal" data-bs-target="#CategoriaModal"><i class="fas fa-edit"></i></button>
-                                <a asp-action="Details" asp-route-id="@categoria.CategoriaId"  class="btn botonDetalle"><i class="fa-solid fa-file"></i></a>
-                                <!-- Dentro del bucle foreach en tu vista Razor -->
-                                <form style="display:inline-block;" asp-controller="Categorias" asp-action="Delete" method="post" class="delete-form">
-                                    @Html.Hidden("id", categoria.CategoriaId)
-                                    <!-- Agrega el atributo onclick para llamar a la función confirmarEliminacion() -->
-                                    <button type="button" onclick="confirmarEliminacion()"  value="" class="btn botonEliminar"><i class="fas fa-trash-alt"></i></button>
-                                </form>
-
-                            </td>
+                             <td class="botonesTabla">
+                                <div class="botonesTablaContenedor">
+                                    <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoCategoria(@categoria.CategoriaId);"><i class="fas fa-edit"></i></button>
+                                    <a asp-action="Details" asp-controller="Categorias" asp-route-id="@categoria.CategoriaId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
+                                    <form asp-controller="Categorias" class="eliminarCategoria" asp-action="Delete" method="post">
+                                        <input type="hidden" value="@categoria.CategoriaId" name="categoriaId" />
+                                        <button type="submit" value="" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                                </div>
+                             </td>
                         </tr>
                     }
                 }
             }
         </tbody>
     </table>
-    <div class="pagination-container mt-2">
+    <div class="pagination-container mt-2" id="paginationContainer">
         @if (Model != null && Model.PageCount > 1)
         {
             <div class="d-flex justify-content-center mb-5">
@@ -209,14 +221,14 @@
                         @if (Model.PageNumber > 1)
                         {
                             <li class="page-item">
-                                <a class="page-link" href="?page=1" aria-label="First">
+                                <a class="page-link" href="?page=1&order=@ViewBag.Order" aria-label="First">
                                     <span aria-hidden="true">Primero</span>
                                 </a>
                             </li>
                         }
                         <!-- Botón para la página anterior (oculto en la página 1) -->
                         <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                            <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
+                            <a class="page-link" href="?page=@(Model.PageNumber - 1)&order=@ViewBag.Order" aria-label="Previous">
                                 <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
                             </a>
                         </li>
@@ -224,12 +236,12 @@
                         @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
                         {
                             <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                                <a class="page-link" href="?page=@i">@i</a>
+                                <a class="page-link" href="?page=@i&order=@ViewBag.Order">@i</a>
                             </li>
                         }
                         <!-- Botón para la página siguiente (oculto en la última página) -->
                         <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                            <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
+                            <a class="page-link" href="?page=@(Model.PageNumber + 1)&order=@ViewBag.Order" aria-label="Next">
                                 <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
                             </a>
                         </li>
@@ -237,7 +249,7 @@
                         @if (Model.PageNumber < Model.PageCount)
                         {
                             <li class="page-item">
-                                <a class="page-link" href="?page=@Model.PageCount" aria-label="Last">
+                                <a class="page-link" href="?page=@Model.PageCount&order=@ViewBag.Order" aria-label="Last">
                                     <span aria-hidden="true">Último</span>
                                 </a>
                             </li>
@@ -247,8 +259,8 @@
             </div>
         }
     </div>
-</div>
 
+</div>
 
 
 

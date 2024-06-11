@@ -11,7 +11,6 @@ namespace ApiNewProject.Entities
             Detallecompras = new HashSet<Detallecompra>();
             Detallepedidos = new HashSet<Detallepedido>();
             Lotes = new HashSet<Lote>();
-            Movimientos = new HashSet<Movimiento>();
         }
 
         public int ProductoId { get; set; }
@@ -38,7 +37,5 @@ namespace ApiNewProject.Entities
         public virtual ICollection<Detallepedido> Detallepedidos { get; set; }
         [JsonIgnore]
         public virtual ICollection<Lote> Lotes { get; set; }
-        [JsonIgnore]
-        public virtual ICollection<Movimiento> Movimientos { get; set; }
     }
 }

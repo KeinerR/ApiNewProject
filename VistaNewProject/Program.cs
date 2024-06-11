@@ -5,78 +5,79 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using VistaNewProject.Services;
+using VistaNewProject.Services; // Importar el namespace correcto
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Agregar servicios al contenedor.
-builder.Services.AddControllersWithViews();
-builder.Services.AddSession();
-// Agregar cliente HTTP para la API
+// Agregar servicios al contenedor
+builder.Services.AddControllersWithViews(); // Soporte para controladores y vistas
+builder.Services.AddSession(); // Habilitar sesiones
+
+// Configurar cliente HTTP para la API
 builder.Services.AddHttpClient("ApiHttpClient", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["AppSettings:ApiBaseUrl"]); // Corregido el nombre de la sección de configuración
+    client.BaseAddress = new Uri(builder.Configuration["AppSettings:ApiBaseUrl"]); // Base URL de la API desde la configuración
 });
-builder.Services.AddScoped<IApiClient, ApiClient>();
+builder.Services.AddScoped<IApiClient, ApiClient>(); // Registrar ApiClient como un servicio scoped
 
-// Agregar IHttpContextAccessor
+// Registrar IHttpContextAccessor
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-// Configurar la autenticación basada en cookies
+// Registrar el servicio de hashing de contraseñas
+builder.Services.AddSingleton<PasswordHasherService>();
+builder.Services.AddScoped<ProductoService>();
+
+// Configurar autenticación basada en cookies
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        options.Cookie.HttpOnly = true;
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(100000); // Cambia según tus necesidades
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Cookies solo a través de HTTPS
+        options.Cookie.HttpOnly = true; // Cookies no accesibles a JavaScript
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(100000); // Duración de la sesión
         options.LoginPath = "/Login/Index"; // Ruta de inicio de sesión
         options.LogoutPath = "/Login/Logout"; // Ruta de cierre de sesión
-        // options.AccessDeniedPath = "/Account/AccessDenied"; // Ruta de acceso denegado
     });
 
-// Configurar las políticas de autorización
+// Configurar políticas de autorización
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("RolAdministrador", policy =>
-        policy.RequireClaim("RolId", "1")); // La política requiere que el usuario tenga una reclamación de RolId con el valor "1"
-
+        policy.RequireClaim("RolId", "1")); // Requiere RolId "1"
     options.AddPolicy("RolCajero", policy =>
-        policy.RequireClaim("RolId", "2")); // La política requiere que el usuario tenga una reclamación de RolId con el valor "2"
-
+        policy.RequireClaim("RolId", "2")); // Requiere RolId "2"
     options.AddPolicy("RolDomiciliario", policy =>
-        policy.RequireClaim("RolId", "3")); // La política requiere que el usuario tenga una reclamación de RolId con el valor "3"
+        policy.RequireClaim("RolId", "3")); // Requiere RolId "3"
 });
 
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    app.UseExceptionHandler("/Home/Error"); // Manejo de errores en producción
+    app.UseHsts(); // Habilitar HSTS para seguridad
 }
 
-//Estas líneas de código establecen la base para el funcionamiento de tu aplicación web:
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
+// Middleware base para la aplicación web
+app.UseHttpsRedirection(); // Redirigir HTTP a HTTPS
+app.UseStaticFiles(); // Servir archivos estáticos
+app.UseRouting(); // Habilitar el enrutamiento
 
-// Habilitar el middleware de autenticación y autorización
+// Habilitar autenticación, autorización y sesiones
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
 
 app.UseCors(builder =>
 {
-    builder.WithOrigins("https://localhost:7226") // Agrega aquí el dominio de tu cliente web
+    builder.WithOrigins("https://localhost:7226") // Permitir CORS desde este origen
            .AllowAnyHeader()
            .AllowAnyMethod()
-           .AllowCredentials(); // Agregado para permitir el uso de cookies en la solicitud CORS
+           .AllowCredentials(); // Permitir el uso de cookies en solicitudes CORS
 });
 
-// Configurar las rutas predeterminadas y el enrutamiento
+// Configurar el enrutamiento predeterminado de controladores
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.Run();
+app.Run(); // Ejecutar la aplicación

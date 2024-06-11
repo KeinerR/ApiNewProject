@@ -84,30 +84,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function validarpedido() {
     var cliente = document.getElementById("ClienteIdTxt").value;
-    return validarCliente(cliente);
+    var isValid = true;
+    if (!validarCliente(cliente)) {
+        isValid = false;
+    }
+    return isValid;
 }
 
 
 
 
-
+document.getElementById('ClienteIdTxt').addEventListener('input', function () {
+    validarCliente(this.value); // Llama a la función validarCliente con el valor actual del campo
+});
+// Función para validar el cliente en tiempo real
 function validarCliente(cliente) {
     var nombreclienteInput = document.getElementById("ClienteIdTxt");
-    var clienteIdInput = document.getElementById("ClienteIdHidden");
     var nombreClienteError = document.getElementById("ClienteIdspan");
+    var clienteIdInput = document.getElementById("ClienteIdHidden");
 
-    cliente = cliente.trim();
+    cliente = cliente.trim(); // Elimina espacios en blanco al principio y al final del valor
 
     if (!clienteIdInput.value || cliente === "") {
-        mostrarError(nombreclienteInput, nombreClienteError, "El campo cliente no es el que esta registrardo ");
+        mostrarError(nombreclienteInput, nombreClienteError, "El campo cliente está vacío o no está registrado.");
+        clienteIdInput.value = ""; // Limpiar el campo hidden
         return false;
     } else {
         quitarError(nombreclienteInput, nombreClienteError);
     }
-   
     return true;
 }
-
 
 function mostrarError(inputElement, errorElement, errorMessage) {
     inputElement.classList.add("is-invalid");
@@ -119,17 +125,6 @@ function quitarError(inputElement, errorElement) {
     errorElement.textContent = "";
 }
 
-//$('#ClienteIdTxt').on('input', function () {
-//    clearTimeout(timeout);
-//    timeout = setTimeout(() => {
-//        var selectedValue = $(this).val();
-//        var selectedUserId = $('#clientesList').find('option[value="' + selectedValue + '"]').attr('data-id');
-
-//        console.log("cliente seleccionado:", selectedValue);
-//        $('#ClienteIdHidden').val(selectedUserId);
-//        console.log("Id", selectedUserId)
-//    }, 650);
-//});
 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -142,72 +137,61 @@ document.addEventListener('DOMContentLoaded', function () {
     fechaPedido.value = formateada;
 
 
-    $("#ClienteIdTxt").on("blur", function () {
-        var nombreCliente = $(this).val().trim();  // Obtener el valor del input y eliminar espacios en blanco
-        if (nombreCliente === "") {
-            $("#ClienteIdHidden").val("");  // Limpiar el campo oculto si el campo de texto está vacío
-        }
-        validarCliente(nombreCliente);  // Llamar a la función de validación
-    });
-
-    $('#ClienteIdTxt').on('input', function () {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            seleccionarOpcion(this, document.getElementById('clientesList'), document.getElementById('ClienteIdHidden'));
-        }, 650);
-    });
+   
 });
 
 
 
-document.getElementById('buscarPedido').addEventListener('input', function () {
-    var input = this.value.trim().toLowerCase();
-    var rows = document.querySelectorAll('.pedidosPaginado');
+//document.getElementById('buscarPedido').addEventListener('input', function () {
+//    var input = this.value.trim().toLowerCase();
+//    var rows = document.querySelectorAll('.pedidosPaginado');
 
-    if (input === "") {
-        rows.forEach(function (row) {
-            row.style.display = '';
-        });
-        var icon = document.querySelector('#btnNavbarSearch i');
-        icon.className = 'fas fa-search';
-        icon.style.color = 'white';
-    } else {
-        rows.forEach(function (row) {
-            row.style.display = 'none';
-        });
-        var icon = document.querySelector('#btnNavbarSearch i');
-        icon.className = 'fas fa-times';
-        icon.style.color = 'white';
-    }
-    var rowsTodos = document.querySelectorAll('.Pedidos');
+//    if (input === "") {
+//        rows.forEach(function (row) {
+//            row.style.display = '';
+//        });
+//        var icon = document.querySelector('#btnNavbarSearch i');
+//        icon.className = 'fas fa-search';
+//        icon.style.color = 'white';
+//    } else {
+//        rows.forEach(function (row) {
+//            row.style.display = 'none';
+//        });
+//        var icon = document.querySelector('#btnNavbarSearch i');
+//        icon.className = 'fas fa-times';
+//        icon.style.color = 'white';
+//    }
+//    var rowsTodos = document.querySelectorAll('.Pedidos');
 
-    rowsTodos.forEach(function (row) {
-        if (input === "") {
-            row.style.display = 'none';
-        } else {
-            var clienteId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
-            var tipoP = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-            var fechaP = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+//    rowsTodos.forEach(function (row) {
+//        if (input === "") {
+//            row.style.display = 'none';
+//        } else {
+//            var clienteId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
+//            var tipoP = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+//            var fechaP = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
 
-            row.style.display = (clienteId.includes(input) || tipoP.includes(input) || fechaP.includes(input)) ? 'table-row' : 'none';
-        }
-    });
-});
+//            row.style.display = (clienteId.includes(input) || tipoP.includes(input) || fechaP.includes(input)) ? 'table-row' : 'none';
+//        }
+//    });
+//});
 
-function vaciarInput() {
-    document.getElementById('buscarPedido').value = "";
-    var icon = document.querySelector('#btnNavbarSearch i');
-    icon.className = 'fas fa-search';
-    icon.style.color = 'gray';
+//function vaciarInput() {
+//    document.getElementById('buscarPedido').value = "";
+//    var icon = document.querySelector('#btnNavbarSearch i');
+//    icon.className = 'fas fa-search';
+//    icon.style.color = 'gray';
 
-    var rows = document.querySelectorAll('.pedidosPaginado');
-    rows.forEach(function (row) {
-        row.style.display = 'table-row';
-    });
+//    var rows = document.querySelectorAll('.pedidosPaginado');
+//    rows.forEach(function (row) {
+//        row.style.display = 'table-row';
+//    });
 
-    var rowsTodos = document.querySelectorAll('.Pedidos');
-    rowsTodos.forEach(function (row) {
-        row.style.display = 'none';
-    });
-}
+//    var rowsTodos = document.querySelectorAll('.Pedidos');
+//    rowsTodos.forEach(function (row) {
+//        row.style.display = 'none';
+//    });
+//}
+
+
 
