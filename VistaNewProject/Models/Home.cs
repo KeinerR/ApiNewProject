@@ -1,4 +1,4 @@
-﻿namespace VistaNewProject.Models
+namespace VistaNewProject.Models
 {
     public class Home
     {
