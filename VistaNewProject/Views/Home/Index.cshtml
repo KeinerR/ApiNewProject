@@ -1,4 +1,4 @@
-﻿@model VistaNewProject.Models.Home
+@model VistaNewProject.Models.Home
 @{
     ViewData["Title"] = "Pagina de Inicio";
 }
@@ -263,26 +263,28 @@
 
 
             // Pedidos Chart
-            const ctxPedido = document.getElementById('pedidosChart');
+            const ctxPedido = document.getElementById('pedidosChart').getContext('2d');
 
-            var fechasPedido = [
+            var pedidosClientes = [
             @foreach (var pedido in Model.Pedidos)
             {
-                @: '@pedido.PedidoId' 
+                var cliente = Model.Clientes.FirstOrDefault(c => c.ClienteId == pedido.ClienteId);
+                var nombreCliente = cliente != null ? cliente.NombreCompleto : "Cliente Desconocido";
+                @: '@pedido.PedidoId - @nombreCliente',
             }
                 ];
 
             var preciosPedido = [
             @foreach (var pedido in Model.Pedidos)
             {
-                @: parseFloat('@pedido.ValorTotalPedido'), 
+                @:parseFloat('@pedido.ValorTotalPedido'),
             }
                 ];
 
             new Chart(ctxPedido, {
                 type: 'line',
                 data: {
-                    labels: fechasPedido,
+                    labels: pedidosClientes,
                     datasets: [{
                         label: 'Total del pedido',
                         data: preciosPedido,
