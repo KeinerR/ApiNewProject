@@ -31,7 +31,7 @@ namespace VistaNewProject.Controllers
             foreach (var producto in registroProductos)
             {
                 var marcaId = producto.MarcaId;
-                var marcaApi = await _api.FindMarcasAsync(marcaId);
+                var marcaApi = await _api.FindMarcaAsync(marcaId);
 
                 marcasNombre.Add(
                     new NombresMarca()

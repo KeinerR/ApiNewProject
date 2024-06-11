@@ -260,7 +260,7 @@ namespace VistaNewProject.Services
             }
             return response;
         }
-        public async Task< Marca> FindMarcasAsync(int? id)
+        public async Task< Marca> FindMarcaAsync(int? id)
         {
             var response = await _httpClient.GetFromJsonAsync<Marca>($"Marcas/GetMarcaById?id={id}");
 
