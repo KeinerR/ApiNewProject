@@ -11,7 +11,25 @@ input, span, a,button{
     border:none;
 }
 
+html {
+    font-size: 16px;
+}
 
+.circle {
+    width: 35px; /* Ancho del círculo */
+    height: 35px; /* Altura del círculo */
+}
+
+header .iconoHeaderMenu {
+    font-size: 2em;
+}
+
+.tituloHeader {
+    font-size: 2em;
+}
+.cabeceraSalir .Perfil span {
+    font-size: 1em;
+}
 /*----------------------------------------------------------------------------------------------------------------------*/
 /*Estilos del contenedor header*/
 header {
@@ -368,7 +386,6 @@ input[type="checkbox"]:checked + .sub-menu {
         display: flex;
         gap:5px;
         justify-content: center;
-        min-width:150px;
     }
 
  
@@ -435,13 +452,6 @@ input:checked + .slider:before {
     -ms-transform: translateX(70%);
     transform: translateX(70%);
     border: solid 1px black;
-}
-
-/*------Paginacion ---------------*/
-
-.pagination-container {
-    height: 100%;
-    justify-content: center;
 }
 
 
@@ -550,13 +560,14 @@ input:checked + .slider:before {
         font-weight: bold;
     }
 
-    /* Estilos para la paginación de color */
-    .pagination-container .page-item.active .page-link {
-        background-color: #213b68; /* Cambia el color de fondo del enlace activo */
-        color: white; /* Cambia el color del texto del enlace activo */
-        border-color: #213b68; /* Cambia el color del borde del enlace activo */
-        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6); /* Sombra negra */
-    }
+    /* Estilos para la paginación de color cunado estoy sobre la pagina */
+.pagination-container .page-item.active .page-link {
+    background-color: #213b68; /* Cambia el color de fondo del enlace activo */
+    color: white; /* Cambia el color del texto del enlace activo */
+    border-color: #213b68; /* Cambia el color del borde del enlace activo */
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6); /* Sombra negra */
+
+}
 
     /* Estilos para enlaces de paginación deshabilitados */
     .pagination-detail a.disabled {
@@ -564,63 +575,28 @@ input:checked + .slider:before {
         opacity: 0.6;
     }
 
-
-
-
-/*Mas pequeño que el maximo zoom de pantalla*/
-@media (min-width: 100px) and (max-width: 150px) {
-    html {
-        font-size: 16px;
-    }
-
-    .container {
-        min-width: auto;
-        border: solid red 2px;
-    }
-
-    header .iconoHeaderMenu {
-  
-    }
-
-    #cabeceraMenu .circle {
-        display: none; /* Ocultar el círculo */
-    }
-
-    .circle {
-        width: 35px; /* Ancho del círculo */
-        height: 35px; /* Altura del círculo */
-    }
-
-    .tituloHeader {
-        font-size: 1.5em;
-        visibility: hidden; /* Ocultar el texto */
-    }
-
-    .cabeceraSalir {
-        display: none; /*Hace desparecer el span del nombre en el perfil al acercar mucho la pantalla*/
-    }
+.pagination-container {
+    max-height: 40px; /* Altura máxima del paginado */
 }
+
+        .pagination-container .pagination {
+            font-size: 15px; /* Tamaño de fuente reducido */
+        }
+
+        .pagination-container .page-item {
+            margin-right: 2px; /* Reducción del espaciado entre elementos */
+        }
+
+        .pagination-container .fa-solid {
+            font-size: 17px; /* Tamaño reducido de los íconos */
+        }
+
+
+
+
 /*Maximo zoom de pantalla*/
-@media (min-width: 151px) and (max-width: 300px) {
-    /*---------------------------------------------------------------------*/
-    html {
-        font-size: 16px;
-    }
-    /*---------------------------------------------------------------------*/
-    .container {
-        min-width: auto;
-        border: solid blue 2px;
-    }
-    /*---------------------------------------------------------------------*/
-
-    header .iconoHeaderMenu {
-        font-size: 1.5em;
-    }
-
-    .circle {
-        width: 35px; /* Ancho del círculo */
-        height: 35px; /* Altura del círculo */
-    }
+@media (min-width: 100px) and (max-width: 400px) {
+   
     #cabeceraCircle .circle {
         visibility: visible;
     }
@@ -628,9 +604,6 @@ input:checked + .slider:before {
        visibility:hidden;
     }
 
-    .tituloHeader {
-        font-size: 2em;
-    }
     #cabeceraTitulo .tituloHeader {
         visibility:hidden;
     }
@@ -644,158 +617,31 @@ input:checked + .slider:before {
     /*---------------------------------------------------------------------*/
 
 }
-/*Medidad regular y para telefonos moviles*/
-@media (min-width: 301px) and (max-width: 649px) {
-    /*---------------------------------------------------------------------*/
-    html {
-        font-size: 16px;
-    }
-    /*---------------------------------------------------------------------*/
-    .container {
-        min-width: auto;
-        border: solid purple 2px;
-    }
-    /*---------------------------------------------------------------------*/
-    header .iconoHeaderMenu {
-        font-size: 1.5em;
-    }
-    
-    .circle {
-        width: 35px; /* Ancho del círculo */
-        height: 35px; /* Altura del círculo */
-    }
-    
-    .tituloHeader {
-        font-size: 2em;
-    }
-    .cabeceraSalir .Perfil span {
-        display: none;
-    }
 
-    /*ajustar tamaño para la modal de categoria*/
+/*Medida para modales*/
+@media (min-width: 600px) and (max-width:3000px) {
+    /*ajustar tamaño para la modal de presentacion*/
     #ContenedorPresentacion .modal-dialog {
-        width: auto;
+        min-width: 690px !important; 
+    }
+    /*ajustar tamaño para la modal de categoria*/
+    #ContenedorCategoria .modal-dialog {
+        width: 450px !important;
+
     }
 
-    
-
-}
-/*Medida promedio comun*/
-@media (min-width: 650px) and (max-width: 1518px) {
-    /*---------------------------------------------------------------------*/
-    html {
-        font-size: 16px;
-    }
-    /*---------------------------------------------------------------------*/
-    .container {
-        min-width: auto;
-        border: solid brown 2px;
+    /*ajustar tamaño para la modal de marca*/
+    #ContenedorMarca .modal-dialog {
+        width: 450px !important;
     }
 
-    /*---------------------------------------------------------------------*/
-    header .iconoHeaderMenu {
-        font-size: 2em;
-    }
 
-    .circle {
-        width: 35px; /* Ancho del círculo */
-        height: 35px; /* Altura del círculo */
+    /*ajustar tamaño para la modal de producto*/
+    #ContenedorProducto .modal-dialog {
+        min-width: 690px !important;
     }
-    .tituloHeader {
-        font-size: 2em;
-    }
-    .cabeceraSalir .Perfil span {
-        font-size: 1em;
-    }
-    /*---------------------------------------------------------------------*/
-    .table-custom thead th:last-child {
-        width: 150px;
-    }
-  
-    .pagination-container {
-        max-height: 50px; /* Altura máxima del paginado */ 
-    }
-        .pagination-container .pagination {
-            font-size: 15px; /* Tamaño de fuente reducido */
-        }
-
-        .pagination-container .page-item {
-            margin-right: 2px; /* Reducción del espaciado entre elementos */
-        }
-
-        .pagination-container .fa-solid {
-            font-size: 17px; /* Tamaño reducido de los íconos */
-        }
-    /*---------------------------------------------------------------------*/
-
 
 }
-/*Medida mas grande que el promedio*/
-@media (min-width: 1519px) and (max-width: 2732px) {
-    /*---------------------------------------------------------------------*/
-    html {
-        font-size: 16px;
-    }
-    /*---------------------------------------------------------------------*/
-    .container {
-        min-width: auto;
-        border: solid black 2px;
-    }
-    /*---------------------------------------------------------------------*/
-    header .iconoHeaderMenu {
-
-        font-size: 2em;
-    }
-
-    .circle {
-        width: 35px; /* Ancho del círculo */
-        height: 35px; /* Altura del círculo */
-    }
-
-    .tituloHeader {
-        font-size: 2em;
-    }
-
-    .cabeceraSalir .Perfil span {
-        font-size: 1em;
-    }
-    /*---------------------------------------------------------------------*/
-}
-/*Medida maxima*/
-@media (min-width: 2733px) and (max-width: 5464px) {
-    /*---------------------------------------------------------------------*/
-    html {
-        font-size: 16px;
-    }
-    /*---------------------------------------------------------------------*/
-    .container {
-        min-width: auto;
-        border: solid yellow 2px;
-    }
-    /*---------------------------------------------------------------------*/
-    header .iconoHeaderMenu {
-
-        font-size: 2em;
-    }
-
-    .circle {
-        width: 35px; /* Ancho del círculo */
-        height: 35px; /* Altura del círculo */
-    }
-
-    #cabeceraCircle .tituloHeader {
-        font-size: 2em;
-    }
-
-    .tituloHeader {
-        font-size: 2em;
-    }
-    .cabeceraSalir .Perfil span {
-        font-size: 1em;
-    }
-    /*---------------------------------------------------------------------*/
-}
-
 
 
 /* Media queries para hacer la tabla responsive */
@@ -819,9 +665,16 @@ input:checked + .slider:before {
         .table-custom tbody td:last-child {
             padding-bottom: 20px; /* Ajuste de espacio inferior para el último elemento */
         }
+    .table-custom .consecutivo {
+        width: auto; /* Establece el ancho deseado */
+    }
 
-    .btn {
-        margin-bottom: 10px; /* Ajuste de espacio entre botones */
+    .table-custom .contenedorCantidad {
+        width: auto; /* Establece el ancho deseado */
+    }
+
+    .table-custom .contenedorEstado {
+        width: auto; /* Establece el ancho deseado */
     }
 }
 
@@ -893,7 +746,12 @@ input:checked + .slider:before {
 }
     .icono-input i {
         position: absolute;
-        right: 20px;
+        right: 14px;
         top: 50%;
-        transform: translateY(50%);
+        transform: translateY(30%);
     }
+
+/* Ocultar el ícono del datalist */
+input::-webkit-calendar-picker-indicator {
+    display: none !important;
+}

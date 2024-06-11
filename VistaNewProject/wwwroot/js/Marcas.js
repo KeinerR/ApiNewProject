@@ -86,10 +86,10 @@ function mostrarValoresFormularioMarcaAct() {
 
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
-    const mostrarAlerta = urlParams.get('mostrarAlerta');
+    const mostrarAlertaCampoVacio = urlParams.get('mostrarAlertaCampoVacio');
     const marcaId = urlParams.get('marcaId');
 
-    if (mostrarAlerta === 'true' && marcaId) {
+    if (mostrarAlertaCampoVacio === 'true' && marcaId) {
         mostrarModalSinRetrasoMarca(marcaId);
     }
     //Evitar el envio de los formularios hasta que todo este validados

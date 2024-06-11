@@ -223,16 +223,6 @@ function RegistrarBuy() {
 
 
 //Funciones para mostrar alerta
-function mostrarAlerta(campo) {
-    Swal.fire({
-        position: "center",
-        icon: 'warning',
-        title: '\u00A1Atenci\u00F3n!',
-        html: `<p>Completa el campo: ${campo}.</p>`,
-        showConfirmButton: false,
-        timer: 6000
-    });
-}
 function mostrarAlerta2(campo) {
     Swal.fire({
         position: "center",
@@ -241,46 +231,6 @@ function mostrarAlerta2(campo) {
         html: `<p>${campo}.</p>`,
         showConfirmButton: false,
         timer: 6000
-    });
-}
-function MostrarAlertaPersonalizada(campo) {
-    Swal.fire({
-        position: "center",
-        icon: 'warning',
-        title: '¡Atencion!',
-        html: `${campo}`,
-        showConfirmButton: false, // Mostrar botón de confirmación
-        timer: 6000
-
-    });
-
-}
-function MostrarAlertaPersonalizadaFinal(campo) {
-    Swal.fire({
-        position: "center",
-        icon: 'warning',
-        title: '¡Atencion!',
-        html: `${campo}`,
-        showConfirmButton: false, // Mostrar botón de confirmación
-        timer: 6000
-
-    });
-
-}
-function mostrarAlertaDataList(campo) {
-    Swal.fire({
-        position: "center",
-        icon: 'warning',
-        title: '¡Atencion!',
-        html: `<p style="margin: 0;">Recuerda que debes seleccionar el ${campo} dando click en la opción que deseas</p>
-            <div class="text-center" style="margin: 0; padding: 0;">
-            <p style="margin: 0;">O</p>
-            </div>
-            <p style="margin: 0;">En su defecto, escribir el ID del ${campo} o nombre exactamente igual.</p>`,
-
-        showConfirmButton: false, // Mostrar botón de confirmación
-        timer: 6000
-
     });
 }
 
@@ -1098,7 +1048,7 @@ function actualizarCompra() {
    
 
     if (numeroFactura === '' || fechaCompra === '') {
-        mostrarAlerta(numeroFactura === '' ? 'numeroFactura' : 'fechaCompra');
+        mostrarAlertaCampoVacio(numeroFactura === '' ? 'numeroFactura' : 'fechaCompra');
         return;
     } else if (proveedorId === '') { // Corregido a "!=="
         mostrarAlertaDataList('Proveedor');
@@ -1254,6 +1204,7 @@ function cambioFechaVencimiento() {
 document.addEventListener   ("DOMContentLoaded", function () {
     var inputCantidad = document.getElementById('Cantidad');
     var inputprecioCompra = document.getElementById('PrecioDeCompra');
+
     var inputprecioVentaxPresentacion = document.getElementById('PrecioDeVentaUnitario');
     var inputprecioVentaxUnidad = document.getElementById('PrecioDeVentaxUnidadPresentacion');
     var inputprecioVentaxUnidadPresentacion = document.getElementById('PrecioDeVentaPorUnidad');
@@ -1280,23 +1231,6 @@ document.addEventListener   ("DOMContentLoaded", function () {
         if (valorActual > 1) { // Establecer el límite mínimo
             inputCantidad.value = valorActual - 1;
         }
-    }
-    function formatoNumeroINT(input) {
-        // Obtener el valor del input y quitar los puntos
-        let cleanedValue = input.value.replace(/\./g, '');
-        // Eliminar cualquier carácter que no sea número
-        cleanedValue = cleanedValue.replace(/[^\d]/g, '');
-        // Verificar si el valor es cero y reemplazarlo por uno si es necesario
-        if (parseInt(cleanedValue, 10) === 0) {
-            cleanedValue = '1';
-        }
-        // Formatear el valor con puntos para separar los miles
-        const formattedValue = cleanedValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-        // Asignar el valor formateado al campo
-        input.value = formattedValue;
-        
-        // Llamar a la función de validación de campos
-        validarCampoCompras($(input));
     }
 
     // Función para iniciar el intervalo al mantener presionado el botón
@@ -1363,89 +1297,6 @@ document.addEventListener   ("DOMContentLoaded", function () {
         formatoNumeroINT(this);
     });
 
-
-
-
-    function seleccionarOpcion(input, dataList, hiddenInput, campo) {
-        var selectedValue = input.value.trim();
-
- 
-      if (/^\d+[a-zA-Z]$/.test(selectedValue)) {
-            // Si selectedValue es un número seguido de una letra, realizar la acción correspondiente
-            console.log('Número seguido de letra encontrado:', selectedValue);
-            var selectedOptionByName = Array.from(dataList.options).find(function (option) {
-                return option.value === selectedValue;
-            });
-
-        } else {
-            var selectedOptionByName = Array.from(dataList.options).find(function (option) {
-                return option.value === selectedValue;
-            });
-        } if (/^\d+$/.test(selectedValue)) {
-            var selectedOptionById = Array.from(dataList.options).find(function (option) {
-                return option.getAttribute('data-id') === selectedValue;
-            });
-            if (!selectedOptionById) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: `No se encontró ningún resultado con este ID de ${campo}`,
-                    showConfirmButton: false,
-                    timer: 1800 // Duración rápida en milisegundos (1.5 segundos)
-                });
-                input.value = '';
-                input.dispatchEvent(new Event('input'));
-            }
-        } 
-
-        if (selectedOptionByName) {
-            // Si se seleccionó un nombre del datalist, mostrar el nombre y enviar el data-id al input hidden
-            input.value = selectedOptionByName.value;
-            hiddenInput.value = selectedOptionByName.getAttribute('data-id');
-
-            // Verificar si es el campo ProductoId y el resto del código...
-        } else if (selectedOptionById) {
-            // Si se ingresó un ID en el campo de entrada, mostrar el nombre correspondiente y enviar el ID al input hidden
-            input.value = selectedOptionById.value;
-            hiddenInput.value = selectedOptionById.getAttribute('data-id');
-
-            // Verificar si es el campo ProductoId y el resto del código...
-        }
-        if (selectedOptionByName) {
-            // Si se seleccionó un nombre del datalist, mostrar el nombre y enviar el data-id al input hidden
-            input.value = selectedOptionByName.value;
-            hiddenInput.value = selectedOptionByName.getAttribute('data-id');
-
-            // Verificar si es el campo ProductoId
-            if (input.id === 'ProductoId') {
-                document.getElementById('ProductoId').value = selectedOptionByName.value;
-                document.getElementById('CantidadPorPresentacionHidden').value = selectedOptionByName.getAttribute('data-cantidad') || '';
-            }
-            // Verificar si es el campo UnidadId
-            if (input.id === 'UnidadId') {
-                document.getElementById('CantidadPorUnidad').value = selectedOptionByName.getAttribute('data-cantidad') || '';
-            }
-        } else if (selectedOptionById) {
-            // Si se ingresó un ID en el campo de entrada, mostrar el nombre correspondiente y enviar el ID al input hidden
-            input.value = selectedOptionById.value;
-            hiddenInput.value = selectedOptionById.getAttribute('data-id');
-
-            // Verificar si es el campo ProductoId
-            if (input.id === 'ProductoId') {
-                document.getElementById('ProductoId').value = selectedOptionById.value;
-                document.getElementById('CantidadPorPresentacionHidden').value = selectedOptionById.getAttribute('data-cantidad') || '';
-            }
-            // Verificar si es el campo UnidadId
-            if (input.id === 'UnidadId') {
-                document.getElementById('CantidadPorUnidad').value = selectedOptionById.getAttribute('data-cantidad') || '';
-            }
-        }
-    }
-
-      
-
-      
-
-
     // Asignar función de selección a los campos ProveedorId, ProductoId y UnidadId
     document.getElementById('ProveedorId').addEventListener('input', function () {
         clearTimeout(timeout);
@@ -1470,10 +1321,7 @@ document.addEventListener   ("DOMContentLoaded", function () {
 
     
 
-    // Función para formatear números enteros con puntos de mil
-    function formatNumber(number) {
-        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    }
+
         
 
     // Agregar un evento de clic al botón "Calcular"
@@ -1500,7 +1348,7 @@ document.addEventListener   ("DOMContentLoaded", function () {
             unidadId === '' ||  
             cantidad === ''   
         ) {
-            mostrarAlerta(
+            mostrarAlertaCampoVacio(
                 producto === ''
                     ? 'Producto'
                     : unidadId === '' 
@@ -1515,7 +1363,7 @@ document.addEventListener   ("DOMContentLoaded", function () {
             );
             return;
         } else if (productoId === '') {
-            MostrarAlertaPersonalizada(
+            mostrarAlertaCampoVacioPersonalizada(
                 '<p style="margin: 0;">Recuerda que debes seleccionar el producto dando click en la opción que deseas</p>' +
                 '<div class="text-center" style="margin: 0; padding: 0;">' +
                 '<p style="margin: 0;">O</p>' +
@@ -1525,7 +1373,7 @@ document.addEventListener   ("DOMContentLoaded", function () {
             noVerCalculo();
             return;
         } else if (unidad === '') {
-            MostrarAlertaPersonalizada(
+            mostrarAlertaCampoVacioPersonalizada(
                 '<p style="margin: 0;">Recuerda que debes seleccionar la unidad o empaque dando click en la opción que deseas</p>' +
                 '<div class="text-center" style="margin: 0; padding: 0;">' +
                 '<p style="margin: 0;">O</p>' +

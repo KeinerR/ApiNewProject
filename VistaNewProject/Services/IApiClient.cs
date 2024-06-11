@@ -127,6 +127,7 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Lote>> GetLoteAsync();
         Task<HttpResponseMessage> CreateLoteAsync(Lote lote);
         Task<Lote> FindLoteAsync(int id);
+        Task<IEnumerable<Lote>> GetLotesByProductIdAsync(int productId);
         Task<HttpResponseMessage> UpdateLoteAsync(Lote lote);
         Task<HttpResponseMessage> DeleteLoteAsync(int id);
         Task<HttpResponseMessage> UpdatePrecioLotesAsync(int productoId, decimal precioxunidad, decimal precioxproducto );

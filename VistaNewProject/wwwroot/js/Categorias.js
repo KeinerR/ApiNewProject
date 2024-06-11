@@ -84,10 +84,10 @@ function mostrarValoresFormularioCategoriaAct() {
 
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
-    const mostrarAlerta = urlParams.get('mostrarAlerta');
+    const mostrarAlertaCampoVacio = urlParams.get('mostrarAlertaCampoVacio');
     const categoriaId = urlParams.get('categoriaId');
 
-    if (mostrarAlerta === 'true' && categoriaId) {
+    if (mostrarAlertaCampoVacio === 'true' && categoriaId) {
         mostrarModalSinRetrasoCategoria(categoriaId);
     }
     //Evitar el envio de los formularios hasta que todo este validados

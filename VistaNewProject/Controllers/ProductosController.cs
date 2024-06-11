@@ -2,9 +2,11 @@
 using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
+using System.Linq;
+using System.Net;
 using System;
 using Microsoft.AspNetCore.Http;
-using System.Net;
+
 using Microsoft.CodeAnalysis.Operations;
 using System.Collections.Immutable;
 using System.Net.Http;
@@ -15,7 +17,7 @@ namespace VistaNewProject.Controllers
     public class ProductosController : Controller
     {
         private readonly IApiClient _client;
-        private readonly ProductoService _productoService; // Agrega ProductoService como campo privado
+        private readonly ProductoService _productoService;
 
         public ProductosController(IApiClient client, ProductoService productoService) // Añade ProductoService al constructor
         {
@@ -130,8 +132,8 @@ namespace VistaNewProject.Controllers
                 }
 
             }
-          
-            
+
+
 
             // Retornar los registros filtrados o todos los registros según corresponda
             return Json(new { Categorias = categorias, Marcas = marcas, Presentaciones = presentaciones });
@@ -140,6 +142,19 @@ namespace VistaNewProject.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] ProductoEnd producto)
         {
+            if (!ModelState.IsValid)
+            {
+                // Devolver los errores de validación al cliente
+                foreach (var modelState in ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        MensajeSweetAlert("error", "Error de validación", error.ErrorMessage, "true", null);
+                    }
+                }
+                return RedirectToAction("Index");
+            }
+
             try
             {
                 // Verificar que todos los campos estén llenos
@@ -148,7 +163,7 @@ namespace VistaNewProject.Controllers
                     producto.MarcaId <= 0 ||
                     producto.CategoriaId <= 0)
                 {
-                    MensajeSweetAlert("error", "Error", "Por favor, complete todos los campos obligatorios con *.","false",null);  
+                    MensajeSweetAlert("error", "Error", "Por favor, complete todos los campos obligatorios con *.", "false", null);
                     return RedirectToAction("Index");
                 }
 
@@ -161,7 +176,6 @@ namespace VistaNewProject.Controllers
                     {
                         return string.Empty; // O cualquier otro valor predeterminado que desees
                     }
-
                     return input.ToLowerInvariant().Replace(" ", "");
                 }
 
@@ -174,36 +188,34 @@ namespace VistaNewProject.Controllers
 
                 if (productExist != null)
                 {
-                    MensajeSweetAlert("error", "Error", $"Ya hay un producto con los mismos datos. ID: {productExist.ProductoId}", "false",null);
+                    MensajeSweetAlert("error", "Error", $"Ya hay un producto con los mismos datos. ID: {productExist.ProductoId}", "false", null);
+                    return RedirectToAction("Index");
+                }
+
+                // Crear el nuevo producto
+                var response = await _client.CreateProductoAsync(new Producto
+                {
+                    NombreProducto = producto.NombreProducto,
+                    PresentacionId = producto.PresentacionId,
+                    MarcaId = producto.MarcaId,
+                    ProductoId = producto.ProductoId,
+                    CategoriaId = producto.CategoriaId,
+                    CantidadTotal = producto.CantidadTotal,
+                    CantidadReservada = 0,
+                    CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor,
+                    DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor,
+                    Estado = producto.Estado
+                });
+
+                if (response.IsSuccessStatusCode)
+                {
+                    MensajeSweetAlert("success", "Exito", "Se ha registrado exitosamente el producto", "false", 3000);
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    // Crear el nuevo producto
-                    var response = await _client.CreateProductoAsync(new Producto
-                    {
-                        NombreProducto = producto.NombreProducto,
-                        PresentacionId = producto.PresentacionId,
-                        MarcaId = producto.MarcaId,
-                        ProductoId = producto.ProductoId,
-                        CategoriaId = producto.CategoriaId,
-                        CantidadTotal = producto.CantidadTotal,
-                        CantidadReservada=0,
-                        CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor,
-                        DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor,
-                        Estado = producto.Estado
-                    });
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        MensajeSweetAlert("success", "Exito", "Se ha registrado exitosamente el producto", "false",3000);
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        MensajeSweetAlert("error", "Error", "Hubo un problema al crear el producto.", "false", null);
-                        return RedirectToAction("Index");
-                    }
+                    MensajeSweetAlert("error", "Error", "Hubo un problema al crear el producto.", "false", null);
+                    return RedirectToAction("Index");
                 }
             }
             catch (Exception ex)
@@ -215,15 +227,14 @@ namespace VistaNewProject.Controllers
             }
         }
 
+
         [HttpPost]
         public async Task<JsonResult> FindProducto(int productoId)
         {
             var producto = await _client.FindProductoAsync(productoId);
             return Json(producto);
         }
-
-
-        public async Task<IActionResult> Details(int? id, int? page)    
+        public async Task<IActionResult> Details(int? id, int? page)
         {
             int pageSize = 4; // Número máximo de elementos por página
             int pageNumber = page ?? 1;
@@ -233,32 +244,19 @@ namespace VistaNewProject.Controllers
                 return NotFound();
             }
 
-            var productos = await _client.GetProductoAsync();
-            var lotes = await _client.GetLoteAsync();
+            var productos = await _client.FindProductoAsync(id.Value);
+            var lotesInfo = await _client.GetLotesByProductIdAsync(id.Value); // Utilizar el valor de id en lugar de productoid
 
-            var productoInfo = productos.FirstOrDefault(u => u.ProductoId == id);
-            if (productoInfo == null)
-            {
-                return NotFound();
-            }
-
-            // Concatenar nombres completos y calcular cantidad total
-            var productoConcatenado = await _productoService.ConcatenarNombreCompletoProducto(productoInfo.ProductoId);
-
-            var lotesInfo = lotes
-                .Where(u => u.ProductoId == productoInfo.ProductoId && u.Cantidad > 0 && u.EstadoLote == 1)
-                .ToList();
-
-            // Crear una lista de LoteVista y asignar los valores de lotesInfo
-            var listaLotesVista = lotesInfo.Select(loteInfo => new LoteVista
+            // Filtrar los lotes con EstadoLote igual a 1
+            var listaLotesVista = lotesInfo.Where(loteInfo => loteInfo.EstadoLote == 1).Select(loteInfo => new LoteVista
             {
                 LoteId = loteInfo.LoteId,
                 DetalleCompraId = loteInfo.DetalleCompraId,
                 ProductoId = loteInfo.ProductoId,
                 NumeroLote = loteInfo.NumeroLote,
-                PrecioCompra = loteInfo.PrecioCompra,
-                PrecioPorPresentacion = loteInfo.PrecioPorPresentacion,
-                PrecioPorUnidadProducto = loteInfo.PrecioPorUnidadProducto,
+                PrecioCompra = FormatearPrecio(loteInfo.PrecioCompra),
+                PrecioPorPresentacion = FormatearPrecio(loteInfo.PrecioPorPresentacion),
+                PrecioPorUnidadProducto = FormatearPrecio(loteInfo.PrecioPorUnidadProducto),
                 FechaVencimiento = loteInfo.FechaVencimiento,
                 Cantidad = loteInfo.Cantidad,
                 EstadoLote = loteInfo.EstadoLote,
@@ -267,6 +265,15 @@ namespace VistaNewProject.Controllers
                 FechaCaducidad = FormatearFechaVencimiento(loteInfo.FechaVencimiento)
             }).ToList();
 
+            var productoInfo = productos;
+            if (productoInfo == null)
+            {
+                return NotFound();
+            }
+
+            // Concatenar nombres completos y calcular cantidad total
+            var productoConcatenado = await _productoService.ConcatenarNombreCompletoProducto(productoInfo.ProductoId);
+
             var pagedLote = listaLotesVista.ToPagedList(pageNumber, pageSize);
 
             ViewData["Producto"] = productoConcatenado;
@@ -274,8 +281,6 @@ namespace VistaNewProject.Controllers
 
             return View(pagedLote); // Se pasa pagedLote a la vista en lugar de listaLotesVista
         }
-
-
 
         [HttpPost]
         public async Task<JsonResult> FindProductos()
@@ -338,7 +343,7 @@ namespace VistaNewProject.Controllers
                         MarcaId = producto.MarcaId,
                         CategoriaId = producto.CategoriaId,
                         CantidadTotal = producto.CantidadTotal,
-                        CantidadReservada=0,
+                        CantidadReservada = 0,
                         CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor,
                         DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor,
                         Estado = producto.Estado
@@ -404,7 +409,7 @@ namespace VistaNewProject.Controllers
                 return RedirectToAction("Index");
             }
             // Si no tiene detalles asociados, procede con la eliminación del producto
-                var response = await _client.DeleteProductoAsync(productoId);
+            var response = await _client.DeleteProductoAsync(productoId);
             if (response == null)
             {
                 SetTempData("error", "Error", "Error al eliminar el Producto.");
@@ -423,9 +428,6 @@ namespace VistaNewProject.Controllers
             }
             return RedirectToAction("Index");
         }
-
-
-
         private async Task<bool> VerificarDetallesAsociados(Producto producto)
         {
             var detallesC = await _client.GetDetallecompraAsync();
@@ -486,14 +488,15 @@ namespace VistaNewProject.Controllers
 
                 if (producto == null)
                 {
-                    MensajeSweetAlert("error", "Error", "El producto no existe.", "false",null);
-                    return RedirectToAction("Index");
+                    MensajeSweetAlert("error", "Error", "El producto no existe.", "false", null);
+                    return Json(new { success = false, message = "El producto no existe." });
                 }
 
-                var lotes = await _client.GetLoteAsync();
+                var lotes = await _client.GetLotesByProductIdAsync(id);
                 var lotesFiltrados = lotes
-                    .Where(u => u.ProductoId == producto.ProductoId && u.Cantidad > 0 && u.EstadoLote == 1)
+                    .Where(u => u.EstadoLote == 1 && u.Cantidad > 0)
                     .ToList();
+
                 if (lotesFiltrados.Any())
                 {
                     decimal? precioPorPresentacionRedondeado;
@@ -519,14 +522,10 @@ namespace VistaNewProject.Controllers
                         precioPorUnidadDeProductoRedondeado = 0; // O el valor por defecto que desees
                     }
 
-                    TempData["Producto"] = producto.ProductoId;
-                    TempData["PrecioPorPresentacionRedondeado"] = precioPorPresentacionRedondeado?.ToString(); // Convertir a string
-                    TempData["PrecioPorUnidadDeProductoRedondeado"] = precioPorUnidadDeProductoRedondeado?.ToString();
-                    TempData["TiempoAct"] = false;
-                    TempData["EstadoAlertaAct"] = "true";
-                    return RedirectToAction("Details", "Productos", new { id = id });
+                    var PrecioPorPresentacionRedondeado = FormatearPrecio(precioPorPresentacionRedondeado); // Convertir a string
+                    var PrecioPorUnidadDeProductoRedondeado = FormatearPrecio(precioPorUnidadDeProductoRedondeado);
 
-
+                    return Json(new { success = true, message = "Precios redondeados correctamente.", productoId = producto.ProductoId, precioProducto = PrecioPorPresentacionRedondeado , precioUnidad = PrecioPorUnidadDeProductoRedondeado});
                 }
                 else
                 {
@@ -535,9 +534,7 @@ namespace VistaNewProject.Controllers
                     TempData["SweetAlertMessage"] = "El producto no tiene lotes válidos para calcular precios redondeados.";
                     TempData["Tiempo"] = 3000;
 
-
-                    return RedirectToAction("Details", "Productos", new { id = id });
-
+                    return Json(new { success = false, message = "El producto no tiene lotes válidos para calcular precios redondeados." });
                 }
             }
             catch (Exception ex)
@@ -548,12 +545,44 @@ namespace VistaNewProject.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> CambiarPrecios(int productoId, decimal precioProducto, decimal precioUnidad)
         {
             try
             {
+                var lotes = await _client.GetLotesByProductIdAsync(productoId);
+
+                lotes = lotes.Where(lote => lote.EstadoLote == 1);
+
+                // Verificar si los precios están dentro del rango permitido por los lotes
+                var precioMinimoPorUnidadDeProducto = lotes.Min(lote => lote.PrecioPorUnidadProducto);
+                var precioMaximoPorUnidadDeProducto = lotes.Max(lote => lote.PrecioPorUnidadProducto);
+                var precioMinimoPorProducto = lotes.Min(lote => lote.PrecioPorPresentacion);
+                var precioMaximoPorProducto = lotes.Max(lote => lote.PrecioPorPresentacion);
+
+                if (precioProducto < precioMinimoPorProducto || precioProducto > precioMaximoPorProducto)
+                {
+                    // Los precios por producto están fuera del rango permitido por los lotes
+                    string mensajeError = $"Minimo: {precioMinimoPorProducto} y\n" +
+                                          $"Maximo: {precioMaximoPorProducto}";
+
+                    MensajeSweetAlertPersonalizada("error", "El precio por producto debe estar entre:", mensajeError, "false", 0);
+
+                    return RedirectToAction("Details", new { id = productoId });
+                }
+               
+                if (precioUnidad < precioMinimoPorUnidadDeProducto || precioUnidad > precioMaximoPorUnidadDeProducto)
+                {
+                    string mensajeError = $"Minimo: {precioMinimoPorUnidadDeProducto} y\n" +
+                                          $"Maximo: {precioMaximoPorUnidadDeProducto}";
+
+                    MensajeSweetAlertPersonalizada("error", "El precio por unidad debe estar entre:", mensajeError, "false", 0);
+
+                    return RedirectToAction("Details", new { id = productoId });
+                }
+
+     
                 // Consumir el servicio para actualizar los precios de los lotes
                 var response = await _client.UpdatePrecioLotesAsync(productoId, precioUnidad, precioProducto);
 
@@ -581,6 +610,7 @@ namespace VistaNewProject.Controllers
             }
         }
 
+
         private void SetTempData(string icon, string title, string message)
         {
             TempData["SweetAlertIcon"] = icon;
@@ -590,15 +620,22 @@ namespace VistaNewProject.Controllers
             TempData["EstadoAlerta"] = "false";
         }
 
-        private void MensajeSweetAlert(string icon, string title, string message, string estado ,int ? tiempo)
+        private void MensajeSweetAlert(string icon, string title, string message, string estado, int? tiempo)
         {
             TempData["SweetAlertIcon"] = icon;
             TempData["SweetAlertTitle"] = title;
-            TempData["SweetAlertMessage"] = message; 
-            TempData["EstadoAlerta"] = estado;
-            TempData["Tiempo"] = tiempo.HasValue ? tiempo.Value:3000;
-            TempData["EstadoAlerta"] = "false";
-
+            TempData["SweetAlertMessage"] = message;
+            TempData["EstadoAlerta"] = !string.IsNullOrEmpty(estado) ? estado: "true";
+            TempData["Tiempo"] = tiempo.HasValue ? tiempo.Value.ToString() : 0;
+        }
+        private void MensajeSweetAlertPersonalizada(string icon, string title, string message, string estado, int? tiempo)
+        {
+            TempData["SweetAlertMessagePersonalizado"] = "true";
+            TempData["SweetAlertIcon"] = icon;
+            TempData["SweetAlertTitle"] = title;
+            TempData["SweetAlertMessage"] = message;
+            TempData["EstadoAlerta"] = !string.IsNullOrEmpty(estado) ? estado: "true";
+            TempData["Tiempo"] = tiempo.HasValue ? tiempo.Value.ToString() : 0;
         }
         private string FormatearFechaVencimiento(DateTime? fechaVencimiento)
         {
@@ -621,6 +658,22 @@ namespace VistaNewProject.Controllers
                 return string.Empty; // Si la fecha es nula, retorna una cadena vacía o puedes manejarlo de otra manera
             }
         }
+        private string FormatearPrecio(decimal? precio)
+        {
+            if (precio.HasValue)
+            {
+                string precioFormateado = precio.Value.ToString("#,##0"); // Formatea el precio con puntos de mil
+                return precioFormateado;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+
+
+
 
     }
 }

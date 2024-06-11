@@ -837,6 +837,17 @@ namespace VistaNewProject.Services
             }
             return response;
         }
+        public async Task<IEnumerable<Lote>> GetLotesByProductIdAsync(int productId)
+        {
+           var lotes = await _httpClient.GetFromJsonAsync<IEnumerable<Lote>>($"Lotes/GetLotesByProductId?productId={productId}");
+
+            if (lotes == null)
+            {
+                // Manejar el caso en el que los lotes recibidos sean nulos o estén vacíos
+                throw new Exception("No se encontraron lotes asociados al producto especificado.");
+            }
+            return lotes;
+        }
 
         public async Task<HttpResponseMessage> CreateLoteAsync(Lote lote)
         {
@@ -854,6 +865,8 @@ namespace VistaNewProject.Services
             }
             return response;
         }
+
+       
 
         public async Task<HttpResponseMessage> UpdateLoteAsync(Lote lote)
         {

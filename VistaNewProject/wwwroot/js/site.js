@@ -65,7 +65,7 @@ $(function () {
     
 });
 
-
+/*---------------------------------------------Funciones generales-------------------------------------------------------- */
 /*Mostrar la hora actual en un campo solo llamarla i pasarle el id del campo al que se dese aagregar la fecha*/
 function setHoraActual(campo) {
     // Crear un nuevo objeto Date que representa la fecha y hora actual
@@ -133,7 +133,86 @@ window.seleccionarOpcion = function (input, dataList, hiddenInput) {
 }
 /*------------------------------------------Funciones patra mostrar alertas--------------------------------------------*/
 //Funcion para mostrar un sweet alert en caso de que se ingrese un numero de id que no tiene coincidencias
-function mostrarAlertaDataList(campo) {
+
+// Función general para mostrar el Sweet Alert si no hay opciones disponibles
+function showAlertIfNoOptions(elementId, alertTitle, alertText) {
+    var options = document.getElementById(elementId).getElementsByTagName("option");
+    if (options.length === 0) {
+        Swal.fire({
+            icon: 'info',
+            title: alertTitle,
+            text: alertText,
+            timer: 3000,
+            timerProgressBar: true
+        });
+    }
+}
+
+function showNoMarcasAlert(input) {
+
+    showAlertIfNoOptions("marcas", "No hay marcas activas", "No hay marcas disponibles en este momento.");
+}
+
+function showNoPresentacionesAlert(input) {
+    showAlertIfNoOptions("presentaciones", "No hay presentaciones activas", "No hay presentaciones disponibles en este momento.");
+}
+
+function showNoCategoriasAlert(input) {
+    showAlertIfNoOptions("categorias", "No hay categorias ", "No hay categorias disponibles en este momento.");
+}
+
+function mostrarAlertaCampoVacioPersonalizada(mensaje) {
+    Swal.fire({
+        position: "center",
+        icon: 'warning',
+        title: '\u00A1Atención!',
+        html: `<p>${mensaje}</p>`,
+        showConfirmButton: false,
+        timer: 6000
+    });
+}
+
+//----------------------------------------------------Funcion para validar campos-------------------------------------------
+// Función para verificar los campos
+window.verificarCamposDataList = function (lista) {
+    for (var i = 0; i < lista.length; i++) {
+        var campo = lista[i];
+        if ($(`#${campo.id}`).val() === '') {
+            mostrarAlertaDataList(campo.nombre);
+            return false;
+        }
+    }
+    return true;
+}
+
+window.mostrarAlertaCampoVacio = function (campo) {
+    Swal.fire({
+        position: "center",
+        icon: 'warning',
+        title: '\u00A1Atenci\u00F3n!',
+        html: `<p>Completa el campo: ${campo}.</p>`,
+        showConfirmButton: false,
+        timer: 6000
+    });
+}
+
+window.verificarCampos = function (lista) {
+    for (var i = 0; i < lista.length; i++) {
+        var campo = lista[i];
+        if ($(`#${campo.id}`).val() === '') {
+            window.mostrarAlertaCampoVacio(campo.nombre);
+            return false;
+        }
+    }
+    return true;
+}
+
+window.esURLValida = function (parametro) {
+    var urlActual = window.location.href;
+    // Verificar si la URL contiene el parámetro deseado
+    return urlActual.includes(parametro);
+}
+window.mostrarAlertaDataList = function (campo) {
     Swal.fire({
         position: "center",
         icon: 'warning',
@@ -150,66 +229,7 @@ function mostrarAlertaDataList(campo) {
     });
 }
 
-// Función general para mostrar el Sweet Alert si no hay opciones disponibles
-function showAlertIfNoOptions(elementId, alertTitle, alertText) {
-    var options = document.getElementById(elementId).getElementsByTagName("option");
-    if (options.length === 0) {
-        Swal.fire({
-            icon: 'info',
-            title: alertTitle,
-            text: alertText,
-            timer: 3000,
-            timerProgressBar: true
-        });
-    }
-}
-
-//function showNoMarcasAlert(input) {
-
-//    showAlertIfNoOptions("marcas", "No hay marcas activas", "No hay marcas disponibles en este momento.");
-//}
-
-//function showNoPresentacionesAlert(input) {
-//    showAlertIfNoOptions("presentaciones", "No hay presentaciones activas", "No hay presentaciones disponibles en este momento.");
-//}
-
-//function showNoCategoriasAlert(input) {
-//    showAlertIfNoOptions("categorias", "No hay categorias ", "No hay categorias disponibles en este momento.");
-//}
-
-
-function mostrarAlertaCampoVacio(campo) {
-    Swal.fire({
-        position: "center",
-        icon: 'warning',
-        title: '\u00A1Atenci\u00F3n!',
-        html: `<p>Completa el campo: ${campo}.</p>`,
-        showConfirmButton: false,
-        timer: 6000
-    });
-}
-function mostrarAlerta(campo) {
-    Swal.fire({
-        position: "center",
-        icon: 'warning',
-        title: '¡Atención!',
-        html: `<p>Completa el campo: ${campo}.</p>`,
-        showConfirmButton: false,
-        timer: 6000
-    });
-}
-
-function mostrarAlertaCampoVacioPersonalizada(mensaje) {
-    Swal.fire({
-        position: "center",
-        icon: 'warning',
-        title: '\u00A1Atención!',
-        html: `<p>${mensaje}</p>`,
-        showConfirmButton: false,
-        timer: 6000
-    });
-}
-function mostrarAlertaAtencionPersonalizadaConBoton(mensaje) {
+window.mostrarAlertaAtencionPersonalizadaConBoton = function (mensaje) {
     Swal.fire({
         position: "center",
         icon: 'warning',
@@ -217,24 +237,6 @@ function mostrarAlertaAtencionPersonalizadaConBoton(mensaje) {
         html: `<p>${mensaje}</p>`,
         showConfirmButton: true
     });
-}
-
-//----------------------------------------------------Funcion para validar campos-------------------------------------------
-// Función para verificar los campos
-window.verificarCampos = function (lista, mostrarAlerta) {
-    for (var i = 0; i < lista.length; i++) {
-        var campo = lista[i];
-        if ($(`#${campo.id}`).val() === '') {
-            mostrarAlerta(campo.nombre);
-            return false;
-        }
-    }
-    return true;
-}
-window.esURLValida = function (parametro) {
-    var urlActual = window.location.href;
-    // Verificar si la URL contiene el parámetro deseado
-    return urlActual.includes(parametro);
 }
 
 function obtenerValoresFormulario(ids) {
@@ -251,34 +253,58 @@ function obtenerValoresFormulario(ids) {
 function limpiarCampo(idCampo) {
     document.getElementById(idCampo).value = '';
 }
+function agregarIconoparalimpiarElCampo(input) {
+    var $input = $(input); // Obtener el elemento input usando 'input'
+    var $icono = $input.closest('.icono-input').find('i'); // Buscar el icono dentro del contenedor 'icono-input'
+    var campo = $input.val().trim();
+    if (campo.length != 0) {
+        $icono.removeClass('noBe');
+    } else {
+        $icono.addClass('noBe');
+    }
+}
+function removerIconoparalimpiarElCampo(input) {
+    var $input = $('#'+input); // Obtener el elemento input usando 'input'
+    var $icono = $input.closest('.icono-input').find('i'); // Buscar el icono dentro del contenedor 'icono-input'
+    const labelForCampo = $('label[for="' + input + '"]');
+    const spanVacio = labelForCampo.find('.Mensaje');
+    $icono.addClass('noBe');
+    spanVacio.text('*');
+
+}
+function iconoLimpiarCampo(idsCampos,id) {
+    // Iterar sobre cada ID de campo
+    idsCampos.forEach(function (idCampo) {
+        limpiarCampo(idCampo); // Limpiar el campo
+    });
+    removerIconoparalimpiarElCampo(id);
+}
+
+//Vuelve el vaor a todoen minusculas para luego ser comparado
 function normalizar(texto) {
     return texto ? texto.toLowerCase().replace(/\s/g, '') : '';
 }
-/*---------------------------- Funciones para detalle de producto ---------------------------------------------- */
-var precioProducto = 0;
-var precioUnidadProducto = 0;
-function editarFuncion() {
-    // Valida si los campos ya no tienen el atributo readonly
-    if ($('#precioProducto').prop('readonly') === false && $('#precioUnidad').prop('readonly') === false) {
-        // Muestra una alerta indicando que los campos ya son editables
-        alert('Los Campos ya son Editables');
-    } else {
-        // Quita el atributo readonly de los campos de entrada
-        $('#precioProducto').removeAttr('readonly');
-        $('#precioUnidad').removeAttr('readonly');
-        // Cambia el icono de candado a candado abierto en los inputs
-        $('.icono-input i').removeClass('fa-lock').addClass('fa-lock-open');
-        // Oculta el botón de desbloqueo
-        $('#desbloquearPrecios').hide();
-        // Otro código que desees ejecutar después de quitar el atributo readonly
-        var p = $('#precioProducto').val();
-        var u = $('#precioUnidad').val();
-        console.log(p, u);
+// Función para formatear números enteros con puntos de mil
+function formatNumber(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+// Función para formatear números enteros con puntos de mil y verlo en el input entiempo real
+function formatoNumeroINT(input) {
+    // Obtener el valor del input y quitar los puntos
+    let cleanedValue = input.value.replace(/\./g, '');
+    // Eliminar cualquier carácter que no sea número
+    cleanedValue = cleanedValue.replace(/[^\d]/g, '');
+    // Verificar si el valor es cero y reemplazarlo por uno si es necesario
+    if (parseInt(cleanedValue, 10) === 0) {
+        cleanedValue = '1';
     }
+    // Formatear el valor con puntos para separar los miles
+    const formattedValue = cleanedValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    // Asignar el valor formateado al campo
+    input.value = formattedValue;
 }
 
-
-    
+/*---------------------------- Funciones para detalle de producto ---------------------------------------------- */
 
 // Función para limpiar y rellenar las listas
 function fillList(selector, data, nameKey, idKey, stateKey, emptyMessage) {
@@ -406,5 +432,27 @@ async function checkboxFiltrarActPasanddvariables(filtrar, asociar, filtro) {
         console.error(error); // Muestra el error en la consola
     }
 }
-
+function actualizarLotes(id) {
+    fetch('/Productos/RedondearPrecios/' + id, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ocurrió un error al obtener la respuesta del servidor.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Respuesta del servidor:', data);
+            var formActualizarLotes = $('#FormActualizarLotes');
+            formActualizarLotes.find('#precioProducto').val(data.precioProducto);
+            formActualizarLotes.find('#precioUnidad').val(data.precioUnidad);
+        })
+        .catch(error => {
+            console.error('Error:', error.message);
+        });
+}
 

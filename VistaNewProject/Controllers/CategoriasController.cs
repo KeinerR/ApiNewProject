@@ -135,8 +135,6 @@ namespace VistaNewProject.Controllers
             return View(pagedProductosPagedList);
         }
 
-
-
         public async Task<IActionResult> Create([FromForm] Categoria categoria)
         {
             if (ModelState.IsValid)

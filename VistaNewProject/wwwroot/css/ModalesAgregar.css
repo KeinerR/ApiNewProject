@@ -42,7 +42,6 @@
 
 .ContenedorVista .modal-dialog {
     width: 100%;
-    max-width: 600px; /* Ajusta según tus necesidades */
     margin: auto;
 }
 
@@ -126,20 +125,6 @@
 
 
 
-/*ajustar tamaño para la modal de categoria*/
-#ContenedorCategoria .modal-dialog {
-    width:450px;
- 
-}
 
-/*ajustar tamaño para la modal de categoria*/
-#ContenedorMarca .modal-dialog {
-    width: 450px;
-}
 
-/*ajustar tamaño para la modal de categoria*/
-#ContenedorPresentacion .modal-dialog {
-    min-width: 690px;
-}
-   
 

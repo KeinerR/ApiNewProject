@@ -41,8 +41,9 @@
                     <form asp-controller="Marcas" asp-action="Create" method="post" class="modal-formulario-crear-marca">
                         <div class="modal-body">
                             <div class="form-group">
-                                <label for="NombreMarcaVista" class="control-label">Nombre marca</label>
-                                <span class="Mensaje">*</span>
+                                <label for="NombreMarcaVista" class="control-label">
+                                    Nombre marca<span class="Mensaje">*</span>
+                                </label>
                                 <input type="text" id="NombreMarcaVista" oninput="validarCampoMarca(this);" name="nombreMarca" class="form-control" autocomplete="off" />
                                 <span class="text-danger"></span>
                             </div>
