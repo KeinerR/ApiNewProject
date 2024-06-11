@@ -671,11 +671,14 @@ function actualizarProducto(campo) {
             seleccionarOpcion(document.getElementById('NombreCategoriaAct'), document.getElementById('categorias'), document.getElementById('CategoriaIdAct'));
             seleccionarOpcion(document.getElementById('NombrePresentacionAct'), document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'));
             if (data.cantidadAplicarPorMayor > 0) {
-                var button = document.getElementById("checkboxDescuentoPorMayorAct");
-                button.click();   // Simular el clic en el botón
-                Llamar2();
                 $('#DescuentoAplicarPorMayorAct').val(data.descuentoAplicarPorMayor);
                 $('#CantidadAplicarPorMayorAct').val(data.cantidadAplicarPorMayor);
+                // Mostrar los elementos con la clase 'PorMayor'
+                var elementos = document.getElementsByClassName('PorMayorAct');
+                for (var i = 0; i < elementos.length; i++) {
+                    elementos[i].style.display = "block";
+                    elementos[i].style.visibility = "visible";
+                }
             } else {
                 $('#checkboxDescuentoPorMayorAct').prop('checked', false); // Desmarcar el checkbox
             }
@@ -890,7 +893,7 @@ function Llamar() {
         document.getElementById('DescuentoAplicarPorMayor').value = '0';
     }
 }
-function LlamarActualizado() {
+function Llamar2() {
     var checkbox = document.getElementById('checkboxDescuentoPorMayorAct');
     var cantidadElement = document.getElementById('CantidadAplicarPorMayorAct');
     var descuentoElement = document.getElementById('DescuentoAplicarPorMayorAct');
