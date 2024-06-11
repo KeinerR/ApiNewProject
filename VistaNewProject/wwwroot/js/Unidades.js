@@ -90,10 +90,10 @@ function mostrarValoresFormularioUnidadAct() {
 
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
-    const mostrarAlerta = urlParams.get('mostrarAlerta');
+    const mostrarAlertaCampoVacio = urlParams.get('mostrarAlertaCampoVacio');
     const unidadId = urlParams.get('unidadId');
 
-    if (mostrarAlerta === 'true' && unidadId) {
+    if (mostrarAlertaCampoVacio === 'true' && unidadId) {
         mostrarModalSinRetrasoUnidad(unidadId);
     }
     //Evitar el envio de los formularios hasta que todo este validados

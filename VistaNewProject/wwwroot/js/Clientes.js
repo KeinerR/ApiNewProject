@@ -817,9 +817,9 @@ function actualizarEstadoCliente(ClienteId) {
 
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
-    const mostrarAlerta = urlParams.get('mostrarAlerta');
+    const mostrarAlertaCampoVacio = urlParams.get('mostrarAlertaCampoVacio');
     const clienteId = urlParams.get('clienteId');
-    if (mostrarAlerta === 'true' && clienteId) {
+    if (mostrarAlertaCampoVacio === 'true' && clienteId) {
         mostrarModalSinRetrasoCliente(clienteId);
     }
 

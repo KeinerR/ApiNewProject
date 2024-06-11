@@ -1,4 +1,4 @@
-﻿@model VistaNewProject.Models.Home
+@model VistaNewProject.Models.Home
 @{
     ViewData["Title"] = "Pagina de Inicio";
 }
@@ -11,95 +11,93 @@
                     var totalProductos = TempData["TotalProductos"] as string;
                     if (!string.IsNullOrEmpty(totalProductos))
                     {
-                        <div class="card" style="background-color: #2574A8 ">
-                            <div class="card-body text-white">
-                                <h5 class="card-title text-white">Total de productos</h5>
-                                <p class="card-text text-white">@totalProductos</p>
-                                <i class="fa-solid fa-bottle-water fa-2xl"></i>
-                            </div>
-                        </div>
+                                        <div class="card" style="background-color: #2574A8 ">
+                                            <div class="card-body text-white">
+                                                <h5 class="card-title text-white">Total de productos</h5>
+                                                <p class="card-text text-white">@totalProductos</p>
+                                                <i class="fa-solid fa-bottle-water fa-2xl"></i>
+                                            </div>
+                                        </div>
                     }
                 }
             </div>
-            <div class="col mb-2">
+            <div class ="col mb-2 col-md-6">
                 @{
                     var totalCompras = TempData["TotalCompras"] as string;
                     if (!string.IsNullOrEmpty(totalCompras))
                     {
-                        <div class="card" style="background-color: #2574A8 ">
-                            <div class="card-body text-white">
-                                <h5 class="card-title text-white">Total de las compras</h5>
-                                <p class="card-text text-white">@totalCompras</p>
-                                <i class="fa-solid fa-cart-shopping fa-2xl"></i>
-                            </div>
-                        </div>
+                                        <div class="card" style="background-color: #2574A8 ">
+                                            <div class="card-body text-white">
+                                                <h5 class="card-title text-white">Total de las compras</h5>
+                                                <p class="card-text text-white">@totalCompras</p>
+                                                <i class="fa-solid fa-cart-shopping fa-2xl"></i>
+                                            </div>
+                                        </div>
                     }
                 }
             </div>
         </div>
         <div class="row">
-            <div class="col mb-2">
+            <div class="col mb-2 col-md-6">
                 @{
                     var totalPedidos = TempData["TotalPedidos"] as string;
                     if (!string.IsNullOrEmpty(totalPedidos))
                     {
-                        <div class="card" style="background-color: #2574A8 ">
-                            <div class="card-body text-white">
-                                <h5 class="card-title text-white">Total de los pedidos</h5>
-                                <p class="card-text text-white">@totalPedidos</p>
-                                <i class="fa-solid fa-sack-dollar fa-2xl"></i>
-                            </div>
-                        </div>
+                                        <div class="card" style="background-color: #2574A8 ">
+                                            <div class="card-body text-white">
+                                                <h5 class="card-title text-white">Total de los pedidos</h5>
+                                                <p class="card-text text-white">@totalPedidos</p>
+                                                <i class="fa-solid fa-sack-dollar fa-2xl"></i>
+                                            </div>
+                                        </div>
                     }
                 }
             </div>
-            <div class="col mb-2">
+            <div class="col mb-2 col-md-6">
                 @{
                     var totalClientes = TempData["TotalClientes"] as string;
                     if (!string.IsNullOrEmpty(totalClientes))
                     {
-                        <div class="card" style="background-color: #2574A8 ">
-                            <div class="card-body text-white">
-                                <h5 class="card-title text-white">Total de clientes</h5>
-                                <p class="card-text text-white">@totalClientes</p>
-                                <i class="fa-solid fa-people-group fa-2xl"></i>
-                            </div>
-                        </div>
+                                        <div class="card" style="background-color: #2574A8 ">
+                                            <div class="card-body text-white">
+                                                <h5 class="card-title text-white">Total de clientes</h5>
+                                                <p class="card-text text-white">@totalClientes</p>
+                                                <i class="fa-solid fa-people-group fa-2xl"></i>
+                                            </div>
+                                        </div>
                     }
                 }
             </div>
         </div>
         <div class="row">
-            <div class="col mb-2">
+            <div class="col mb-2 col-md-6">
                 @{
                     var totalProveedores = TempData["TotalProveedores"] as string;
                     if (!string.IsNullOrEmpty(totalProveedores))
                     {
-                        <div class="card" style="background-color: #2574A8 ">
-                            <div class="card-body text-white">
-                                <h5 class="card-title text-white">Total de proveedores</h5>
-                                <p class="card-text text-white">@totalProveedores</p>
-                                <i class="fa-solid fa-truck fa-2xl"></i>
-                            </div>
-                        </div>
+                                        <div class="card" style="background-color: #2574A8 ">
+                                            <div class="card-body text-white">
+                                                <h5 class="card-title text-white">Total de proveedores</h5>
+                                                <p class="card-text text-white">@totalProveedores</p>
+                                                <i class="fa-solid fa-truck fa-2xl"></i>
+                                            </div>
+                                        </div>
                     }
                 }
             </div>
         </div>
+
         <div class="row text-center">
             <div class="wrapper col">
-                <canvas width="1200" height="250" id="comprasChart"></canvas>
+                <canvas style="max-width: 100%;" id="comprasChart"></canvas>
             </div>
             <div class="wrapper col">
-                <canvas width="1200" height="250" id="pedidosChart"></canvas>
+                <canvas style="max-width: 100%;" id="pedidosChart"></canvas>
             </div>
         </div>
         <div class="row">
             <div class="wrapper col">
-                <canvas width="1200" height="250" id="serviciosChart"></canvas>
-            </div>
-            <div class="wrapper col">
-                <canvas width="1200" height="250" id="productosChart"></canvas>
+                <canvas style="max-width: 100%;" id="productosChart"></canvas>
             </div>
         </div>
 
@@ -110,37 +108,74 @@
 
         <script>
 
-
             // Productos Chart
+            
             const ctxProducto = document.getElementById('productosChart').getContext('2d');
 
-            var productos = [
-            @foreach (var producto in Model.Productos)
-            {
-                @: '@producto.NombreProducto',
-            }
-                    ];
+            var datos = [];
 
-            var cantidad = [
+            @{var productos = Model.Productos;}
+                @{var marcas = Model.NombreMarcas;}
+
+                @{var cantidadElementos = Math.Min(productos.Count, marcas.Count);}
+
+                @for (int i = 0; i < cantidadElementos; i++){
+                var nombreProducto = productos[i].NombreProducto;
+                var nombreMarca = marcas[i].Nombre;
+                var cantidadProducto = productos[i].CantidadTotal;
+
+                @:datos.push({ nombreMarca: '@nombreMarca', nombreProducto: '@nombreProducto', cantidadTotal: @cantidadProducto});
+            }
+
+            @*
             @foreach (var producto in Model.Productos)
             {
-                @: '@producto.CantidadTotal',
+                foreach (var nombre in Model.NombreMarcas)
+                {
+                    var nombreMarca = nombre.Nombre != null ? nombre.Nombre : "Marca Desconocida";
+
+                    var nombreProducto = !string.IsNullOrEmpty(producto.NombreProducto) ? producto.NombreProducto : "Producto Desconocido";
+
+                    @:datos.push({ nombreMarca: '@nombreMarca', nombreProducto: '@nombreProducto', cantidadTotal: @producto.CantidadTotal });
+                }    
             }
-                    ];
+            *@
+
+            var labels = datos.map(function (item) {
+                return item.nombreMarca + ' - ' + item.nombreProducto;
+            });
+
+            var cantidades = datos.map(function (item) {
+                return item.cantidadTotal;
+            });
 
             new Chart(ctxProducto, {
-                type: 'bar',
+                type: 'doughnut',
                 data: {
-                    labels: productos,
+                    labels: labels,
                     datasets: [{
                         label: 'Cantidad Total de Productos',
-                        data: cantidad,
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
+                        data: cantidades,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
                         borderWidth: 1
                     }]
                 },
                 options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
                     scales: {
                         y: {
                             beginAtZero: true
@@ -148,41 +183,74 @@
                     }
                 }
             });
+            
 
+
+            
 
             // Compras Chart
             const ctxCompras = document.getElementById('comprasChart').getContext('2d');
 
-            // Obtener los datos de las compras del modelo
-            var compras = [
-            @foreach (var compra in Model.Compras)
-            {
-                @: '@compra.CompraId',
+            var compras = [];
+            var totalCompras = [];
+
+            @{
+
+                var compras = Model.CompraIDs;
+                var proveedor = Model.NombreProveedores;
+                var totalLotesCompras = Model.ValorTotalCompras;
+                var cantidadDatos = Math.Min(compras.Count, proveedor.Count);
+                
+
+                @for (int i = 0; i < cantidadDatos; i++)
+                {
+                var compraId = compras[i].IdCompra;
+                var nombreProveedor = proveedor[i].NombrePro;
+
+                @:compras.push({ idCompra: '@compraId', nombreProveedor: '@nombreProveedor' });
+                }
             }
-                        ];
+            // Obtener los datos de las compras del modelo
+
+            var compras = compras.map(function (item) {
+                return item.idCompra + ' - ' + item.nombreProveedor;
+            });
 
             var valoresTotales = [
-            @foreach (var compra in Model.Compras)
+            @foreach (var lote in Model.ValorTotalCompras)
             {
-                @: parseFloat('@compra.ValorTotalCompra'),
+                @: parseFloat('@lote.TotalCompra'),
             }
                         ];
             console.log(valoresTotales)
 
             // Crear el gráfico de barras
             new Chart(ctxCompras, {
-                type: 'bar',
+                type: 'line',
                 data: {
                     labels: compras,
                     datasets: [{
                         label: 'Valor Total de las Compras',
                         data: valoresTotales,
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
                         borderWidth: 1
                     }]
                 },
                 options: {
+                    responsive: true,
                     scales: {
                         yAxes: [{
                             ticks: {
@@ -195,35 +263,50 @@
 
 
             // Pedidos Chart
-            const ctxPedido = document.getElementById('pedidosChart');
+            const ctxPedido = document.getElementById('pedidosChart').getContext('2d');
 
-            var fechasPedido = [
+            var pedidosClientes = [
             @foreach (var pedido in Model.Pedidos)
             {
-                @: '@pedido.PedidoId',
+                var cliente = Model.Clientes.FirstOrDefault(c => c.ClienteId == pedido.ClienteId);
+                var nombreCliente = cliente != null ? cliente.NombreCompleto : "Cliente Desconocido";
+                @: '@pedido.PedidoId - @nombreCliente',
             }
                 ];
 
             var preciosPedido = [
             @foreach (var pedido in Model.Pedidos)
             {
-                @: parseFloat('@pedido.ValorTotalPedido'), 
+                @:parseFloat('@pedido.ValorTotalPedido'),
             }
                 ];
 
             new Chart(ctxPedido, {
-                type: 'bar',
+                type: 'line',
                 data: {
-                    labels: fechasPedido,
+                    labels: pedidosClientes,
                     datasets: [{
                         label: 'Total del pedido',
                         data: preciosPedido,
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
                         borderWidth: 1,
                     }]
                 },
                 options: {
+                    responsive: true,
                     scales: {
                         y: {
                             beginAtZero: true

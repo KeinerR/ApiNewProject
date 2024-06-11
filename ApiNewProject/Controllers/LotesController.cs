@@ -73,6 +73,34 @@ namespace ApiNewProject.Controllers
             }
         }
 
+        [HttpGet("GetLotesByProductId")]
+        public async Task<ActionResult<IEnumerable<Lote>>> GetLotesByProductId(int productId)
+        {
+            var lotes = await _context.Lotes
+                .Where(l => l.ProductoId == productId)
+                .Select(l => new Lote
+                {
+                    LoteId = l.LoteId,
+                    DetalleCompraId = l.DetalleCompraId,
+                    ProductoId = l.ProductoId,
+                    NumeroLote = l.NumeroLote,
+                    PrecioCompra = l.PrecioCompra,
+                    PrecioPorUnidadProducto = l.PrecioPorUnidadProducto,
+                    PrecioPorPresentacion = l.PrecioPorPresentacion,
+                    FechaVencimiento = l.FechaVencimiento,
+                    Cantidad = l.Cantidad,
+                    EstadoLote = l.EstadoLote
+                })
+                .ToListAsync();
+
+            if (lotes == null || !lotes.Any())
+            {
+                return Ok(new List<Lote>()); // Devolver objeto vacío si no se encuentran lotes
+            }
+
+            return Ok(lotes);
+        }
+
 
         [HttpPost("InsertarLote")]
         public async Task<ActionResult<Lote>> InsertarLote(Lote lote)

@@ -174,10 +174,10 @@ function mostrarValoresFormularioUsuarioAct() {
 /*------------------------------------- Al cargar la vista ------------------------------------------------------------------------------------------ */
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
-    const mostrarAlerta = urlParams.get('mostrarAlerta');
+    const mostrarAlertaCampoVacio = urlParams.get('mostrarAlertaCampoVacio');
     const usuarioId = urlParams.get('usuarioId');
 
-    if (mostrarAlerta === 'true' && usuarioId) {
+    if (mostrarAlertaCampoVacio === 'true' && usuarioId) {
         mostrarModalSinRetrasoUsuario(usuarioId);
     }
     //Evitar el envio de los formularios hasta que todo este validados

@@ -35,10 +35,10 @@
                 </div>
             </div>
             <div id="cabeceraCircle">
-                <span class="tituloHeader">T</span>
-                <a class="circle" asp-area="" asp-controller="Home" asp-action="Index">
+                  <a class="circle" asp-area="" asp-controller="Home" asp-action="Index">
                     <img src="~/image/OPTIMUS/3-removebg-preview.png" />
                 </a>
+                <span class="tituloHeader">T</span>
             </div>
             @if (User.Identity != null && User.Identity.IsAuthenticated)
             {
@@ -171,62 +171,33 @@
                 icon: "@TempData["SweetAlertIcon"]",
                 title: "@Html.Raw(TempData["SweetAlertTitle"])",
                 html: `<div id="MensajeAlertaGeneral"'>@Html.Raw(TempData["SweetAlertMessage"])</div>`,
-                showConfirmButton: "@TempData["EstadoAlerta"]" === "true" ? true : false,
-                timer: "@TempData["Tiempo"]" || 6000,
-                timerProgressBar: true
+                showConfirmButton: "@TempData["EstadoAlerta"]",
+                timer: @TempData["Tiempo"] != "false" && @TempData["Tiempo"] != "0" ? "@TempData["Tiempo"]" : null,
+                timerProgressBar: @TempData["Tiempo"] != "false" && @TempData["Tiempo"] != "0"
+
             });
 
         </script>
-    }
-    @if (TempData["Producto"] != null)
+    } 
+    @if (TempData["SweetAlertMessagePersonalizado"] != null)
     {
-        @if (decimal.TryParse(TempData["PrecioPorPresentacionRedondeado"]?.ToString(), out decimal precioPorPresentacion))
-        {
-            @if (decimal.TryParse(TempData["PrecioPorUnidadDeProductoRedondeado"]?.ToString(), out decimal precioPorUnidad))
-            {
-                <script>
-                    Swal.fire({
-                        position: 'top', 
-                        customClass: {
-                            popup: 'popup-style' 
-                        },
-                        showCloseButton: true,
-                        html: `<div class="contenedor-detalle-producto">
-                        <h4 class="text-center">Precio redondeado</h4>
-                        <form id="formCambiarPrecios" action="/Productos/CambiarPrecios" method="post">
-                            <input type="hidden" name="productoId" value="@TempData["Producto"]">
-                            <div class="icono-input">
-                                <label class="detalle-label" for="precioProducto">Por producto:</label>
-                                                                        <input readonly type="text" value="@TempData["PrecioPorPresentacionRedondeado"]" id="precioProducto" name="precioProducto" class="detalle-input form-control">
-                                <i class="fas fa-lock"></i>
-                            </div>
-                            <div class="icono-input">
-                                <label class="detalle-label" for="precioUnidad">Por unidad de producto:</label>
-                                                                        <input readonly type="text" value="@TempData["PrecioPorUnidadDeProductoRedondeado"]" id="precioUnidad" name="precioUnidad" class="detalle-input form-control">
-                                <i class="fas fa-lock"></i>
-                            </div>
-                        </form>
-                        <div id="contenedorRedondearPrecios">
-                            <button id="desbloquearPrecios" class="btn" onclick="editarFuncion()">
-                                <i id="iconoEditar" class="fas fa-edit"></i>Editar
-                            </button>
-                        </div>
-                    </div>`,
-                        showCancelButton: true,
-                        confirmButtonText: 'Continuar',
-                        cancelButtonText: 'Cancelar'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            document.getElementById('formCambiarPrecios').submit();
-                        }
-                    });
-                </script>
+        <script>
+            Swal.fire({
+                position: "center",
+                icon: "@TempData["SweetAlertIcon"]",
+                title: "@Html.Raw(TempData["SweetAlertTitle"])",
+                html: `<div id="MensajeAlertaGeneral"'>@Html.Raw(TempData["SweetAlertMessage"])</div>`,
+                showConfirmButton: "@TempData["EstadoAlerta"]",
+                timer: @TempData["Tiempo"] != "false" && @TempData["Tiempo"] != "0" ? "@TempData["Tiempo"]" : null,
+                timerProgressBar: @TempData["Tiempo"] != "false" && @TempData["Tiempo"] != "0",
+                customClass: {
+                    popup: 'modal-redondeo-error',
+                    title: 'custom-title-class'
+                },
+            });
 
-
-            }
-        }
-    }
-
+        </script>
+    } 
     @section Scripts {
         @{
             await Html.RenderPartialAsync("_ValidationScriptsPartial");

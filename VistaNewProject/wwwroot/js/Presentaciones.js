@@ -102,10 +102,10 @@ function mostrarValoresFormularioPresentacionAct() {
 
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
-    const mostrarAlerta = urlParams.get('mostrarAlerta');
+    const mostrarAlertaCampoVacio = urlParams.get('mostrarAlertaCampoVacio');
     const presentacionId = urlParams.get('presentacionId');
 
-    if (mostrarAlerta === 'true' && presentacionId) {
+    if (mostrarAlertaCampoVacio === 'true' && presentacionId) {
         mostrarModalSinRetrasoPresentacion(presentacionId);
     }
     //Evitar el envio de los formularios hasta que todo este validados

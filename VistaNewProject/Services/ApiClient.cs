@@ -59,7 +59,7 @@ namespace VistaNewProject.Services
         }
 
 
-        public async Task<HttpResponseMessage> CambiarEstadoClienteAsync(int id)
+        public async Task<HttpResponseMessage> CambiarEstadoClienteAsync(int  id)
         {
             // Realiza la solicitud PATCH a la API
             var response = await _httpClient.PatchAsync($"Clientes/UpdateEstadoCliente/{id}");
@@ -472,7 +472,7 @@ namespace VistaNewProject.Services
             }
             return response;
         }
-        public async Task< Marca> FindMarcaAsync(int id)
+        public async Task< Marca> FindMarcaAsync(int? id)
         {
             var response = await _httpClient.GetFromJsonAsync<Marca>($"Marcas/GetMarcaById?id={id}");
 
@@ -997,14 +997,9 @@ namespace VistaNewProject.Services
             return response;
         }
 
-        public async Task<Proveedor> FindProveedorAsync(int id)
+        public async Task<Proveedor> FindProveedorAsync(int? id)
         {
             var response = await _httpClient.GetFromJsonAsync<Proveedor>($"Proveedores/GetProveedorById?id={id}");
-
-            if (response == null)
-            {
-                throw new Exception("No se encontró el proveedor con el ID especificado.");
-            }
             return response;
         }
 
@@ -1049,6 +1044,17 @@ namespace VistaNewProject.Services
             }
             return response;
         }
+        public async Task<IEnumerable<Lote>> GetLotesByProductIdAsync(int productId)
+        {
+           var lotes = await _httpClient.GetFromJsonAsync<IEnumerable<Lote>>($"Lotes/GetLotesByProductId?productId={productId}");
+
+            if (lotes == null)
+            {
+                // Manejar el caso en el que los lotes recibidos sean nulos o estén vacíos
+                throw new Exception("No se encontraron lotes asociados al producto especificado.");
+            }
+            return lotes;
+        }
 
         public async Task<HttpResponseMessage> CreateLoteAsync(Lote lote)
         {
@@ -1066,6 +1072,8 @@ namespace VistaNewProject.Services
             }
             return response;
         }
+
+       
 
         public async Task<HttpResponseMessage> UpdateLoteAsync(Lote lote)
         {
@@ -1400,11 +1408,7 @@ namespace VistaNewProject.Services
             }
         }
 
-
-
-
-
-
+       
     }
 }
 

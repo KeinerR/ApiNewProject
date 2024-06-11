@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Net;
 using VistaNewProject.Models;
 using VistaNewProject.Services;
@@ -24,9 +25,22 @@ namespace VistaNewProject.Controllers
             var registroProductos = productosApi.Where(r => r.Estado != 0).OrderByDescending(r => r.CantidadTotal)
                 .Take(7).ToList();
 
+            List<NombresMarca> marcasNombre = new List<NombresMarca>();
+
             int CantidadTotal = 0;
             foreach (var producto in registroProductos)
             {
+                var marcaId = producto.MarcaId;
+                var marcaApi = await _api.FindMarcaAsync(marcaId.Value);
+
+                marcasNombre.Add(
+                    new NombresMarca()
+                    {
+                        Nombre = marcaApi.NombreMarca
+                    });
+
+                Console.WriteLine($"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA---------------{marcaApi.NombreMarca}");
+
                 // Verificar si ProductoId es nulo y asignar un valor predeterminado en ese caso
                 int unidad = producto.ProductoId != null ? producto.ProductoId : 0;
                 CantidadTotal += unidad;
@@ -35,23 +49,63 @@ namespace VistaNewProject.Controllers
 
             // ----------------------- REPORTE COMPRAS -----------------------
 
+            // Obtener los datos de compras, detalles de compra, lotes y proveedores desde la API
             var comprasApi = await _api.GetCompraAsync();
-
             var fechaInicioCompras = DateTime.Now.AddDays(-30);
             var fechaFinCompras = DateTime.Now;
 
-            var registroCompras = comprasApi.Where(r => r.FechaCompra >= fechaInicioCompras && r.FechaCompra < fechaFinCompras && r.EstadoCompra != 0)
+            // Filtrar y ordenar las compras de los últimos 30 días
+            var registroCompras = comprasApi
+                .Where(r => r.FechaCompra >= fechaInicioCompras && r.FechaCompra < fechaFinCompras && r.EstadoCompra != 0)
                 .OrderByDescending(r => r.ValorTotalCompra)
-                .Take(7).ToList();
+                .Take(7)
+                .ToList();
+
+            var detalleCompraApi = await _api.GetDetallecompraAsync();
+            var lotesCompraApi = await _api.GetLoteAsync();
+            var proveedorApi = await _api.GetProveedorAsync();
+
+            // Listas para almacenar los detalles de las compras
+            List<Detallecompra> ArrayDetalle = new List<Detallecompra>();
+            List<NombreProveedor> ArrayProveedores = new List<NombreProveedor>();
+            List<CompraID> ArrayCompras = new List<CompraID>();
+            List<TotalCompras> ArrayTotalCompras = new List<TotalCompras>();
 
             decimal totalCompras = 0;
+
             foreach (var compra in registroCompras)
             {
-                // Verificar si el ValorTotal de la compra es nulo y asignar un valor predeterminado en ese caso
-                decimal valorTotal = compra.ValorTotalCompra ?? 1;
-                totalCompras += valorTotal;
+                var proveedorId = compra.ProveedorId;
+                var proveedorNombre = await _api.FindProveedorAsync(proveedorId);
+
+                ArrayCompras.Add(new CompraID() { IdCompra = compra.CompraId });
+
+                ArrayProveedores.Add(new NombreProveedor() { NombrePro = proveedorNombre.NombreContacto });
+
+                var newDetalle = detalleCompraApi.Where(d => d.CompraId == compra.CompraId).FirstOrDefault();
+                if (newDetalle != null)
+                {
+                    var idDetalle = newDetalle.DetalleCompraId;
+                    var newLote = lotesCompraApi.Where(d => d.DetalleCompraId == idDetalle).FirstOrDefault();
+                    if (newLote != null)
+                    {
+                        var idLote = newLote.LoteId;
+                        var lotePrecio = await _api.FindLoteAsync(idLote);
+
+                        ArrayTotalCompras.Add(new TotalCompras() { TotalCompra = lotePrecio.PrecioCompra });
+
+                        // Sumar el precio de compra del lote al total de compras
+                        totalCompras += lotePrecio.PrecioCompra ?? 0;
+
+                        Console.WriteLine($"Proveedor: {proveedorNombre.NombreContacto}");
+                        Console.WriteLine($"Compra ID: {compra.CompraId}");
+                        Console.WriteLine($"Precio Lote: {lotePrecio.PrecioCompra}");
+                    }
+                }
             }
+
             TempData["TotalCompras"] = totalCompras.ToString("$ #,##0");
+
 
             // ----------------------- REPORTE PEDIDOS -----------------------
             var pedidosApi = await _api.GetPedidoAsync();
@@ -105,7 +159,12 @@ namespace VistaNewProject.Controllers
                 Compras = registroCompras,
                 Proveedores = registroProveedores,
                 Clientes = registroClientes,
-                Pedidos = registroPedidos
+                Pedidos = registroPedidos,
+                NombreMarcas = marcasNombre,
+                NombreProveedores = ArrayProveedores,
+                CompraIDs = ArrayCompras,
+                ValorTotalCompras = ArrayTotalCompras,
+
             };
 
 

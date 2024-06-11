@@ -51,7 +51,7 @@ namespace VistaNewProject.Services
         // marca
         Task<IEnumerable<Marca>> GetMarcaAsync();
         Task<HttpResponseMessage> CreateMarcaAsync( Marca marca);
-        Task<Marca> FindMarcaAsync(int id);
+        Task<Marca> FindMarcaAsync(int? id);
         Task<Marca> FindNombreMarcasAsync(string nombreMarca);
         Task<HttpResponseMessage> UpdateMarcaAsync(MarcaUpdate marca);
         Task<HttpResponseMessage> CambiarEstadoMarcaAsync(int id);
@@ -97,7 +97,7 @@ namespace VistaNewProject.Services
 
         Task<IEnumerable<Proveedor>> GetProveedorAsync();
         Task<HttpResponseMessage> CreateProveedorAsync(Proveedor proveedor);
-        Task<Proveedor> FindProveedorAsync(int id);
+        Task<Proveedor> FindProveedorAsync(int? id);
         Task<Proveedor> FindnombreProveedorAsync(string nombreEmpresa);
 
         Task<HttpResponseMessage> UpdateProveedorAsync(ProveedorUpdate proveedor);
@@ -132,6 +132,7 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Lote>> GetLoteAsync();
         Task<HttpResponseMessage> CreateLoteAsync(Lote lote);
         Task<Lote> FindLoteAsync(int id);
+        Task<IEnumerable<Lote>> GetLotesByProductIdAsync(int productId);
         Task<HttpResponseMessage> UpdateLoteAsync(Lote lote);
         Task<HttpResponseMessage> DeleteLoteAsync(int id);
         Task<HttpResponseMessage> UpdatePrecioLotesAsync(int productoId, decimal precioxunidad, decimal precioxproducto );
