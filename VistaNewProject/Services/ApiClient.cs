@@ -833,7 +833,18 @@ namespace VistaNewProject.Services
             if (response == null)
             {
                 // Manejar el caso en el que response sea nulo
-                throw new Exception("No se encontró la marca con el ID especificado.");
+                throw new Exception("No se encontró el producto con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<IEnumerable<Producto>> GetAllDatosProductosAsync(string? busqueda = "")
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Producto>>("Productos/GetaAllDatosProductos");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró el producto con el ID especificado.");
             }
             return response;
         }
@@ -854,6 +865,16 @@ namespace VistaNewProject.Services
 
         {
             var response = await _httpClient.GetFromJsonAsync<Producto>($"Productos/GetProductoById?id={id}");
+            if (response == null)
+            {
+                throw new Exception("No se encontro el producto con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<Producto> FindDatosProductoAsync(int id)
+
+        {
+            var response = await _httpClient.GetFromJsonAsync<Producto>($"Productos/GetDatosProductoById?id={id}");
             if (response == null)
             {
                 throw new Exception("No se encontro el producto con el ID especificado.");

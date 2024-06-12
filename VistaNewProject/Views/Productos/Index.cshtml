@@ -28,7 +28,7 @@
                 <div class="modal-cabecera">
                     <div id="pibo"></div>
                     <div class="modal-header-view TituloModal">
-                        <h2 class="modal-title">Agregar productos</h2>
+                        <h2 class="modal-title">Agregar producto</h2>
                     </div>
                     <div class="modal-header-view" id="modal-cabecera-equis">
                         <button type="button" onclick="limpiarFormularioProducto();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -352,22 +352,10 @@
                         @Html.DisplayFor(modelItem => item.ProductoId)
                     </td>
                     <td>
-                        @foreach (var categoria in ViewBag.Categorias)
-                        {
-                            @if (categoria.CategoriaId == item.CategoriaId) // Verifica si el ID del rol coincide con el ID del rol del usuario
-                            {
-                                <span>@categoria.NombreCategoria</span> <!-- Muestra el nombre del rol si coincide -->
-                            }
-                        }
+                        @Html.DisplayFor(modelItem => item.NombreCategoria)
                     </td>          
                     <td>
-                        @foreach (var marca in ViewBag.Marcas)
-                        {
-                            @if (marca.MarcaId == item.MarcaId) // Verifica si el ID del rol coincide con el ID del rol del usuario
-                            {                                                                                                   
-                                <span>@marca.NombreMarca</span> <!-- Muestra el nombre del rol si coincide -->
-                            }
-                        }
+                        @Html.DisplayFor(modelItem => item.NombreMarca)
                     </td>               
                     <td>
                         @Html.DisplayFor(modelItem => item.NombreCompleto)
@@ -405,24 +393,8 @@
                                 @contadorB <!-- Muestra el valor del contador -->
                             </td>
                             <td>@producto.ProductoId</td>
-                            <td>
-                                @foreach (var categoria in ViewBag.Categorias)
-                                {
-                                    @if (categoria.CategoriaId == producto.CategoriaId) // Verifica si el ID del rol coincide con el ID del rol del usuario
-                                    {   
-                                        <span>@categoria.NombreCategoria</span> <!-- Muestra el nombre del rol si coincide -->
-                                    } 
-                                }
-                            </td>  
-                            <td>
-                                @foreach (var marca in ViewBag.Marcas)
-                                {
-                                    @if (marca.MarcaId == producto.MarcaId) // Verifica si el ID del rol coincide con el ID del rol del usuario
-                                    {   
-                                        <span>@marca.NombreMarca </span> <!-- Muestra el nombre del rol si coincide -->
-                                    } 
-                                }
-                            </td>
+                            <td>@producto.NombreCategoria</td>
+                            <td>@producto.NombreMarca</td>
                             <td>@producto.NombreCompleto</td>
                             <td class="">@producto.CantidadTotal</td>
                             <td class="text-center align-middle">

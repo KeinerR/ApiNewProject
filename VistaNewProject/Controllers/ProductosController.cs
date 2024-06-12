@@ -200,7 +200,7 @@ namespace VistaNewProject.Controllers
                     MarcaId = producto.MarcaId,
                     ProductoId = producto.ProductoId,
                     CategoriaId = producto.CategoriaId,
-                    CantidadTotal = producto.CantidadTotal,
+                    CantidadTotal = producto.CantidadTotal ?? 0,
                     CantidadReservada = 0,
                     CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor,
                     DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor,
@@ -227,7 +227,6 @@ namespace VistaNewProject.Controllers
             }
         }
 
-
         [HttpPost]
         public async Task<JsonResult> FindProducto(int productoId)
         {
@@ -244,7 +243,7 @@ namespace VistaNewProject.Controllers
                 return NotFound();
             }
 
-            var productos = await _client.FindProductoAsync(id.Value);
+            var productos = await _client.FindDatosProductoAsync(id.Value);
             var lotesInfo = await _client.GetLotesByProductIdAsync(id.Value); // Utilizar el valor de id en lugar de productoid
 
             // Filtrar los lotes con EstadoLote igual a 1
@@ -342,7 +341,7 @@ namespace VistaNewProject.Controllers
                         PresentacionId = producto.PresentacionId,
                         MarcaId = producto.MarcaId,
                         CategoriaId = producto.CategoriaId,
-                        CantidadTotal = producto.CantidadTotal,
+                        CantidadTotal = producto.CantidadTotal ?? 0,
                         CantidadReservada = 0,
                         CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor,
                         DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor,
@@ -351,14 +350,6 @@ namespace VistaNewProject.Controllers
 
                     if (response.IsSuccessStatusCode)
                     {
-                        // Mostrar datos entrantes en la consola
-                        Console.WriteLine($"ProductoId: {producto.ProductoId}");
-                        Console.WriteLine($"NombreProducto: {producto.NombreProducto}");
-                        Console.WriteLine($"EstadoProducto: {producto.Estado}");
-
-                        // Aquí puedes agregar lógica adicional como guardar en la base de datos
-
-
                         TempData["SweetAlertIcon"] = "success";
                         TempData["SweetAlertTitle"] = "Exito";
                         TempData["SweetAlertMessage"] = "Se ha Actualizado exitosamente el producto";
@@ -395,7 +386,7 @@ namespace VistaNewProject.Controllers
 
             if (producto == null)
             {
-                SetTempData("error", "Error", "El producto a eliminar no existe.");
+                MensajeSweetAlert("error", "Error", "El producto a eliminar no existe.", null, null);
                 return RedirectToAction("Index");
             }
             Console.WriteLine(producto);
@@ -405,26 +396,26 @@ namespace VistaNewProject.Controllers
 
             if (tieneDetallesAsociados)
             {
-                SetTempData("error", "Error", "No se puede eliminar el producto porque tiene detalles asociados.");
+                MensajeSweetAlert("error", "Error", "No se puede eliminar el producto porque tiene detalles asociados.", null, null);
                 return RedirectToAction("Index");
             }
             // Si no tiene detalles asociados, procede con la eliminación del producto
             var response = await _client.DeleteProductoAsync(productoId);
             if (response == null)
             {
-                SetTempData("error", "Error", "Error al eliminar el Producto.");
+                MensajeSweetAlert("error", "Error", "Error al eliminar el Producto.", null, null);
             }
             else if (response.IsSuccessStatusCode)
             {
-                SetTempData("success", "Éxito", "Producto eliminado correctamente.");
+                MensajeSweetAlert("success", "Éxito", "Producto eliminado correctamente.", null, null);
             }
             else if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                SetTempData("error", "Error", "El Producto no se encontró en el servidor.");
+                MensajeSweetAlert("error", "Error", "El Producto no se encontró en el servidor.", null, null);
             }
             else
             {
-                SetTempData("error", "Error", "Error desconocido al eliminar el Producto.");
+                MensajeSweetAlert("error", "Error", "Error desconocido al eliminar el Producto.", null, null);
             }
             return RedirectToAction("Index");
         }
@@ -610,16 +601,53 @@ namespace VistaNewProject.Controllers
             }
         }
 
-
-        private void SetTempData(string icon, string title, string message)
+        public async Task<IActionResult> CambiarPrecio(int productoId, decimal precioProducto, decimal precioUnidad, string numeroLote, DateTime fechaVencimiento)
         {
-            TempData["SweetAlertIcon"] = icon;
-            TempData["SweetAlertTitle"] = title;
-            TempData["SweetAlertMessage"] = message;
-            TempData["Tiempo"] = 3000;
-            TempData["EstadoAlerta"] = "false";
-        }
+            // Obtener lotes asociados al producto
+            var lotes = await _client.GetLotesByProductIdAsync(productoId);
+            // Filtrar los lotes con estado 1 (asumiendo que el estado 1 significa activo)
+            lotes = lotes.Where(lote => lote.EstadoLote == 1);
 
+            // Encontrar el precio más alto y más bajo entre los lotes
+            decimal? precioMasAltoProducto = lotes.Max(lote => lote.PrecioPorPresentacion);
+            decimal? precioMasBajoProducto = lotes.Min(lote => lote.PrecioPorPresentacion);
+            decimal? precioMasAltoUnidadProducto = lotes.Max(lote => lote.PrecioPorUnidadProducto);
+            decimal? precioMasBajoUnidadProducto = lotes.Min(lote => lote.PrecioPorUnidadProducto);
+
+            // Crear variables con valores basados en los precios encontrados
+            decimal? tripleDelPrecioMasAltoProducto = precioMasAltoProducto * 3;
+            decimal? cuarentaPorCientoDelPrecioMasBajoProducto = precioMasBajoProducto * 0.4m;
+            decimal? tripleDelPrecioMasAltoUnidadProducto = precioMasAltoUnidadProducto * 3;
+            decimal? cuarentaPorCientoDelPrecioMasBajoUnidadProducto = precioMasBajoUnidadProducto * 0.4m;
+
+            // Verificar si el precio por producto está dentro del rango permitido
+            if (precioProducto < cuarentaPorCientoDelPrecioMasBajoProducto || precioProducto > tripleDelPrecioMasAltoProducto)
+            {
+                // Los precios por producto están fuera del rango permitido por el admin
+                string mensajeError = $"Mínimo 40% del precio del producto: {cuarentaPorCientoDelPrecioMasBajoProducto} y\n" +
+                                      $"Máximo triple del producto: {tripleDelPrecioMasAltoProducto}";
+
+                MensajeSweetAlertPersonalizada("error", "El precio por producto debe estar entre:", mensajeError, "false", 0);
+
+                return RedirectToAction("Details", new { id = productoId });
+            }
+
+            // Verificar si el precio por unidad está dentro del rango permitido
+            if (precioUnidad < cuarentaPorCientoDelPrecioMasBajoUnidadProducto || precioUnidad > tripleDelPrecioMasAltoUnidadProducto)
+            {
+                // Los precios por unidad están fuera del rango permitido por el admin
+                string mensajeError = $"Mínimo 40% del precio por unidad: {cuarentaPorCientoDelPrecioMasBajoUnidadProducto} y\n" +
+                                      $"Máximo triple del precio por unidad: {tripleDelPrecioMasAltoUnidadProducto}";
+
+                MensajeSweetAlertPersonalizada("error", "El precio por unidad debe estar entre:", mensajeError, "false", 0);
+
+                return RedirectToAction("Details", new { id = productoId });
+            }
+
+            // Lógica para actualizar el precio aquí
+
+            return RedirectToAction("Details", "Productos", new { id = productoId });
+        }
         private void MensajeSweetAlert(string icon, string title, string message, string estado, int? tiempo)
         {
             TempData["SweetAlertIcon"] = icon;

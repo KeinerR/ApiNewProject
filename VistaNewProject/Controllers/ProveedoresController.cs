@@ -388,7 +388,7 @@ namespace VistaNewProject.Controllers
                 .Where(l => l.EstadoLote == 1 && l.ProductoId == productoId)
                 .Sum(l => l.Cantidad);
 
-            producto.CantidadTotal = cantidadTotalPorProducto;
+            producto.CantidadTotal = cantidadTotalPorProducto ?? 0;
 
             // Concatenar nombre completo de presentaciones
             var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);

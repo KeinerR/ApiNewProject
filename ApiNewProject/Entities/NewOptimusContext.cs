@@ -36,7 +36,7 @@ namespace ApiNewProject.Entities
         public virtual DbSet<Rol> Rols { get; set; } = null!;
         public virtual DbSet<Rolxpermiso> Rolxpermisos { get; set; } = null!;
         public virtual DbSet<Unidad> Unidades { get; set; } = null!;
-        public virtual DbSet<Usuario> Usuarios { get; set; } = null!;
+        public virtual DbSet<Usuario> Usuarios { get; set; } = null!; 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

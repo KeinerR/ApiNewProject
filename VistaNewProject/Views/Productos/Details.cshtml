@@ -3,7 +3,9 @@
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Detalle de producto";
+    var cantidadPorPresentacion = ViewBag.Producto.CantidadTotal * ViewBag.Producto.CantidadPorPresentacion;
 }
+
 <div class="ContenedorVista" id="ContenedorDetalleProducto">
     <br />
     <div>
@@ -13,6 +15,7 @@
         <!-- Agrega esto en tu enlace de "Editar" en Details.cshtml -->
         <a href="#" onclick="redireccionarYEditar('@ViewBag.Producto.ProductoId ', 'Productos','producto')" class="btn botonEnviarDetalle"><i class="fa-solid fa-pen"></i> Editar</a>
     </div>
+    <!-- Tu contenido aquí -->
     <div class="modal fade GeneralModal" id="ModalLote" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content" id="FormActualizarLotes">
@@ -27,7 +30,7 @@
                 </div>
                 <div class="modal-cuerpo">
                     <form id="formCambiarPrecios" asp-action="CambiarPrecios" asp-controller="Productos" method="post">
-                       <input type="hidden" name="productoId" value="@ViewBag.Producto.ProductoId" />
+                        <input type="hidden" name="productoId" value="@ViewBag.Producto.ProductoId" />
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -49,7 +52,7 @@
                             </div>
                         </div>
                         <div class="modal-contenedor-footer">
-                            <button type="reset" class="btn btn-secondary">Cancelar</button>
+                            <button type="reset" data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
                             <button type="submit" class="btn btn-primary btnGuardar">Actualizar</button>
                         </div>
                     </form>
@@ -58,7 +61,7 @@
         </div>
     </div>
     <div class="modal fade GeneralModal" id="ModalLoteAct" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-         <div class="modal-dialog">
+        <div class="modal-dialog">
             <div class="modal-content formActualizarLote">
                 <div class="modal-cabecera">
                     <div id="pibo"></div>
@@ -70,47 +73,47 @@
                     </div>
                 </div>
                 <div class="modal-cuerpo">
-                    <form id="formCambiarPrecio" asp-action="" asp-controller="" method="post">
-                        <div class="row">
-                            <div class="form-group">
+                         <form id="formCambiarPrecio" asp-action="CambiarPrecio" asp-controller="Productos" method="post">
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-6">
+                                        <div class="icono-input">
+                                            <label class="control-label" for="fechaCaducidad">Fecha Vencimiento</label>
+                                            <input type="date" id="fechaCaducidad" name="fechaVencimiento" class="form-control">
+                                            <i class="fas fa-times noBe" onclick="limpiarCampo('precioProductoAct');"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-md-6">
-                                    <div class="icono-input">
-                                        <label class="control-label" for="fechaCaducidad">Fecha Vencimiento</label>
-                                        <input type="date" id="fechaCaducidad" name="fechaVencimiento" class="form-control">
-                                        <i class="fas fa-times noBe" onclick="limpiarCampo('precioProductoAct');"></i>
+                                    <div class="form-group">
+                                        <div class="icono-input">
+                                            <i class="fas fa-times" onclick="limpiarCampo('precioUnidadAct');"></i>
+                                            <label class="control-label" for="precioProductoAct">Por producto<span class="Mensaje"></span></label>
+                                            <input type="text" oninput="agregarIconoparalimpiarElCampo(this);" id="precioProductoAct" name="precioProducto" class="form-control">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <div class="icono-input">
-                                        <i class="fas fa-times" onclick="limpiarCampo('precioUnidadAct');"></i>
-                                        <label class="control-label" for="precioUnidadAct">Por unidad de producto<span class="Mensaje"></span></label>
-                                        <input type="text" oninput="agregarIconoparalimpiarElCampo(this);" id="precioUnidadAct" name="precioUnidad" class="form-control">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="icono-input">
+                                            <i class="fas fa-times" onclick="limpiarCampo('precioUnidadAct');"></i>
+                                            <label class="control-label" for="precioUnidadAct">Por unidad de producto<span class="Mensaje"></span></label>
+                                            <input type="text" oninput="agregarIconoparalimpiarElCampo(this);" id="precioUnidadAct" name="precioUnidad" class="form-control">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <div class="icono-input">
-                                        <i class="fas fa-times" onclick="limpiarCampo('precioUnidadAct');"></i>
-                                        <label class="control-label" for="precioUnidadAct">Por unidad de producto<span class="Mensaje"></span></label>
-                                        <input type="text" oninput="agregarIconoparalimpiarElCampo(this);" id="precioUnidadAct" name="precioUnidad" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
 
-                        </div>
-                        <input type="hidden" name="productoId">
-                        <input type="hidden" name="numeroLote">
-
-                        <div class="modal-contenedor-footer">
-                            <button type="reset" class="btn btn-secondary">Cancelar</button>
-                            <button type="submit" class="btn btn-primary btnGuardar">Actualizar</button>
-                        </div>
-                    </form>
+                            </div>
+                            <input name="productoId">
+                            <input name="numeroLote">
+                            <div class="modal-contenedor-footer">
+                                <button type="reset" class="btn btn-secondary">Cancelar</button>
+                                <button type="submit" class="btn btn-primary btnGuardar">Actualizar</button>
+                            </div>
+                      </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -123,20 +126,26 @@
                 <tr>
                     <th>Producto ID</th>
                     <th>Nombre</th>
+                    <th>Categoria</th>
                     <th>Marca</th>
                     <th>Presentacion</th>
-                    <th>Categoria</th>
-                    <th>Cantidad total de productos</th>
+                    <th>Cantidad por presentación</th>
+                    <th>Cantidad total por productos</th>
+                    <th>Cantidad total por unidad</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>@(ViewBag.Producto.ProductoId)</td>
                     <td>@(ViewBag.Producto.NombreProducto)</td>
-                    <td>@(ViewBag.Producto.MarcaId)</td> 
-                    <td>@(ViewBag.Producto.PresentacionId)</td>
-                    <td>@(ViewBag.Producto.CategoriaId)</td>
+                    <td>@(ViewBag.Producto.NombreCategoria)</td>
+                    <td>@(ViewBag.Producto.NombreMarca)</td> 
+                    <td>@(ViewBag.Producto.NombrePresentacion)</td>
+                    <td>@(ViewBag.Producto.CantidadPorPresentacion)</td>
                     <td>@(ViewBag.Producto.CantidadTotal)</td>
+                    <td>@cantidadPorPresentacion</td>
+                    <td>@(ViewBag.Producto.CantidadTotalPorUnidad)</td>
+
                 </tr>
             </tbody>
         </table>
@@ -163,7 +172,11 @@
                             <th scope="col"># de Lote</th>
                             <th scope="col">Cantidad en lote</th>
                             <th scope="col">Precio por producto</th>
-                            <th scope="col">Precio por unidad de producto</th>
+                            @if (ViewBag.Producto.CantidadPorPresentacion > 1)
+                            {
+                                <th scope="col">Precio por unidad de producto</th>
+                            }
+                           
                             <th scope="col" class="fechaVencimientoTabla">Fecha de vencimiento</th>
                             <th>Accion</th>
                         </tr>
@@ -176,7 +189,10 @@
                                 <td>@lote.NumeroLote</td>
                                 <td>@lote.Cantidad</td>
                                 <td>@(lote.PrecioPorPresentacion)</td>
+                                @if (ViewBag.Producto.CantidadPorPresentacion > 1)
+                                {
                                 <td>@(lote.PrecioPorUnidadProducto)</td>
+                                }
                                 <td>@(lote.FechaCaducidad)</td>
                                 <td><button data-bs-toggle="modal" data-bs-target="#ModalLoteAct">Editar</button></td>
                             </tr>

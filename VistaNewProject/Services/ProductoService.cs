@@ -12,30 +12,47 @@ public class ProductoService
 
     public async Task<Producto> ConcatenarNombreCompletoProducto(int productoId)
     {
-        var producto = (await _client.GetProductoAsync()).FirstOrDefault(p => p.ProductoId == productoId);
-        var presentaciones = await _client.GetPresentacionAsync();
-        var lotes = await _client.GetLoteAsync();
-        var marcas = await _client.GetMarcaAsync();
+        // Retrieve product information asynchronously
+        var producto = await _client.FindDatosProductoAsync(productoId);
 
-        // Calcular cantidad total de lotes por ProductoId y estado activo
+        // Convert Producto to DatosProducto
+        var datosProducto = new Producto
+        {
+            ProductoId = producto.ProductoId,
+            PresentacionId = producto.ProductoId, // Revisar si es correcto asignar ProductoId a PresentacionId
+            MarcaId = producto.MarcaId,
+            CategoriaId = producto.CategoriaId, // Asignar el id de la categoría
+            NombreProducto = producto.NombreProducto,
+            NombrePresentacion = producto.NombrePresentacion,
+            CantidadReservada = producto.CantidadReservada,
+            CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor,
+            DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor,
+            Contenido = producto.Contenido,
+            NombreMarca = producto.NombreMarca,
+            CantidadPorPresentacion = producto.CantidadPorPresentacion,
+            NombreCategoria = producto.NombreCategoria
+            // etc.
+        };
+
+        var lotes = await _client.GetLotesByProductIdAsync(productoId);
+
         var cantidadTotalPorProducto = lotes
             .Where(l => l.EstadoLote == 1 && l.ProductoId == productoId)
             .Sum(l => l.Cantidad);
 
-        producto.CantidadTotal = cantidadTotalPorProducto;
+        datosProducto.CantidadTotal = cantidadTotalPorProducto ?? 0;
 
-        // Concatenar nombre completo de presentaciones
-        var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
-        var nombrePresentacion = presentacionEncontrada?.NombrePresentacion ?? "Sin presentación";
-        var contenido = presentacionEncontrada?.Contenido ?? "";
-        var cantidad = presentacionEncontrada?.CantidadPorPresentacion ?? 1;
-        var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
-        var nombreMarca = marcaEncontrada?.NombreMarca ?? "Sin marca";
+        var nombrePresentacion = datosProducto.NombrePresentacion;
+        var contenido = datosProducto.Contenido;
+        var cantidad = datosProducto.CantidadPorPresentacion;
+        var nombreMarca = datosProducto.NombreMarca;
 
-        producto.NombreCompleto = cantidad > 1 ?
-            $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} unidades de {contenido}" :
-            $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
+        datosProducto.NombreCompleto = cantidad > 1 ?
+            $"{nombrePresentacion} de {datosProducto.NombreProducto} x {cantidad} unidades de {contenido}" :
+            $"{nombrePresentacion} de {datosProducto.NombreProducto} {nombreMarca} de {contenido}";
 
-        return producto;
+        return datosProducto;
     }
+
+
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ApiNewProject.Controllers
 {
@@ -64,7 +65,7 @@ namespace ApiNewProject.Controllers
                         CategoriaId = s.CategoriaId,
                         NombreProducto = s.NombreProducto,
                         CantidadTotal = s.CantidadTotal,
-                        CantidadReservada= s.CantidadReservada,
+                        CantidadReservada = s.CantidadReservada,
                         CantidadAplicarPorMayor = s.CantidadAplicarPorMayor,
                         DescuentoAplicarPorMayor = s.DescuentoAplicarPorMayor,
                         Estado = s.Estado,
@@ -80,29 +81,85 @@ namespace ApiNewProject.Controllers
                 return Ok(producto);
             }
         }
-
-
-        [HttpPost("InsertarProducto")]
-        public async Task<ActionResult<Producto>> InsertarProducto(Producto producto)
+        [HttpGet("GetAllDatosProductos")]
+        public async Task<ActionResult<List<DatosProducto>>> GetAllDatosProductos(string? busqueda = "")
         {
-            try
+            IQueryable<Producto> query = _context.Productos; // Cambio a IQueryable<Producto>
+            if (!string.IsNullOrEmpty(busqueda))
             {
-                if (producto == null)
-                {
-                    return BadRequest("Los datos del producto no pueden ser nulos.");
-                }
-
-                _context.Productos.Add(producto);
-                await _context.SaveChangesAsync();
-
-                return CreatedAtAction(nameof(GetProductoById), new { id = producto.ProductoId }, producto);
+                // Aplica filtros de búsqueda solo si se proporciona una consulta de búsqueda
+                query = query.Where(p =>
+                    p.NombreProducto.Contains(busqueda) ||
+                    p.Categoria.NombreCategoria.Contains(busqueda) ||
+                    p.Marca.NombreMarca.Contains(busqueda));
             }
-            catch (Exception ex)
+
+            var productos = await query
+                .Include(p => p.Categoria)
+                .Include(p => p.Marca)
+                .Include(p => p.Presentacion)
+                .ToListAsync();
+
+            var datosProductosList = productos.Select(p => new DatosProducto
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar el producto en la base de datos: " + ex.Message);
-            }
+                ProductoId = p.ProductoId,
+                PresentacionId = p.PresentacionId,
+                MarcaId = p.MarcaId,
+                CategoriaId = p.CategoriaId,
+                NombreProducto = p.NombreProducto,
+                CantidadTotal = p.CantidadTotal,
+                CantidadReservada = p.CantidadReservada,
+                CantidadAplicarPorMayor = p.CantidadAplicarPorMayor,
+                DescuentoAplicarPorMayor = p.DescuentoAplicarPorMayor,
+                Estado = p.Estado,
+                NombreCategoria = p.Categoria != null ? p.Categoria.NombreCategoria : null,
+                NombreMarca = p.Marca != null ? p.Marca.NombreMarca : null,
+                NombrePresentacion = p.Presentacion != null ? p.Presentacion.NombrePresentacion : null,
+                CantidadPorPresentacion = p.Presentacion != null ? p.Presentacion.CantidadPorPresentacion : 0,
+                Contenido = p.Presentacion != null ? p.Presentacion.Contenido : null
+                // Asegúrate de agregar las propiedades adicionales que desees cargar
+            }).ToList();
+
+            return datosProductosList;
         }
 
+        [HttpGet("GetDatosProductoById")]
+        public async Task<ActionResult<DatosProducto>> GetDatosProductoById(int id)
+        {
+            var producto = await _context.Productos
+                .Where(p => p.ProductoId == id)
+                .Include(p => p.Categoria)
+                .Include(p => p.Marca)
+                .Include(p => p.Presentacion)
+                .FirstOrDefaultAsync();
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            var datosProducto = new DatosProducto
+            {
+                ProductoId = producto.ProductoId,
+                PresentacionId = producto.PresentacionId,
+                MarcaId = producto.MarcaId,
+                CategoriaId = producto.CategoriaId,
+                NombreProducto = producto.NombreProducto,
+                CantidadTotal = producto.CantidadTotal,
+                CantidadReservada = producto.CantidadReservada,
+                CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor,
+                DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor,
+                Estado = producto.Estado,
+                NombreCategoria = producto.Categoria != null ? producto.Categoria.NombreCategoria : null,
+                NombreMarca = producto.Marca != null ? producto.Marca.NombreMarca : null,
+                NombrePresentacion = producto.Presentacion != null ? producto.Presentacion.NombrePresentacion : null,
+                CantidadPorPresentacion = producto.Presentacion != null ? producto.Presentacion.CantidadPorPresentacion : 0,
+                Contenido = producto.Presentacion != null ? producto.Presentacion.Contenido : null
+                // Asegúrate de agregar las propiedades adicionales que desees cargar
+            };
+
+            return datosProducto;
+        }
 
         [HttpPut("UpdateProductos")]
         public async Task<ActionResult> UpdateProductos(Producto producto)

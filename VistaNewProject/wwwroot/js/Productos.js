@@ -108,125 +108,6 @@ document.addEventListener('DOMContentLoaded', function () {
         actualizarProducto(productoId);
     }
   
-    // Evita el envío de los formularios si no se cumplen los requerimientos mínimos
-    $('.modal-formulario-crear-producto').on('submit', function (event) {
-        const productoFinal = mostrarValoresFormularioInicialProducto();
-        const productosAll = productos;
-        const productoRepetido = compararProductos(productoFinal, productosAll);
-        const campos = [
-            { id: 'NombreCategoria', nombre: 'Categoría' },
-            { id: 'NombreProducto', nombre: 'Nombre Producto' },
-            { id: 'NombreMarca', nombre: 'Marca' },
-            { id: 'NombrePresentacion', nombre: 'Presentación' },
-            { id: 'CantidadAplicarPorMayor', nombre: 'Cantidad a superar' },
-            { id: 'DescuentoAplicarPorMayor', nombre: 'Descuento por producto' }
-        ];
-        const camposVacios = verificarCampos(campos);
-
-        if (!NoCamposVaciosProducto()) {
-            event.preventDefault();
-            return;
-        }
-
-        if (!NoCamposConErroresProducto()) {
-            event.preventDefault();
-            return;
-        }
-
-
-        if (!camposVacios) {
-            event.preventDefault();
-            return;
-        }
-
-        if (productoRepetido) {
-            event.preventDefault();
-            return;
-        }
-
-        const datalist = [
-            { id: 'CategoriaId', nombre: 'categoría' },
-            { id: 'MarcaId', nombre: 'marca' },
-            { id: 'PresentacionId', nombre: 'presentación' }
-        ];
-
-        if (!verificarCamposDataList(datalist)) {
-            event.preventDefault();
-            return;
-        }
-    });
-
-    $('.modal-formulario-actualizar-producto').on('submit', function (event) {
-        const productoFinal = mostrarValoresFormularioProductoAct();
-        const productosAll = productos;
-        const productoRepetido = compararProductosAct(productoFinal, productosAll);
-
-        const campos = [
-            { id: 'NombreCategoriaAct', nombre: 'Categor\u00EDa' },
-            { id: 'NombreProductoAct', nombre: 'Nombre Producto' },
-            { id: 'NombreMarcaAct', nombre: 'Marca' },
-            { id: 'NombrePresentacionAct', nombre: 'Presentaci\u00F3n' },
-            { id: 'CantidadAplicarPorMayorAct', nombre: 'Cantidad a superar' },
-            { id: 'DescuentoAplicarPorMayorAct', nombre: 'Descuento por producto' }
-        ];
-
-        const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
-
-        if (!NoCamposVaciosProductoAct()) {
-            event.preventDefault();
-            return;
-        }
-
-        if (!NoCamposConErroresProductoAct()) {
-            event.preventDefault();
-            mostrarAlertaCampoVacioPersonalizada('Algunos campos contienen errores');
-            return;
-        }
-
-        if (productoRepetido) {
-            event.preventDefault();
-            return;
-        }
-
-        if (!camposVacios) {
-            event.preventDefault();
-            return;
-        }
-
-        const datalist = [
-            { id: 'CategoriaIdAct', nombre: 'Categoría' },
-            { id: 'MarcaIdAct', nombre: 'Marca' },
-            { id: 'PresentacionIdAct', nombre: 'Presentación' }
-        ];
-
-        if (!verificarCamposDataList(datalist)) {
-            event.preventDefault();
-            return;
-        }
-    });
-
-    // Confirmación de eliminación
-    $('.eliminarProducto').on('submit', function (event) {
-        event.preventDefault(); // Evita que el formulario se envíe automáticamente
-
-        // Mostrar el diálogo de confirmación
-        Swal.fire({
-            title: '\u00BFEst\u00E1s seguro?',
-            text: '\u00A1Esta acci\u00F3n no se puede deshacer.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'S\u00ED, eliminar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Si el usuario confirma, enviar el formulario
-                event.target.submit();
-            }
-        });
-    });
-
     // Validar campos en cada cambio para cambiar el mensaje inicial que aparece arriba de los botones del formulario
     $('.modal-formulario-crear-producto input, .modal-formulario-crear-producto select').on('input', function () {
         NoCamposVaciosProductoInicial();
@@ -547,7 +428,7 @@ function limpiarDatosFormularioProductoAgregar() {
     var mensajes = document.querySelectorAll('.Mensaje');
     var mensajesText = document.querySelectorAll('.text-danger');
     for (var i = 0; i < mensajes.length - 8 ; i++) {
-        mensajes[i].textContent = '*s';
+        mensajes[i].textContent = '*';
     }
     for (var i = 0; i < mensajesText.length - 3; i++) {
         mensajesText[i].textContent = '';
@@ -686,6 +567,7 @@ function actualizarProducto(campo) {
                 }
             }
             obtenerDatosProductos();
+            limpiarDatosFormularioProductoAct();
             // Abrir la modal después de completar la actualización del producto
             $('#ModalProductoAct').modal('show');
         },
@@ -870,8 +752,7 @@ function Llamar() {
         var elementos = document.getElementsByClassName('PorMayor');
         // Iterar sobre la colección de elementos y aplicar estilos a cada uno
         for (var i = 0; i < elementos.length; i++) {
-            elementos[i].style.display = "block";
-            elementos[i].style.visibility = "visible";
+            elementos[i].classList.remove("noBe");
         }
         document.getElementById('CantidadAplicarPorMayor').value = '';
         document.getElementById('DescuentoAplicarPorMayor').value = '';
@@ -886,73 +767,9 @@ function Llamar() {
 
         // Iterar sobre la colección de elementos y aplicar estilos a cada uno
         for (var i = 0; i < elementos.length; i++) {
-            elementos[i].style.display = "none";
-            elementos[i].style.visibility = "hidden";
+            elementos[i].classList.add("noBe");
         }
         document.getElementById('CantidadAplicarPorMayor').value = '0';
         document.getElementById('DescuentoAplicarPorMayor').value = '0';
     }
 }
-function Llamar2() { 
-
-    var checkbox = document.getElementById('checkboxDescuentoPorMayorAct');
-    var checkbox = document.getElementById('checkboxDescuentoPorMayorAct-act');
-
-    var checkbox = document.getElementById('checkboxDescuentoPorMayorAct');
-    var cantidadElement = document.getElementById('CantidadAplicarPorMayorAct');
-    var descuentoElement = document.getElementById('DescuentoAplicarPorMayorAct');
-    var cantidad = cantidadElement.value.trim();
-    var descuento = descuentoElement.value.trim();
-    var mensajes = document.querySelectorAll('.Mensaje');
-    if (checkbox.checked) {
-        if (cantidad === '' || descuento === '') {
-            {
-                // Limpiar los mensajes de error si los campos están llenos
-                const mensajesError = document.querySelectorAll('.text-danger');
-                mensajesError.forEach(span => {
-                    span.innerText = '';
-                });
-                document.getElementById('CantidadAplicarPorMayorAct').value = '0';
-                document.getElementById('DescuentoAplicarPorMayorAct').value = '0';
-            }
-            // Mostrar los elementos con la clase 'PorMayor'
-            var elementos = document.getElementsByClassName('PorMayorAct');
-            for (var i = 0; i < elementos.length; i++) {
-                elementos[i].style.display = "block";
-                elementos[i].style.visibility = "visible";
-            }
-
-            // Limpiar los campos de cantidad y descuento por mayor
-        } else {
-            Swal.fire({
-                title: '¿Deseas quitar el precio y cantidad por mayor?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sí',
-                cancelButtonText: 'No'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Esconder los elementos con la clase 'PorMayor'
-                    var elementos = document.getElementsByClassName('PorMayorAct');
-                    for (var i = 0; i < elementos.length; i++) {
-                        elementos[i].style.display = "none";
-                        elementos[i].style.visibility = "hidden";
-                    }
-                    // Restaurar los mensajes de error
-                    mensajes.forEach((mensaje, index) => {
-                        if (index >= 10 && index < mensajes.length) {
-                            mensaje.textContent = '';
-                        }
-                        // Establecer los campos de cantidad y descuento por mayor a vacío
-                        cantidadElement.value = '0';
-                        descuentoElement.value = '0';
-                    });
-                } else {
-                    // Si el usuario cancela, volver a marcar el checkbox
-                    checkbox.checked = true;
-                }
-            });
-        }
-    }
-}
-
