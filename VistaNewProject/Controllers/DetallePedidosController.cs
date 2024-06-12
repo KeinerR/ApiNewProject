@@ -505,15 +505,13 @@ namespace VistaNewProject.Controllers
 
         }
 
-        public async Task<IActionResult> Edit(int detalleId)
+        public async Task<JsonResult> finddetalle(int detallePedidoId)
         {
-            var detalles = await _client.FindDetallesPedidoAsync(detalleId);
-            if (detalles == null)
-            {
-                return NotFound();
-            }
-            return View(detalles);
+            var detalle = await _client.FindDetallesPedidoAsync(detallePedidoId);
+            return Json(detalle);
         }
+
+
 
 
 

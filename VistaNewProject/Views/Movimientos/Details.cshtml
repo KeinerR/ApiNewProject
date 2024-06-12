@@ -43,11 +43,8 @@
                             <th>Cantidad</th>
                             <th>Precio Unitario</th>
                             <th>Subtotal</th>
-                            <td>
-                              
-                               
-
-                            </td>
+                            <th>Acciones</th>
+                           
                         </tr>
                     </thead>
                     <tbody>
@@ -60,14 +57,22 @@
                                 <td>@String.Format("{0:N0}", detallepedido.Cantidad)</td>
                                 <td>@String.Format("{0:N0}", detallepedido.PrecioUnitario)</td>
                                 <td>@String.Format("{0:N0}", detallepedido.Subtotal)</td>
-                                @if (ViewBag.movimiento == "Entrada")
-                                {
+                                <td>
+                                    @if (ViewBag.TipoMovimineto == "Entrada")
+                                    {
 
-                                    <a class="btn botonEditar" asp-action="Edit" asp-controller="DetallePedidos" asp-route-detalleId="@detallepedido.DetallePedidoId">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
+                                        <button class="btn botonEditar" onclick="mostrarModalConRetrasodetalles(@detallepedido.DetallePedidoId)"><i class="fas fa-edit"></i> </button>
 
-                                }
+                                    }
+                                    else
+                                    {
+
+                                        <a asp-action="Edit" asp-controller="DetallePedidos" asp-route-detalleId="@detallepedido.DetallePedidoId">
+                                            Salida
+                                        </a>
+                                    }
+                                </td>
+                             
                             </tr>
                         }
                     </tbody>
@@ -93,3 +98,111 @@
             }
         </div>
     </div>
+
+
+    <div class="modal fade GeneralModal" id="ModalDomicilio" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content noBe" id="FormActualiZarDomicilio">
+                <div class="modal-cabecera">
+                    <div id="pibo"></div>
+                    <div class="modal-header-view TituloModal">
+                        <h2 class="modal-title"> Movimineto de Entrada de Pedido </h2>
+                    </div>
+                    <div class="moda-header-view" id="modal-cabecera-equis">
+                        <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="modal-cuerpo">
+
+                        <form asp-action="CreatePost" class="modal-formulario-actualizar-domicilio" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                     
+
+                        <div class="row">
+                            <!-- Campo de búsqueda único -->
+                            <div class="">
+                                <label for="DetalleId" class="control-label"></label>
+                                <input type="text" id="DetallePedidoId" name="detallePedidoId" />
+                                <span id="detalleerror" class="text-danger"></span>
+                            </div>
+                            <div class="">
+                                <label for="PedidoId" class="control-label"></label>
+                                <input type="text" id="PedidoId" name="pedidoId" />
+                                <span id="PedidoIderror" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-4">
+                                <label for="ProductoIdtxt" class="control-label">Productos</label>
+                                <input id="ProductoIdtxt" class="form-control" list="ProductosList"  readonly/>
+                                <input type="" id="ProductoId" name="productoId" class="form-control" />
+                                <datalist id="ProductosList">
+
+                                    @foreach (var item in ViewBag.Producto)
+                                    {
+                                        if (item.Estado != 0)
+                                        {
+                                            <option value="@item.NombreProducto" data-id="@item.ProductoId">@item.NombreProducto</option>
+                                        }
+                                    }
+                                </datalist>
+                                <span id="ProductoIdError" class="text-danger"></span>
+                            </div>
+
+                                <div class="">
+                                    <label for="LoteId" class="control-label"></label>
+                                    <input  name="loteId" id="LoteId" readonly class="form-control" list="LoteList" />
+                                    <datalist id="LoteList">
+                                    
+                                        <!-- Aquí se cargarán dinámicamente los lotes disponibles según el producto seleccionado -->
+                                    </datalist>
+                                    <span id="LoteIderror" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-4">
+                                    <label for="UnidadId" class="control-label">Unidad </label>
+                                    <input type="text" id="UnidadId" class="form-control" list="UnidadIdList" autocomplete="off" />
+                                    <datalist id="UnidadIdList">
+
+                                    @foreach (var item in ViewBag.Unidad)
+                                    {
+                                        if (item.EstadoUnidad != 0)
+                                        {
+                                            <option value="@item.NombreUnidad" data-id="@item.UnidadId">@item.NombreUnidad</option>
+                                        }
+                                    }
+                                    </datalist>
+                                    <input id="unidadHidden" name="unidadId" type="" />
+                                    <span id="UnidadError" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-4">
+                                    <label for="PrecioUnitario" class="control-label"></label>
+                                    <input name="precioUnitario" class="form-control" id="PrecioUnitario" readonly>
+                                    <span id="PrecioUnitarioError" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-4">
+                                    <label for="Cantidad" class="control-label"></label>
+                                    <input name="cantidad" id="CantidadTxt" class="form-control" />
+                                    <span id="CantidadError" class="text-danger"></span>
+                                </div>
+                            <div class="col-4">
+                                <label for="SubTotal" class="control-label"></label>
+                                <input name="subTotal" id="SubTotal" class="form-control" />
+                                <span id="SubTotalError" class="text-danger"></span>
+                            </div>
+
+                            
+
+                            </div>
+                        </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script src="~/js/movimientos.js"></script>

@@ -85,23 +85,31 @@ namespace VistaNewProject.Controllers
                 Console.WriteLine(movimiento.TipoAccion);
                 if (movimiento.TipoAccion == "Pedido"   )
                 {
+                    var tipomovimiento = movimiento.TipoMovimiento;
                     var pedidoId = movimiento.BuscarId.Value;
-                    return RedirectToAction("Details", "Movimientos", new { pedidoId });
+                    return RedirectToAction("Details", "Movimientos", new { pedidoId,tipomovimiento  });
                 }
 
                 else if (movimiento.TipoAccion == "Compra"  )
                 {
+                    var tipomovimiento = movimiento.TipoMovimiento;
                     var CompraId = movimiento.BuscarId.Value;
-                    return RedirectToAction("DetallesCompras", "Movimientos", new { CompraId, });
+                    return RedirectToAction("DetallesCompras", "Movimientos", new { CompraId, tipomovimiento });
                 }
             }
 
             return Ok();
         }
 
-        public async Task<IActionResult> Details(int pedidoId , int? page )
+        public async Task<IActionResult> Details(int pedidoId , int? page,string tipomovimiento)
         {
+
+
+
+         
             var pedido = await _client.FindPedidosAsync(pedidoId);
+           
+            ViewBag.TipoMovimineto = tipomovimiento;
 
             ViewBag.pedidos = pedido;
             if (pedido == null)
@@ -109,14 +117,40 @@ namespace VistaNewProject.Controllers
                 return NotFound();
             }
 
-               
-            
+            if (pedido.TipoServicio == "Domicilio")
+            {
+                var domicilios = _client.GetDomicilioAsync();
+                var domicilio = domicilios.Result.FirstOrDefault(d => d.PedidoId == pedido.PedidoId);
+
+                Console.WriteLine(domicilio.DireccionDomiciliario);
+                Console.WriteLine(domicilios);
+                if (domicilios == null )
+                {
+                    return NotFound("Domicilios no encontrados para el pedido especificado.");
+                }
+                ViewBag.Domicilio = domicilio;
+            }
+
+
+
 
             var detallesPeidos = await _client.GetDetallepedidoAsync();
+            var detalles = detallesPeidos.FirstOrDefault(d => d.DetallePedidoId == pedidoId);
+
+
             var detallepedidos = detallesPeidos.Where(p => p.PedidoId == pedidoId).ToList();
+
+            var producto = await _client.GetProductoAsync();
+
+            ViewBag.Producto = producto;
+
+             var unidad=await _client.GetUnidadAsync();
+            ViewBag.Unidad = unidad;
+
 
             var productosTasks = detallepedidos.Select(async detalle =>
             {
+
                 detalle.Producto = await _client.FindProductoAsync(detalle.ProductoId.Value);
                 detalle.Unidad = await _client.FindUnidadAsync(detalle.UnidadId.Value);
             });
@@ -136,10 +170,12 @@ namespace VistaNewProject.Controllers
 
             return View(pagedProductos);
         }
-        public async Task<IActionResult> DetallesCompras(int CompraId, int? page)
+        public async Task<IActionResult> DetallesCompras(int CompraId, int? page,string tipomovimiento)
         {
             // 1. Obtener la compra específica por su ID
             var compra = await _client.FinComprasAsync(CompraId);
+
+            ViewBag.TipoMovimineto=tipomovimiento;
 
             var proveedor = await _client.FindProveedorAsync(compra.CompraId);
               ViewBag.Proveedor = proveedor;
@@ -170,6 +206,8 @@ namespace VistaNewProject.Controllers
                 detalle.Unidad = await _client.FindUnidadAsync(detalle.UnidadId.Value);
             });
 
+        
+
             // 7. Esperar a que todas las tareas asíncronas de obtención de productos y detalles de compras finalicen
             await Task.WhenAll(productosTasks);
 
@@ -185,7 +223,12 @@ namespace VistaNewProject.Controllers
         }
 
 
+        public async Task<IActionResult> FindetallesPedidos(int detalleId)
+        {
+            var detalle = await _client.FindDetallesPedidoAsync(detalleId);
+            return Json(detalle);
 
+        }
 
     }
 }
