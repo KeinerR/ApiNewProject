@@ -117,11 +117,9 @@ namespace VistaNewProject.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                TempData["SweetAlertIcon"] = "success";
-                TempData["SweetAlertTitle"] = "Éxito";
-                TempData["SweetAlertMessage"] = "¡Registro guardado correctamente!";
-
+                MensajeSweetAlert("success", "Éxito", "¡Cliente registrada correctamente!", true, null);
                 return RedirectToAction("Index");
+
             }
             else
             {
@@ -133,6 +131,15 @@ namespace VistaNewProject.Controllers
         
         }
 
+        private void MensajeSweetAlert(string icon, string title, string message, bool ?  estado , int? tiempo)
+        {
+            TempData["SweetAlertIcon"] = icon;
+            TempData["SweetAlertTitle"] = title;
+            TempData["SweetAlertMessage"] = message;
+            TempData["Tiempo"] = tiempo.HasValue ? tiempo.Value : 3000;
+            TempData["EstadoAlerta"] = false ? estado : "false";
+
+        }
 
         public async Task<IActionResult> Update([FromForm] Cliente cliente)
         {
