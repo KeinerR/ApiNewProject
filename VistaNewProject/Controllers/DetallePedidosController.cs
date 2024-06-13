@@ -516,28 +516,73 @@ namespace VistaNewProject.Controllers
 
 
 
+      
+
         public async Task<IActionResult> Update([FromBody] Detallepedido detallepedido)
         {
             Console.WriteLine(detallepedido);
 
-           
 
-       
-            var update = new Detallepedido
+            var detalleantes = await _client.FindDetallesPedidoAsync(detallepedido.DetallePedidoId);
+
+            detalleantes.Cantidad += detallepedido.Cantidad;
+            var response = await _client.UpdateDetallepedidosAsync(detalleantes);
+
+
+            int cantidadRestante = detallepedido.Cantidad.Value;
+            var productoId = detallepedido.ProductoId;
+            var loteIdDetalle = detallepedido.LoteId;
+
+            var lote = await _client.FindLoteAsync(loteIdDetalle.Value);
+            if (lote.Cantidad >= cantidadRestante)
             {
-              DetallePedidoId = detallepedido.DetallePedidoId,
-              PedidoId=detallepedido.PedidoId,
-              ProductoId=detallepedido.ProductoId,
-              LoteId=detallepedido.LoteId,
-              UnidadId=detallepedido.UnidadId,
-              PrecioUnitario=detallepedido.PrecioUnitario,
-              Cantidad=detallepedido.Cantidad,
-              Subtotal=detallepedido.Subtotal,
+                // Lote asociado al detalle tiene suficiente cantidad
+                lote.Cantidad -= cantidadRestante;
+                cantidadRestante = 0;
+
+                // Update the lot
+                var updatelotes = await _client.UpdateLoteAsync(lote);
+               
+            }
+            else
+            {
+                // Lote asociado al detalle no tiene suficiente cantidad
+                cantidadRestante -= lote.Cantidad.Value;
+                lote.Cantidad = 0;
+
+                // Update the lot
+                var updatelotes = await _client.UpdateLoteAsync(lote);
+               
+                // Buscar otros lotes del producto
+                var lotes = await _client.GetLoteAsync();
+                var lotesFiltrados = lotes
+                    .Where(l => l.ProductoId == productoId && l.Cantidad > 0 && l.EstadoLote != 0 && l.LoteId != loteIdDetalle)
+                    .OrderBy(l => l.FechaVencimiento)
+                    .ThenByDescending(l => l.Cantidad)
+                    .ToList();
+
+                if (lotesFiltrados.Any())
+                {
+                    foreach (var loteAdicional in lotesFiltrados)
+                    {
+                        if (cantidadRestante <= 0)
+                            break;
+
+                        int cantidadDescontar = Math.Min(cantidadRestante, loteAdicional.Cantidad.Value);
+                        loteAdicional.Cantidad -= cantidadDescontar;
+                        cantidadRestante -= cantidadDescontar;
+
+                        var updateLoteAdicional = await _client.UpdateLoteAsync(loteAdicional);
+                       
+                    }
+                }
+
+               
+            }
 
 
-            };
 
-            var response = await _client.UpdateDetallepedidosAsync(update);
+
             if (response.IsSuccessStatusCode)
             {
                 Console.WriteLine("Actualizacion Correcta");
@@ -545,36 +590,31 @@ namespace VistaNewProject.Controllers
             var pedidoId = detallepedido.PedidoId;
 
             var pedido = await _client.FindPedidosAsync(pedidoId.Value);
-            if (pedido != null)
+            if (pedido != null && lote != null)
             {
 
                 // Obtener todos los detalles asociados a este pedido
                 var detalles = await _client.GetDetallepedidoAsync();
                 var detallesPedido = detalles.Where(d => d.PedidoId == pedido.PedidoId).ToList();
-                if(detallesPedido != null)
+
+                if (detallesPedido != null)
                 {
-                    pedido.ValorTotalPedido +=detallesPedido.Sum(d => d.Subtotal);
+                    pedido.ValorTotalPedido += detallesPedido.Sum(d => d.Subtotal);
 
                     var updatetotal = await _client.UpdatePedidoAsync(pedido);
 
-                   
-
-
-                       
-                    
 
 
                 }
-
-
             }
-            if (response.IsSuccessStatusCode )
+
+            if (response.IsSuccessStatusCode)
             {
-                return Json(new { success = true, message = "Domicilio actualizado correctamente." });
+                return Json(new { success = true, message = "Movimiento de Entrada Realizado Correctamente ." });
             }
             else
             {
-                return Json(new { success = false, message = "No se pudo actualizar el domicilio." });
+                return Json(new { success = false, message = "No se pudo Realizar el Movimiento." });
             }
 
 

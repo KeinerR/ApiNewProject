@@ -1,26 +1,6 @@
-﻿function mostrarModalConRetrasodetalles(detalleId, productoId) {
-    setTimeout(function () {
-        actualizardetalle(detalleId);
-        mostrarModal(productoId);
-        setTimeout(function () {
-            var modalElement = document.getElementById('ModalDomicilio');
-            if (modalElement) {
-                var myModal = new bootstrap.Modal(modalElement);
-                myModal.show();
-            } else {
-                console.error('Modal element not found');
-            }
-        }, 100); // Retraso antes de abrir el modal
-    }, 0); // Retraso antes de llamar a actualizarProducto
-}
+﻿
 
-function mostrarModal(productoId) {
-    setTimeout(function () {
-        actualizarproductoId(productoId);
-    }, 0);
-}
-
-function actualizarproductoId(productoId) {
+function actualizarproductoId( detalleId,productoId ) {
     $.ajax({
         url: '/Productos/FindProductos', // Ruta relativa al controlador y la acción
         type: 'POST',
@@ -29,8 +9,15 @@ function actualizarproductoId(productoId) {
             var producto = data.find(item => item.productoId == productoId);
             if (producto != null) {
                 var cantidadDisponible = producto.cantidadTotal - producto.cantidadReservada;
+                var nombre = producto.nombreProducto;
+                console.log(nombre);
                 $('#CantidadDisponibleLabel').text('Cantidad disponible: ' + cantidadDisponible);
-                actualizardetalle(productoId, cantidadDisponible); // Llama a actualizardetalle con productoId y cantidadDisponible
+                console.log(cantidadDisponible);
+                $('#CantidadHidden').val(cantidadDisponible);
+
+                $('#ProductoIdtxt').val(nombre);
+                // Assuming detalleId is globally available or can be retrieved
+                actualizardetalle(detalleId, productoId);
             }
         },
         error: function () {
@@ -39,29 +26,35 @@ function actualizarproductoId(productoId) {
     });
 }
 
-function actualizardetalle(detalleId, cantidadDisponible) {
+function actualizardetalle(detalleId, productoId) {
+
+    console.log(detalleId)
+    var modalElement = document.getElementById('ModalDomicilio');
+    if (modalElement) {
+        var myModal = new bootstrap.Modal(modalElement);
+        myModal.show();
+    } else {
+        console.error('Modal element not found');
+    }
+
     $.ajax({
         url: '/DetallePedidos/GetDetalles', // Ruta relativa al controlador y la acción
         type: 'POST',
         data: { detallePedidoId: detalleId },
         success: function (data) {
-
             console.log(data);
             var formActualizar = $('#FormActualiZarDomicilio');
             formActualizar.find('#DetallePedidoId').val(data.detallePedidoId);
             formActualizar.find('#PedidoId').val(data.pedidoId);
             formActualizar.find('#LoteId').val(data.loteId);
             formActualizar.find('#PrecioUnitario').val(data.precioUnitario);
-            formActualizar.find('#CantidadTxt').val(data.cantidad);
             formActualizar.find('#SubTotal').val(data.subtotal);
-            formActualizar.find('#CantidadTxthidden').val(data.cantidad);
 
-            formActualizar.find('#CantidadDisponibleLabel').text('Cantidad disponible: ' + cantidadDisponible);
 
-            var usuarioInput = formActualizar.find('#ProductoIdtxt');
-            var usuarioOption = $("#ProductosList option[data-id='" + data.productoId + "']");
-            usuarioInput.val(usuarioOption.val());
-            formActualizar.find('#ProductoId').val(data.productoId);
+            var productoInput = formActualizar.find('#ProductoIdtxt');
+            var productoOption = $("#ProductosList option[data-id='" + productoId + "']");
+            productoInput.val(productoOption.val());
+            formActualizar.find('#ProductoId').val(productoId);
 
             var unidadInput = formActualizar.find('#UnidadId');
             var unidadOption = $("#UnidadIdList option[data-id='" + data.unidadId + "']");
@@ -72,11 +65,18 @@ function actualizardetalle(detalleId, cantidadDisponible) {
             alert('Error al obtener los datos del domicilio.');
         }
     });
+
     $('#FormActualiZarDomicilio').show().css('visibility', 'visible');
 }
 
+
 $(document).ready(function () {
     // Manejo de eventos para los campos de entrada
+    $('#CantidadTxt').on('input', function () {
+        calcularSubtotal();
+    });
+
+  
     $('#ProductoIdtxt').on('input', function () {
         var input = $(this).val();
         var option = $("#ProductosList option[value='" + input + "']");
@@ -97,32 +97,18 @@ $(document).ready(function () {
         }
     });
 
-    $('#CantidadTxt').on('input', function () {
-        var cantidad = parseFloat($(this).val());
-        var cantidadHidden = parseFloat($('#CantidadTxthidden').val());
-        var cantidadSuperar = parseFloat($('#CantidadDisponibleLabel').text().split(':')[1].trim());
-        var precioUnitario = parseFloat($('#PrecioUnitario').val());
-
-        if (!isNaN(cantidad) && !isNaN(precioUnitario)) {
-            if (cantidad >= cantidadHidden && cantidad <= cantidadSuperar) {
-                var subtotal = cantidad * precioUnitario;
-                $('#SubTotal').val(subtotal);
-                $('#SubTotalError').text('');
-            } else {
-                $('#SubTotal').val('');
-                $('#SubTotalError').text('La cantidad debe estar entre ' + cantidadHidden + ' y ' + cantidadSuperar + '.');
-            }
-        } else {
-            $('#SubTotal').val('');
-            $('#SubTotalError').text('Por favor ingrese un número válido en Cantidad.');
-        }
-    });
-
     $('#FormActualiZarDomicilio').submit(function (event) {
         event.preventDefault();
         ActualizarDetalle();
     });
 });
+
+function calcularSubtotal() {
+    var cantidad = parseFloat($('#CantidadTxt').val()) || 0;
+    var precio = parseFloat($('#PrecioUnitario').val()) || 0;
+    var subtotal = cantidad * precio;
+    $('#SubTotal').val(subtotal.toFixed(2));
+}
 
 function ActualizarDetalle() {
     var detalleid = $('#DetallePedidoId').val();
@@ -133,6 +119,15 @@ function ActualizarDetalle() {
     var cantidad = $('#CantidadTxt').val();
     var precio = $('#PrecioUnitario').val();
     var subtotal = $('#SubTotal').val();
+
+    if (!validarenviada()) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text:  'el formulario no cumple con los requisitos'
+        });
+        return false; // Detiene el envío del formulario si la validación falla
+    }
 
     var data = {
         detallePedidoId: detalleid,
@@ -179,3 +174,64 @@ function ActualizarDetalle() {
         }
     });
 }
+
+function validarenviada() {
+    var cantidad = $('#CantidadTxt').val();
+    return validarcantidad(cantidad);
+}
+
+function validarcantidad(cantidad) {
+    var cantidadInput = $('#CantidadTxt');
+    var cantidadHiddenInput = parseFloat($('#CantidadHidden').val()); // Obtener el valor numérico del input oculto
+    var cantidadError = $('#CantidadError');
+
+    cantidad = parseFloat(cantidad); // Convertir la cantidad ingresada a número flotante
+
+    if (isNaN(cantidad)) {
+        mostrarError(cantidadInput, cantidadError, "Ingrese un número válido.");
+        return false;
+    }
+
+    if (cantidad <= 0 || cantidad=="") {
+        mostrarError(cantidadInput, cantidadError, "La cantidad debe ser mayor a cero.");
+        return false;
+    }
+
+    if (cantidad > cantidadHiddenInput) {
+        mostrarError(cantidadInput, cantidadError, "La cantidad no puede ser mayor a la cantidad disponible.");
+        return false;
+    }
+
+    quitarError(cantidadInput, cantidadError);
+    return true;
+}
+
+$(document).ready(function () {
+    $('#CantidadTxt').on('input', function () {
+        validarcantidad(this.value);
+    });
+
+    $('#FormActualiZarDomicilio').submit(function (event) {
+        event.preventDefault();
+        if (validarenviada()) {
+            ActualizarDetalle();
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de validación',
+                text: 'No se puede enviar el formulario porque hay errores de validación.'
+            });
+        }
+    });
+});
+
+function mostrarError(inputElement, errorElement, errorMessage) {
+    inputElement.addClass("is-invalid");
+    errorElement.text(errorMessage);
+}
+
+function quitarError(inputElement, errorElement) {
+    inputElement.removeClass("is-invalid");
+    errorElement.text("");
+}
+
