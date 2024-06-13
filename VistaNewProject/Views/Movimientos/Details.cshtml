@@ -61,13 +61,13 @@
                                     @if (ViewBag.TipoMovimineto == "Entrada")
                                     {
 
-                                        <button class="btn botonEditar" onclick="mostrarModalConRetrasodetalles(@detallepedido.DetallePedidoId)"><i class="fas fa-edit"></i> </button>
+                                        <button class="btn botonEditar" onclick="mostrarModalConRetrasodetalles(@detallepedido.DetallePedidoId,@detallepedido.ProductoId)"><i class="fas fa-edit"></i> </button>
 
                                     }
                                     else
                                     {
 
-                                        <a asp-action="Edit" asp-controller="DetallePedidos" asp-route-detalleId="@detallepedido.DetallePedidoId">
+                                        <a asp-action="Edit" asp-controller="DetallePedidos" asp-route-detalleId="@detallepedido.DetallePedidoId,@detallepedido.ProductoId">
                                             Salida
                                         </a>
                                     }
@@ -120,12 +120,12 @@
 
                         <div class="row">
                             <!-- Campo de búsqueda único -->
-                            <div class="">
+                            <div class="d-none">
                                 <label for="DetalleId" class="control-label"></label>
                                 <input type="text" id="DetallePedidoId" name="detallePedidoId" />
                                 <span id="detalleerror" class="text-danger"></span>
                             </div>
-                            <div class="">
+                            <div class="d-none">
                                 <label for="PedidoId" class="control-label"></label>
                                 <input type="text" id="PedidoId" name="pedidoId" />
                                 <span id="PedidoIderror" class="text-danger"></span>
@@ -134,7 +134,7 @@
                             <div class="col-4">
                                 <label for="ProductoIdtxt" class="control-label">Productos</label>
                                 <input id="ProductoIdtxt" class="form-control" list="ProductosList"  readonly/>
-                                <input type="" id="ProductoId" name="productoId" class="form-control" />
+                                <input type="hidden" id="ProductoId" name="productoId" class="form-control" />
                                 <datalist id="ProductosList">
 
                                     @foreach (var item in ViewBag.Producto)
@@ -148,7 +148,7 @@
                                 <span id="ProductoIdError" class="text-danger"></span>
                             </div>
 
-                                <div class="">
+                                <div class="d-none">
                                     <label for="LoteId" class="control-label"></label>
                                     <input  name="loteId" id="LoteId" readonly class="form-control" list="LoteList" />
                                     <datalist id="LoteList">
@@ -160,7 +160,7 @@
 
                                 <div class="col-4">
                                     <label for="UnidadId" class="control-label">Unidad </label>
-                                    <input type="text" id="UnidadId" class="form-control" list="UnidadIdList" autocomplete="off" />
+                                    <input type="text" id="UnidadId" class="form-control" list="UnidadIdList"  readonly />
                                     <datalist id="UnidadIdList">
 
                                     @foreach (var item in ViewBag.Unidad)
@@ -171,30 +171,36 @@
                                         }
                                     }
                                     </datalist>
-                                    <input id="unidadHidden" name="unidadId" type="" />
+                                    <input id="unidadHidden" name="unidadId" type="hidden" />
                                     <span id="UnidadError" class="text-danger"></span>
                                 </div>
 
                                 <div class="col-4">
-                                    <label for="PrecioUnitario" class="control-label"></label>
-                                    <input name="precioUnitario" class="form-control" id="PrecioUnitario" readonly>
+                                    <label for="precioUnitariotxt" class="control-label">Precio Unitario</label>
+                                <input name="precioUnitario" class="form-control" id="PrecioUnitario" readonly>
                                     <span id="PrecioUnitarioError" class="text-danger"></span>
                                 </div>
 
                                 <div class="col-4">
-                                    <label for="Cantidad" class="control-label"></label>
+
+                                    <label for="Cantidad" class="control-label"> Cantidad</label>
                                     <input name="cantidad" id="CantidadTxt" class="form-control" />
+                                    <input name="cantidadhidden" id="CantidadTxthidden" class="form-control" />
                                     <span id="CantidadError" class="text-danger"></span>
+                                 <label id="CantidadDisponibleLabel"> Disponible:</label>
+
                                 </div>
                             <div class="col-4">
-                                <label for="SubTotal" class="control-label"></label>
-                                <input name="subTotal" id="SubTotal" class="form-control" />
+                                <label for="SubTotal" class="control-label"> Subtotal</label>
+                                <input name="subTotal" id="SubTotal" class="form-control" readonly />
                                 <span id="SubTotalError" class="text-danger"></span>
                             </div>
 
                             
 
                             </div>
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormularioUsuario();">Cancelar</button>
+                        <button type="button" onclick="ActualizarDetalle();" class="btn btn-primary ">Actualizar</button>
                         </form>
 
                 </div>
