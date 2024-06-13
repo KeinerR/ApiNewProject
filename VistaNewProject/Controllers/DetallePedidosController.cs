@@ -505,13 +505,85 @@ namespace VistaNewProject.Controllers
 
         }
 
-        public async Task<JsonResult> finddetalle(int detallePedidoId)
+        public async Task<JsonResult> GetDetalles(int detallePedidoId)
         {
-            var detalle = await _client.FindDetallesPedidoAsync(detallePedidoId);
-            return Json(detalle);
+            var detalle = await _client.GetDetallepedidoAsync();
+
+            var detallesid=detalle.FirstOrDefault(c=>c.DetallePedidoId==detallePedidoId);
+            return Json(detallesid);
         }
 
 
+
+
+        public async Task<IActionResult> Update([FromBody] Detallepedido detallepedido)
+        {
+            Console.WriteLine(detallepedido);
+
+           
+
+       
+            var update = new Detallepedido
+            {
+              DetallePedidoId = detallepedido.DetallePedidoId,
+              PedidoId=detallepedido.PedidoId,
+              ProductoId=detallepedido.ProductoId,
+              LoteId=detallepedido.LoteId,
+              UnidadId=detallepedido.UnidadId,
+              PrecioUnitario=detallepedido.PrecioUnitario,
+              Cantidad=detallepedido.Cantidad,
+              Subtotal=detallepedido.Subtotal,
+
+
+            };
+
+            var response = await _client.UpdateDetallepedidosAsync(update);
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Actualizacion Correcta");
+            }
+            var pedidoId = detallepedido.PedidoId;
+
+            var pedido = await _client.FindPedidosAsync(pedidoId.Value);
+            if (pedido != null)
+            {
+
+                // Obtener todos los detalles asociados a este pedido
+                var detalles = await _client.GetDetallepedidoAsync();
+                var detallesPedido = detalles.Where(d => d.PedidoId == pedido.PedidoId).ToList();
+                if(detallesPedido != null)
+                {
+                    pedido.ValorTotalPedido +=detallesPedido.Sum(d => d.Subtotal);
+
+                    var updatetotal = await _client.UpdatePedidoAsync(pedido);
+
+                   
+
+
+                       
+                    
+
+
+                }
+
+
+            }
+            if (response.IsSuccessStatusCode )
+            {
+                return Json(new { success = true, message = "Domicilio actualizado correctamente." });
+            }
+            else
+            {
+                return Json(new { success = false, message = "No se pudo actualizar el domicilio." });
+            }
+
+
+
+
+
+
+
+        }
 
 
 
