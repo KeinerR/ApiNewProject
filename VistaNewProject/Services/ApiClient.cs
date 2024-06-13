@@ -839,7 +839,7 @@ namespace VistaNewProject.Services
         }
         public async Task<IEnumerable<Producto>> GetAllDatosProductosAsync(string? busqueda = "")
         {
-            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Producto>>("Productos/GetaAllDatosProductos");
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Producto>>("Productos/GetAllDatosProductos");
 
             if (response == null)
             {

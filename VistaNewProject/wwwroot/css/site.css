@@ -1,4 +1,3 @@
-
 * {
     padding:0px;
     margin:0px;
@@ -16,7 +15,7 @@ html {
 }
 
 .circle {
-    width: 35px; /* Ancho del círculo */
+    width: 35px; /* Ancho del círculo tambien esta en la  vista el ancho.*/
     height: 35px; /* Altura del círculo */
 }
 

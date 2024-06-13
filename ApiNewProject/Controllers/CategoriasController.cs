@@ -40,7 +40,7 @@ namespace ApiNewProject.Controllers
         public async Task<ActionResult<Categoria>> GetCategoriaById(int Id)
         {
 
-            Categoria categoria = await _context.Categorias.Select(
+            Categoria? categoria = await _context.Categorias.Select(
                     s => new Categoria
                     {
                         CategoriaId = s.CategoriaId,
@@ -85,12 +85,18 @@ namespace ApiNewProject.Controllers
         [HttpPut("UpdateCategorias")]
         public async Task<ActionResult> UpdateCategorias(Categoria categoria)
         {
-            var categorias = await _context.Categorias.FirstOrDefaultAsync(s => s.CategoriaId == categoria.CategoriaId);
-
             if (categoria == null)
             {
                 return NotFound();
             }
+
+            var categorias = await _context.Categorias.FirstOrDefaultAsync(s => s.CategoriaId == categoria.CategoriaId);
+
+            if (categorias == null)
+            {
+                return NotFound();
+            }
+
             categorias.CategoriaId = categoria.CategoriaId;
             categorias.NombreCategoria = categoria.NombreCategoria;
             categorias.EstadoCategoria = categoria.EstadoCategoria;
@@ -98,6 +104,7 @@ namespace ApiNewProject.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
+
 
         [HttpDelete("DeleteCategoria/{Id}")]
         public async Task<HttpStatusCode> DeleteCategoria(int Id)
@@ -144,7 +151,7 @@ namespace ApiNewProject.Controllers
         [HttpGet("GetNombreCategoriaById")]
         public async Task<ActionResult<Categoria>> GetNombreCategoriaById(string nombreCategoria)
         {
-            Categoria categoria = await _context.Categorias.Select(
+            Categoria? categoria = await _context.Categorias.Select(
                     s => new Categoria
                     {
                         CategoriaId = s.CategoriaId,

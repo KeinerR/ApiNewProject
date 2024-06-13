@@ -10,10 +10,14 @@ namespace VistaNewProject.Controllers
     {
 
         private readonly IApiClient _client;
-        public CategoriasController(IApiClient client)
+        private readonly ProductoService _productoService;
+
+        public CategoriasController(IApiClient client, ProductoService productoService) // Añade ProductoService al constructor
         {
             _client = client;
+            _productoService = productoService; // Inicializa ProductoService
         }
+
         public async Task<IActionResult> Index(int? page, string order = "default")
         {
             int pageSize = 5;
@@ -92,13 +96,6 @@ namespace VistaNewProject.Controllers
                 return NotFound();
             }
 
-            var categorias = await _client.GetCategoriaAsync();
-            var categoriaExiste = categorias.FirstOrDefault(p => p.CategoriaId == id);
-
-            if (categoriaExiste == null)
-            {
-                return NotFound();
-            }
 
             var categoria = await _client.FindCategoriaAsync(id.Value);
             if (categoria == null)
@@ -122,13 +119,14 @@ namespace VistaNewProject.Controllers
             int pageSize = 5;
             int pageNumber = page ?? 1;
 
+            // Concatenar nombres completos y calcular cantidad total
             var pagedProductos = new List<Producto>();
-
-            foreach (var producto in productosDeCategoria)
+            foreach (var producto in productos)
             {
-                var productoConNombreCompleto = await ConcatenarNombreCompletoProducto(producto.ProductoId);
-                pagedProductos.Add(productoConNombreCompleto);
+                var productoConcatenado = await _productoService.ConcatenarNombreCompletoProducto(producto.ProductoId);
+                pagedProductos.Add(productoConcatenado);
             }
+
 
             var pagedProductosPagedList = pagedProductos.ToPagedList(pageNumber, pageSize);
 
@@ -302,36 +300,6 @@ namespace VistaNewProject.Controllers
             TempData["EstadoAlerta"] = "false";
 
         }
-
-        private async Task<Producto> ConcatenarNombreCompletoProducto(int productoId)
-        {
-            var producto = (await _client.GetProductoAsync()).FirstOrDefault(p => p.ProductoId == productoId);
-            var presentaciones = await _client.GetPresentacionAsync();
-            var lotes = await _client.GetLoteAsync();
-            var marcas = await _client.GetMarcaAsync();
-
-            // Calcular cantidad total de lotes por ProductoId y estado activo
-            var cantidadTotalPorProducto = lotes
-                .Where(l => l.EstadoLote == 1 && l.ProductoId == productoId)
-                .Sum(l => l.Cantidad);
-
-            producto.CantidadTotal = cantidadTotalPorProducto ?? 0;
-
-            // Concatenar nombre completo de presentaciones
-            var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
-            var nombrePresentacion = presentacionEncontrada?.NombrePresentacion ?? "Sin presentación";
-            var contenido = presentacionEncontrada?.Contenido ?? "";
-            var cantidad = presentacionEncontrada?.CantidadPorPresentacion ?? 1;
-            var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
-            var nombreMarca = marcaEncontrada?.NombreMarca ?? "Sin marca";
-
-            producto.NombreCompleto = cantidad > 1 ?
-                $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} unidades de {contenido}" :
-                $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
-
-            return producto;
-        }
-     
 
 
     }

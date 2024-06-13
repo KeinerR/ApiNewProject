@@ -1,4 +1,5 @@
 ﻿using ApiNewProject.Entities;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,12 +26,12 @@ namespace ApiNewProject.Controllers
 
             if (!string.IsNullOrEmpty(busqueda))
             {
-                // Aplica filtros de búsqueda solo si se proporciona una consulta de búsqueda
                 query = query.Where(p =>
-                    p.NombreProducto.Contains(busqueda) ||
-                    p.Categoria.NombreCategoria.Contains(busqueda) ||
-                    p.Marca.NombreMarca.Contains(busqueda));
+                    (p.NombreProducto != null && p.NombreProducto.Contains(busqueda)) ||
+                    (p.Categoria != null && p.Categoria.NombreCategoria != null && p.Categoria.NombreCategoria.Contains(busqueda)) ||
+                    (p.Marca != null && p.Marca.NombreMarca != null && p.Marca.NombreMarca.Contains(busqueda)));
             }
+
 
             var productList = await query
                 .Select(s => new Producto
@@ -51,48 +52,40 @@ namespace ApiNewProject.Controllers
             return productList;
         }
 
-
         [HttpGet("GetProductoById")]
         public async Task<ActionResult<Producto>> GetProductoById(int Id)
         {
-
-            Producto producto = await _context.Productos.Select(
-                    s => new Producto
-                    {
-                        ProductoId = s.ProductoId,
-                        PresentacionId = s.PresentacionId,
-                        MarcaId = s.MarcaId,
-                        CategoriaId = s.CategoriaId,
-                        NombreProducto = s.NombreProducto,
-                        CantidadTotal = s.CantidadTotal,
-                        CantidadReservada = s.CantidadReservada,
-                        CantidadAplicarPorMayor = s.CantidadAplicarPorMayor,
-                        DescuentoAplicarPorMayor = s.DescuentoAplicarPorMayor,
-                        Estado = s.Estado,
-                    })
+            Producto? producto = await _context.Productos
+                .Select(s => new Producto
+                {
+                    ProductoId = s.ProductoId,
+                    PresentacionId = s.PresentacionId, 
+                    MarcaId = s.MarcaId, 
+                    CategoriaId = s.CategoriaId, 
+                    NombreProducto = s.NombreProducto, 
+                    CantidadTotal = s.CantidadTotal,
+                    CantidadReservada = s.CantidadReservada,
+                    CantidadAplicarPorMayor = s.CantidadAplicarPorMayor, 
+                    DescuentoAplicarPorMayor = s.DescuentoAplicarPorMayor, 
+                    Estado = s.Estado, 
+                })
                 .FirstOrDefaultAsync(s => s.ProductoId == Id);
 
-            if (producto == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(producto);
-            }
+            return producto != null ? Ok(producto) : NotFound();
         }
+
         [HttpGet("GetAllDatosProductos")]
         public async Task<ActionResult<List<DatosProducto>>> GetAllDatosProductos(string? busqueda = "")
         {
             IQueryable<Producto> query = _context.Productos; // Cambio a IQueryable<Producto>
             if (!string.IsNullOrEmpty(busqueda))
             {
-                // Aplica filtros de búsqueda solo si se proporciona una consulta de búsqueda
                 query = query.Where(p =>
-                    p.NombreProducto.Contains(busqueda) ||
-                    p.Categoria.NombreCategoria.Contains(busqueda) ||
-                    p.Marca.NombreMarca.Contains(busqueda));
+                    (p.NombreProducto != null && p.NombreProducto.Contains(busqueda)) ||
+                    (p.Categoria != null && p.Categoria.NombreCategoria != null && p.Categoria.NombreCategoria.Contains(busqueda)) ||
+                    (p.Marca != null && p.Marca.NombreMarca != null && p.Marca.NombreMarca.Contains(busqueda)));
             }
+
 
             var productos = await query
                 .Include(p => p.Categoria)
@@ -109,8 +102,8 @@ namespace ApiNewProject.Controllers
                 NombreProducto = p.NombreProducto,
                 CantidadTotal = p.CantidadTotal,
                 CantidadReservada = p.CantidadReservada,
-                CantidadAplicarPorMayor = p.CantidadAplicarPorMayor,
-                DescuentoAplicarPorMayor = p.DescuentoAplicarPorMayor,
+                CantidadAplicarPorMayor = p.CantidadAplicarPorMayor ?? 0,
+                DescuentoAplicarPorMayor = p.DescuentoAplicarPorMayor ?? 0,
                 Estado = p.Estado,
                 NombreCategoria = p.Categoria != null ? p.Categoria.NombreCategoria : null,
                 NombreMarca = p.Marca != null ? p.Marca.NombreMarca : null,
@@ -119,10 +112,34 @@ namespace ApiNewProject.Controllers
                 Contenido = p.Presentacion != null ? p.Presentacion.Contenido : null
                 // Asegúrate de agregar las propiedades adicionales que desees cargar
             }).ToList();
-
-            return datosProductosList;
+            if (datosProductosList == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(datosProductosList);
+            }
         }
 
+        [HttpGet("GetUnidadesPorProducto")]
+        public async Task<ActionResult<List<UnidadxProducto>>> GetUnidadesPorProducto(int productoId) {
+            IQueryable<UnidadxProducto> query = _context.UnidadesxProducto;
+
+            query = query.Where(p => p.ProductoId == productoId);
+            var unidades = await query
+           .Include(p => p.Producto) 
+           .Include(p => p.Unidad)
+           .ToListAsync();
+            var datosUnidadesList = unidades.Select(p => new UnidadxProducto
+            {
+                ProductoId = p.ProductoId,
+                UnidadId = p.UnidadId
+                // Asegúrate de agregar las propiedades adicionales que desees cargar
+            }).ToList();
+
+            return datosUnidadesList;
+        }
         [HttpGet("GetDatosProductoById")]
         public async Task<ActionResult<DatosProducto>> GetDatosProductoById(int id)
         {
@@ -147,8 +164,8 @@ namespace ApiNewProject.Controllers
                 NombreProducto = producto.NombreProducto,
                 CantidadTotal = producto.CantidadTotal,
                 CantidadReservada = producto.CantidadReservada,
-                CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor,
-                DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor,
+                CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor ?? 0,
+                DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor ?? 0,
                 Estado = producto.Estado,
                 NombreCategoria = producto.Categoria != null ? producto.Categoria.NombreCategoria : null,
                 NombreMarca = producto.Marca != null ? producto.Marca.NombreMarca : null,
@@ -157,8 +174,14 @@ namespace ApiNewProject.Controllers
                 Contenido = producto.Presentacion != null ? producto.Presentacion.Contenido : null
                 // Asegúrate de agregar las propiedades adicionales que desees cargar
             };
-
-            return datosProducto;
+            if (datosProducto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(datosProducto);
+            }
         }
 
         [HttpPut("UpdateProductos")]

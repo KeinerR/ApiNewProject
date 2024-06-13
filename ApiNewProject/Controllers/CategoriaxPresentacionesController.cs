@@ -27,7 +27,13 @@ namespace ApiNewProject.Controllers
                 s => new CategoriaxPresentacion
                 {
                     CategoriaId = s.CategoriaId,
-                    PresentacionId = s.PresentacionId
+                    PresentacionId = s.PresentacionId,
+                    NombrePresentacion = s.NombrePresentacion,
+                    CantidadPorPresentacion = s.CantidadPorPresentacion,
+                    NombreCategoria = s.NombreCategoria,
+                    EstadoCategoria = s.EstadoCategoria,
+                    Contenido = s.Contenido,
+                    EstadoPresentacion = s.EstadoPresentacion
                 }
             ).ToListAsync();
             return list;
@@ -57,7 +63,14 @@ namespace ApiNewProject.Controllers
                 {
                     return BadRequest("Los datos de la categoria no pueden ser nulos.");
                 }
-
+                var presentacion = await _context.Presentaciones.FirstOrDefaultAsync(s => s.PresentacionId == categoriaxPresentacion.CategoriaId);
+                var categoria = await _context.Categorias.FirstOrDefaultAsync(s => s.CategoriaId == categoriaxPresentacion.CategoriaId);
+                categoriaxPresentacion.NombrePresentacion = presentacion?.NombrePresentacion;
+                categoriaxPresentacion.CantidadPorPresentacion = presentacion?.CantidadPorPresentacion;
+                categoriaxPresentacion.Contenido = presentacion?.Contenido;
+                categoriaxPresentacion.EstadoPresentacion = presentacion?.EstadoPresentacion;
+                categoriaxPresentacion.NombreCategoria = categoria?.NombreCategoria ?? "No aplica";
+                categoriaxPresentacion.EstadoCategoria = categoria?.EstadoCategoria ?? 0;
                 _context.CategoriaxPresentaciones.Add(categoriaxPresentacion);
                 await _context.SaveChangesAsync();
 

@@ -20,8 +20,8 @@ namespace ApiNewProject.Entities
         public string? NombreProducto { get; set; }
         public int? CantidadTotal { get; set; } = 0;
         public int? CantidadReservada { get; set; } = 0;
-        public int CantidadAplicarPorMayor { get; set; }
-        public int DescuentoAplicarPorMayor { get; set; }
+        public int? CantidadAplicarPorMayor { get; set; }
+        public int? DescuentoAplicarPorMayor { get; set; }
         public ulong? Estado { get; set; }
         [JsonIgnore]
 

@@ -27,7 +27,9 @@ namespace ApiNewProject.Controllers
                 s => new CategoriaxMarca
                 {
                     CategoriaId = s.CategoriaId,
-                    MarcaId = s.MarcaId
+                    MarcaId = s.MarcaId,
+                    NombreCategoria = s.NombreCategoria,
+                    EstadoCategoria = s.EstadoCategoria
                 }
             ).ToListAsync();
             return list;
@@ -57,7 +59,12 @@ namespace ApiNewProject.Controllers
                 {
                     return BadRequest("Los datos de la categoria no pueden ser nulos.");
                 }
-
+                var categoria = await _context.Categorias.FirstOrDefaultAsync(s => s.CategoriaId == categoriaxMarca.CategoriaId);
+                var marca = await _context.Marcas.FirstOrDefaultAsync(m=> m.MarcaId == categoriaxMarca.MarcaId);
+                categoriaxMarca.NombreCategoria = categoria?.NombreCategoria;
+                categoriaxMarca.EstadoCategoria = categoria?.EstadoCategoria;
+                categoriaxMarca.NombreMarca= marca?.NombreMarca;
+                categoriaxMarca.EstadoMarca = marca?.EstadoMarca;
                 _context.CategoriaxMarcas.Add(categoriaxMarca);
                 await _context.SaveChangesAsync();
 
@@ -68,7 +75,6 @@ namespace ApiNewProject.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar la categoria en la base de datos: " + ex.Message);
             }
         }
-
 
         // DELETE: api/CategoriaxMarca/DeleteCategoriaxMarca/5
         [HttpDelete("DeleteCategoriaxMarca/{categoriaId}/{marcaId}")]

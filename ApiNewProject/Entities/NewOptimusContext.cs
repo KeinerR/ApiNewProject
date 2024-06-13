@@ -32,6 +32,7 @@ namespace ApiNewProject.Entities
         public virtual DbSet<Permiso> Permisos { get; set; } = null!;
         public virtual DbSet<Presentacion> Presentaciones { get; set; } = null!;
         public virtual DbSet<Producto> Productos { get; set; } = null!;
+        public virtual DbSet<UnidadxProducto> UnidadesxProducto { get; set; } = null!;
         public virtual DbSet<Proveedor> Proveedores { get; set; } = null!;
         public virtual DbSet<Rol> Rols { get; set; } = null!;
         public virtual DbSet<Rolxpermiso> Rolxpermisos { get; set; } = null!;
@@ -64,7 +65,12 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.CategoriaId).HasColumnName("CategoriaID");
                 entity.Property(e => e.PresentacionId).HasColumnName("PresentacionID");
+                entity.Property(e => e.NombrePresentacion).HasMaxLength(100);
+                entity.Property(e => e.Contenido).HasMaxLength(50);
+                entity.Property(e => e.EstadoPresentacion)
 
+                .HasColumnType("bit(1)")
+                .HasDefaultValueSql("b'1'");
                 entity.HasIndex(e => e.CategoriaId).HasDatabaseName("IX_CategoriaID");
                 entity.HasIndex(e => e.PresentacionId).HasDatabaseName("IX_PresentacionID");
             });
@@ -77,10 +83,14 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.CategoriaId).HasColumnName("CategoriaID");
                 entity.Property(e => e.MarcaId).HasColumnName("MarcaID");
-
+                entity.Property(e => e.NombreCategoria).HasMaxLength(100);
+                entity.Property(e => e.EstadoCategoria)
+                .HasColumnType("bit(1)")
+                .HasDefaultValueSql("b'1'");
                 entity.HasIndex(e => e.CategoriaId).HasDatabaseName("IX_CategoriaID");
                 entity.HasIndex(e => e.MarcaId).HasDatabaseName("IX_MarcaID");
             });
+
             modelBuilder.Entity<CategoriaxUnidad>(entity =>
             {
                 entity.HasKey(e => new { e.CategoriaId, e.UnidadId });
@@ -89,11 +99,15 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.CategoriaId).HasColumnName("CategoriaID");
                 entity.Property(e => e.UnidadId).HasColumnName("UnidadID");
+                entity.Property(e => e.NombreCategoria).HasMaxLength(100);
+                entity.Property(e => e.EstadoCategoria)
+                .HasColumnType("bit(1)")
+                .HasDefaultValueSql("b'1'");
 
                 entity.HasIndex(e => e.CategoriaId).HasDatabaseName("IX_CategoriaID");
                 entity.HasIndex(e => e.UnidadId).HasDatabaseName("IX_UnidadID");
             });
-           
+
             modelBuilder.Entity<Cliente>(entity =>
             {
                 entity.ToTable("cliente");
@@ -497,6 +511,19 @@ namespace ApiNewProject.Entities
                     .HasDefaultValueSql("b'1'");
 
                 entity.Property(e => e.NombreUnidad).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<UnidadxProducto>(entity =>
+            {
+                entity.HasKey(e => new { e.UnidadId, e.ProductoId });
+
+                entity.ToTable("unidadxproducto");
+
+                entity.Property(e => e.ProductoId).HasColumnName("ProductoID");
+                entity.Property(e => e.UnidadId).HasColumnName("UnidadID");
+
+                entity.HasIndex(e => e.ProductoId).HasDatabaseName("IX_ProductoID");
+                entity.HasIndex(e => e.UnidadId).HasDatabaseName("IX_UnidadID");
             });
 
             modelBuilder.Entity<Usuario>(entity =>

@@ -27,55 +27,34 @@ namespace VistaNewProject.Controllers
 
         public async Task<ActionResult> Index(int? page, string order = "default")
         {
-            int pageSize = 5; // Número máximo de elementos por página
-            int pageNumber = page ?? 1;
-            var productos = await _client.GetProductoAsync();
-            productos = productos.Reverse().ToList();
-            productos = productos.OrderByDescending(c => c.Estado == 1).ToList();
 
-            var presentaciones = await _client.GetPresentacionAsync();
             var categorias = await _client.GetCategoriaAsync();
             var marcas = await _client.GetMarcaAsync();
+            var productos = await _productoService.ConcatenarNombreCompletoProductos();
+            productos.Reverse();
+            productos.OrderByDescending(c => c.Estado == 1).ToList();
+            var presentaciones = await _productoService.ConcatenarNombreCompletoPresentaciones();
 
             switch (order.ToLower())
             {
                 case "first":
-                    productos = productos.Reverse().ToList();
-                    productos = productos.OrderByDescending(c => c.Estado == 1).ToList();
+                    productos.Reverse();
+                    productos.OrderByDescending(c => c.Estado == 1).ToList();
                     break;
                 case "alfabetico":
-                    productos = productos.OrderBy(p => p.NombreCompleto).ToList();
-                    productos = productos.OrderByDescending(c => c.Estado == 1).ToList();
+                    productos.OrderBy(p => p.NombreCompleto).ToList();
+                    productos.OrderByDescending(c => c.Estado == 1).ToList();
                     break;
                 case "name_desc":
-                    productos = productos.OrderByDescending(p => p.NombreCompleto).ToList();
-                    productos = productos.OrderByDescending(c => c.Estado == 1).ToList();
+                    productos.OrderByDescending(p => p.NombreCompleto).ToList();
+                    productos.OrderByDescending(c => c.Estado == 1).ToList();
                     break;
                 default:
                     break;
             }
-
-            // Concatenar nombres completos y calcular cantidad total
-            var productosConcatenados = new List<Producto>();
-            foreach (var producto in productos)
-            {
-                var productoConcatenado = await _productoService.ConcatenarNombreCompletoProducto(producto.ProductoId);
-                productosConcatenados.Add(productoConcatenado);
-            }
-
-
-            // Concatenar nombre completo de presentaciones
-            foreach (var presentacion in presentaciones)
-            {
-                var nombrePresentacion = presentacion.NombrePresentacion;
-                var contenido = presentacion.Contenido;
-                var cantidad = presentacion.CantidadPorPresentacion ?? 1;
-
-                presentacion.NombreCompleto = cantidad > 1 ?
-                    $"{nombrePresentacion} x {cantidad} unidades de {contenido}" :
-                    $"{nombrePresentacion} de {contenido}";
-            }
-            var pageProductos = productosConcatenados.ToPagedList(pageNumber, pageSize);
+            int pageSize = 5; // Número máximo de elementos por página
+            int pageNumber = page ?? 1;
+            var pageProductos = productos.ToPagedList(pageNumber, pageSize);
 
             // Si la página solicitada no tiene elementos y no es la primera página, redirigir a la última página
             if (!pageProductos.Any() && pageProductos.PageNumber > 1)
@@ -91,7 +70,7 @@ namespace VistaNewProject.Controllers
             ViewBag.Productos = productos; // Pasar la lista paginada y ordenada a la vista
             ViewBag.Marcas = marcas;
             ViewBag.Order = order; // Pasar el criterio de orden a la vista
-            ViewData["Productos"] = productosConcatenados;
+            ViewData["Productos"] = productos;
             return View(pageProductos);
         }
 
@@ -243,7 +222,12 @@ namespace VistaNewProject.Controllers
                 return NotFound();
             }
 
-            var productos = await _client.FindDatosProductoAsync(id.Value);
+            var producto = await _client.FindDatosProductoAsync(id.Value);
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
             var lotesInfo = await _client.GetLotesByProductIdAsync(id.Value); // Utilizar el valor de id en lugar de productoid
 
             // Filtrar los lotes con EstadoLote igual a 1
@@ -264,17 +248,20 @@ namespace VistaNewProject.Controllers
                 FechaCaducidad = FormatearFechaVencimiento(loteInfo.FechaVencimiento)
             }).ToList();
 
-            var productoInfo = productos;
-            if (productoInfo == null)
-            {
-                return NotFound();
-            }
+            var primerLote = listaLotesVista.FirstOrDefault();
+            bool precioPorProductoIgual = listaLotesVista.All(lote => lote.PrecioPorPresentacion == primerLote?.PrecioPorPresentacion);
+            bool precioPorUnidadProductoIgual = listaLotesVista.All(lote => lote.PrecioPorUnidadProducto == primerLote?.PrecioPorUnidadProducto);
+
+            ViewData["PrecioPorUnidadProductoIgual"] = precioPorUnidadProductoIgual;
+            ViewData["PrecioPorProductoIgual"] = precioPorProductoIgual;
+            ViewData["CantidadPorPresentacionMasDeuno"] = producto.CantidadPorPresentacion > 1 ? true:false;
+
 
             // Concatenar nombres completos y calcular cantidad total
-            var productoConcatenado = await _productoService.ConcatenarNombreCompletoProducto(productoInfo.ProductoId);
+            var productoConcatenado = await _productoService.ConcatenarNombreCompletoProducto(producto.ProductoId);
 
             var pagedLote = listaLotesVista.ToPagedList(pageNumber, pageSize);
-
+            ViewData["Pagina"] = pageNumber;
             ViewData["Producto"] = productoConcatenado;
             ViewData["Lotes"] = pagedLote; // Se cambia a pagedLote para reflejar paginación
 
@@ -648,7 +635,7 @@ namespace VistaNewProject.Controllers
 
             return RedirectToAction("Details", "Productos", new { id = productoId });
         }
-        private void MensajeSweetAlert(string icon, string title, string message, string estado, int? tiempo)
+        private void MensajeSweetAlert(string icon, string title, string message, string? estado, int? tiempo)
         {
             TempData["SweetAlertIcon"] = icon;
             TempData["SweetAlertTitle"] = title;
