@@ -29,7 +29,9 @@ namespace ApiNewProject.Controllers
                     CategoriaId = s.CategoriaId,
                     MarcaId = s.MarcaId,
                     NombreCategoria = s.NombreCategoria,
-                    EstadoCategoria = s.EstadoCategoria
+                    EstadoCategoria = s.EstadoCategoria,
+                    NombreMarca = s.NombreMarca,
+                    EstadoMarca = s.EstadoMarca
                 }
             ).ToListAsync();
             return list;
