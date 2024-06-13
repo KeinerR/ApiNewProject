@@ -183,6 +183,27 @@ namespace ApiNewProject.Controllers
                 return Ok(datosProducto);
             }
         }
+        [HttpPost("InsertarProducto")]
+        public async Task<ActionResult<Producto>> InsertarProducto(Producto producto)
+        {
+            try
+            {
+                if (producto == null)
+                {
+                    return BadRequest("Los datos del producto no pueden ser nulos.");
+                }
+
+                _context.Productos.Add(producto);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(GetProductoById), new { id = producto.ProductoId }, producto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar el producto en la base de datos: " + ex.Message);
+            }
+        }
+
 
         [HttpPut("UpdateProductos")]
         public async Task<ActionResult> UpdateProductos(Producto producto)
