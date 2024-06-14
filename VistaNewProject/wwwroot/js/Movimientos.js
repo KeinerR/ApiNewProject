@@ -109,8 +109,7 @@ function calcularSubtotal() {
     var subtotal = cantidad * precio;
     $('#SubTotal').val(subtotal.toFixed(2));
 }
-
-function ActualizarDetalle() {
+function ActualizarDetalle(tipomovimineto) {
     var detalleid = $('#DetallePedidoId').val();
     var pedidoId = $('#PedidoId').val();
     var productoId = $('#ProductoId').val();
@@ -120,11 +119,12 @@ function ActualizarDetalle() {
     var precio = $('#PrecioUnitario').val();
     var subtotal = $('#SubTotal').val();
 
+    console.log(tipomovimineto)
     if (!validarenviada()) {
         Swal.fire({
             icon: 'error',
             title: 'Error',
-            text:  'el formulario no cumple con los requisitos'
+            text: 'El formulario no cumple con los requisitos'
         });
         return false; // Detiene el envío del formulario si la validación falla
     }
@@ -137,11 +137,12 @@ function ActualizarDetalle() {
         unidadId: unidadId,
         precioUnitario: precio,
         subtotal: subtotal,
-        cantidad: cantidad
+        cantidad: cantidad,
+        tipomovimineto: tipomovimineto // Añadir el tipo de movimiento
     };
 
     $.ajax({
-        url: '/DetallePedidos/Update',
+        url: `/DetallePedidos/Update?tipomovimineto=${encodeURIComponent(tipomovimineto)}`,
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(data),
@@ -174,6 +175,7 @@ function ActualizarDetalle() {
         }
     });
 }
+
 
 function validarenviada() {
     var cantidad = $('#CantidadTxt').val();
@@ -235,3 +237,45 @@ function quitarError(inputElement, errorElement) {
     errorElement.text("");
 }
 
+
+
+$(document).ready(function () {
+    $('#TipoAccion').change(function () {
+        var tipo = $(this).val();
+        var url = '';
+
+        if (tipo === "Pedido") {
+            url = 'https://localhost:7013/api/Pedidos/GetPedidosRealizado';
+        } else if (tipo === "Compra") {
+            url = 'https://localhost:7013/api/Compras/GetComprasRealizada';
+        }
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener los datos');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Limpiar el campo de búsqueda y datalist
+                console.log(data);
+                const dataList = document.getElementById('buscarList');
+                dataList.innerHTML = ''; // Limpiar opciones existentes
+
+
+                // Agregar nuevas opciones al datalist
+                data.forEach(item => {
+                    let option = document.createElement('option');
+                    option.value = tipo === "Pedido" ? item.pedidoId : item.compraId;
+                    dataList.appendChild(option);
+                });
+            })
+             
+           
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al obtener los datos');
+            });
+    });
+});

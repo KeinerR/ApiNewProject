@@ -83,12 +83,13 @@ namespace VistaNewProject.Controllers
             {
 
                 Console.WriteLine(movimiento.TipoAccion);
-                if (movimiento.TipoAccion == "Pedido"   )
+                if (movimiento.TipoAccion == "Pedido"    )
                 {
                     var tipomovimiento = movimiento.TipoMovimiento;
                     var pedidoId = movimiento.BuscarId.Value;
                     return RedirectToAction("Details", "Movimientos", new { pedidoId,tipomovimiento  });
                 }
+              
 
                 else if (movimiento.TipoAccion == "Compra"  )
                 {
@@ -229,6 +230,8 @@ namespace VistaNewProject.Controllers
             return Json(detalle);
 
         }
+
+
 
     }
 }

@@ -66,10 +66,9 @@
                                     }
                                     else
                                     {
+                                        <button class="btn botonEditar" onclick="actualizarproductoId(@detallepedido.DetallePedidoId,@detallepedido.ProductoId)"><i class="fas fa-edit"></i></button>
 
-                                        <a asp-action="Edit" asp-controller="DetallePedidos" asp-route-detalleId="@detallepedido.DetallePedidoId,@detallepedido.ProductoId">
-                                            Salida
-                                        </a>
+                                        
                                     }
                                 </td>
                              
@@ -199,8 +198,18 @@
                             
 
                             </div>
-                        <button type="button" onclick="ActualizarDetalle();" class="btn btn-primary ">Actualizar</button>
-                        </form>
+
+                        @if (ViewBag.TipoMovimineto == "Entrada")
+                        {
+                            <button type="button" value="Entrada" onclick="ActualizarDetalle(this.value);" class="btn btn-primary">Entrada</button>
+
+                        }
+                        else if (ViewBag.TipoMovimineto == "Salida")
+                        {
+                            <button type="button" value="Salida" onclick="ActualizarDetalle(this.value);" class="btn btn-primary">Salidad</button>
+
+                        }
+                    </form>
 
                 </div>
             </div>

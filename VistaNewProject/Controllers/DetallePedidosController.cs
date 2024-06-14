@@ -139,9 +139,9 @@ namespace VistaNewProject.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreatePost(  )
+        public async Task<IActionResult> CreatePost()
         {
-            if (listaGlobalDetalles.Count ==0)
+            if (listaGlobalDetalles.Count == 0)
             {
                 TempData["ErrorMessage"] = "Por favor agregue los productos para guardar el pedido correctamente.";
                 return RedirectToAction("Create", "DetallePedidos");
@@ -150,7 +150,7 @@ namespace VistaNewProject.Controllers
             try
             {
 
-             
+
 
 
                 decimal sumaSubtotales = listaGlobalDetalles.Sum(detalle => detalle.Subtotal ?? 0);
@@ -170,12 +170,12 @@ namespace VistaNewProject.Controllers
                     }
                 }
 
-            
-                    var ultimoPedido = await _client.GetPedidoAsync();
+
+                var ultimoPedido = await _client.GetPedidoAsync();
                 var ultimoPedidoGuardado = ultimoPedido.OrderByDescending(p => p.PedidoId).First();
 
                 if (ultimoPedido != null && ultimoPedido.Any())
-                    {
+                {
 
                     ultimoPedidoGuardado.ValorTotalPedido += sumaSubtotales;
 
@@ -212,7 +212,7 @@ namespace VistaNewProject.Controllers
                             // Obtener los lotes disponibles para el producto actual
                             var lotes = await _client.GetLoteAsync();
                             var lotesFiltrados = lotes
-                                .Where(l => l.ProductoId == productoId && l.Cantidad > 0 && l.EstadoLote!=0)
+                                .Where(l => l.ProductoId == productoId && l.Cantidad > 0 && l.EstadoLote != 0)
                                 .OrderBy(l => l.FechaVencimiento)
                                 .ThenByDescending(l => l.Cantidad);
 
@@ -248,20 +248,20 @@ namespace VistaNewProject.Controllers
                         TempData["SuccessMessage"] = "Pedido realizado con éxito.";
 
                         return RedirectToAction("Index", "Pedidos");
-                     }
-
-                        // Verifica el tipo de servicio para redireccionar apropiadamente
-                        if (ultimoPedidoGuardado.TipoServicio == "Domicilio")
-                        {
-                            listaGlobalDetalles.Clear();
-                            return RedirectToAction("Create", "Domicilios");
-                        }
                     }
-                
+
+                    // Verifica el tipo de servicio para redireccionar apropiadamente
+                    if (ultimoPedidoGuardado.TipoServicio == "Domicilio")
+                    {
+                        listaGlobalDetalles.Clear();
+                        return RedirectToAction("Create", "Domicilios");
+                    }
+                }
+
                 // Limpiar la lista de detalles globales después de procesar el pedido
                 listaGlobalDetalles.Clear();
-                    return RedirectToAction("Index", "Pedidos");
-               
+                return RedirectToAction("Index", "Pedidos");
+
             }
             catch (Exception ex)
             {
@@ -335,7 +335,7 @@ namespace VistaNewProject.Controllers
 
                 var updateProductResult = await _client.UpdateProductoAsync(producto);
 
-                
+
                 // Eliminar el detalle de la lista
                 listaGlobalDetalles.RemoveAt(index);
 
@@ -459,7 +459,7 @@ namespace VistaNewProject.Controllers
 
 
 
-        public async Task<IActionResult> AgregarMaxDetallesPost(int ? pedidoId)
+        public async Task<IActionResult> AgregarMaxDetallesPost(int? pedidoId)
         {
 
             decimal sumaSubtotales = listaGlobalDetalles.Sum(detalle => detalle.Subtotal ?? 0);
@@ -501,7 +501,7 @@ namespace VistaNewProject.Controllers
 
 
             }
-            return RedirectToAction("Index","Pedidos");
+            return RedirectToAction("Index", "Pedidos");
 
         }
 
@@ -509,122 +509,197 @@ namespace VistaNewProject.Controllers
         {
             var detalle = await _client.GetDetallepedidoAsync();
 
-            var detallesid=detalle.FirstOrDefault(c=>c.DetallePedidoId==detallePedidoId);
+            var detallesid = detalle.FirstOrDefault(c => c.DetallePedidoId == detallePedidoId);
             return Json(detallesid);
         }
 
 
 
 
-      
 
-        public async Task<IActionResult> Update([FromBody] Detallepedido detallepedido)
+        [HttpPost]
+        [Route("DetallePedidos/Update")]
+        public async Task<IActionResult> Update([FromBody] Detallepedido detallepedido, [FromQuery] string tipomovimineto)
         {
-            Console.WriteLine(detallepedido);
-
-
-            var detalleantes = await _client.FindDetallesPedidoAsync(detallepedido.DetallePedidoId);
-
-            detalleantes.Cantidad += detallepedido.Cantidad;
-            var response = await _client.UpdateDetallepedidosAsync(detalleantes);
-
-
-            int cantidadRestante = detallepedido.Cantidad.Value;
-            var productoId = detallepedido.ProductoId;
-            var loteIdDetalle = detallepedido.LoteId;
-
-            var lote = await _client.FindLoteAsync(loteIdDetalle.Value);
-            if (lote.Cantidad >= cantidadRestante)
+            if (string.IsNullOrEmpty(tipomovimineto))
             {
-                // Lote asociado al detalle tiene suficiente cantidad
-                lote.Cantidad -= cantidadRestante;
-                cantidadRestante = 0;
-
-                // Update the lot
-                var updatelotes = await _client.UpdateLoteAsync(lote);
-               
+                return Json(new { success = false, message = "Tipo de movimiento no proporcionado." });
             }
-            else
+
+            Console.WriteLine(detallepedido);
+            if (tipomovimineto == "Entrada")
             {
-                // Lote asociado al detalle no tiene suficiente cantidad
-                cantidadRestante -= lote.Cantidad.Value;
-                lote.Cantidad = 0;
+                Console.WriteLine(detallepedido);
 
-                // Update the lot
-                var updatelotes = await _client.UpdateLoteAsync(lote);
-               
-                // Buscar otros lotes del producto
-                var lotes = await _client.GetLoteAsync();
-                var lotesFiltrados = lotes
-                    .Where(l => l.ProductoId == productoId && l.Cantidad > 0 && l.EstadoLote != 0 && l.LoteId != loteIdDetalle)
-                    .OrderBy(l => l.FechaVencimiento)
-                    .ThenByDescending(l => l.Cantidad)
-                    .ToList();
+                var detalleantes = await _client.FindDetallesPedidoAsync(detallepedido.DetallePedidoId);
+                var subtotaloriginal = detalleantes.Subtotal;
 
-                if (lotesFiltrados.Any())
+
+
+                var cantidadOriginalDetalle = detalleantes.Cantidad;
+                detalleantes.Subtotal -= subtotaloriginal;
+                detalleantes.Cantidad += detallepedido.Cantidad;
+
+                var response = await _client.UpdateDetallepedidosAsync(detalleantes);
+
+                detalleantes.Subtotal += detallepedido.Subtotal;
+                var responses = await _client.UpdateDetallepedidosAsync(detalleantes);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    foreach (var loteAdicional in lotesFiltrados)
+                    Console.WriteLine("Actualizacion Correcta");
+                }
+
+                int cantidadRestante = detallepedido.Cantidad.Value;
+                var productoId = detallepedido.ProductoId;
+                var loteIdDetalle = detallepedido.LoteId;
+
+                var lote = await _client.FindLoteAsync(loteIdDetalle.Value);
+                var cantidadOriginalLote = lote.Cantidad;
+
+                if (lote.Cantidad >= cantidadRestante)
+                {
+                    lote.Cantidad -= cantidadRestante;
+                    cantidadRestante = 0;
+                    var updatelotes = await _client.UpdateLoteAsync(lote);
+                }
+                else
+                {
+                    cantidadRestante -= lote.Cantidad.Value;
+                    lote.Cantidad = 0;
+                    var updatelotes = await _client.UpdateLoteAsync(lote);
+
+                    var lotes = await _client.GetLoteAsync();
+                    var lotesFiltrados = lotes
+                        .Where(l => l.ProductoId == productoId && l.Cantidad > 0 && l.EstadoLote != 0 && l.LoteId != loteIdDetalle)
+                        .OrderBy(l => l.FechaVencimiento)
+                        .ThenByDescending(l => l.Cantidad)
+                        .ToList();
+
+                    if (lotesFiltrados.Any())
                     {
-                        if (cantidadRestante <= 0)
-                            break;
+                        foreach (var loteAdicional in lotesFiltrados)
+                        {
+                            if (cantidadRestante <= 0)
+                                break;
 
-                        int cantidadDescontar = Math.Min(cantidadRestante, loteAdicional.Cantidad.Value);
-                        loteAdicional.Cantidad -= cantidadDescontar;
-                        cantidadRestante -= cantidadDescontar;
+                            int cantidadDescontar = Math.Min(cantidadRestante, loteAdicional.Cantidad.Value);
+                            loteAdicional.Cantidad -= cantidadDescontar;
+                            cantidadRestante -= cantidadDescontar;
 
-                        var updateLoteAdicional = await _client.UpdateLoteAsync(loteAdicional);
-                       
+                            var updateLoteAdicional = await _client.UpdateLoteAsync(loteAdicional);
+                        }
+                        if (cantidadRestante > 0)
+                        {
+                            detalleantes.Cantidad = cantidadOriginalDetalle;
+                            await _client.UpdateDetallepedidosAsync(detalleantes);
+
+                            lote.Cantidad = cantidadOriginalLote;
+                            await _client.UpdateLoteAsync(lote);
+
+                            return Json(new { success = true, message = "No hay suficiente cantidad para hacer el movimiento." });
+                        }
                     }
                 }
 
-               
-            }
 
-
-
-
-            if (response.IsSuccessStatusCode)
-            {
-                Console.WriteLine("Actualizacion Correcta");
-            }
-            var pedidoId = detallepedido.PedidoId;
-
-            var pedido = await _client.FindPedidosAsync(pedidoId.Value);
-            if (pedido != null && lote != null)
-            {
-
-                // Obtener todos los detalles asociados a este pedido
-                var detalles = await _client.GetDetallepedidoAsync();
-                var detallesPedido = detalles.Where(d => d.PedidoId == pedido.PedidoId).ToList();
-
-                if (detallesPedido != null)
+                if (response.IsSuccessStatusCode)
                 {
-                    pedido.ValorTotalPedido += detallesPedido.Sum(d => d.Subtotal);
+                    Console.WriteLine("Actualización Correcta");
+                }
+                var pedidoId = detallepedido.PedidoId;
+
+                var pedido = await _client.FindPedidosAsync(pedidoId.Value);
+                if (pedido != null && lote != null)
+                {
+
+
+                    var detallesPedido = await _client.GetDetallepedidoAsync();
+
+                    // Calcular el nuevo valor total del pedido sumando los subtotales de los detalles asociados
+                    pedido.ValorTotalPedido = detallesPedido.Where(d => d.PedidoId == pedidoId.Value).Sum(d => d.Subtotal);
+
 
                     var updatetotal = await _client.UpdatePedidoAsync(pedido);
 
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = true, message = "Movimiento de Entrada Realizado Correctamente." });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "No se pudo Realizar el Movimiento." });
+                }
+            }
+            else if (tipomovimineto == "Salida")
+            {
+                Console.WriteLine(detallepedido);
+
+                var detalleantes = await _client.FindDetallesPedidoAsync(detallepedido.DetallePedidoId);
+                var cantidadOriginalDetalle = detalleantes.Cantidad;
+                var subtotaloriginal = detalleantes.Subtotal;
 
 
+
+                detalleantes.Subtotal -= subtotaloriginal;
+
+                detalleantes.Cantidad -= detallepedido.Cantidad;
+                var response = await _client.UpdateDetallepedidosAsync(detalleantes);
+                detalleantes.Subtotal += detallepedido.Subtotal;
+                var responses = await _client.UpdateDetallepedidosAsync(detalleantes);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Actualizacion Correcta");
+                }
+
+                var productoId = detallepedido.ProductoId;
+                var loteIdDetalle = detallepedido.LoteId;
+
+
+                var lote = await _client.FindLoteAsync(loteIdDetalle.Value);
+                int cantidadRestante = detallepedido.Cantidad.Value;
+                lote.Cantidad += cantidadRestante;
+
+
+                var updatelotes = await _client.UpdateLoteAsync(lote);
+
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Actualización Correcta");
+                }
+                var pedidoId = detallepedido.PedidoId;
+
+                var pedido = await _client.FindPedidosAsync(pedidoId.Value);
+                if (pedido != null && lote != null)
+                {
+
+
+                    var detallesPedido = await _client.GetDetallepedidoAsync();
+
+                    // Calcular el nuevo valor total del pedido sumando los subtotales de los detalles asociados
+                    pedido.ValorTotalPedido = detallesPedido.Where(d => d.PedidoId == pedidoId.Value).Sum(d => d.Subtotal);
+
+
+                    var updatetotal = await _client.UpdatePedidoAsync(pedido);
+
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = true, message = "Movimiento de Salida Realizado Correctamente." });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "No se pudo Realizar el Movimiento." });
                 }
             }
 
-            if (response.IsSuccessStatusCode)
-            {
-                return Json(new { success = true, message = "Movimiento de Entrada Realizado Correctamente ." });
-            }
-            else
-            {
-                return Json(new { success = false, message = "No se pudo Realizar el Movimiento." });
-            }
-
-
-
-
-
-
-
+            return Ok();
         }
-
 
 
     }

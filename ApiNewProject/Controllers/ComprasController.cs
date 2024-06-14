@@ -168,6 +168,36 @@ namespace ApiNewProject.Controllers
             await _context.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
+
+
+        [HttpGet("GetComprasRealizada")]
+        public async Task<ActionResult<List<Compra>>> GetComprasRealizada()
+        {
+            try
+            {
+                // Obtener solo los productos cuyo estado es diferente de cero
+                var comprasRealizadas = await _context.Compras
+                    .Where(p => p.EstadoCompra != 1)
+                    .Select(p => new Compra
+                    {
+                        CompraId = p.CompraId,
+                        ProveedorId = p.ProveedorId,
+                        NumeroFactura = p.NumeroFactura,
+                        FechaCompra = p.FechaCompra,
+                        ValorTotalCompra = p.ValorTotalCompra,
+                        EstadoCompra = p.EstadoCompra,
+                       
+                    })
+                    .ToListAsync();
+
+                return Ok(comprasRealizadas);
+            }
+            catch (Exception ex)
+            {
+                // Si ocurre algún error, devolver un error 500 Internal Server Error
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al obtener los productos activos: " + ex.Message);
+            }
+        }
     }
 }
 

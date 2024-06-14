@@ -12,31 +12,31 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="row">
 
-             <div class="col-6">
-                <label asp-for="TipoAccion" class="control-label"></label>
+        <div class="col-6">
+            <label asp-for="TipoAccion" class="control-label"></label>
+            <select id="TipoAccion" name="tipoAccion" class="form-control">
+                <option disabled selected>Seleccione un Tipo De Acción</option>
+                <option value="Pedido">Ventas</option>
+                <option value="Compra">Compras</option>
+            </select>
+            <span id="TipoAccionError" class="text-danger"></span>
+        </div>
 
-                <select  id="TipoAccion" name="tipoAccion"  class="form-control">
-                   <option value="Pedido">Pedido</option>
-                <option value="Compra">Compra</option>
-
-
-
-                </select>
-                <span id="TipoAccionError" class="text-danger"></span>
-            </div>
         <div class="col-6">
             <label asp-for="TipoMovimiento" class="control-label"></label>
             <select id="TipoMovimiento" name="tipoMovimiento" class="form-control">
                 <option value="Entrada" data-icon="fa-brands fa-get-pocket">Entrada</option>
-                <option value="Salida" data-icon="fa-solid fa-circle-xmark">Salidad</option>
+                <option value="Salida" data-icon="fa-solid fa-circle-xmark">Salida</option>
             </select>
-                <span id="TipoMovimientoError" class="text-danger"></span>
-            </div>
+            <span id="TipoMovimientoError" class="text-danger"></span>
+        </div>
+      
         <div class="col-6">
-                <label asp-for="BuscarId" class="control-label"></label>
-                <input asp-for="BuscarId" class="form-control" />
-                <span asp-validation-for="BuscarId" class="text-danger"></span>
-            </div>
+            <label for="buscar" class="control-label">Buscar Id</label>
+            <input id="buscarIdTxt" asp-for="BuscarId" class="form-control" list="buscarList" autocomplete="off" />
+            <datalist id="buscarList"></datalist>
+            <span id="buscarError" class="text-danger"></span>
+        </div>
         <div class="col-6">
                 <label asp-for="FechaMovimiento" class="control-label"></label>
                 <input asp-for="FechaMovimiento" class="form-control" />

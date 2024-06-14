@@ -282,5 +282,33 @@ namespace ApiNewProject.Controllers
 
 
 
+        [HttpGet("GetPedidosRealizado")]
+        public async Task<ActionResult<List<Pedido>>> GetPedidosRealizado()
+        {
+            try
+            {
+                // Obtener solo los productos cuyo estado es diferente de cero
+                var pedidoRealizado = await _context.Pedidos
+                    .Where(p => p.EstadoPedido =="Realizado")
+                    .Select(p => new Pedido
+                    {
+                        PedidoId = p.PedidoId,
+                        ClienteId = p.ClienteId,
+                        FechaPedido = p.FechaPedido,
+                        EstadoPedido = p.EstadoPedido,
+                        TipoServicio = p.TipoServicio,
+                        ValorTotalPedido = p.ValorTotalPedido,
+                       
+                    })
+                    .ToListAsync();
+
+                return Ok(pedidoRealizado);
+            }
+            catch (Exception ex)
+            {
+                // Si ocurre algún error, devolver un error 500 Internal Server Error
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al obtener los productos activos: " + ex.Message);
+            }
+        }
     }
 }
