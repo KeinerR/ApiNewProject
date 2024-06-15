@@ -122,24 +122,6 @@ namespace ApiNewProject.Controllers
             }
         }
 
-        [HttpGet("GetUnidadesPorProducto")]
-        public async Task<ActionResult<List<UnidadxProducto>>> GetUnidadesPorProducto(int productoId) {
-            IQueryable<UnidadxProducto> query = _context.UnidadesxProducto;
-
-            query = query.Where(p => p.ProductoId == productoId);
-            var unidades = await query
-           .Include(p => p.Producto) 
-           .Include(p => p.Unidad)
-           .ToListAsync();
-            var datosUnidadesList = unidades.Select(p => new UnidadxProducto
-            {
-                ProductoId = p.ProductoId,
-                UnidadId = p.UnidadId
-                // Asegúrate de agregar las propiedades adicionales que desees cargar
-            }).ToList();
-
-            return datosUnidadesList;
-        }
         [HttpGet("GetDatosProductoById")]
         public async Task<ActionResult<DatosProducto>> GetDatosProductoById(int id)
         {
@@ -193,6 +175,13 @@ namespace ApiNewProject.Controllers
                     return BadRequest("Los datos del producto no pueden ser nulos.");
                 }
 
+                // Verificar si el producto ya existe
+                var existingProduct = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == producto.ProductoId);
+                if (existingProduct != null)
+                {
+                    return Conflict("El producto ya existe en la base de datos.");
+                }
+
                 _context.Productos.Add(producto);
                 await _context.SaveChangesAsync();
 
@@ -203,7 +192,6 @@ namespace ApiNewProject.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar el producto en la base de datos: " + ex.Message);
             }
         }
-
 
         [HttpPut("UpdateProductos")]
         public async Task<ActionResult> UpdateProductos(Producto producto)

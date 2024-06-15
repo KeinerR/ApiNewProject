@@ -8,13 +8,13 @@ namespace VistaNewProject.Models
         public List<Proveedor> Proveedores { get; set; }
         public List<Cliente> Clientes { get; set; }
         public List<Pedido> Pedidos { get; set; }
-        public List<NombresMarca> NombreMarcas {  get; set; }
+        public List<NombresMarca> NombreMarcas { get; set; }
         public List<Lote> Loteres { get; set; }
         public List<Detallecompra> detalleCompra { get; set; }
         public List<NombreProveedor> NombreProveedores { get; set; }
         public List<CompraID> CompraIDs { get; set; }
-        public List<TotalCompras> ValorTotalCompras {  get; set; }
-        
+        public List<TotalCompras> ValorTotalCompras { get; set; }
+
     }
 
     public class NombresMarca
@@ -34,7 +34,7 @@ namespace VistaNewProject.Models
 
     public class CompraID
     {
-        public int IdCompra { get; set; } 
+        public int IdCompra { get; set; }
     }
 
     public class Lotes
@@ -44,7 +44,7 @@ namespace VistaNewProject.Models
 
     public class NombreProveedor
     {
-        public string NombrePro {  get; set; }
+        public string NombrePro { get; set; }
     }
 
 }

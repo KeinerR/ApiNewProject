@@ -165,7 +165,7 @@ namespace VistaNewProject.Controllers
             }
 
             var categorias = await _client.GetCategoriaAsync();
-            var categoriasxpresentaciones = await _client.GetCategoriaxPresentacionesAsync();
+            var categoriasxpresentaciones = await _client.GetCategoriasxPresentacionByIdAsync(id.Value);
 
             var categoriasAsociadasIds = categoriasxpresentaciones
                 .Where(cu => cu.PresentacionId == id.Value)
@@ -176,7 +176,7 @@ namespace VistaNewProject.Controllers
                 .Select(c => new CategoriaxPresentacion
                 {
                     CategoriaId = c.CategoriaId,
-                    NombreCategoria = c.NombreCategoria,
+                    NombreCategoria = c?.NombreCategoria,
                     PresentacionId = id.Value,
                     EstaAsociada = categoriasAsociadasIds.Contains(c.CategoriaId)
                 })
@@ -211,7 +211,6 @@ namespace VistaNewProject.Controllers
 
             return View(pagedCategorias);
         }
-
         public async Task<IActionResult> CategoriasAsociadasxPresentacion(int? id, int? page)
         {
             if (id == null)
@@ -220,25 +219,14 @@ namespace VistaNewProject.Controllers
             }
             var presentaciones = await _client.GetPresentacionAsync();
 
-            var presentacionExiste = presentaciones.FirstOrDefault(p => p.PresentacionId == id);
-            if (presentacionExiste == null)
+            var presentacion = presentaciones.FirstOrDefault(p => p.PresentacionId == id);
+            if (presentacion == null)
             {
                 return NotFound();
             }
-            var presentacion = await _client.FindPresentacionAsync(id.Value); // Obtener la unidad directamente como int
 
-            var categorias = await _client.GetCategoriaAsync();
-            var categoriasxpresentaciones = await _client.GetCategoriaxPresentacionesAsync();
-
-            // Filtrar categorías asociadas a la unidad específica
-            var categoriasAsociadasIds = categoriasxpresentaciones
-                .Where(cu => cu.PresentacionId == id.Value) // Utilizar id.Value directamente
-                .Select(cu => cu.CategoriaId)
-                .ToList();
-
-            var categoriasAsociadas = categorias.Where(c => categoriasAsociadasIds.Contains(c.CategoriaId)).ToList();
-            // Concatenar el nombre de la unidad con su cantidad si está disponible
-
+            // Obtener las categorías asociadas a la presentación específica
+            var categoriasAsociadas = await _client.GetCategoriasxPresentacionByIdAsync(id.Value);
             ViewBag.Presentacion = presentacion;
             if (!categoriasAsociadas.Any())
             {
@@ -252,7 +240,6 @@ namespace VistaNewProject.Controllers
 
             return View(pagedCategorias);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] Presentacion presentacion)

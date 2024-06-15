@@ -12,16 +12,16 @@ public class ProductoService
 
     public async Task<Producto> ConcatenarNombreCompletoProducto(int productoId)
     {
-        // Retrieve product information asynchronously
+        // Recuperar la información del producto de forma asincrónica
         var producto = await _client.FindDatosProductoAsync(productoId);
 
-        // Convert Producto to DatosProducto
+        // Crear una nueva instancia de Producto con los datos necesarios
         var datosProducto = new Producto
         {
             ProductoId = producto.ProductoId,
-            PresentacionId = producto.ProductoId, // Revisar si es correcto asignar ProductoId a PresentacionId
+            PresentacionId = producto.PresentacionId, // Asegúrate de que este valor sea correcto
             MarcaId = producto.MarcaId,
-            CategoriaId = producto.CategoriaId, // Asignar el id de la categoría
+            CategoriaId = producto.CategoriaId,
             NombreProducto = producto.NombreProducto,
             NombrePresentacion = producto.NombrePresentacion,
             CantidadReservada = producto.CantidadReservada,
@@ -31,26 +31,32 @@ public class ProductoService
             NombreMarca = producto.NombreMarca,
             CantidadPorPresentacion = producto.CantidadPorPresentacion,
             NombreCategoria = producto.NombreCategoria
-            // etc.
         };
 
+        // Obtener lotes para el producto actual de forma asincrónica
         var lotes = await _client.GetLotesByProductIdAsync(productoId);
 
-        var cantidadTotalPorProducto = lotes
+        // Calcular la cantidad total por producto sumando la cantidad de lotes
+        datosProducto.CantidadTotal = lotes
             .Where(l => l.EstadoLote == 1 && l.ProductoId == productoId)
-            .Sum(l => l.Cantidad);
+            .Sum(l => l.Cantidad) ?? 0;
 
-        datosProducto.CantidadTotal = cantidadTotalPorProducto ?? 0;
-
+        // Construir el nombre completo del producto
         var nombrePresentacion = datosProducto.NombrePresentacion;
         var contenido = datosProducto.Contenido;
         var cantidad = datosProducto.CantidadPorPresentacion;
         var nombreMarca = datosProducto.NombreMarca;
 
-        datosProducto.NombreCompleto = cantidad > 1 ?
-            $"{nombrePresentacion} de {datosProducto.NombreProducto} x {cantidad} unidades de {contenido}" :
-            $"{nombrePresentacion} de {datosProducto.NombreProducto} {nombreMarca} de {contenido}";
+        datosProducto.NombreCompleto = cantidad > 1
+            ? $"{nombrePresentacion} de {datosProducto.NombreProducto} x {cantidad} unidades de {contenido}"
+            : $"{nombrePresentacion} de {datosProducto.NombreProducto} {nombreMarca} de {contenido}";
 
+        // Actualizar NombrePresentacion con el nombre completo concatenado
+        datosProducto.NombrePresentacion = cantidad > 1
+            ? $"{nombrePresentacion} x {cantidad} unidades de {contenido}"
+            : $"{nombrePresentacion} de {contenido}";
+
+        // Devolver el producto con el nombre completo y presentación concatenados
         return datosProducto;
     }
 
@@ -64,13 +70,13 @@ public class ProductoService
 
         foreach (var producto in productos)
         {
-            // Convertir Producto a DatosProducto
+            // Crear una nueva instancia de Producto con los datos necesarios
             var datosProducto = new Producto
             {
                 ProductoId = producto.ProductoId,
-                PresentacionId = producto.ProductoId, // Revisar si es correcto asignar ProductoId a PresentacionId
+                PresentacionId = producto.PresentacionId,
                 MarcaId = producto.MarcaId,
-                CategoriaId = producto.CategoriaId, // Asignar el id de la categoría
+                CategoriaId = producto.CategoriaId,
                 NombreProducto = producto.NombreProducto,
                 NombrePresentacion = producto.NombrePresentacion,
                 CantidadReservada = producto.CantidadReservada,
@@ -80,18 +86,15 @@ public class ProductoService
                 NombreMarca = producto.NombreMarca,
                 CantidadPorPresentacion = producto.CantidadPorPresentacion,
                 NombreCategoria = producto.NombreCategoria
-                // etc.
             };
 
             // Obtener lotes para el producto actual
             var lotes = await _client.GetLotesByProductIdAsync(producto.ProductoId);
 
             // Calcular la cantidad total por producto sumando la cantidad de lotes
-            var cantidadTotalPorProducto = lotes
+            datosProducto.CantidadTotal = lotes
                 .Where(l => l.EstadoLote == 1 && l.ProductoId == producto.ProductoId)
-                .Sum(l => l.Cantidad);
-
-            datosProducto.CantidadTotal = cantidadTotalPorProducto ?? 0;
+                .Sum(l => l.Cantidad) ?? 0;
 
             // Construir el nombre completo del producto
             var nombrePresentacion = datosProducto.NombrePresentacion;
@@ -99,18 +102,73 @@ public class ProductoService
             var cantidad = datosProducto.CantidadPorPresentacion;
             var nombreMarca = datosProducto.NombreMarca;
 
-            datosProducto.NombreCompleto = cantidad > 1 ?
-                $"{nombrePresentacion} de {datosProducto.NombreProducto} x {cantidad} unidades de {contenido}" :
-                $"{nombrePresentacion} de {datosProducto.NombreProducto} {nombreMarca} de {contenido}";
+            datosProducto.NombreCompleto = cantidad > 1
+                ? $"{nombrePresentacion} de {datosProducto.NombreProducto} x {cantidad} unidades de {contenido}"
+                : $"{nombrePresentacion} de {datosProducto.NombreProducto} {nombreMarca} de {contenido}";
+
+            // Actualizar NombrePresentacion con el nombre completo concatenado
+            datosProducto.NombrePresentacion = cantidad > 1
+                ? $"{nombrePresentacion} x {cantidad} unidades de {contenido}"
+                : $"{nombrePresentacion} de {contenido}";
+
+            // Agregar el producto a la lista
             productosConNombreCompleto.Add(datosProducto);
+        }
 
-            datosProducto.NombrePresentacion = cantidad > 1 ?
-             $"{nombrePresentacion} x {cantidad} unidades de {contenido}" :
-             $"{nombrePresentacion} de {contenido}";
+        // Devolver la lista de productos con el nombre completo concatenado
+        return productosConNombreCompleto;
+    }
 
-            // Agregar la presentación con el nombre completo concatenado a la lista
+    public async Task<List<Producto>> ConcatenarNombreCompletoProductos(List<Producto> productos)
+    {
+        // Lista para almacenar los productos con el nombre completo concatenado
+        var productosConNombreCompleto = new List<Producto>();
+
+        foreach (var producto in productos)
+        {
+            // Crear una nueva instancia de Producto con los datos necesarios
+            var datosProducto = new Producto
+            {
+                ProductoId = producto.ProductoId,
+                PresentacionId = producto.PresentacionId,
+                MarcaId = producto.MarcaId,
+                CategoriaId = producto.CategoriaId,
+                NombreProducto = producto.NombreProducto,
+                NombrePresentacion = producto.NombrePresentacion,
+                CantidadReservada = producto.CantidadReservada,
+                CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor,
+                DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor,
+                Contenido = producto.Contenido,
+                NombreMarca = producto.NombreMarca,
+                CantidadPorPresentacion = producto.CantidadPorPresentacion,
+                NombreCategoria = producto.NombreCategoria
+            };
+
+            // Obtener lotes para el producto actual de forma asincrónica
+            var lotes = await _client.GetLotesByProductIdAsync(producto.ProductoId);
+
+            // Calcular la cantidad total por producto sumando la cantidad de lotes
+            datosProducto.CantidadTotal = lotes
+                .Where(l => l.EstadoLote == 1 && l.ProductoId == producto.ProductoId)
+                .Sum(l => l.Cantidad) ?? 0;
+
+            // Construir el nombre completo del producto
+            var nombrePresentacion = datosProducto.NombrePresentacion;
+            var contenido = datosProducto.Contenido;
+            var cantidad = datosProducto.CantidadPorPresentacion;
+            var nombreMarca = datosProducto.NombreMarca;
+
+            datosProducto.NombreCompleto = cantidad > 1
+                ? $"{nombrePresentacion} de {datosProducto.NombreProducto} x {cantidad} unidades de {contenido}"
+                : $"{nombrePresentacion} de {datosProducto.NombreProducto} {nombreMarca} de {contenido}";
+
+            // Actualizar NombrePresentacion con el nombre completo concatenado
+            datosProducto.NombrePresentacion = cantidad > 1
+                ? $"{nombrePresentacion} x {cantidad} unidades de {contenido}"
+                : $"{nombrePresentacion} de {contenido}";
+
+            // Agregar el producto a la lista
             productosConNombreCompleto.Add(datosProducto);
-
         }
 
         // Devolver la lista de productos con el nombre completo concatenado

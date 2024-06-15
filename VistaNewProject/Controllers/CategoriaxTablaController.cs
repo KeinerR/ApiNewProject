@@ -37,7 +37,7 @@ namespace VistaNewProject.Controllers
         }
 
         [HttpPost("CrearCategoriaxPresentacion")]
-        public async Task<IActionResult> CrearCategoriaxPresentacion([FromBody] CategoriaxPresentacion categoriaxunidad)
+        public async Task<IActionResult> CrearCategoriaxPresentacion([FromBody] CategoriaxPresentacionAsosiacion categoriaxunidad)
         {
             if (categoriaxunidad == null || categoriaxunidad.CategoriaId <= 0 || categoriaxunidad.PresentacionId <= 0)
             {
@@ -119,8 +119,8 @@ namespace VistaNewProject.Controllers
         }
 
 
-        [HttpDelete("DeleteCategoriaxMarca")]
-        public async Task<IActionResult> DeleteCategoriaxMarca([FromBody] CategoriaxMarca categoriaxmarca)
+        [HttpDelete("DeleteUnidadxProducto")]
+        public async Task<IActionResult> DeleteUnidadxProducto([FromBody] CategoriaxMarca categoriaxmarca)
         {
             if (categoriaxmarca == null || categoriaxmarca.CategoriaId <= 0 || categoriaxmarca.MarcaId <= 0)
             {

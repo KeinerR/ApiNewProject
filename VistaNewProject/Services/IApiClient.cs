@@ -194,7 +194,8 @@ namespace VistaNewProject.Services
 
         // categoria x presentacion
         Task<IEnumerable<CategoriaxPresentacion>> GetCategoriaxPresentacionesAsync();
-        Task<HttpResponseMessage> CreateCategoriaxPresentacionAsync(CategoriaxPresentacion categoriaxpresentacion);
+        Task<IEnumerable<CategoriaxPresentacion>> GetCategoriasxPresentacionByIdAsync(int presentacionId);
+        Task<HttpResponseMessage> CreateCategoriaxPresentacionAsync(CategoriaxPresentacionAsosiacion categoriaxpresentacion);
 
         Task<HttpResponseMessage> DeleteCategoriaxPresentacionAsync(int categoriaId, int presentacionId);
 

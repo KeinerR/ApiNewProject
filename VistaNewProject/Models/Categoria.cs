@@ -8,13 +8,11 @@ namespace VistaNewProject.Models
 {
     public class Categoria
     {
-        [BindNever]
         public int CategoriaId { get; set; }
 
         [Required(ErrorMessage = "El nombre de la categoría es obligatorio.")]
         [StringLength(40, ErrorMessage = "El nombre de la categoría no puede exceder los 40 caracteres.")]
         public string? NombreCategoria { get; set; }
-        [BindNever]
         public ulong? EstadoCategoria { get; set; }
        
     }

@@ -19,84 +19,127 @@ namespace ApiNewProject.Controllers
             _context = context;
         }
 
-        // GET: api/CategoriaxPresentacion/GetCategoriasxPresentaciones
         [HttpGet("GetCategoriasxPresentaciones")]
         public async Task<ActionResult<List<CategoriaxPresentacion>>> GetCategoriasxPresentaciones()
         {
-            var list = await _context.CategoriaxPresentaciones.Select(
-                s => new CategoriaxPresentacion
-                {
-                    CategoriaId = s.CategoriaId,
-                    PresentacionId = s.PresentacionId,
-                    NombrePresentacion = s.NombrePresentacion,
-                    CantidadPorPresentacion = s.CantidadPorPresentacion,
-                    NombreCategoria = s.NombreCategoria,
-                    EstadoCategoria = s.EstadoCategoria,
-                    Contenido = s.Contenido,
-                    EstadoPresentacion = s.EstadoPresentacion
-                }
-            ).ToListAsync();
-            return list;
-        }
-
-        // GET: api/CategoriaxPresentacion/GetCategoriaxPresentacion/5
-        [HttpGet("GetCategoriaxPresentacion/{categoriaId}/{presentacionId}")]
-        public async Task<ActionResult<CategoriaxPresentacion>> GetCategoriaxPresentacion(int categoriaId, int presentacionId)
-        {
-            var categoriaxPresentacion = await _context.CategoriaxPresentaciones.FindAsync(categoriaId, presentacionId);
-
-            if (categoriaxPresentacion == null)
-            {
-                return NotFound();
-            }
-
-            return categoriaxPresentacion;
-        }
-
-        // POST: api/CategoriaxPresentacion/InsertarCategoria
-        [HttpPost("InsertarCategoria")]
-        public async Task<ActionResult<CategoriaxPresentacion>> InsertarCategoria(CategoriaxPresentacion categoriaxPresentacion)
-        {
             try
             {
-                if (categoriaxPresentacion == null)
-                {
-                    return BadRequest("Los datos de la categoria no pueden ser nulos.");
-                }
-                var presentacion = await _context.Presentaciones.FirstOrDefaultAsync(s => s.PresentacionId == categoriaxPresentacion.CategoriaId);
-                var categoria = await _context.Categorias.FirstOrDefaultAsync(s => s.CategoriaId == categoriaxPresentacion.CategoriaId);
-                categoriaxPresentacion.NombrePresentacion = presentacion?.NombrePresentacion;
-                categoriaxPresentacion.CantidadPorPresentacion = presentacion?.CantidadPorPresentacion;
-                categoriaxPresentacion.Contenido = presentacion?.Contenido;
-                categoriaxPresentacion.EstadoPresentacion = presentacion?.EstadoPresentacion;
-                categoriaxPresentacion.NombreCategoria = categoria?.NombreCategoria ?? "No aplica";
-                categoriaxPresentacion.EstadoCategoria = categoria?.EstadoCategoria ?? 0;
-                _context.CategoriaxPresentaciones.Add(categoriaxPresentacion);
-                await _context.SaveChangesAsync();
+                var list = await _context.CategoriaxPresentaciones // Corrección en el nombre de la tabla
+                    .Select(cp => new CategoriaxPresentacion
+                    {
+                        CategoriaId = cp.CategoriaId,
+                        PresentacionId = cp.PresentacionId,
+                        NombrePresentacion = cp.NombrePresentacion, 
+                        NombreCategoria = cp.NombreCategoria,
+                        CantidadPorPresentacion = cp.CantidadPorPresentacion,
+                        Contenido = cp.Contenido,
+                        EstadoPresentacion = cp.EstadoPresentacion, 
+                        EstadoCategoria = cp.EstadoCategoria 
+                    })
+                    .ToListAsync();
 
-                return CreatedAtAction(nameof(GetCategoriaxPresentacion), new { categoriaId = categoriaxPresentacion.CategoriaId, presentacionId = categoriaxPresentacion.PresentacionId }, categoriaxPresentacion);
+                return list;
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar la categoria en la base de datos: " + ex.Message);
+                // Considera registrar el error en un log aquí
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al obtener las relaciones categoría-presentación: " + ex.Message);
+            }
+        }
+
+        [HttpGet("GetCategoriasxPresentacionById")]
+        public async Task<ActionResult<List<CategoriaxPresentacion>>> GetCategoriasxPresentacionById(int id)
+        {
+            try
+            {
+                var categoriasxPresentaciones = await _context.CategoriaxPresentaciones
+                 .Where(cm => cm.PresentacionId == id)
+                .ToListAsync();
+
+                return categoriasxPresentaciones;
+            }
+            catch (Exception ex)
+            {
+                // Considera registrar el error en un log aquí
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                                 "Error al obtener las asociaciones categoría-marca: " + ex.Message);
             }
         }
 
 
-        // DELETE: api/CategoriaxPresentacion/DeleteCategoriaxPresentacion/5
+
+        [HttpPost("InsertarCategoriaxPresentacion")]
+        public async Task<ActionResult<CategoriaxPresentacion>> InsertarCategoria(CategoriaxPresentacionAsociasion categoriaxPresentacionAsosiacion)
+        {
+            try
+            {
+                if (categoriaxPresentacionAsosiacion == null)
+                {
+                    return BadRequest("Los datos de la categoría no pueden ser nulos.");
+                }
+                if (CategoriaxPresentacionExists(categoriaxPresentacionAsosiacion.CategoriaId, categoriaxPresentacionAsosiacion.PresentacionId))
+                {
+                    return Conflict("La relación entre esta categoría y esta presentacion ya existe.");
+                }
+
+                var categoria = await _context.Categorias.FirstOrDefaultAsync(s => s.CategoriaId == categoriaxPresentacionAsosiacion.CategoriaId);
+                var presentacion = await _context.Presentaciones.FirstOrDefaultAsync(p => p.PresentacionId == categoriaxPresentacionAsosiacion.PresentacionId);
+
+                // Validación adicional: Asegurarse de que la categoría y la marca existen
+                if (categoria == null || presentacion == null)
+                {
+                    return BadRequest("La categoría o la marca especificadas no existen.");
+                }
+
+                // Crear instancia de CategoriaxMarca y llenar con datos
+                var categoriaxPresentacion = new CategoriaxPresentacion
+                {
+                    CategoriaId = categoriaxPresentacionAsosiacion.CategoriaId,
+                    PresentacionId = categoriaxPresentacionAsosiacion.PresentacionId,
+                    NombreCategoria = categoria.NombreCategoria,
+                    EstadoCategoria = categoria.EstadoCategoria,
+                    NombrePresentacion = presentacion.NombrePresentacion,
+                    CantidadPorPresentacion = presentacion.CantidadPorPresentacion,
+                    Contenido = presentacion.Contenido,
+                    EstadoPresentacion = presentacion.EstadoPresentacion
+                };
+
+                _context.CategoriaxPresentaciones.Add(categoriaxPresentacion);
+                await _context.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Considera registrar el error en un log aquí
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar la relación categoría-marca: " + ex.Message);
+            }
+        }
+
         [HttpDelete("DeleteCategoriaxPresentacion/{categoriaId}/{presentacionId}")]
         public async Task<IActionResult> DeleteCategoriaxPresentacion(int categoriaId, int presentacionId)
         {
-            var categoriaxPresentacion = await _context.CategoriaxPresentaciones.FindAsync(categoriaId, presentacionId);
-            if (categoriaxPresentacion == null)
+            try
             {
-                return NotFound();
+                // Usar FindAsync para buscar por la clave primaria compuesta
+                var categoriaxPresentacion = await _context.CategoriaxPresentaciones.FindAsync(categoriaId, presentacionId);
+
+                if (categoriaxPresentacion == null)
+                {
+                    return NotFound(); // Relación no encontrada
+                }
+
+                _context.CategoriaxPresentaciones.Remove(categoriaxPresentacion);
+                await _context.SaveChangesAsync();
+
+                return NoContent(); // Éxito, sin contenido que devolver
             }
-
-            _context.CategoriaxPresentaciones.Remove(categoriaxPresentacion);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                // Log the exception here (using your preferred logging mechanism)
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                                 "Error al eliminar la relación categoría-presentación: " + ex.Message);
+            }
         }
 
         private bool CategoriaxPresentacionExists(int categoriaId, int presentacionId)
@@ -104,6 +147,6 @@ namespace ApiNewProject.Controllers
             return _context.CategoriaxPresentaciones.Any(e => e.CategoriaId == categoriaId && e.PresentacionId == presentacionId);
         }
 
-       
+
     }
 }

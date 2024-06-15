@@ -59,7 +59,7 @@ namespace VistaNewProject.Services
         }
 
 
-        public async Task<HttpResponseMessage> CambiarEstadoClienteAsync(int  id)
+        public async Task<HttpResponseMessage> CambiarEstadoClienteAsync(int id)
         {
             // Realiza la solicitud PATCH a la API
             var response = await _httpClient.PatchAsync($"Clientes/UpdateEstadoCliente/{id}");
@@ -177,10 +177,6 @@ namespace VistaNewProject.Services
             }
             return response;
         }
-
-
-
-
 
 
         public async Task<HttpResponseMessage> UpdatePresentacionAsync(PresentacionUpdate presentacion)
@@ -365,7 +361,7 @@ namespace VistaNewProject.Services
             return response;
         }
 
-       
+
 
 
         public async Task<HttpResponseMessage> UpdateDetallesComprasAsync(Detallecompra detallecompra)
@@ -472,7 +468,7 @@ namespace VistaNewProject.Services
             }
             return response;
         }
-        public async Task< Marca> FindMarcaAsync(int? id)
+        public async Task<Marca> FindMarcaAsync(int? id)
         {
             var response = await _httpClient.GetFromJsonAsync<Marca>($"Marcas/GetMarcaById?id={id}");
 
@@ -635,15 +631,15 @@ namespace VistaNewProject.Services
         }
 
         public async Task<Categoria> FindnombreCategoriaAsync(string nombreCategoria)
-        { 
-             var response = await _httpClient.GetFromJsonAsync<Categoria>($"Categorias/GetNombreCategoriaById?nombreCategoria={nombreCategoria}");
+        {
+            var response = await _httpClient.GetFromJsonAsync<Categoria>($"Categorias/GetNombreCategoriaById?nombreCategoria={nombreCategoria}");
             if (response == null)
             {
                 // Manejar el caso en el que response sea nulo
                 throw new Exception("No se encontró la categoria con el ID especificado.");
             }
             return response;
-    
+
         }
 
         public async Task<HttpResponseMessage> UpdateCategoriaAsync(CategoriaUpdate categoria)
@@ -697,7 +693,7 @@ namespace VistaNewProject.Services
 
 
 
-      
+
 
         public async Task<HttpResponseMessage> UpdateUsuarioAsync(Usuario usuario)
         {
@@ -851,7 +847,7 @@ namespace VistaNewProject.Services
 
         public async Task<HttpResponseMessage> CreateProductoAsync(Producto producto)
         {
-            var response = await _httpClient.PostAsJsonAsync("Productos/InsertarProducto",producto);
+            var response = await _httpClient.PostAsJsonAsync("Productos/InsertarProducto", producto);
 
             if (response == null)
             {
@@ -860,7 +856,7 @@ namespace VistaNewProject.Services
             }
             return response;
         }
-   
+
         public async Task<Producto> FindProductoAsync(int id)
 
         {
@@ -1033,7 +1029,7 @@ namespace VistaNewProject.Services
                 throw new Exception("No se encontró la unidad con el ID especificado.");
             }
             return response;
-               
+
         }
 
         public async Task<HttpResponseMessage> UpdateProveedorAsync(ProveedorUpdate proveedor)
@@ -1067,7 +1063,7 @@ namespace VistaNewProject.Services
         }
         public async Task<IEnumerable<Lote>> GetLotesByProductIdAsync(int productId)
         {
-           var lotes = await _httpClient.GetFromJsonAsync<IEnumerable<Lote>>($"Lotes/GetLotesByProductId?productId={productId}");
+            var lotes = await _httpClient.GetFromJsonAsync<IEnumerable<Lote>>($"Lotes/GetLotesByProductId?productId={productId}");
 
             if (lotes == null)
             {
@@ -1094,7 +1090,7 @@ namespace VistaNewProject.Services
             return response;
         }
 
-       
+
 
         public async Task<HttpResponseMessage> UpdateLoteAsync(Lote lote)
         {
@@ -1166,7 +1162,7 @@ namespace VistaNewProject.Services
 
 
 
-     
+
 
 
 
@@ -1296,7 +1292,7 @@ namespace VistaNewProject.Services
 
         public async Task<IEnumerable<CategoriaxUnidad>> GetCategoriaxUnidadesAsync()
         {
-        
+
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxUnidad>>("CategoriaxUnidad/GetCategoriasxUnidades");
             if (response == null)
             {
@@ -1338,25 +1334,41 @@ namespace VistaNewProject.Services
             }
         }
 
-        
+
 
 
         public async Task<IEnumerable<CategoriaxPresentacion>> GetCategoriaxPresentacionesAsync()
         {
 
-                var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxPresentacion>>("CategoriaxPresentacion/GetCategoriasxPresentaciones");
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxPresentacion>>("CategoriaxPresentacion/GetCategoriasxPresentaciones");
 
-                if (response == null)
-                {
-                    // Manejar el caso en el que response sea nulo
-                    throw new Exception("No se encontró la unidad con el ID especificado.");
-                }
-                return response;
-         
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró resultado alguno.");
+            }
+            return response;
+
         }
-        public async Task<HttpResponseMessage> CreateCategoriaxPresentacionAsync(CategoriaxPresentacion categoriaxpresentacion)
+        public async Task<HttpResponseMessage> CreateCategoriaxPresentacionAsync(CategoriaxPresentacionAsosiacion categoriaxpresentacion)
         {
-            var response = await _httpClient.PostAsJsonAsync("CategoriaxPresentacion/InsertarCategoria", categoriaxpresentacion);
+            var response = await _httpClient.PostAsJsonAsync("CategoriaxPresentacion/InsertarCategoriaxPresentacion", categoriaxpresentacion);
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró ninguna presentacion con el ID especificado.");
+            }
+            return response;
+
+      
+        }
+        public async Task<IEnumerable<CategoriaxPresentacion>> GetCategoriasxPresentacionByIdAsync(int presentacionId){
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxPresentacion>>($"CategoriaxPresentacion/GetCategoriasxPresentacionById?id={presentacionId}");
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró ninguna presentacion con el ID especificado.");
+            }
             return response;
         }
         public async Task<HttpResponseMessage> DeleteCategoriaxPresentacionAsync(int categoriaId, int presentacionId)
@@ -1388,7 +1400,7 @@ namespace VistaNewProject.Services
 
         public async Task<IEnumerable<CategoriaxMarca>> GetCategoriaxMarcasAsync()
         {    
-           var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxMarca>>("CategoriaxMarca/GetCategoriasxMarcaes");
+           var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxMarca>>("CategoriaxMarca/GetCategoriasxMarcas");
 
             if (response == null)
             {
@@ -1407,7 +1419,7 @@ namespace VistaNewProject.Services
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"CategoriaxMarca/DeleteCategoriaxMarca/{categoriaId}/{marcaId}"
+                var response = await _httpClient.DeleteAsync($"CategoriaxMarca/DeleteUnidadxProducto/{categoriaId}/{marcaId}"
 );
 
                 if (!response.IsSuccessStatusCode)

@@ -19,11 +19,10 @@ namespace ApiNewProject.Controllers
             _context = context;
         }
 
-        // GET: api/CategoriaxMarca/GetCategoriasxMarcaes
-        [HttpGet("GetCategoriasxMarcaes")]
-        public async Task<ActionResult<List<CategoriaxMarca>>> GetCategoriasxMarcaes()
+        [HttpGet("GetCategoriasxMarcas")]
+        public async Task<ActionResult<List<CategoriaxMarca>>> GetCategoriasxMarcas()
         {
-            var list = await _context.CategoriaxMarcas.Select(
+            var lista = await _context.CategoriaxMarcas.Select(
                 s => new CategoriaxMarca
                 {
                     CategoriaId = s.CategoriaId,
@@ -34,53 +33,78 @@ namespace ApiNewProject.Controllers
                     EstadoMarca = s.EstadoMarca
                 }
             ).ToListAsync();
-            return list;
+            return lista;
         }
 
-        // GET: api/CategoriaxMarca/GetCategoriaxMarca/5
-        [HttpGet("GetCategoriaxMarca/{categoriaId}/{marcaId}")]
-        public async Task<ActionResult<CategoriaxMarca>> GetCategoriaxMarca(int categoriaId, int marcaId)
-        {
-            var categoriaxMarca = await _context.CategoriaxMarcas.FindAsync(categoriaId, marcaId);
-
-            if (categoriaxMarca == null)
-            {
-                return NotFound();
-            }
-
-            return categoriaxMarca;
-        }
-
-        // POST: api/CategoriaxMarca/InsertarCategoria
-        [HttpPost("InsertarCategoria")]
-        public async Task<ActionResult<CategoriaxMarca>> InsertarCategoria(CategoriaxMarca categoriaxMarca)
+        [HttpGet("GetCategoriasxMarcaById")]
+        public async Task<ActionResult<List<CategoriaxMarca>>> GetCategoriasxMarcaById(int id)
         {
             try
             {
-                if (categoriaxMarca == null)
-                {
-                    return BadRequest("Los datos de la categoria no pueden ser nulos.");
-                }
-                var categoria = await _context.Categorias.FirstOrDefaultAsync(s => s.CategoriaId == categoriaxMarca.CategoriaId);
-                var marca = await _context.Marcas.FirstOrDefaultAsync(m=> m.MarcaId == categoriaxMarca.MarcaId);
-                categoriaxMarca.NombreCategoria = categoria?.NombreCategoria;
-                categoriaxMarca.EstadoCategoria = categoria?.EstadoCategoria;
-                categoriaxMarca.NombreMarca= marca?.NombreMarca;
-                categoriaxMarca.EstadoMarca = marca?.EstadoMarca;
-                _context.CategoriaxMarcas.Add(categoriaxMarca);
-                await _context.SaveChangesAsync();
+                var categoriasxMarcas = await _context.CategoriaxMarcas
+                 .Where(cm => cm.MarcaId == id)
+                .ToListAsync();
 
-                return CreatedAtAction(nameof(GetCategoriaxMarca), new { categoriaId = categoriaxMarca.CategoriaId, marcaId = categoriaxMarca.MarcaId }, categoriaxMarca);
+                return categoriasxMarcas;
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar la categoria en la base de datos: " + ex.Message);
+                // Considera registrar el error en un log aquí
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                                 "Error al obtener las asociaciones categoría-marca: " + ex.Message);
             }
         }
 
-        // DELETE: api/CategoriaxMarca/DeleteCategoriaxMarca/5
+
+
+        [HttpPost("InsertarCategoriaxMarca")]
+        public async Task<ActionResult<CategoriaxMarcaAsociacion>> InsertarCategoriaxMarca(CategoriaxMarcaAsociacion categoriaxMarcaAsociacion)
+        {
+            try
+            {
+                if (categoriaxMarcaAsociacion == null)
+                {
+                    return BadRequest("Los datos de la categoría no pueden ser nulos.");
+                }
+                if (CategoriaxPresentacionExists(categoriaxMarcaAsociacion.CategoriaId, categoriaxMarcaAsociacion.MarcaId))
+                {
+                    return Conflict("La relación entre esta categoría y esta marca ya existe.");
+                }
+
+                var categoria = await _context.Categorias.FirstOrDefaultAsync(s => s.CategoriaId == categoriaxMarcaAsociacion.CategoriaId);
+                var marca = await _context.Marcas.FirstOrDefaultAsync(m => m.MarcaId == categoriaxMarcaAsociacion.MarcaId);
+
+                // Validación adicional: Asegurarse de que la categoría y la marca existen
+                if (categoria == null || marca == null)
+                {
+                    return BadRequest("La categoría o la marca especificadas no existen.");
+                }
+
+                // Crear instancia de CategoriaxMarca y llenar con datos
+                var categoriaxMarca = new CategoriaxMarca
+                {
+                    CategoriaId = categoriaxMarcaAsociacion.CategoriaId,
+                    MarcaId = categoriaxMarcaAsociacion.MarcaId,
+                    NombreCategoria = categoria.NombreCategoria,
+                    EstadoCategoria = categoria.EstadoCategoria,
+                    NombreMarca = marca.NombreMarca,
+                    EstadoMarca = marca.EstadoMarca
+                };
+
+                _context.CategoriaxMarcas.Add(categoriaxMarca);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Considera registrar el error en un log aquí
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar la relación categoría-marca: " + ex.Message);
+            }
+        }
+
+        // DELETE: api/CategoriaxMarca/DeleteUnidadxProducto/5
         [HttpDelete("DeleteCategoriaxMarca/{categoriaId}/{marcaId}")]
-        public async Task<IActionResult> DeleteCategoriaxMarca(int categoriaId, int marcaId)
+        public async Task<IActionResult> DeleteUnidadxProducto(int categoriaId, int marcaId)
         {
             var categoriaxMarca = await _context.CategoriaxMarcas.FindAsync(categoriaId, marcaId);
             if (categoriaxMarca == null)
@@ -94,7 +118,7 @@ namespace ApiNewProject.Controllers
             return NoContent();
         }
 
-        private bool CategoriaxMarcaExists(int categoriaId, int marcaId)
+        private bool CategoriaxPresentacionExists(int categoriaId, int marcaId)
         {
             return _context.CategoriaxMarcas.Any(e => e.CategoriaId == categoriaId && e.MarcaId == marcaId);
         }

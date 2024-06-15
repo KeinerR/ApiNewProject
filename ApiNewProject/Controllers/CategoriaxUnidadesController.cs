@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 
 namespace ApiNewProject.Controllers
@@ -23,52 +24,78 @@ namespace ApiNewProject.Controllers
         [HttpGet("GetCategoriasxUnidades")]
         public async Task<ActionResult<List<CategoriaxUnidad>>> GetCategoriasxUnidades()
         {
-            var list = await _context.CategoriaxUnidades.Select(
+            var lista = await _context.CategoriaxUnidades.Select(
                 s => new CategoriaxUnidad
                 {
                     CategoriaId = s.CategoriaId,
-                    UnidadId = s.UnidadId
+                    UnidadId = s.UnidadId,
+                    NombreCategoria = s.NombreCategoria,
+                    EstadoCategoria = s.EstadoCategoria,
+                    NombreUnidad = s.NombreUnidad,
+                    CantidadPorUnidad = s.CantidadPorUnidad,
+                    EstadoUnidad = s.EstadoUnidad
                 }
             ).ToListAsync();
-            return list;
+            return lista;
         }
 
-        // GET: api/CategoriaxUnidad/GetCategoriaxUnidad/
-        [HttpGet("GetCategoriaxUnidad/{categoriaId}/{UnidadId}")]
-        public async Task<ActionResult<CategoriaxUnidad>> GetCategoriaxUnidad(int categoriaId, int UnidadId)
-        {
-            var CategoriaxUnidad = await _context.CategoriaxUnidades.FindAsync(categoriaId, UnidadId);
-
-            if (CategoriaxUnidad == null)
-            {
-                return NotFound();
-            }
-
-            return CategoriaxUnidad;
-        }
-      
-        // POST: api/CategoriaxUnidad/InsertarCategoria
-        [HttpPost("InsertarCategoria")]
-        public async Task<ActionResult<CategoriaxUnidad>> InsertarCategoria(CategoriaxUnidad CategoriaxUnidad)
+        [HttpGet("GetCategoriasxUnidadById")]
+        public async Task<ActionResult<List<CategoriaxUnidad>>> GetCategoriasxUnidadById(int id)
         {
             try
             {
-                if (CategoriaxUnidad == null)
+                var categoriasxUnidades = await _context.CategoriaxUnidades
+                 .Where(cm => cm.UnidadId == id)
+                .ToListAsync();
+
+                return categoriasxUnidades;
+            }
+            catch (Exception ex)
+            {
+                // Considera registrar el error en un log aquí
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                                 "Error al obtener las asociaciones categoría-marca: " + ex.Message);
+            }
+        }
+
+        [HttpPost("InsertarCategoriaxUnidad")]
+        public async Task<ActionResult<CategoriaxUnidadAsosiacion>> InsertarCategoriaxUnidad(CategoriaxUnidadAsosiacion categoriaxUnidadAsociacion)
+        {
+            try
+            {
+                if (categoriaxUnidadAsociacion == null)
                 {
                     return BadRequest("Los datos de la categoria no pueden ser nulos.");
                 }
+                var categoria = _context.Categorias.FirstOrDefault(c => c.CategoriaId == categoriaxUnidadAsociacion.CategoriaId);
+                var unidad = _context.Unidades.FirstOrDefault(c => c.UnidadId == categoriaxUnidadAsociacion.UnidadId);
+                if(CategoriaxUnidadExists(categoriaxUnidadAsociacion.CategoriaId, categoriaxUnidadAsociacion.UnidadId))
+                if (categoria == null || unidad == null) {
+                    return Conflict("La categoria o unidad no existen");
+                }
+                // Crear instancia de CategoriaxMarca y llenar con datos
+                var categoriaxUnidad = new CategoriaxUnidad
+                {
+                    CategoriaId = categoriaxUnidadAsociacion.CategoriaId,
+                    UnidadId = categoriaxUnidadAsociacion.UnidadId,
+                    NombreCategoria = categoria?.NombreCategoria,
+                    EstadoCategoria = categoria?.EstadoCategoria,
+                    NombreUnidad = unidad?.NombreUnidad,
+                    CantidadPorUnidad =  unidad?.CantidadPorUnidad,
+                    EstadoUnidad = unidad?.EstadoUnidad
+                };
 
-                _context.CategoriaxUnidades.Add(CategoriaxUnidad);
+                _context.CategoriaxUnidades.Add(categoriaxUnidad);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction(nameof(GetCategoriaxUnidad), new { categoriaId = CategoriaxUnidad.CategoriaId, UnidadId = CategoriaxUnidad.UnidadId }, CategoriaxUnidad);
+                return Ok();
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar la categoria en la base de datos: " + ex.Message);
             }
         }
-        // DELETE: api/CategoriaxUnidad/DeleteCategoriaxUnidad/5
+
         [HttpDelete("DeleteCategoriaxUnidad/{categoriaId}/{UnidadId}")]
         public async Task<IActionResult> DeleteCategoriaxUnidad(int categoriaId, int UnidadId)
         {
