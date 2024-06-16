@@ -15,6 +15,11 @@
                 </div>
             </form>
         </div>
+
+        <button type="button" class="reporte-crear rounded-pill d-flex ov-btn-grow-ellipse justify-content-center align-items-around" data-toggle="modal" data-target="#dateModal">
+            <a asp-action="GenerarPDF" class="btn btn-primary">Generar PDF</a>
+        </button>
+
         <!-- Botón para abrir el modal -->
         <button type="button" onclick="simularClickProducto();" id="botonabrirModalProducto" class="btn btn-primary botonAbrirModal" data-bs-toggle="modal" data-bs-target="#ModalProducto" >
             <i class="fas fa-plus-circle"></i>  Agregar producto
@@ -257,14 +262,14 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6 PorMayorAct descuentoAplica noBe">
+                            <div class="col-md-6 PorMayorAct noBe">
                                 <div class="form-group">
                                     <label for="CantidadAplicarPorMayorAct" class="control-label">Cantidad de unidades a superar<span class="Mensaje"></span></label>
                                     <input type="text" id="CantidadAplicarPorMayorAct" oninput="validarCampoProducto(this)" name="cantidadAplicarPorMayor" class="form-control" />
                                     <span class="text-danger"></span>
                                 </div>
                             </div>
-                            <div class="col-md-6 PorMayorAct descuentoAplica noBe">
+                            <div class="col-md-6 PorMayorAct noBe">
                                 <div class="form-group">
                                     <label for="DescuentoAplicarPorMayorAct" class="control-label">Descuento por producto<span class="Mensaje"></span></label>
                                     <input type="text" id="DescuentoAplicarPorMayorAct" oninput="validarCampoProducto(this)" name="descuentoAplicarPorMayor" class="form-control" />
@@ -274,7 +279,7 @@
                             <div class="text-center">
                                 <div class="modal-contenedor-check check-mayor-no-aplica">
                                     <div class="contenedorDatos">
-                                        <label class="form-check-label labelDescuentoPorMayor" for="checkboxDescuentoPorMayorAct">Aplicar Descuento por mayor<span class="Mensaje"></span></label>
+                                        <label class="ontrol-label" for="checkboxDescuentoPorMayorAct">Aplicar Descuento por mayor<span class="Mensaje"></span></label>
                                         <input type="checkbox" class="form-check-input" onclick="Llamar2();" id="checkboxDescuentoPorMayorAct">
                                     </div>
                                 </div>
@@ -388,8 +393,8 @@
                     int contadorB = 1;
                     foreach (var producto in productos)
                     {
-                        <tr class="Productos noIs">
-                            <td class="contadorB noIs">
+                        <tr class="Productos noBe">
+                            <td class="contadorB noBe">
                                 @contadorB <!-- Muestra el valor del contador -->
                             </td>
                             <td>@producto.ProductoId</td>
@@ -423,7 +428,6 @@
             }
         </tbody>
     </table>
-
       <div class="pagination-container mt-2">
         @if (Model != null && Model.PageCount > 1)
         {

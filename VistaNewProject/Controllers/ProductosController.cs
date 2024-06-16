@@ -7,9 +7,18 @@ using System.Net;
 using System;
 using Microsoft.AspNetCore.Http;
 
+
 using Microsoft.CodeAnalysis.Operations;
 using System.Collections.Immutable;
 using System.Net.Http;
+using Microsoft.AspNetCore.Authorization;
+using System.Drawing.Printing;
+using System.Drawing;
+using Microsoft.CSharp;
+using System.Xml.Linq;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+
 
 
 namespace VistaNewProject.Controllers
@@ -685,6 +694,70 @@ namespace VistaNewProject.Controllers
                 return string.Empty;
             }
         }
+
+        public async Task<IActionResult> GenerarPDF()
+        {
+            var productos = await _client.GetProductoAsync(); // Obtener la lista de productos desde el servicio
+
+            // Crear el documento PDF
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                Document document = new Document();
+                PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+                document.Open();
+
+                // Título del documento
+                Paragraph title = new Paragraph("Reporte de Productos", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.BLACK));
+                title.Alignment = Element.ALIGN_CENTER;
+                document.Add(title);
+
+                // Agregar tabla de productos
+                PdfPTable table = new PdfPTable(4); // 4 columnas para Categoría, Marca, Nombre Producto, Cantidad
+                table.WidthPercentage = 100;
+                table.SpacingBefore = 10f;
+                table.SpacingAfter = 10f;
+
+                // Encabezados de tabla
+                PdfPCell cell = new PdfPCell(new Phrase("Categoría", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE)));
+                cell.BackgroundColor = BaseColor.GRAY;
+                table.AddCell(cell);
+
+                cell = new PdfPCell(new Phrase("Marca", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE)));
+                cell.BackgroundColor = BaseColor.GRAY;
+                table.AddCell(cell);
+
+                cell = new PdfPCell(new Phrase("Nombre Producto", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE)));
+                cell.BackgroundColor = BaseColor.GRAY;
+                table.AddCell(cell);
+
+                cell = new PdfPCell(new Phrase("Cantidad", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE)));
+                cell.BackgroundColor = BaseColor.GRAY;
+                table.AddCell(cell);
+
+                // Llenar tabla con datos de productos
+                foreach (var producto in productos)
+                {
+                    string categoriaNombre = producto.Categoria != null ? producto.Categoria.NombreCategoria : ""; // Ajustar según la propiedad correcta de Categoria
+                    string marcaNombre = producto.Marca != null ? producto.Marca.NombreMarca : ""; // Ajustar según la propiedad correcta de Marca
+                    string nombreProducto = producto.NombreProducto ?? "";
+                    string cantidadTotal = producto.CantidadTotal.ToString();
+
+                    table.AddCell(categoriaNombre);
+                    table.AddCell(marcaNombre);
+                    table.AddCell(nombreProducto);
+                    table.AddCell(cantidadTotal);
+                }
+
+                // Agregar tabla al documento
+                document.Add(table);
+
+                document.Close();
+
+                // Devolver el archivo PDF como FileResult
+                return File(memoryStream.ToArray(), "application/pdf", "ReporteProductos.pdf");
+            }
+        }
+
 
 
 

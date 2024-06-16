@@ -5,7 +5,6 @@ namespace VistaNewProject.Models
 {
     public class Presentacion
     {
-        [BindNever]
         public int PresentacionId { get; set; }
 
         [Required(ErrorMessage = "El nombre de la presentación es obligatorio.")]

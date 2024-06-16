@@ -123,7 +123,7 @@ async function actualizarEstadoCategoriaxMarca(marcaId, categoriaId, isChecked) 
         return;
     }
 
-    const url = isChecked ? '/CategoriasxTabla/CrearCategoriaxMarca' : '/CategoriasxTabla/DeleteCategoriaxMarca';
+    const url = isChecked ? '/CategoriasxTabla/CrearCategoriaxMarca' : '/CategoriasxTabla/DeleteUnidadxProducto';
     const method = isChecked ? 'POST' : 'DELETE';
     const data = isChecked ? JSON.stringify({ categoriaId: categoriaId, marcaId: marcaId }) : JSON.stringify({ categoriaId: categoriaId, marcaId: marcaId });
 

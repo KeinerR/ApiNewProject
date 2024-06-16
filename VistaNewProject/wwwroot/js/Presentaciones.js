@@ -363,9 +363,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 function simularClickPresentacion() {
-    //ocultar formulario de actualizar  y mostrar el formulario principal
-    $('#FormActualizarPresentacion').hide();
-    $('#FormPrincipalPresentacion').show().css('visibility', 'visible');
     obtenerDatosPresentaciones();
 }
 
@@ -392,16 +389,6 @@ document.addEventListener('keydown', function (event) {
         }
     }
 });
-
-function abrirModalPresentacion() {
-    // Verificar si la modal está abierta
-    if ($('#ModalPresentacion').hasClass('show')) {
-        $('#ModalPresentacion').modal('hide'); // Cerrar la modal
-    } else {
-        simularClickPresentacion(); // Simular algún evento antes de abrir la modal
-        $('#ModalPresentacion').modal('show'); // Abrir la modal
-    }
-}
 
 function limpiarFormularioPresentacion() {
     limpiarFormularioPresentacionAgregar();
@@ -475,24 +462,11 @@ $('.modal').on('click', function (e) {
 });
 
 function AlPerderFocoPresentacion() {
-    var displayFormActualizar = $('#FormActualizarPresentacion').css('display');
-    var displayModal = $('#ModalPresentacion').css('display');
-    if (displayFormActualizar == "block" && displayModal == "none") {
-        limpiarFormularioPresentacionAct();
-    }
+   limpiarFormularioPresentacionAct();
 }
 
 /*--------------------------------------------------------- Modal de actualizar usuario ---------------------------------------*/
-function mostrarModalConRetrasoPresentacion(presentacionId) {
-    limpiarFormularioPresentacionAct();
-    actualizarPresentacion(presentacionId);
-    setTimeout(function () {
-        var myModal = new bootstrap.Modal(document.getElementById('ModalPresentacion'));
-        myModal.show();
-        // Aquí puedes llamar a la función actualizarProducto si es necesario
-    }, 400); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
 
-}
 //Modal cuando se hace click en editar en el boton de detalle
 function mostrarModalSinRetrasoPresentacion(presentacionId) {
     obtenerDatosPresentaciones();
@@ -528,8 +502,6 @@ function actualizarPresentacion(campo) {
             alert('Error al obtener los datos de la  presentacion.');
         }
     });
-    $('#FormPrincipalPresentacion').hide().css('visibility', 'hidden');
-    $('#FormActualizarPresentacion').show().css('visibility', 'visible');
 }
 function actualizarEstadoPresentacion(PresentacionId) {
     $.ajax({
@@ -598,9 +570,9 @@ function searchPresentacion() {
         if (input === "") {
             row.style.display = 'none';
         } else {
-            var presentacionId = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-            var nombreC = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
-            row.style.display = (input === "" || presentacionId.includes(input) || nombreC.includes(input)) ? 'table-row' : 'none';
+            var presentacionId = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+            var nombreC = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
+            row.style.display = (presentacionId.includes(input) || nombreC.includes(input)) ? 'table-row' : 'none';
         }
     });
 }
