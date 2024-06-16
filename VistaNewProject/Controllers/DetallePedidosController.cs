@@ -537,9 +537,23 @@ namespace VistaNewProject.Controllers
 
 
                 var cantidadOriginalDetalle = detalleantes.Cantidad;
+                var productoId=detalleantes.ProductoId;
+                var productooriginal = await _client.FindProductoAsync(productoId.Value);
                 detalleantes.Subtotal -= subtotaloriginal;
                 detalleantes.Cantidad += detallepedido.Cantidad;
 
+                var cantidaddisponible = productooriginal.CantidadTotal - productooriginal.CantidadReservada;
+
+                if (cantidaddisponible < detallepedido.Cantidad)
+                {
+
+                    TempData["SuccessMessage"] = "No  hay suficientes  productos para agregarlos a la venta.";
+
+
+                    RedirectToAction("Details", "Movimientos");
+
+                }
+             
                 var response = await _client.UpdateDetallepedidosAsync(detalleantes);
 
                 detalleantes.Subtotal += detallepedido.Subtotal;
@@ -551,7 +565,6 @@ namespace VistaNewProject.Controllers
                 }
 
                 int cantidadRestante = detallepedido.Cantidad.Value;
-                var productoId = detallepedido.ProductoId;
                 var loteIdDetalle = detallepedido.LoteId;
 
                 var lote = await _client.FindLoteAsync(loteIdDetalle.Value);
@@ -638,13 +651,17 @@ namespace VistaNewProject.Controllers
                 Console.WriteLine(detallepedido);
 
                 var detalleantes = await _client.FindDetallesPedidoAsync(detallepedido.DetallePedidoId);
+
+
+                var productoId = detalleantes.ProductoId;
+
+              
                 var cantidadOriginalDetalle = detalleantes.Cantidad;
                 var subtotaloriginal = detalleantes.Subtotal;
 
 
 
                 detalleantes.Subtotal -= subtotaloriginal;
-
                 detalleantes.Cantidad -= detallepedido.Cantidad;
                 var response = await _client.UpdateDetallepedidosAsync(detalleantes);
                 detalleantes.Subtotal += detallepedido.Subtotal;
@@ -655,7 +672,6 @@ namespace VistaNewProject.Controllers
                     Console.WriteLine("Actualizacion Correcta");
                 }
 
-                var productoId = detallepedido.ProductoId;
                 var loteIdDetalle = detallepedido.LoteId;
 
 

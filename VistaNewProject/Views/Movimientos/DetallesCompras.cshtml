@@ -49,11 +49,11 @@
                             <th>NumeroLote</th>
                             <th>Unidad</th>
                             <th>Cantidad</th>
+                            <th>loteid</th>
                             <th>Precio PrecioPorPresentacion</th>
                             <th>Precio PrecioPorUnidadProducto</th>
                             <th>PrecioCompra</th>
-                            <td>
-                            </td>
+                            <th> Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -65,15 +65,26 @@
                                 <td>@detalle.lote.NumeroLote</td>
                                 <td>@detalle.Unidad.NombreUnidad</td>
                                 <td>@detalle.Cantidad</td>
+                                <td>@detalle.lote.LoteId</td>
+
                                 <td>@detalle.lote.PrecioPorPresentacion</td>
                                 <td>@detalle.lote.PrecioPorUnidadProducto</td>
                                 <td>@detalle.lote.PrecioCompra</td>
-                               
-                                @if (ViewBag.movimiento == "Entrada")
-                                {
+                                <td>
+                                    @if (ViewBag.TipoMovimineto == "Entrada")
+                                    {
 
-                                    
-                                }
+                                        <button class="btn botonEditar" onclick="actualizardetallelotes(@detalle.DetalleCompraId,@detalle.lote.LoteId)"><i class="fas fa-edit"></i></button>
+
+                                    }
+                                    else
+                                    {
+                                        <button class="btn botonEditar" onclick="actualizarproductoId(@detalle.DetalleCompraId,@detalle.lote.LoteId)"><i class="fas fa-edit"></i></button>
+
+
+                                    }
+                                </td>
+                               
                             </tr>
                         }
                     </tbody>
@@ -95,3 +106,87 @@
            
         </div>
     </div>
+
+
+
+    <div class="modal fade GeneralModal" id="ModalDomicilio" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content noBe" id="FormActualiZarDomicilio">
+                <div class="modal-cabecera">
+                    <div id="pibo"></div>
+                    <div class="modal-header-view TituloModal">
+                        <h2 class="modal-title">Movimiento Compras</h2>
+                    </div>
+                    <div class="moda-header-view" id="modal-cabecera-equis">
+                        <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="modal-cuerpo">
+                    <form asp-action="CreatePost" class="modal-formulario-actualizar-domicilio" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="row">
+                            <div class="d-none">
+                                <label for="DetalleCompraId" class="control-label"></label>
+                                <input type="text" id="DetalleCompraId" name="detalleCompraId" class="form-control" />
+                                <span id="detalleerror" class="text-danger"></span>
+                            </div>
+                            <div class="d-none">
+                                <label for="LoteId" class="control-label"></label>
+                                <input type="text" id="LoteId" name="loteId" class="form-control" />
+                                <span id="loteerror" class="text-danger"></span>
+                            </div>
+                            <div class="col-6">
+                                <label for="ProductoId" class="control-label">ProductoId</label>
+                                <input type="text" id="ProductoId" name="productoId" class="form-control" />
+                                <span id="productoerror" class="text-danger"></span>
+                            </div>
+                            <div class="col-6">
+                                <label for="Cantidad" class="control-label">Cantidad</label>
+                                <input type="text" id="Cantidad" name="cantidad" class="form-control" />
+                                <span id="cantidaderror" class="text-danger"></span>
+                            </div>
+                            <div class="col-6">
+                                <label for="FechaVencimiento" class="control-label">FechaVencimiento</label>
+                                <input type="datetime" id="FechaVencimiento" name="fechaVencimiento" class=" form-control" />
+                                <span id="fechaerror" class="text-danger"></span>
+                            </div>
+                            <div class="col-6">
+                                <label for="NumeroLote" class="control-label">NumeroLote</label>
+                                <input type="text" id="NumeroLote" name="numeroLote" class=" form-control" />
+                                <span id="numeroloteerrro" class="text-danger"></span>
+                            </div>
+                            <div class="col-6">
+                                <label for="PrecioCompra" class="control-label">PrecioCompra</label>
+                                <input type="text" id="PrecioCompra" name="precioCompra" class=" form-control" />
+                                <span id="preciocompraerror" class="text-danger"></span>
+                            </div>
+                            <div class="col-6">
+                                <label for="PrecioPorPresentacion" class="control-label">PrecioPorPresentacion</label>
+                                <input type="text" id="PrecioPorPresentacion" name="precioPorPresentacion" class=" form-control" />
+                                <span id="precioporerror" class="text-danger"></span>
+                            </div>
+                            <div class="col-6">
+                                <label for="PrecioPorUnidadProducto" class="control-label">PrecioPorUnidadProducto</label>
+                                <input type="text" id="PrecioPorUnidadProducto" name="precioPorUnidadProducto" class=" form-control" />
+                                <span id="precioPorproductoerror" class="text-danger"></span>
+                            </div>
+                            <div class="col-6 mt-4">
+                                @if (ViewBag.TipoMovimineto == "Entrada")
+                                {
+                                    <button type="button" value="Entrada" onclick="ActualizarDetalle(this.value);" class="btn btn-primary">Entrada</button>
+                                }
+                                else if (ViewBag.TipoMovimineto == "Salida")
+                                {
+                                    <button type="button" value="Salida" onclick="ActualizarDetalle(this.value);" class="btn btn-primary">Salida</button>
+                                }
+                            </div>
+                        </div>
+                     
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/js/movimientos.js"></script>
+
+    <script src="~/js/movimientos.js"></script>

@@ -25,5 +25,9 @@ namespace VistaNewProject.Controllers
 
             return View(detallecompra);
         }
+
+
+    
+
     }
 }

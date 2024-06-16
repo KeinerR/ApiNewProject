@@ -279,3 +279,160 @@ $(document).ready(function () {
             });
     });
 });
+function actualizardetallelotes(detalleId) {
+    console.log(detalleId);
+    var modalElement = document.getElementById('ModalDomicilio');
+    if (modalElement) {
+        var myModal = new bootstrap.Modal(modalElement);
+        myModal.show();
+    } else {
+        console.error('Modal element not found');
+    }
+
+    $.ajax({
+        url: '/Lotes/findDlotes', // Ruta relativa al controlador y la acción
+        type: 'POST',
+        data: { detalleCompraId: detalleId },
+        success: function (data) {
+            console.log(data);
+
+            // Verifica si data es un array y tiene al menos un objeto
+            if (Array.isArray(data) && data.length > 0) {
+                var lote = data[0];
+                var productoNombre = lote.productoId; // Asume que estás interesado en el primer lote
+                productosnombre(productoNombre);
+
+                // Asegúrate de que los campos de entrada existen antes de asignar valores
+                var formActualizar = $('#FormActualiZarDomicilio');
+                var fields = {
+                    '#DetalleCompraId': lote.detalleCompraId,
+                    '#LoteId': lote.loteId,
+                    '#Cantidad': lote.cantidad,
+                    '#FechaVencimiento': lote.fechaVencimiento,
+                    '#NumeroLote': lote.numeroLote,
+                    '#PrecioCompra': lote.precioCompra,
+                    '#PrecioPorPresentacion': lote.precioPorPresentacion,
+                    '#PrecioPorUnidadProducto': lote.precioPorUnidadProducto
+                };
+
+                for (var fieldId in fields) {
+                    var field = formActualizar.find(fieldId);
+                    if (field.length) {
+                        field.val(fields[fieldId]);
+                    } else {
+                        console.error(`Field ${fieldId} not found`);
+                    }
+                }
+            } else {
+                console.error('No data received or data is not an array');
+            }
+        },
+        error: function () {
+            alert('Error al obtener los datos del domicilio.');
+        }
+    });
+
+    $('#FormActualiZarDomicilio').show().css('visibility', 'visible');
+}
+
+
+
+function productosnombre(productoNombre) {
+    console.log(productoNombre);
+
+    $.ajax({
+        url: '/Productos/FindProducto', // Ruta relativa al controlador y la acción
+        type: 'POST',
+        data: { productoId: productoNombre },
+        success: function (data) {
+            console.log("producto",data);
+
+            $("#ProductoId").val(data.nombreProducto);
+            
+
+        },
+        error: function () {
+            alert('Error al obtener los datos del domicilio.');
+        }
+    });
+
+
+};
+
+function ActualizarLotes(tipomovimineto) {
+    var detalleid = $('#DetalleCompraId').val();
+    var LoteId = $('#LoteId').val();
+    var productoId = $('#ProductoId').val();
+    var Cantidad = $('#Cantidad').val();
+    var FechaVencimiento = $('#FechaVencimiento').val();
+    var NumeroLote = $('#NumeroLote').val();
+    var PrecioCompra = $('#PrecioCompra').val();
+    var PrecioPorPresentacion = $('#PrecioPorPresentacion').val();
+    var PrecioPorUnidadProducto = $('#PrecioPorUnidadProducto').val();
+
+    console.log(tipomovimineto)
+    if (!validarenviadaCompra()) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'El formulario no cumple con los requisitos'
+        });
+        return false; // Detiene el envío del formulario si la validación falla
+    }
+
+    var data = {
+        detallePedidoId: detalleid,
+        pedidoId: pedidoId,
+        productoId: productoId,
+        loteId: loteId,
+        unidadId: unidadId,
+        precioUnitario: precio,
+        subtotal: subtotal,
+        cantidad: cantidad,
+        tipomovimineto: tipomovimineto // Añadir el tipo de movimiento
+    };
+
+    $.ajax({
+        url: `/DetallePedidos/Update?tipomovimineto=${encodeURIComponent(tipomovimineto)}`,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function (response) {
+            if (response.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: response.message,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                }).then((result) => {
+                    window.location.href = '/Movimientos/Index';
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: response.message
+                });
+            }
+        },
+        error: function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al actualizar el detalle.'
+            });
+        }
+    });
+}
+
+
+
+$(document).ready(function () {
+    // Obtener la fecha actual en formato ISO (yyyy-mm-ddThh:mm)
+    var fechaActualISO = new Date().toISOString().slice(0, 16);
+
+    // Establecer el valor del campo FechaMovimiento
+    $('#FechaMovimiento').val(fechaActualISO);
+});

@@ -177,7 +177,7 @@ namespace ApiNewProject.Controllers
             {
                 // Obtener solo los productos cuyo estado es diferente de cero
                 var comprasRealizadas = await _context.Compras
-                    .Where(p => p.EstadoCompra != 1)
+                    .Where(p => p.EstadoCompra != 0)
                     .Select(p => new Compra
                     {
                         CompraId = p.CompraId,

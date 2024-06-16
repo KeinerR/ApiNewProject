@@ -38,10 +38,11 @@
             <span id="buscarError" class="text-danger"></span>
         </div>
         <div class="col-6">
-                <label asp-for="FechaMovimiento" class="control-label"></label>
-                <input asp-for="FechaMovimiento" class="form-control" />
-                <span asp-validation-for="FechaMovimiento" class="text-danger"></span>
-            </div>
+            <label asp-for="FechaMovimiento" class="control-label"></label>
+            <input type="datetime-local" id="FechaMovimiento" name="fechaMovimiento" class="form-control" />
+            <span asp-validation-for="FechaMovimiento" class="text-danger"></span>
+        </div>
+
             <div class="col-6">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
