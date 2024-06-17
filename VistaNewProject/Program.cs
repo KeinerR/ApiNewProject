@@ -78,6 +78,6 @@ app.UseCors(builder =>
 // Configurar el enrutamiento predeterminado de controladores
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Login}/{action=Index}");
 
 app.Run(); // Ejecutar la aplicación
