@@ -1,6 +1,7 @@
 ﻿
 
 
+
 var detallesdepedidp = [];
 
 function agregarDetalle(url) {
@@ -140,7 +141,7 @@ function validarUnidad(unidad) {
 
     unidad = unidad.trim();
 
-    if (unidad === "" ) {
+    if (unidad === "") {
         mostrarError(unidadInput, unidadError, "El campo Unidad no puede estar vacío.");
         return false;
     }
@@ -165,7 +166,7 @@ function validarProducto(producto) {
         mostrarError(productoInput, productoError, "El campo Producto no puede estar vacío.");
         return false;
     }
-    if (!prod.value ){
+    if (!prod.value) {
         mostrarError(productoInput, productoError, "El  Producto no es el que esta registrado de datos.");
         return false;
     } else {
@@ -307,7 +308,7 @@ document.getElementById('ProductoId').addEventListener('change', async function 
 
         var data = await response.json();
 
-      
+
 
         var datalist = document.getElementById('LoteList');
         datalist.innerHTML = '';
@@ -385,184 +386,256 @@ $(document).ready(function () {
         }
     });
 
-   
-       
 
 
+    let unidades = [];
 
-    // Función para obtener y mostrar los detalles del producto seleccionado
     function obtenerDetallesProducto(productId) {
-
-
-        fetch(`https://localhost:7013/api/Productos/GetNombreProductoPorId/${productId}`)
+        // Llamada para obtener los datos de la unidad y los lotes
+        const fetchUnidades = fetch(`https://localhost:7013/api/Unidades/GetUnidades`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error('Error al obtener las unidades');
                 }
-                return response.text(); // Cambiar response.json() por response.text()
+                return response.json();
             })
             .then(data => {
-                console.log("Nombre del producto:", data);
-                $('#ProductoIdtxt').val(data.trim());
-            })
-            .catch(error => {
-                console.error('There has been a problem with your fetch operation:', error);
+                unidades = data; // Guardar unidades en una variable global
             });
 
-
-        // Llamada a la API para obtener los lotes del producto
-        fetch(`https://localhost:7013/api/Lotes/GetLotes`)
+        const fetchLotes = fetch(`https://localhost:7013/api/Lotes/GetLotes`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al obtener los lotes del producto');
                 }
                 return response.json();
-            })
-            .then(data => {
-                // Filtrar los lotes por productId seleccionado
-                const lotesProducto = data.filter(lote => lote.productoId == productId);
+            });
+
+        const fetchProductos = fetch(`https://localhost:7013/api/Productos/GetProductos`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener los productos');
+                }
+                return response.json();
+            });
+
+        const fetchDetalleCompras = fetch(`https://localhost:7013/api/Detallecompras/GetDetallecompras`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener los detalles de compras');
+                }
+                return response.json();
+            });
+
+        // Esperar a que todas las solicitudes se completen
+        Promise.all([fetchUnidades, fetchLotes, fetchProductos, fetchDetalleCompras])
+            .then(([unidadesData, lotesData, productosData, detalleComprasData]) => {
+                console.log("Unidades:", unidadesData);
+                console.log("Lotes:", lotesData);
+                console.log("Productos:", productosData);
+                console.log("Detalle compras:", detalleComprasData);
+
+                // Procesar datos de producto
+                const productoSeleccionado = productosData.find(producto => producto.productoId == productId);
+                console.log(productoSeleccionado);
+
+                if (productoSeleccionado) {
+                    var AplicarPormayor = productoSeleccionado.cantidadAplicarPorMayor;
+                    var descuento = productoSeleccionado.descuentoAplicarPorMayor;
+                    $('#Descuento').val(descuento);
+                    $('#CantidadAPlicada').val(AplicarPormayor);
+
+
+                    console.log(AplicarPormayor);
+                    console.log(descuento);;
+                    const cantidadTotal = productoSeleccionado.cantidadTotal;
+                    const cantidadReservada = productoSeleccionado.cantidadReservada;
+                    const cantidadDisponible = cantidadTotal - cantidadReservada;
+
+                    if (cantidadDisponible > 0) {
+                        $('#CantidadTxt').attr('placeholder', `Disponible: ${cantidadDisponible}`);
+                    } else {
+                        $('#CantidadTxt').attr('placeholder', 'No hay productos disponibles');
+                    }
+
+                    // Obtener detalles de compras y unidades
+                    const detalles = detalleComprasData.filter(d => d.productoId == productId);
+                    if (detalles.length > 0) {
+                        detalles.forEach(detalle => {
+                            var unidadIdDetalles = detalle.unidadId;
+                            var nombreUnidad = unidades.find(u => u.unidadId == unidadIdDetalles)?.nombreUnidad;
+
+
+                            $('#UnidadTxt').val(nombreUnidad);
+
+                            const dataList = document.getElementById('UnidadIdList');
+                            dataList.innerHTML = '';
+                            if (nombreUnidad) {
+                                const option = document.createElement('option');
+                                option.value = nombreUnidad;
+                                option.setAttribute('data-id', unidadIdDetalles);
+                                dataList.appendChild(option);
+                            }
+                        });
+                    } else {
+                        console.log('No se encontraron detalles para el productoId:', productId);
+                    }
+                }
+
+                // Procesar lotes
+                const lotesProducto = lotesData.filter(lote => lote.productoId == productId);
                 if (lotesProducto.length > 0) {
-                    // Encontrar el lote con la fecha de vencimiento más próxima y con cantidad disponible mayor que cero
                     let loteProximoVencimiento = null;
                     for (const lote of lotesProducto) {
-                        if (lote.cantidad > 0 && lote.estadoLote!=0) {
+                        if (lote.cantidad > 0 && lote.estadoLote != 0) {
                             if (loteProximoVencimiento === null || new Date(lote.fechaVencimiento) < new Date(loteProximoVencimiento.fechaVencimiento)) {
                                 loteProximoVencimiento = lote;
                             }
                         }
                     }
-
                     if (loteProximoVencimiento !== null) {
-                        const precio = loteProximoVencimiento.precioPorPresentacion; // Ajusta esta propiedad según la estructura real
+                        const precio = loteProximoVencimiento.precioPorPresentacion;
+                        const preciopormayor = loteProximoVencimiento.precioPorUnidadProducto
+                        console.log("preciomayor", preciopormayor);
                         $('#PrecioUnitario').val(precio);
-                        $('#LoteId').val(loteProximoVencimiento.loteId); // Asigna el ID del lote al campo LoteId
+                        $('#PrecioUnitariohiddenpormayor').val(preciopormayor);
+
+                        $('#LoteId').val(loteProximoVencimiento.loteId);
                     } else {
-                        // Si no se encontró ningún lote con cantidad disponible mayor que cero
                         $('#PrecioUnitario').val('');
                         $('#LoteId').val('');
+                        $('#PrecioUnitariohiddenpormayor').val('');
+
                     }
                 } else {
-                    // Manejar el caso en que no se encuentren lotes
                     $('#PrecioUnitario').val('');
                     $('#LoteId').val('');
+                    $('#PrecioUnitariohiddenpormayor').val('');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error al obtener los lotes del producto');
+                alert('Error al obtener los datos');
             });
-
-        // Llamada a la API de productos para obtener la cantidad total y establecer el marcador de posición
-        fetch(`https://localhost:7013/api/Productos/GetProductos`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener los productos');
-                }
-                return response.json();
-            })
-            .then(data => {
-
-                // Filtrar los productos por productId seleccionado
-                const productoSeleccionado = data.find(producto => producto.productoId == productId);
-                const unidadId = productoSeleccionado.unidadId;
-
-                if (productoSeleccionado) {
-
-                    const cantidadTotal = productoSeleccionado.cantidadTotal;
-                    const cantidadReservada = productoSeleccionado.cantidadReservada;
-                    const cantidadDisponible = cantidadTotal - cantidadReservada;
-
-
-
-                    if (cantidadDisponible > 0) {
-                        // Mostrar la cantidad total como marcador de posición en el campo "Cantidad"
-                        $('#CantidadTxt').attr('placeholder', `Disponible: ${cantidadDisponible}`);
-                    } else {
-                        // Si la cantidad disponible es cero, mostrar el mensaje apropiado en el marcador de posición
-                        $('#CantidadTxt').attr('placeholder', 'No hay productos disponibles');
-                    }
-                } else {
-                    // Si no se encuentra ningún producto con el productId seleccionado, mostrar un mensaje
-                    $('#CantidadTxt').attr('placeholder', '');
-                }
-
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al obtener los productos');
-            });
-
-
-
-
-
-        fetch(`https://localhost:7013/api/Unidades/GetUnidades`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener los productos');
-                }
-                return response.json();
-            })
-            .then(data => {
-                const dataList = document.getElementById('UnidadIdList');
-                dataList.innerHTML = ''; // Limpiar opciones existentes
-
-
-
-                data.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item.nombreUnidad; // Utiliza el nombre de la unidad para el valor visible
-                    option.setAttribute('data-id', item.unidadId); // Guarda el ID de la unidad como un atributo data-id
-                    dataList.appendChild(option);
-
-                  
-                });
-
-
-             
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al obtener los productos');
-            });
-
-      
     }
 
 
     $(document).ready(function () {
-        $('#UnidadId').on('input', function () {
-            var selectedValue = $(this).val();
-            var selectedOption = $('#UnidadIdList option').filter(function () {
-                return $(this).val() === selectedValue || $(this).data('id') === selectedValue;
-            }).first();
+        $('#CantidadTxt').on('input', function () {
+            // Obtener el valor ingresado en el campo de cantidad y convertirlo a número
+            const cantidadIngresada = parseFloat($(this).val());
+            console.log('Cantidad ingresada:', cantidadIngresada);
 
-            if (selectedOption.length > 0) {
-                var unidadId = selectedOption.attr('data-id');
-                console.log("ID de la unidad seleccionada:", unidadId);
-                $('#unidadHidden').val(unidadId);
-            } else if (!isNaN(selectedValue) && selectedValue !== '') { // Verificar si el valor ingresado es un número
-                fetch(`https://localhost:7013/api/Unidades/GetunidadPorId/${selectedValue}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.text();
-                    })
-                    .then(data => {
-                        console.log("Nombre de la unidad:", data);
-                        $('#UnidadId').val(data.trim());
-                        $('#unidadHidden').val(selectedValue);
-                    })
-                    .catch(error => {
-                        console.error('There has been a problem with your fetch operation:', error);
-                    });
-            } else {
-                $('#unidadHidden').val(''); // Limpiar el campo oculto si no se encuentra ninguna unidad que coincida
+            // Obtener y mostrar el valor de los otros campos
+            var unidadprecio = parseFloat($('#unidadtotal').val()); // Convertir a número el valor obtenido
+            var descuento = parseFloat($('#Descuento').val()); // Convertir a número el valor obtenido
+            var aplicadomayor = parseFloat($('#CantidadAPlicada').val()); // Convertir a número el valor obtenido
+            var precio = parseFloat($('#PrecioUnitario').val());
+            var UnidadId = parseFloat($('#unidadHidden').val());
+            var preciomayor = parseFloat($('#PrecioUnitariohiddenpormayor').val());
+
+            
+
+
+
+
+            // Convertir a número el valor obtenido
+
+            var descuentoaplicar = descuento / 100;
+            var descuentoaplicado = precio * descuentoaplicar;
+            console.log("Valor de preco descuento:", descuentoaplicado);
+
+            var mayordescentoaplicado = preciomayor * descuentoaplicar;
+
+            var precioHiddenmayor = preciomayor - mayordescentoaplicado;
+
+            console.log("Valor de descuento:", descuento);
+            console.log("Valor de precio:", precio);
+            $('#PrecioUnitariohidden').val(preciohhiden);
+
+            console.log("Valor de aplicadomayor:", aplicadomayor);
+            console.log("Valor de unidadtotal:", unidadprecio);
+            console.log("Valor de descuentoAplicado100:", descuentoaplicar);
+            var preciohhiden = precio - descuentoaplicado;
+            console.log("preciocampo", preciohhiden);
+            // Calcular la cantidad total por unidad
+            var cantidadenviar = cantidadIngresada * unidadprecio;
+            $('#CantidadPorUnidad').val(cantidadenviar);
+
+            console.log("Valor de cantidadenviar:", cantidadenviar);
+
+            // Comparar con la cantidad aplicada por mayor y mostrar mensaje si se cumple la condición
+            if (cantidadenviar > aplicadomayor) {
+                $('#PrecioUnitariohidden').val(preciohhiden);
+
+                $('#PrecioEnviar').val(preciohhiden);
+
+
+                console.log("La cantidad supera la cantidad aplicada por mayor.");
+            } 
+            if (cantidadenviar <= aplicadomayor) {
+
+                $('#PrecioEnviar').val(precio);
+
+
+                console.log("La cantidad supera la cantidad aplicada por mayor.");
+            } 
+
+            if (UnidadId != 1 && cantidadenviar >= aplicadomayor) {
+
+
+                $('#PrecioEnviar').val(precioHiddenmayor);
+
+            }
+            if (UnidadId != 1 && cantidadenviar < aplicadomayor) {
+
+
+                $('#PrecioEnviar').val(precioHiddenmayor);
+
             }
         });
-    });
+    }); $('#UnidadId').on('input', function () {
+        var selectedValue = $(this).val();
+        var selectedOption = $('#UnidadIdList option').filter(function () {
+            return $(this).val() === selectedValue || $(this).data('id') === selectedValue;
+        }).first();
 
+        if (selectedOption.length > 0) {
+            var unidadId = selectedOption.attr('data-id');
+            console.log("ID de la unidad seleccionada:", unidadId);
+
+            // Buscar la unidad en el arreglo global "unidades"
+            var unidadSeleccionada = unidades.find(u => u.unidadId == unidadId);
+            if (unidadSeleccionada) {
+                // Asignar el valor de cantidadPorUnidad al campo "unidadtotal"
+                $('#unidadtotal').val(unidadSeleccionada.cantidadPorUnidad);
+            } else {
+                console.log("No se encontró la unidad con ID:", unidadId);
+            }
+
+            // Asignar el ID de la unidad seleccionada al campo oculto
+            $('#unidadHidden').val(unidadId);
+        } else if (!isNaN(selectedValue) && selectedValue !== '') {
+            // Código para manejar la entrada de número si no se encuentra en el datalist
+            fetch(`https://localhost:7013/api/Unidades/GetunidadPorId/${selectedValue}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    console.log("Nombre de la unidad:", data);
+                    $('#UnidadId').val(data.trim());
+                    $('#unidadHidden').val(selectedValue);
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
+        } else {
+            $('#unidadHidden').val(''); // Limpiar el campo oculto si no se encuentra ninguna unidad que coincida
+        }
+    });
 
     // Función para limpiar los detalles del producto
     function limpiarDetallesProducto() {
@@ -638,3 +711,63 @@ function mostrarDetallesActuales() {
 }
 
 
+
+
+function limpiaCantidades() {
+    // Limpiar el campo Cantidad
+    document.getElementById('CantidadTxt').value = '';
+
+    // Limpiar el campo CantidadPorUnidad
+    document.getElementById('CantidadPorUnidad').value = '';
+
+    // Limpiar el campo Descuento
+    document.getElementById('Descuento').value = '';
+
+    // Limpiar el campo CantidadAPlicada
+    document.getElementById('CantidadAPlicada').value = '';
+
+    // Limpiar el mensaje de error
+    document.getElementById('CantidadError').innerText = '';
+
+}
+
+
+function limpiaPrecios() {
+    // Limpiar el campo PrecioUnitario
+    document.getElementById('PrecioUnitario').value = '';
+
+    // Limpiar el campo PrecioUnitariohidden
+    document.getElementById('PrecioUnitariohidden').value = '';
+
+    // Limpiar el campo PrecioUnitariohiddenpormayor
+    document.getElementById('PrecioUnitariohiddenpormayor').value = '';
+
+    // Limpiar el campo PrecioUnitariohiddenpormayordescuento
+    document.getElementById('PrecioUnitariohiddenpormayordescuento').value = '';
+
+    // Limpiar el campo PrecioEnviar
+    document.getElementById('PrecioEnviar').value = '';
+
+    // Limpiar el mensaje de error
+    document.getElementById('PrecioUnitarioError').innerText = '';
+}
+
+
+function limpiaUnidadPresentacion() {
+    // Limpiar el campo UnidadId
+    document.getElementById('UnidadId').value = '';
+
+    // Limpiar el campo unidadHidden
+    document.getElementById('unidadHidden').value = '';
+
+    // Limpiar el campo unidadtotal
+    document.getElementById('unidadtotal').value = '';
+
+    // Limpiar el mensaje de error
+    document.getElementById('UnidadError').innerText = '';
+}
+
+$(document).ready(function () {
+
+   
+});

@@ -89,18 +89,32 @@
                 <input id="UnidadId" class="form-control" list="UnidadIdList" autocomplete="off" />
                 <datalist id="UnidadIdList"></datalist>
                 <input id="unidadHidden" name="unidadId" type="" />
+                <input id="unidadtotal" name="unidadId" class="form-control" />
                 <span id="UnidadError" class="text-danger"></span>
             </div>
 
             <div class="col-4">
                 <label asp-for="PrecioUnitario" class="control-label"></label>
-                <input asp-for="PrecioUnitario" class="form-control" id="PrecioUnitario" readonly>
+                <input  class="form-control" id="PrecioUnitario" >
+                <input class="form-control" id="PrecioUnitariohidden"  readonly>
+                <input  class="form-control" id="PrecioUnitariohiddenpormayor" readonly>
+                <input class="form-control" id="PrecioUnitariohiddenpormayordescuento" readonly>
+                <input class="form-control" id="PrecioEnviar" readonly>
+
+
+
+
                 <span id="PrecioUnitarioError" class="text-danger"></span>
             </div>
 
             <div class="col-4">
                 <label asp-for="Cantidad" class="control-label"></label>
-                <input asp-for="Cantidad" id="CantidadTxt" class="form-control" />
+                <input name="Cantidad" id="CantidadTxt" class="form-control" />
+                <input  id="CantidadPorUnidad" class="form-control" />
+                <input id="Descuento" class="form-control" />
+                <input id="CantidadAPlicada" class="form-control" />
+
+
                 <span id="CantidadError" class="text-danger"></span>
             </div>
 
