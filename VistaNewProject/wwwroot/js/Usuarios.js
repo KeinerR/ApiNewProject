@@ -198,12 +198,21 @@ document.addEventListener('DOMContentLoaded', function () {
         ];
 
         const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
-        if (!NoCamposVacios()) {
+        if (!camposVacios) {
             event.preventDefault();
             return;
         }
 
+
         if (!NoCamposConErrores()) {
+            event.preventDefault();
+            return;
+        }
+        const datalist = [
+            { id: 'RolId', nombre: 'Rol' }
+        ];
+
+        if (!verificarCampos(datalist, mostrarAlertaDataList)) {
             event.preventDefault();
             return;
         }
@@ -213,19 +222,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        if (!camposVacios) {
-            event.preventDefault();
-            return;
-        }
-
-        const datalist = [
-            { id: 'RolId', nombre: 'Rol' }
-        ];
-
-        if (!verificarCampos(datalist, mostrarAlertaDataList)) {
-            event.preventDefault();
-            return;
-        }
     });
     $('.modal-formulario-actualizar-usuario').on('submit', function (event) {
         const usuarioFinal = mostrarValoresFormularioUsuarioAct();
@@ -242,21 +238,6 @@ document.addEventListener('DOMContentLoaded', function () {
             { id: 'CorreoUsuarioAct', nombre: 'Correo' }
         ];
         const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
-        if (!NoCamposVaciosAct()) {
-            event.preventDefault();
-            return;
-        }
-
-        if (!NoCamposConErroresAct()) {
-            event.preventDefault();
-            return;
-        }
-
-        if (usuarioRepetido) {
-            event.preventDefault();
-            return;
-        }
-
         if (!camposVacios) {
             event.preventDefault();
             return;
@@ -270,7 +251,19 @@ document.addEventListener('DOMContentLoaded', function () {
             event.preventDefault();
             return;
         }
-  
+
+
+        if (!NoCamposConErroresAct()) {
+            event.preventDefault();
+            return;
+        }
+
+        if (usuarioRepetido) {
+            event.preventDefault();
+            return;
+        }
+
+    
     });
     // Confirmación de eliminación
     $('.eliminarUsuario').on('submit', function (event) {
@@ -295,11 +288,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Validar campos en cada cambio para cambiar el mensaje inicial que aparece arriba de los botones del formulario
     $('.modal-formulario-crear-usuario input, .modal-formulario-crear-usuario select').on('input', function () {
-        NoCamposVaciosInicial();
         NoCamposConErroresInicial();
     });
         $('.modal-formulario-actualizar-usuario input, .modal-formulario-actualizar-usuario select').on('input', function () {
-            NoCamposVaciosInicialAct();
             NoCamposConErroresInicialAct();
 
         });
@@ -317,34 +308,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 650);
     });
 
-    //Este elimina el mensaje inicial u lo agrega de ser necesario el que aparece sobre los botones
-    function NoCamposVacios() {
-        const mensajeElements = $('.Mensaje');
-        const mensajeSlice = mensajeElements.slice(0, 8);
-        const camposConTexto = mensajeSlice.filter(function () {
-            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
-        }).length;
-
-        console.log('Número de campos sin texto:', camposConTexto);
-
-        if (camposConTexto === 8) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos con *.');
-            return false;
-        }
-        if (camposConTexto > 1 && camposConTexto < 8) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos con *.');
-            return false;
-        }
-        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa el campo con *');
-            $('.MensajeInicial').text('Por favor, complete el campo con *.');
-            return false;
-        }
-
-        return true;
-    } 
     function NoCamposConErrores() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(0, 8);
@@ -370,31 +333,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return true;
     }
 
-    function NoCamposVaciosAct() {
-        const mensajeElements = $('.Mensaje');
-        const mensajeSlice = mensajeElements.slice(-7);
-        const camposConTexto = mensajeSlice.filter(function () {
-            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
-        }).length;
-
-        if (camposConTexto === 7) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos con *.');
-            return false;
-        }
-        if (camposConTexto > 1 && camposConTexto < 7) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos con *.');
-            return false;
-        }
-        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa el campo con *');
-            $('.MensajeInicial').text('Por favor, complete el campo con *.');
-            return false;
-        }
-
-        return true;
-    }
+    
     function NoCamposConErroresAct() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(-7);
@@ -419,50 +358,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return true;
     }
-    function NoCamposVaciosInicial() {
-        const mensajeElements = $('.Mensaje');
-
-        const mensajeSlice = mensajeElements.slice(0, 8);
-
-
-        const todosLlenos = mensajeSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
-
-        if (todosLlenos) {
-            $('.MensajeInicial').text('');
-        }
-
-    }
+  
     function NoCamposConErroresInicial() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(0, 8);
         const todoValido = textDangerSlice.filter(function () {
             return $(this).text() !== '';
         }).length === 0;
-        console.log('Todos los campos son válidos:', todoValido);
         if (todoValido) {
             $('.MensajeErrores').text('');
         }
         return true;
-    }
-
-    function NoCamposVaciosInicialAct() {
-        const mensajeElements = $('.Mensaje');
-
-        const mensajeSlice = mensajeElements.slice(-7);
-
-
-        const todosLlenos = mensajeSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
-
-        if (todosLlenos) {
-            $('.MensajeInicial').text('');
-        }
-
     }
     function NoCamposConErroresInicialAct() {
         const textDangerElements = $('.text-danger');
@@ -481,9 +387,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /*---------------------------------------------------- Al dar click en el boton de agregar usuario  ---------------------------------------------------- */
 function simularClickUsuario() {
-    //ocultar formulario de actualizar  y mostrar el formulario principal
-    $('#FormActualizarUsuario').hide();
-    $('#FormPrincipalUsuario').show().css('visibility', 'visible');
     obtenerDatosUsuarios();
 }
 
@@ -511,19 +414,7 @@ document.addEventListener('keydown', function (event) {
     }
 });
 
-
-function abrirModalUsuario() {
-    // Verificar si la modal está abierta
-    if ($('#ModalUsuario').hasClass('show')) {
-        $('#ModalUsuario').modal('hide'); // Cerrar la modal
-    } else {
-        simularClickUsuario(); // Simular algún evento antes de abrir la modal
-        $('#ModalUsuario').modal('show'); // Abrir la modal
-    }
-}
-
 /*------------------------------ Limpiar formularios y url ---------------------------------------------------------------------------------------------------- */
-
 
 function limpiarFormularioUsuarioAgregar() {
     history.replaceState(null, '', location.pathname);
@@ -537,21 +428,9 @@ function limpiarFormularioUsuarioAgregar() {
     for (var i = 0; i < mensajesText.length - 6; i++) {
         mensajesText[i].textContent = '';
     }
-    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
-        element.textContent = '';
-    });
-    document.querySelectorAll('.MensaErrores').forEach(function (element) {
-        element.textContent = '';
-    });
 }
 function limpiarFormularioUsuarioAct() {
     history.replaceState(null, '', location.pathname);
-    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
-        element.textContent = '';
-    });
-    document.querySelectorAll('.MensaErrores').forEach(function (element) {
-        element.textContent = '';
-    });
     // Limpiar mensajes de alerta y *
     var mensajes = document.querySelectorAll('.Mensaje');
     var mensajesText = document.querySelectorAll('.text-danger');
@@ -562,10 +441,6 @@ function limpiarFormularioUsuarioAct() {
     for (var i = Math.max(0, mensajesText.length - 7); i < mensajesText.length; i++) {
         mensajesText[i].textContent = '';
     }
-
-    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
-        element.textContent = '';
-    }); 
 
 }
 function limpiarFormularioUsuario() {
@@ -601,39 +476,27 @@ $('.modal').on('click', function (e) {
     if (e.target === this) {
         // Limpiar la URL eliminando los parámetros de consulta
         history.replaceState(null, '', location.pathname);
-        $(this).modal('hide'); // Oculta la modal
+        limpiarFormularioUsuarioAct();
     }
 });
 
 function AlPerderFocoUsuario() {
-    var displayFormActualizar = $('#FormActualizarUsuario').css('display');
-    var displayModal = $('#ModalUsuario').css('display');
-    if (displayFormActualizar == "block" && displayModal == "none") {
+    var displayModal = $('#ModalActualizarUsuario').css('display');
+    if (displayModal == "none") {
         limpiarFormularioUsuarioAct();
     }
 }
 
 /*--------------------------------------------------------- Modal de actualizar usuario ---------------------------------------*/
-function mostrarModalConRetrasoUsuario(usuarioId) {
+function mostrarModalActualizarUsuario(usuarioId) {
     limpiarFormularioUsuarioAct();
     actualizarUsuario(usuarioId);
     setTimeout(function () {
-        var myModal = new bootstrap.Modal(document.getElementById('ModalUsuario'));
+        var myModal = new bootstrap.Modal(document.getElementById('ModalActualizarUsuario'));
         myModal.show();
         // Aquí puedes llamar a la función actualizarProducto si es necesario
-    }, 400); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
+    }, 50); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
 
-}
-//Modal cuando se hace click en editar en el boton de detalle
-function mostrarModalSinRetrasoUsuario(usuarioId) {
-    obtenerDatosUsuarios();
-    actualizarUsuario(usuarioId);
-    setTimeout(function () {
-        limpiarFormularioUsuarioAct();
-        var myModal = new bootstrap.Modal(document.getElementById('ModalUsuario'));
-        myModal.show();
-        // Aquí puedes llamar a la función actualizarProducto si es necesario
-    }, 50); // 50 milisegundos (0.05 segundos) de retraso antes de abrir la modal
 }
 
 function actualizarUsuario(campo) {
@@ -655,7 +518,6 @@ function actualizarUsuario(campo) {
             formActualizar.find('#CorreoUsuarioAct').val(data.correo);
             formActualizar.find('#EstadoProductoAct').val(data.correo);
             seleccionarOpcion(document.getElementById('NombreRolAct'), document.getElementById('roles'), document.getElementById('RolIdAct'));
-            limpiarFormularioUsuarioAct()
             obtenerDatosUsuarios();
         },
         error: function () {

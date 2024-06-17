@@ -2,7 +2,7 @@
 @model X.PagedList.IPagedList<VistaNewProject.Models.Usuario>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Usuarios";
 }
 <div class="ContenedorVista" id="ContenedorUsuario">
     <br />
@@ -22,7 +22,7 @@
         </button>
     </div>
     <!-- Modal -->
-    <div class="modal fade GeneralModal" onblur="AlPerderFocoUsuario();" id="ModalUsuario" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade GeneralModal" id="ModalUsuario" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content" id="FormPrincipalUsuario">
                 <div class="modal-cabecera">
@@ -47,7 +47,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="NombreRol" class="control-label">Rol</label>
+                                        <label for="NombreRol" class="control-label">Rol<span class="Mensaje">*</span></label>
                                         <input list="roles" oninput="validarCampoUsuario(this)" id="NombreRol" name="nombreRol" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoRolesAlert()" autocomplete="off" />
                                         <datalist id="roles">
                                             @foreach (var item in ViewBag.Roles)
@@ -64,7 +64,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="Nombre" class="control-label">Nombre</label>
+                                        <label for="Nombre" class="control-label">Nombre<span class="Mensaje">*</span></label>
                                         <input type="text" id="Nombre" oninput="validarCampoUsuario(this);" name="nombre" class="form-control" autocomplete="off" />
                                         <span id="MensajeNombre" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
@@ -73,15 +73,15 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="Apellido" class="control-label">Apellido</label>
+                                        <label for="Apellido" class="control-label">Apellido<span class="Mensaje">*</span></label>
                                         <input type="text" id="Apellido" oninput="validarCampoUsuario(this)" name="apellido" class="form-control" autocomplete="off" />
                                         <span id="MensajeApellido" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="Usuario" class="control-label">Usuario</label>
-                                        <input type="text" id="Usuario" oninput="validarCampoUsuario(this);" name="usuario1" class="form-control" autocomplete="off" />
+                                        <label for="Usuario" class="control-label">Usuario<span class="Mensaje">*</span></label>
+                                        <input type="hidden" id="Usuario" oninput="validarCampoUsuario(this);" name="usuario1" class="form-control" autocomplete="off" />
                                         <span id="MensajeUsuario" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
                                 </div>
@@ -89,8 +89,8 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="Contraseña" class="control-label">Contraseña</label>
-                                        <input type="password" id="Contraseña" oninput="validarCampoUsuario(this);" name="contraseña" class="form-control " autocomplete="off" />
+                                        <label for="Contraseña" class="control-label">Contraseña<span class="Mensaje">*</span></label>
+                                        <input type="hidden" id="Contraseña" oninput="validarCampoUsuario(this);" name="contraseña" class="form-control " autocomplete="off" />
                                         <span id="MensajeContraseña" class="text-danger"></span>
                                         <span id="MostrarOcultar1" class="icono-ojo" onclick="mostrarOcultarContrasena('Contraseña')">
                                             <!-- Corregido el ID para evitar duplicidad -->
@@ -101,7 +101,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="RepetirContraseña" class="control-label">Repetir Contraseña</label>
+                                        <label for="RepetirContraseña" class="control-label">Repetir Contraseña<span class="Mensaje">*</span></label>
                                         <input type="password" id="RepetirContraseña" oninput="validarCampoUsuario(this);" name="repetirContraseña" class="form-control" autocomplete="off" />
                                         <span id="MensajeRepetirContraseña" class="text-danger"></span>
                                         <span id="MostrarOcultar2" class="icono-ojo" onclick="mostrarOcultarContrasena('RepetirContraseña')">
@@ -115,23 +115,20 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="TelefonoUsuario" class="control-label">Teléfono</label>
+                                        <label for="TelefonoUsuario" class="control-label">Teléfono<span class="Mensaje">*</span></label>
                                         <input type="text" id="TelefonoUsuario" oninput="validarCampoUsuario(this);" name="telefono" class="form-control" autocomplete="off" />
                                         <span id="MensajeTelefono" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="CorreoUsuario" class="control-label">Correo</label>
+                                        <label for="CorreoUsuario" class="control-label">Correo<span class="Mensaje">*</span></label>
                                         <input type="text" id="CorreoUsuario" oninput="validarCampoUsuario(this);" name="correo" class="form-control" autocomplete="off" />
                                         <span id="MensajeCorreo" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-                        
-                        
                         <div class="modal-contenedor-footer">
                             <button type="reset" onclick="limpiarFormularioUsuarioAgregar();" class="btn btn-secondary">Cancelar</button>
                             <button type="submit" class="btn btn-primary btnGuardar">Agregar</button>
@@ -139,15 +136,18 @@
                     </form>
                 </div>
             </div>
-
-            <div class="modal-content noBe" id="FormActualizarUsuario">
+        </div>
+    </div>  
+    <div class="modal fade GeneralModal" onblur="AlPerderFocoUsuario();" id="ModalActualizarUsuario" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" id="FormActualizarUsuario">
                 <div class="modal-cabecera">
                     <div id="pibo"></div>
                     <div class="modal-header-view TituloModal">
                         <h2 class="modal-title">Actualizar datos de Usuario</h2>
                     </div>
                     <div class="moda-header-view" id="modal-cabecera-equis">
-                        <button type="button" onclick="limpiarFormularioUsuario();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" onclick="limpiarFormularioUsuarioAct();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                 </div>
                 <div class="modal-cuerpo">
@@ -157,7 +157,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="NombreRolAct" class="control-label">Rol</label>
+                                        <label for="NombreRolAct" class="control-label">Rol<span class="Mensaje"></span></label>
                                         <input list="roles" oninput="validarCampoUsuario(this)" id="NombreRolAct" name="nombreRol" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoRolesAlert()" autocomplete="off" />
                                         <datalist id="roles">
                                             @foreach (var item in ViewBag.Roles)
@@ -185,14 +185,14 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="NombreAct" class="control-label">Nombre</label>
+                                        <label for="NombreAct" class="control-label">Nombre<span class="Mensaje">*</span></label>
                                         <input type="text" id="NombreAct" oninput="validarCampoUsuario(this);" name="nombre" class="form-control" autocomplete="off" />
                                         <span id="MensajeNombre" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="ApellidoAct" class="control-label">Apellido</label>
+                                        <label for="ApellidoAct" class="control-label">Apellido<span class="Mensaje">*</span></label>
                                         <input type="text" id="ApellidoAct" oninput="validarCampoUsuario(this)" name="apellido" class="form-control" autocomplete="off" />
                                         <span id="MensajeApellido" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
@@ -201,14 +201,14 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="UsuarioAct" class="control-label">Usuario</label>
+                                        <label for="UsuarioAct" class="control-label">Usuario<span class="Mensaje">*</span></label>
                                         <input type="text" id="UsuarioAct" oninput="validarCampoUsuario(this)" name="usuario1" class="form-control" autocomplete="off" />
                                         <span id="MensajeUsuario" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="ContraseñaAct" class="control-label">Contraseña</label>
+                                        <label for="ContraseñaAct" class="control-label">Contraseña<span class="Mensaje">*</span></label>
                                         <input type="password" id="ContraseñaAct" oninput="validarCampoUsuario(this)" name="contraseña" class="form-control " autocomplete="off" />
                                         <span id="MensajeContraseñaAct" class="text-danger"></span>
                                         <span id="MostrarOcultarAct" class="icono-ojo" onclick="mostrarOcultarContrasena('ContraseñaAct')">
@@ -222,14 +222,14 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="TelefonoUsuarioAct" class="control-label">Teléfono</label>
+                                        <label for="TelefonoUsuarioAct" class="control-label">Teléfono<span class="Mensaje">*</span></label>
                                         <input type="text" id="TelefonoUsuarioAct" oninput="validarCampoUsuario(this)" name="telefono" class="form-control" autocomplete="off" />
                                         <span id="MensajeTelefono" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="CorreoUsuarioAct" class="control-label">Correo</label>
+                                        <label for="CorreoUsuarioAct" class="control-label">Correo<span class="Mensaje">*</span></label>
                                         <input type="text" id="CorreoUsuarioAct" oninput="validarCampoUsuario(this)" name="correo" class="form-control" autocomplete="off" />
                                         <span id="MensajeCorreo" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
@@ -237,8 +237,6 @@
                             </div>
 
                         </div>
-                        
-                        
                         <div class="modal-contenedor-footer">
                             <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormularioUsuario();">Cancelar</button>
                             <button type="submit" class="btn btn-primary btnGuardar">Actualizar</button>
@@ -250,14 +248,12 @@
     </div>
     <br />
     <hr>
-
     <div class="mt-3">
         <a href="?order=alfabetico">Ordenar por nombre (A-Z)</a> |
         <a href="?order=name_desc">Ordenar por nombre (Z-A)</a> |
         <a href="?order=first">Ordenar por más antiguo</a> |
         <a href="?order=reverse">Ordenar por más reciente</a>
     </div>
-
     <table class="table table-custom text-center">
         <thead>
             <tr>
@@ -269,7 +265,7 @@
                 <th>TELEFONO</th>
                 <th>CORREO</th>
                 <th class="contenedorEstado">ESTADO</th>
-                <th>ACCIONES</th>
+                <th class="contenedorAcciones">ACCIONES</th>
             </tr>
         </thead>
         <tbody class="text-center">
@@ -306,7 +302,7 @@
                     </td>
                     <td class="botonesTabla">
                         <div class="botonesTablaContenedor">
-                            <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoUsuario(@item.UsuarioId);"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-edit botonEditar" onclick="mostrarModalActualizarUsuario(@item.UsuarioId);"><i class="fas fa-edit"></i></button>
                             <a asp-action="Details" asp-controller="Usuarios" asp-route-id="@item.UsuarioId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
                             <form asp-controller="Usuarios" class="eliminarUsuario" asp-action="Delete" method="post">
                                 <input type="hidden" value="@item.UsuarioId" name="usuarioId" />
@@ -350,7 +346,7 @@
                             </td>
                             <td class="botonesTabla">
                                 <div class="botonesTablaContenedor">
-                                    <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoUsuario(@usuario.UsuarioId);"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-edit botonEditar" onclick="mostrarModalActualizarUsuario(@usuario.UsuarioId);"><i class="fas fa-edit"></i></button>
                                     <a asp-action="Details" asp-controller="Usuarios" asp-route-id="@usuario.UsuarioId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
                                     <form asp-controller="Usuarios" class="eliminarUsuario" asp-action="Delete" method="post">
                                         <input type="hidden" value="@usuario.UsuarioId" name="usuarioId" />
@@ -368,7 +364,6 @@
 
         </tbody>
     </table>
-
     <div class="pagination-container mt-2" id="paginationContainer">
         @if (Model != null && Model.PageCount > 1)
         {
