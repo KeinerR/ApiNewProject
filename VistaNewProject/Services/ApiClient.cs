@@ -845,7 +845,7 @@ namespace VistaNewProject.Services
             return response;
         }
 
-        public async Task<HttpResponseMessage> CreateProductoAsync(Producto producto)
+        public async Task<HttpResponseMessage> CreateProductoAsync(ProductoCrearYActualizar producto)
         {
             var response = await _httpClient.PostAsJsonAsync("Productos/InsertarProducto", producto);
 

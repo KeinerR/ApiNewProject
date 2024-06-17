@@ -26,6 +26,7 @@ namespace ApiNewProject.Controllers
                 {
                     PresentacionId = s.PresentacionId,
                     NombrePresentacion = s.NombrePresentacion,
+                    NombreCompletoPresentacion = s.NombreCompletoPresentacion,
                     Contenido = s.Contenido,
                     CantidadPorPresentacion = s.CantidadPorPresentacion,
                     DescripcionPresentacion = s.DescripcionPresentacion,
@@ -48,6 +49,7 @@ namespace ApiNewProject.Controllers
                     {
                         PresentacionId = s.PresentacionId,
                         NombrePresentacion = s.NombrePresentacion,
+                        NombreCompletoPresentacion = s.NombreCompletoPresentacion,
                         DescripcionPresentacion = s.DescripcionPresentacion,
                         Contenido = s.Contenido,
                         CantidadPorPresentacion = s.CantidadPorPresentacion,
@@ -99,6 +101,7 @@ namespace ApiNewProject.Controllers
             }
             presentaciones.PresentacionId = presentacion.PresentacionId;
             presentaciones.NombrePresentacion = presentacion.NombrePresentacion;
+            presentaciones.NombreCompletoPresentacion = presentacion.NombreCompletoPresentacion;
             presentaciones.DescripcionPresentacion = presentacion.DescripcionPresentacion;
             presentaciones.CantidadPorPresentacion = presentacion.CantidadPorPresentacion;
             presentaciones.Contenido = presentacion.Contenido; 

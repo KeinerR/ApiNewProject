@@ -131,7 +131,7 @@ namespace VistaNewProject.Controllers
                     productosConCantidad.Add(new ProductoConCantidad
                     {
                         ProductoId = kvp.Key,
-                        NombreCompleto = producto,
+                        NombreCompletoProducto = producto,
                         Cantidad = kvp.Value
                     });
                 }
@@ -157,7 +157,7 @@ namespace VistaNewProject.Controllers
         public class ProductoConCantidad
         {
             public int ? ProductoId { get; set; }
-            public Producto ? NombreCompleto { get; set; }
+            public Producto ? NombreCompletoProducto { get; set; }
             public int ? Cantidad { get; set; }
         }
 
@@ -398,7 +398,7 @@ namespace VistaNewProject.Controllers
             var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
             var nombreMarca = marcaEncontrada?.NombreMarca ?? "Sin marca";
 
-            producto.NombreCompleto = cantidad > 1 ?
+            producto.NombreCompletoProducto = cantidad > 1 ?
                 $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} unidades de {contenido}" :
                 $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
 

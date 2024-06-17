@@ -85,7 +85,7 @@ namespace VistaNewProject.Services
 
         Task<IEnumerable<Producto>> GetProductoAsync(string busqueda = null);
         Task<IEnumerable<Producto>> GetAllDatosProductosAsync(string busqueda = null);
-        Task<HttpResponseMessage> CreateProductoAsync(Producto producto);
+        Task<HttpResponseMessage> CreateProductoAsync(ProductoCrearYActualizar producto);
         Task<Producto> FindProductoAsync(int id);
         Task<Producto> FindDatosProductoAsync(int id);
         Task<HttpResponseMessage> UpdateProductoAsync(Producto producto);
