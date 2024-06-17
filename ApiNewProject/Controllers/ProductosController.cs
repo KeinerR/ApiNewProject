@@ -216,7 +216,107 @@ namespace ApiNewProject.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
+        [HttpPut("AddCantidadReservada/{id}")]
+        public async Task<ActionResult> AddCantidadReservada(int id, int ? cantidad)
+        {
+            // Buscar el producto por su ID
+            var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == id);
 
+            var cantidadTotalEnInventario = producto.CantidadTotal - producto.CantidadReservada;
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            if (cantidad > producto.CantidadTotal) {
+                return BadRequest("La cantidad a reservar no puede ser mayor que la cantidad total");
+            }
+            if (cantidad > cantidadTotalEnInventario) {
+                return BadRequest("La cantidad a reservar no puede ser mayor que la cantidad cantidadTotalEnInventario (cantidadTotal - cantidadReservada)"); 
+            }
+            // Actualizar la cantidad reservada del producto
+            producto.CantidadReservada += cantidad;
+            // Guardar los cambios en la base de datos
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPut("SustraerCantidadReservada/{id}")]
+        public async Task<ActionResult> SustraerCantidadReservada(int id, int? cantidad)
+        {
+            // Buscar el producto por su ID
+            var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == id);
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            // Verificar si la cantidad a restar es válida
+            if (cantidad > producto.CantidadReservada)
+            {
+                return BadRequest("La cantidad a restar es mayor que la cantidad reservada actual.");
+            }
+            // Verificar si la cantidad a restar es válida
+            if (cantidad > producto.CantidadTotal)
+            {
+                return BadRequest("La cantidad a restar es mayor que la cantidadTotal de productos.");
+            }
+
+            // Actualizar la cantidad reservada del producto
+            producto.CantidadReservada -= cantidad;
+            producto.CantidadTotal -= cantidad; ;
+
+            // Guardar los cambios en la base de datos
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPut("AddCantidadTotal/{id}")]
+        public async Task<ActionResult> AddCantidadTotal(int id, int ? cantidad)
+        {
+            // Buscar el producto por su ID
+            var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == id);
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+            // Actualizar la cantidad reservada del producto
+            producto.CantidadTotal += cantidad;
+
+            // Guardar los cambios en la base de datos
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPut("SustraerCantidadTotal/{id}")]
+        public async Task<ActionResult> SustraerCantidadTotal(int id, int ? cantidad)
+        {
+            // Buscar el producto por su ID
+            var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == id);
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            // Verificar si la cantidad a restar es válida
+            if (producto.CantidadTotal < cantidad)
+            {
+                return BadRequest("La cantidad a restar es mayor que la cantidad total actual.");
+            }
+
+            producto.CantidadTotal -= cantidad; ;
+
+            // Guardar los cambios en la base de datos
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
 
         [HttpDelete("DeleteProducto/{Id}")]
         public async Task<HttpStatusCode> DeleteProducto(int Id)

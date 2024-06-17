@@ -89,30 +89,22 @@ namespace VistaNewProject.Services
         Task<Producto> FindProductoAsync(int id);
         Task<Producto> FindDatosProductoAsync(int id);
         Task<HttpResponseMessage> UpdateProductoAsync(Producto producto);
+        Task<HttpResponseMessage> AddCantidadReservadaAsync(int productoId, int? cantidad);
+        Task<HttpResponseMessage> SustraerCantidadReservadaAsync(int productoId, int? cantidad);  
+        Task<HttpResponseMessage> AddCantidadTotalAsync(int productoId, int? cantidad);
+        Task<HttpResponseMessage> SustraerCantidadTotalAsync(int productoId, int? cantidad);
         Task<HttpResponseMessage> DeleteProductoAsync(int id);
         Task<HttpResponseMessage> CambiarEstadoProductoAsync(int id);
-
-
-
-
         // proveedor
-
         Task<IEnumerable<Proveedor>> GetProveedorAsync();
         Task<HttpResponseMessage> CreateProveedorAsync(Proveedor proveedor);
         Task<Proveedor> FindProveedorAsync(int? id);
         Task<Proveedor> FindnombreProveedorAsync(string nombreEmpresa);
-
         Task<HttpResponseMessage> UpdateProveedorAsync(ProveedorUpdate proveedor);
         Task<HttpResponseMessage> CambiarEstadoProveedorAsync(int id);
-
         Task<HttpResponseMessage> DeleteProveedorAsync(int id);
-
-
-
         // usuario
-
         Task<IEnumerable<Usuario>> GetUsuarioAsync();
-
         Task<HttpResponseMessage> CreateUsuarioAsync(Usuario usuario);
         Task<Usuario> FindUsuarioAsync(int id);
         Task<HttpResponseMessage> UpdateUsuarioAsync(Usuario usuario);

@@ -59,11 +59,6 @@ namespace VistaNewProject.Controllers
             return View();
         }
 
-
-
-
-
-
         public async Task<IActionResult> CrearDetalles([FromBody] Detallepedido detallePedido)
         {
             if (detallePedido == null)
@@ -100,11 +95,10 @@ namespace VistaNewProject.Controllers
                     return NotFound(new { message = "Producto no encontrado" });
                 }
 
-                // Actualizar la cantidad reservada
-                producto.CantidadReservada += detallePedido.Cantidad;
-
+                var id = producto.ProductoId;
+                var cantidad= detallePedido.Cantidad;
                 // Actualizar el producto en la base de datos
-                var updateProductResult = await _client.UpdateProductoAsync(producto);
+                var updateProductResult = await _client.AddCantidadReservadaAsync(id, cantidad);
                 if (updateProductResult.IsSuccessStatusCode)
                 {
                     Console.WriteLine("Cantidad reservada actualizada en el producto.");
@@ -113,7 +107,6 @@ namespace VistaNewProject.Controllers
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Error al actualizar el producto en la base de datos" });
                 }
-
                 // Imprimir los valores de las propiedades del detalle recibido en la consola
                 Console.WriteLine("Detalle recibido:");
                 Console.WriteLine("PedidoId: " + detallePedido.PedidoId);
@@ -136,8 +129,6 @@ namespace VistaNewProject.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Ocurrió un error al procesar la solicitud", error = ex.Message });
             }
         }
-
-
         [HttpPost]
         public async Task<IActionResult> CreatePost()
         {
@@ -149,9 +140,6 @@ namespace VistaNewProject.Controllers
 
             try
             {
-
-
-
 
                 decimal sumaSubtotales = listaGlobalDetalles.Sum(detalle => detalle.Subtotal ?? 0);
                 foreach (var detalle in listaGlobalDetalles)
@@ -195,16 +183,16 @@ namespace VistaNewProject.Controllers
                         foreach (var detalle in listaGlobalDetalles)
                         {
                             var productoId = detalle.ProductoId.Value;
-                            var productos = await _client.FindProductoAsync(productoId);
+                            var producto = await _client.FindProductoAsync(productoId);
 
-                            if (productos != null)
+                            if (producto != null)
                             {
-                                productos.CantidadReservada -= detalle.Cantidad;
-                                var updateProducto = await _client.UpdateProductoAsync(productos);
-
-                                if (!updateProducto.IsSuccessStatusCode)
+                                int Id = producto.ProductoId; ;
+                                int ?cantidad = detalle.Cantidad;
+                                var actualizarCantidadReservada= await _client.SustraerCantidadReservadaAsync(Id,cantidad);
+                                if (!actualizarCantidadReservada.IsSuccessStatusCode)
                                 {
-                                    TempData["ErrorMessage"] = $"Error al actualizar el producto: {updateProducto.ReasonPhrase}";
+                                    TempData["ErrorMessage"] = $"Error al actualizar el producto: {actualizarCantidadReservada.ReasonPhrase}";
                                     return RedirectToAction("Index", "Pedidos");
                                 }
                             }
@@ -284,8 +272,9 @@ namespace VistaNewProject.Controllers
                     var producto = await _client.FindProductoAsync(detalle.ProductoId.Value);
                     if (producto != null)
                     {
-                        producto.CantidadReservada -= detalle.Cantidad;
-                        await _client.UpdateProductoAsync(producto);
+                        var Id = producto.ProductoId;
+                        int ? cantidad = detalle.Cantidad;
+                        await _client.SustraerCantidadReservadaAsync(Id,cantidad);
                     }
                 }
 
@@ -329,11 +318,11 @@ namespace VistaNewProject.Controllers
                 {
                     return NotFound(new { message = "Producto no encontrado" });
                 }
-
+                int id = producto.ProductoId;
+                int ? cantidad = detalleAEliminar.Cantidad;
                 // Actualizar la cantidad reservada del producto
-                producto.CantidadReservada -= detalleAEliminar.Cantidad;
 
-                var updateProductResult = await _client.UpdateProductoAsync(producto);
+                var updateProductResult = await _client.SustraerCantidadReservadaAsync(id,cantidad);
 
 
                 // Eliminar el detalle de la lista
@@ -420,11 +409,10 @@ namespace VistaNewProject.Controllers
                     return NotFound(new { message = "Producto no encontrado" });
                 }
 
-                // Actualizar la cantidad reservada
-                producto.CantidadReservada += detallePedido.Cantidad;
-
+                var Id = producto.ProductoId;
+                int? cantidad = detallePedido.Cantidad;
                 // Actualizar el producto en la base de datos
-                var updateProductResult = await _client.UpdateProductoAsync(producto);
+                var updateProductResult = await _client.AddCantidadReservadaAsync(Id,cantidad);
                 if (updateProductResult.IsSuccessStatusCode)
                 {
                     Console.WriteLine("Cantidad reservada actualizada en el producto.");

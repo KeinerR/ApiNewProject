@@ -989,6 +989,54 @@ namespace VistaNewProject.Services
 
         }
 
+        public async Task<HttpResponseMessage> AddCantidadReservadaAsync(int productoId, int ? cantidad)
+        {
+            // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
+            var content = new StringContent("", Encoding.UTF8, "application/json");
+
+            // Realiza la solicitud PUT a la API
+            var response = await _httpClient.PutAsync($"Productos/AddCantidadReservada/{productoId}?cantidad={cantidad}",content);
+
+            // Retorna la respuesta de la solicitud
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> SustraerCantidadReservadaAsync(int productoId, int ? cantidad)
+        {
+            // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
+            var content = new StringContent("", Encoding.UTF8, "application/json");
+
+            // Realiza la solicitud PUT a la API
+            var response = await _httpClient.PutAsync($"Productos/AddCantidadReservada/{productoId}?cantidad={cantidad}", content);
+
+            // Retorna la respuesta de la solicitud
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> AddCantidadTotalAsync(int productoId, int? cantidad)
+        {
+            // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
+            var content = new StringContent("", Encoding.UTF8, "application/json");
+
+            // Realiza la solicitud PUT a la API
+            var response = await _httpClient.PutAsync($"Productos/AddCantidadTotal/{productoId}?cantidad={cantidad}", content);
+
+            // Retorna la respuesta de la solicitud
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> SustraerCantidadTotalAsync(int productoId, int? cantidad)
+        {
+            // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
+            var content = new StringContent("", Encoding.UTF8, "application/json");
+
+            // Realiza la solicitud PUT a la API
+            var response = await _httpClient.PutAsync($"Productos/SustraerCantidadTotal/{productoId}?cantidad={cantidad}", content);
+
+            // Retorna la respuesta de la solicitud
+            return response;
+        }
+
 
         /// PROVEEDOR
 
