@@ -23,7 +23,7 @@
 
 
     <!-- Modal -->
-    <div class="modal fade GeneralModal" onblur="AlPerderFocoProveedor();" id="ModalProveedor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade GeneralModal" id="ModalProveedor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content" id="FormPrincipalProveedor">
                 <div class="modal-cabecera">
@@ -49,7 +49,9 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="DireccionProveedor" class="control-label">
-                                            Direccion<span class="Mensaje">*</span>
+                                            Direccion
+                                            <span class="Mensaje">*</span>
+
                                         </label>
                                         <input type="text" id="DireccionProveedor" oninput="validarCampoProveedor(this);" name="direccion" class="form-control" />
                                         <span class="text-danger"></span>
@@ -60,7 +62,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="NombreContacto" class="control-label">
-                                            Nombre contacto<span class="Mensaje">*</span>
+                                            Nombre contacto
+                                            <span class="Mensaje">*</span>
                                         </label>
                                         <input type="text" id="NombreContacto" oninput="validarCampoProveedor(this);" name="nombreContacto" class="form-control" />
                                         <span class="text-danger"></span>
@@ -69,7 +72,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="TelefonoProveedor" class="control-label">
-                                            Telefono<span class="Mensaje">*</span>
+                                            Telefono
+                                            <span class="Mensaje">*</span>
                                         </label>
                                         <input type="text" id="TelefonoProveedor" oninput="validarCampoProveedor(this);" name="telefono" class="form-control" />
                                         <span class="text-danger"></span>
@@ -89,8 +93,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="MensajeInicial"></div>
-                        <div class="MensajeErrores"></div>
                         <div class="modal-contenedor-footer">
                             <button type="reset" class="btn btn-secondary" onclick="limpiarFormularioProveedor();">Cancelar</button>
                             <button type="submit" class="btn btn-primary btnGuardar">Agregar</button>
@@ -99,9 +101,10 @@
                 </div>
             </div>
         </div>
-
+    </div>   
+    <div class="modal fade GeneralModal" onblur="AlPerderFocoProveedor();" id="ModalActualizarProveedor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content noBe" id="FormActualizarProveedor">
+            <div class="modal-content" id="FormActualizarProveedor">
                 <div class="modal-cabecera">
                     <div id="pibo"></div>
                     <div class="modal-header-view TituloModal">
@@ -121,14 +124,14 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="NombreEmpresaAct" class="control-label">Nombre empresa  <span class="Mensaje"></span></label>
+                                        <label for="NombreEmpresaAct" class="control-label">Nombre empresa<span class="Mensaje"></span></label>
                                         <input type="text" id="NombreEmpresaAct" oninput="validarCampoProveedor(this);" name="nombreEmpresa" class="form-control" autocomplete="off" />
                                         <span class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="DireccionProveedorAct" class="control-label">Direccion  <span class="Mensaje"></span></label>
+                                        <label for="DireccionProveedorAct" class="control-label">Direccion<span class="Mensaje"></span></label>
                                         <input type="text" id="DireccionProveedorAct" oninput="validarCampoProveedor(this);" name="direccion" class="form-control" />
                                         <span class="text-danger"></span>
                                     </div>
@@ -144,7 +147,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="TelefonoProveedorAct" class="control-label">Telefono <span class="Mensaje"></span></label>
+                                        <label for="TelefonoProveedorAct" class="control-label">Telefono<span class="Mensaje"></span></label>
                                         <input type="text" id="TelefonoProveedorAct" oninput="validarCampoProveedor(this);" name="telefono" placeholder="" class="form-control" />
                                         <span class="text-danger" id="mensajeTelefonoAct"></span>
                                     </div>
@@ -172,8 +175,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="MensajeInicial"></div>
-                        <div class="MensajeErrores"></div>
+
+
                         <div class="modal-contenedor-footer">
                             <button type="reset" data-bs-dismiss="modal" class="btn btn-secondary" onclick="limpiarFormularioProveedor();">Cancelar</button>
                             <button type="submit" class="btn btn-primary btnGuardar">Actualizar</button>
@@ -182,9 +185,6 @@
                 </div>
             </div>
         </div>
-
-
-
     </div>
 
     <div class="contenedor-filtro">
@@ -258,7 +258,7 @@
                     <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                     <td class="botonesTabla">
                         <div class="botonesTablaContenedor">
-                            <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoProveedor(@item.ProveedorId);"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-edit botonEditar" onclick="mostrarModalActualizarProveedor(@item.ProveedorId);"><i class="fas fa-edit"></i></button>
                             <a asp-action="Details" asp-controller="Proveedores" asp-route-id="@item.ProveedorId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
                             <form asp-controller="Proveedores" class="eliminarProveedor" asp-action="Delete" method="post">
                                 <input type="hidden" value="@item.ProveedorId" oninput="validarCampoProveedor(this);" name="proveedorId" />
@@ -293,7 +293,7 @@
                             <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                             <td class="botonesTabla">
                                 <div class="botonesTablaContenedor">
-                                    <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoProveedor(@proveedor.ProveedorId);"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-edit botonEditar" onclick="mostrarModalActualizarProveedor(@proveedor.ProveedorId);"><i class="fas fa-edit"></i></button>
                                     <a asp-action="Details" asp-controller="Proveedores" asp-route-id="@proveedor.ProveedorId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
                                     <form asp-controller="Proveedores" class="eliminarProveedor" asp-action="Delete" method="post">
                                         <input type="hidden" value="@proveedor.ProveedorId" oninput="validarCampoProveedor(this);" name="proveedorId" />

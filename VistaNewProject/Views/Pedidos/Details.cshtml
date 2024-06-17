@@ -127,7 +127,7 @@
 
 
                                         <div class="form-group">
-                                            <label for="UsuarioIdAct" class="control-label">Usuario</label><span class="Mensaje">*</span>
+                                            <label for="UsuarioIdAct" class="control-label">Usuario</label>
                                             <input list="usuarios" id="UsuarioIdActInput" name="usuario" class="form-control" placeholder="Escribe y/o selecciona..." />
                                             <datalist id="usuarios">
                                                 @foreach (var item in ViewBag.Usuarios)
@@ -166,7 +166,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="ObservacionAct" class="control-label">Observacion</label>
-                                                <span class="Mensaje"></span>
+                                                
                                                 <input type="text" id="ObservacionAct" name="observacion" class="form-control" autocomplete="off" />
                                                 <span id="MensajeObservacion" class="text-danger"></span>
                                             </div>
@@ -174,7 +174,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="DireccionDomiciliarioAct" class="control-label">Direccion</label>
-                                                <span class="Mensaje"></span>
+                                                
                                                 <input type="text" id="DireccionDomiciliarioAct" name="DireccionDomiciliario" class="form-control" autocomplete="off" />
                                                 <span id="MensajeDireccionDomiciliario" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                             </div>
@@ -183,7 +183,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="FechaEntregaAct" class="control-label">Usuario</label>
-                                                <span class="Mensaje"></span>
+                                                
                                                 <input type="datetime-local" id="FechaEntregaAct" name="fechaEntrega" class="form-control" />
                                                 <span id="Mensajefechaerror" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                             </div>
@@ -191,7 +191,7 @@
 
                                     </div>
                                 </div>
-                                <div class="MensajeInicial"></div>
+                                
                                 <div class="modal-contenedor-footer">
                                     <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormularioUsuario();">Cancelar</button>
                                     <button type="button" onclick="actualizarDomi();" class="btn btn-primary ">Actualizar</button>

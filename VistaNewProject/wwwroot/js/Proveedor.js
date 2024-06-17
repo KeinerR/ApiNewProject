@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const proveedorId = urlParams.get('proveedorId');
 
     if (mostrarAlertaCampoVacio === 'true' && proveedorId) {
-        mostrarModalSinRetrasoProveedor(proveedorId);
+        mostrarModalActualizarProveedor(proveedorId);
     }
     //Evitar el envio de los formularios hasta que todo este validados
     $('.modal-formulario-crear-proveedor').on('submit', function (event) {
@@ -196,10 +196,6 @@ document.addEventListener('DOMContentLoaded', function () {
         ];
         console.log(proveedorFinal,proveedoresAll);
         const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
-        if (!NoCamposVacios()) {
-            event.preventDefault();
-            return;
-        }
 
         if (!NoCamposConErrores()) {
             event.preventDefault();
@@ -232,10 +228,7 @@ document.addEventListener('DOMContentLoaded', function () {
         ];
 
         const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
-        if (!NoCamposVaciosAct()) {
-            event.preventDefault();
-            return;
-        }
+
 
         if (!NoCamposConErroresAct()) {
             event.preventDefault();
@@ -285,42 +278,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Validar campos en cada cambio para cambiar el mensaje inicial que aparece arriba de los botones del formulario
     $('.modal-formulario-crear-proveedor input, .modal-formulario-crear-proveedor select').on('input', function () {
-        NoCamposVaciosInicial();
         NoCamposConErroresInicial();
     });
     $('.modal-formulario-actualizar-proveedor input, .modal-formulario-actualizar-proveedor select').on('input', function () {
-        NoCamposVaciosInicialAct();
         NoCamposConErroresInicialAct();
 
     });
 
-    //Este elimina el mensaje inicial u lo agrega de ser necesario el que aparece sobre los botones
-    function NoCamposVacios() {
-        const mensajeElements = $('.Mensaje');
-        const mensajeSlice = mensajeElements.slice(0, 5);
-        const camposConTexto = mensajeSlice.filter(function () {
-            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
-        }).length;
-
-        console.log('Número de campos sin texto:', camposConTexto);
-
-        if (camposConTexto === 5) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos con *.');
-            return false;
-        }
-        if (camposConTexto > 1 && camposConTexto < 5) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos con *.');
-            return false;
-        }
-        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            $('.MensajeInicial').text('Por favor, complete el campo con *.');
-            return false;
-        }
-
-        return true;
-    }
     function NoCamposConErrores() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(0, 5);
@@ -346,30 +310,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return true;
     }
 
-    function NoCamposVaciosAct() {
-        const mensajeElements = $('.Mensaje');
-        const mensajeSlice = mensajeElements.slice(-5);
-        const camposConTexto = mensajeSlice.filter(function () {
-            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
-        }).length;
-
-        if (camposConTexto === 7) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos con *.');
-            return false;
-        }
-        if (camposConTexto > 1 && camposConTexto < 7) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos con *.');
-            return false;
-        }
-        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            $('.MensajeInicial').text('Por favor, complete el campo con *.');
-            return false;
-        }
-
-        return true;
-    }
     function NoCamposConErroresAct() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(-5);
@@ -394,22 +334,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return true;
     }
-    function NoCamposVaciosInicial() {
-        const mensajeElements = $('.Mensaje');
-
-        const mensajeSlice = mensajeElements.slice(0, 5);
-
-
-        const todosLlenos = mensajeSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
-
-        if (todosLlenos) {
-            $('.MensajeInicial').text('');
-        }
-
-    }
+    
     function NoCamposConErroresInicial() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(0, 5);
@@ -422,22 +347,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return true;
     }
 
-    function NoCamposVaciosInicialAct() {
-        const mensajeElements = $('.Mensaje');
-
-        const mensajeSlice = mensajeElements.slice(-5);
-
-
-        const todosLlenos = mensajeSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
-
-        if (todosLlenos) {
-            $('.MensajeInicial').text('');
-        }
-
-    }
     function NoCamposConErroresInicialAct() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(-5);
@@ -455,9 +364,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /*---------------------------------------------------- Al dar click en el boton de agregar proveedor  ---------------------------------------------------- */
 function simularClickProveedor() {
-    //ocultar formulario de actualizar  y mostrar el formulario principal
-    $('#FormActualizarProveedor').hide();
-    $('#FormPrincipalProveedor').show().css('visibility', 'visible');
     obtenerDatosProveedores();
 }
 
@@ -485,56 +391,27 @@ document.addEventListener('keydown', function (event) {
     }
 });
 
-
-function abrirModalProveedor() {
-    // Verificar si la modal está abierta
-    if ($('#ModalProveedor').hasClass('show')) {
-        $('#ModalProveedor').modal('hide'); // Cerrar la modal
-    } else {
-        simularClickProveedor(); // Simular algún evento antes de abrir la modal
-        $('#ModalProveedor').modal('show'); // Abrir la modal
-    }
-}
-
 /*------------------------------ Limpiar formularios y url ---------------------------------------------------------------------------------------------------- */
 
 
 function limpiarFormularioProveedorAgregar() {
     history.replaceState(null, '', location.pathname);
     // Limpiar mensajes de alerta y *
-    var mensajes = document.querySelectorAll('.Mensaje');
+  
     var mensajesText = document.querySelectorAll('.text-danger');
 
-    for (var i = 0; i < mensajes.length - 5; i++) {
-        mensajes[i].textContent = '*';
-    }
     for (var i = 0; i < mensajesText.length - 5; i++) {
         mensajesText[i].textContent = '';
     }
-    $('.MensajeInicial').text('');
-    $('.MensajeErrores').text('');
 }
 function limpiarFormularioProveedorAct() {
     history.replaceState(null, '', location.pathname);
-    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
-        element.textContent = '';
-    });
-    document.querySelectorAll('.MensaErrores').forEach(function (element) {
-        element.textContent = '';
-    });
-    // Limpiar mensajes de alerta y *
-    var mensajes = document.querySelectorAll('.Mensaje');
+   
     var mensajesText = document.querySelectorAll('.text-danger');
 
-    for (var i = Math.max(0, mensajes.length - 5); i < mensajes.length; i++) {
-        mensajes[i].textContent = '';
-    }
     for (var i = Math.max(0, mensajesText.length - 5); i < mensajesText.length; i++) {
         mensajesText[i].textContent = '';
     }
-
-    $('.MensajeInicial').text('');
-    $('.MensajeErrores').text('');
 
 }
 function limpiarFormularioProveedor() {
@@ -569,36 +446,24 @@ $('.modal').on('click', function (e) {
 });
 
 function AlPerderFocoProveedor() {
-    var displayFormActualizar = $('#FormActualizarProveedor').css('display');
-    var displayModal = $('#ModalProveedor').css('display');
-    if (displayFormActualizar == "block" && displayModal == "none") {
+    var displayModal = $('#ModalActualizarProveedor').css('display');
+    if (displayModal == "none") {
         limpiarFormularioProveedorAct();
     }
 }
 
 /*--------------------------------------------------------- Modal de actualizar proveedor ---------------------------------------*/
-function mostrarModalConRetrasoProveedor(proveedorId) {
-    limpiarFormularioProveedorAct();
+function mostrarModalActualizarProveedor(proveedorId) {
     actualizarProveedor(proveedorId);
     setTimeout(function () {
-        var myModal = new bootstrap.Modal(document.getElementById('ModalProveedor'));
+        var myModal = new bootstrap.Modal(document.getElementById('ModalActualizarProveedor'));
         obtenerDatosProveedores();
         myModal.show();
         // Aquí puedes llamar a la función actualizarProducto si es necesario
-    }, 400); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
+    }, 50); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
 
 }
-//Modal cuando se hace click en editar en el boton de detalle
-function mostrarModalSinRetrasoProveedor(proveedorId) {
-    actualizarProveedor(proveedorId);
-    setTimeout(function () {
-        limpiarFormularioProveedorAct();
-        obtenerDatosProveedores();
-        var myModal = new bootstrap.Modal(document.getElementById('ModalProveedor'));
-        myModal.show();
-        // Aquí puedes llamar a la función actualizarProducto si es necesario
-    }, 50); // 50 milisegundos (0.05 segundos) de retraso antes de abrir la modal
-}
+
 
 function actualizarProveedor(campo) {
     var proveedorId = campo;
@@ -615,15 +480,13 @@ function actualizarProveedor(campo) {
             formActualizar.find('#CorreoProveedorAct').val(data.correo);
             formActualizar.find('#DireccionProveedorAct').val(data.direccion);
             formActualizar.find('#EstadoProveedorAct').val(data.estadoProveedor);
-            limpiarFormularioProveedorAct()
             obtenerDatosProveedores();
         },
         error: function () {
             alert('Error al obtener los datos del proveedor.');
         }
     });
-    $('#FormPrincipalProveedor').hide().css('visibility', 'hidden');
-    $('#FormActualizarProveedor').show().css('visibility', 'visible');
+
 }
 
 

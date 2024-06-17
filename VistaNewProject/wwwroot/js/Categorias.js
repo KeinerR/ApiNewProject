@@ -2,7 +2,6 @@
     return navigator.onLine;
 }
 var categorias = []; 
-
 function obtenerDatosCategorias() {
     fetch('/Categorias/FindCategorias', {
         method: 'POST',
@@ -88,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const categoriaId = urlParams.get('categoriaId');
 
     if (mostrarAlertaCampoVacio === 'true' && categoriaId) {
-        mostrarModalSinRetrasoCategoria(categoriaId);
+        mostrarModalCategoria(categoriaId);
     }
     //Evitar el envio de los formularios hasta que todo este validados
     $('.modal-formulario-crear-categoria').on('submit', function (event) {
@@ -98,25 +97,17 @@ document.addEventListener('DOMContentLoaded', function () {
         const campos = [
             { id: 'NombreCategoriaVista', nombre: 'Nombre categoría' }
         ];
-
         const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
-        if (!NoCamposVaciosCategoria()) {
+        if (!camposVacios) {
             event.preventDefault();
             return;
         }
-
         if (!NoCamposConErroresCategoria()) {
             event.preventDefault();
-            mostrarAlertaAtencionPersonalizadaConBoton('El campo no es valido');
             return;
         }
 
         if (categoriaRepetida) {
-            event.preventDefault();
-            return;
-        }
-
-        if (!camposVacios) {
             event.preventDefault();
             return;
         }
@@ -129,11 +120,11 @@ document.addEventListener('DOMContentLoaded', function () {
             { id: 'NombreCategoriaVistaAct', nombre: 'Nombre categoría'}
         ];
         const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
-        if (!NoCamposVaciosCategoriaAct()) {
+
+        if (!camposVacios) {
             event.preventDefault();
             return;
         }
-
         if (!NoCamposConErroresCategoriaAct()) {
             event.preventDefault();
             return;
@@ -144,10 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        if (!camposVacios) {
-            event.preventDefault();
-            return;
-        }
+    
 
     });
     // Confirmación de eliminación
@@ -170,35 +158,15 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-
     // Validar campos en cada cambio para cambiar el mensaje inicial que aparece arriba de los botones del formulario
     $('.modal-formulario-crear-categoria input').on('input', function () {
-        NoCamposVaciosInicialCategoria();
         NoCamposConErroresInicialCategoria();
     });
     $('.modal-formulario-actualizar-categoria input, .modal-formulario-actualizar-categoria select').on('input', function () {
-        NoCamposVaciosInicialCategoriaAct();
         NoCamposConErroresInicialCategoriaAct();
 
     });
     
-    //Este elimina el mensaje inicial u lo agrega de ser necesario el que aparece sobre los botones
-    function NoCamposVaciosCategoria() {
-        const mensajeElements = $('.Mensaje');
-        const mensajeSlice = mensajeElements.slice(0,1);
-        const camposConTexto = mensajeSlice.filter(function () {
-            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
-        }).length;
-
-        console.log('Número de campos sin texto:', camposConTexto);
-
-        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            $('.MensajeInicial').text('Por favor, complete el campo con *.');
-            return false;
-        } 
-
-        return true;
-    }
     function NoCamposConErroresCategoria() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(0, 1);
@@ -206,30 +174,11 @@ document.addEventListener('DOMContentLoaded', function () {
             return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
         }).length;
 
-        console.log('Número de campos sin texto:', camposConTexto);
-
         if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
             mostrarAlertaAtencionPersonalizadaConBoton('El campo contiene errores');
             $('.MensajeInicial').text('El campo contiene errores.');
             return false;
         }
-        return true;
-    }
-
-    function NoCamposVaciosCategoriaAct() {
-        const mensajeElements = $('.Mensaje');
-        const mensajeSlice = mensajeElements.slice(-1);
-        const camposConTexto = mensajeSlice.filter(function () {
-            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
-        }).length;
-
-        console.log('Número de campos sin texto:', camposConTexto);
-
-        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            $('.MensajeInicial').text('Por favor, completa el campo con *.');
-            return false;
-        } 
-
         return true;
     }
     function NoCamposConErroresCategoriaAct() {
@@ -239,30 +188,12 @@ document.addEventListener('DOMContentLoaded', function () {
             return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
         }).length;
 
-        console.log('Número de campos sin texto:', camposConTexto);
-
         if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
             mostrarAlertaAtencionPersonalizadaConBoton('El campo contiene errores');
             $('.MensajeInicial').text('El campo contiene errores.');
             return false;
         }
         return true;
-    }
-    function NoCamposVaciosInicialCategoria() {
-        const mensajeElements = $('.Mensaje');
-
-        const mensajeSlice = mensajeElements.slice(0, 1);
-
-
-        const todosLlenos = mensajeSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
-
-        if (todosLlenos) {
-            $('.MensajeInicial').text('');
-        }
-
     }
     function NoCamposConErroresInicialCategoria() {
         const textDangerElements = $('.text-danger');
@@ -276,30 +207,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return true;
     }
-
-    function NoCamposVaciosInicialCategoriaAct() {
-        const mensajeElements = $('.Mensaje');
-
-        const mensajeSlice = mensajeElements.slice(-1);
-
-
-        const todosLlenos = mensajeSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
-
-        if (todosLlenos) {
-            $('.MensajeInicial').text('');
-        }
-
-    }
     function NoCamposConErroresInicialCategoriaAct() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(-1);
         const todoValido = textDangerSlice.filter(function () {
             return $(this).text() !== '';
         }).length === 0;
-        console.log('Todos los campos son válidos:', todoValido);
         if (todoValido) {
             $('.MensajeErrores').text('');
         }
@@ -307,13 +220,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 });
-
-
-
 function simularClickCategoria() {
-    //ocultar formulario de actualizar  y mostrar el formulario principal
-    $('#FormActualizarCategoria').hide();
-    $('#FormPrincipalCategoria').show().css('visibility', 'visible');
     obtenerDatosCategorias();
 }
 
@@ -341,25 +248,12 @@ document.addEventListener('keydown', function (event) {
     }
 });
 
-
-function abrirModalCategoria() {
-    // Verificar si la modal está abierta
-    if ($('#ModalCategoria').hasClass('show')) {
-        $('#ModalCategoria').modal('hide'); // Cerrar la modal
-    } else {
-        simularClickCategoria(); // Simular algún evento antes de abrir la modal
-        $('#ModalCategoria').modal('show'); // Abrir la modal
-    }
-}
-
 function limpiarFormularioCategoria() {
     limpiarFormularioCategoriaAgregar();
     limpiarFormularioCategoriaAct();
     history.replaceState(null, '', location.pathname);
     // Limpiar campos y elementos específicos
     limpiarCampo('NombreCategoriaVista');
-
-
     // Limpiar campos y elementos específicos de la versión actualizada
     limpiarCampo('NombreCategoriaVistaAct');
 
@@ -368,41 +262,21 @@ function limpiarFormularioCategoria() {
 function limpiarFormularioCategoriaAgregar() {
     // Limpiar la URL eliminando los parámetros de consulta
     history.replaceState(null, '', location.pathname);
-    // Limpiar mensajes de alerta y *
-    var mensajes = document.querySelectorAll('.Mensaje');
-    var mensajesText = document.querySelectorAll('.text-danger');
 
-    for (var i = 0; i < mensajes.length - 1; i++) {
-        mensajes[i].textContent = '*';
-    }
+    var mensajesText = document.querySelectorAll('.text-danger');
+   
     for (var i = 0; i < mensajesText.length - 1; i++) {
         mensajesText[i].textContent = '';
     }
-
-    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
-        element.textContent = '';
-    });
-    document.querySelectorAll('.MensaErrores').forEach(function (element) {
-        element.textContent = '';
-    });
-    
+ 
 }
 function limpiarFormularioCategoriaAct() {
     history.replaceState(null, '', location.pathname);
-    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
-        element.textContent = '';
-    });
-    document.querySelectorAll('.MensaErrores').forEach(function (element) {
-        element.textContent = '';
-    });
+  
 
-    // Limpiar mensajes de alerta y asteriscos
-    var mensajes = document.querySelectorAll('.Mensaje');
+    // Limpiar mensajes de alerta
     var mensajesText = document.querySelectorAll('.text-danger');
 
-    for (var i = Math.max(0, mensajes.length - 1); i < mensajes.length; i++) {
-        mensajes[i].textContent = '';
-    }
     for (var i = Math.max(0, mensajesText.length - 1); i < mensajesText.length; i++) {
         mensajesText[i].textContent = '';
     }
@@ -419,37 +293,21 @@ $('.modal').on('click', function (e) {
 });
 
 function AlPerderFocoCategoria() {
-    var displayFormActualizar = $('#FormActualizarCategoria').css('display');
-    var displayModal = $('#ModalCategoria').css('display');
-    if (displayFormActualizar == "block" && displayModal == "none") {
+    var displayModal = $('#ModalActualizarCategoria').css('display');
+    if (displayModal == "none") {
         limpiarFormularioCategoriaAct();
     }
 }
 
 
-
-
 /*--------------------------------------------------------- Modal de actualizar usuario ---------------------------------------*/
-function mostrarModalConRetrasoCategoria(categoriaId) {
+function mostrarModalCategoria(categoriaId) {
     limpiarFormularioCategoriaAct();
     actualizarCategoria(categoriaId);
     setTimeout(function () {
-        var myModal = new bootstrap.Modal(document.getElementById('ModalCategoria'));
+        var myModal = new bootstrap.Modal(document.getElementById('ModalActualizarCategoria'));
         myModal.show();
-        // Aquí puedes llamar a la función actualizarProducto si es necesario
-    }, 400); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
-
-}
-//Modal cuando se hace click en editar en el boton de detalle
-function mostrarModalSinRetrasoCategoria(categoriaId) {
-    obtenerDatosCategorias();
-    actualizarCategoria(categoriaId);
-    setTimeout(function () {
-        var myModal = new bootstrap.Modal(document.getElementById('ModalCategoria'));
-        limpiarFormularioCategoriaAct();
-        myModal.show();
-        // Aquí puedes llamar a la función actualizarProducto si es necesario
-    }, 600); // 50 milisegundos (0.05 segundos) de retraso antes de abrir la modal
+    }, 50);
 }
 
 
@@ -464,15 +322,12 @@ function actualizarCategoria(campo) {
             formActualizar.find('#CategoriaIdAct').val(data.categoriaId);
             formActualizar.find('#NombreCategoriaVistaAct').val(data.nombreCategoria);
             formActualizar.find('#EstadoCategoriaAct').val(data.estadoCategoria);
-            limpiarFormularioCategoriaAct()
             obtenerDatosCategorias();
         },
         error: function () {
             alert('Error al obtener los datos de la  categoria.');
         }
     });
-    $('#FormPrincipalCategoria').hide().css('visibility', 'hidden');
-    $('#FormActualizarCategoria').show().css('visibility', 'visible');
 }
 function actualizarEstadoCategoria(CategoriaId) {
     $.ajax({
@@ -576,8 +431,6 @@ function vaciarInputCategoria() {
     paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
 
 }
-
-
 
 function validarCampoCategoria(input) {
     const inputElement = $(input); // Convertir el input a objeto jQuery

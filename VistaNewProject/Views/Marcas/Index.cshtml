@@ -17,15 +17,12 @@
         </div>
 
         <!-- Botón para abrir el modal -->
-        <button type="button" id="botonabrirModalMarca" onclick="simularClickMarca();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalMarca">
+        <button type="button" id="botonabrirModalMarca" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalMarca">
             <i class="fas fa-plus-circle"></i> Agregar marca
         </button>
     </div>
-
-
-
     <!-- Modal -->
-    <div class="modal fade GeneralModal" id="ModalMarca" tabindex="-1" aria-labelledby="exampleModalLabel" onblur="AlPerderFocoMarca();" aria-hidden="true">
+    <div class="modal fade GeneralModal" id="ModalMarca" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content" id="FormPrincipalMarca">
                  <div class="modal-cabecera">
@@ -42,14 +39,13 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label for="NombreMarcaVista" class="control-label">
-                                    Nombre marca<span class="Mensaje">*</span>
+                                    Nombre marca
+                                    <span class="Mensaje">*</span>
                                 </label>
                                 <input type="text" id="NombreMarcaVista" oninput="validarCampoMarca(this);" name="nombreMarca" class="form-control" autocomplete="off" />
                                 <span class="text-danger"></span>
                             </div>
                         </div>
-                        <div class="MensajeInicial"></div>
-                        <div class="MensajeErrores"></div>
                         <div class="modal-contenedor-footer">
                             <button type="reset" onclick="limpiarFormularioCategoriaAgregar();" class="btn btn-secondary">Cancelar</button>
                             <button type="submit" class="btn btn-primary btnGuardar">Agregar</button>
@@ -57,51 +53,52 @@
                     </form>
                 </div>
             </div>
-            <div class="modal-dialog">
-                <div class="modal-content noIs" id="FormActualizarMarca">
-                    <div class="modal-cabecera">
-                        <div id="pibo"></div>
-                        <div class="modal-header-view TituloModal">
-                            <h2 class="modal-title">Actualizar marca</h2>
-                        </div>
-                        <div class="moda-header-view" id="modal-cabecera-equis">
-                            <button type="button" onclick="limpiarFormularioMarca();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
+        </div>
+    </div>
+    <div class="modal fade GeneralModal" id="ModalActualizarMarca" tabindex="-1" aria-labelledby="exampleModalLabel" onblur="AlPerderFocoMarca();" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" id="FormActualizarMarca">
+                <div class="modal-cabecera">
+                    <div id="pibo"></div>
+                    <div class="modal-header-view TituloModal">
+                        <h2 class="modal-title">Actualizar marca</h2>
                     </div>
-                    <div class="modal-cuerpo">
-                        <form asp-controller="Marcas" asp-action="Update" method="post" class="modal-formulario-actualizar-marca">
-                            @Html.AntiForgeryToken() <!-- Asegúrate de tener esto si estás utilizando AntiForgeryToken -->
-                            <div class="modal-body">
-                                <div class="d-none">
-                                    <input id="MarcaIdAct" name="marcaId" class="form-control" type="hidden" />
-                                </div>
-                                <div class="row">
-                                    <div class="form-group">
-                                        <label for="NombreMarcaVistaAct" class="control-label">Nombre marca</label>
-                                        <span class="Mensaje"></span>
-                                        <input type="text" oninput="validarCampoMarca(this);" id="NombreMarcaVistaAct" name="nombreMarca" class="form-control" autocomplete="off" />
-                                        <span class="text-danger" id="mensajeNombreMarcaVistaAct"></span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="EstadoMarcaAct" class="control-label">Estado</label>
-                                        <select id="EstadoMarcaAct" name="estadoMarca" class="form-control">
-                                            <option value="1">Activo</option>
-                                            <option value="0">Inactivo</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="MensajeInicial"></div>
-                            <div class="MensajeErrores"></div>
-                            <div class="modal-contenedor-footer">
-                                <button type="reset" onclick="limpiarFormularioMarcaAct();" data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
-                                <button type="submit" class="btn btn-primary btnGuardar">Actualizar</button>
-                            </div>
-                        </form>
+                    <div class="moda-header-view" id="modal-cabecera-equis">
+                        <button type="button" onclick="limpiarFormularioMarca();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                 </div>
+                <div class="modal-cuerpo">
+                    <form asp-controller="Marcas" asp-action="Update" method="post" class="modal-formulario-actualizar-marca">
+                        @Html.AntiForgeryToken() <!-- Asegúrate de tener esto si estás utilizando AntiForgeryToken -->
+                        <div class="modal-body">
+                            <div class="d-none">
+                                <input id="MarcaIdAct" name="marcaId" class="form-control" type="hidden" />
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <label for="NombreMarcaVistaAct" class="control-label">Nombre marca<span class="Mensaje"></span></label>
+                                    <input type="text" oninput="validarCampoMarca(this);" id="NombreMarcaVistaAct" name="nombreMarca" class="form-control" autocomplete="off" />
+                                    <span class="text-danger" id="mensajeNombreMarcaVistaAct"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="EstadoMarcaAct" class="control-label">Estado</label>
+                                    <select id="EstadoMarcaAct" name="estadoMarca" class="form-control">
+                                        <option value="1">Activo</option>
+                                        <option value="0">Inactivo</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="modal-contenedor-footer">
+                            <button type="reset" onclick="limpiarFormularioMarcaAct();" data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
+                            <button type="submit" class="btn btn-primary btnGuardar">Actualizar</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
+        </div> <!-- Se cerró la etiqueta modal -->
     </div>
     <div class="contenedor-filtro">
         <select name="order" class="input-sm empSelect" onchange="redirectToOrder(this)">
@@ -165,7 +162,7 @@
                     </td>
                     <td class="botonesTabla">
                         <div class="botonesTablaContenedor">
-                            <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoMarca(@item.MarcaId);"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-edit botonEditar" onclick="mostrarModalActualizarMarca(@item.MarcaId);"><i class="fas fa-edit"></i></button>
                             <a asp-action="Details" asp-controller="Marcas" asp-route-id="@item.MarcaId" class="btn btn-detail botonDetalle"> <i class="fas fa-file"></i> </a>
                             <form asp-controller="Marcas" class="eliminarMarca" asp-action="Delete" method="post">
                                 <input type="hidden" value="@item.MarcaId" name="marcaId" />
@@ -196,7 +193,7 @@
                             </td>
                             <td class="botonesTabla">
                                 <div class="botonesTablaContenedor">
-                                    <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoMarca(@marca.MarcaId);"><i class="fas fa-edit"></i></button>
+                                   <button class="btn btn-edit botonEditar" onclick="mostrarModalActualizarMarca(@marca.MarcaId);"><i class="fas fa-edit"></i></button>
                                     <a asp-action="Details" asp-controller="Marcas" asp-route-id="@marca.MarcaId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
                                     <form asp-controller="Marcas" class="eliminarMarca" asp-action="Delete" method="post">
                                         <input type="hidden" value="@marca.MarcaId" name="marcaId" />
@@ -210,7 +207,6 @@
             }
         </tbody>
     </table>
-
     <div class="pagination-container mt-2" id="paginationContainer">
         @if (Model != null && Model.PageCount > 1)
         {

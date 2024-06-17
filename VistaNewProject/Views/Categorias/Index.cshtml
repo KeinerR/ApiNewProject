@@ -25,7 +25,7 @@
 
 
     <!-- Modal -->
-    <div class="modal fade GeneralModal" id="ModalCategoria" tabindex="-1" aria-labelledby="exampleModalLabel" onblur="AlPerderFocoCategoria();" aria-hidden="true">
+    <div class="modal fade GeneralModal" id="ModalCategoria" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content" id="FormPrincipalCategoria">
                 <div class="modal-cabecera">
@@ -49,8 +49,6 @@
 
                             </div>
                         </div>
-                        <div class="MensajeInicial"></div>
-                        <div class="MensajeErrores"></div>
                         <div class="modal-contenedor-footer">
                             <button type="reset" onclick="limpiarFormularioCategoriaAgregar();" class="btn btn-secondary">Cancelar</button>
                             <button type="submit" class="btn btn-primary btnGuardar">Agregar</button>
@@ -59,8 +57,10 @@
                 </div>
             </div>
         </div>
+    </div>
+     <div class="modal fade GeneralModal" id="ModalActualizarCategoria" tabindex="-1" aria-labelledby="exampleModalLabel" onblur="AlPerderFocoCategoria();" aria-hidden="true">
             <div class="modal-dialog">
-                <div class="modal-content noBe" id="FormActualizarCategoria">
+                <div class="modal-content" id="FormActualizarCategoria">
                        <div class="modal-cabecera">
                             <div id="pibo"></div>
                             <div class="modal-header-view TituloModal">
@@ -79,7 +79,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="form-group">
-                                    <label for="NombreCategoriaVistaAct" class="control-label">Nombre categoría<span class="Mensaje"></span></label>
+                                                <label for="NombreCategoriaVistaAct" class="control-label">Nombre categoría<span class="Mensaje"></span></label>
                                                 <input type="text" id="NombreCategoriaVistaAct" oninput="validarCampoCategoria(this);" name="nombreCategoria" class="form-control" autocomplete="off" />
                                                 <span class="text-danger"></span>
                                             </div>
@@ -92,8 +92,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="MensajeInicial"></div>
-                                    <div class="MensajeErrores"></div>
                                     <div class="modal-contenedor-footer">
                                         <button type="reset" onclick="limpiarFormularioCategoriaAct();" data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
                                         <button type="submit" class="btn btn-primary btnGuardar">Actualizar</button>
@@ -165,7 +163,7 @@
                     </td>
                       <td class="botonesTabla">
                             <div class="botonesTablaContenedor">
-                                <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoCategoria(@item.CategoriaId);"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-edit botonEditar" onclick="mostrarModalCategoria(@item.CategoriaId);"><i class="fas fa-edit"></i></button>
                                 <a asp-action="Details" asp-controller="Categorias" asp-route-id="@item.CategoriaId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
                                 <form asp-controller="Categorias" class="eliminarCategoria" asp-action="Delete" method="post">
                                     <input type="hidden" value="@item.CategoriaId" name="categoriaId" />
@@ -197,7 +195,7 @@
                             <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                              <td class="botonesTabla">
                                 <div class="botonesTablaContenedor">
-                                    <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoCategoria(@categoria.CategoriaId);"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-edit botonEditar" onclick="mostrarModalCategoria(@categoria.CategoriaId);"><i class="fas fa-edit"></i></button>
                                     <a asp-action="Details" asp-controller="Categorias" asp-route-id="@categoria.CategoriaId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
                                     <form asp-controller="Categorias" class="eliminarCategoria" asp-action="Delete" method="post">
                                         <input type="hidden" value="@categoria.CategoriaId" name="categoriaId" />

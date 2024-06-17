@@ -48,7 +48,7 @@
                         <input type="hidden" id="CompraId" name="compraId" class="form-control" />
                         <div class="row">
                             <div class="col-6">
-                                <label for="ProveedorId" class="control-label">Proveedor<span class="Mensaje">*</span></label>
+                                <label for="ProveedorId" class="control-label">Proveedor</label>
                                 <input list="proveedores" id="ProveedorId" name="ProveedorId" class="form-control inputs" placeholder="Escribe y/o Selecciona" autocomplete="off">
                                 <span class="text-danger"></span>
                                 <datalist id="proveedores">
@@ -63,14 +63,14 @@
                             </div>
 
                             <div class="col-6">
-                                <label for="FechaCompra" class="control-label">Fecha Compra<span class="Mensaje"></span></label>
+                                <label for="FechaCompra" class="control-label">Fecha Compra</label>
                                 <input type="datetime-local" id="FechaCompra" name="fechaCompra" class="form-control inputs" />
                                 <span class="text-danger"></span>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-6">
-                                <label for="NumeroFactura" class="control-label"># de Factura<span class="Mensaje">*</span></label>
+                                <label for="NumeroFactura" class="control-label"># de Factura</label>
                                 <input type="text" id="NumeroFactura" name="numeroFactura" class="form-control inputs" />
                                 <span class="text-danger"></span>
                             </div>
@@ -98,7 +98,7 @@
                     <div id="detallecontainer" class="form-group">
                         <div class="row" id="DatosProducto">
                             <div class="col-6">
-                                <label for="ProductoId" class="control-label">Producto<span class="Mensaje">*</span></label>
+                                <label for="ProductoId" class="control-label">Producto</label>
                                 <input list="productos" id="ProductoId" name="productoId" class="form-control" placeholder="Escribe y/o selecciona el producto ..." autocomplete="off"/>
                                 <datalist id="productos">
                                     @foreach (var producto in ViewBag.Productos)
@@ -114,7 +114,7 @@
                             <div class="col-3">
                                 <div class="d-flex align-items-center">
                                 <!-- Utilizamos flexbox para alinear verticalmente los elementos -->
-                                <label for="FechaVencimiento" class="control-label mb-0 me-2">Fecha Vencimiento<span class="Mensaje">*</span></label>
+                                <label for="FechaVencimiento" class="control-label mb-0 me-2">Fecha Vencimiento</label>
                                 <span class="text-danger" id="spanFechaVencimiento"></span>
                                 </div>
                                 <input type="datetime-local" id="FechaVencimiento" name="fechaVencimiento" class="form-control" />
@@ -128,7 +128,7 @@
                             </div>
 
                             <div class="col-3">
-                                <label for="NumeroLote" class="control-label">Numero Lote<span class="Mensaje">*</span></label>
+                                <label for="NumeroLote" class="control-label">Numero Lote</label>
                                 <input type="text" id="NumeroLote" name="numeroLote" class="form-control" />
                                 <span class="text-danger"></span>
                             </div>
@@ -136,7 +136,7 @@
                          <div class="EspacioForm"></div>
                         <div class="row">
                             <div class="col-3">
-                                <label for="UnidadId" class="control-label"> Unidad<span class="Mensaje">*</span></label>
+                                <label for="UnidadId" class="control-label"> Unidad</label>
                                 <input list="unidades" id="UnidadId" name="unidadId" class="form-control" placeholder="Escribe y / o selecciona la unidad ..." autocomplete="off">
                                 <span class="text-danger"></span>
                                 <datalist id="unidades">
@@ -162,12 +162,12 @@
                                 </div>
                             </div>
                             <div class="col-3">
-                                <label for="PrecioDeCompra" class="control-label" id="PC">Precio de Compra<span class="Mensaje">*</span></label>
+                                <label for="PrecioDeCompra" class="control-label" id="PC">Precio de Compra</label>
                                 <input type="text" id="PrecioDeCompra" name="precioDeCompra" class="form-control"/>
                                 <span class="text-danger"></span>
                             </div>
                             <div class="col-3">
-                                <label for="PorcentajeGanancia" class="control-label">% A Ganar<span class="Mensaje">*</span></label>
+                                <label for="PorcentajeGanancia" class="control-label">% A Ganar</label>
                                 <div class="contenedorCalculo">
                                     <input type="text" id="PorcentajeGanancia" name="porcentajeGanancia" class="form-control"/>
                                     <button class="btn-calculo" id="btnCalcular" title="Calcular"><i class="fas fa-calculator"></i></button>
@@ -195,12 +195,12 @@
                         <div class="row noVisualizar" id="PrecioBougth">
                              <h5>Precio de venta</h5>
                             <div class="col-4">
-                                <label for="PrecioDeVentaPorUnidad" class="control-label">x Unidad<span class="Mensaje">*</span></label>
+                                <label for="PrecioDeVentaPorUnidad" class="control-label">x Unidad</label>
                                 <input type="text" id="PrecioDeVentaPorUnidad" name="precioDeVentaPorUnidad" class="form-control"/>
                                 <span class="text-danger"></span>
                             </div>
                             <div class="col-4" >
-                                <label for="PrecioDeVentaUnitario" class="control-label">x Producto<span class="Mensaje">*</span></label>
+                                <label for="PrecioDeVentaUnitario" class="control-label">x Producto</label>
                                 <div class="contenedorCalculo">
                                 <input type="text" id="PrecioDeVentaUnitario" name="precioDeVentaUnitario" class="form-control" />
                                 <button class="btn-calculo" id="btnCalcularVenta" title="Calcular precio por unidad"><i class="fas fa-calculator"></i></button>
@@ -208,7 +208,7 @@
                                 <span id="spanErmitanio" class="text-danger"></span>
                             </div>
                             <div class="col-4">
-                                <label for="PrecioDeVentaxUnidadPresentacion" class="control-label">x Unidad de producto<span class="Mensaje">*</span></label>
+                                <label for="PrecioDeVentaxUnidadPresentacion" class="control-label">x Unidad de producto</label>
                                 <input type="text" id="PrecioDeVentaxUnidadPresentacion" name="precioDeVentaxUnidadPresentacion" class="form-control" />
                                 <span class="text-danger"></span>
                             </div>

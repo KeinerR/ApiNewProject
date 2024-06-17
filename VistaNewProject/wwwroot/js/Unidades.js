@@ -1,6 +1,3 @@
-function checkInternetConnection() {
-    return navigator.onLine;
-}
 var unidades = [];
 
 function obtenerDatosUnidades() {
@@ -94,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const unidadId = urlParams.get('unidadId');
 
     if (mostrarAlertaCampoVacio === 'true' && unidadId) {
-        mostrarModalSinRetrasoUnidad(unidadId);
+        mostrarModalActualizarUnidad(unidadId);
     }
     //Evitar el envio de los formularios hasta que todo este validados
     $('.modal-formulario-crear-unidad').on('submit', function (event) {
@@ -108,11 +105,11 @@ document.addEventListener('DOMContentLoaded', function () {
         ];
 
         const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
-        if (!NoCamposVaciosUnidad()) {
+
+        if (!camposVacios) {
             event.preventDefault();
             return;
         }
-
         if (!NoCamposConErroresUnidad()) {
             event.preventDefault();
             return;
@@ -123,10 +120,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        if (!camposVacios) {
-            event.preventDefault();
-            return;
-        }
     });
     $('.modal-formulario-actualizar-unidad').on('submit', function (event) {
         const unidadFinal = mostrarValoresFormularioUnidadAct();
@@ -136,10 +129,10 @@ document.addEventListener('DOMContentLoaded', function () {
             { id: 'NombreUnidadVistaAct', nombre: 'Unidad' },
             { id: 'CantidadPorUnidadAct', nombre: 'Cantidad por Unidad' }
         ];
-        console.log(unidadFinal, unidadesAll);
 
         const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
-        if (!NoCamposVaciosUnidadAct()) {
+
+        if (!camposVacios) {
             event.preventDefault();
             return;
         }
@@ -154,10 +147,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        if (!camposVacios) {
-            event.preventDefault();
-            return;
-        }
+   
 
     });
     // Confirmación de eliminación
@@ -180,39 +170,14 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-
     // Validar campos en cada cambio para cambiar el mensaje inicial que aparece arriba de los botones del formulario
     $('.modal-formulario-crear-unidad input').on('input', function () {
-        NoCamposVaciosInicialUnidad();
         NoCamposConErroresInicialUnidad();
     });
     $('.modal-formulario-actualizar-unidad input, .modal-formulario-actualizar-unidad select').on('input', function () {
-        NoCamposVaciosInicialUnidadAct();
         NoCamposConErroresInicialUnidadAct();
 
     });
-
-    //Este elimina el mensaje inicial u lo agrega de ser necesario el que aparece sobre los botones
-    function NoCamposVaciosUnidad() {
-        const mensajeElements = $('.Mensaje');
-        const mensajeSlice = mensajeElements.slice(0, 2);
-        const camposConTexto = mensajeSlice.filter(function () {
-            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
-        }).length;
-
-        if (camposConTexto === 2) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos con *');
-            $('.MensajeInicial').text('Por favor, complete todos los campos con *.');
-            return false;
-        }
-        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            $('.MensajeInicial').text('Por favor, complete el campo con *.');
-            return false;
-        }
-
-  
-        return true;
-    }
     function NoCamposConErroresUnidad() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(0, 3);
@@ -235,25 +200,6 @@ document.addEventListener('DOMContentLoaded', function () {
             $('.MensajeErrores').text('Un campo es invalido.');
             return false;
         }
-        return true;
-    }
-    function NoCamposVaciosUnidadAct() {
-        const mensajeElements = $('.Mensaje');
-        const mensajeSlice = mensajeElements.slice(-2);
-        const camposConTexto = mensajeSlice.filter(function () {
-            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
-        }).length;
-
-        if (camposConTexto === 2) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos con *');
-            $('.MensajeInicial').text('Por favor, complete todos los campos con *.');
-            return false;
-        }
-        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            $('.MensajeInicial').text('Por favor, complete el campo con *.');
-            return false;
-        }
-  
         return true;
     }
     function NoCamposConErroresUnidadAct() {
@@ -280,23 +226,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return true;
     }
-
-    function NoCamposVaciosInicialUnidad() {
-        const mensajeElements = $('.Mensaje');
-
-        const mensajeSlice = mensajeElements.slice(0, 2);
-
-
-        const todosLlenos = mensajeSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
-
-        if (todosLlenos) {
-            $('.MensajeInicial').text('');
-        }
-
-    }
     function NoCamposConErroresInicialUnidad() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(0, 3);
@@ -309,30 +238,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return true;
     }
-
-    function NoCamposVaciosInicialUnidadAct() {
-        const mensajeElements = $('.Mensaje');
-
-        const mensajeSlice = mensajeElements.slice(-2);
-
-
-        const todosLlenos = mensajeSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
-
-        if (todosLlenos) {
-            $('.MensajeInicial').text('');
-        }
-
-    }
     function NoCamposConErroresInicialUnidadAct() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(-3);
         const todoValido = textDangerSlice.filter(function () {
             return $(this).text() !== '';
         }).length === 0;
-        console.log('Todos los campos son válidos:', todoValido);
         if (todoValido) {
             $('.MensajeErrores').text('');
         }
@@ -342,9 +253,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function simularClickUnidad() {
-    //ocultar formulario de actualizar  y mostrar el formulario principal
-    $('#FormActualizarUnidad').hide();
-    $('#FormPrincipalUnidad').show().css('visibility', 'visible');
     obtenerDatosUnidades();
 }
 
@@ -372,16 +280,6 @@ document.addEventListener('keydown', function (event) {
     }
 });
 
-function abrirModalUnidad() {
-    // Verificar si la modal está abierta
-    if ($('#ModalUnidad').hasClass('show')) {
-        $('#ModalUnidad').modal('hide'); // Cerrar la modal
-    } else {
-        simularClickUnidad(); // Simular algún evento antes de abrir la modal
-        $('#ModalUnidad').modal('show'); // Abrir la modal
-    }
-}
-
 function limpiarFormularioUnidad() {
     limpiarFormularioUnidadAgregar();
     limpiarFormularioUnidadAct();
@@ -403,22 +301,13 @@ function limpiarFormularioUnidadAgregar() {
     // Limpiar la URL eliminando los parámetros de consulta
     history.replaceState(null, '', location.pathname);
     // Limpiar mensajes de alerta y *
-    var mensajes = document.querySelectorAll('.Mensaje');
+
     var mensajesText = document.querySelectorAll('.text-danger');
 
-    for (var i = 0; i < mensajes.length - 2; i++) {
-        mensajes[i].textContent = '*';
-    }
     for (var i = 0; i < mensajesText.length - 3; i++) {
         mensajesText[i].textContent = '';
     }
 
-    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
-        element.textContent = '';
-    });
-    document.querySelectorAll('.MensaErrores').forEach(function (element) {
-        element.textContent = '';
-    });
 
 }
 function limpiarFormularioUnidadAct() {
@@ -430,13 +319,10 @@ function limpiarFormularioUnidadAct() {
         element.textContent = '';
     });
 
-    // Limpiar mensajes de alerta y asteriscos
-    var mensajes = document.querySelectorAll('.Mensaje');
+  
     var mensajesText = document.querySelectorAll('.text-danger');
 
-    for (var i = Math.max(0, mensajes.length - 2); i < mensajes.length; i++) {
-        mensajes[i].textContent = '';
-    }
+
     for (var i = Math.max(0, mensajesText.length - 3); i < mensajesText.length; i++) {
         mensajesText[i].textContent = '';
     }
@@ -453,39 +339,23 @@ $('.modal').on('click', function (e) {
 });
 
 function AlPerderFocoUnidad() {
-    var displayFormActualizar = $('#FormActualizarUnidad').css('display');
-    var displayModal = $('#ModalUnidad').css('display');
-    if (displayFormActualizar == "block" && displayModal == "none") {
+    var displayModal = $('#ModalActualizarUnidad').css('display');
+    if (displayModal == "none") {
         limpiarFormularioUnidadAct();
     }
 }
 
-
-
-
 /*--------------------------------------------------------- Modal de actualizar usuario ---------------------------------------*/
-function mostrarModalConRetrasoUnidad(unidadId) {
+function mostrarModalActualizarUnidad(unidadId) {
     limpiarFormularioUnidadAct();
     actualizarUnidad(unidadId);
     setTimeout(function () {
-        var myModal = new bootstrap.Modal(document.getElementById('ModalUnidad'));
+        var myModal = new bootstrap.Modal(document.getElementById('ModalActualizarUnidad'));
         myModal.show();
         // Aquí puedes llamar a la función actualizarProducto si es necesario
-    }, 400); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
+    }, 50); // 500 milisegundos (0.5 segundos) de retraso antes de abrir la modal
 
 }
-//Modal cuando se hace click en editar en el boton de detalle
-function mostrarModalSinRetrasoUnidad(unidadId) {
-    obtenerDatosUnidades();
-    actualizarUnidad(unidadId);
-    setTimeout(function () {
-        var myModal = new bootstrap.Modal(document.getElementById('ModalUnidad'));
-        limpiarFormularioUnidadAct();
-        myModal.show();
-        // Aquí puedes llamar a la función actualizarProducto si es necesario
-    }, 600); // 50 milisegundos (0.05 segundos) de retraso antes de abrir la modal
-}
-
 
 function actualizarUnidad(campo) {
     var unidadId = campo;
@@ -500,15 +370,13 @@ function actualizarUnidad(campo) {
             formActualizar.find('#CantidadPorUnidadAct').val(data.cantidadPorUnidad);
             formActualizar.find('#DescripcionUnidadAct').val(data.descripcionUnidad);
             formActualizar.find('#EstadoUnidadAct').val(data.estadoUnidad);
-            limpiarFormularioUnidadAct()
             obtenerDatosUnidades();
         },
         error: function () {
             alert('Error al obtener los datos de la  unidad.');
         }
     });
-    $('#FormPrincipalUnidad').hide().css('visibility', 'hidden');
-    $('#FormActualizarUnidad').show().css('visibility', 'visible');
+
 }
 function actualizarEstadoUnidad(UnidadId) {
     $.ajax({

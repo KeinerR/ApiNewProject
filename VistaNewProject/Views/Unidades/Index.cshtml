@@ -23,7 +23,7 @@
         </button>
     </div>
     <!-- Modal -->
-    <div class="modal fade GeneralModal" id="ModalUnidad" tabindex="-1" aria-labelledby="exampleModalLabel" onblur="AlPerderFocoUnidad();" aria-hidden="true">
+    <div class="modal fade GeneralModal" id="ModalUnidad" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content" id="FormPrincipalUnidad">
                 <div class="modal-cabecera">
@@ -57,13 +57,13 @@
                             <div class="row">
                                 <div class="form-group">
                                     <label for="DescripcionUnidad" class="control-label">Descripcion unidad</label>
-                                    <input type="text" oninput="validarCampoUnidad(this);" id="DescripcionUnidad" name="descripcionUnidad" class="form-control" />
+                                    <input type="text" oninput="validarCampoUnidad(this);" placeholder="Campo no obligatorio" id="DescripcionUnidad" name="descripcionUnidad" class="form-control" />
                                     <span class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
-                        <div class="MensajeInicial"></div>
-                        <div class="MensajeErrores"></div>
+                        
+                        
                         <div class="modal-contenedor-footer">
                             <button type="reset" onclick="limpiarFormularioUnidadAgregar();" class="btn btn-secondary">Cancelar</button>
                             <button type="submit" class="btn btn-primary btnGuardar">Agregar</button>
@@ -72,8 +72,11 @@
                 </div>
             </div>
         </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade GeneralModal" id="ModalActualizarUnidad" tabindex="-1" aria-labelledby="exampleModalLabel" onblur="AlPerderFocoUnidad();" aria-hidden="true">
         <div class="modal-dialog">
-            <div id="FormActualizarUnidad" class="modal-content noBe">
+            <div id="FormActualizarUnidad" class="modal-content">
                 <div class="modal-cabecera">
                     <div id="pibo"></div>
                     <div class="modal-header-view TituloModal">
@@ -98,7 +101,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="CantidadPorUnidadAct" class="control-label">Cantidad por unidad<span class="Mensaje"></span> </label>
+                                        <label for="CantidadPorUnidadAct" class="control-label">Cantidad por unidad<span class="Mensaje"></span></label>
                                         <input type="number" id="CantidadPorUnidadAct" oninput="validarCampoUnidad(this);" name="cantidadPorUnidad" class="form-control" autocomplete="off" />
                                         <span class="text-danger" id="mensajeCantidadUnidadAct"></span>
                                     </div>
@@ -106,11 +109,13 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label for="EstadoUnidadAct" class="control-label">Estado</label>
-                                    <select id="EstadoUnidadAct" name="estadoUnidad" class="form-control">
-                                        <option value="1">Activo</option>
-                                        <option value="0">Inactivo</option>
-                                    </select>
+                                    <div class="form-group">
+                                        <label for="EstadoUnidadAct" class="control-label">Estado</label>
+                                        <select id="EstadoUnidadAct" name="estadoUnidad" class="form-control">
+                                            <option value="1">Activo</option>
+                                            <option value="0">Inactivo</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
@@ -121,8 +126,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="MensajeInicial"></div>
-                        <div class="MensajeErrores"></div>
                         <div class="modal-contenedor-footer">
                             <button type="reset" onclick="limpiarFormularioUnidadAct();" data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
                             <button type="submit" class="btn btn-primary btnGuardar">Actualizar</button>
@@ -131,6 +134,7 @@
                 </div>
             </div>
         </div>
+
     </div>
     <div class="contenedor-filtro">
         <select name="order" class="input-sm empSelect" onchange="redirectToOrder(this)">
@@ -194,7 +198,7 @@
                     <!-- Botones de acciones -->
                     <td class="botonesTabla">
                         <div class="botonesTablaContenedor">
-                            <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoUnidad(@item.UnidadId);"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-edit botonEditar" onclick="mostrarModalActualizarUnidad(@item.UnidadId);"><i class="fas fa-edit"></i></button>
                             <a asp-action="Details" asp-controller="Unidades" asp-route-id="@item.UnidadId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
                             <form asp-controller="Unidades" class="eliminarUnidad" asp-action="Delete" method="post">
                                 <input type="hidden" value="@item.UnidadId" name="UnidadId" />
@@ -227,7 +231,7 @@
                             <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                             <td class="botonesTabla">
                                 <div class="botonesTablaContenedor">
-                                    <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoUnidad(@unidad.UnidadId);"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-edit botonEditar" onclick="mostrarModalActualizarUnidad(@unidad.UnidadId);"><i class="fas fa-edit"></i></button>
                                     <a asp-action="Details" asp-controller="Unidades" asp-route-id="@unidad.UnidadId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
                                     <form asp-controller="Unidades" class="eliminarUnidad" asp-action="Delete" method="post">
                                         <input type="hidden" value="@unidad.UnidadId" name="UnidadId" />

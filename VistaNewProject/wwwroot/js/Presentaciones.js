@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const presentacionId = urlParams.get('presentacionId');
 
     if (mostrarAlertaCampoVacio === 'true' && presentacionId) {
-        mostrarModalSinRetrasoPresentacion(presentacionId);
+        mostrarModalActualizarPresentacion(presentacionId);
     }
     //Evitar el envio de los formularios hasta que todo este validados
     $('.modal-formulario-crear-presentacion').on('submit', function (event) {
@@ -120,11 +120,10 @@ document.addEventListener('DOMContentLoaded', function () {
         ];
 
         const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
-        if (!NoCamposVaciosPresentacion()) {
+        if (!camposVacios) {
             event.preventDefault();
             return;
         }
-
         if (!NoCamposConErroresPresentacion()) {
             event.preventDefault();
             return;
@@ -134,36 +133,27 @@ document.addEventListener('DOMContentLoaded', function () {
             event.preventDefault();
             return;
         }
-
-        if (!camposVacios) {
-            event.preventDefault();
-            return;
-        }
     });
     $('.modal-formulario-actualizar-presentacion').on('submit', function (event) {
         const presentacionFinal = mostrarValoresFormularioPresentacionAct();
         const presentacionesAll = presentaciones;
         const presentacionRepetida = compararPresentacionesAct(presentacionFinal, presentacionesAll);
         const campos = [
-            { id: 'NombrePresentacionVistaAct', nombre: 'Presentacion' }
+                { id: 'NombrePresentacionVistaAct', nombre: 'Tipo presentación' },
+                { id: 'ContenidoAct', nombre: 'Contenido' },
+                { id: 'CantidadPorPresentacionAct', nombre: 'Cantidad de productos x presentacion' }
         ];
         const camposVacios = verificarCampos(campos, mostrarAlertaCampoVacio);
-        if (!NoCamposVaciosPresentacionAct()) {
+        if (!camposVacios) {
             event.preventDefault();
             return;
         }
-
         if (!NoCamposConErroresPresentacionAct()) {
             event.preventDefault();
             return;
         }
 
         if (presentacionRepetida) {
-            event.preventDefault();
-            return;
-        }
-
-        if (!camposVacios) {
             event.preventDefault();
             return;
         }
@@ -192,42 +182,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Validar campos en cada cambio para cambiar el mensaje inicial que aparece arriba de los botones del formulario
     $('.modal-formulario-crear-presentacion input').on('input', function () {
-        NoCamposVaciosInicialPresentacion();
         NoCamposConErroresInicialPresentacion();
     });
     $('.modal-formulario-actualizar-presentacion input, .modal-formulario-actualizar-presentacion select').on('input', function () {
-        NoCamposVaciosInicialPresentacionAct();
         NoCamposConErroresInicialPresentacionAct();
 
     });
 
-    //Este elimina el mensaje inicial u lo agrega de ser necesario el que aparece sobre los botones
-    function NoCamposVaciosPresentacion() {
-        const mensajeElements = $('.Mensaje');
-        const mensajeSlice = mensajeElements.slice(0, 3);
-        const camposConTexto = mensajeSlice.filter(function () {
-            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
-        }).length;
-
-        console.log('Número de campos sin texto:', camposConTexto);
-
-        if (camposConTexto === 3) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos con *.');
-            return false;
-        }
-        if (camposConTexto > 1 && camposConTexto < 3) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos con *.');
-            return false;
-        }
-        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            $('.MensajeInicial').text('Por favor, complete el campo con *.');
-            return false;
-        }
-
-        return true;
-    }
+    
     function NoCamposConErroresPresentacion() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(0, 4);
@@ -253,30 +215,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return true;
     }
 
-    function NoCamposVaciosPresentacionAct() {
-        const mensajeElements = $('.Mensaje');
-        const mensajeSlice = mensajeElements.slice(-3);
-        const camposConTexto = mensajeSlice.filter(function () {
-            return $(this).text().trim() !== ''; // Utilizamos trim() para eliminar espacios en blanco al principio y al final del texto.
-        }).length;
-
-
-        if (camposConTexto === 3) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos con *.');
-            return false;
-        }
-        if (camposConTexto > 1 && camposConTexto < 3) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos con *.');
-            return false;
-        }
-        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            $('.MensajeInicial').text('Por favor, complete el campo con *.');
-            return false;
-        }
-        return true;
-    }
     function NoCamposConErroresPresentacionAct() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(-4);
@@ -303,22 +241,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return true;
     }
-    function NoCamposVaciosInicialPresentacion() {
-        const mensajeElements = $('.Mensaje');
-
-        const mensajeSlice = mensajeElements.slice(0, 3);
-
-
-        const todosLlenos = mensajeSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
-
-        if (todosLlenos) {
-            $('.MensajeInicial').text('');
-        }
-
-    }
+   
     function NoCamposConErroresInicialPresentacion() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(0, 4);
@@ -332,22 +255,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return true;
     }
 
-    function NoCamposVaciosInicialPresentacionAct() {
-        const mensajeElements = $('.Mensaje');
-
-        const mensajeSlice = mensajeElements.slice(-3);
-
-
-        const todosLlenos = mensajeSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
-
-        if (todosLlenos) {
-            $('.MensajeInicial').text('');
-        }
-
-    }
     function NoCamposConErroresInicialPresentacionAct() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(-4);
@@ -412,40 +319,18 @@ function limpiarFormularioPresentacionAgregar() {
     // Limpiar la URL eliminando los parámetros de consulta
     history.replaceState(null, '', location.pathname);
     // Limpiar mensajes de alerta y *
-    var mensajes = document.querySelectorAll('.Mensaje');
     var mensajesText = document.querySelectorAll('.text-danger');
 
-    for (var i = 0; i < mensajes.length - 3; i++) {
-        mensajes[i].textContent = '*';
-    }
     for (var i = 0; i < mensajesText.length - 4; i++) {
         mensajesText[i].textContent = '';
     }
 
-    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
-        element.textContent = '';
-    });
-    document.querySelectorAll('.MensaErrores').forEach(function (element) {
-        element.textContent = '';
-    });
-
 }
 function limpiarFormularioPresentacionAct() {
     history.replaceState(null, '', location.pathname);
-    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
-        element.textContent = '';
-    });
-    document.querySelectorAll('.MensaErrores').forEach(function (element) {
-        element.textContent = '';
-    });
-
-    // Limpiar mensajes de alerta y asteriscos
-    var mensajes = document.querySelectorAll('.Mensaje');
+  
     var mensajesText = document.querySelectorAll('.text-danger');
 
-    for (var i = Math.max(0, mensajes.length - 3); i < mensajes.length; i++) {
-        mensajes[i].textContent = '';
-    }
     for (var i = Math.max(0, mensajesText.length - 4); i < mensajesText.length; i++) {
         mensajesText[i].textContent = '';
     }
@@ -462,23 +347,25 @@ $('.modal').on('click', function (e) {
 });
 
 function AlPerderFocoPresentacion() {
-   limpiarFormularioPresentacionAct();
+    var displayModal = $('#ModalActualizarPresentacion').css('display');
+    if (displayModal == "none") {
+        limpiarFormularioPresentacionAct();
+    }
 }
 
 /*--------------------------------------------------------- Modal de actualizar usuario ---------------------------------------*/
 
 //Modal cuando se hace click en editar en el boton de detalle
-function mostrarModalSinRetrasoPresentacion(presentacionId) {
+function mostrarModalActualizarPresentacion(presentacionId) {
     obtenerDatosPresentaciones();
     actualizarPresentacion(presentacionId);
     setTimeout(function () {
-        var myModal = new bootstrap.Modal(document.getElementById('ModalPresentacion'));
+        var myModal = new bootstrap.Modal(document.getElementById('ModalActualizarPresentacion'));
         limpiarFormularioPresentacionAct();
         myModal.show();
         // Aquí puedes llamar a la función actualizarProducto si es necesario
-    }, 600); // 50 milisegundos (0.05 segundos) de retraso antes de abrir la modal
+    }, 50); // 50 milisegundos (0.05 segundos) de retraso antes de abrir la modal
 }
-
 
 function actualizarPresentacion(campo) {
     var presentacionId = campo;
@@ -487,7 +374,6 @@ function actualizarPresentacion(campo) {
         type: 'POST',
         data: { presentacionId: presentacionId },
         success: function (data) {
-            console.log(data);
             var formActualizar = $('#FormActualizarPresentacion');
             formActualizar.find('#PresentacionIdAct').val(data.presentacionId);
             formActualizar.find('#NombrePresentacionVistaAct').val(data.nombrePresentacion);
@@ -495,7 +381,6 @@ function actualizarPresentacion(campo) {
             formActualizar.find('#CantidadPorPresentacionAct').val(data.cantidadPorPresentacion);
             formActualizar.find('#DescripcionPresentacionAct').val(data.descripcionPresentacion);
             formActualizar.find('#EstadoPresentacionAct').val(data.estadoPresentacion);
-            limpiarFormularioPresentacionAct()
             obtenerDatosPresentaciones();
         },
         error: function () {
@@ -531,7 +416,6 @@ function actualizarEstadoPresentacion(PresentacionId) {
         }
     });
 }
-
 
 function searchPresentacion() {
     var input = $('#buscarPresentacion').val().trim().toLowerCase();    //Obtiene el valor del buscadpor
@@ -604,7 +488,6 @@ function vaciarInputPresentacion() {
     paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
 
 }
-
 function validarCampoPresentacion(input) {
     const inputElement = $(input); // Convertir el input a objeto jQuery
     const campo = inputElement.attr('id'); // Obtener el id del input actual como nombre de campo

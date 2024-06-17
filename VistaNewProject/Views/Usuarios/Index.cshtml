@@ -47,7 +47,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="NombreRol" class="control-label">Rol<span class="Mensaje">*</span></label>
+                                        <label for="NombreRol" class="control-label">Rol</label>
                                         <input list="roles" oninput="validarCampoUsuario(this)" id="NombreRol" name="nombreRol" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoRolesAlert()" autocomplete="off" />
                                         <datalist id="roles">
                                             @foreach (var item in ViewBag.Roles)
@@ -64,7 +64,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="Nombre" class="control-label">Nombre<span class="Mensaje">*</span></label>
+                                        <label for="Nombre" class="control-label">Nombre</label>
                                         <input type="text" id="Nombre" oninput="validarCampoUsuario(this);" name="nombre" class="form-control" autocomplete="off" />
                                         <span id="MensajeNombre" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
@@ -73,14 +73,14 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="Apellido" class="control-label">Apellido<span class="Mensaje">*</span></label>
+                                        <label for="Apellido" class="control-label">Apellido</label>
                                         <input type="text" id="Apellido" oninput="validarCampoUsuario(this)" name="apellido" class="form-control" autocomplete="off" />
                                         <span id="MensajeApellido" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="Usuario" class="control-label">Usuario<span class="Mensaje">*</span></label>
+                                        <label for="Usuario" class="control-label">Usuario</label>
                                         <input type="text" id="Usuario" oninput="validarCampoUsuario(this);" name="usuario1" class="form-control" autocomplete="off" />
                                         <span id="MensajeUsuario" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
@@ -89,7 +89,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="Contraseña" class="control-label">Contraseña<span class="Mensaje">*</span></label>
+                                        <label for="Contraseña" class="control-label">Contraseña</label>
                                         <input type="password" id="Contraseña" oninput="validarCampoUsuario(this);" name="contraseña" class="form-control " autocomplete="off" />
                                         <span id="MensajeContraseña" class="text-danger"></span>
                                         <span id="MostrarOcultar1" class="icono-ojo" onclick="mostrarOcultarContrasena('Contraseña')">
@@ -101,7 +101,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="RepetirContraseña" class="control-label">Repetir Contraseña<span class="Mensaje">*</span></label>
+                                        <label for="RepetirContraseña" class="control-label">Repetir Contraseña</label>
                                         <input type="password" id="RepetirContraseña" oninput="validarCampoUsuario(this);" name="repetirContraseña" class="form-control" autocomplete="off" />
                                         <span id="MensajeRepetirContraseña" class="text-danger"></span>
                                         <span id="MostrarOcultar2" class="icono-ojo" onclick="mostrarOcultarContrasena('RepetirContraseña')">
@@ -115,14 +115,14 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="TelefonoUsuario" class="control-label">Teléfono<span class="Mensaje">*</span></label>
+                                        <label for="TelefonoUsuario" class="control-label">Teléfono</label>
                                         <input type="text" id="TelefonoUsuario" oninput="validarCampoUsuario(this);" name="telefono" class="form-control" autocomplete="off" />
                                         <span id="MensajeTelefono" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="CorreoUsuario" class="control-label">Correo<span class="Mensaje">*</span></label>
+                                        <label for="CorreoUsuario" class="control-label">Correo</label>
                                         <input type="text" id="CorreoUsuario" oninput="validarCampoUsuario(this);" name="correo" class="form-control" autocomplete="off" />
                                         <span id="MensajeCorreo" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
@@ -130,8 +130,8 @@
                             </div>
 
                         </div>
-                        <div class="MensajeInicial"></div>
-                        <div class="MensajeErrores"></div>
+                        
+                        
                         <div class="modal-contenedor-footer">
                             <button type="reset" onclick="limpiarFormularioUsuarioAgregar();" class="btn btn-secondary">Cancelar</button>
                             <button type="submit" class="btn btn-primary btnGuardar">Agregar</button>
@@ -157,7 +157,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="NombreRolAct" class="control-label">Rol<span class="Mensaje"></span></label>
+                                        <label for="NombreRolAct" class="control-label">Rol</label>
                                         <input list="roles" oninput="validarCampoUsuario(this)" id="NombreRolAct" name="nombreRol" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoRolesAlert()" autocomplete="off" />
                                         <datalist id="roles">
                                             @foreach (var item in ViewBag.Roles)
@@ -185,14 +185,14 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="NombreAct" class="control-label">Nombre<span class="Mensaje"></span></label>
+                                        <label for="NombreAct" class="control-label">Nombre</label>
                                         <input type="text" id="NombreAct" oninput="validarCampoUsuario(this);" name="nombre" class="form-control" autocomplete="off" />
                                         <span id="MensajeNombre" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="ApellidoAct" class="control-label">Apellido<span class="Mensaje"></span></label>
+                                        <label for="ApellidoAct" class="control-label">Apellido</label>
                                         <input type="text" id="ApellidoAct" oninput="validarCampoUsuario(this)" name="apellido" class="form-control" autocomplete="off" />
                                         <span id="MensajeApellido" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
@@ -201,14 +201,14 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="UsuarioAct" class="control-label">Usuario<span class="Mensaje"></span></label>
+                                        <label for="UsuarioAct" class="control-label">Usuario</label>
                                         <input type="text" id="UsuarioAct" oninput="validarCampoUsuario(this)" name="usuario1" class="form-control" autocomplete="off" />
                                         <span id="MensajeUsuario" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="ContraseñaAct" class="control-label">Contraseña<span class="Mensaje"></span></label>
+                                        <label for="ContraseñaAct" class="control-label">Contraseña</label>
                                         <input type="password" id="ContraseñaAct" oninput="validarCampoUsuario(this)" name="contraseña" class="form-control " autocomplete="off" />
                                         <span id="MensajeContraseñaAct" class="text-danger"></span>
                                         <span id="MostrarOcultarAct" class="icono-ojo" onclick="mostrarOcultarContrasena('ContraseñaAct')">
@@ -222,14 +222,14 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="TelefonoUsuarioAct" class="control-label">Teléfono<span class="Mensaje"></span></label>
+                                        <label for="TelefonoUsuarioAct" class="control-label">Teléfono</label>
                                         <input type="text" id="TelefonoUsuarioAct" oninput="validarCampoUsuario(this)" name="telefono" class="form-control" autocomplete="off" />
                                         <span id="MensajeTelefono" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="CorreoUsuarioAct" class="control-label">Correo<span class="Mensaje"></span></label>
+                                        <label for="CorreoUsuarioAct" class="control-label">Correo</label>
                                         <input type="text" id="CorreoUsuarioAct" oninput="validarCampoUsuario(this)" name="correo" class="form-control" autocomplete="off" />
                                         <span id="MensajeCorreo" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
@@ -237,8 +237,8 @@
                             </div>
 
                         </div>
-                        <div class="MensajeInicial"></div>
-                        <div class="MensajeErrores"></div>
+                        
+                        
                         <div class="modal-contenedor-footer">
                             <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormularioUsuario();">Cancelar</button>
                             <button type="submit" class="btn btn-primary btnGuardar">Actualizar</button>

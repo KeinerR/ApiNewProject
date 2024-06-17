@@ -62,7 +62,7 @@
                                 <div class="form-group">
                                       <div class="icono-input">
                                         <i class="fas fa-times noBe" onclick="iconoLimpiarCampo(['NombreCategoria', 'CategoriaId'],'NombreCategoria');"></i>
-                                        <label for="NombreCategoria" class="control-label">Categoría<span class="Mensaje">*</span></label>
+                                        <label for="NombreCategoria" class="control-label">Categoría</label>
                                         <input list="categorias" oninput="validarCampoProducto(this); agregarIconoparalimpiarElCampo(this);" id="NombreCategoria" name="nombreCategoria" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoCategoriasAlert(this);" autocomplete="off" />
                                         <datalist id="categorias">
                                             @foreach (var item in ViewBag.Categorias)
@@ -79,7 +79,7 @@
                                 <div class="form-group">
                                     <div class="icono-input">
                                         <i class="fas fa-times noBe" onclick="iconoLimpiarCampo(['NombreMarca','MarcaId'],'NombreMarca');"></i>
-                                        <label for="NombreMarca" class="control-label">Marca<span class="Mensaje">*</span></label>
+                                        <label for="NombreMarca" class="control-label">Marca</label>
                                         <input list="marcas" oninput="validarCampoProducto(this); agregarIconoparalimpiarElCampo(this);" id="NombreMarca" name="nombreMarca" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoMarcasAlert(this)" autocomplete="off" />
                                         <datalist id="marcas">
                                             @foreach (var item in ViewBag.Marcas)
@@ -102,7 +102,7 @@
                                 <div class="form-group">
                                     <div class="icono-input">
                                         <i class="fas fa-times noBe" onclick="iconoLimpiarCampo(['NombrePresentacion','PresentacionId'],'NombrePresentacion');"></i>
-                                        <label for="NombrePresentacion" class="control-label">Presentación<span class="Mensaje">*</span></label>
+                                        <label for="NombrePresentacion" class="control-label">Presentación</label>
                                         <input list="presentaciones" oninput="validarCampoProducto(this); agregarIconoparalimpiarElCampo(this);" id="NombrePresentacion" name="nombrePresentacion" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoPresentacionesAlert(this)" autocomplete="off" />
                                         <datalist id="presentaciones">
                                             @foreach (var item in ViewBag.Presentaciones)
@@ -120,7 +120,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="NombreProducto" class="control-label">Nombre producto<span class="Mensaje">*</span></label>
+                                    <label for="NombreProducto" class="control-label">Nombre producto</label>
                                     <input type="text" id="NombreProducto" oninput="validarCampoProducto(this)" name="nombreProducto" class="form-control" />
                                     <span class="text-danger"></span>
                                 </div>
@@ -136,21 +136,21 @@
                             </div>
                             <div class="col-md-6 noBe PorMayor">
                                 <div class="form-group">
-                                    <label for="CantidadAplicarPorMayor" class="control-label">Cantidad de unidades a superar<span class="Mensaje"></span></label>
+                                    <label for="CantidadAplicarPorMayor" class="control-label">Cantidad de unidades a superar</label>
                                     <input type="text" id="CantidadAplicarPorMayor" value="0" oninput="validarCampoProducto(this)" name="cantidadAplicarPorMayor" class="form-control" />
                                     <span class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-6 noBe PorMayor">
                                 <div class="form-group">
-                                    <label for="DescuentoAplicarPorMayor" class="control-label">Descuento por producto<span class="Mensaje"></span></label>
+                                    <label for="DescuentoAplicarPorMayor" class="control-label">Descuento por producto</label>
                                     <input type="text" id="DescuentoAplicarPorMayor" value="0" oninput="validarCampoProducto(this)" name="descuentoAplicarPorMayor" class="form-control" />
                                     <span class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
-                        <div class="MensajeInicial"></div>
-                        <div class="MensajeErrores"></div>
+                        
+                        
                         <div class="modal-contenedor-footer">
                             <button type="reset" class="btn btn-secondary" onclick="limpiarDatosFormularioProductoAgregar();">Cancelar</button>
                             <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
@@ -195,7 +195,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="NombreCategoriaAct" class="control-label">Categoría<span class="Mensaje"></span></label>
+                                    <label for="NombreCategoriaAct" class="control-label">Categoría</label>
                                     <input list="categorias" oninput="validarCampoProducto(this)" id="NombreCategoriaAct" name="nombreCategoria" class="form-control" placeholder="Selecciona una categoría..." onclick="showCategorias()" autocomplete="off">
                                     <datalist id="categorias">
                                         @foreach (var item in ViewBag.Categorias)
@@ -211,7 +211,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="NombreMarcaAct" class="control-label">Marca<span class="Mensaje"></span></label>
+                                    <label for="NombreMarcaAct" class="control-label">Marca</label>
                                     <input list="marcas" oninput="validarCampoProducto(this)" id="NombreMarcaAct" name="nombreMarca" class="form-control" placeholder="Escribe y/o selecciona una marca..." onclick="showNoMarcasAlert(this)" autocomplete="off">
                                     <datalist id="marcas">  
                                         @foreach (var item in ViewBag.Marcas)
@@ -230,7 +230,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="NombrePresentacionAct" class="control-label">Presentación<span class="Mensaje"></span></label>
+                                    <label for="NombrePresentacionAct" class="control-label">Presentación</label>
                                     <input list="presentaciones" oninput="validarCampoProducto(this)" id="NombrePresentacionAct" name="nombrePresentacion" class="form-control" placeholder="Escribe y/o selecciona una presentación..." onclick="showNoPresentacionesAlert(this)" autocomplete="off">
                                     <datalist id="presentaciones">
                                         @foreach (var item in ViewBag.Presentaciones)
@@ -246,7 +246,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="NombreProductoAct" class="control-label">Nombre producto<span class="Mensaje"></span></label>
+                                    <label for="NombreProductoAct" class="control-label">Nombre producto</label>
                                     <input type="text" id="NombreProductoAct" oninput="validarCampoProducto(this)" name="nombreProducto" class="form-control" />
                                     <span class="text-danger"></span>
                                 </div>
@@ -264,14 +264,14 @@
                             </div>
                             <div class="col-md-6 PorMayorAct noBe">
                                 <div class="form-group">
-                                    <label for="CantidadAplicarPorMayorAct" class="control-label">Cantidad de unidades a superar<span class="Mensaje"></span></label>
+                                    <label for="CantidadAplicarPorMayorAct" class="control-label">Cantidad de unidades a superar</label>
                                     <input type="text" id="CantidadAplicarPorMayorAct" oninput="validarCampoProducto(this)" name="cantidadAplicarPorMayor" class="form-control" />
                                     <span class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-6 PorMayorAct noBe">
                                 <div class="form-group">
-                                    <label for="DescuentoAplicarPorMayorAct" class="control-label">Descuento por producto<span class="Mensaje"></span></label>
+                                    <label for="DescuentoAplicarPorMayorAct" class="control-label">Descuento por producto</label>
                                     <input type="text" id="DescuentoAplicarPorMayorAct" oninput="validarCampoProducto(this)" name="descuentoAplicarPorMayor" class="form-control" />
                                     <span class="text-danger"></span>
                                 </div>
@@ -279,14 +279,14 @@
                             <div class="text-center">
                                 <div class="modal-contenedor-check check-mayor-no-aplica">
                                     <div class="contenedorDatos">
-                                        <label class="ontrol-label" for="checkboxDescuentoPorMayorAct">Aplicar Descuento por mayor<span class="Mensaje"></span></label>
+                                        <label class="ontrol-label" for="checkboxDescuentoPorMayorAct">Aplicar Descuento por mayor</label>
                                         <input type="checkbox" class="form-check-input" onclick="Llamar2();" id="checkboxDescuentoPorMayorAct">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="MensajeInicial"></div>
-                        <div class="MensajeErrores"></div>
+                        
+                        
                         <div class="modal-contenedor-footer">
                             <button type="reset" onclick="limpiarDatosFormularioProductoAct();" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                             <button type="submit" class="btn btn-primary" id="btnGuardar">Actualizar</button>
