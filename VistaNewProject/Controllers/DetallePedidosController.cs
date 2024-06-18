@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VistaNewProject.Models;
 using VistaNewProject.Services;
+using AutoMapper.QueryableExtensions;
+
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using Microsoft.EntityFrameworkCore;
 
 namespace VistaNewProject.Controllers
 {
@@ -41,6 +45,54 @@ namespace VistaNewProject.Controllers
                                          .ToList();
             return Json(lotesDisponibles);
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> FiltrarProductos(string busqueda)
+        {
+            try
+            {
+                // Obtener todos los productos
+                var productos = await _client.GetProductoAsync();
+
+                // Convertir a IQueryable para permitir la filtración
+                var query = productos.AsQueryable();
+
+                if (!string.IsNullOrEmpty(busqueda))
+                {
+                    query = query.Where(p =>
+                        (p.NombreProducto != null && p.NombreProducto.Contains(busqueda, StringComparison.OrdinalIgnoreCase)) ||
+                        (p.Categoria != null && p.Categoria.NombreCategoria != null && p.Categoria.NombreCategoria.Contains(busqueda, StringComparison.OrdinalIgnoreCase)) ||
+                        (p.Marca != null && p.Marca.NombreMarca != null && p.Marca.NombreMarca.Contains(busqueda, StringComparison.OrdinalIgnoreCase)));
+                }
+
+                // Convertir la consulta a una lista
+                var productList = await Task.Run(() => query
+                    .Select(s => new Producto
+                    {
+                        ProductoId = s.ProductoId,
+                        PresentacionId = s.PresentacionId,
+                        MarcaId = s.MarcaId,
+                        CategoriaId = s.CategoriaId,
+                        NombreProducto = s.NombreProducto,
+                        NombreCompletoProducto = s.NombreCompletoProducto,
+                        CantidadTotal = s.CantidadTotal,
+                        CantidadReservada = s.CantidadReservada,
+                        CantidadAplicarPorMayor = s.CantidadAplicarPorMayor,
+                        DescuentoAplicarPorMayor = s.DescuentoAplicarPorMayor,
+                        Estado = s.Estado
+                    })
+                    .ToList());
+
+                return Json(productList); // Devolver productos filtrados como JSON
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error al filtrar productos: {ex.Message}");
+            }
+        }
+
+
 
 
         [HttpGet]

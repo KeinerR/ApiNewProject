@@ -267,98 +267,91 @@ function eliminarDetalle(index) {
 //    });
 //}
 
-document.getElementById('ProductoId').addEventListener('change', async function () {
-    var productoId = this.value;
-    console.log("ProductoId seleccionado:", productoId);  // Para depuración
 
-    try {
-        var response = await fetch('/DetallePedidos/ObtenerLotesDisponibles?productoId=' + productoId);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
+//$(document).ready(function () {
+//    // Evento para capturar la selección del cliente del datalist
+//    $('#Clientes').on('change', function () {
+//        var inputValue = $(this).val();
+//        var selectedOption = $("#clientes option").filter(function () {
+//            return $(this).val() === inputValue || $(this).data("id") == inputValue; // Ensure type coercion for numeric comparison
+//        });
 
-        var data = await response.json();
+//        if (selectedOption.length) {
+//            $("#ClienteHidden").val(selectedOption.data("id"));
+//            $("#Clientes").val(selectedOption.val()); // Set the Clientes input to the name of the entity
+//            quitarError(this, document.getElementById("clienteerror"));
+//        } else {
+//            // Check if the entered value is a number
+//            if (!isNaN(parseFloat(inputValue)) && isFinite(inputValue)) {
+//                var option = $("#clientes option[data-id='" + inputValue + "']");
+//                if (option.length) {
+//                    $("#ClienteHidden").val(inputValue);
+//                    $("#Clientes").val(option.val()); // Set the Clientes input to the name of the entity
+//                } else {
+//                    $("#ClienteHidden").val("");
+//                    $("#Clientes").val(""); // Clear the Clientes input if no entity is found
+//                }
+//            } else {
+//                $("#ClienteHidden").val("");
+//                $("#Clientes").val(""); // Clear the Clientes input if the value is not a valid number
+//            }
+//        }
 
+//        // Obtener el valor actual del ClienteHidden
+//        var clienteId = $("#ClienteHidden").val();
 
-
-        var datalist = document.getElementById('LoteList');
-        datalist.innerHTML = '';
-
-        // Actualizar el valor del campo PrecioUnitario con el precio del primer lote disponible
-        if (data.length > 0) {
-            document.getElementById('PrecioUnitario').value = data[0].precioPorPresentacion;
-        } else {
-            document.getElementById('PrecioUnitario').value = ''; // Limpiar el campo si no hay lotes disponibles
-        }
-
-        // Agregar opciones al datalist
-        data.forEach(function (lote) {
-            var option = document.createElement('option');
-            option.value = lote.loteId;
-            option.textContent = lote.numeroLote;
-            datalist.appendChild(option);
-        });
-    } catch (error) {
-        console.error('Error fetching lotes disponibles:', error);
-    }
-});
-
+//        // Llamar a la función para obtener detalles del producto pasando el clienteId
+//        obtenerDetallesProducto(clienteId);
+//    });
+//});
 $(document).ready(function () {
     // Función para cargar los productos
-    function cargarProductos() {
-        let query = $('#ProductoIdtxt').val(); // Captura el valor del input
-        fetch(`https://localhost:7013/api/Productos/GetProductos?busqueda=${query}`, {
-            method: 'GET', // Especifica el método de la solicitud
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => response.json()) // Convierte la respuesta a JSON
-            .then(data => {
-                console.log("keienrdata" ,data);
-                $('#ProductosList').empty(); // Limpia la lista de productos
-                $.each(data, function (index, producto) {
-                    $('#ProductosList').append('<option value="' + producto.nombreProducto + '" data-id="' + producto.productoId + '"></option>');
-                });
-            })
-            .catch(error => {
-                console.log(error); // Muestra el error en la consola
-                showAlert('Error fetching products: ' + error.message);
-            });
-    }
-
-
-    // Cargar productos al cargar la vista
-    cargarProductos();
-
-    // Evento para cargar productos al escribir en el campo de búsqueda
-    $('#ProductoIdtxt').on('input', function () {
-        cargarProductos();
-    });
-
-    // Evento para capturar la selección del producto del datalist
-    $('#ProductoIdtxt').on('input', function () {
-        const input = $(this).val();
-        const selectedOption = $('#ProductosList option').filter(function () {
-            return $(this).val() === input || $(this).data('id') == input;
+    $("#Clientes").on("change", function () {
+        var inputValue = $(this).val();
+        var selectedOption = $("#clientes option").filter(function () {
+            return $(this).val() === inputValue || $(this).data("id") == inputValue; // Ensure type coercion for numeric comparison
         });
 
-        if (selectedOption.length > 0) {
-            const idSeleccionado = selectedOption.attr('data-id');
-            const nombreSeleccionado = selectedOption.val();
+        if (selectedOption.length) {
+            $("#ClienteHidden").val(selectedOption.data("id"));
+            $("#Clientes").val(selectedOption.val()); // Set the Clientes input to the name of the entity
+            quitarError(this, document.getElementById("clienteerror"));
 
-            $('#ProductoId').val(idSeleccionado); // Asignar el ID del producto al campo oculto
-            $(this).val(nombreSeleccionado); // Mostrar el nombre del producto seleccionado en el campo de texto
+            // Capturar el ID del cliente seleccionado en una variable
+            var clienteIdSeleccionado = selectedOption.data("id");
+            $("#ClinteHiden").val(clienteIdSeleccionado);
 
-            obtenerDetallesProducto(idSeleccionado); // Obtener detalles adicionales del producto si es necesario
+            console.log("Cliente seleccionado:", clienteIdSeleccionado);
+
+            // Llamar a la función para obtener detalles del producto pasando el clienteId
+            obtenerDetallesProducto(clienteIdSeleccionado);
         } else {
-            limpiarDetallesProducto(); // Limpiar detalles del producto si no se selecciona ninguno
+            // Check if the entered value is a number
+            if (!isNaN(parseFloat(inputValue)) && isFinite(inputValue)) {
+                var option = $("#clientes option[data-id='" + inputValue + "']");
+                if (option.length) {
+                    $("#ClinteHiden").val(inputValue);
+                    $("#Clientes").val(option.val()); // Set the Clientes input to the name of the entity
+
+                    // Capturar el ID del cliente seleccionado en una variable
+                    var clienteIdSeleccionado = inputValue;
+                    console.log("Cliente seleccionado:", clienteIdSeleccionado);
+
+                    // Llamar a la función para obtener detalles del producto pasando el clienteId
+                    obtenerDetallesProducto(clienteIdSeleccionado);
+                } else {
+                    $("#ClienteHidden").val("");
+                    $("#Clientes").val("");
+                    limpiarDetallesProducto();
+                    // Clear the Clientes input if no entity is found
+                }
+            } else {
+                $("#ClienteHidden").val("");
+                $("#Clientes").val("");
+                limpiarDetallesProducto();// Clear the Clientes input if the value is not a valid number
+            }
         }
     });
-
-    // Función para obtener detalles adicionales del producto (puedes implementarla si es necesario)
-   
-
 
     let unidades = [];
 
@@ -702,7 +695,37 @@ $(document).ready(function () {
   
 
 })
-    
+function buscarProductos() {
+    var busqueda = $('#busqueda').val(); // Obtener el valor del campo de búsqueda
+
+    console.log(busqueda);
+    // Llamar a la función para filtrar productos por categoría
+    filtrarProductos(busqueda);
+}
+
+function filtrarProductos(busqueda) {
+    console.log("Buscando productos con:", busqueda);
+    $.ajax({
+        url: '/DetallePedidos/FiltrarProductos',
+        type: 'GET',
+        data: { busqueda: busqueda },
+        success: function (response) {
+            console.log("Productos filtrados:", response);
+
+            // Limpiar el datalist de productos
+            $('#clientes').empty();
+
+            // Añadir los productos filtrados al datalist
+            $.each(response, function (index, producto) {
+                $('#clientes').append('<option value="' + producto.nombreProducto + '" data-id="' + producto.productoId + '">' + producto.nombreProducto + '</option>');
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error('Error al filtrar productos:', xhr.responseText);
+        }
+    });
+}
+
 
 
 
@@ -714,33 +737,6 @@ function mostrarDetallesActuales() {
     });
 }
 
-$("#Pedioscarga").on("change", function () {
-    var inputValue = $(this).val();
-    var selectedOption = $("#pedidoslist option").filter(function () {
-        return $(this).val() === inputValue || $(this).data("id") == inputValue; // Ensure type coercion for numeric comparison
-    });
-
-    if (selectedOption.length) {
-        $("#PedidodId").val(selectedOption.data("id"));
-        $("#Pedioscarga").val(selectedOption.val()); // Set the Clientes input to the name of the entity
-        quitarError(this, document.getElementById("ProductoIdErrorer"));
-    } else {
-        // Check if the entered value is a number
-        if (!isNaN(parseFloat(inputValue)) && isFinite(inputValue)) {
-            var option = $("#pedidoslist option[data-id='" + inputValue + "']");
-            if (option.length) {
-                $("#PedidodId").val(inputValue);
-                $("#Pedioscarga").val(option.val()); // Set the Clientes input to the name of the entity
-            } else {
-                $("#PedidodId").val("");
-                $("#Pedioscarga").val(""); // Clear the Clientes input if no entity is found
-            }
-        } else {
-            $("#PedidodId").val("");
-            $("#Pedioscarga").val(""); // Clear the Clientes input if the value is not a valid number
-        }
-    }
-});
 
 
 

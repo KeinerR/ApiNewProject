@@ -64,40 +64,37 @@
             <!-- Campo de búsqueda único -->
             <div class="col-6">
                 <label for="busqueda">Filtrar Productos:</label>
-                <input class="form-control" type="text" id="busqueda" name="busqueda" placeholder="Buscar Productos" />
-            </div>
-
-            <div class="col-4">
-                <label for="ProductoIdtxt" class="control-label">Productos</label>
-                <input type="text" id="ProductoIdtxt" class="form-control" list="ProductosList" placeholder="Buscar producto" />
-                <input type="hidden" id="ProductoId" name="productoId" class="form-control" />
-                <datalist id="ProductosList">
-                    @foreach (var item in ViewBag.Producto)
-                        if (item.Estado != 0)
-                        {
-                            <option value="@item.NombreProducto" data-id="@item.ProductoId">@item.NombreProducto</option>
-                        }
-                </datalist>
-                <span id="ProductoIdError" class="text-danger"></span>
+                <input class="form-control" type="text" id="busqueda" name="busqueda" placeholder="Buscar Productos" oninput="filtrarProductos(this.value)" />
             </div>
 
             <div class="col-md-6">
                 <div class="form-group">
-                   
-                        <input list="pedidos"  id="Pedioscarga" name="pedido" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoCategoriasAlert(this);" autocomplete="off" />
-                        <datalist id="pedidoslist">
-                            @foreach (var item in ViewBag.Producto)
-                                if (item.Estado != 0)
-                                {
-                                    <option value="@item.NombreProducto" data-id="@item.ProductoId">@item.NombreProducto</option>
-                                }
-                        </datalist>
-                        <input id="PedidodId" type="" name="ProduvtoId">
+                    <label for="NombreCliente" class="control-label">Cliente</label>
+                    <input list="clientes" id="Clientes" name="cliente" class="form-control" placeholder="Escribe y/o selecciona..." autocomplete="off" />
+                    <datalist id="clientes">
+                        <!-- Opciones de productos se llenarán dinámicamente aquí -->
+                    </datalist>
+                    <input id="ClinteHiden" type="hidden" name="clienteId">
+                    <span id="clienteerror" class="text-danger"></span>
                 </div>
-                <span id="ProductoIdErrorer" class="text-danger"></span>
-
             </div>
-            <div class="d-none">
+
+            @* <div class="col-md-6">
+                <div class="form-group">
+                    <label for="NombreCliente" class="control-label">Cliente</label>
+                    <input list="clientes" id="Clientes" name="cliente" class="form-control" placeholder="Escribe y/o selecciona..." autocomplete="off" />
+                    <datalist id="clientes">
+                        @foreach (var item in ViewBag.Producto)
+                            if (item.Estado != 0)
+                            {
+                                <option value="@item.NombreProducto" data-id="@item.ProductoId">@item.NombreProducto</option>
+                            }
+                    </datalist>
+                    <input id="ClinteHiden" type="" name="clienteId">
+                    <span id="clienteerror" class="text-danger"></span>
+                </div>
+            </div> *@
+            <div class="">
                 <label asp-for="LoteId" class="control-label"></label>
                 <input asp-for="LoteId" name="LoteId" id="LoteId" readonly class="form-control" list="LoteList" />
                 <datalist id="LoteList">
