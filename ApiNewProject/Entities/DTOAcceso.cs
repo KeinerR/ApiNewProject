@@ -24,7 +24,6 @@ namespace ApiNewProject.Entities
         [JsonIgnore]
         public virtual ICollection<Domicilio> Domicilios { get; set; }
     }
-
     public partial class DatosUsuario
     {
         public DatosUsuario()
@@ -44,36 +43,33 @@ namespace ApiNewProject.Entities
         public virtual Rol? Rol { get; set; }
         public virtual ICollection<Domicilio> Domicilios { get; set; }
     }
-
     public partial class Rolxpermiso
     {
         public int RolxPermisoId { get; set; }
         public int? PermisoId { get; set; }
         public int? RolId { get; set; }
-        public int? NivelAcceso { get; set; }
+        public string? NombrePermisoxRol { get; set; }
         [JsonIgnore]
         public virtual Permiso? Permiso { get; set; }
         [JsonIgnore]
         public virtual Rol? Rol { get; set; }
     }
-
     public partial class Rol
-    {
-        public Rol()
         {
-            Rolxpermisos = new HashSet<Rolxpermiso>();
-            Usuarios = new HashSet<Usuario>();
+            public Rol()
+            {
+                Rolxpermisos = new HashSet<Rolxpermiso>();
+                Usuarios = new HashSet<Usuario>();
+            }
+
+            public int RolId { get; set; }
+            public string? NombreRol { get; set; }
+            public ulong? EstadoRol { get; set; }
+            [JsonIgnore]
+            public virtual ICollection<Rolxpermiso> Rolxpermisos { get; set; }
+            [JsonIgnore]
+            public virtual ICollection<Usuario> Usuarios { get; set; }
         }
-
-        public int RolId { get; set; }
-        public string? NombreRol { get; set; }
-        public ulong? EstadoRol { get; set; }
-        [JsonIgnore]
-        public virtual ICollection<Rolxpermiso> Rolxpermisos { get; set; }
-        [JsonIgnore]
-        public virtual ICollection<Usuario> Usuarios { get; set; }
-    }
-
     public partial class Permiso
     {
         public Permiso()
@@ -83,9 +79,31 @@ namespace ApiNewProject.Entities
 
         public int PermisoId { get; set; }
         public string? NombrePermiso { get; set; }
-        public string? Descripcion { get; set; }
         public ulong? EstadoPermiso { get; set; }
         [JsonIgnore]
         public virtual ICollection<Rolxpermiso> Rolxpermisos { get; set; }
     }
+    public class UsuarioAcceso
+    {
+        public int UsuarioId { get; set; }
+        public int? RolId { get; set; }
+        public string? Usuario1 { get; set; }
+        public string? NombreRol { get; set; }
+        public ulong? EstadoAcceso { get; set; }
+        public virtual List<RolxpermisoAcceso> ? RolxPermisoAcceso { get; set; }
+    }
+    public class RolxpermisoAcceso
+    {
+        public int? PermisoId { get; set;}
+        public string? NombrePermiso { get; set; }
+        public virtual List<RolxpermisoNombres>? RolxPermisoNombres { get; set; }
+
+
+    }
+    public class RolxpermisoNombres
+    {
+        public int RolxPermisoId { get; set; }
+        public string? NombrePermisoxRol { get; set; }
+    }
+
 }

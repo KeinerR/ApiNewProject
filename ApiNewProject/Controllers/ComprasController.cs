@@ -40,10 +40,10 @@ namespace ApiNewProject.Controllers
         }
 
         [HttpGet("GetCompraById")]
-        public async Task<ActionResult<Cliente>> GetCompraById(int Id)
+        public async Task<ActionResult<Compra>> GetCompraById(int Id)
         {
 
-            Compra compra = await _context.Compras.Select(
+            Compra? compra = await _context.Compras.Select(
                      s => new Compra
                      {
                          CompraId = s.CompraId,
@@ -67,7 +67,6 @@ namespace ApiNewProject.Controllers
         [HttpPost("InsertCompras")]
         public async Task<IActionResult> InsertCompras(Compra compra)
         {
-            Console.WriteLine(compra.FechaCompra);
             try
             {
                 var newCompra = new Compra
@@ -121,10 +120,21 @@ namespace ApiNewProject.Controllers
                     }
 
                     newCompra.Detallecompras.Add(newDetalleCompra);
+                    foreach (var lote in newDetalleCompra.Lotes)
+                    {
+                        var producto = await _context.Productos.FindAsync(lote.ProductoId);
+                        if (producto != null)
+                        {
+                            producto.CantidadTotal += lote.Cantidad;
+                        }
+                    }
+                    await _context.SaveChangesAsync();
                 }
 
                 _context.Compras.Add(newCompra);
+                
                 await _context.SaveChangesAsync();
+          
                 return Ok();
             }
             catch (Exception ex)
@@ -132,8 +142,6 @@ namespace ApiNewProject.Controllers
                 return BadRequest("Error al insertar la compra: " + ex.Message);
             }
         }
-
-
 
         [HttpPut("UpdateCompras")]
         public async Task<ActionResult> UpdateCompras(Compra compra)
