@@ -69,11 +69,33 @@
 
             <div class="col-4">
                 <label for="ProductoIdtxt" class="control-label">Productos</label>
-                <input id="ProductoIdtxt" class="form-control" list="ProductosList" placeholder="Buscar producto" />
+                <input type="text" id="ProductoIdtxt" class="form-control" list="ProductosList" placeholder="Buscar producto" />
                 <input type="hidden" id="ProductoId" name="productoId" class="form-control" />
                 <datalist id="ProductosList">
+                    @foreach (var item in ViewBag.Producto)
+                        if (item.Estado != 0)
+                        {
+                            <option value="@item.NombreProducto" data-id="@item.ProductoId">@item.NombreProducto</option>
+                        }
                 </datalist>
                 <span id="ProductoIdError" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                   
+                        <input list="pedidos"  id="Pedioscarga" name="pedido" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoCategoriasAlert(this);" autocomplete="off" />
+                        <datalist id="pedidoslist">
+                            @foreach (var item in ViewBag.Producto)
+                                if (item.Estado != 0)
+                                {
+                                    <option value="@item.NombreProducto" data-id="@item.ProductoId">@item.NombreProducto</option>
+                                }
+                        </datalist>
+                        <input id="PedidodId" type="" name="ProduvtoId">
+                </div>
+                <span id="ProductoIdErrorer" class="text-danger"></span>
+
             </div>
             <div class="d-none">
                 <label asp-for="LoteId" class="control-label"></label>
@@ -85,21 +107,21 @@
             </div>
 
             <div class="col-4">
-                <label for="UnidadId" class="control-label">Unidad de Presentación</label>
+                <label for="UnidadId" class="control-label">Presentación</label>
                 <input id="UnidadId" class="form-control" list="UnidadIdList" autocomplete="off" />
-                <datalist id="UnidadIdList"></datalist>
-                <input id="unidadHidden" name="unidadId" type="" />
-                <input id="unidadtotal" name="unidadId" class="form-control" />
+                <datalist type="hidden" id="UnidadIdList"></datalist>
+                <input type="hidden" id="unidadHidden" name="unidadId" type="" />
+                <input type="hidden" id="unidadtotal" name="unidadId" class="form-control" />
                 <span id="UnidadError" class="text-danger"></span>
             </div>
 
             <div class="col-4">
                 <label asp-for="PrecioUnitario" class="control-label"></label>
-                <input  class="form-control" id="PrecioUnitario" >
-                <input class="form-control" id="PrecioUnitariohidden"  readonly>
-                <input  class="form-control" id="PrecioUnitariohiddenpormayor" readonly>
-                <input class="form-control" id="PrecioUnitariohiddenpormayordescuento" readonly>
-                <input class="form-control" id="PrecioEnviar" readonly>
+                <input type="hidden" class="form-control" id="PrecioUnitario">
+                <input type="hidden" class="form-control" id="PrecioUnitariohidden" readonly>
+                <input type="hidden" class="form-control" id="PrecioUnitariohiddenpormayor" readonly>
+                <input type="hidden" class="form-control" id="PrecioUnitariohiddenpormayordescuento" readonly>
+                <input class="form-control" id="PrecioEnviar" >
 
 
 
@@ -109,10 +131,10 @@
 
             <div class="col-4">
                 <label asp-for="Cantidad" class="control-label"></label>
-                <input name="Cantidad" id="CantidadTxt" class="form-control" />
-                <input  id="CantidadPorUnidad" class="form-control" />
-                <input id="Descuento" class="form-control" />
-                <input id="CantidadAPlicada" class="form-control" />
+                <input type="number" name="Cantidad" id="CantidadTxt" class="form-control" />
+                <input type ="" id="CantidadPorUnidad" class="form-control" />
+                <input type="hidden" id="Descuento" class="form-control" />
+                <input type="hidden" id="CantidadAPlicada" class="form-control" />
 
 
                 <span id="CantidadError" class="text-danger"></span>

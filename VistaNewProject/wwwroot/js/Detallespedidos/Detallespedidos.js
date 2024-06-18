@@ -306,7 +306,7 @@ document.getElementById('ProductoId').addEventListener('change', async function 
 $(document).ready(function () {
     // Función para cargar los productos
     function cargarProductos() {
-        let query = $('#busqueda').val(); // Captura el valor del input
+        let query = $('#ProductoIdtxt').val(); // Captura el valor del input
         fetch(`https://localhost:7013/api/Productos/GetProductos?busqueda=${query}`, {
             method: 'GET', // Especifica el método de la solicitud
             headers: {
@@ -315,6 +315,7 @@ $(document).ready(function () {
         })
             .then(response => response.json()) // Convierte la respuesta a JSON
             .then(data => {
+                console.log("keienrdata" ,data);
                 $('#ProductosList').empty(); // Limpia la lista de productos
                 $.each(data, function (index, producto) {
                     $('#ProductosList').append('<option value="' + producto.nombreProducto + '" data-id="' + producto.productoId + '"></option>');
@@ -322,14 +323,16 @@ $(document).ready(function () {
             })
             .catch(error => {
                 console.log(error); // Muestra el error en la consola
+                showAlert('Error fetching products: ' + error.message);
             });
     }
+
 
     // Cargar productos al cargar la vista
     cargarProductos();
 
     // Evento para cargar productos al escribir en el campo de búsqueda
-    $('#busqueda').on('input', function () {
+    $('#ProductoIdtxt').on('input', function () {
         cargarProductos();
     });
 
@@ -484,13 +487,16 @@ $(document).ready(function () {
                         const precio = loteProximoVencimiento.precioPorPresentacion;
                         const preciopormayor = loteProximoVencimiento.precioPorUnidadProducto
                         console.log("preciomayor", preciopormayor);
+
                         $('#PrecioUnitario').val(precio);
+
                         $('#PrecioUnitariohiddenpormayor').val(preciopormayor);
 
 
                         $('#LoteId').val(loteProximoVencimiento.loteId);
                     } else {
                      
+                        $('#PrecioEnviar').val('');
 
                         $('#PrecioUnitario').val('');
                         $('#LoteId').val('');
@@ -603,6 +609,9 @@ $(document).ready(function () {
         var selectedOption = $('#UnidadIdList option').filter(function () {
             return $(this).val() === selectedValue || $(this).data('id') == selectedValue; // Utiliza '==' para permitir comparación de tipos mixtos
         }).first();
+        var preciomayor = parseFloat($('#PrecioUnitariohiddenpormayor').val());
+        var precio = parseFloat($('#PrecioUnitario').val());
+        var aplicadomayor = parseFloat($('#CantidadAPlicada').val());
 
         if (selectedOption.length > 0) {
             var unidadId = selectedOption.attr('data-id');
@@ -613,12 +622,32 @@ $(document).ready(function () {
             if (unidadSeleccionada) {
                 // Asignar el valor de cantidadPorUnidad al campo "unidadtotal"
                 $('#unidadtotal').val(unidadSeleccionada.cantidadPorUnidad);
+
+                // Asignar el ID de la unidad seleccionada al campo oculto
+                $('#unidadHidden').val(unidadId);
+
+                // Actualizar el precio basado en la unidad seleccionada y cantidad
+                var cantidad = parseFloat($('#CantidadPorUnidad').val());
+                var descuento = parseFloat($('#Descuento').val()) / 100;
+
+                if (unidadId == "1") {
+                    // Si la unidad es 1, usar el precio unitario normal
+                    if (cantidad > aplicadomayor) {
+                        $('#PrecioEnviar').val(precio * (1 - descuento));
+                    } else {
+                        $('#PrecioEnviar').val(precio);
+                    }
+                } else {
+                    // Si la unidad no es 1, usar el precio por mayor
+                    if (cantidad > aplicadomayor) {
+                        $('#PrecioEnviar').val(preciomayor * (1 - descuento));
+                    } else {
+                        $('#PrecioEnviar').val(preciomayor);
+                    }
+                }
             } else {
                 console.log("No se encontró la unidad con ID:", unidadId);
             }
-
-            // Asignar el ID de la unidad seleccionada al campo oculto
-            $('#unidadHidden').val(unidadId);
         } else if (!isNaN(selectedValue) && selectedValue !== '') {
             // Código para manejar la entrada de número si no se encuentra en el datalist
             fetch(`https://localhost:7013/api/Unidades/GetunidadPorId/${selectedValue}`)
@@ -649,6 +678,7 @@ $(document).ready(function () {
     });
 
 
+
     // Función para limpiar los detalles del producto
     function limpiarDetallesProducto() {
         $('#PrecioUnitario').val('');
@@ -675,18 +705,6 @@ $(document).ready(function () {
     
 
 
-// Evento input para el campo "ProductoId"
-$('#ProductoId').on('input', function () {
-    const productId = $(this).val();
-    console.log('ProductoId seleccionado:', productId);
-    if (productId) {
-        // Si hay un productId seleccionado, obtener y mostrar los detalles del producto
-    } else {
-        // Si el campo está vacío, limpiar los campos relacionados
-        $('#PrecioUnitario').val('');
-        $('#CantidadTxt').attr('placeholder', '');
-    }
-});
 
 function mostrarDetallesActuales() {
     // Realizar una solicitud al servidor para obtener la lista global de detalles
@@ -696,14 +714,33 @@ function mostrarDetallesActuales() {
     });
 }
 
-
-
-$(document).ready(function () {
-    $('#CantidadPorUnidad').on('input', function () {
-        const cantidadIngresadaporunidad = parseFloat($(this).val()); // Convertir el valor a un número flotante
-        const cantidadDisponible = parseFloat($('#CantidadTxt').attr('placeholder').split(':')[1].trim());
-
-        console.log('Cantidad ingresada por unidad:', cantidadIngresadaporunidad);
-        console.log('Cantidad disponible:', cantidadDisponible);
+$("#Pedioscarga").on("change", function () {
+    var inputValue = $(this).val();
+    var selectedOption = $("#pedidoslist option").filter(function () {
+        return $(this).val() === inputValue || $(this).data("id") == inputValue; // Ensure type coercion for numeric comparison
     });
+
+    if (selectedOption.length) {
+        $("#PedidodId").val(selectedOption.data("id"));
+        $("#Pedioscarga").val(selectedOption.val()); // Set the Clientes input to the name of the entity
+        quitarError(this, document.getElementById("ProductoIdErrorer"));
+    } else {
+        // Check if the entered value is a number
+        if (!isNaN(parseFloat(inputValue)) && isFinite(inputValue)) {
+            var option = $("#pedidoslist option[data-id='" + inputValue + "']");
+            if (option.length) {
+                $("#PedidodId").val(inputValue);
+                $("#Pedioscarga").val(option.val()); // Set the Clientes input to the name of the entity
+            } else {
+                $("#PedidodId").val("");
+                $("#Pedioscarga").val(""); // Clear the Clientes input if no entity is found
+            }
+        } else {
+            $("#PedidodId").val("");
+            $("#Pedioscarga").val(""); // Clear the Clientes input if the value is not a valid number
+        }
+    }
 });
+
+
+
