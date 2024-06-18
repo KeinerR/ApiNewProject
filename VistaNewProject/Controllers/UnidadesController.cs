@@ -9,12 +9,14 @@ namespace VistaNewProject.Controllers
     public class UnidadesController : Controller
     {
         private readonly IApiClient _client;
+        private readonly ProductoService _productoService;
 
-
-        public UnidadesController(IApiClient client)
+        public UnidadesController(IApiClient client, ProductoService productoService) // Añade ProductoService al constructor
         {
             _client = client;
+            _productoService = productoService; // Inicializa ProductoService
         }
+
         public async Task<IActionResult> Index(int? page, string order = "default")
         {
             int pageSize = 5;
@@ -58,12 +60,6 @@ namespace VistaNewProject.Controllers
                 return NotFound("error");
             }
 
-            // Concatenar nombre de unidad con cantidad
-            foreach (var unidad in unidades)
-            {
-                unidad.NombreUnidad = $"{unidad.NombreUnidad} x {unidad.CantidadPorUnidad}";
-            }
-
             var pageUnidad = await unidades.ToPagedListAsync(pageNumber, pageSize);
 
             if (!pageUnidad.Any() && pageUnidad.PageNumber > 1)
@@ -93,6 +89,7 @@ namespace VistaNewProject.Controllers
             var unidades = await _client.GetUnidadAsync();
             return Json(unidades);
         }
+
         public async Task<IActionResult> Details(int? id, int? page)
         {
             if (id == null)
@@ -201,8 +198,6 @@ namespace VistaNewProject.Controllers
             return View(pagedCategorias);
         }
 
-
-
         public async Task<IActionResult> Create([FromForm] Unidad unidad)
         {
             if (ModelState.IsValid)
@@ -216,6 +211,8 @@ namespace VistaNewProject.Controllers
                     MensajeSweetAlert("error", "Error", $"Ya hay una unidad registrada con esos datos ID {unidadExistente.UnidadId}.", "true", null);
                     return RedirectToAction("Index");
                 }
+                var nombreCompleto = _productoService.ObtenerNombreCompletoUnidadAsync(unidad);
+                unidad.NombreCompletoUnidad = await nombreCompleto;
 
                 var response = await _client.CreateUnidadAsync(unidad);
 
@@ -243,7 +240,7 @@ namespace VistaNewProject.Controllers
                 return RedirectToAction("Index");
             }
         }
-        public async Task<IActionResult> Update([FromForm] UnidadUpdate unidad)
+        public async Task<IActionResult> Update([FromForm] Unidad unidad)
         {
             if (ModelState.IsValid)
             {
@@ -265,6 +262,9 @@ namespace VistaNewProject.Controllers
                     MensajeSweetAlert("error", "Error", $"Ya hay una unidad registrada con esos datos. Unidad ID: {unidadesIdsStr}", "true", null);
                     return RedirectToAction("Index");
                 }
+                
+                var nombreCompleto = _productoService.ObtenerNombreCompletoUnidadAsync(unidad);
+                unidad.NombreCompletoUnidad = await nombreCompleto;
 
                 var response = await _client.UpdateUnidadAsync(unidad);
 

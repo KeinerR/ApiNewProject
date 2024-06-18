@@ -75,7 +75,7 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Unidad>> GetUnidadAsync();
         Task<HttpResponseMessage> CreateUnidadAsync(Unidad unidad);
         Task<Unidad> FindUnidadAsync(int id);
-        Task<HttpResponseMessage> UpdateUnidadAsync(UnidadUpdate unidad);
+        Task<HttpResponseMessage> UpdateUnidadAsync(Unidad unidad);
         Task<HttpResponseMessage> DeleteUnidadAsync(int id);
         Task<HttpResponseMessage> CambiarEstadoUnidadAsync(int id);
 

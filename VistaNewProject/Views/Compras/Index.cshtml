@@ -24,17 +24,17 @@
         </button>
 
     </div>
-        <!-- Modal -->
+    <!-- Modal -->
     <div class="modal fade" id="CompraModal" tabindex="-1" aria-labelledby="titulomodal" aria-hidden="true">
         <div class="modal-dialog modal-lg" id="CompraVista">
             <div class="modal-content modal-lg">
                 <div class="modal-header">
                     <div id="joker">
                         <span></span>
-                    </div>   
+                    </div>
                     <div class="modal-header-view" id="tituloCompra">
                         <h2 class="modal-title tituloCompra">Agregar Compra</h2>
-                    </div>       
+                    </div>
                     <div class="modal-header-view noVer" id="subtituloCompra">
                         <h2 class="modal-title subtituloCompra">Agregar productos a la compra</h2>
                     </div>
@@ -42,20 +42,20 @@
                         <button type="button" onclick="reiniciarCompra()" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                 </div>
-                               
+
                 <div id="PrincipalCompra" class="modal-body">
                     <div class="form-group">
                         <input type="hidden" id="CompraId" name="compraId" class="form-control" />
                         <div class="row">
                             <div class="col-6">
-                                <label for="ProveedorId" class="control-label">Proveedor</label>
+                                <label for="ProveedorId" class="control-label">Proveedor<span class="Mensaje">*</span></label>
                                 <input list="proveedores" id="ProveedorId" name="ProveedorId" class="form-control inputs" placeholder="Escribe y/o Selecciona" autocomplete="off">
                                 <span class="text-danger"></span>
                                 <datalist id="proveedores">
-                                @foreach (var proveedor in ViewBag.Proveedores)
-                                {
-                                <option value="@proveedor.NombreEmpresa" data-id="@proveedor.ProveedorId">@proveedor.NombreEmpresa</option>
-                                }
+                                    @foreach (var proveedor in ViewBag.Proveedores)
+                                    {
+                                        <option value="@proveedor.NombreEmpresa" data-id="@proveedor.ProveedorId">@proveedor.NombreEmpresa</option>
+                                    }
                                 </datalist>
 
                                 <input type="hidden" id="ProveedorIdHidden" name="proveedorIdHidden">
@@ -63,32 +63,32 @@
                             </div>
 
                             <div class="col-6">
-                                <label for="FechaCompra" class="control-label">Fecha Compra</label>
+                                <label for="FechaCompra" class="control-label">Fecha Compra<span class="Mensaje"></span></label>
                                 <input type="datetime-local" id="FechaCompra" name="fechaCompra" class="form-control inputs" />
                                 <span class="text-danger"></span>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-6">
-                                <label for="NumeroFactura" class="control-label"># de Factura</label>
+                                <label for="NumeroFactura" class="control-label"># de Factura<span class="Mensaje">*</span></label>
                                 <input type="text" id="NumeroFactura" name="numeroFactura" class="form-control inputs" />
                                 <span class="text-danger"></span>
                             </div>
                         </div>
-                        <div style="text-align:center;"class="noVisualizar" id="MensajeInicial">Completa los campos con *</div>
+                        <div style="text-align:center;" class="noVisualizar" id="MensajeInicial">Completa los campos con *</div>
                         <div class="text-center" id="agregarDetalle">
                             <button class="btn btn-primary" id="btnAbrirDetalle" onclick="agregarProductos()">Agregar productos</button>
                         </div>
                         <div class="contenedorFooter noVer" id="actualizarCompra">
                             <button class="btn btn-secondary" id="reducir" onclick="noVerCompra()" title="Reducir">
-                            <span class="d-flex align-items-center">
-                            <i class="fas fa-minus"></i>
-                            </span>
+                                <span class="d-flex align-items-center">
+                                    <i class="fas fa-minus"></i>
+                                </span>
                             </button>
                             <button class="btn btn-primary" id="btnActualizarCompra" onclick="actualizarCompra()">
-                            <span class="d-flex align-items-center">
-                            Actualizar datos de compra
-                            </span>
+                                <span class="d-flex align-items-center">
+                                    Actualizar datos de compra
+                                </span>
                             </button>
                         </div>
 
@@ -98,24 +98,24 @@
                     <div id="detallecontainer" class="form-group">
                         <div class="row" id="DatosProducto">
                             <div class="col-6">
-                                <label for="ProductoId" class="control-label">Producto</label>
-                                <input list="productos" id="ProductoId" name="productoId" class="form-control" placeholder="Escribe y/o selecciona el producto ..." autocomplete="off"/>
+                                <label for="ProductoId" class="control-label">Producto<span class="Mensaje">*</span></label>
+                                <input list="productos" id="ProductoId" name="productoId" class="form-control" placeholder="Escribe y/o selecciona el producto ..." autocomplete="off" />
                                 <datalist id="productos">
                                     @foreach (var producto in ViewBag.Productos)
                                     {
-                                        <option value="@producto.NombreCompleto" data-cantidad="@producto.CantidadPorPresentacion" data-id="@producto.ProductoId"></option>
+                                        <option value="@producto.NombreCompletoProducto" data-cantidad="@producto.CantidadPorPresentacion" data-id="@producto.ProductoId"></option>
                                     }
                                 </datalist>
-                                <input type="hidden" id="ProductoIdHidden" name="productoIdHidden"/>
+                                <input type="hidden" id="ProductoIdHidden" name="productoIdHidden" />
                                 <input type="hidden" id="CantidadPorPresentacionHidden" name="cantidadPorPresentacionHidden" />
 
 
                             </div>
                             <div class="col-3">
                                 <div class="d-flex align-items-center">
-                                <!-- Utilizamos flexbox para alinear verticalmente los elementos -->
-                                <label for="FechaVencimiento" class="control-label mb-0 me-2">Fecha Vencimiento</label>
-                                <span class="text-danger" id="spanFechaVencimiento"></span>
+                                    <!-- Utilizamos flexbox para alinear verticalmente los elementos -->
+                                    <label for="FechaVencimiento" class="control-label mb-0 me-2">Fecha Vencimiento<span class="Mensaje">*</span></label>
+                                    <span class="text-danger" id="spanFechaVencimiento"></span>
                                 </div>
                                 <input type="datetime-local" id="FechaVencimiento" name="fechaVencimiento" class="form-control" />
                                 <input type="text" class="noVisualizar form-control" id="FechaVencimientoNunca" name="fechaVencimientoNunca" value="No aplica" readonly />
@@ -128,57 +128,57 @@
                             </div>
 
                             <div class="col-3">
-                                <label for="NumeroLote" class="control-label">Numero Lote</label>
+                                <label for="NumeroLote" class="control-label">Numero Lote<span class="Mensaje">*</span></label>
                                 <input type="text" id="NumeroLote" name="numeroLote" class="form-control" />
                                 <span class="text-danger"></span>
                             </div>
                         </div>
-                         <div class="EspacioForm"></div>
+                        <div class="EspacioForm"></div>
                         <div class="row">
                             <div class="col-3">
-                                <label for="UnidadId" class="control-label"> Unidad</label>
+                                <label for="UnidadId" class="control-label"> Unidad<span class="Mensaje">*</span></label>
                                 <input list="unidades" id="UnidadId" name="unidadId" class="form-control" placeholder="Escribe y / o selecciona la unidad ..." autocomplete="off">
                                 <span class="text-danger"></span>
                                 <datalist id="unidades">
-                                @foreach (var unidad in ViewBag.Unidades)
-                                {
-                                <option value="@($"{unidad.NombreUnidad} x {unidad.CantidadPorUnidad}")" data-id="@unidad.UnidadId" data-cantidad="@unidad.CantidadPorUnidad"></option>
-                                }
+                                    @foreach (var unidad in ViewBag.Unidades)
+                                    {
+                                        <option value="@unidad.NombreCompletoUnidad" data-id="@unidad.UnidadId" data-cantidad="@unidad.CantidadPorUnidad"></option>
+                                    }
                                 </datalist>
-                                <input type="" id="UnidadIdHidden" name="unidadIdHidden">
-                                <input type="hidden" id="CantidadPorUnidad" name="CantidadPorUnidad">
+                                <input type="text" id="UnidadIdHidden" name="unidadIdHidden">
+                                <input type="text" id="CantidadPorUnidad" name="CantidadPorUnidad">
                             </div>
                             <div class="col-3">
                                 <label for="Cantidad" class="control-label">Cantidad</label>
-                                    <div class="input-group" id="CampoCantidad">
+                                <div class="input-group" id="CampoCantidad">
                                     <input type="number" id="Cantidad" name="cantidad" class="form-control" value="1" min="1">
                                     <span class="text-danger"></span>
                                     <button type="button" class="btn btn-default btn-number input-group-prepend" id="btnMenos">
-                                    <i class="fas fa-minus"></i>
+                                        <i class="fas fa-minus"></i>
                                     </button>
                                     <button type="button" class="btn btn-default btn-number input-group-append" id="btnMas">
-                                    <i class="fas fa-plus"></i>
+                                        <i class="fas fa-plus"></i>
                                     </button>
                                 </div>
                             </div>
                             <div class="col-3">
-                                <label for="PrecioDeCompra" class="control-label" id="PC">Precio de Compra</label>
-                                <input type="text" id="PrecioDeCompra" name="precioDeCompra" class="form-control"/>
+                                <label for="PrecioDeCompra" class="control-label" id="PC">Precio de Compra<span class="Mensaje">*</span></label>
+                                <input type="text" id="PrecioDeCompra" name="precioDeCompra" class="form-control" />
                                 <span class="text-danger"></span>
                             </div>
                             <div class="col-3">
-                                <label for="PorcentajeGanancia" class="control-label">% A Ganar</label>
+                                <label for="PorcentajeGanancia" class="control-label">% A Ganar<span class="Mensaje">*</span></label>
                                 <div class="contenedorCalculo">
-                                    <input type="text" id="PorcentajeGanancia" name="porcentajeGanancia" class="form-control"/>
+                                    <input type="text" id="PorcentajeGanancia" name="porcentajeGanancia" class="form-control" />
                                     <button class="btn-calculo" id="btnCalcular" title="Calcular"><i class="fas fa-calculator"></i></button>
                                 </div>
                             </div>
                         </div>
                         <button id="modal-header-botonAgregarDetalle" class="btn btn-primary" onclick="agregarDetalleCompra()"><i id="agregarDetalleIcono" class="fas fa-plus-circle"></i>Agregar Producto</button>
 
-                         <div class="EspacioForm"></div>
+                        <div class="EspacioForm"></div>
                         <div class="row noVisualizar" id="PrecioBuy">
-                             <h5>Precio de compra</h5>
+                            <h5>Precio de compra</h5>
                             <div class="col-4">
                                 <label for="PrecioDeCompraPorUnidad" class="labelForm control-label">x Unidad</label>
                                 <input type="text" id="PrecioDeCompraPorUnidad" name="precioDeCompraPorUnidad" class="form-control" readonly />
@@ -193,30 +193,30 @@
                             </div>
                         </div>
                         <div class="row noVisualizar" id="PrecioBougth">
-                             <h5>Precio de venta</h5>
+                            <h5>Precio de venta</h5>
                             <div class="col-4">
-                                <label for="PrecioDeVentaPorUnidad" class="control-label">x Unidad</label>
-                                <input type="text" id="PrecioDeVentaPorUnidad" name="precioDeVentaPorUnidad" class="form-control"/>
+                                <label for="PrecioDeVentaPorUnidad" class="control-label">x Unidad<span class="Mensaje">*</span></label>
+                                <input type="text" id="PrecioDeVentaPorUnidad" name="precioDeVentaPorUnidad" class="form-control" />
                                 <span class="text-danger"></span>
                             </div>
-                            <div class="col-4" >
-                                <label for="PrecioDeVentaUnitario" class="control-label">x Producto</label>
+                            <div class="col-4">
+                                <label for="PrecioDeVentaUnitario" class="control-label">x Producto<span class="Mensaje">*</span></label>
                                 <div class="contenedorCalculo">
-                                <input type="text" id="PrecioDeVentaUnitario" name="precioDeVentaUnitario" class="form-control" />
-                                <button class="btn-calculo" id="btnCalcularVenta" title="Calcular precio por unidad"><i class="fas fa-calculator"></i></button>
+                                    <input type="text" id="PrecioDeVentaUnitario" name="precioDeVentaUnitario" class="form-control" />
+                                    <button class="btn-calculo" id="btnCalcularVenta" title="Calcular precio por unidad"><i class="fas fa-calculator"></i></button>
                                 </div>
                                 <span id="spanErmitanio" class="text-danger"></span>
                             </div>
                             <div class="col-4">
-                                <label for="PrecioDeVentaxUnidadPresentacion" class="control-label">x Unidad de producto</label>
+                                <label for="PrecioDeVentaxUnidadPresentacion" class="control-label">x Unidad de producto<span class="Mensaje">*</span></label>
                                 <input type="text" id="PrecioDeVentaxUnidadPresentacion" name="precioDeVentaxUnidadPresentacion" class="form-control" />
                                 <span class="text-danger"></span>
                             </div>
-                       </div>
+                        </div>
                     </div>
                     <div class="noVisualizar" id="verCompra">
                         <div class="modal-footer-botones">
-                             <div class="modal-footer-inicial">
+                            <div class="modal-footer-inicial">
                                 <button class="btn btn-secondary noVisualizar" id="minimizarTabla" onclick="minimizarTabla()" title="No ver tabla"><i class="fas fa-minus"></i></button>
                                 <button class="btn btn-secondary" id="expandirTabla" onclick="verTabla()" title="Ver tabla de productos"><i class="fas fa-expand-alt"></i></button>
                                 <button class="btn btn-secondary" id="expandir" onclick="verCompra()" title="Actualizar compra"><i class="fas fa-expand-alt"></i></button>
@@ -227,12 +227,12 @@
                                         <input type="text" id="ValorTotal" readonly />
                                     </div>
                                 </div>
-                             </div>
-                              <button type="button" id="btnModal" class="btn btn-primary" onclick="RegistrarBuy(compra)" title="Enviar">Registrar Compra</button>
-                        </div>                    
+                            </div>
+                            <button type="button" id="btnModal" class="btn btn-primary" onclick="RegistrarBuy(compra)" title="Enviar">Registrar Compra</button>
+                        </div>
                     </div>
-                  
-                
+
+
                 </div>
                 <div class="noVisualizar" id="TablaDetalles">
                     <div id="contenedorTablaDetalles">
@@ -245,106 +245,106 @@
                             </button>
                         </div>
 
-                    <!-- Tabla de detalles -->
-                    <table id="detalleTable" class="table table-striped table-custom text-center">
-                        <thead>
-                        <tr>
-                        <th title="Nombre producto">ProductoId</th>
-                        <th>Cantidad</th>
-                        <th>PrecioUnitario</th>
-                        <th>Subtotal</th>
-                        <th>Acciones</th>
-                        </tr>
-                        </thead>
-                    <tbody id="detalleTableBody">
-                    <!-- Filas de la tabla se agregarán dinámicamente aquí -->
-                    </tbody>
-                    </table>
+                        <!-- Tabla de detalles -->
+                        <table id="detalleTable" class="table table-striped table-custom text-center">
+                            <thead>
+                                <tr>
+                                    <th title="Nombre producto">ProductoId</th>
+                                    <th>Cantidad</th>
+                                    <th>PrecioUnitario</th>
+                                    <th>Subtotal</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detalleTableBody">
+                                <!-- Filas de la tabla se agregarán dinámicamente aquí -->
+                            </tbody>
+                        </table>
 
                     </div>
                 </div>
             </div>
-            </div>
         </div>
+    </div>
     <br />
     <hr>
-        <table class="table table-custom text-center">
+    <table class="table table-custom text-center">
         <thead>
-        <tr>
-        <th>
-        #
-        </th>
-        <th class="d-none">
-        compraId
-        </th>
-        <th>
-        Proveedor
-        </th>
-        <th>
-        # Factura
-        </th>
-        <th>
-        Fecha compra
-        </th>
-        <th>
-        Estado
-        </th>
-        <th>
-        Acciones
-        </th>
-        </tr>
+            <tr>
+                <th>
+                    #
+                </th>
+                <th class="d-none">
+                    compraId
+                </th>
+                <th>
+                    Proveedor
+                </th>
+                <th>
+                    # Factura
+                </th>
+                <th>
+                    Fecha compra
+                </th>
+                <th>
+                    Estado
+                </th>
+                <th>
+                    Acciones
+                </th>
+            </tr>
         </thead>
         <tbody class="text-center">
-        @{
-        int contador = ViewBag.contador ?? 1;
-        }
+            @{
+                int contador = ViewBag.contador ?? 1;
+            }
 
-        @foreach (var item in Model)
-        {
+            @foreach (var item in Model)
+            {
 
-        <tr>
-        <td>
-        @contador
-        @{
-        contador++;
-        }
-        </td>
-        <td class="d-none">
-        @Html.DisplayFor(modelItem => item.CompraId)
-        </td>
-        <td>
-        @foreach (var proveedor in ViewBag.Proveedores)
-        {
-        @if (proveedor.ProveedorId == item.ProveedorId)
-        {
-        <span>@proveedor.NombreEmpresa</span>
-        }
-        }
-        </td>
-        <td>
-        @Html.DisplayFor(modelItem => item.NumeroFactura)
-        </td>
-        <td>
-        @Html.DisplayFor(modelItem => item.FechaCompra)
-        </td>
-        <td class="contenedorEstadoTabla">
-        <label class="switch">
-        <input type="checkbox" @(item.EstadoCompra != 0 ? "checked" : "") onchange="mostraralerta('@item.CompraId')">
-        <span class="slider"></span>
-        </label>
-        </td>
-        <td>
-        <a asp-action="Details" asp-route-id="@item.CompraId" value="" class="btn botonDetalle" ><i class="fas fa-file"></i></a>
-        <form style="display: inline-block;" asp-controller="Compras" id="botonTrash" asp-action="Delete" method="post" class="delete-form">
-        <input type="hidden" name="id" id="campoId" value="@item.CompraId" />
-        <button type="submit"  value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
-        </form>
-        </td>
+                <tr>
+                    <td>
+                        @contador
+                        @{
+                            contador++;
+                        }
+                    </td>
+                    <td class="d-none">
+                        @Html.DisplayFor(modelItem => item.CompraId)
+                    </td>
+                    <td>
+                        @foreach (var proveedor in ViewBag.Proveedores)
+                        {
+                            @if (proveedor.ProveedorId == item.ProveedorId)
+                            {
+                                <span>@proveedor.NombreEmpresa</span>
+                            }
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NumeroFactura)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FechaCompra)
+                    </td>
+                    <td class="contenedorEstadoTabla">
+                        <label class="switch">
+                            <input type="checkbox" @(item.EstadoCompra != 0 ? "checked" : "") onchange="mostraralerta('@item.CompraId')">
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.CompraId" value="" class="btn botonDetalle"><i class="fas fa-file"></i></a>
+                        <form style="display: inline-block;" asp-controller="Compras" id="botonTrash" asp-action="Delete" method="post" class="delete-form">
+                            <input type="hidden" name="id" id="campoId" value="@item.CompraId" />
+                            <button type="submit" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                        </form>
+                    </td>
 
-        </tr>
-        }
+                </tr>
+            }
         </tbody>
-        </table>
+    </table>
     <div class="pagination-container">
         @if (Model != null && Model.PageCount > 1)
         {

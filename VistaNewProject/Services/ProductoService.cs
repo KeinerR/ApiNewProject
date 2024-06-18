@@ -1,5 +1,6 @@
 ﻿using VistaNewProject.Services;
 using VistaNewProject.Models;
+using Microsoft.AspNetCore.Mvc;
 
 public class ProductoService
 {
@@ -10,7 +11,7 @@ public class ProductoService
         _client = client;
     }
 
-    public async Task<Producto> ConcatenarNombreCompletoProducto(int productoId)
+    public async Task<Producto> ConcatenarNombreCompletoProductoAsync(int productoId)
     {
         // Recuperar la información del producto de forma asincrónica
         var producto = await _client.FindDatosProductoAsync(productoId);
@@ -60,7 +61,7 @@ public class ProductoService
         return datosProducto;
     }
 
-    public async Task<string> ObtenerNombreCompletoProducto(ProductoCrearYActualizar producto)
+    public async Task<string> ObtenerNombreCompletoProductoAsync(ProductoCrearYActualizar producto)
     {
         var presentacion = await _client.FindPresentacionAsync(producto.PresentacionId.Value);
         var marca = await _client.FindMarcaAsync(producto.MarcaId);
@@ -83,12 +84,15 @@ public class ProductoService
     }
 
     // Método ConcatenarNombreCompletoPresentacion
-    public async Task<string> ObtenerNombreCompletoPresentacion(PresentacionCrearYActualizar producto)
+    public async Task<string> ObtenerNombreCompletoPresentacionAsync(PresentacionCrearYActualizar presentacion)
     {
         // Construir el nombre completo de la presentación
-        var nombrePresentacion = producto.NombrePresentacion;
-        var contenido = producto.Contenido;
-        var cantidad = producto.CantidadPorPresentacion ?? 1;
+        var nombrePresentacion = presentacion.NombrePresentacion;
+        var contenido = presentacion.Contenido;
+        var cantidad = presentacion.CantidadPorPresentacion ?? 1;
+
+        // Simular una operación asincrónica, si fuera necesario (por ejemplo, acceso a la base de datos)
+        await Task.Delay(10);
 
         // Devolver el nombre completo concatenado
         return cantidad > 1 ?
@@ -96,5 +100,15 @@ public class ProductoService
             $"{nombrePresentacion} de {contenido}";
     }
 
+    public async Task<string> ObtenerNombreCompletoUnidadAsync(Unidad unidad)
+    {
+        // Construir el nombre completo de la unidad
+        var nombreUnidad = unidad.NombreUnidad;
+        var cantidadPorUnidad = unidad.CantidadPorUnidad;
+        await Task.Delay(10);
+
+        // Devolver el nombre completo concatenado
+        return $"{nombreUnidad} x {cantidadPorUnidad}";
+    }
 
 }

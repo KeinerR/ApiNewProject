@@ -505,44 +505,44 @@ function mostrarOcultarError(spanId, mensaje) {
 
 
 
-document.getElementById('buscarCliente').addEventListener('input', function () {
-    var input = this.value.trim().toLowerCase();
-    var rows = document.querySelectorAll('.clientesPaginado');
+//document.getElementById('buscarCliente').addEventListener('input', function () {
+//    var input = this.value.trim().toLowerCase();
+//    var rows = document.querySelectorAll('.clientesPaginado');
 
-    if (input === "") {
-        rows.forEach(function (row) {
-            row.style.display = '';
-        });
-        var icon = document.querySelector('#btnNavbarSearch i');
-        icon.className = 'fas fa-search';
-        icon.style.color = 'gray';
-    } else {
-        rows.forEach(function (row) {
-            row.style.display = 'none';
-        });
-        var icon = document.querySelector('#btnNavbarSearch i');
-        icon.className = 'fas fa-times';
-        icon.style.color = 'gray';
-    }
-    var rowsTodos = document.querySelectorAll('.Clientes');
+//    if (input === "") {
+//        rows.forEach(function (row) {
+//            row.style.display = '';
+//        });
+//        var icon = document.querySelector('#btnNavbarSearch i');
+//        icon.className = 'fas fa-search';
+//        icon.style.color = 'gray';
+//    } else {
+//        rows.forEach(function (row) {
+//            row.style.display = 'none';
+//        });
+//        var icon = document.querySelector('#btnNavbarSearch i');
+//        icon.className = 'fas fa-times';
+//        icon.style.color = 'gray';
+//    }
+//    var rowsTodos = document.querySelectorAll('.Clientes');
 
-    rowsTodos.forEach(function (row) {
-        if (input === "") {
-            row.style.display = 'none';
-        } else {
-            var clienteId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
-            var identificacion = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-            var nombreE = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-            var nombreC = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-            var tipoC = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-            var telefono = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-            var correo = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-            var direccion = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+//    rowsTodos.forEach(function (row) {
+//        if (input === "") {
+//            row.style.display = 'none';
+//        } else {
+//            var clienteId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
+//            var identificacion = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+//            var nombreE = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+//            var nombreC = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+//            var tipoC = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+//            var telefono = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+//            var correo = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+//            var direccion = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
 
-            row.style.display = (clienteId.includes(input) || identificacion.includes(input) || nombreE.includes(input) || nombreC.includes(input) || tipoC.includes(input) || telefono.includes(input) || correo.includes(input) || direccion.includes(input)) ? 'table-row' : 'none';
-        }
-    });
-});
+//            row.style.display = (clienteId.includes(input) || identificacion.includes(input) || nombreE.includes(input) || nombreC.includes(input) || tipoC.includes(input) || telefono.includes(input) || correo.includes(input) || direccion.includes(input)) ? 'table-row' : 'none';
+//        }
+//    });
+//});
 
 function vaciarInput() {
     document.getElementById('buscarCliente').value = "";

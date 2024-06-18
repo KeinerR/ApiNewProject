@@ -181,7 +181,7 @@ namespace VistaNewProject.Controllers
                     return RedirectToAction("Index");
                 }
 
-                var nombreCompletoTask = _productoService.ObtenerNombreCompletoProducto(producto);
+                var nombreCompletoTask = _productoService.ObtenerNombreCompletoProductoAsync(producto);
                 producto.NombreCompletoProducto = await nombreCompletoTask;
 
                 // Crear el nuevo producto
@@ -258,7 +258,7 @@ namespace VistaNewProject.Controllers
 
 
             // Concatenar nombres completos y calcular cantidad total
-            var productoConcatenado = await _productoService.ConcatenarNombreCompletoProducto(producto.ProductoId);
+            var productoConcatenado = await _productoService.ConcatenarNombreCompletoProductoAsync(producto.ProductoId);
 
             var pagedLote = listaLotesVista.ToPagedList(pageNumber, pageSize);
             ViewData["Pagina"] = pageNumber;
@@ -328,7 +328,7 @@ namespace VistaNewProject.Controllers
                 }
 
                 // Concatenar el nombre completo del producto
-                producto.NombreCompletoProducto = await _productoService.ObtenerNombreCompletoProducto(producto);
+                producto.NombreCompletoProducto = await _productoService.ObtenerNombreCompletoProductoAsync(producto);
               
 
                 var response = await _client.UpdateProductoAsync(producto);

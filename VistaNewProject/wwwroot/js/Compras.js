@@ -1296,26 +1296,103 @@ document.addEventListener   ("DOMContentLoaded", function () {
     inputprecioVentaxUnidadPresentacion.addEventListener('input', function () {
         formatoNumeroINT(this);
     });
+    function seleccionarOpcionCompra(input, dataList, hiddenInput, campo) {
+        var selectedValue = input.value.trim();
+
+
+        if (/^\d+[a-zA-Z]$/.test(selectedValue)) {
+            // Si selectedValue es un número seguido de una letra, realizar la acción correspondiente
+            console.log('Número seguido de letra encontrado:', selectedValue);
+            var selectedOptionByName = Array.from(dataList.options).find(function (option) {
+                return option.value === selectedValue;
+            });
+
+        } else {
+            var selectedOptionByName = Array.from(dataList.options).find(function (option) {
+                return option.value === selectedValue;
+            });
+        } if (/^\d+$/.test(selectedValue)) {
+            var selectedOptionById = Array.from(dataList.options).find(function (option) {
+                return option.getAttribute('data-id') === selectedValue;
+            });
+            if (!selectedOptionById) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: `No se encontró ningún resultado con este ID de ${campo}`,
+                    showConfirmButton: false,
+                    timer: 1800 // Duración rápida en milisegundos (1.5 segundos)
+                });
+                input.value = '';
+                input.dispatchEvent(new Event('input'));
+            }
+        }
+
+        if (selectedOptionByName) {
+            // Si se seleccionó un nombre del datalist, mostrar el nombre y enviar el data-id al input hidden
+            input.value = selectedOptionByName.value;
+            hiddenInput.value = selectedOptionByName.getAttribute('data-id');
+
+            // Verificar si es el campo ProductoId y el resto del código...
+        } else if (selectedOptionById) {
+            // Si se ingresó un ID en el campo de entrada, mostrar el nombre correspondiente y enviar el ID al input hidden
+            input.value = selectedOptionById.value;
+            hiddenInput.value = selectedOptionById.getAttribute('data-id');
+
+            // Verificar si es el campo ProductoId y el resto del código...
+        }
+        if (selectedOptionByName) {
+            // Si se seleccionó un nombre del datalist, mostrar el nombre y enviar el data-id al input hidden
+            input.value = selectedOptionByName.value;
+            hiddenInput.value = selectedOptionByName.getAttribute('data-id');
+
+            // Verificar si es el campo ProductoId
+            if (input.id === 'ProductoId') {
+                document.getElementById('ProductoId').value = selectedOptionByName.value;
+                document.getElementById('CantidadPorPresentacionHidden').value = selectedOptionByName.getAttribute('data-cantidad') || '';
+            }
+            // Verificar si es el campo UnidadId
+            if (input.id === 'UnidadId') {
+                document.getElementById('CantidadPorUnidad').value = selectedOptionByName.getAttribute('data-cantidad') || '';
+            }
+        } else if (selectedOptionById) {
+            // Si se ingresó un ID en el campo de entrada, mostrar el nombre correspondiente y enviar el ID al input hidden
+            input.value = selectedOptionById.value;
+            hiddenInput.value = selectedOptionById.getAttribute('data-id');
+
+            // Verificar si es el campo ProductoId
+            if (input.id === 'ProductoId') {
+                document.getElementById('ProductoId').value = selectedOptionById.value;
+                document.getElementById('CantidadPorPresentacionHidden').value = selectedOptionById.getAttribute('data-cantidad') || '';
+            }
+            // Verificar si es el campo UnidadId
+            if (input.id === 'UnidadId') {
+                document.getElementById('CantidadPorUnidad').value = selectedOptionById.getAttribute('data-cantidad') || '';
+            }
+        }
+    }
+
+
+
 
     // Asignar función de selección a los campos ProveedorId, ProductoId y UnidadId
     document.getElementById('ProveedorId').addEventListener('input', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
-            seleccionarOpcion(this, document.getElementById('proveedores'), document.getElementById('ProveedorIdHidden'), 'proveedor');
+            seleccionarOpcionCompra(this, document.getElementById('proveedores'), document.getElementById('ProveedorIdHidden'), 'proveedor');
          }, 700); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
     });
 
     document.getElementById('ProductoId').addEventListener('input', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
-            seleccionarOpcion(this, document.getElementById('productos'), document.getElementById('ProductoIdHidden'), 'Producto');
+            seleccionarOpcionCompra(this, document.getElementById('productos'), document.getElementById('ProductoIdHidden'), 'Producto');
         }, 700); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
     });
 
     document.getElementById('UnidadId').addEventListener('input', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
-            seleccionarOpcion(this, document.getElementById('unidades'), document.getElementById('UnidadIdHidden'), 'Unidad');
+            seleccionarOpcionCompra(this, document.getElementById('unidades'), document.getElementById('UnidadIdHidden'), 'Unidad');
         }, 700); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
     });
 
@@ -1337,7 +1414,7 @@ document.addEventListener   ("DOMContentLoaded", function () {
         const cantidadPorPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
 
         const producto = document.getElementById('ProductoId').value;
-        const unidadId = document.getElementById('UnidadId').value;
+        const unidadId = document.getElementById('UnidadIdHidden').value;
 
         // Verificar si los campos requeridos están completos
         if (

@@ -121,7 +121,7 @@ namespace VistaNewProject.Controllers
 
             foreach (var producto in productosDeMarca)
             {
-                var productoConNombreCompleto = await ConcatenarNombreCompletoProducto(producto.ProductoId);
+                var productoConNombreCompleto = await ConcatenarNombreCompletoProductoAsync(producto.ProductoId);
                 pagedProductos.Add(productoConNombreCompleto);
             }
 
@@ -406,7 +406,7 @@ namespace VistaNewProject.Controllers
 
         }
 
-        private async Task<Producto> ConcatenarNombreCompletoProducto(int productoId)
+        private async Task<Producto> ConcatenarNombreCompletoProductoAsync(int productoId)
         {
             var producto = (await _client.GetProductoAsync()).FirstOrDefault(p => p.ProductoId == productoId);
             var presentaciones = await _client.GetPresentacionAsync();

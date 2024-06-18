@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Ocsp;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -756,9 +757,12 @@ namespace VistaNewProject.Services
 
 
 
-        public async Task<HttpResponseMessage> UpdateUnidadAsync(UnidadUpdate unidad)
+        public async Task<HttpResponseMessage> UpdateUnidadAsync(Unidad unidad)
         {
             var response = await _httpClient.PutAsJsonAsync($"Unidades/UpdateUnidades/", unidad);
+            if (response == null) { 
+             throw new Exception("No se pudo realizar la actualiacion en el API");
+            }
             return response;
         }
 

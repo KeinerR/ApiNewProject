@@ -123,7 +123,7 @@ namespace VistaNewProject.Controllers
             var pagedProductos = new List<Producto>();
             foreach (var producto in productos)
             {
-                var productoConcatenado = await _productoService.ConcatenarNombreCompletoProducto(producto.ProductoId);
+                var productoConcatenado = await _productoService.ConcatenarNombreCompletoProductoAsync(producto.ProductoId);
                 pagedProductos.Add(productoConcatenado);
             }
 
@@ -132,7 +132,6 @@ namespace VistaNewProject.Controllers
 
             return View(pagedProductosPagedList);
         }
-
         public async Task<IActionResult> Create([FromForm] Categoria categoria)
         {
             if (ModelState.IsValid)
@@ -300,7 +299,6 @@ namespace VistaNewProject.Controllers
             TempData["EstadoAlerta"] = "false";
 
         }
-
 
     }
 }

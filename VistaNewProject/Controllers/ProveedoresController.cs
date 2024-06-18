@@ -126,7 +126,7 @@ namespace VistaNewProject.Controllers
                 if (producto != null)
                 {
                     // Concatenar el nombre completo del producto
-                    producto = await ConcatenarNombreCompletoProducto(producto.ProductoId);
+                    producto = await ConcatenarNombreCompletoProductoAsync(producto.ProductoId);
 
                     productosConCantidad.Add(new ProductoConCantidad
                     {
@@ -376,7 +376,7 @@ namespace VistaNewProject.Controllers
 
         }
 
-        private async Task<Producto> ConcatenarNombreCompletoProducto(int productoId)
+        private async Task<Producto> ConcatenarNombreCompletoProductoAsync(int productoId)
         {
             var producto = (await _client.GetProductoAsync()).FirstOrDefault(p => p.ProductoId == productoId);
             var presentaciones = await _client.GetPresentacionAsync();

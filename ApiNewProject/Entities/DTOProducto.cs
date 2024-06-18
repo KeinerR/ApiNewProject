@@ -104,7 +104,7 @@ namespace ApiNewProject.Entities
             Detallecompras = new HashSet<Detallecompra>();
             Detallepedidos = new HashSet<Detallepedido>();
         }
-
+      
         public int UnidadId { get; set; }
         public string? NombreUnidad { get; set; }
         public string? NombreCompletoUnidad { get; set; }
@@ -112,11 +112,12 @@ namespace ApiNewProject.Entities
         public string? DescripcionUnidad { get; set; }
         public ulong? EstadoUnidad { get; set; }
         [JsonIgnore]
-
         public virtual ICollection<Detallecompra> Detallecompras { get; set; }
         [JsonIgnore]
         public virtual ICollection<Detallepedido> Detallepedidos { get; set; }
+
     }
+
     public partial class Proveedor
     {
         public Proveedor()

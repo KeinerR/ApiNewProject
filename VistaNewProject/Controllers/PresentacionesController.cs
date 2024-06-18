@@ -127,7 +127,7 @@ namespace VistaNewProject.Controllers
 
             foreach (var producto in productosDePresentacion)
             {
-                var productoConNombreCompleto = await ConcatenarNombreCompletoProducto(producto.ProductoId);
+                var productoConNombreCompleto = await ConcatenarNombreCompletoProductoAsync(producto.ProductoId);
                 pagedProductos.Add(productoConNombreCompleto);
             }
 
@@ -245,7 +245,7 @@ namespace VistaNewProject.Controllers
                     MensajeSweetAlert("error", "Error", "Ya hay una presentación registrada con ese nombre.", "true", null);
                     return RedirectToAction("Index");
                 }
-                var nombreCompletoTask = _productoService.ObtenerNombreCompletoPresentacion(presentacion);
+                var nombreCompletoTask = _productoService.ObtenerNombreCompletoPresentacionAsync(presentacion);
                 var nombreCompleto = await nombreCompletoTask;
                 presentacion.NombreCompletoPresentacion = nombreCompleto;
                 var response = await _client.CreatePresentacionAsync(presentacion);
@@ -298,7 +298,7 @@ namespace VistaNewProject.Controllers
                     MensajeSweetAlert("error", "Error", $"Ya hay {contadorPresentacionesIguales} presentaciónes registradas con ese nombre.", "true", null);
                     return RedirectToAction("Index");
                 }
-                var generarNombreCompleto = _productoService.ObtenerNombreCompletoPresentacion(presentacion);
+                var generarNombreCompleto = _productoService.ObtenerNombreCompletoPresentacionAsync(presentacion);
                 var NombreCompleto = await generarNombreCompleto;
                 presentacion.NombreCompletoPresentacion = NombreCompleto;
                 var response = await _client.UpdatePresentacionAsync(presentacion);
@@ -398,7 +398,7 @@ namespace VistaNewProject.Controllers
             }
         }
 
-        private async Task<Producto> ConcatenarNombreCompletoProducto(int productoId)
+        private async Task<Producto> ConcatenarNombreCompletoProductoAsync(int productoId)
         {
             var producto = (await _client.GetProductoAsync()).FirstOrDefault(p => p.ProductoId == productoId);
             var presentaciones = await _client.GetPresentacionAsync();
