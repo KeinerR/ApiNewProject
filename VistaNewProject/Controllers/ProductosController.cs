@@ -51,11 +51,11 @@ namespace VistaNewProject.Controllers
                     productos.OrderByDescending(c => c.Estado == 1).ToList();
                     break;
                 case "alfabetico":
-                    productos.OrderBy(p => p.NombreCompleto).ToList();
+                    productos.OrderBy(p => p.NombreCompletoProducto).ToList();
                     productos.OrderByDescending(c => c.Estado == 1).ToList();
                     break;
                 case "name_desc":
-                    productos.OrderByDescending(p => p.NombreCompleto).ToList();
+                    productos.OrderByDescending(p => p.NombreCompletoProducto).ToList();
                     productos.OrderByDescending(c => c.Estado == 1).ToList();
                     break;
                 default:
@@ -128,7 +128,7 @@ namespace VistaNewProject.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] ProductoEnd producto)
+        public async Task<IActionResult> Create([FromForm] ProductoCrearYActualizar producto)
         {
             if (!ModelState.IsValid)
             {
@@ -180,24 +180,21 @@ namespace VistaNewProject.Controllers
                     return RedirectToAction("Index");
                 }
 
-                // Crear el nuevo producto
-                var response = await _client.CreateProductoAsync(new Producto
-                {
-                    NombreProducto = producto.NombreProducto,
-                    PresentacionId = producto.PresentacionId,
-                    MarcaId = producto.MarcaId,
-                    ProductoId = producto.ProductoId,
-                    CategoriaId = producto.CategoriaId,
-                    CantidadTotal = producto.CantidadTotal ?? 0,
-                    CantidadReservada = 0,
-                    CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor,
-                    DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor,
-                    Estado = producto.Estado
-                });
+                // Concatenar el nombre completo del producto
+                var productoConNombreCompleto = await _productoService.ProductosParaConcatenar(new List<ProductoCrearYActualizar> { producto });
+                var nuevoProducto = productoConNombreCompleto.FirstOrDefault();
 
+                if (nuevoProducto == null)
+                {
+                    MensajeSweetAlert("error", "Error", "No se pudo construir el nombre completo del producto.", "false", null);
+                    return RedirectToAction("Index");
+                }
+
+                // Crear el nuevo producto
+                var response = await _client.CreateProductoAsync(nuevoProducto);
                 if (response.IsSuccessStatusCode)
                 {
-                    MensajeSweetAlert("success", "Exito", "Se ha registrado exitosamente el producto", "false", 3000);
+                    MensajeSweetAlert("success", "Éxito", "Se ha registrado exitosamente el producto", "false", 3000);
                     return RedirectToAction("Index");
                 }
                 else

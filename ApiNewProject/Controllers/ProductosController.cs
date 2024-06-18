@@ -41,6 +41,7 @@ namespace ApiNewProject.Controllers
                     MarcaId = s.MarcaId,
                     CategoriaId = s.CategoriaId,
                     NombreProducto = s.NombreProducto,
+                    NombreCompletoProducto = s.NombreCompletoProducto,
                     CantidadTotal = s.CantidadTotal,
                     CantidadReservada = s.CantidadReservada,
                     CantidadAplicarPorMayor = s.CantidadAplicarPorMayor,
@@ -63,6 +64,7 @@ namespace ApiNewProject.Controllers
                     MarcaId = s.MarcaId, 
                     CategoriaId = s.CategoriaId, 
                     NombreProducto = s.NombreProducto, 
+                    NombreCompletoProducto = s.NombreCompletoProducto,
                     CantidadTotal = s.CantidadTotal,
                     CantidadReservada = s.CantidadReservada,
                     CantidadAplicarPorMayor = s.CantidadAplicarPorMayor, 
@@ -100,6 +102,7 @@ namespace ApiNewProject.Controllers
                 MarcaId = p.MarcaId,
                 CategoriaId = p.CategoriaId,
                 NombreProducto = p.NombreProducto,
+                NombreCompletoProducto = p.NombreCompletoProducto,
                 CantidadTotal = p.CantidadTotal,
                 CantidadReservada = p.CantidadReservada,
                 CantidadAplicarPorMayor = p.CantidadAplicarPorMayor ?? 0,
@@ -144,6 +147,7 @@ namespace ApiNewProject.Controllers
                 MarcaId = producto.MarcaId,
                 CategoriaId = producto.CategoriaId,
                 NombreProducto = producto.NombreProducto,
+                NombreCompletoProducto = producto.NombreCompletoProducto,
                 CantidadTotal = producto.CantidadTotal,
                 CantidadReservada = producto.CantidadReservada,
                 CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor ?? 0,
@@ -165,8 +169,9 @@ namespace ApiNewProject.Controllers
                 return Ok(datosProducto);
             }
         }
+
         [HttpPost("InsertarProducto")]
-        public async Task<ActionResult<Producto>> InsertarProducto(Producto producto)
+        public async Task<ActionResult<ProductoCrearYActualizar>> InsertarProducto(ProductoCrearYActualizar producto)
         {
             try
             {
@@ -181,8 +186,20 @@ namespace ApiNewProject.Controllers
                 {
                     return Conflict("El producto ya existe en la base de datos.");
                 }
+                var nuevoProducto = new Producto
+                {
+                    ProductoId = producto.ProductoId,
+                    MarcaId = producto.MarcaId,
+                    PresentacionId = producto.PresentacionId,
+                    CategoriaId = producto.CategoriaId,
+                    NombreCompletoProducto = producto.NombreCompletoProducto,
+                    NombreProducto = producto.NombreProducto,
+                    CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor,
+                    DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor,
+                    Estado = producto.Estado
 
-                _context.Productos.Add(producto);
+                };
+                _context.Productos.Add(nuevoProducto);
                 await _context.SaveChangesAsync();
 
                 return CreatedAtAction(nameof(GetProductoById), new { id = producto.ProductoId }, producto);
@@ -194,7 +211,7 @@ namespace ApiNewProject.Controllers
         }
 
         [HttpPut("UpdateProductos")]
-        public async Task<ActionResult> UpdateProductos(Producto producto)
+        public async Task<ActionResult> UpdateProductos(ProductoCrearYActualizar producto)
         {
             var productos = await _context.Productos.FirstOrDefaultAsync(s => s.ProductoId == producto.ProductoId);
 
@@ -202,20 +219,25 @@ namespace ApiNewProject.Controllers
             {
                 return NotFound();
             }
-            productos.ProductoId = producto.ProductoId;
-            productos.PresentacionId = producto.PresentacionId;
-            productos.MarcaId = producto.MarcaId;
-            productos.CategoriaId = producto.CategoriaId;
-            productos.NombreProducto = producto.NombreProducto;
-            productos.CantidadTotal = producto.CantidadTotal;
-            productos.CantidadReservada = producto.CantidadReservada;
-            productos.CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor;
-            productos.DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor;
-            productos.Estado = producto.Estado;
+            var nuevoProducto = new Producto
+            {
+                ProductoId = producto.ProductoId,
+                MarcaId = producto.MarcaId,
+                PresentacionId = producto.PresentacionId,
+                CategoriaId = producto.CategoriaId,
+                NombreCompletoProducto = producto.NombreCompletoProducto,
+                NombreProducto = producto.NombreProducto,
+                CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor,
+                DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor,
+                Estado = producto.Estado
+
+            };
+            _context.Productos.Add(nuevoProducto);
 
             await _context.SaveChangesAsync();
             return Ok();
         }
+
         [HttpPut("AddCantidadReservada/{id}")]
         public async Task<ActionResult> AddCantidadReservada(int id, int ? cantidad)
         {

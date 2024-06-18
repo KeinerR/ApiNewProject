@@ -123,18 +123,23 @@ document.addEventListener('DOMContentLoaded', function () {
             { id: 'CantidadAplicarPorMayor', nombre: 'Cantidad a superar' },
             { id: 'DescuentoAplicarPorMayor', nombre: 'Descuento por producto' }
         ];
+
         if (!NoCamposVaciosProducto()) {
             event.preventDefault();
             return;
-            if (!verificarCampos(campos, mostrarAlertaCampoVacio)) {
-                event.preventDefault();
-                return;
-            } 
-        }else if (!NoCamposConErroresProducto()) {
+
+        }
+        if (!verificarCampos(campos, mostrarAlertaCampoVacio)) {
+            event.preventDefault();
+            return;
+        }
+
+        if (!NoCamposConErroresProducto()) {
             mostrarAlertaCampoVacioPersonalizada('Algunos campos contienen errores');
             event.preventDefault();
             return;
-        } else if (productoRepetido !== false) {
+        }
+        if (productoRepetido !== false) {
             event.preventDefault();
             return;
         } else {
@@ -197,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     // Confirmación de eliminación
-    $('.delete-form').on('submit', function (event) {
+    $('.eliminarProducto').on('submit', function (event) {
         event.preventDefault(); // Evita que el formulario se envíe automáticamente
 
         // Mostrar el diálogo de confirmación
@@ -326,11 +331,6 @@ document.addEventListener('DOMContentLoaded', function () {
             mostrarAlertaAtencionPersonalizadaConBoton('Completa los campos con *');
             return false;
         }
-        if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            $('.MensajeInicial').text('Por favor, complete el campo con *.');
-            return false;
-        }
-
         return true;
     }
 
@@ -557,7 +557,7 @@ function limpiarDatosFormularioProductoAgregar() {
         checbox.trigger('click');
         $('#filtrarxCategoriaAct').trigger('click');
     }
-
+    actualizarFormularioParaDescuentoCrear(false);
 }
 function limpiarDatosFormularioProductoAct() {
     // Limpiar la URL eliminando los parámetros de consulta
@@ -572,7 +572,6 @@ function limpiarDatosFormularioProductoAct() {
     // Limpiar mensajes de alerta y asteriscos
     var mensajes = document.querySelectorAll('.Mensaje');
     var mensajesText = document.querySelectorAll('.text-danger');
-
     for (var i = Math.max(0, mensajes.length - 8); i < mensajes.length - 2; i++) {
         mensajes[i].textContent = '';
     }
@@ -587,7 +586,7 @@ function limpiarDatosFormularioProductoAct() {
     if ($('#filtrarxCategoriaAct').prop('checked')) {
         $('#filtrarxCategoriaAct').trigger('click');
     }
-  
+
 
 
 
@@ -629,56 +628,53 @@ $('.modal').on('click', function (e) {
 //Funcion que se activa al hacer clik en el boton de editar.
 function actualizarProducto(campo) {
     var productoId = campo;
-    $.ajax({
-        url: '/Productos/FindProducto', // Ruta relativa al controlador y la acción
-        type: 'POST',
-        data: { productoId: productoId },
-        success: function (data) {
-            console.log(data);
-            var formActualizar = $('#FormActualizarProducto');
-            formActualizar.find('#ProductoIdAct').val(data.productoId);
-            formActualizar.find('#EstadoAct').val(data.estado);
-            formActualizar.find('#NombreMarcaAct').val(data.marcaId);
-            formActualizar.find('#NombreProductoAct').val(data.nombreProducto);
-            formActualizar.find('#NombrePresentacionAct').val(data.presentacionId);
-            formActualizar.find('#NombreCategoriaAct').val(data.categoriaId);
-            seleccionarOpcion(document.getElementById('NombreMarcaAct'), document.getElementById('marcas'), document.getElementById('MarcaIdAct'));
-            seleccionarOpcion(document.getElementById('NombreCategoriaAct'), document.getElementById('categorias'), document.getElementById('CategoriaIdAct'));
-            seleccionarOpcion(document.getElementById('NombrePresentacionAct'), document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'));
-            if (data.cantidadAplicarPorMayor > 0) {
-                // Marcar el checkbox DescuentoPorMayorAct como no seleccionado
-                document.getElementById('checkboxDescuentoPorMayorAct').checked = false;
-                // Ocultar elementos adicionales
-                var elementos = document.getElementsByClassName('PorMayorAct');
-                for (var i = 0; i < elementos.length; i++) {
-                    elementos[i].style.display = "none";
-                    elementos[i].style.visibility = "hidden";
+    try {
+        $.ajax({
+            url: '/Productos/FindProducto', // Ruta relativa al controlador y la acción
+            type: 'POST',
+            data: { productoId: productoId },
+            success: function (data) {
+                console.log(data);
+                var formActualizar = $('#FormActualizarProducto');
+                formActualizar.find('#ProductoIdAct').val(data.productoId);
+                formActualizar.find('#EstadoAct').val(data.estado);
+                formActualizar.find('#NombreMarcaAct').val(data.marcaId);
+                formActualizar.find('#NombreProductoAct').val(data.nombreProducto);
+                formActualizar.find('#NombrePresentacionAct').val(data.presentacionId);
+                formActualizar.find('#NombreCategoriaAct').val(data.categoriaId);
+                seleccionarOpcion(document.getElementById('NombreMarcaAct'), document.getElementById('marcas'), document.getElementById('MarcaIdAct'));
+                seleccionarOpcion(document.getElementById('NombreCategoriaAct'), document.getElementById('categorias'), document.getElementById('CategoriaIdAct'));
+                seleccionarOpcion(document.getElementById('NombrePresentacionAct'), document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'));
+                if (data.cantidadAplicarPorMayor > 0) {
+                    // Marcar el checkbox DescuentoPorMayorAct como seleccionado
+                    $('#checkboxDescuentoPorMayorAct').prop('checked', true);
+                    $('#DescuentoAplicarPorMayorAct').val(data.descuentoAplicarPorMayor);
+                    $('#CantidadAplicarPorMayorAct').val(data.cantidadAplicarPorMayor);
+                    // Mostrar los elementos con la clase 'PorMayor'
+                    var elementos = document.getElementsByClassName('PorMayorAct');
+                    for (var i = 0; i < elementos.length; i++) {
+                        elementos[i].classList.remove('noBe');
+                    }
+                } else {
+                    $('#checkboxDescuentoPorMayorAct').prop('checked', false);
+                    $('#DescuentoAplicarPorMayorAct').val(0);
+                    $('#CantidadAplicarPorMayorAct').val(0);
+                    var elementos = document.getElementsByClassName('PorMayorAct');
+                    for (var i = 0; i < elementos.length; i++) {
+                        elementos[i].classList.add('noBe');
+                    }
                 }
 
-                // Marcar el checkbox DescuentoPorMayorAct como seleccionado
-                $('#checkboxDescuentoPorMayorAct').prop('checked', true);
-                $('#DescuentoAplicarPorMayorAct').val(data.descuentoAplicarPorMayor);
-                $('#CantidadAplicarPorMayorAct').val(data.cantidadAplicarPorMayor);
-                // Mostrar los elementos con la clase 'PorMayor'
-                for (var i = 0; i < elementos.length; i++) {
-                    elementos[i].classList.remove('noBe');
-                }
-            } else {
-                $('#checkboxDescuentoPorMayorAct').prop('checked', false);
-                $('#DescuentoAplicarPorMayorAct').val(0);
-                $('#CantidadAplicarPorMayorAct').val(0);
-                var elementos = document.getElementsByClassName('descuentoAplica');
-                for (var i = 0; i < elementos.length; i++) {
-                    elementos[i].classList.add('noBe');
-                }
+                obtenerDatosProductos();
+                limpiarDatosFormularioProductoAct();
+                // Abrir la modal después de completar la actualización del producto
+                $('#ModalProductoAct').modal('show');
             }
+        });
+    } catch {
+        alert('Hubo problemas para obtener los datos del producto revisa tu conexion a internet.')
+    }
 
-            obtenerDatosProductos();
-            limpiarDatosFormularioProductoAct();
-            // Abrir la modal después de completar la actualización del producto
-            $('#ModalProductoAct').modal('show');
-        }
-    });
 }
 
 
@@ -842,104 +838,99 @@ function Llamar() {
     var checkbox = document.getElementById('checkboxDescuentoPorMayor');
 
     if (checkbox.checked) {
-        var mensajes = document.querySelectorAll('.Mensaje');
-        // Iterar sobre los mensajes, omitiendo los primeros 3 y los últimos 3
-        for (var i = 4; i < mensajes.length - 6; i++) {
-            var mensaje = mensajes[i];
-            mensaje.textContent = '*'; // Restaurar mensajes de error
-        }
-        const mensajesError = document.querySelectorAll('.text-danger');
-        mensajesError.forEach(span => {
-            span.innerText = ''; // Limpiar contenido del mensaje
-        });
-        // Obtener todos los elementos que tienen una clase específica
-        var elementos = document.getElementsByClassName('PorMayor');
-        // Iterar sobre la colección de elementos y aplicar estilos a cada uno
-        for (var i = 0; i < elementos.length; i++) {
-            elementos[i].classList.remove("noBe");
-        }
-        document.getElementById('CantidadAplicarPorMayor').value = '';
-        document.getElementById('DescuentoAplicarPorMayor').value = '';
+        actualizarFormularioParaDescuentoCrear(true);
     } else {
-        var mensajes = document.querySelectorAll('.Mensaje');
-        // Iterar sobre los mensajes, omitiendo los primeros 3 y los últimos 3
-        for (var i = 4; i < mensajes.length - 6; i++) {
-            var mensaje = mensajes[i];
-            mensaje.textContent = ''; // Restaurar mensajes de error
-        }
-        var elementos = document.getElementsByClassName('PorMayor');
+        actualizarFormularioParaDescuentoCrear(false);
 
-        // Iterar sobre la colección de elementos y aplicar estilos a cada uno
-        for (var i = 0; i < elementos.length; i++) {
-            elementos[i].classList.add("noBe");
-        }
-        document.getElementById('CantidadAplicarPorMayor').value = '0';
-        document.getElementById('DescuentoAplicarPorMayor').value = '0';
     }
 }
+
+function actualizarFormularioParaDescuentoCrear(activar) {
+    var mensajes = document.querySelectorAll('.Mensaje');
+    const elementos = document.getElementsByClassName('PorMayor');
+
+    for (let i = 4; i < mensajes.length - 6; i++) {
+        mensajes[i].textContent = activar ? '*' : ''; // Restaurar mensajes de error o limpiarlos
+    }
+
+    for (let i = 0; i < elementos.length; i++) {
+        if (activar) {
+            elementos[i].classList.remove("noBe");
+        } else {
+            elementos[i].classList.add("noBe");
+        }
+    }
+
+    document.getElementById('CantidadAplicarPorMayor').value = activar ? '' : '0';
+    document.getElementById('DescuentoAplicarPorMayor').value = activar ? '' : '0';
+}
+
 
 function Llamar2() {
     var checkbox = document.getElementById('checkboxDescuentoPorMayorAct');
-    var cantidadElement = document.getElementById('CantidadAplicarPorMayorAct');
-    var descuentoElement = document.getElementById('DescuentoAplicarPorMayorAct');
-    var cantidad = cantidadElement.value.trim();
-    var descuento = descuentoElement.value.trim();
     var mensajes = document.querySelectorAll('.Mensaje');
+    const mensajesError = document.querySelectorAll('.text-danger');
+    const elementos = document.getElementsByClassName('PorMayorAct');
 
     if (checkbox.checked) {
-        if (cantidad === '' || descuento === '') {
-            // Mostrar mensajes de error si los campos est�n vac�os
-            mensajes.forEach((mensaje, index) => {
-                if (index >= 10 && index < mensajes.length) {
-                    mensaje.textContent = '*';
+        for (let i = mensajes.length - 2; i < mensajes.length; i++) {
+            mensajes[i].textContent = '*'; // Restaurar mensajes de error
+        }
+
+        for (let i = 0; i < elementos.length; i++) {
+            elementos[i].classList.remove("noBe");
+        }
+        document.getElementById('CantidadAplicarPorMayorAct').value = '';
+        document.getElementById('DescuentoAplicarPorMayorAct').value = '';
+    } else {
+        let cantidadAplicarPorMayorAct = document.getElementById('CantidadAplicarPorMayorAct').value;
+        let descuentoAplicarPorMayorAct = document.getElementById('DescuentoAplicarPorMayorAct').value;
+
+        if (cantidadAplicarPorMayorAct > 0 && descuentoAplicarPorMayorAct > 0) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Si desmarcas esta opción, se perderán los datos de descuento por mayor.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, desmarcar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    actualizarFormularioParaDescuento(false);
+                } else {
+                    checkbox.checked = true;
                 }
             });
         } else {
-            // Limpiar los mensajes de error si los campos est�n llenos
-            const mensajesError = document.querySelectorAll('.text-danger');
-            mensajesError.forEach(span => {
-                span.innerText = '';
-            });
-            document.getElementById('CantidadAplicarPorMayorAct').value = '0';
-            document.getElementById('DescuentoAplicarPorMayorAct').value = '0';
+            actualizarFormularioParaDescuento(false);
         }
-        // Mostrar los elementos con la clase 'PorMayor'
-        var elementos = document.getElementsByClassName('PorMayorAct');
-        for (var i = 0; i < elementos.length; i++) {
-            elementos[i].style.display = "block";
-            elementos[i].style.visibility = "visible";
-        }
-
-        // Limpiar los campos de cantidad y descuento por mayor
-    } else {
-        Swal.fire({
-            title: '�Deseas quitar el precio y cantidad por mayor?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'S�',
-            cancelButtonText: 'No'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Esconder los elementos con la clase 'PorMayor'
-                var elementos = document.getElementsByClassName('PorMayorAct');
-                for (var i = 0; i < elementos.length; i++) {
-                    elementos[i].style.display = "none";
-                    elementos[i].style.visibility = "hidden";
-                }
-                // Restaurar los mensajes de error
-                mensajes.forEach((mensaje, index) => {
-                    if (index >= 10 && index < mensajes.length) {
-                        mensaje.textContent = '';
-                    }
-                    // Establecer los campos de cantidad y descuento por mayor a vac�o
-                    cantidadElement.value = '';
-                    descuentoElement.value = '';
-                });
-            } else {
-                // Si el usuario cancela, volver a marcar el checkbox
-                checkbox.checked = true;
-            }
-        });
     }
 }
 
+function actualizarFormularioParaDescuento(activar) {
+    var mensajes = document.querySelectorAll('.Mensaje');
+    const elementos = document.getElementsByClassName('PorMayorAct');
+
+    if (activar) {
+        for (let i = mensajes.length - 2; i < mensajes.length; i++) {
+            mensajes[i].textContent = '*'; // Restaurar mensajes de error
+        }
+
+        for (let i = 0; i < elementos.length; i++) {
+            elementos[i].classList.remove("noBe");
+        }
+    } else {
+        for (let i = 4; i < mensajes.length - 6; i++) {
+            mensajes[i].textContent = ''; // Restaurar mensajes de error
+        }
+
+        for (let i = 0; i < elementos.length; i++) {
+            elementos[i].classList.add("noBe");
+        }
+
+        document.getElementById('CantidadAplicarPorMayorAct').value = '0';
+        document.getElementById('DescuentoAplicarPorMayorAct').value = '0';
+    }
+}

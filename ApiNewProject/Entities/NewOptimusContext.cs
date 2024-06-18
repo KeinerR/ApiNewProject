@@ -423,6 +423,8 @@ namespace ApiNewProject.Entities
                 entity.Property(e => e.MarcaId).HasColumnName("MarcaID");
 
                 entity.Property(e => e.NombreProducto).HasMaxLength(100);
+                
+                entity.Property(e => e.NombreCompletoProducto).HasMaxLength(150);
 
                 entity.Property(e => e.PresentacionId).HasColumnName("PresentacionID");
 

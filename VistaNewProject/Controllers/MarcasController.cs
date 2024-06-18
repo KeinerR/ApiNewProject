@@ -428,7 +428,7 @@ namespace VistaNewProject.Controllers
             var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
             var nombreMarca = marcaEncontrada?.NombreMarca ?? "Sin marca";
 
-            producto.NombreCompleto = cantidad > 1 ?
+            producto.NombreCompletoProducto = cantidad > 1 ?
                 $"{nombrePresentacion} de {producto.NombreProducto} x {cantidad} unidades de {contenido}" :
                 $"{nombrePresentacion} de {producto.NombreProducto} {nombreMarca} de {contenido}";
 
