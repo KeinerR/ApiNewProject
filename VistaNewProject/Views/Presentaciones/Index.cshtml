@@ -148,6 +148,7 @@
             </div>
         </div>
     </div>
+
     <div class="contenedor-filtro">
         <select name="order" class="input-sm empSelect" onchange="redirectToOrder(this)">
             <option selected disabled>Ordenar por</option>
@@ -166,7 +167,7 @@
                 <th>Nombre Completo</th>
                 <th>Cantidad x presentacion</th>
                 <th class="contenedorEstado">Estado</th>
-                <th>Acciones</th>
+                <th class="contenedorAcciones">Acciones</th>
             </tr>
         </thead>
         <tbody class="text-center">
@@ -183,7 +184,7 @@
                         }
                     </td>
                     <td class="d-none">@Html.DisplayFor(modelItem => item.PresentacionId)</td>
-                    <td>@Html.DisplayFor(modelItem => item.NombreCompleto)</td>
+                    <td>@Html.DisplayFor(modelItem => item.NombreCompletoPresentacion)</td>
                     <td>@Html.DisplayFor(modelItem => item.CantidadPorPresentacion)</td>
                     <td class="text-center align-middle">
                         <label class="switch">
@@ -207,12 +208,12 @@
                 var presentaciones = ViewData["Presentaciones"] as List<Presentacion>;
                 if (presentaciones != null)
                 {
-                    int contadorC = 1;
+                    int contadorB = 1;
                     foreach (var presentacion in presentaciones)
                     {
                         <tr class="Presentaciones noIs">
                             <td class="contadorB noIs">
-                                @contadorC <!-- Muestra el valor del contador -->
+                                @contadorB <!-- Muestra el valor del contador -->
                             </td>
                             <td>
                                 @contador <!-- Muestra el valor del contador -->
@@ -221,7 +222,7 @@
                                 }
                             </td>
                             <td class="d-none">@Html.DisplayFor(modelItem => presentacion.PresentacionId)</td>
-                            <td>@Html.DisplayFor(modelItem => presentacion.NombreCompleto)</td>
+                            <td>@Html.DisplayFor(modelItem => presentacion.NombreCompletoPresentacion)</td>
                             <td>@Html.DisplayFor(modelItem => presentacion.CantidadPorPresentacion)</td>
                             <td class="text-center align-middle">
                                 <label class="switch">
@@ -240,6 +241,7 @@
                                 </div>
                             </td>
                         </tr>
+                        contadorB++;
                     }
                 }
             }

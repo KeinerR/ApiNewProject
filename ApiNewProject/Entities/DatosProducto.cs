@@ -15,6 +15,7 @@
         public string? NombreMarca { get; set; }
         public string? NombreCategoria { get; set; }
         public string? NombrePresentacion { get; set; }
+        public string? NombreCompletoPresentacion { get; set; }
         public string? Contenido { get; set; }
         public int? CantidadPorPresentacion { get; set; }
         public ulong? Estado { get; set; }

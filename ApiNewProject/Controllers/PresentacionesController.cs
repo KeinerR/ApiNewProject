@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using ZstdSharp.Unsafe;
 
 namespace ApiNewProject.Controllers
 {
@@ -41,32 +42,19 @@ namespace ApiNewProject.Controllers
         }
 
         [HttpGet("GetPresentacionById")]
-        public async Task<ActionResult<Presentacion>> GetPresentacionById(int Id)
+        public async Task<ActionResult<Presentacion>> GetPresentacionById(int id)
         {
-
-            Presentacion presentacion = await _context.Presentaciones.Select(
-                    s => new Presentacion
-                    {
-                        PresentacionId = s.PresentacionId,
-                        NombrePresentacion = s.NombrePresentacion,
-                        NombreCompletoPresentacion = s.NombreCompletoPresentacion,
-                        DescripcionPresentacion = s.DescripcionPresentacion,
-                        Contenido = s.Contenido,
-                        CantidadPorPresentacion = s.CantidadPorPresentacion,
-                        EstadoPresentacion = s.EstadoPresentacion
-                    })
-                .FirstOrDefaultAsync(s => s.PresentacionId == Id);
+            var presentacion = await _context.Presentaciones.FirstOrDefaultAsync(c => c.PresentacionId == id);
 
             if (presentacion == null)
             {
-                return NotFound();
+                return NotFound(); // 404 Not Found si no se encuentra la presentación
             }
             else
             {
-                return Ok(presentacion);
+                return Ok(presentacion); // 200 OK con la presentación si se encuentra
             }
         }
-
 
         [HttpPost("InsertarPresentacion")]
         public async Task<ActionResult<Presentacion>> InsertarPresentacion(Presentacion presentacion)
@@ -88,7 +76,6 @@ namespace ApiNewProject.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al insertar la presentacion en la base de datos: " + ex.Message);
             }
         }
-
 
         [HttpPut("UpdatePresentaciones")]
         public async Task<ActionResult> UpdatePresentaciones(Presentacion presentacion)
@@ -150,6 +137,21 @@ namespace ApiNewProject.Controllers
             {
                 // Si ocurre algún error, devolver un error 500 Internal Server Error
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el estado del categoria: " + ex.Message);
+            }
+        }
+
+        [HttpPost("NombrePresentacionById")]
+        public async Task<ActionResult<string>> GetNombreProductoById(int id)
+        {
+            var presentacion = await _context.Presentaciones.FindAsync(id);
+
+            if (presentacion == null)
+            {
+                return NotFound(); // 404 Not Found si no se encuentra la presentación
+            }
+            else
+            {
+                return Ok(presentacion.NombreCompletoPresentacion); // 200 OK con el nombre completo de la presentación si se encuentra
             }
         }
 

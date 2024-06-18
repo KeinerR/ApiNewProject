@@ -263,8 +263,12 @@ function limpiarFormularioCategoriaAgregar() {
     // Limpiar la URL eliminando los parámetros de consulta
     history.replaceState(null, '', location.pathname);
 
+    var mensajes = document.querySelectorAll('.Mensaje');
     var mensajesText = document.querySelectorAll('.text-danger');
-   
+
+    for (var i = 0; i < mensajes.length - 1; i++) {
+        mensajes[i].textContent = '*';
+    }
     for (var i = 0; i < mensajesText.length - 1; i++) {
         mensajesText[i].textContent = '';
     }
@@ -272,11 +276,12 @@ function limpiarFormularioCategoriaAgregar() {
 }
 function limpiarFormularioCategoriaAct() {
     history.replaceState(null, '', location.pathname);
-  
-
-    // Limpiar mensajes de alerta
+    var mensajes = document.querySelectorAll('.Mensaje');
     var mensajesText = document.querySelectorAll('.text-danger');
 
+    for (var i = Math.max(0, mensajes.length - 1); i < mensajes.length; i++) {
+        mensajes[i].textContent = '';
+    }
     for (var i = Math.max(0, mensajesText.length - 1); i < mensajesText.length; i++) {
         mensajesText[i].textContent = '';
     }

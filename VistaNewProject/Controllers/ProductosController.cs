@@ -39,26 +39,27 @@ namespace VistaNewProject.Controllers
 
             var categorias = await _client.GetCategoriaAsync();
             var marcas = await _client.GetMarcaAsync();
-            var productos = await _productoService.ConcatenarNombreCompletoProductos();
-            productos.Reverse();
-            productos.OrderByDescending(c => c.Estado == 1).ToList();
-            var presentaciones = await _productoService.ConcatenarNombreCompletoPresentaciones();
+            var productos = await _client.GetAllDatosProductosAsync();
+            productos = productos.Reverse();
+            productos = productos.OrderByDescending(c => c.Estado == 1).ToList();
+            var presentaciones = await _client.GetPresentacionAsync();
 
             switch (order.ToLower())
             {
                 case "first":
-                    productos.Reverse();
-                    productos.OrderByDescending(c => c.Estado == 1).ToList();
+                    productos = productos.Reverse();
+                    productos = productos.OrderByDescending(c => c.Estado == 1).ToList();
                     break;
                 case "alfabetico":
-                    productos.OrderBy(p => p.NombreCompletoProducto).ToList();
-                    productos.OrderByDescending(c => c.Estado == 1).ToList();
+                    productos = productos.OrderBy(p => p.NombreCompletoProducto).ToList();
+                    productos = productos.OrderByDescending(c => c.Estado == 1).ToList();
                     break;
                 case "name_desc":
-                    productos.OrderByDescending(p => p.NombreCompletoProducto).ToList();
-                    productos.OrderByDescending(c => c.Estado == 1).ToList();
+                    productos = productos.OrderByDescending(p => p.NombreCompletoProducto).ToList();
+                    productos = productos.OrderByDescending(c => c.Estado == 1).ToList();
                     break;
                 default:
+                    productos = productos.OrderByDescending(c => c.Estado == 1).ToList();
                     break;
             }
             int pageSize = 5; // Número máximo de elementos por página
@@ -180,18 +181,11 @@ namespace VistaNewProject.Controllers
                     return RedirectToAction("Index");
                 }
 
-                // Concatenar el nombre completo del producto
-                var productoConNombreCompleto = await _productoService.ProductosParaConcatenar(new List<ProductoCrearYActualizar> { producto });
-                var nuevoProducto = productoConNombreCompleto.FirstOrDefault();
-
-                if (nuevoProducto == null)
-                {
-                    MensajeSweetAlert("error", "Error", "No se pudo construir el nombre completo del producto.", "false", null);
-                    return RedirectToAction("Index");
-                }
+                var nombreCompletoTask = _productoService.ObtenerNombreCompletoProducto(producto);
+                producto.NombreCompletoProducto = await nombreCompletoTask;
 
                 // Crear el nuevo producto
-                var response = await _client.CreateProductoAsync(nuevoProducto);
+                var response = await _client.CreateProductoAsync(producto);
                 if (response.IsSuccessStatusCode)
                 {
                     MensajeSweetAlert("success", "Éxito", "Se ha registrado exitosamente el producto", "false", 3000);
@@ -281,8 +275,21 @@ namespace VistaNewProject.Controllers
             return Json(productos);
         }
         [HttpPost]
-        public async Task<IActionResult> Update([FromForm] ProductoEnd producto)
+        public async Task<IActionResult> Update([FromForm] ProductoCrearYActualizar producto)
         {
+            if (!ModelState.IsValid)
+            {
+                // Devolver los errores de validación al cliente
+                foreach (var modelState in ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        MensajeSweetAlert("error", "Error de validación", error.ErrorMessage, "true", null);
+                    }
+                }
+                return RedirectToAction("Index");
+            }
+
             try
             {
                 // Verificar que todos los campos estén llenos
@@ -291,84 +298,58 @@ namespace VistaNewProject.Controllers
                     producto.MarcaId <= 0 ||
                     producto.CategoriaId <= 0)
                 {
-                    TempData["SweetAlertIcon"] = "error";
-                    TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = "Por favor, complete todos los campos obligatorios con *.";
-                    TempData["EstadoAlerta"] = "false";
+                    MensajeSweetAlert("error", "Error", "Por favor, complete todos los campos obligatorios con *.", "false", null);
                     return RedirectToAction("Index");
                 }
+
                 var productos = await _client.GetProductoAsync();
 
+                // Normalizar el nombre del producto para la comparación
                 string Normalize(string? input)
                 {
                     if (input == null)
                     {
                         return string.Empty; // O cualquier otro valor predeterminado que desees
                     }
-
                     return input.ToLowerInvariant().Replace(" ", "");
                 }
 
                 var normalizedProductoNombre = Normalize(producto.NombreProducto);
                 var productExist = productos.FirstOrDefault(p =>
-                    p.ProductoId != producto.ProductoId &&
                     Normalize(p.NombreProducto) == normalizedProductoNombre &&
                     p.PresentacionId == producto.PresentacionId &&
-                    p.CategoriaId == producto.CategoriaId);
+                    p.MarcaId == producto.MarcaId &&
+                    p.CategoriaId == producto.CategoriaId && p.ProductoId != producto.ProductoId);
 
                 if (productExist != null)
                 {
-                    TempData["SweetAlertIcon"] = "error";
-                    TempData["SweetAlertTitle"] = "Error";
-                    TempData["SweetAlertMessage"] = $"Ya hay un producto con los mismos datos. ID: {productExist.ProductoId}";
-                    TempData["EstadoAlerta"] = "false";
+                    MensajeSweetAlert("error", "Error", $"Ya hay un producto con los mismos datos. ID: {productExist.ProductoId}", "false", null);
+                    return RedirectToAction("Index");
+                }
+
+                // Concatenar el nombre completo del producto
+                producto.NombreCompletoProducto = await _productoService.ObtenerNombreCompletoProducto(producto);
+              
+
+                var response = await _client.UpdateProductoAsync(producto);
+                if (response.IsSuccessStatusCode)
+                {
+                    MensajeSweetAlert("success", "Éxito", "Se ha actualizado exitosamente el producto", "false", 3000);
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    // Crear el nuevo producto
-                    var response = await _client.UpdateProductoAsync(new Producto
-                    {
-                        ProductoId = producto.ProductoId,
-                        NombreProducto = producto.NombreProducto,
-                        PresentacionId = producto.PresentacionId,
-                        MarcaId = producto.MarcaId,
-                        CategoriaId = producto.CategoriaId,
-                        CantidadTotal = producto.CantidadTotal ?? 0,
-                        CantidadReservada = 0,
-                        CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor,
-                        DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor,
-                        Estado = producto.Estado
-                    });
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        TempData["SweetAlertIcon"] = "success";
-                        TempData["SweetAlertTitle"] = "Exito";
-                        TempData["SweetAlertMessage"] = "Se ha Actualizado exitosamente el producto";
-                        TempData["EstadoAlerta"] = "false";
-                        TempData["Tiempo"] = 2000;
-
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        // Si hubo un error al crear el producto, mostrar un mensaje de error
-                        TempData["SweetAlertIcon"] = "error";
-                        TempData["SweetAlertTitle"] = "Error";
-                        TempData["SweetAlertMessage"] = "Hubo un problema al actualizar el producto.";
-                        TempData["EstadoAlerta"] = "false";
-                        return RedirectToAction("Index");
-                    }
+                    MensajeSweetAlert("error", "Error", "Hubo un problema al actualizar el producto.", "false", null);
+                    return RedirectToAction("Index");
                 }
             }
             catch (Exception ex)
             {
-                // Manejo de errores
-                Console.WriteLine($"Error: {ex.Message}");
-                return StatusCode(500, new { success = false, message = "Ocurrió un error." });
+                // Log the exception (consider using a logging framework)
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                // Return a 500 Internal Server Error response with the error message
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-
         }
 
         public async Task<IActionResult> Delete(int productoId)

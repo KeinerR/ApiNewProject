@@ -273,18 +273,25 @@ function limpiarFormularioMarcaAgregar() {
     // Limpiar la URL eliminando los parámetros de consulta
     history.replaceState(null, '', location.pathname);
     var mensajesText = document.querySelectorAll('.text-danger');
-
+    var mensaje = document.querySelectorAll('.Mensaje');
     for (var i = 0; i < mensajesText.length - 1; i++) {
         mensajesText[i].textContent = '';
+    }
+    for (var i = 0; i < mensajes.length - 1; i++) {
+        mensaje[i].textContent = '';
     }
 
 }
 function limpiarFormularioMarcaAct() {
     history.replaceState(null, '', location.pathname);
 
-    
+    // Limpiar mensajes de alerta y asteriscos
+    var mensajes = document.querySelectorAll('.Mensaje');
     var mensajesText = document.querySelectorAll('.text-danger');
 
+    for (var i = Math.max(0, mensajes.length - 1); i < mensajes.length; i++) {
+        mensajes[i].textContent = '';
+    }
     for (var i = Math.max(0, mensajesText.length - 1); i < mensajesText.length; i++) {
         mensajesText[i].textContent = '';
     }
@@ -445,11 +452,13 @@ function vaciarInputMarca() {
 }
 
 
-function validarCampoMarca(campo) {
-    const input = $(campo); // Convertir el input a objeto jQuery
-    var valor = input.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
-    var spanError = input.next('.text-danger'); // Obtener el elemento span de error asociado al input
-    var spanVacio = input.prev('.Mensaje'); // Obtener el elemento span vacío asociado al input
+function validarCampoMarca(input) {
+    const inputElement = $(input); // Convertir el input a objeto jQuery
+    const campo = inputElement.attr('id'); // Obtener el id del input actual como nombre de campo
+    const valor = inputElement.val().trim(); // Obtener el valor del campo y eliminar espacios en blanco al inicio y al final
+    const spanError = inputElement.next('.text-danger'); // Obtener el elemento span de error asociado al input
+    const labelForCampo = $('label[for="' + campo + '"]');
+    const spanVacio = labelForCampo.find('.Mensaje');
 
     // Limpiar el mensaje de error previo
     spanError.text('');
@@ -463,7 +472,7 @@ function validarCampoMarca(campo) {
     
 
     // Validación de usuario
-    if (input.is('#NombreMarcaVista') || input.is('#NombreMarcaVistaAct')) {
+    if (inputElement.is('#NombreMarcaVista') || inputElement.is('#NombreMarcaVistaAct')) {
         const nombreValido = /^[a-zA-Z]{3,}[a-zA-Z0-9_-]{0,16}$/.test(valor); // Verifica que el usuario cumpla con el formato especificado
         if (valor === '') {
             spanVacio.text('*');

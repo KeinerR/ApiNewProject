@@ -28,9 +28,9 @@ namespace VistaNewProject.Services
         // presentacion
 
         Task<IEnumerable<Presentacion>> GetPresentacionAsync();
-        Task<HttpResponseMessage> CreatePresentacionAsync(Presentacion presentacion);
+        Task<HttpResponseMessage> CreatePresentacionAsync(PresentacionCrearYActualizar presentacion);
         Task<Presentacion> FindPresentacionAsync(int id);
-        Task<HttpResponseMessage> UpdatePresentacionAsync(PresentacionUpdate presentacion);
+        Task<HttpResponseMessage> UpdatePresentacionAsync(PresentacionCrearYActualizar presentacion);
         Task<HttpResponseMessage> CambiarEstadoPresentacionAsync(int id);
 
         Task<HttpResponseMessage> DeletePresentacionAsync(int id);
@@ -88,7 +88,7 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> CreateProductoAsync(ProductoCrearYActualizar producto);
         Task<Producto> FindProductoAsync(int id);
         Task<Producto> FindDatosProductoAsync(int id);
-        Task<HttpResponseMessage> UpdateProductoAsync(Producto producto);
+        Task<HttpResponseMessage> UpdateProductoAsync(ProductoCrearYActualizar producto);
         Task<HttpResponseMessage> AddCantidadReservadaAsync(int productoId, int? cantidad);
         Task<HttpResponseMessage> SustraerCantidadReservadaAsync(int productoId, int? cantidad);  
         Task<HttpResponseMessage> AddCantidadTotalAsync(int productoId, int? cantidad);

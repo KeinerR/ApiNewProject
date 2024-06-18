@@ -131,7 +131,7 @@
             <th class="contenedorEstado">
                     Estado
                 </th>
-                <th>
+                <th class="contenedorAcciones">
                     Acciones
                 </th>
             </tr>
@@ -177,18 +177,18 @@
                 var categorias = ViewData["Categorias"] as List<Categoria>;
                 if (categorias != null)
                 {
-                     int contadorC = 1;
+                     int contadorB = 1;
                     foreach (var categoria in categorias)
                     {
                         <tr class="Categorias noIs" >
                              <td class="contadorB noIs">
-                                @contadorC <!-- Muestra el valor del contador -->
+                                @contadorB <!-- Muestra el valor del contador -->
                             </td>
                             <td>@categoria.CategoriaId</td>
                             <td>@categoria.NombreCategoria</td>
                             <td class="text-center align-middle">
                                 <label class="switch">
-                                    <input type="checkbox" @(categoria.EstadoCategoria != 0 ? "checked" : "") onchange="actualizarEstadoCategoria('@categoria.CategoriaId',this.checked)">
+                                    <input type="checkbox" @(categoria.EstadoCategoria != 0 ? "checked" : ""); onchange="actualizarEstadoCategoria('@categoria.CategoriaId',this.checked)">
                                     <span class="slider"></span>
                                 </label>
                             </td>
@@ -204,6 +204,7 @@
                                 </div>
                              </td>
                         </tr>
+                        contadorB++;
                     }
                 }
             }

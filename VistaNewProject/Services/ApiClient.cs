@@ -162,7 +162,7 @@ namespace VistaNewProject.Services
 
 
 
-        public async Task<HttpResponseMessage> CreatePresentacionAsync(Presentacion presentacion)
+        public async Task<HttpResponseMessage> CreatePresentacionAsync(PresentacionCrearYActualizar presentacion)
         {
             var response = await _httpClient.PostAsJsonAsync("Presentaciones/InsertarPresentacion", presentacion);
             return response;
@@ -179,7 +179,7 @@ namespace VistaNewProject.Services
         }
 
 
-        public async Task<HttpResponseMessage> UpdatePresentacionAsync(PresentacionUpdate presentacion)
+        public async Task<HttpResponseMessage> UpdatePresentacionAsync(PresentacionCrearYActualizar presentacion)
         {
             var response = await _httpClient.PutAsJsonAsync($"Presentaciones/UpdatePresentaciones/", presentacion);
             return response;
@@ -878,7 +878,7 @@ namespace VistaNewProject.Services
             return response;
         }
 
-        public async Task<HttpResponseMessage> UpdateProductoAsync(Producto producto)
+        public async Task<HttpResponseMessage> UpdateProductoAsync(ProductoCrearYActualizar producto)
         {
             try
             {

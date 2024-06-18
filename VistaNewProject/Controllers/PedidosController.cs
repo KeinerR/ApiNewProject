@@ -184,8 +184,9 @@ namespace VistaNewProject.Controllers
 
                                 if (producto != null)
                                 {
-                                    producto.CantidadReservada -= detallePedido.Cantidad;
-                                    var updateProducto = await _client.UpdateProductoAsync(producto);
+                                    var Id = productoId;
+                                    var cantidad = detallePedido.Cantidad;
+                                    var updateProducto = await _client.SustraerCantidadReservadaAsync(Id,cantidad);
                                     if (updateProducto.IsSuccessStatusCode)
                                     {
                                         Console.WriteLine("Producto actualizado correctamente");
@@ -249,8 +250,9 @@ namespace VistaNewProject.Controllers
 
                                 if (producto != null)
                                 {
-                                    producto.CantidadReservada -= detallePedido.Cantidad;
-                                    var updateProducto = await _client.UpdateProductoAsync(producto);
+                                    var Id = productoId;
+                                    var cantidad = detallePedido.Cantidad;
+                                    var updateProducto = await _client.SustraerCantidadReservadaAsync(Id,cantidad);
                                     if (updateProducto.IsSuccessStatusCode)
                                     {
                                         Console.WriteLine("Producto actualizado correctamente");

@@ -73,8 +73,7 @@ namespace VistaNewProject.Models
 
         public virtual ICollection<Producto>? Productos { get; set; }
     }
-
-    public class PresentacionUpdate
+    public class PresentacionCrearYActualizar
     {
         public int PresentacionId { get; set; }
         [Required(ErrorMessage = "El nombre de la categoría es obligatorio.")]
@@ -130,7 +129,6 @@ namespace VistaNewProject.Models
         public string? NombreCompletoProducto { get; set; }
         public int CantidadAplicarPorMayor { get; set; }
         public int DescuentoAplicarPorMayor { get; set; }
-        public string? Contenido { get; set; }
         public ulong? Estado { get; set; }
 
     }

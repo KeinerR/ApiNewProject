@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using ZstdSharp.Unsafe;
 
 namespace ApiNewProject.Controllers
 {
@@ -40,7 +41,7 @@ namespace ApiNewProject.Controllers
         public async Task<ActionResult<Marca>> GetMarcaById(int Id)
         {
 
-            Marca marca = await _context.Marcas.Select(
+            Marca? marca = await _context.Marcas.Select(
                     s => new Marca
                     {
                         MarcaId = s.MarcaId,
@@ -60,25 +61,17 @@ namespace ApiNewProject.Controllers
         }
 
         [HttpGet("GetNombreMarcaById")]
-        public async Task<ActionResult<Marca>> GetNombreMarcaById(string nombreMarca)
+        public async Task<ActionResult<string>> GetNombreMarcaById(int id)
         {
 
-            Marca marca = await _context.Marcas.Select(
-                    s => new Marca
-                    {
-                        MarcaId = s.MarcaId,
-                        NombreMarca = s.NombreMarca,
-                        EstadoMarca = s.EstadoMarca
-                    })
-                .FirstOrDefaultAsync(s => s.NombreMarca == nombreMarca );
-
+            var marca = await _context.Marcas.FindAsync(id);
             if (marca == null)
             {
                 return NotFound();
             }
             else
             {
-                return Ok(marca);
+                return Ok(marca.NombreMarca);
             }
         }
 

@@ -212,12 +212,12 @@
                 var unidades = ViewData["Unidades"] as List<Unidad>;
                 if (unidades != null)
                 {
-                    int contadorC = 1;
+                    int contadorB = 1;
                     foreach (var unidad in unidades)
                     {
                         <tr class="Unidades noIs">
                             <td class="contadorB noIs">
-                                @contadorC <!-- Muestra el valor del contador -->
+                                @contadorB <!-- Muestra el valor del contador -->
                             </td>
                             <td>@unidad.UnidadId</td>
                             <td>@unidad.NombreUnidad</td>
@@ -240,6 +240,7 @@
                                 </div>
                             </td>
                         </tr>
+                        contadorB++;
                     }
                 }
             }

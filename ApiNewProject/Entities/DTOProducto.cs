@@ -93,6 +93,10 @@ namespace ApiNewProject.Entities
         public int? DescuentoAplicarPorMayor { get; set; }
         public ulong? Estado { get; set; }
     }
+
+
+
+
     public partial class Unidad
     {
         public Unidad()
@@ -103,6 +107,7 @@ namespace ApiNewProject.Entities
 
         public int UnidadId { get; set; }
         public string? NombreUnidad { get; set; }
+        public string? NombreCompletoUnidad { get; set; }
         public int? CantidadPorUnidad { get; set; }
         public string? DescripcionUnidad { get; set; }
         public ulong? EstadoUnidad { get; set; }

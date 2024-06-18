@@ -56,7 +56,6 @@ namespace ApiNewProject.Controllers
                     return Conflict("La relación entre esta unidad y este producto ya existe.");
                 }
 
-                // Buscar entidades completas (no solo el primer resultado)
                 var unidad = await _context.Unidades.FindAsync(unidadxProductoAsociasion.UnidadId);
                 var producto = await _context.Productos.FindAsync(unidadxProductoAsociasion.ProductoId);
 
@@ -71,6 +70,7 @@ namespace ApiNewProject.Controllers
                     UnidadId = unidadxProductoAsociasion.UnidadId,
                     ProductoId = unidadxProductoAsociasion.ProductoId,
                     NombreUnidad = unidad.NombreUnidad,
+                    NombreCompletoUnidad = unidad.NombreCompletoUnidad,
                     EstadoUnidad = unidad.EstadoUnidad,
                     CantidadPorUnidad = unidad.CantidadPorUnidad,
                     Unidad = unidad, 

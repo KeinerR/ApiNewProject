@@ -195,52 +195,62 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="NombreCategoriaAct" class="control-label">Categoría<span class="Mensaje"></span></label>
-                                    <input list="categorias" oninput="validarCampoProducto(this)" id="NombreCategoriaAct" name="nombreCategoria" class="form-control" placeholder="Selecciona una categoría..." onclick="showCategorias()" autocomplete="off">
-                                    <datalist id="categorias">
-                                        @foreach (var item in ViewBag.Categorias)
-                                        {
-                                            if (item.EstadoCategoria != 0)
+                                    <div class="icono-input">
+                                        <i class="fas fa-times" onclick="iconoLimpiarCampo(['NombreCategoriaAct','CategoriaIdAct'],'NombreCategoriaAct');"></i>
+                                        <label for="NombreCategoriaAct" class="control-label">Categoría<span class="Mensaje"></span></label>
+                                        <input list="categorias" oninput="validarCampoProducto(this); agregarIconoparalimpiarElCampo(this);" id="NombreCategoriaAct" name="nombreCategoria" class="form-control" placeholder="Selecciona una categoría..." onclick="showCategorias()" autocomplete="off">
+                                        <datalist id="categorias">
+                                            @foreach (var item in ViewBag.Categorias)
                                             {
-                                                <option value="@item.NombreCategoria" data-id="@item.CategoriaId">@item.NombreCategoria</option>
+                                                if (item.EstadoCategoria != 0)
+                                                {
+                                                    <option value="@item.NombreCategoria" data-id="@item.CategoriaId">@item.NombreCategoria</option>
+                                                }
                                             }
-                                        }
-                                    </datalist>
-                                    <input type="hidden" id="CategoriaIdAct" name="categoriaId">
+                                        </datalist>
+                                        <input type="hidden" id="CategoriaIdAct" name="categoriaId">
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="NombreMarcaAct" class="control-label">Marca<span class="Mensaje"></span></label>
-                                    <input list="marcas" oninput="validarCampoProducto(this)" id="NombreMarcaAct" name="nombreMarca" class="form-control" placeholder="Escribe y/o selecciona una marca..." onclick="showNoMarcasAlert(this)" autocomplete="off">
-                                    <datalist id="marcas">
-                                        @foreach (var item in ViewBag.Marcas)
-                                        {
-                                            if (item.EstadoMarca != 0)
+                                    <div class="icono-input">
+                                        <i class="fas fa-times" onclick="iconoLimpiarCampo(['NombreMarcaAct','MarcaIdAct'],'NombreMarcaAct');"></i>
+                                        <label for="NombreMarcaAct" class="control-label">Marca<span class="Mensaje"></span></label>
+                                        <input list="marcas" oninput="validarCampoProducto(this); agregarIconoparalimpiarElCampo(this);" id="NombreMarcaAct" name="nombreMarca" class="form-control" placeholder="Escribe y/o selecciona una marca..." onclick="showNoMarcasAlert(this)" autocomplete="off">
+                                        <datalist id="marcas">
+                                            @foreach (var item in ViewBag.Marcas)
                                             {
-                                                <option value="@item.NombreMarca" data-id="@item.MarcaId">@item.NombreMarca</option>
+                                                if (item.EstadoMarca != 0)
+                                                {
+                                                    <option value="@item.NombreMarca" data-id="@item.MarcaId">@item.NombreMarca</option>
+                                                }
                                             }
-                                        }
-                                    </datalist>
-                                    <input type="hidden" id="MarcaIdAct" name="marcaId">
+                                        </datalist>
+                                        <input type="hidden" id="MarcaIdAct" name="marcaId">
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="NombrePresentacionAct" class="control-label">Presentación<span class="Mensaje"></span></label>
-                                    <input list="presentaciones" oninput="validarCampoProducto(this)" id="NombrePresentacionAct" name="nombrePresentacion" class="form-control" placeholder="Escribe y/o selecciona una presentación..." onclick="showNoPresentacionesAlert(this)" autocomplete="off">
-                                    <datalist id="presentaciones">
-                                        @foreach (var item in ViewBag.Presentaciones)
-                                        {
-                                            if (item.EstadoPresentacion != 0)
+                                    <div class="icono-input">
+                                        <i class="fas fa-times" onclick="iconoLimpiarCampo(['NombrePresentacionAct','PresentacionIdAct'],'NombrePresentacionAct');"></i>
+                                        <label for="NombrePresentacionAct" class="control-label">Presentación<span class="Mensaje"></span></label>
+                                        <input list="presentaciones" oninput="validarCampoProducto(this); agregarIconoparalimpiarElCampo(this);" id="NombrePresentacionAct" name="nombrePresentacion" class="form-control" placeholder="Escribe y/o selecciona una presentación..." onclick="showNoPresentacionesAlert(this)" autocomplete="off">
+                                        <datalist id="presentaciones">
+                                            @foreach (var item in ViewBag.Presentaciones)
                                             {
-                                                <option value="@item.NombreCompletoPresentacion" data-id="@item.PresentacionId">@item.NombreCompletoPresentacion</option>
+                                                if (item.EstadoPresentacion != 0)
+                                                {
+                                                    <option value="@item.NombreCompletoPresentacion" data-id="@item.PresentacionId">@item.NombreCompletoPresentacion</option>
+                                                }
                                             }
-                                        }
-                                    </datalist>
-                                    <input type="hidden" id="PresentacionIdAct" name="presentacionId">
+                                        </datalist>
+                                        <input type="hidden" id="PresentacionIdAct" name="presentacionId">
+                               
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -325,7 +335,7 @@
                 <th>
                     Marca
                 </th>
-                <th>
+                <th class="nombreLong">
                     NOMBRE PRODUCTO
                 </th>
                 <th title="cantidad total por producto">
@@ -334,7 +344,7 @@
                 <th class="contenedorEstado">
                     ESTADO
                 </th>
-                <th>
+                <th class="contenedorAcciones">
                     ACCIONES
                 </th>
             </tr>
@@ -370,8 +380,9 @@
                     </td>
                     <td class="text-center align-middle">
                         <label class="switch">
-                            <input type="checkbox" @(item.Estado != 0 ? "checked" : "") onchange="actualizarEstadoProducto('@item.ProductoId')">
+                            <input type="checkbox" onchange="actualizarEstadoProducto('@item.ProductoId', this.checked)" @(item.Estado == 1 ? "checked" : "") />
                             <span class="slider"></span>
+                            @item.Estado
                         </label>
                     </td>
                     <!-- Agrega esto a tu tabla dentro de la sección tbody -->
@@ -400,12 +411,13 @@
                             <td>@producto.ProductoId</td>
                             <td>@producto.NombreCategoria</td>
                             <td>@producto.NombreMarca</td>
-                            <td class="NombreLong">@producto.NombreCompletoProducto</td>
+                            <td>@producto.NombreCompletoProducto</td>
                             <td class="">@producto.CantidadTotal</td>
                             <td class="text-center align-middle">
                                 <label class="switch">
-                                    <input type="checkbox" @(producto.Estado != 0 ? "checked" : "") onchange="actualizarEstadoProducto('@producto.ProductoId')">
+                                    <input type="checkbox" onchange="actualizarEstadoProducto('@producto.ProductoId')" @(producto.Estado != 0 ? "checked" : "")>
                                     <span class="slider"></span>
+                                    @producto.Estado
                                 </label>
                             </td>
 
@@ -428,7 +440,7 @@
             }
         </tbody>
     </table>
-    <div class="pagination-container mt-2">
+    <div class="pagination-container mt-2" id="paginationContainer">
         @if (Model != null && Model.PageCount > 1)
         {
             <div class="d-flex justify-content-center mb-5">

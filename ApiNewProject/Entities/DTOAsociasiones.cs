@@ -68,6 +68,7 @@ namespace ApiNewProject.Entities
         public int UnidadId { get; set; }
         public int ProductoId { get; set; }
         public string? NombreUnidad { get; set; }
+        public string? NombreCompletoUnidad { get; set; }
         public ulong? EstadoUnidad { get; set; }
         public int? CantidadPorUnidad { get; set; }
         public virtual Producto? Producto { get; set; }

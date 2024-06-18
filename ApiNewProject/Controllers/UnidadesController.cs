@@ -26,6 +26,7 @@ namespace ApiNewProject.Controllers
                 {
                     UnidadId = s.UnidadId,
                     NombreUnidad = s.NombreUnidad,
+                    NombreCompletoUnidad = s.NombreCompletoUnidad,
                     CantidadPorUnidad = s.CantidadPorUnidad,
                     DescripcionUnidad = s.DescripcionUnidad,
                     EstadoUnidad = s.EstadoUnidad
@@ -42,11 +43,12 @@ namespace ApiNewProject.Controllers
         public async Task<ActionResult<Unidad>> GetUnidadById(int Id)
         {
 
-            Unidad unidad = await _context.Unidades.Select(
+            Unidad? unidad = await _context.Unidades.Select(
                     s => new Unidad
                     {
                         UnidadId = s.UnidadId,
                         NombreUnidad = s.NombreUnidad,
+                        NombreCompletoUnidad = s.NombreCompletoUnidad,
                         CantidadPorUnidad = s.CantidadPorUnidad,
                         DescripcionUnidad = s.DescripcionUnidad,
                         EstadoUnidad = s.EstadoUnidad
@@ -97,6 +99,7 @@ namespace ApiNewProject.Controllers
             }
             unidades.UnidadId = unidad.UnidadId;
             unidades.NombreUnidad = unidad.NombreUnidad;
+            unidades.NombreCompletoUnidad = unidad.NombreCompletoUnidad;
             unidades.DescripcionUnidad = unidad.DescripcionUnidad;
             unidades.CantidadPorUnidad = unidad.CantidadPorUnidad;
             unidades.EstadoUnidad = unidad.EstadoUnidad;
@@ -149,8 +152,8 @@ namespace ApiNewProject.Controllers
         }
 
 
-        [HttpGet("GetunidadPorId/{id}")]
-        public async Task<ActionResult<string>> GetunidadPorId(int id)
+        [HttpGet("GetNombreunidadPorId/{id}")]
+        public async Task<ActionResult<string>> GetNombreunidadPorId(int id)
         {
             try
             {

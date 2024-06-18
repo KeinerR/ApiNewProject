@@ -254,23 +254,42 @@ function limpiarCampo(idCampo) {
     document.getElementById(idCampo).value = '';
 }
 function agregarIconoparalimpiarElCampo(input) {
-    var $input = $(input); // Obtener el elemento input usando 'input'
-    var $icono = $input.closest('.icono-input').find('i'); // Buscar el icono dentro del contenedor 'icono-input'
-    var campo = $input.val().trim();
-    if (campo.length != 0) {
-        $icono.removeClass('noBe');
+    var $input = $(input); // Get the input element using 'input'
+    var $icono = $input.closest('.icono-input').find('i'); // Find the icon within the 'icono-input' container
+    var campo = $input.val().trim(); // Get the trimmed value of the input field
+
+    // Check if the field is not empty
+    if (campo.length !== 0) {
+        $icono.removeClass('noBe'); // Remove the 'noBe' class from the icon
     } else {
-        $icono.addClass('noBe');
+        $icono.addClass('noBe'); // Add the 'noBe' class to the icon
     }
 }
-function removerIconoparalimpiarElCampo(input) {
-    var $input = $('#'+input); // Obtener el elemento input usando 'input'
-    var $icono = $input.closest('.icono-input').find('i'); // Buscar el icono dentro del contenedor 'icono-input'
-    const labelForCampo = $('label[for="' + input + '"]');
-    const spanVacio = labelForCampo.find('.Mensaje');
-    $icono.addClass('noBe');
-    spanVacio.text('*');
 
+function agregarIconoParalimpiarElCampoActinput(input) {
+    var $input = $(input); // Get the input element using 'input'
+    var $icono = $input.closest('.icono-input').find('i'); // Find the icon within the 'icono-input' container
+    $icono.removeClass('noBe'); // Add the 'noBe' class to the icon
+
+}
+function limpiarCampoIcono(inputId) {
+    var $input = $('#' + inputId); // Get the input element by ID
+    $input.val(''); // Clear the value of the input field
+    agregarIconoParalimpiarElCampoActinput($input); // Call your existing function to handle the icon class
+}
+
+function removerIconoparalimpiarElCampo(inputs) {
+    if (!Array.isArray(inputs)) {
+        inputs = [inputs];
+    }
+    inputs.forEach(function (input) {
+        var $input = $('#' + input); // Obtener el elemento input usando 'input'
+        var $icono = $input.closest('.icono-input').find('i'); // Buscar el icono dentro del contenedor 'icono-input'
+        const labelForCampo = $('label[for="' + input + '"]');
+        const spanVacio = labelForCampo.find('.Mensaje');
+        $icono.addClass('noBe');
+        spanVacio.text('*');
+    });
 }
 function iconoLimpiarCampo(idsCampos,id) {
     // Iterar sobre cada ID de campo

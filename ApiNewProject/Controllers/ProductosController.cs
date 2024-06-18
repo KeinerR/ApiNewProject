@@ -110,7 +110,8 @@ namespace ApiNewProject.Controllers
                 Estado = p.Estado,
                 NombreCategoria = p.Categoria != null ? p.Categoria.NombreCategoria : null,
                 NombreMarca = p.Marca != null ? p.Marca.NombreMarca : null,
-                NombrePresentacion = p.Presentacion != null ? p.Presentacion.NombrePresentacion : null,
+                NombrePresentacion = p.Presentacion != null ? p.Presentacion.NombrePresentacion : null, 
+                NombreCompletoPresentacion = p.Presentacion != null ? p.Presentacion.NombreCompletoPresentacion : null,
                 CantidadPorPresentacion = p.Presentacion != null ? p.Presentacion.CantidadPorPresentacion : 0,
                 Contenido = p.Presentacion != null ? p.Presentacion.Contenido : null
                 // Asegúrate de agregar las propiedades adicionales que desees cargar
@@ -156,6 +157,7 @@ namespace ApiNewProject.Controllers
                 NombreCategoria = producto.Categoria != null ? producto.Categoria.NombreCategoria : null,
                 NombreMarca = producto.Marca != null ? producto.Marca.NombreMarca : null,
                 NombrePresentacion = producto.Presentacion != null ? producto.Presentacion.NombrePresentacion : null,
+                NombreCompletoPresentacion = producto.Presentacion != null ? producto.Presentacion.NombreCompletoPresentacion : null,
                 CantidadPorPresentacion = producto.Presentacion != null ? producto.Presentacion.CantidadPorPresentacion : 0,
                 Contenido = producto.Presentacion != null ? producto.Presentacion.Contenido : null
                 // Asegúrate de agregar las propiedades adicionales que desees cargar
@@ -180,12 +182,16 @@ namespace ApiNewProject.Controllers
                     return BadRequest("Los datos del producto no pueden ser nulos.");
                 }
 
-                // Verificar si el producto ya existe
-                var existingProduct = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == producto.ProductoId);
+                // Verificar si el producto ya existe con AsNoTracking to avoid tracking issues
+                var existingProduct = await _context.Productos
+                                                     .AsNoTracking()
+                                                     .FirstOrDefaultAsync(p => p.ProductoId == producto.ProductoId);
                 if (existingProduct != null)
                 {
                     return Conflict("El producto ya existe en la base de datos.");
                 }
+
+                // Crear una nueva instancia del producto
                 var nuevoProducto = new Producto
                 {
                     ProductoId = producto.ProductoId,
@@ -197,11 +203,13 @@ namespace ApiNewProject.Controllers
                     CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor,
                     DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor,
                     Estado = producto.Estado
-
                 };
+
+                // Añadir el nuevo producto a la base de datos
                 _context.Productos.Add(nuevoProducto);
                 await _context.SaveChangesAsync();
 
+                // Return the created product details
                 return CreatedAtAction(nameof(GetProductoById), new { id = producto.ProductoId }, producto);
             }
             catch (Exception ex)
@@ -211,32 +219,38 @@ namespace ApiNewProject.Controllers
         }
 
         [HttpPut("UpdateProductos")]
-        public async Task<ActionResult> UpdateProductos(ProductoCrearYActualizar producto)
+        public async Task<ActionResult> UpdateProductos(ProductoCrearYActualizar productoDto)
         {
-            var productos = await _context.Productos.FirstOrDefaultAsync(s => s.ProductoId == producto.ProductoId);
+            // Fetch the existing product without tracking it
+            var productoExiste = await _context.Productos.AsNoTracking().FirstOrDefaultAsync(s => s.ProductoId == productoDto.ProductoId);
 
-            if (productos == null)
+            if (productoExiste == null)
             {
-                return NotFound();
+                return NotFound("El producto no se encontró en la base de datos.");
             }
-            var nuevoProducto = new Producto
-            {
-                ProductoId = producto.ProductoId,
-                MarcaId = producto.MarcaId,
-                PresentacionId = producto.PresentacionId,
-                CategoriaId = producto.CategoriaId,
-                NombreCompletoProducto = producto.NombreCompletoProducto,
-                NombreProducto = producto.NombreProducto,
-                CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor,
-                DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor,
-                Estado = producto.Estado
 
-            };
-            _context.Productos.Add(nuevoProducto);
+            // Attach the existing product to the context
+            _context.Productos.Attach(productoExiste);
 
+            // Update the existing product's properties
+            productoExiste.MarcaId = productoDto.MarcaId;
+            productoExiste.PresentacionId = productoDto.PresentacionId;
+            productoExiste.CategoriaId = productoDto.CategoriaId;
+            productoExiste.NombreCompletoProducto = productoDto.NombreCompletoProducto;
+            productoExiste.NombreProducto = productoDto.NombreProducto;
+            productoExiste.CantidadAplicarPorMayor = productoDto.CantidadAplicarPorMayor;
+            productoExiste.DescuentoAplicarPorMayor = productoDto.DescuentoAplicarPorMayor;
+            productoExiste.Estado = productoDto.Estado;
+
+            // Mark the product as modified
+            _context.Entry(productoExiste).State = EntityState.Modified;
+
+            // Save changes to the database
             await _context.SaveChangesAsync();
-            return Ok();
+
+            return Ok("El producto se ha actualizado correctamente.");
         }
+
 
         [HttpPut("AddCantidadReservada/{id}")]
         public async Task<ActionResult> AddCantidadReservada(int id, int ? cantidad)
@@ -244,7 +258,7 @@ namespace ApiNewProject.Controllers
             // Buscar el producto por su ID
             var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == id);
 
-            var cantidadTotalEnInventario = producto.CantidadTotal - producto.CantidadReservada;
+            var cantidadTotalEnInventario = producto?.CantidadTotal - producto?.CantidadReservada;
             if (producto == null)
             {
                 return NotFound();
@@ -432,7 +446,7 @@ namespace ApiNewProject.Controllers
                 }
 
                 // Devolver el nombre del producto
-                return Ok(producto.NombreProducto);
+                return Ok(producto.NombreCompletoProducto);
             }
             catch (Exception ex)
             {

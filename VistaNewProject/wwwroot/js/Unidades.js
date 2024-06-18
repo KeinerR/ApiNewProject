@@ -295,7 +295,6 @@ function limpiarFormularioUnidad() {
     limpiarCampo('CantidadPorUnidadAct');
     limpiarCampo('DescripcionUnidadAct');
 
-
 }
 function limpiarFormularioUnidadAgregar() {
     // Limpiar la URL eliminando los parámetros de consulta
@@ -312,17 +311,12 @@ function limpiarFormularioUnidadAgregar() {
 }
 function limpiarFormularioUnidadAct() {
     history.replaceState(null, '', location.pathname);
-    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
-        element.textContent = '';
-    });
-    document.querySelectorAll('.MensaErrores').forEach(function (element) {
-        element.textContent = '';
-    });
-
-  
+    var mensajes = document.querySelectorAll('.Mensaje');
     var mensajesText = document.querySelectorAll('.text-danger');
 
-
+    for (var i = Math.max(0, mensajes.length - 2); i < mensajes.length; i++) {
+        mensajes[i].textContent = '';
+    }
     for (var i = Math.max(0, mensajesText.length - 3); i < mensajesText.length; i++) {
         mensajesText[i].textContent = '';
     }

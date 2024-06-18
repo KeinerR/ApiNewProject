@@ -9,12 +9,15 @@ namespace VistaNewProject.Controllers
     public class PresentacionesController : Controller
     {
         private readonly IApiClient _client;
+        private readonly ProductoService _productoService;
 
 
-        public PresentacionesController(IApiClient client)
+        public PresentacionesController(IApiClient client, ProductoService productoService) // Añade ProductoService al constructor
         {
             _client = client;
+            _productoService = productoService; // Inicializa ProductoService
         }
+
 
         public async Task<IActionResult> Index(int? page, string order = "default")
         {
@@ -26,19 +29,6 @@ namespace VistaNewProject.Controllers
             presentaciones = presentaciones
                 .OrderByDescending(p => p.EstadoPresentacion == 1)
                 .ToList(); 
-            // Modificación en la ordenación de las presentaciones
-           
-            foreach (var presentacion in presentaciones)
-            {
-                var nombrePresentacion = presentacion.NombrePresentacion;
-                var contenido = presentacion.Contenido;
-                var cantidad = presentacion.CantidadPorPresentacion ?? 1;
-
-                presentacion.NombreCompleto = cantidad > 1 ?
-                    $"{nombrePresentacion} x {cantidad} presentaciones de {contenido}" :
-                    $"{nombrePresentacion} de {contenido}";
-            }
-
             order = order?.ToLower() ?? "default";
             switch (order)
             {
@@ -242,7 +232,7 @@ namespace VistaNewProject.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] Presentacion presentacion)
+        public async Task<IActionResult> Create([FromForm] PresentacionCrearYActualizar presentacion)
         {
             if (ModelState.IsValid)
             {
@@ -255,7 +245,9 @@ namespace VistaNewProject.Controllers
                     MensajeSweetAlert("error", "Error", "Ya hay una presentación registrada con ese nombre.", "true", null);
                     return RedirectToAction("Index");
                 }
-
+                var nombreCompletoTask = _productoService.ObtenerNombreCompletoPresentacion(presentacion);
+                var nombreCompleto = await nombreCompletoTask;
+                presentacion.NombreCompletoPresentacion = nombreCompleto;
                 var response = await _client.CreatePresentacionAsync(presentacion);
 
                 if (response.IsSuccessStatusCode)
@@ -283,7 +275,7 @@ namespace VistaNewProject.Controllers
             }
         }
 
-        public async Task<IActionResult> Update([FromForm] PresentacionUpdate presentacion)
+        public async Task<IActionResult> Update([FromForm] PresentacionCrearYActualizar presentacion)
         {
             if (ModelState.IsValid)
             {
@@ -306,7 +298,9 @@ namespace VistaNewProject.Controllers
                     MensajeSweetAlert("error", "Error", $"Ya hay {contadorPresentacionesIguales} presentaciónes registradas con ese nombre.", "true", null);
                     return RedirectToAction("Index");
                 }
-                var catehgoriaantesdeenviar = presentacion;
+                var generarNombreCompleto = _productoService.ObtenerNombreCompletoPresentacion(presentacion);
+                var NombreCompleto = await generarNombreCompleto;
+                presentacion.NombreCompletoPresentacion = NombreCompleto;
                 var response = await _client.UpdatePresentacionAsync(presentacion);
 
                 if (response != null)

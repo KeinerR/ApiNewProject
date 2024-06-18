@@ -122,13 +122,13 @@
                 <th class="d-none">
                     Marca Id
                 </th>
-                <th>
+                <th class="nombreShort">
                     Nombre marca
                 </th>
                 <th class="contenedorEstado">
                     Estado
                 </th>
-                <th>
+                <th class="contenedorAcciones">
                     Acciones
                 </th>
 
@@ -176,12 +176,12 @@
                 var marcas = ViewData["Marcas"] as List<Marca>;
                 if (marcas != null)
                 {
-                    int contadorC = 1;
+                    int contadorB = 1;
                     foreach (var marca in marcas)
                     {
                         <tr class="Marcas noIs">
                             <td class="contadorB noIs">
-                                @contadorC <!-- Muestra el valor del contador -->
+                                @contadorB<!-- Muestra el valor del contador -->
                             </td>
                             <td>@marca.MarcaId</td>
                             <td>@marca.NombreMarca</td>
@@ -202,6 +202,7 @@
                                 </div>
                             </td>
                         </tr>
+                        contadorB++;
                     }
                 }
             }

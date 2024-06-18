@@ -532,9 +532,11 @@ function limpiarFormularioProductoAct() {
     limpiarCampo('NombreProductoAct');
     limpiarCampo('CantidadAplicarPorMayorAct');
     limpiarCampo('DescuentoAplicarPorMayorAct');
+
 }
 //Se llama al daar click en cancelar en la modal de agregar producto
 function limpiarDatosFormularioProductoAgregar() {
+    removerIconoparalimpiarElCampo(['NombreMarca', 'NombrePresentacion', 'NombreMarca']);
     limpiarFiltroProductoAgregar();
     history.replaceState(null, '', location.pathname);
     var mensajes = document.querySelectorAll('.Mensaje');
@@ -560,6 +562,7 @@ function limpiarDatosFormularioProductoAgregar() {
     actualizarFormularioParaDescuentoCrear(false);
 }
 function limpiarDatosFormularioProductoAct() {
+
     // Limpiar la URL eliminando los parámetros de consulta
     history.replaceState(null, '', location.pathname);
     document.querySelectorAll('.MensajeInicial').forEach(function (element) {
@@ -587,7 +590,9 @@ function limpiarDatosFormularioProductoAct() {
         $('#filtrarxCategoriaAct').trigger('click');
     }
 
-
+    agregarIconoparalimpiarElCampo('NombrePresentacionAct');
+    agregarIconoparalimpiarElCampo('NombreMarcaAct');
+    agregarIconoparalimpiarElCampo('NombreCategoriaAct');
 
 
 }
@@ -635,6 +640,9 @@ function actualizarProducto(campo) {
             data: { productoId: productoId },
             success: function (data) {
                 console.log(data);
+                limpiarCampoIcono('NombrePresentacionAct');
+                limpiarCampoIcono('NombreMarcaAct');
+                limpiarCampoIcono('NombreCategoriaAct');
                 var formActualizar = $('#FormActualizarProducto');
                 formActualizar.find('#ProductoIdAct').val(data.productoId);
                 formActualizar.find('#EstadoAct').val(data.estado);
@@ -655,7 +663,8 @@ function actualizarProducto(campo) {
                     for (var i = 0; i < elementos.length; i++) {
                         elementos[i].classList.remove('noBe');
                     }
-                } else {
+                  
+                }else{
                     $('#checkboxDescuentoPorMayorAct').prop('checked', false);
                     $('#DescuentoAplicarPorMayorAct').val(0);
                     $('#CantidadAplicarPorMayorAct').val(0);
@@ -664,9 +673,9 @@ function actualizarProducto(campo) {
                         elementos[i].classList.add('noBe');
                     }
                 }
-
+             
                 obtenerDatosProductos();
-                limpiarDatosFormularioProductoAct();
+              
                 // Abrir la modal después de completar la actualización del producto
                 $('#ModalProductoAct').modal('show');
             }
@@ -713,6 +722,7 @@ function actualizarEstadoProducto(ProductoId) {
 /*---------------------------------------------------------Buscador--------------------------------------------------------- */
 
 function vaciarInputProducto() {
+    var paginationContainer = document.getElementById('paginationContainer');
     document.getElementById('buscarProducto').value = "";
     var icon = document.querySelector('#btnNavbarSearch i');
     icon.className = 'fas fa-search';
@@ -735,6 +745,7 @@ function vaciarInputProducto() {
     rowsTodos.forEach(function (row) {
         row.style.display = 'none';
     });
+    paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
 }
 
 function searchProducto() {
@@ -744,6 +755,7 @@ function searchProducto() {
     var icon = document.querySelector('#btnNavbarSearch i');     //Obtiene el icino de buscar
     var contador = document.querySelector('.contador');         //Obtiene la columna que tiene el # 
     var contadores = document.querySelectorAll('.contadorB');  //Obtiene el contadorB que esta en none y lo hace visible para mostrar el consecutivo y el ID
+    var paginationContainer = document.getElementById('paginationContainer');
     if (input === "") {
         rows.forEach(function (row) { //Esconde los usuarios paginado
             row.style.display = '';
@@ -754,6 +766,8 @@ function searchProducto() {
         icon.className = 'fas fa-search';
         icon.style.color = 'white';
         contador.innerText = '#';
+        paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
+
     } else {
         rows.forEach(function (row) {
             row.style.display = 'none';
@@ -764,7 +778,7 @@ function searchProducto() {
         icon.className = 'fas fa-times';
         icon.style.color = 'white';
         contador.innerText = 'ID';
-
+        paginationContainer.classList.add('noBe'); // Oculta el contenedor de paginación
     }
 
     rowsTodos.forEach(function (row) {

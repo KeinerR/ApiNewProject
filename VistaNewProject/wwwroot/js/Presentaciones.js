@@ -319,8 +319,12 @@ function limpiarFormularioPresentacionAgregar() {
     // Limpiar la URL eliminando los parámetros de consulta
     history.replaceState(null, '', location.pathname);
     // Limpiar mensajes de alerta y *
+    var mensajes = document.querySelectorAll('.Mensaje');
     var mensajesText = document.querySelectorAll('.text-danger');
 
+    for (var i = 0; i < mensajes.length - 3; i++) {
+        mensajes[i].textContent = '*';
+    }
     for (var i = 0; i < mensajesText.length - 4; i++) {
         mensajesText[i].textContent = '';
     }
@@ -329,8 +333,13 @@ function limpiarFormularioPresentacionAgregar() {
 function limpiarFormularioPresentacionAct() {
     history.replaceState(null, '', location.pathname);
   
+    // Limpiar mensajes de alerta y asteriscos
+    var mensajes = document.querySelectorAll('.Mensaje');
     var mensajesText = document.querySelectorAll('.text-danger');
 
+    for (var i = Math.max(0, mensajes.length - 3); i < mensajes.length; i++) {
+        mensajes[i].textContent = '';
+    }
     for (var i = Math.max(0, mensajesText.length - 4); i < mensajesText.length; i++) {
         mensajesText[i].textContent = '';
     }
