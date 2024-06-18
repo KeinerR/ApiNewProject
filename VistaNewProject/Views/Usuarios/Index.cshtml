@@ -81,7 +81,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="Usuario" class="control-label">Usuario<span class="Mensaje">*</span></label>
-                                        <input type="hidden" id="Usuario" oninput="validarCampoUsuario(this);" name="usuario1" class="form-control" autocomplete="off" />
+                                        <input type="text" id="Usuario" oninput="validarCampoUsuario(this);" name="usuario1" class="form-control" autocomplete="off" />
                                         <span id="MensajeUsuario" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
                                     </div>
                                 </div>
@@ -90,7 +90,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="Contraseña" class="control-label">Contraseña<span class="Mensaje">*</span></label>
-                                        <input type="hidden" id="Contraseña" oninput="validarCampoUsuario(this);" name="contraseña" class="form-control " autocomplete="off" />
+                                        <input type="password" id="Contraseña" oninput="validarCampoUsuario(this);" name="contraseña" class="form-control " autocomplete="off" />
                                         <span id="MensajeContraseña" class="text-danger"></span>
                                         <span id="MostrarOcultar1" class="icono-ojo" onclick="mostrarOcultarContrasena('Contraseña')">
                                             <!-- Corregido el ID para evitar duplicidad -->

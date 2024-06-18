@@ -18,72 +18,61 @@
 
     </a>
 </div>
-
-
-<form asp-action="Create" method="post" onsubmit="return validarpedido();">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="row">
-        <div class="col-6">
-            <label asp-for="ClienteId" class="control-label"> Cliente</label>
-            <input type="text" id="ClienteIdTxt" class="form-control" list="clientesList" />
-            <input type="" id="ClienteIdHidden" name="clienteId" />
-            <datalist id="clientesList">
-                @foreach (var cliente in ViewBag.Clientes)
-                {
-                    if (cliente.EstadoCliente != 0)
-                    {
-                        <option value="@cliente.NombreEntidad" data-id="@cliente.ClienteId">@cliente.NombreEntidad</option>
-                        <text>
-                            clientesMap["@cliente.NombreEntidad"] = "@cliente.ClienteId";
-                        </text>
-                    }
-                }
-            </datalist>
-            <span id="ClienteIdspan" class="text-danger"></span>
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="NombreCliente" class="control-label">Cliente</label>
+                    <input list="clientes" id="Clientes" name="cliente" class="form-control" placeholder="Escribe y/o selecciona..." autocomplete="off" />
+                    <datalist id="clientes">
+                        @foreach (var item in ViewBag.Clientes)
+                            if (item.EstadoCliente != 0)
+                            {
+                                <option value="@item.NombreEntidad" data-id="@item.ClienteId">@item.NombreEntidad</option>
+                            }
+                    </datalist>
+                    <input id="ClinteHiden" type="hidden" name="clienteId">
+                    <span id="clienteerror" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-6">
+                <label asp-for="TipoServicio" class="control-label"></label>
+                <select asp-for="TipoServicio" id="TipoServicio" name="TipoServicio" class="form-control" onchange="updateEstadoPedido()">
+                    <option value="Caja">Caja</option>
+                    <option value="Domicilio">Domicilio</option>
+                </select>
+                <span asp-validation-for="TipoServicio" class="text-danger"></span>
+            </div>
+            <div class="col-6">
+                <label asp-for="FechaPedido" class="control-label"></label>
+                <input type="datetime-local" id="FechaPedido" name="FechaPedido" class="form-control" readonly />
+                <span id="FechaPedidoerror" class="text-danger"></span>
+            </div>
+            <div class="col-6">
+                <label asp-for="EstadoPedido" class="control-label"></label>
+                <select asp-for="EstadoPedido" id="EstadoPedido" name="EstadoPedido" class="form-control">
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Realizado">Realizado</option>
+                    <option value="Cancelado">Cancelado</option>
+                </select>
+                <span asp-validation-for="EstadoPedido" class="text-danger"></span>
+            </div>
         </div>
-
-
-
-        <div class="col-6">
-            <label asp-for="TipoServicio" class="control-label"></label>
-            <select asp-for="TipoServicio" id="TipoServicio" name="TipoServicio" class="form-control" onchange="updateEstadoPedido()">
-                <option value="Caja">Caja</option>
-                <option value="Domicilio">Domicilio</option>
-            </select>
-            <span asp-validation-for="TipoServicio" class="text-danger"></span>
+        <div class="mt-4">
+            <div class="d-flex justify-content-center align-items-center mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus-circle"></i> Agregar
+                </button>
+            </div>
         </div>
-        <div class="col-6">
-            <label asp-for="FechaPedido" class="control-label"></label>
-            <input type="datetime-local" id="FechaPedido" name="FechaPedido" class="form-control" readonly />
-            <span id="FechaPedidoerror" class="text-danger"></span>
-        </div>
-        <div class="col-6">
-            <label asp-for="EstadoPedido" class="control-label"></label>
-            <select asp-for="EstadoPedido" id="EstadoPedido" name="EstadoPedido" class="form-control">
-                <option value="Pendiente">Pendiente</option>
-                <option value="Realizado">Realizado</option>
-                <option value="Cancelado">Cancelado</option>
-            </select>
-            <span asp-validation-for="EstadoPedido" class="text-danger"></span>
-        </div>
-    </div>
+    </form>
 
-    <div class=" mt-4">
-
-        <div class="d-flex justify-content-center aling-item-center mt-4">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-plus-circle"></i> Agregar
-            </button>
-        </div>
-    </div>
-
-
-
-</form>
 
 
 
 </div>
+@* 
 <script>
     // Crear un objeto para mapear IDs de cliente con nombres de entidad
     var clientesNombreEntidadMap = {};
@@ -188,7 +177,7 @@
     });
 
 </script>
-
+ *@
 
 
 @if (!string.IsNullOrEmpty(successMessage))
