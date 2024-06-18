@@ -372,8 +372,6 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.PermisoId).HasColumnName("PermisoID");
 
-                entity.Property(e => e.Descripcion).HasMaxLength(255);
-
                 entity.Property(e => e.EstadoPermiso)
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("b'1'");

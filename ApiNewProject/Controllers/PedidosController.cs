@@ -195,7 +195,7 @@ namespace ApiNewProject.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "error del servidor");
+                return StatusCode(500, $"error del servidor +{ex}");
             }
         }
 

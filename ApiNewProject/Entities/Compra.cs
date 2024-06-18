@@ -18,9 +18,7 @@ namespace ApiNewProject.Entities
         public decimal? ValorTotalCompra { get; set; }
         public ulong? EstadoCompra { get; set; }
         [JsonIgnore]
-
         public virtual Proveedor? Proveedor { get; set; }
-        [JsonIgnore]
         public virtual ICollection<Detallecompra> Detallecompras { get; set; }
     }
 }

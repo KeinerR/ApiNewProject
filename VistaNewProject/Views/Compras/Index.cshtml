@@ -1,4 +1,4 @@
-﻿@using X.PagedList
+﻿ @using X.PagedList
 @model X.PagedList.IPagedList<VistaNewProject.Models.Compra>
 @{
     ViewData["Title"] = "Compras";
@@ -10,39 +10,35 @@
         <div class="mr-auto">
             <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
                 <div class="input-group">
-                    <input class="form-control" type="text" placeholder="Buscar por..." aria-label="Search for..." aria-describedby="btnNavbarSearch" id="searchInput" />
-                    <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
-                    <!-- Botón para limpiar la búsqueda -->
-                    <button class="btn btn-danger" id="btnClearSearch" type="button"><i class="fas fa-times"></i></button>
+                    <input id="buscarCompra" type="text" class="form-control" oninput="searchCompra();" placeholder="Buscar compra" aria-label="Search" aria-describedby="button-addon2">
+                    <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputCompra();" type="button"><i class="fas fa-search"></i></button>
                 </div>
             </form>
         </div>
-
         <!-- Botón para abrir el modal -->
-        <button type="button" id="btnModal" class="btn btn-primary" onclick="setHoraActual('FechaCompra');" data-bs-toggle="modal" data-bs-target="#CompraModal">
+        <button type="button" id="btnModal" class="btn btn-primary" onclick="setHoraActual('FechaCompra');" data-bs-toggle="modal" data-bs-target="#ModalCompra">
             <i class="fas fa-plus-circle"></i> Agregar Compra
         </button>
 
     </div>
     <!-- Modal -->
-    <div class="modal fade" id="CompraModal" tabindex="-1" aria-labelledby="titulomodal" aria-hidden="true">
-        <div class="modal-dialog modal-lg" id="CompraVista">
+    <div class="modal fade" id="ModalCompra" tabindex="-1" aria-labelledby="titulomodal" aria-hidden="true">
+        <div class="modal-dialog" id="CompraVista">
             <div class="modal-content modal-lg">
-                <div class="modal-header">
-                    <div id="joker">
+                <div class="modal-cabecera">
+                    <div id="pibo">
                         <span></span>
                     </div>
-                    <div class="modal-header-view" id="tituloCompra">
-                        <h2 class="modal-title tituloCompra">Agregar Compra</h2>
+                    <div class="modal-header-view TituloModal" id="tituloCompra">
+                        <h2>Agregar Compra</h2>
                     </div>
-                    <div class="modal-header-view noVer" id="subtituloCompra">
-                        <h2 class="modal-title subtituloCompra">Agregar productos a la compra</h2>
+                    <div class="modal-header-view noVer TituloModal" id="subtituloCompra">
+                        <h2>Agregar productos a la compra</h2>
                     </div>
-                    <div class="modal-header-view" id="modal-header-equis">
+                    <div class="moda-header-view" id="modal-cabecera-equis">
                         <button type="button" onclick="reiniciarCompra()" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                 </div>
-
                 <div id="PrincipalCompra" class="modal-body">
                     <div class="form-group">
                         <input type="hidden" id="CompraId" name="compraId" class="form-control" />

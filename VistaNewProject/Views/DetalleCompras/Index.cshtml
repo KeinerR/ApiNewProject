@@ -4,12 +4,12 @@
 }
 
 <!-- Botón para abrir el modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#DetalleCompraModal">
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#DetalleModalCompra">
     Agregar DetalleCompra
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="DetalleCompraModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="DetalleModalCompra" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -94,7 +94,7 @@
                 </td>
                 <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td>
-                    <button class="btn btn-warning" onclick="obtenerDatosDetalleCompra('@item.DetalleCompraId')" data-cliente-id="@item.DetalleCompraId" data-bs-toggle="modal" data-bs-target="#DetalleCompraModal">Editar</button>
+                    <button class="btn btn-warning" onclick="obtenerDatosDetalleCompra('@item.DetalleCompraId')" data-cliente-id="@item.DetalleCompraId" data-bs-toggle="modal" data-bs-target="#DetalleModalCompra">Editar</button>
                     <button class="btn btn-danger" onclick="eliminarDetalleCompra('@item.DetalleCompraId')">Eliminar</button>
                 </td>
             </tr>

@@ -40,7 +40,7 @@ namespace ApiNewProject.Controllers
                 return NotFound();
             }
 
-            Rol rol = await _context.Rols
+            Rol? rol = await _context.Rols
                 .Select(s => new Rol
                 {
                     RolId = s.RolId,
