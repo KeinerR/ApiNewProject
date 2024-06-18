@@ -69,12 +69,12 @@
 
             <div class="col-4">
                 <label for="ProductoIdtxt" class="control-label">Productos</label>
-                <input id="ProductoIdtxt" class="form-control" list="ProductosList" />
-                <input type="" id="ProductoId" name="productoId" class="form-control" />
-                <datalist id="ProductosList"></datalist>
+                <input id="ProductoIdtxt" class="form-control" list="ProductosList" placeholder="Buscar producto" />
+                <input type="hidden" id="ProductoId" name="productoId" class="form-control" />
+                <datalist id="ProductosList">
+                </datalist>
                 <span id="ProductoIdError" class="text-danger"></span>
             </div>
-
             <div class="d-none">
                 <label asp-for="LoteId" class="control-label"></label>
                 <input asp-for="LoteId" name="LoteId" id="LoteId" readonly class="form-control" list="LoteList" />

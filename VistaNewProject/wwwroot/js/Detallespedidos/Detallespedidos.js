@@ -5,13 +5,11 @@
 var detallesdepedidp = [];
 
 function agregarDetalle(url) {
-    // Obtener los valores de los campos
     var unidadId = document.getElementById("unidadHidden").value;
-    var cantidad = document.getElementById("CantidadTxt").value;
-    var precioUnitario = document.getElementById("PrecioUnitario").value;
+    var cantidad = document.getElementById("CantidadPorUnidad").value;
+    var precioUnitario = document.getElementById("PrecioEnviar").value;
     var pedidoId = document.getElementById("PedidoId").value;
 
-    // Crear el detalle del pedido
     var detalle = {
         PedidoId: pedidoId,
         LoteId: document.getElementById("LoteId").value,
@@ -25,7 +23,6 @@ function agregarDetalle(url) {
     // Validar el detalle del pedido
     var isValidDetalle = validarDetalle(detalle);
 
-    // Si el detalle del pedido es válido, agregarlo y realizar las acciones necesarias
     if (isValidDetalle) {
         detallesdepedidp.push(detalle);
         mostrarDetallesPedido();
@@ -34,7 +31,23 @@ function agregarDetalle(url) {
     }
 }
 
+function validarDetalle(detalle) {
+    var isValid = true;
 
+ 
+    if (!validarPrecioUnitario(detalle.PrecioUnitario)) {
+        isValid = false;
+    }
+
+    if (!validarUnidad(detalle.UnidadId)) {
+        isValid = false;
+    }
+    if (!validarCantidad(detalle.Cantidad)) {
+        isValid = false;
+    }
+   
+    return isValid;
+}
 
 
 function enviarDetallePedido(detalle, url) {
@@ -49,74 +62,32 @@ function enviarDetallePedido(detalle, url) {
             if (!response.ok) {
                 throw new Error("Error al enviar el detalle del pedido al servidor");
             }
-            // Procesar la respuesta JSON recibida
             return response.json();
         })
         .then((data) => {
             console.log("Detalle del pedido enviado correctamente:", data.message);
-            document.getElementById("ProductoId").value = "";
-            document.getElementById("CantidadTxt").value = "";
-            document.getElementById("PrecioUnitario").value = "";
-            document.getElementById("UnidadId").value = "";
-            document.getElementById("busqueda").value = "";
-            document.getElementById("LoteId").value = "";
-            document.getElementById("CantidadTxt").placeholder = "Ingrese cantidad"; // Aquí pones el placeholder que desees
-            document.getElementById("unidadHidden").value = "";
-
-            document.getElementById("ProductoIdtxt").value = ""; // Limpiar el campo de entrada de texto
-            document.getElementById("ProductoId").value = ""; // Limpiar el campo oculto
-
+            limpiarCampos();
         })
         .catch((error) => {
             console.error("Error al enviar el detalle del pedido al servidor:", error);
         });
 }
 
+function limpiarCampos() {
+    document.getElementById("ProductoId").value = "";
+    document.getElementById("CantidadTxt").value = "";
+    document.getElementById("PrecioUnitario").value = "";
+    document.getElementById("UnidadId").value = "";
+    document.getElementById("LoteId").value = "";
+    document.getElementById("busqueda").value = "";
+    document.getElementById("CantidadTxt").placeholder = "Ingrese cantidad";
+    document.getElementById("unidadHidden").value = "";
 
-function validarDetalle() {
-    var cantidad = document.getElementById("CantidadTxt").value;
-    var precio = document.getElementById("PrecioUnitario").value;
-    var unidad = document.getElementById("UnidadId").value;
-    var producto = document.getElementById("ProductoIdtxt").value;
-
-    var isValid = true;
-
-    if (!validarCantidad(cantidad)) {
-        isValid = false;
-    }
-
-    if (!validarPrecioUnitario(precio)) {
-        isValid = false;
-    }
-
-    if (!validarUnidad(unidad)) {
-        isValid = false;
-    }
-
-    if (!validarProducto(producto)) {
-        isValid = false;
-    }
-
-    return isValid;
+    document.getElementById("ProductoIdtxt").value = ""; // Limpiar el campo de entrada de texto
+    document.getElementById("ProductoId").value = ""; // Limpiar el campo oculto
 }
 
-function validarCantidad(cantidad) {
-    var cantidadInput = document.getElementById('CantidadTxt');
-    var cantidadError = document.getElementById("CantidadError");
 
-    cantidad = cantidad.trim();
-
-    if (cantidad === "") {
-        mostrarError(cantidadInput, cantidadError, "El campo Cantidad no puede estar vacío.");
-        return false;
-    } else if (!/^[0-9]+$/.test(cantidad)) {
-        mostrarError(cantidadInput, cantidadError, "El campo Cantidad solo puede contener números.");
-        return false;
-    } else {
-        quitarError(cantidadInput, cantidadError);
-        return true;
-    }
-}
 
 function validarPrecioUnitario(precio) {
     var precioInput = document.getElementById('PrecioUnitario');
@@ -126,6 +97,20 @@ function validarPrecioUnitario(precio) {
 
     if (precio === "") {
         mostrarError(precioInput, precioError, "El campo Precio Unitario no puede estar vacío.");
+        return false;
+    } else {
+        quitarError(precioInput, precioError);
+        return true;
+    }
+}
+function validarCantidad(Cantidad) {
+    var precioInput = document.getElementById('CantidadTxt');
+    var precioError = document.getElementById("CantidadError");
+
+    Cantidad = Cantidad.trim();
+
+    if (Cantidad === "") {
+        mostrarError(precioInput, precioError, "El campo campo cantidad  no puede estar vacío.");
         return false;
     } else {
         quitarError(precioInput, precioError);
@@ -155,34 +140,20 @@ function validarUnidad(unidad) {
     }
 }
 
-function validarProducto(producto) {
-    var productoInput = document.getElementById('ProductoIdtxt');
-    var prod = document.getElementById('ProductoId');
-    var productoError = document.getElementById("ProductoIdError");
-
-    producto = producto.trim();
-
-    if (producto === "") {
-        mostrarError(productoInput, productoError, "El campo Producto no puede estar vacío.");
-        return false;
-    }
-    if (!prod.value) {
-        mostrarError(productoInput, productoError, "El  Producto no es el que esta registrado de datos.");
-        return false;
-    } else {
-        quitarError(productoInput, productoError);
-        return true;
-    }
-}
 
 function mostrarError(inputElement, errorElement, errorMessage) {
     inputElement.classList.add("is-invalid");
     errorElement.textContent = errorMessage;
 }
 
+
 function quitarError(inputElement, errorElement) {
-    inputElement.classList.remove("is-invalid");
-    errorElement.textContent = "";
+    if (inputElement && errorElement) {
+        inputElement.classList.remove("is-invalid");
+        errorElement.textContent = "";
+    } else {
+        console.error("Elemento de entrada o elemento de error es null.");
+    }
 }
 
 
@@ -332,8 +303,6 @@ document.getElementById('ProductoId').addEventListener('change', async function 
     }
 });
 
-
-
 $(document).ready(function () {
     // Función para cargar los productos
     function cargarProductos() {
@@ -365,7 +334,6 @@ $(document).ready(function () {
     });
 
     // Evento para capturar la selección del producto del datalist
-    // Evento para capturar la selección del producto del datalist
     $('#ProductoIdtxt').on('input', function () {
         const input = $(this).val();
         const selectedOption = $('#ProductosList option').filter(function () {
@@ -374,18 +342,19 @@ $(document).ready(function () {
 
         if (selectedOption.length > 0) {
             const idSeleccionado = selectedOption.attr('data-id');
+            const nombreSeleccionado = selectedOption.val();
 
-            console.log("ProductoId seleccionado:", idSeleccionado);
+            $('#ProductoId').val(idSeleccionado); // Asignar el ID del producto al campo oculto
+            $(this).val(nombreSeleccionado); // Mostrar el nombre del producto seleccionado en el campo de texto
 
-            $('#ProductoId').val(idSeleccionado);
-
-            // Asignar el ID del producto al campo oculto
-            obtenerDetallesProducto(idSeleccionado);
+            obtenerDetallesProducto(idSeleccionado); // Obtener detalles adicionales del producto si es necesario
         } else {
             limpiarDetallesProducto(); // Limpiar detalles del producto si no se selecciona ninguno
         }
     });
 
+    // Función para obtener detalles adicionales del producto (puedes implementarla si es necesario)
+   
 
 
     let unidades = [];
@@ -459,27 +428,45 @@ $(document).ready(function () {
                     }
 
                     // Obtener detalles de compras y unidades
+                    // Obtener detalles de compras y unidades
                     const detalles = detalleComprasData.filter(d => d.productoId == productId);
                     if (detalles.length > 0) {
                         detalles.forEach(detalle => {
                             var unidadIdDetalles = detalle.unidadId;
+
+                            // Buscar nombre de la unidad asociada al detalle
                             var nombreUnidad = unidades.find(u => u.unidadId == unidadIdDetalles)?.nombreUnidad;
 
+                            // Buscar nombre de la unidad con unidadId igual a 1
+                            var nombreUnidadUno = unidades.find(u => u.unidadId == 1)?.nombreUnidad;
 
+                            // Asignar nombre de unidad al campo de texto usando jQuery
                             $('#UnidadTxt').val(nombreUnidad);
 
+                            // Limpiar opciones anteriores del datalist
                             const dataList = document.getElementById('UnidadIdList');
                             dataList.innerHTML = '';
+
+                            // Agregar opción para nombreUnidad al datalist
                             if (nombreUnidad) {
                                 const option = document.createElement('option');
                                 option.value = nombreUnidad;
                                 option.setAttribute('data-id', unidadIdDetalles);
                                 dataList.appendChild(option);
                             }
+
+                            // Agregar opción para nombreUnidadUno (unidadId == 1) al datalist
+                            if (nombreUnidadUno) {
+                                const optionUno = document.createElement('option');
+                                optionUno.value = nombreUnidadUno;
+                                optionUno.setAttribute('data-id', 1); // Asignar unidadId 1
+                                dataList.appendChild(optionUno);
+                            }
                         });
                     } else {
                         console.log('No se encontraron detalles para el productoId:', productId);
                     }
+
                 }
 
                 // Procesar lotes
@@ -500,14 +487,18 @@ $(document).ready(function () {
                         $('#PrecioUnitario').val(precio);
                         $('#PrecioUnitariohiddenpormayor').val(preciopormayor);
 
+
                         $('#LoteId').val(loteProximoVencimiento.loteId);
                     } else {
+                     
+
                         $('#PrecioUnitario').val('');
                         $('#LoteId').val('');
                         $('#PrecioUnitariohiddenpormayor').val('');
 
                     }
                 } else {
+                    
                     $('#PrecioUnitario').val('');
                     $('#LoteId').val('');
                     $('#PrecioUnitariohiddenpormayor').val('');
@@ -525,79 +516,92 @@ $(document).ready(function () {
             // Obtener el valor ingresado en el campo de cantidad y convertirlo a número
             const cantidadIngresada = parseFloat($(this).val());
             console.log('Cantidad ingresada:', cantidadIngresada);
+            const cantidadDisponible = parseFloat($('#CantidadTxt').attr('placeholder').split(':')[1].trim());
 
-            // Obtener y mostrar el valor de los otros campos
-            var unidadprecio = parseFloat($('#unidadtotal').val()); // Convertir a número el valor obtenido
-            var descuento = parseFloat($('#Descuento').val()); // Convertir a número el valor obtenido
-            var aplicadomayor = parseFloat($('#CantidadAPlicada').val()); // Convertir a número el valor obtenido
+            // Obtener y convertir a número los valores de los otros campos
+            var unidadprecio = parseFloat($('#unidadtotal').val());
+            var descuento = parseFloat($('#Descuento').val());
+            var aplicadomayor = parseFloat($('#CantidadAPlicada').val());
             var precio = parseFloat($('#PrecioUnitario').val());
-            var UnidadId = parseFloat($('#unidadHidden').val());
+            var UnidadId = parseInt($('#unidadHidden').val()); // Asumiendo que UnidadId es un número entero
             var preciomayor = parseFloat($('#PrecioUnitariohiddenpormayor').val());
 
-            
-
-
-
-
-            // Convertir a número el valor obtenido
-
+            // Calcular el descuento aplicado en función del descuento porcentual
             var descuentoaplicar = descuento / 100;
             var descuentoaplicado = precio * descuentoaplicar;
-            console.log("Valor de preco descuento:", descuentoaplicado);
-
             var mayordescentoaplicado = preciomayor * descuentoaplicar;
 
-            var precioHiddenmayor = preciomayor - mayordescentoaplicado;
+            // Calcular el precio con descuento para la unidad estándar y mayorista
+            var precioConDescuento = precio - descuentoaplicado;
+            var precioMayorConDescuento = preciomayor - mayordescentoaplicado;
 
-            console.log("Valor de descuento:", descuento);
-            console.log("Valor de precio:", precio);
-            $('#PrecioUnitariohidden').val(preciohhiden);
-
-            console.log("Valor de aplicadomayor:", aplicadomayor);
-            console.log("Valor de unidadtotal:", unidadprecio);
-            console.log("Valor de descuentoAplicado100:", descuentoaplicar);
-            var preciohhiden = precio - descuentoaplicado;
-            console.log("preciocampo", preciohhiden);
             // Calcular la cantidad total por unidad
             var cantidadenviar = cantidadIngresada * unidadprecio;
             $('#CantidadPorUnidad').val(cantidadenviar);
 
+
             console.log("Valor de cantidadenviar:", cantidadenviar);
 
-            // Comparar con la cantidad aplicada por mayor y mostrar mensaje si se cumple la condición
-            if (cantidadenviar > aplicadomayor) {
-                $('#PrecioUnitariohidden').val(preciohhiden);
-
-                $('#PrecioEnviar').val(preciohhiden);
-
-
-                console.log("La cantidad supera la cantidad aplicada por mayor.");
-            } 
-            if (cantidadenviar <= aplicadomayor) {
-
-                $('#PrecioEnviar').val(precio);
-
-
-                console.log("La cantidad supera la cantidad aplicada por mayor.");
-            } 
-
-            if (UnidadId != 1 && cantidadenviar >= aplicadomayor) {
-
-
-                $('#PrecioEnviar').val(precioHiddenmayor);
-
+            // Aplicar lógica según las condiciones especificadas
+            if (UnidadId === 1) {
+                // Si la unidad es 1, aplicar lógica para precioenviar basado en precio estándar
+                if (cantidadenviar > aplicadomayor) {
+                    $('#PrecioEnviar').val(precioConDescuento);
+                    console.log("Precio con descuento aplicado (unidad estándar).");
+                } else {
+                    $('#PrecioEnviar').val(precio);
+                    console.log("Precio estándar sin descuento aplicado.");
+                }
+            } else {
+                // Si la unidad no es 1, aplicar lógica para precioenviar basado en precio mayorista
+                if (cantidadenviar > aplicadomayor) {
+                    $('#PrecioEnviar').val(precioMayorConDescuento);
+                    console.log("Precio con descuento aplicado (unidad mayorista).");
+                } else {
+                    $('#PrecioEnviar').val(preciomayor);
+                    console.log("Precio mayorista sin descuento aplicado.");
+                }
             }
-            if (UnidadId != 1 && cantidadenviar < aplicadomayor) {
 
+            if (isNaN(cantidadenviar)) {
+                $('#CantidadTxt').addClass('input-validation-error'); // Agregar la clase de error al campo
+                $('span[data-valmsg-for="CantidadTxt"]').text('Por favor, ingrese una cantidad válida'); // Mostrar el mensaje de error
+                $('#CantidadTxt').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
+                $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
 
-                $('#PrecioEnviar').val(precioHiddenmayor);
-
+                console.log("no se puede enviar");
             }
+            else if (cantidadenviar > cantidadDisponible) {
+            // Si la cantidad ingresada es mayor que la cantidad disponible, mostrar mensaje de error
+            $('#CantidadTxt').addClass('input-validation-error');
+            // Agregar la clase de error al campo
+            $('span[data-valmsg-for="Cantidad"]').text('La cantidad ingresada no puede ser mayor que la cantidad disponible');
+            $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
+            $('#CantidadTxt').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
+            } else if (cantidadenviar <= 0) {
+            // Si la cantidad ingresada es menor o igual a 0, mostrar mensaje de error
+            $('#CantidadTxt').addClass('input-validation-error');
+            // Agregar la clase de error al campo
+            $('span[data-valmsg-for="CantidadTxt"]').text('La cantidad ingresada no puede ser menor o igual a 0');
+            $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
+            $('#CantidadTxt').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
+        } else {
+            // Si la cantidad ingresada es válida, quitar la clase de error del campo
+            $('#CantidadTxt').removeClass('input-validation-error');
+            // Quitar el mensaje de error
+            $('span[data-valmsg-for="CantidadTxt"]').text('');
+            // Quitar la clase de error del campo para los estilos de Bootstrap
+            $('#CantidadTxt').removeClass('is-invalid');
+            // Habilitar el botón de enviar
+            $('#btnEnviar').prop('disabled', false);
+        }
+
         });
-    }); $('#UnidadId').on('input', function () {
+    });
+    $('#UnidadId').on('input', function () {
         var selectedValue = $(this).val();
         var selectedOption = $('#UnidadIdList option').filter(function () {
-            return $(this).val() === selectedValue || $(this).data('id') === selectedValue;
+            return $(this).val() === selectedValue || $(this).data('id') == selectedValue; // Utiliza '==' para permitir comparación de tipos mixtos
         }).first();
 
         if (selectedOption.length > 0) {
@@ -628,14 +632,22 @@ $(document).ready(function () {
                     console.log("Nombre de la unidad:", data);
                     $('#UnidadId').val(data.trim());
                     $('#unidadHidden').val(selectedValue);
+                    $('#unidadtotal').val(''); // Limpiar el campo de cantidadPorUnidad
+                    $('#CantidadTxt').val(''); // Limpiar el campo de cantidad
+                    $('#PrecioEnviar').val(''); // Limpiar el campo de precio
                 })
                 .catch(error => {
                     console.error('There has been a problem with your fetch operation:', error);
                 });
         } else {
-            $('#unidadHidden').val(''); // Limpiar el campo oculto si no se encuentra ninguna unidad que coincida
+            // Limpiar campos si no se selecciona ninguna unidad válida
+            $('#unidadHidden').val('');
+            $('#unidadtotal').val('');
+            $('#CantidadTxt').val('');
+            $('#PrecioEnviar').val('');
         }
     });
+
 
     // Función para limpiar los detalles del producto
     function limpiarDetallesProducto() {
@@ -643,47 +655,21 @@ $(document).ready(function () {
         $('#ProductoId').val('');
         $('#ProductoIdtxt').val('');
         $('#ProductosList').val('');
+        $('#unidadHidden').val('');
+        $('#UnidadId').val('');
+        $('#unidadtotal').val('');
         $('#CantidadTxt').attr('placeholder', '');
         $('#LoteId').val('');
+
+        $('#PrecioUnitariohiddenpormayordescuento').val('');
+        $('#PrecioEnviar').val('');
+        $('#PrecioUnitariohiddenpormayor').val('');
+        $('#CantidadAPlicada').val('');
+        $('#Descuento').val('');
     }
 
     // Evento input para el campo "Cantidad"
-    $('#CantidadTxt').on('input', function () {
-        const cantidadIngresada = parseFloat($(this).val()); // Convertir el valor a un número flotante
-        const cantidadDisponible = parseFloat($('#CantidadTxt').attr('placeholder').split(':')[1].trim());
-
-        if (isNaN(cantidadIngresada)) {
-            // Si la cantidad ingresada no es un número válido, mostrar mensaje de error
-            $('#CantidadTxt').addClass('input-validation-error'); // Agregar la clase de error al campo
-            $('span[data-valmsg-for="CantidadTxt"]').text('Por favor, ingrese una cantidad válida'); // Mostrar el mensaje de error
-            $('#CantidadTxt').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
-            $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
-        } else if (cantidadIngresada > cantidadDisponible) {
-            // Si la cantidad ingresada es mayor que la cantidad disponible, mostrar mensaje de error
-            $('#CantidadTxt').addClass('input-validation-error');
-            // Agregar la clase de error al campo
-            $('span[data-valmsg-for="Cantidad"]').text('La cantidad ingresada no puede ser mayor que la cantidad disponible');
-            $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
-            $('#CantidadTxt').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
-        } else if (cantidadIngresada <= 0) {
-            // Si la cantidad ingresada es menor o igual a 0, mostrar mensaje de error
-            $('#CantidadTxt').addClass('input-validation-error');
-            // Agregar la clase de error al campo
-            $('span[data-valmsg-for="CantidadTxt"]').text('La cantidad ingresada no puede ser menor o igual a 0');
-            $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
-            $('#CantidadTxt').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
-        } else {
-            // Si la cantidad ingresada es válida, quitar la clase de error del campo
-            $('#CantidadTxt').removeClass('input-validation-error');
-            // Quitar el mensaje de error
-            $('span[data-valmsg-for="CantidadTxt"]').text('');
-            // Quitar la clase de error del campo para los estilos de Bootstrap
-            $('#CantidadTxt').removeClass('is-invalid');
-            // Habilitar el botón de enviar
-            $('#btnEnviar').prop('disabled', false);
-        }
-    });
-
+  
 
 })
     
@@ -712,62 +698,12 @@ function mostrarDetallesActuales() {
 
 
 
-
-function limpiaCantidades() {
-    // Limpiar el campo Cantidad
-    document.getElementById('CantidadTxt').value = '';
-
-    // Limpiar el campo CantidadPorUnidad
-    document.getElementById('CantidadPorUnidad').value = '';
-
-    // Limpiar el campo Descuento
-    document.getElementById('Descuento').value = '';
-
-    // Limpiar el campo CantidadAPlicada
-    document.getElementById('CantidadAPlicada').value = '';
-
-    // Limpiar el mensaje de error
-    document.getElementById('CantidadError').innerText = '';
-
-}
-
-
-function limpiaPrecios() {
-    // Limpiar el campo PrecioUnitario
-    document.getElementById('PrecioUnitario').value = '';
-
-    // Limpiar el campo PrecioUnitariohidden
-    document.getElementById('PrecioUnitariohidden').value = '';
-
-    // Limpiar el campo PrecioUnitariohiddenpormayor
-    document.getElementById('PrecioUnitariohiddenpormayor').value = '';
-
-    // Limpiar el campo PrecioUnitariohiddenpormayordescuento
-    document.getElementById('PrecioUnitariohiddenpormayordescuento').value = '';
-
-    // Limpiar el campo PrecioEnviar
-    document.getElementById('PrecioEnviar').value = '';
-
-    // Limpiar el mensaje de error
-    document.getElementById('PrecioUnitarioError').innerText = '';
-}
-
-
-function limpiaUnidadPresentacion() {
-    // Limpiar el campo UnidadId
-    document.getElementById('UnidadId').value = '';
-
-    // Limpiar el campo unidadHidden
-    document.getElementById('unidadHidden').value = '';
-
-    // Limpiar el campo unidadtotal
-    document.getElementById('unidadtotal').value = '';
-
-    // Limpiar el mensaje de error
-    document.getElementById('UnidadError').innerText = '';
-}
-
 $(document).ready(function () {
+    $('#CantidadPorUnidad').on('input', function () {
+        const cantidadIngresadaporunidad = parseFloat($(this).val()); // Convertir el valor a un número flotante
+        const cantidadDisponible = parseFloat($('#CantidadTxt').attr('placeholder').split(':')[1].trim());
 
-   
+        console.log('Cantidad ingresada por unidad:', cantidadIngresadaporunidad);
+        console.log('Cantidad disponible:', cantidadDisponible);
+    });
 });
