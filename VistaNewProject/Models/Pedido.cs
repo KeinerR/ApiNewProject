@@ -10,7 +10,7 @@
         public string? EstadoPedido { get; set; }
 
 
-        public virtual Cliente? Cliente { get; set; }
+        public virtual Cliente? clientes { get; set; }
         public virtual Domicilio ? Domicilios { get; set; }
 
     }

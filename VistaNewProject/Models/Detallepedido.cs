@@ -14,14 +14,13 @@ namespace VistaNewProject.Models
         public decimal? PrecioUnitario { get; set; }
         public decimal? Subtotal { get; set; }
 
-        [JsonIgnore]
-        public virtual Pedido? Pedido { get; set; }
-        [JsonIgnore]
-        public virtual Producto? Producto { get; set; }
+        
+        public virtual Pedido? Pedidos { get; set; }
+        public virtual Producto? Productos { get; set; }
 
-        [JsonIgnore]
-        public virtual Unidad? Unidad { get; set; }
-        [JsonIgnore]
+        public virtual Unidad? Unidades { get; set; }
+         public virtual Cliente? Clientes { get; set; }
+
         public virtual Lote? Lotes { get; set; }
 
 
