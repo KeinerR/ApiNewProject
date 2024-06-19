@@ -125,43 +125,6 @@
 
 /*-----------------------------------------------------------*/
 /*Estilo de Detalle de compra*/
-.detalle-compra {
-    border: 1px solid #ccc;
-    margin-bottom: 20px;
-    padding: 10px;
-    border: solid red 2px;
-}
-
-    .detalle-compra header {
-        font-size: 16px;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
-
-    .detalle-compra .detalle-info {
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-        .detalle-compra .detalle-info .info-label {
-            font-weight: bold;
-        }
-
-    .detalle-compra .info-label {
-        margin-left: 10px;
-    }
-
-
-    .detalle-compra .info-value {
-        display: inline-block;
-        margin-left: 5px;
-    }
-
-
-    .detalle-compra .detalle-info .info-value {
-        flex-grow: 1;
-    }
-
 
 
 
