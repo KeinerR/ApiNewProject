@@ -645,6 +645,11 @@ input:checked + .slider:before {
     #ModalDetallesCompra .modal-dialog {
         min-width: 960px !important;
     }
+    #ModalProductosCompra .modal-dialog {
+        min-width: 960px !important;
+        margin-top:100px;
+    }
+    
 }
 
 

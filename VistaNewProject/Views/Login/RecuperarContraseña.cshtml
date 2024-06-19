@@ -12,74 +12,119 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://kit.fontawesome.com/822fe3c749.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .container {
+            margin-top: 50px;
+            max-width: 500px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .volver {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .btn-primary {
+            background-color: #2574A8;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+            .btn-primary:hover {
+                background-color: #2574A8;
+            }
+
+        .form-control {
+            border-radius: 50px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .fa-arrow-left {
+            margin-right: 5px;
+        }
+
+        .alert {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h4 class="volver">Recuperar contraseña</h4>
-    <div>
-        <a href="@Url.Action("Index", "Login")" class="btn btn-primary btn-sm">
-            <i class="fas fa-arrow-left"></i> Volver
-        </a>
-    </div>
-    <hr />
-
     <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <form asp-action="RecuperarContraseña" id="Recuperar" class="password-form" method="post">
-                    <div class="form-group">
-                        <label for="Correo">Ingresa tu Correo</label>
-                        <input type="text" class="form-control" id="Correo" name="correo">
-                    </div>
-                    <div>
+        <h4 class="volver">Recuperar contraseña</h4>
+        <div>
+            <a href="@Url.Action("Index", "Login")" class="btn btn-primary btn-sm">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+        <hr />
+        <form asp-action="RecuperarContraseña" id="Recuperar" class="password-form" method="post">
+            <div class="form-group">
+                <label for="Correo">Ingresa tu Correo</label>
+                <input type="email" class="form-control" id="Correo" name="correo" required>
+            </div>
+            <div>
+                @if (TempData["Mensaje"] != null)
+                {
+                    <div class="alert alert-info" role="alert">
                         @TempData["Mensaje"]
                     </div>
-                    <br />
-                    <button type="submit" class="btn btn-primary">Comprobar correo</button>
-                </form>
+                }
             </div>
-        </div>
+            <br />
+            <button type="submit" class="btn btn-primary btn-block">Comprobar correo</button>
+        </form>
     </div>
 
-</body>
+    @if (TempData["MensajeExito"] != null)
+    {
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: '@TempData["MensajeExito"]',
+                showConfirmButton: false,
+                timer: 2000
+            }).then(() => {
+                window.location.href = '@Url.Action("Index", "Login")';
+            });
+        </script>
+    }
 
-@if (TempData["MensajeExito"] != null)
-{
     <script>
-        Swal.fire({
-            icon: 'success',
-            title: '@TempData["MensajeExito"]',
-            showConfirmButton: false,
-            timer: 2000
-        }).then(() => {
-            window.location.href = '@Url.Action("Index", "Login")';
-        });
-    </script>
-}
+        document.getElementById('Recuperar').addEventListener('submit', function (event) {
+            var form = document.getElementById('Recuperar');
+            var formFields = form.querySelectorAll('input');
 
-<script>
-    document.getElementById('Recuperar').addEventListener('submit', function (event) {
-        var form = document.getElementById('Recuperar');
-        var formFields = form.querySelectorAll('input');
+            var isAnyFieldEmpty = false;
 
-        var isAnyFieldEmpty = false;
-
-        formFields.forEach(function (field) {
-            if (field.type !== 'hidden') {
-                if (field.value.trim() === '') {
-                    isAnyFieldEmpty = true;
-                    return;
+            formFields.forEach(function (field) {
+                if (field.type !== 'hidden') {
+                    if (field.value.trim() === '') {
+                        isAnyFieldEmpty = true;
+                        return;
+                    }
                 }
+            });
+
+            if (isAnyFieldEmpty) {
+                event.preventDefault();
+                alert('No puedes dejar el campo en blanco.');
             }
         });
-
-        if (isAnyFieldEmpty) {
-            event.preventDefault();
-            alert('No puedes dejar el campo en blanco.');
-        } else {
-            // Si todos los campos están completos, se enviará el formulario y se mostrará la alerta de éxito.
-            // No hay necesidad de prevenir el evento.
-            // La redirección ocurrirá después de que se muestre la alerta.
-        }
-    });
-</script>
+    </script>
+</body>
 </html>

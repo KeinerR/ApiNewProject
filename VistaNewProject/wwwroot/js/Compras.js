@@ -105,7 +105,7 @@ function RegistrarBuy() {
         var botonAgregar = document.getElementById('agregarDetalle');
         var mensajes = document.querySelectorAll('.Mensaje');
         var inputs = document.querySelectorAll('.inputs');
-       
+        
 
         
         for (var i = 0; i < 3; i++) {
@@ -120,7 +120,7 @@ function RegistrarBuy() {
             if (campo.classList.contains('is-invalid')) {
                 MensajaInicial.innerText = 'Completa correctamente todos los campos.';
                 return; // Terminar la función si hay algún campo inválido
-            } else if(proveedorId === '') {
+            } else if (proveedorId === '') {
                 $('#ProveedorIdHidden').val(''); // Limpiar el valor del campo ProveedorIdHidden
                 mostrarAlertaDataList('Proveedor');
                 return;
@@ -135,6 +135,8 @@ function RegistrarBuy() {
         botonAgregar.classList.add('noBe'); // Remover clase is-invalid
         $('#ModalDetallesCompra').modal('show');
         $('#ModalCompra').modal('hide');
+        var opcionesCambiarDatosCompra = document.getElementById('opcinesCambiarDatosCompra');
+        opcionesCambiarDatosCompra.classList.remove('noSee'); // Remover clase is-invalid
        
     }
 
@@ -167,6 +169,7 @@ function agregarDetalleCompraend(objeto) {
     LimpiarFormulario();
     agregarFilaDetalle(detalleCompra); // Llama a la función para agregar la fila de detalle a la tabla
 }
+
 // Función para agregar un detalle de compra al objeto principal
 function agregarDetalleCompra() {
     // Obtener valores de los campos
@@ -565,6 +568,7 @@ function agregarDetalleCompra() {
                     Swal.fire({
                         html: mensajeAlerta + "\n¿Deseas Continuar?",
                         icon: "question",
+                        icon: "question",
                         showCancelButton: true,
                         confirmButtonText: "Continuar",
                         cancelButtonText: "Actualizar",
@@ -630,7 +634,7 @@ function actualizarValorTotal() {
 
 //Paginado
 function cambiarPagina(direccion) {
-    const filasPorPagina = 3; // Cambia el número de filas por página según tus necesidades
+    const filasPorPagina = 10; // Cambia el número de filas por página según tus necesidades
     const filas = Array.from(document.getElementById('detalleTableBody').rows);
     let paginasTotales = Math.ceil(filas.length / filasPorPagina);
 
@@ -698,24 +702,22 @@ function agregarFilaDetalle(detalleCompra) {
     var cellAcciones = newRow.insertCell(4);
 
     // Asignar los valores del detalle a las celdas
-    cellProducto.innerHTML = detalleCompra.productoId;
-    cellProducto.innerHTML = detalleCompra.productoId;
-    cellProducto.setAttribute('title', nombreProducto);
-    cellCantidad.innerHTML = detalleCompra.cantidad * cantidadPorUnidad;
-    cellPrecioUnitario.innerHTML = ultimoLote.precioCompra / (detalleCompra.cantidad * cantidadPorUnidad);
+    cellProducto.innerHTML = nombreProducto;
+    cellProducto.setAttribute('title', detalleCompra.productoId);
+    cellCantidad.innerHTML = ultimoLote.cantidad;
+    cellPrecioUnitario.innerHTML = ultimoLote.precioPorPresentacion;
     cellSubtotal.innerHTML = ultimoLote.precioCompra;
     cellAcciones.innerHTML = '<button onclick="eliminarFilaDetalle(this)">Eliminar</button>';
 
+    // Verifica si es necesario que se vea o no el paginado
+    verificarPaginado();
 
-
-    //verifica si es necesario que se vea u no el paginado
-    verificarPaginado() 
     // Actualizar el valor total
     actualizarValorTotal();
+
+    // Cambiar a la página 2 (o cualquier otra lógica de paginación que tengas)
     cambiarPagina(2);
-
 }
-
 
 // Funcion para eliminar un solo detalle al que se presione el boton
 function eliminarFilaDetalle(button) {
@@ -864,16 +866,18 @@ function verCompra() {
     $('#ModalDetallesCompra').modal('hide');
   
 }
-function noVerDetalle() {
-    document.getElementById('agregarDetalle').style.display = 'none';
-    document.getElementById('PrincipalCompra').style.display = 'none';
-    document.getElementById('DetallesCompra').style.display = 'block';
-    document.getElementById('verCompra').style.display = 'block';
-    document.getElementById('PrecioBougth').style.display = 'none';
-    document.getElementById('PrecioBuy').style.display = 'none';
-    document.getElementById('TablaDetalles').style.display = 'flex';
+function verFormularioDetalle() {
 
+    $('#ModalDetallesCompra').modal('show');
+    $('#ModalProductosCompra').modal('hide');
+  
 }
+function verProductos() {
+    $('#ModalDetallesCompra').modal('show');
+    $('#ModalProductosCompra').modal('show');
+  
+}
+
 
 function verCalculo() {
     document.getElementById('PrecioBougth').style.display = 'flex';
@@ -1279,6 +1283,8 @@ function eliminarTodosLosDetalles() {
 function LimpiarFormulario() {
     // Limpiar los valores de los campos del formulario
     document.getElementById('NombreProducto').value = '';
+    document.getElementById('NombreUnidad').value = '';
+    document.getElementById('CantidadPorPresentacionHidden').value = '';
     document.getElementById('ProductoIdHidden').value = '';
     document.getElementById('UnidadIdHidden').value = '';
     document.getElementById('CantidadPorUnidad').value = '';
