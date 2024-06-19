@@ -640,6 +640,11 @@ input:checked + .slider:before {
         min-width: 690px !important;
     }
 
+ 
+
+    #ModalDetallesCompra .modal-dialog {
+        min-width: 960px !important;
+    }
 }
 
 

@@ -47,7 +47,7 @@ namespace ApiNewProject.Controllers
         public async Task<ActionResult<Lote>> GetLoteById(int Id)
         {
 
-            Lote lote = await _context.Lotes.Select(
+            Lote? lote = await _context.Lotes.Select(
                     s => new Lote
                     {
                         LoteId = s.LoteId,
@@ -172,9 +172,8 @@ namespace ApiNewProject.Controllers
             return Ok($"Se actualizaron los precios en {lotes.Count} lotes asociados al producto con ID {productoId}");
         }
 
-
         [HttpPut("UpdatePrecioLote")]
-        public async Task<ActionResult> UpdatePrecioLote(int loteId,string numeroLote, decimal precioPorUnidadProducto, decimal precioPorPresentacion)
+        public async Task<ActionResult> UpdatePrecioLote(int loteId, string numeroLote, decimal precioPorUnidadProducto, decimal precioPorPresentacion)
         {
             // Buscar el lote con el ID proporcionado
             var loteExistente = await _context.Lotes.FirstOrDefaultAsync(s => s.LoteId == loteId && s.NumeroLote == numeroLote);
@@ -193,6 +192,51 @@ namespace ApiNewProject.Controllers
 
             return Ok($"Se actualizó el precio del lote con ID {loteId}");
         }
+       
+        [HttpPut("AddCantidadALote/{id}")]
+        public async Task<ActionResult> AddCantidadALote(int id, int? cantidad)
+        {
+            // Buscar el producto por su ID
+            var lote = await _context.Lotes.FirstOrDefaultAsync(p => p.LoteId == id);
+
+            if (lote == null)
+            {
+                return NotFound();
+            }
+            // Actualizar la cantidad reservada del producto
+            lote.Cantidad += cantidad;
+
+            // Guardar los cambios en la base de datos
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPut("SustraerCantidadALote/{id}")]
+        public async Task<ActionResult> SustraerCantidadALote(int id, int? cantidad)
+        {
+            // Buscar el producto por su ID
+            var lote = await _context.Lotes.FirstOrDefaultAsync(p => p.LoteId == id);
+
+            if (lote == null)
+            {
+                return NotFound();
+            }
+
+            // Verificar si la cantidad a restar es válida
+            if (lote.Cantidad < cantidad)
+            {
+                return BadRequest("La cantidad a restar es mayor que la cantidad en lote actual.");
+            }
+
+            lote.Cantidad -= cantidad; ;
+
+            // Guardar los cambios en la base de datos
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
         [HttpDelete("DeleteLote/{Id}")]
         public async Task<HttpStatusCode> DeleteLote(int Id)
         {
@@ -204,6 +248,35 @@ namespace ApiNewProject.Controllers
             _context.Lotes.Remove(lote);
             await _context.SaveChangesAsync();
             return HttpStatusCode.OK;
+        }
+        [HttpPatch("UpdateEstadoLote/{id}")]
+
+        public async Task<IActionResult> UpdateEstadoLote(int id)
+        {
+            try
+            {
+                // Buscar el lote por su ID
+                var lote = await _context.Lotes.FindAsync(id);
+
+                // Si no se encuentra el lote, devolver un error 404 Not Found
+                if (lote == null)
+                {
+                    return NotFound();
+                }
+
+                lote.EstadoLote = lote.EstadoLote == 0 ? 1UL : 0UL;
+
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+
+                // Devolver una respuesta exitosa
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Si ocurre algún error, devolver un error 500 Internal Server Error
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el estado del lote: " + ex.Message);
+            }
         }
 
     }

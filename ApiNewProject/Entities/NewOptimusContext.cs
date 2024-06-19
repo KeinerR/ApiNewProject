@@ -158,7 +158,6 @@ namespace ApiNewProject.Entities
 
                 entity.Property(e => e.ProveedorId).HasColumnName("ProveedorID");
 
-                entity.Property(e => e.ValorTotalCompra).HasPrecision(10);
 
                 entity.HasOne(d => d.Proveedor)
                     .WithMany(p => p.Compras)

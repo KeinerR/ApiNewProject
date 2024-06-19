@@ -1,8 +1,10 @@
 ﻿using ApiNewProject.Entities;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using System.Numerics;
 
 namespace ApiNewProject.Controllers
 {
@@ -64,6 +66,25 @@ namespace ApiNewProject.Controllers
                 return Ok(compra);
             }
         }
+        [HttpGet("FacturasYLotes")]
+        public async Task<ActionResult<IEnumerable<object>>> GetFacturasYLotes()
+        {
+            var facturas = await _context.Compras
+                .Select(f => new FacturaDTO
+                {
+                    NumeroFactura = f.NumeroFactura
+                })
+                .ToListAsync();
+
+            var lotes = await _context.Lotes
+                .Select(l => new LoteDTO
+                {
+                    NumeroLote = l.NumeroLote
+                })
+                .ToListAsync();
+
+            return new List<object> { facturas, lotes };
+        }
         [HttpPost("InsertCompras")]
         public async Task<IActionResult> InsertCompras(Compra compra)
         {
@@ -99,9 +120,9 @@ namespace ApiNewProject.Controllers
                     {
                         foreach (var lote in detalleCompra.Lotes)
                         {
-                            if (!lote.Cantidad.HasValue || !lote.PrecioCompra.HasValue || !lote.FechaVencimiento.HasValue)
+                            if (!lote.Cantidad.HasValue || !lote.FechaVencimiento.HasValue)
                             {
-                                return BadRequest("Cantidad, PrecioCompra y FechaVencimiento son requeridos para el lote.");
+                                return BadRequest("Cantidad, y FechaVencimiento son requeridos para el lote.");
                             }
 
                             newDetalleCompra.Lotes.Add(new Lote
@@ -130,12 +151,19 @@ namespace ApiNewProject.Controllers
                     }
                     await _context.SaveChangesAsync();
                 }
+                // Calcular el total de la compra como decimal
+                decimal totalCompraDecimal = newCompra.Detallecompras.Sum(detalle => detalle.Lotes.Sum(lote => lote.PrecioCompra));
 
+                long totalCompraLong = decimal.ToInt64(totalCompraDecimal);
+
+                newCompra.ValorTotalCompra = totalCompraLong;
+
+                // Guardar newCompra en la base de datos
                 _context.Compras.Add(newCompra);
-                
                 await _context.SaveChangesAsync();
-          
+
                 return Ok();
+
             }
             catch (Exception ex)
             {
@@ -176,8 +204,7 @@ namespace ApiNewProject.Controllers
             await _context.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
-
-
+        
         [HttpGet("GetComprasRealizada")]
         public async Task<ActionResult<List<Compra>>> GetComprasRealizada()
         {
@@ -206,6 +233,36 @@ namespace ApiNewProject.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al obtener los productos activos: " + ex.Message);
             }
         }
+        [HttpPatch("UpdateEstadoCompra/{id}")]
+        public async Task<IActionResult> UpdateEstadoCompra(int id)
+        {
+            try
+            {
+                // Buscar el compra por su ID
+                var compra = await _context.Compras.FindAsync(id);
+
+                // Si no se encuentra el compra, devolver un error 404 Not Found
+                if (compra == null)
+                {
+                    return NotFound();
+                }
+
+                compra.EstadoCompra = compra.EstadoCompra == 0 ? 1UL : 0UL;
+
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+
+                // Devolver una respuesta exitosa
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Si ocurre algún error, devolver un error 500 Internal Server Error
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el estado del compra: " + ex.Message);
+            }
+        }
+
+
     }
 }
 

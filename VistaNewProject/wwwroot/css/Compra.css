@@ -1,61 +1,4 @@
-﻿/* Estilo para que la modal ocupe el 100% de la pantalla*/
-#ModalCompra {
-    margin: 0;
-    padding: 0;
-}
-
-/* Estilo para la posicion de la modal*/
-#CompraVista {
-   margin-top:10px;
-}
-
-/*Estilos para las etiquetas dentro de la modal y hacer crecer o decrecer la modal */
-.modal-content {
-    user-select: none;
-}
-
-/*-------------------------Estilos para la cabecera de la ventana modal de compras-----------------*/
-
-.Compra .modal-header {
-    display: flex;
-    justify-content: space-between;
-    padding: 0px;
-}
-/*----Estilos de la x ----*/
-#modal-header-icono-boton {
-}
-
-#modal-header-equis {
-    margin-right: 10px;
-    margin-top: 5px;
-}
-
-.close {
-    border: none;
-    cursor: pointer;
-}
-
-    .close:hover {
-        background-color: rgba(0, 0, 0, 0.3); /* Color de fondo al pasar el ratón */
-    }
-
-/*--- Estilo para el titulo ----*/
-.Compra .modal-header h2 {
-  padding:0px;
-  margin:0px;
-}
-
-
-/*--------------------------------------------*/
-
-/*----------------------------------------PrimerFormulario datos de compra---------------------------------*/
-#PrincipalCompra {
-
-}
-#PrincipalCompra .form-group {
-
-}
-
+﻿
 /*estilos para el footer de actualizar compra en la ventana modal*/
 .contenedorFooter {
     display: flex;
@@ -188,7 +131,7 @@
 
 #btnModal {
     margin-right: 0; /* Mover el botón Registrar Compra a la izquierda */
-}
+}   
 
 
 
@@ -202,11 +145,6 @@
     height: 20px;
 }
 /*Diseño para etiqueta label de toda la pagina*/
-#CompraVista label {
-    display: inline-flex; /* Mantener el display flex para centrar verticalmente */
-    align-items: center; /* Centrar verticalmente */
-    vertical-align:central;
-}
 
 /*---Estilos para que se vean o no los elemtos al momento de cargar la pagina---*/
 /*Hace que el elemnto desaparezca con todo su contenido*/
@@ -235,24 +173,6 @@
 
 
 /*-----------------------Estilos del * que acompaña al label---------------------------------------------*/
-#ContenedorCompra .Mensaje {
-    color: red;
-    margin-left: 5px;
-    padding-top: 10px;
-    font-size: 2em;
-    height: 20px;
-    width: 20px;
-    white-space: nowrap; /* Evitar que el texto se desborde a la siguiente línea */
-    display: flex; /* Convertir el contenedor en un flex container */
-    justify-content: center; /* Centrar horizontalmente */
-    align-items: center; /* Centrar verticalmente */
-}
-
-    #ContenedorCompra .Mensaje:hover {
-        color: blue;
-        transform: translateY(-1px); /* Mover el elemento hacia arriba 1px al colocar el cursor sobre él */
-        cursor: pointer;
-    }
 
 #PrecioBougth .Mensaje {
     position: relative; /* Posicionamiento relativo para el contenedor */

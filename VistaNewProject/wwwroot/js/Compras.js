@@ -21,133 +21,6 @@ let timeout = null;
 //Capturar el nombre del producto para agregar al detalle de tabla ;)
 var nombreProducto = "";
 
-
-    // Función para limpiar el formulario
-function LimpiarFormulario() {
-    // Limpiar los valores de los campos del formulario
-    document.getElementById('ProductoId').value = '';
-    document.getElementById('UnidadId').value = '';
-    document.getElementById('Cantidad').value = 1;
-    document.getElementById('PrecioDeCompra').value = '';
-    document.getElementById('PrecioDeCompraPorPresentacion').value = '';
-    document.getElementById('PrecioDeCompraUnitario').value = '';
-    document.getElementById('FechaVencimiento').value = '';
-    document.getElementById('PrecioDeVentaUnitario').value = '';
-    document.getElementById('PrecioDeVentaxUnidadPresentacion').value = '';
-    document.getElementById('PrecioDeCompraPorUnidad').value = '';
-    document.getElementById('PorcentajeGanancia').value = '';
-    document.getElementById('NumeroLote').value = '';
-    document.getElementById('PorcentajeGanancia').value = '';
-    document.getElementById('checkboxNoVencimiento').checked = false;
-    document.getElementById('modal-header-botonAgregarDetalle').style.display = 'none'; // Opcionalmente puedes usar 'display: none;' en lugar de 'visibility: hidden;'
-    const fechaVencimiento = document.getElementById('FechaVencimiento');
-    const fechaVencimientoNunca = document.getElementById('FechaVencimientoNunca');
-    const labelFechaVencimiento = document.getElementById('Vencimiento');
-    const spanMensajeNoFecha = document.querySelector('.col-4 .Mensaje');
-  
-    fechaVencimiento.style.display = 'block'; // Mostrar la fecha de vencimiento
-    fechaVencimiento.value = ''; // Asignar un valor vacío por defecto
-    fechaVencimientoNunca.style.display = 'none'; // Ocultar el texto "Producto no perecedero"
-    labelFechaVencimiento.textContent = 'No Aplica:'; 
-    spanMensajeNoFecha.textContent = '*';
-    
-    var mensajes = document.querySelectorAll('.Mensaje');
-    // Iterar sobre los mensajes, omitiendo los primeros 3 y los últimos 3
-    for (var i = 3; i < mensajes.length - 3; i++) {
-            var mensaje = mensajes[i];
-            mensaje.textContent = '*'; // Restaurar mensajes de error
-            mensaje.style.display = 'flex'; // Establecer estilo si es necesario
-    }
-    const mensajesError = document.querySelectorAll('.text-danger');
-    mensajesError.forEach(span => {
-        span.innerText = ''; // Limpiar contenido del mensaje
-    });
-    noVerCalculo();
-
-   
-}
-
-// Se uas para eliminar todos los detalles de la tabla en la venta modal
-function eliminarTodosLosDetalles() {
-    var filasDetalles = document.querySelectorAll('#tablaDetalles tbody tr');
-
-    // Iterar sobre todas las filas de detalles y eliminarlas una por una
-    filasDetalles.forEach(function (fila) {
-        var botonEliminar = fila.querySelector('.btnEliminar');
-        eliminarFilaDetalle(botonEliminar); // Llamar a la función eliminarFilaDetalle para cada fila
-    });
-}
-
-// Se usa para reiniciar la compra
-function limpiarFormularioTotalmente() {
-    // Eliminar todos los detalles de la tabla
-    eliminarTodosLosDetalles();
-    compra = {
-        proveedorId: 0,
-        numeroFactura: 0,
-        fechaCompra: new Date().toISOString(),
-        valorTotalCompra: 0,
-        estadoCompra: 0,
-        detallecompras: []
-    };
-    // Ocultar elementos
-    document.getElementById('PrecioBougth').style.display = 'none';
-    document.getElementById('PrecioBuy').style.display = 'none';
-    document.getElementById('TablaDetalles').style.display = 'none';
-    document.getElementById('tituloCompra').style.display = 'block';
-    document.getElementById('tituloCompra').style.visibility = 'visible';
-    document.getElementById('subtituloCompra').style.display = 'none';
-    document.getElementById('PrincipalCompra').style.display = 'block';
-    document.getElementById('agregarDetalle').style.display = 'block';
-    document.getElementById('DetallesCompra').style.display = 'none';
-    document.getElementById('actualizarCompra').style.visibility = 'hidden';
-    document.getElementById('actualizarCompra').style.display = 'none';
-    document.getElementById('verCompra').style.display = 'none';
-    // Limpiar los valores de los campos del formulario
-    document.getElementById('ProveedorId').value = '';
-    document.getElementById('NumeroFactura').value = '';
-    document.getElementById('ProductoId').value = '';
-    document.getElementById('UnidadId').value = '';
-    document.getElementById('Cantidad').value = 1;
-    document.getElementById('PrecioDeCompra').value = '';
-    document.getElementById('PrecioDeCompraPorPresentacion').value = '';
-    document.getElementById('PrecioDeCompraUnitario').value = '';
-    document.getElementById('FechaVencimiento').value = '';
-    document.getElementById('PrecioDeVentaUnitario').value = '';
-    document.getElementById('PrecioDeVentaxUnidadPresentacion').value = '';
-    document.getElementById('PrecioDeCompraPorUnidad').value = '';
-    document.getElementById('PorcentajeGanancia').value = '';
-    document.getElementById('NumeroLote').value = '';
-    document.getElementById('PorcentajeGanancia').value = '';
-    document.getElementById('checkboxNoVencimiento').checked = false;
-    const fechaVencimiento = document.getElementById('FechaVencimiento');
-    const fechaVencimientoNunca = document.getElementById('FechaVencimientoNunca');
-    const labelFechaVencimiento = document.getElementById('Vencimiento');
-    const spanMensajeNoFecha = document.querySelector('.col-4 .Mensaje');
-
-    fechaVencimiento.style.display = 'block'; // Mostrar la fecha de vencimiento
-    fechaVencimiento.value = ''; // Asignar un valor vacío por defecto
-    fechaVencimientoNunca.style.display = 'none'; // Ocultar el texto "Producto no perecedero"
-    labelFechaVencimiento.textContent = 'No Aplica:';
-    spanMensajeNoFecha.textContent = '*';
-
-    var mensajes = document.querySelectorAll('.Mensaje');
-    // Iterar sobre los mensajes, omitiendo los primeros 2 y los últimos 2
-    for (var i = 0; i < mensajes.length; i++) {
-        if (i !== 1) { // Omitir el segundo mensaje (índice 1)
-            var mensaje = mensajes[i];
-            mensaje.textContent = '*'; // Restaurar mensajes de error
-            mensaje.style.display = 'flex'; // Establecer estilo si es necesario
-        }
-    }
-    const mensajesError = document.querySelectorAll('.text-danger');
-    mensajesError.forEach(span => {
-        span.innerText = ''; // Limpiar contenido del mensaje
-    });
-
-
-}
-
 // Función para registrar la compra
 function RegistrarBuy() {
     if (compra.detallecompras.length === 0) {
@@ -222,125 +95,6 @@ function RegistrarBuy() {
 };
 
 
-//Funciones para mostrar alerta
-function mostrarAlerta2(campo) {
-    Swal.fire({
-        position: "center",
-        icon: 'warning',
-        title: '¡Atención!',
-        html: `<p>${campo}.</p>`,
-        showConfirmButton: false,
-        timer: 6000
-    });
-}
-
-//Funcion para validar campos vacios
-function validarCampoCompras(input, campo) {
-    var valor = input.val().trim();
-    var spanError = input.next('.text-danger');
-    var labelForCampo = $('label[for="' + campo + '"]');
-    var spanVacio = labelForCampo.find('.Mensaje');
-    var spanDanger = input.closest('.col-4').find('span#spanErmitanio.text-danger');
-    spanError.text('');
-    spanVacio.text('');
-
-    if (valor != '') {
-        spanError.text(''); // Se corrigió aquí para limpiar el texto de error
-        input.removeClass('is-invalid');
-    } else if (valor === "" && input.attr('id') !== "PorcentajeGanancia") {
-        input.addClass('is-invalid');
-        spanVacio.text('*');
-    } 
-    if (input.is('#ProveedorId')) {
-        if (valor === "") {
-            $('#ProveedorIdHidden').val(''); // Vacía el valor del campo oculto
-        }
-    }
-    if (input.is('#FechaCompra')) {
-        var fechaCompra = new Date(valor);
-        var ahora = new Date(); // Fecha actual con hora
-        var hoy = new Date();
-        hoy.setHours(0, 0, 0, 0); // Establecer la hora de hoy a las 00:00:00
-        var dosDiasAntes = new Date();
-        dosDiasAntes.setDate(hoy.getDate() - 20); // Restar 20 días a la fecha de hoy
-        dosDiasAntes.setHours(0, 0, 0, 0); // Establecer la hora de dos días antes a las 00:00:00
-
-        if (fechaCompra.getTime() === ahora.getTime()) {
-            // La fecha de compra es exactamente igual a la fecha y hora actual
-            // No se realiza ninguna acción, ya que no se permite este caso según tu descripción
-        } else if (fechaCompra > ahora) {
-            // La fecha de compra es mayor que la fecha y hora actual
-            input.addClass('is-invalid');
-            spanError.text('La fecha de compra no puede ser mayor que la fecha y hora actual.');
-        } else if (fechaCompra < dosDiasAntes) {
-            // La fecha de compra es menor que 20 días antes de la fecha de hoy
-            input.addClass('is-invalid');
-            spanError.text('La fecha de compra no puede ser más de 20 días antes de la fecha actual.');
-        } else if (fechaCompra.getFullYear().toString().length !== 4) {
-            spanError.text('El año no debe tener mas de 4 caracteres.');
-            input.addClass('is-invalid');
-        }
-    }   
-    if (input.is('#NumeroFactura')) {
-        if (valor.length < 2) {
-            input.addClass('is-invalid');
-            spanError.text('El número de factura debe tener al menos 2 caracteres.');
-        } 
-    }
-    if (input.is('#ProductoId')) {
-        if (valor === "") {
-            $('#ProductoIdHidden').val('');
-            $('#CantidadPorPresentacionHidden').val('');
-        }
-    }   
-    if (input.is('#FechaVencimiento')) {
-        var fechaVencimiento = new Date(valor);
-        var ahora = new Date(); // Fecha actual con hora
-        if (fechaVencimiento.getTime() === ahora.getTime()) {
-            // La fecha de compra es exactamente igual a la fecha y hora actual
-            // No se realiza ninguna acción, ya que no se permite este caso según tu descripción
-        } else if (fechaVencimiento < ahora) {
-            // La fecha de compra es mayor que la fecha y hora actual
-            input.addClass('is-invalid');
-            spanError.text('La fecha de vencimiento no puede ser menor que la fecha actual.');
-        }else if (fechaVencimiento.getFullYear().toString().length !== 4) {
-            spanError.text('El año no debe tener mas de 4 caracteres.');
-            input.addClass('is-invalid');
-        } else {
-            // La fecha de compra es válida
-        }
-    }
-    if (input.is('#NumeroLote')) {
-        if (valor.length < 2) {
-            input.addClass('is-invalid');
-            spanError.text('El número de lote debe tener al menos 2 caracteres.');
-        }
-    }
-    if (input.is('#UnidadId')) {
-        if (valor === "") {
-            $('#UnidadIdHidden').val('');
-            $('#CantidadPorUnidad').val('');
-        }
-    }
- 
-
-
-    if (input.is('#PrecioDeVentaUnitario')) {
-        if (valor != '') {
-            spanDanger.text('');
-        } else {
-            spanDanger.text('Validar campo no vacio');
-        }    
-    }
-}
-
-// Controlador de eventos para campos de entrada al hacer input en ellos 
-$('#NumeroFactura, #ProveedorId, #FechaCompra, #ProductoId, #FechaVencimiento, #NumeroLote, #UnidadId, #PrecioDeCompra, #PorcentajeGanancia, #PrecioDeVentaPorUnidad, #PrecioDeVentaxUnidadPresentacion, #PrecioDeVentaUnitario'  ).on('input', function () {
-    var input = $(this);
-    var campo = input.attr('id'); // Obtener el id del input actual como nombre de campo
-    validarCampoCompras(input, campo);
-});
-
 // Función para llenar correcgtamente la compra antes agregar productos a la compra
     function agregarProductos() {
         // Obtener los valores de los campos del formulario
@@ -348,7 +102,7 @@ $('#NumeroFactura, #ProveedorId, #FechaCompra, #ProductoId, #FechaVencimiento, #
         var numeroFactura = document.getElementById('NumeroFactura').value;
         var fechaCompra = document.getElementById('FechaCompra').value;
         var MensajaInicial = document.getElementById('MensajeInicial');
-
+        var botonAgregar = document.getElementById('agregarDetalle');
         var mensajes = document.querySelectorAll('.Mensaje');
         var inputs = document.querySelectorAll('.inputs');
        
@@ -358,7 +112,6 @@ $('#NumeroFactura, #ProveedorId, #FechaCompra, #ProductoId, #FechaVencimiento, #
             var mensaje = mensajes[i];
             if (mensaje.textContent.trim().length > 0) {
                 MensajaInicial.innerText = 'Completa correctamente todos los campos con *.';
-                MensajaInicial.style.display = 'block';
                 return; // Terminar la función si hay mensajes con contenido
             } 
         }
@@ -366,7 +119,6 @@ $('#NumeroFactura, #ProveedorId, #FechaCompra, #ProductoId, #FechaVencimiento, #
             var campo = inputs[i];
             if (campo.classList.contains('is-invalid')) {
                 MensajaInicial.innerText = 'Completa correctamente todos los campos.';
-                MensajaInicial.style.display = 'block';
                 return; // Terminar la función si hay algún campo inválido
             } else if(proveedorId === '') {
                 $('#ProveedorIdHidden').val(''); // Limpiar el valor del campo ProveedorIdHidden
@@ -380,26 +132,16 @@ $('#NumeroFactura, #ProveedorId, #FechaCompra, #ProductoId, #FechaVencimiento, #
         compra.proveedorId = proveedorId;
         compra.numeroFactura = numeroFactura;
         compra.fechaCompra = fechaCompra;
-
-        // Mostrar y ocultar elementos según sea necesario
-        document.getElementById('DetallesCompra').style.display = 'block';
-        document.getElementById('verCompra').style.display = 'block';
-        document.getElementById('MensajeInicial').style.display = 'none';
-        document.getElementById('PrincipalCompra').style.display = 'none';
-        document.getElementById('agregarDetalle').style.display = 'none';
-        document.getElementById('expandir').style.display = 'inline-block';
-        document.getElementById('expandir').style.visibility = 'visible';
-
-        document.getElementById('tituloCompra').style.visibility = 'hidden';
-        document.getElementById('subtituloCompra').style.visibility = 'visible';
-        document.getElementById('tituloCompra').style.display = 'none';
-        document.getElementById('subtituloCompra').style.display = 'block';
+        botonAgregar.classList.add('noBe'); // Remover clase is-invalid
+        $('#ModalDetallesCompra').modal('show');
+        $('#ModalCompra').modal('hide');
+       
     }
 
 
 // Función para agregar un detalle de compra al objeto principal
 function agregarDetalleCompraend(objeto) {
-    nombreProducto = document.getElementById('ProductoId').value;
+    nombreProducto = document.getElementById('NombreProducto').value;
     var detalleCompra = {
         productoId: objeto.productoId,
         unidadId: objeto.unidadId,
@@ -422,7 +164,6 @@ function agregarDetalleCompraend(objeto) {
 
     detalleCompra.lotes.push(nuevoLote);
     compra.detallecompras.push(detalleCompra);
-    console.log('Optimizado');
     LimpiarFormulario();
     agregarFilaDetalle(detalleCompra); // Llama a la función para agregar la fila de detalle a la tabla
 }
@@ -438,7 +179,7 @@ function agregarDetalleCompra() {
 
     // Validar los campos obligatorios y las condiciones necesarias antes de agregar el detalle de compra
     if (productoId != verificarProducto) {
-        mostrarAlerta2('¡Atención! Parece que has modificado el campo de producto. Por favor, asegúrate de realizar de nuevo el cálculo.');
+        mostrarAlertaAtencionPersonalizadaConBoton('¡Atención! Parece que has modificado el campo de producto. Por favor, asegúrate de realizar de nuevo el cálculo.');
         noVerCalculo();
         return;
     }
@@ -473,13 +214,13 @@ function agregarDetalleCompra() {
     }
     var diferencia = Math.abs(precioCompra - (precioCompraUnidad * cantidad));
     if (diferencia > 10) {
-        mostrarAlerta2('Has modificado un campo, por favor has click de nuevo en el boton calcular');
+        mostrarAlertaAtencionPersonalizadaConBoton('Has modificado un campo, por favor has click de nuevo en el boton calcular');
         noVerCalculo();
         return;
     }
     var diferenciaTwo = Math.abs(precioCompraUnidad - (precioCompraPorProducto * cantidadUnidad));
     if (diferenciaTwo > 10) {
-        mostrarAlerta2('¡Atención! Parece que has modificado el campo de unidad. Por favor, asegúrate de dar click de nuevo en  el boton de  cálcular.');
+        mostrarAlertaAtencionPersonalizadaConBoton('¡Atención! Parece que has modificado el campo de unidad. Por favor, asegúrate de dar click de nuevo en  el boton de  cálcular.');
         noVerCalculo();
         return;
     }
@@ -872,7 +613,7 @@ function agregarDetalleCompra() {
     }
 }
 
-
+/*-------------------------------------------------------------------------------------------------------------------------------------*/
 // Función para calcular y actualizar el valor total
 function actualizarValorTotal() {
     var total = 0;
@@ -1059,21 +800,12 @@ function actualizarCompra() {
         compra.numeroFactura = numeroFactura;
         compra.fechaCompra = fechaCompra;
 
-        MostrarAlertaExito('Compra actualizada');
-        noVerCompra();
+        alert('Compra actualizada');
+        $('#ModalCompra').modal('hide');
+        $('#ModalDetallesCompra').modal('show');
     }
 }
-function verTabla() {
-    document.getElementById('expandirTabla').style.display = 'none';
-    document.getElementById('minimizarTabla').style.display = 'block';
-    document.getElementById('minimizarTabla').style.visibility = 'visible';
-    document.getElementById('TablaDetalles').style.display = 'flex';
-}
-function minimizarTabla() {
-    document.getElementById('TablaDetalles').style.display = 'none';
-    document.getElementById('expandirTabla').style.display = 'block';
-    document.getElementById('minimizarTabla').style.display = 'none';
-}
+
 function volverARegistrarCompra()    {
     document.getElementById('tituloModal').style.display = 'block';
     document.getElementById('subTituloModal').style.display = 'none';
@@ -1086,9 +818,9 @@ function volverARegistrarCompra()    {
     document.getElementById('CompraId').value = '';
     document.getElementById('NumeroFactura').value = '';
     document.getElementById('NumeroLote').value = '';
-    document.getElementById('ProveedorId').value = '';
-    document.getElementById('ProductoId').value = '';
-    document.getElementById('UnidadId').value = '';
+    document.getElementById('NombreProveedor').value = '';
+    document.getElementById('NombreProducto').value = '';
+    document.getElementById('NombreUnidad').value = '';
     document.getElementById('Cantidad').value = 1;
     document.getElementById('PrecioDeCompra').value = '';
     document.getElementById('PorcentajeGanancia').value = '';
@@ -1126,17 +858,11 @@ function reiniciarCompra() {
     location.reload();
 }
 function verCompra() {
-    document.getElementById('agregarDetalle').style.display = 'none';
-    document.getElementById('PrincipalCompra').style.display = 'block';
-    document.getElementById('DetallesCompra').style.display = 'block';
-    document.getElementById('verCompra').style.display = 'block';
-    document.getElementById('reducir').style.display = 'inline-block';
-    document.getElementById('reducir').style.visibility = 'visible';
-    document.getElementById('expandir').style.display = 'none';
-    document.getElementById('expandir').style.visibility = 'hidden';
-    document.getElementById('actualizarCompra').style.visibility = 'visible';
-    document.getElementById('actualizarCompra').style.display = 'flex';
-    
+    var opcionesCambiarDatosCompra = document.getElementById('opcinesCambiarDatosCompra');
+    opcionesCambiarDatosCompra.classList.remove('noSee'); // Remover clase is-invalid
+    $('#ModalCompra').modal('show');
+    $('#ModalDetallesCompra').modal('hide');
+  
 }
 function noVerDetalle() {
     document.getElementById('agregarDetalle').style.display = 'none';
@@ -1163,12 +889,9 @@ function noVerCalculo() {
     document.getElementById('PrecioBuy').style.display = 'none';
 }
 
-function noVerCompra() {
-    document.getElementById('PrincipalCompra').style.display = 'none';
-    document.getElementById('reducir').style.display = 'none';
-    document.getElementById('reducir').style.visibility = 'hidden';
-    document.getElementById('expandir').style.display = 'inline-block';
-    document.getElementById('expandir').style.visibility = 'visible'; 
+function noVerDatosCompra() {
+    $('#ModalCompra').modal('hide');
+    $('#ModalDetallesCompra').modal('show');
 }
 function cambioFechaVencimiento() {
     const checkboxNoVencimiento = document.getElementById('checkboxNoVencimiento');
@@ -1178,23 +901,26 @@ function cambioFechaVencimiento() {
     const spanMensajeNoFecha = document.querySelector('.col-3 .Mensaje');
     const spanText = document.querySelector('span#spanFechaVencimiento.text-danger');
 
-
     checkboxNoVencimiento.addEventListener('change', () => {
         if (checkboxNoVencimiento.checked) {
             fechaVencimiento.style.display = 'none'; // Ocultar la fecha de vencimiento
             fechaVencimientoNunca.style.display = 'block'; // Mostrar el texto "Producto no perecedero"
             labelFechaVencimiento.textContent = 'Aplica click';
             fechaVencimiento.value = ''; // Asignar un valor vacío por defecto
-            spanMensajeNoFecha.textContent = ''; // Cambia el contenido del span a vacío
-            spanText.style.display = 'none'; 
-            spanText.textContent = '';
-
+            if (spanMensajeNoFecha) {
+                spanMensajeNoFecha.textContent = ''; // Cambia el contenido del span a vacío
+            }
+            if (spanText) {
+                spanText.textContent = '';
+            }
         } else {
             fechaVencimiento.style.display = 'block'; // Mostrar la fecha de vencimiento
-            labelFechaVencimiento.textContent = 'No aplica click';
             fechaVencimientoNunca.style.display = 'none'; // Ocultar el texto "Producto no perecedero"
-            spanMensajeNoFecha.textContent = '*';
-            spanText.style.display = 'block'; 
+            fechaVencimiento.classList.remove('is-invalid'); // Remover clase is-invalid
+            labelFechaVencimiento.textContent = 'No aplica click';
+            if (spanMensajeNoFecha) {
+                spanMensajeNoFecha.textContent = '*'; // Cambia el contenido del span a '*'
+            }
         }
     });
 }
@@ -1268,15 +994,8 @@ document.addEventListener   ("DOMContentLoaded", function () {
     btnMas.addEventListener('click', incrementarCantidad);
     btnMenos.addEventListener('click', decrementarCantidad);
 
-    // Evitar que se ingrese texto manualmente en el input
-    // Agregar un evento de entrada al campo de cantidad
+    
     inputCantidad.addEventListener('input', function () {
-        //// Eliminar cualquier carácter que no sea número, incluido el cero inicial
-        //this.value = this.value.replace(/[^\d]/g, '');
-        //// Verificar si el valor es cero y reemplazarlo por uno si es necesario
-        //if (parseInt(this.value, 10) === 0 || this.value === '') {
-        //    this.value = '1';
-        //}
         formatoNumeroINT(this);
     });
 
@@ -1332,26 +1051,26 @@ document.addEventListener   ("DOMContentLoaded", function () {
             input.value = selectedOptionByName.value;
             hiddenInput.value = selectedOptionByName.getAttribute('data-id');
 
-            // Verificar si es el campo ProductoId y el resto del código...
+            // Verificar si es el campo NombreProducto y el resto del código...
         } else if (selectedOptionById) {
             // Si se ingresó un ID en el campo de entrada, mostrar el nombre correspondiente y enviar el ID al input hidden
             input.value = selectedOptionById.value;
             hiddenInput.value = selectedOptionById.getAttribute('data-id');
 
-            // Verificar si es el campo ProductoId y el resto del código...
+            // Verificar si es el campo NombreProducto y el resto del código...
         }
         if (selectedOptionByName) {
             // Si se seleccionó un nombre del datalist, mostrar el nombre y enviar el data-id al input hidden
             input.value = selectedOptionByName.value;
             hiddenInput.value = selectedOptionByName.getAttribute('data-id');
 
-            // Verificar si es el campo ProductoId
-            if (input.id === 'ProductoId') {
-                document.getElementById('ProductoId').value = selectedOptionByName.value;
+            // Verificar si es el campo NombreProducto
+            if (input.id === 'NombreProducto') {
+                document.getElementById('NombreProducto').value = selectedOptionByName.value;
                 document.getElementById('CantidadPorPresentacionHidden').value = selectedOptionByName.getAttribute('data-cantidad') || '';
             }
-            // Verificar si es el campo UnidadId
-            if (input.id === 'UnidadId') {
+            // Verificar si es el campo NombreUnidad
+            if (input.id === 'NombreUnidad') {
                 document.getElementById('CantidadPorUnidad').value = selectedOptionByName.getAttribute('data-cantidad') || '';
             }
         } else if (selectedOptionById) {
@@ -1359,13 +1078,13 @@ document.addEventListener   ("DOMContentLoaded", function () {
             input.value = selectedOptionById.value;
             hiddenInput.value = selectedOptionById.getAttribute('data-id');
 
-            // Verificar si es el campo ProductoId
-            if (input.id === 'ProductoId') {
-                document.getElementById('ProductoId').value = selectedOptionById.value;
+            // Verificar si es el campo NombreProducto
+            if (input.id === 'NombreProducto') {
+                document.getElementById('NombreProducto').value = selectedOptionById.value;
                 document.getElementById('CantidadPorPresentacionHidden').value = selectedOptionById.getAttribute('data-cantidad') || '';
             }
-            // Verificar si es el campo UnidadId
-            if (input.id === 'UnidadId') {
+            // Verificar si es el campo NombreUnidad
+            if (input.id === 'NombreUnidad') {
                 document.getElementById('CantidadPorUnidad').value = selectedOptionById.getAttribute('data-cantidad') || '';
             }
         }
@@ -1374,32 +1093,42 @@ document.addEventListener   ("DOMContentLoaded", function () {
 
 
 
-    // Asignar función de selección a los campos ProveedorId, ProductoId y UnidadId
-    document.getElementById('ProveedorId').addEventListener('input', function () {
-        clearTimeout(timeout);
+    // Asignar función de selección a los campos NombreProveedor, NombreProducto y NombreUnidad
+    document.getElementById('NombreProveedor').addEventListener('input', function () {
+        if (this.value.length > 5) {
+            clearTimeout(timeout);
+            seleccionarOpcionCompra(this, document.getElementById('proveedores'), document.getElementById('ProveedorIdHidden'), 'proveedor');
+        }else {
         timeout = setTimeout(() => {
             seleccionarOpcionCompra(this, document.getElementById('proveedores'), document.getElementById('ProveedorIdHidden'), 'proveedor');
-         }, 700); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
-    });
-
-    document.getElementById('ProductoId').addEventListener('input', function () {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            seleccionarOpcionCompra(this, document.getElementById('productos'), document.getElementById('ProductoIdHidden'), 'Producto');
         }, 700); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
-    });
-
-    document.getElementById('UnidadId').addEventListener('input', function () {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            seleccionarOpcionCompra(this, document.getElementById('unidades'), document.getElementById('UnidadIdHidden'), 'Unidad');
-        }, 700); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
-    });
-
-    
-
-
+        }
         
+    });
+   
+    document.getElementById('NombreProducto').addEventListener('input', function () {
+        if (this.value.length > 5) {
+            clearTimeout(timeout);
+            seleccionarOpcionCompra(this, document.getElementById('productos'), document.getElementById('ProductoIdHidden'), 'Producto');
+        } else {
+            timeout = setTimeout(() => {
+                seleccionarOpcionCompra(this, document.getElementById('productos'), document.getElementById('ProductoIdHidden'), 'Producto');
+            }, 700); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
+        }
+    });
+
+    document.getElementById('NombreUnidad').addEventListener('input', function () {
+        if (this.value.length > 5) {
+            clearTimeout(timeout);
+            seleccionarOpcionCompra(this, document.getElementById('unidades'), document.getElementById('UnidadIdHidden'), 'Unidad');
+        } else {
+            timeout = setTimeout(() => {
+                seleccionarOpcionCompra(this, document.getElementById('unidades'), document.getElementById('UnidadIdHidden'), 'Unidad');
+            }, 700); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
+        }
+    });
+
+
 
     // Agregar un evento de clic al botón "Calcular"
     document.getElementById('btnCalcular').addEventListener('click', () => {
@@ -1413,9 +1142,12 @@ document.addEventListener   ("DOMContentLoaded", function () {
         const unidad = document.getElementById('CantidadPorUnidad').value;
         const cantidadPorPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
 
-        const producto = document.getElementById('ProductoId').value;
+        const producto = document.getElementById('NombreProducto').value;
         const unidadId = document.getElementById('UnidadIdHidden').value;
-
+        const datalist = [
+            { id: 'UnidadIdHidden', nombre: 'Unidad' },
+            { id: 'ProductoIdHidden', nombre: 'Producto' },
+        ];
         // Verificar si los campos requeridos están completos
         if (
             precioCompraConPuntos === '' ||
@@ -1439,33 +1171,16 @@ document.addEventListener   ("DOMContentLoaded", function () {
                                     : ''
             );
             return;
-        } else if (productoId === '') {
-            mostrarAlertaCampoVacioPersonalizada(
-                '<p style="margin: 0;">Recuerda que debes seleccionar el producto dando click en la opción que deseas</p>' +
-                '<div class="text-center" style="margin: 0; padding: 0;">' +
-                '<p style="margin: 0;">O</p>' +
-                '</div>' +
-                '<p style="margin: 0;">En su defecto, escribir el ID del producto</p>'
-            );
-            noVerCalculo();
-            return;
-        } else if (unidad === '') {
-            mostrarAlertaCampoVacioPersonalizada(
-                '<p style="margin: 0;">Recuerda que debes seleccionar la unidad o empaque dando click en la opción que deseas</p>' +
-                '<div class="text-center" style="margin: 0; padding: 0;">' +
-                '<p style="margin: 0;">O</p>' +
-                '</div>' +
-                '<p style="margin: 0;">En su defecto, escribir el ID</p>'
-            );
-            noVerCalculo();
+        } 
+        if (!verificarCamposDataList(datalist)) {
+            event.preventDefault();
             return;
         }
-
         const precioCompra = parseFloat(precioCompraConPuntos.replace(/\./g, ''));
         const porcentajeAGanar = parseFloat(porcentajeAGanarConPuntos.replace(/\./g, ''));
 
         if (isNaN(precioCompra) || isNaN(porcentajeAGanar)) {
-            mostrarAlerta2('El precio de compra y el porcentaje a ganar deben ser números válidos.');
+            mostrarAlertaAtencionPersonalizadaConBoton('El precio de compra y el porcentaje a ganar deben ser números válidos.');
             noVerCalculo();
             return;
         }
@@ -1495,7 +1210,7 @@ document.addEventListener   ("DOMContentLoaded", function () {
 
         // Mostrar los resultados en los campos correspondientes
         if (precioPorUnidadIndividualSinPuntos < 100) {
-            mostrarAlerta2('El precio de compra es demasiado bajo');
+            mostrarAlertaAtencionPersonalizadaConBoton('El precio de compra es demasiado bajo');
             noVerCalculo();
             return;
         }
@@ -1514,7 +1229,6 @@ document.addEventListener   ("DOMContentLoaded", function () {
         for (var i = mensajes.length - 3; i < mensajes.length; i++) {
             var mensaje = mensajes[i];
             mensaje.textContent = ''; // Restaurar mensajes de error
-            mensaje.style.display = 'flex'; // Establecer estilo si es necesario
         }
         verCalculo();
 
@@ -1539,8 +1253,249 @@ document.addEventListener   ("DOMContentLoaded", function () {
 
         document.getElementById('PrecioDeVentaxUnidadPresentacion').value = precioUnitarioPorPresentacion;
     });
+
     document.getElementById('checkboxNoVencimiento').addEventListener('click', cambioFechaVencimiento);
 
         
 });
+
+
+
+
+
+
+/*LIMPIADORES */
+// Se uas para eliminar todos los detalles de la tabla en la venta modal
+function eliminarTodosLosDetalles() {
+    var filasDetalles = document.querySelectorAll('#tablaDetalles tbody tr');
+
+    // Iterar sobre todas las filas de detalles y eliminarlas una por una
+    filasDetalles.forEach(function (fila) {
+        var botonEliminar = fila.querySelector('.btnEliminar');
+        eliminarFilaDetalle(botonEliminar); // Llamar a la función eliminarFilaDetalle para cada fila
+    });
+}
+// Función para limpiar el formulario
+function LimpiarFormulario() {
+    // Limpiar los valores de los campos del formulario
+    document.getElementById('NombreProducto').value = '';
+    document.getElementById('ProductoIdHidden').value = '';
+    document.getElementById('UnidadIdHidden').value = '';
+    document.getElementById('CantidadPorUnidad').value = '';
+    document.getElementById('CantidadPorPresentacionHidden').value = 1;
+    document.getElementById('PrecioDeCompra').value = '';
+    document.getElementById('PrecioDeCompraPorPresentacion').value = '';
+    document.getElementById('PrecioDeCompraUnitario').value = '';
+    document.getElementById('FechaVencimiento').value = '';
+    document.getElementById('PrecioDeVentaUnitario').value = '';
+    document.getElementById('PrecioDeVentaxUnidadPresentacion').value = '';
+    document.getElementById('PrecioDeCompraPorUnidad').value = '';
+    document.getElementById('PorcentajeGanancia').value = '';
+    document.getElementById('NumeroLote').value = '';
+    document.getElementById('PorcentajeGanancia').value = '';
+    document.getElementById('PorcentajeGanancia').value = '';
+    document.getElementById('checkboxNoVencimiento').checked = false;
+    document.getElementById('modal-header-botonAgregarDetalle').style.display = 'none'; 
+    const fechaVencimiento = document.getElementById('FechaVencimiento');
+    const fechaVencimientoNunca = document.getElementById('FechaVencimientoNunca');
+    const labelFechaVencimiento = document.getElementById('Vencimiento');
+    const spanMensajeNoFecha = document.querySelector('.col-4 .Mensaje');
+
+    fechaVencimiento.style.display = 'block'; // Mostrar la fecha de vencimiento
+    fechaVencimiento.value = ''; // Asignar un valor vacío por defecto
+    fechaVencimientoNunca.style.display = 'none'; // Ocultar el texto "Producto no perecedero"
+    labelFechaVencimiento.textContent = 'No Aplica:';
+    spanMensajeNoFecha.textContent = '*';
+
+    var mensajes = document.querySelectorAll('.Mensaje');
+    // Iterar sobre los mensajes, omitiendo los primeros 3 y los últimos 3
+    for (var i = 3; i < mensajes.length - 3; i++) {
+        var mensaje = mensajes[i];
+        mensaje.textContent = '*'; // Restaurar mensajes de error
+    }
+    const mensajesError = document.querySelectorAll('.text-danger');
+    mensajesError.forEach(span => {
+        span.innerText = ''; // Limpiar contenido del mensaje
+    });
+    noVerCalculo();
+}
+// Se usa para reiniciar la compra
+function limpiarFormularioTotalmente() {
+    // Eliminar todos los detalles de la tabla
+    eliminarTodosLosDetalles();
+    compra = {
+        proveedorId: 0,
+        numeroFactura: 0,
+        fechaCompra: new Date().toISOString(),
+        valorTotalCompra: 0,
+        estadoCompra: 0,
+        detallecompras: []
+    };
+    // Ocultar elementos
+    document.getElementById('PrecioBougth').style.display = 'none';
+    document.getElementById('PrecioBuy').style.display = 'none';
+    document.getElementById('TablaDetalles').style.display = 'none';
+    document.getElementById('tituloCompra').style.display = 'block';
+    document.getElementById('tituloCompra').style.visibility = 'visible';
+    document.getElementById('subtituloCompra').style.display = 'none';
+    document.getElementById('PrincipalCompra').style.display = 'block';
+    document.getElementById('agregarDetalle').style.display = 'block';
+    document.getElementById('DetallesCompra').style.display = 'none';
+    document.getElementById('actualizarCompra').style.visibility = 'hidden';
+    document.getElementById('actualizarCompra').style.display = 'none';
+    document.getElementById('verCompra').style.display = 'none';
+    // Limpiar los valores de los campos del formulario
+    document.getElementById('NombreProveedor').value = '';
+    document.getElementById('NumeroFactura').value = '';
+    document.getElementById('NombreProducto').value = '';
+    document.getElementById('NombreUnidad').value = '';
+    document.getElementById('Cantidad').value = 1;
+    document.getElementById('PrecioDeCompra').value = '';
+    document.getElementById('PrecioDeCompraPorPresentacion').value = '';
+    document.getElementById('PrecioDeCompraUnitario').value = '';
+    document.getElementById('FechaVencimiento').value = '';
+    document.getElementById('PrecioDeVentaUnitario').value = '';
+    document.getElementById('PrecioDeVentaxUnidadPresentacion').value = '';
+    document.getElementById('PrecioDeCompraPorUnidad').value = '';
+    document.getElementById('PorcentajeGanancia').value = '';
+    document.getElementById('NumeroLote').value = '';
+    document.getElementById('PorcentajeGanancia').value = '';
+    document.getElementById('checkboxNoVencimiento').checked = false;
+    const fechaVencimiento = document.getElementById('FechaVencimiento');
+    const fechaVencimientoNunca = document.getElementById('FechaVencimientoNunca');
+    const labelFechaVencimiento = document.getElementById('Vencimiento');
+    const spanMensajeNoFecha = document.querySelector('.col-4 .Mensaje');
+
+    fechaVencimiento.style.display = 'block'; // Mostrar la fecha de vencimiento
+    fechaVencimiento.value = ''; // Asignar un valor vacío por defecto
+    fechaVencimientoNunca.style.display = 'none'; // Ocultar el texto "Producto no perecedero"
+    labelFechaVencimiento.textContent = 'No Aplica:';
+    spanMensajeNoFecha.textContent = '*';
+
+    var mensajes = document.querySelectorAll('.Mensaje');
+    // Iterar sobre los mensajes, omitiendo los primeros 2 y los últimos 2
+    for (var i = 0; i < mensajes.length; i++) {
+        if (i !== 1) { // Omitir el segundo mensaje (índice 1)
+            var mensaje = mensajes[i];
+            mensaje.textContent = '*'; // Restaurar mensajes de error
+        }
+    }
+    const mensajesError = document.querySelectorAll('.text-danger');
+    mensajesError.forEach(span => {
+        span.innerText = ''; // Limpiar contenido del mensaje
+    });
+
+
+}
+
+
+
+
+
+/*Validaciones */
+function validarCampoCompras(input, campo) {
+    var valor = input.val().trim();
+    var spanError = input.next('.text-danger');
+    var labelForCampo = $('label[for="' + campo + '"]');
+    var spanVacio = labelForCampo.find('.Mensaje');
+    var spanDanger = input.closest('.col-4').find('span#spanErmitanio.text-danger');
+    spanError.text('');
+    spanVacio.text('');
+    if (valor != '') {
+        spanError.text(''); // Se corrigió aquí para limpiar el texto de error
+        input.removeClass('is-invalid');
+    } else if (valor === "" && input.attr('id') !== "PorcentajeGanancia") {
+        input.addClass('is-invalid');
+        spanVacio.text('*');
+    }
+    if (input.is('#NombreProveedor')) {
+        if (valor === "") {
+            $('#ProveedorIdHidden').val(''); // Vacía el valor del campo oculto
+        }
+    }
+    if (input.is('#FechaCompra')) {
+        var fechaCompra = new Date(valor);
+        var ahora = new Date(); // Fecha actual con hora
+        var hoy = new Date();
+        hoy.setHours(0, 0, 0, 0); // Establecer la hora de hoy a las 00:00:00
+        var dosDiasAntes = new Date();
+        dosDiasAntes.setDate(hoy.getDate() - 20); // Restar 20 días a la fecha de hoy
+        dosDiasAntes.setHours(0, 0, 0, 0); // Establecer la hora de dos días antes a las 00:00:00
+
+        if (fechaCompra.getTime() === ahora.getTime()) {
+            // La fecha de compra es exactamente igual a la fecha y hora actual
+            // No se realiza ninguna acción, ya que no se permite este caso según tu descripción
+        } else if (fechaCompra > ahora) {
+            // La fecha de compra es mayor que la fecha y hora actual
+            input.addClass('is-invalid');
+            spanError.text('La fecha de compra no puede ser mayor que la fecha y hora actual.');
+        } else if (fechaCompra < dosDiasAntes) {
+            // La fecha de compra es menor que 20 días antes de la fecha de hoy
+            input.addClass('is-invalid');
+            spanError.text('La fecha de compra no puede ser más de 20 días antes de la fecha actual.');
+        } else if (fechaCompra.getFullYear().toString().length !== 4) {
+            spanError.text('El año no debe tener mas de 4 caracteres.');
+            input.addClass('is-invalid');
+        }
+    }
+    if (input.is('#NumeroFactura')) {
+        if (valor.length < 2) {
+            input.addClass('is-invalid');
+            spanError.text('El número de factura debe tener al menos 2 caracteres.');
+        }
+    }
+    if (input.is('#NombreProducto')) {
+        if (valor === "") {
+            $('#ProductoIdHidden').val('');
+            $('#CantidadPorPresentacionHidden').val('');
+        }
+    }
+    if (input.is('#FechaVencimiento')) {
+        var fechaVencimiento = new Date(valor);
+        var ahora = new Date(); // Fecha actual con hora
+        if (fechaVencimiento.getTime() === ahora.getTime()) {
+            // La fecha de compra es exactamente igual a la fecha y hora actual
+            // No se realiza ninguna acción, ya que no se permite este caso según tu descripción
+        } else if (fechaVencimiento < ahora) {
+            // La fecha de compra es mayor que la fecha y hora actual
+            input.addClass('is-invalid');
+            spanError.text('La fecha de vencimiento no puede ser menor que la fecha actual.');
+        } else if (fechaVencimiento.getFullYear().toString().length !== 4) {
+            spanError.text('El año no debe tener mas de 4 caracteres.');
+            input.addClass('is-invalid');
+        } else {
+            // La fecha de compra es válida
+        }
+    }
+    if (input.is('#NumeroLote')) {
+        if (valor.length < 2) {
+            input.addClass('is-invalid');
+            spanError.text('El número de lote debe tener al menos 2 caracteres.');
+        }
+    }
+    if (input.is('#NombreUnidad')) {
+        if (valor === "") {
+            $('#UnidadIdHidden').val('');
+            $('#CantidadPorUnidad').val('');
+        }
+    }
+
+
+
+    if (input.is('#PrecioDeVentaUnitario')) {
+        if (valor != '') {
+            spanDanger.text('');
+        } else {
+            spanDanger.text('Validar campo no vacio');
+        }
+    }
+}
+
+// Controlador de eventos para campos de entrada al hacer input en ellos 
+$('#NumeroFactura, #NombreProveedor, #FechaCompra, #NombreProducto, #FechaVencimiento, #NumeroLote, #NombreUnidad, #PrecioDeCompra, #PorcentajeGanancia, #PrecioDeVentaPorUnidad, #PrecioDeVentaxUnidadPresentacion, #PrecioDeVentaUnitario').on('input', function () {
+    var input = $(this);
+    var campo = input.attr('id'); // Obtener el id del input actual como nombre de campo
+    validarCampoCompras(input, campo);
+});
+
 

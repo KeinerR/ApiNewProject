@@ -11,7 +11,7 @@ namespace VistaNewProject.Controllers
         {
             _client = client;
         }
-        public async Task<IActionResult> Index(int? page)
+        public async Task<IActionResult> Index(int? page , string order = "default")
         {
             int pageSize = 5;
             int pageNumber = page ?? 1;
@@ -20,36 +20,35 @@ namespace VistaNewProject.Controllers
             var proveedores = await _client.GetProveedorAsync();
             var unidades = await _client.GetUnidadAsync();
             var marcas = await _client.GetMarcaAsync();
-            var productos = await _client.GetProductoAsync();
+            var productos = await _client.GetAllDatosProductosAsync();
             var presentaciones = await _client.GetPresentacionAsync();
 
+            compras = compras.Reverse();
+            compras = compras.OrderByDescending(c => c.EstadoCompra == 1).ToList();
+
+            switch (order.ToLower())
+            {
+                case "first":
+                    compras = compras.Reverse();
+                    compras = compras.OrderByDescending(c => c.EstadoCompra == 1).ToList();
+                    break;
+                case "alfabetico":
+                    compras = compras.OrderBy(p => p.NumeroFactura).ToList();
+                    compras = compras.OrderByDescending(c => c.EstadoCompra == 1).ToList();
+                    break;
+                case "name_desc":
+                    compras = compras.OrderByDescending(p => p.NumeroFactura).ToList();
+                    compras = compras.OrderByDescending(c => c.EstadoCompra == 1).ToList();
+                    break;
+                default:
+                    compras = compras.OrderByDescending(c => c.EstadoCompra == 1).ToList();
+                    break;
+            }
             if (compras == null)
             {
                 return NotFound("error");
             }
-
-            // Concatenar nombre DEL PRODUCTO controlador
-            foreach (var producto in productos)
-            {
-                var presentacionEncontrada = presentaciones.FirstOrDefault(p => p.PresentacionId == producto.PresentacionId);
-                var nombrePresentacion = presentacionEncontrada != null ? presentacionEncontrada.NombrePresentacion : "Sin presentación";
-                var contenido = presentacionEncontrada != null ? presentacionEncontrada.Contenido : "";
-                int cantidad = presentacionEncontrada != null ? presentacionEncontrada.CantidadPorPresentacion ?? 0 : 0;
-
-                var marcaEncontrada = marcas.FirstOrDefault(m => m.MarcaId == producto.MarcaId);
-                var nombreMarca = marcaEncontrada != null ? marcaEncontrada.NombreMarca : "Sin marca";
-
-                producto.NombreCompletoProducto = $"{producto.NombreProducto} {nombreMarca} {nombrePresentacion} de {contenido}";
-
-                if (cantidad > 1)
-                {
-                    producto.NombreCompletoProducto += $" {cantidad} x unidades";
-                }
-                producto.CantidadPorPresentacion = cantidad;
-            }
-           
-           
-
+ 
             var pageCompra = await compras.ToPagedListAsync(pageNumber, pageSize);
             if (!pageCompra.Any() && pageCompra.PageNumber > 1)
             {
@@ -58,6 +57,8 @@ namespace VistaNewProject.Controllers
 
             int contador = (pageNumber - 1) * pageSize + 1;
             ViewBag.Contador = contador;
+            ViewData["Compras"] = compras;
+            ViewBag.Order = order; // Pasar el criterio de orden a la vista
             ViewBag.Proveedores = proveedores;
             ViewBag.Marcas = marcas;
             ViewBag.Unidades = unidades;

@@ -84,7 +84,6 @@
 .GeneralModal .form-group {
     position: relative; /* Posicionamiento relativo para que el span absoluto se base en este contenedor */
 }
-
 .GeneralModal .Mensaje {
     position: absolute; /* Posiciona el asterisco de forma absoluta dentro del contenedor relativo */
     top: -1px; /* Centra verticalmente*/
@@ -99,7 +98,11 @@
     font-size: 1.5em;
     color: red;
 }
-
+.GeneralModal .Mensaje:hover {
+        color: blue;
+        transform: translateY(-3px); /* Mover el elemento hacia arriba 1px al colocar el cursor sobre él */
+        cursor: pointer;
+    }
 /*-----------FOOTER  M0DAL---------------------------------------------------------*/
 .modal-contenedor-footer {
     margin-top:20px;
