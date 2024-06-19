@@ -60,41 +60,53 @@
             <span asp-validation-for="PedidoId" class="text-danger"></span>
         </div>
 
+         <div class="row">
+
+          
+
+         <fieldset>
+                <div class="col-6">
+                    <label for="busqueda">Filtrar Productos:</label>
+                    <input class="form-control" type="text" id="busqueda" name="busqueda" placeholder="Buscar Productos" oninput="filtrarProductos(this.value)" />
+                </div>
+
+
+                @* <div class="col-md-6">
+                <div class="form-group">
+                <label for="NombreCliente" class="control-label">Cliente</label>
+                <input list="clientes" id="Clientes" name="cliente" class="form-control" placeholder="Escribe y/o selecciona..." autocomplete="off" />
+                <datalist id="clientes">
+                <!-- Opciones de productos se llenarán dinámicamente aquí -->
+                </datalist>
+                <input id="ClinteHiden" type="hidden" name="clienteId">
+                <span id="clienteerror" class="text-danger"></span>
+                </div>
+                </div> *@
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="NombreCliente" class="control-label">Cliente</label>
+                        <input list="clientes" id="Clientes" name="cliente" class="form-control" placeholder="Escribe y/o selecciona..." autocomplete="off" />
+                        <datalist id="clientes">
+                            @foreach (var item in ViewBag.Producto)
+                                if (item.Estado != 0)
+                                {
+                                    <option value="@item.NombreProducto" data-id="@item.ProductoId">@item.NombreProducto</option>
+                                }
+                        </datalist>
+                        <input id="ClinteHiden" type="" name="clienteId">
+                        <span id="clienteerror" class="text-danger"></span>
+                    </div>
+                </div>
+        </div>
+
+         </fieldset>
+
         <div class="row">
             <!-- Campo de búsqueda único -->
-            <div class="col-6">
-                <label for="busqueda">Filtrar Productos:</label>
-                <input class="form-control" type="text" id="busqueda" name="busqueda" placeholder="Buscar Productos" oninput="filtrarProductos(this.value)" />
-            </div>
+           
 
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="NombreCliente" class="control-label">Cliente</label>
-                    <input list="clientes" id="Clientes" name="cliente" class="form-control" placeholder="Escribe y/o selecciona..." autocomplete="off" />
-                    <datalist id="clientes">
-                        <!-- Opciones de productos se llenarán dinámicamente aquí -->
-                    </datalist>
-                    <input id="ClinteHiden" type="hidden" name="clienteId">
-                    <span id="clienteerror" class="text-danger"></span>
-                </div>
-            </div>
-
-            @* <div class="col-md-6">
-                <div class="form-group">
-                    <label for="NombreCliente" class="control-label">Cliente</label>
-                    <input list="clientes" id="Clientes" name="cliente" class="form-control" placeholder="Escribe y/o selecciona..." autocomplete="off" />
-                    <datalist id="clientes">
-                        @foreach (var item in ViewBag.Producto)
-                            if (item.Estado != 0)
-                            {
-                                <option value="@item.NombreProducto" data-id="@item.ProductoId">@item.NombreProducto</option>
-                            }
-                    </datalist>
-                    <input id="ClinteHiden" type="" name="clienteId">
-                    <span id="clienteerror" class="text-danger"></span>
-                </div>
-            </div> *@
-            <div class="">
+            
+            <div class=" d-none">
                 <label asp-for="LoteId" class="control-label"></label>
                 <input asp-for="LoteId" name="LoteId" id="LoteId" readonly class="form-control" list="LoteList" />
                 <datalist id="LoteList">
@@ -118,7 +130,7 @@
                 <input type="hidden" class="form-control" id="PrecioUnitariohidden" readonly>
                 <input type="hidden" class="form-control" id="PrecioUnitariohiddenpormayor" readonly>
                 <input type="hidden" class="form-control" id="PrecioUnitariohiddenpormayordescuento" readonly>
-                <input class="form-control" id="PrecioEnviar" >
+                <input class="form-control" id="PrecioEnviar" readonly >
 
 
 
@@ -129,7 +141,7 @@
             <div class="col-4">
                 <label asp-for="Cantidad" class="control-label"></label>
                 <input type="number" name="Cantidad" id="CantidadTxt" class="form-control" />
-                <input type ="" id="CantidadPorUnidad" class="form-control" />
+                <input type ="hidden" id="CantidadPorUnidad" class="form-control" />
                 <input type="hidden" id="Descuento" class="form-control" />
                 <input type="hidden" id="CantidadAPlicada" class="form-control" />
 

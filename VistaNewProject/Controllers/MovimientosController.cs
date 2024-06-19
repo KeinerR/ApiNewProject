@@ -152,8 +152,8 @@ namespace VistaNewProject.Controllers
             var productosTasks = detallepedidos.Select(async detalle =>
             {
 
-                detalle.Producto = await _client.FindProductoAsync(detalle.ProductoId.Value);
-                detalle.Unidad = await _client.FindUnidadAsync(detalle.UnidadId.Value);
+                detalle.Productos = await _client.FindProductoAsync(detalle.ProductoId.Value);
+                detalle.Unidades = await _client.FindUnidadAsync(detalle.UnidadId.Value);
             });
             await Task.WhenAll(productosTasks);
 

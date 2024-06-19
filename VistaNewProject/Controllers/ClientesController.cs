@@ -290,7 +290,7 @@ namespace VistaNewProject.Controllers
             // Load client details for each pedido
             foreach (var pedido in pedidosCliente)
             {
-                pedido.Cliente = await _client.FindClienteAsync(pedido.ClienteId.Value);
+                pedido.clientes = await _client.FindClienteAsync(pedido.ClienteId.Value);
             }
 
             int pageSize = 2; // Número máximo de elementos por página

@@ -13,7 +13,7 @@ function agregarDetalle(url) {
     var detalle = {
         PedidoId: pedidoId,
         LoteId: document.getElementById("LoteId").value,
-        ProductoId: document.getElementById("ProductoId").value,
+        ProductoId: document.getElementById("ClinteHiden").value,
         Cantidad: cantidad,
         PrecioUnitario: precioUnitario,
         UnidadId: unidadId,
@@ -66,7 +66,6 @@ function enviarDetallePedido(detalle, url) {
         })
         .then((data) => {
             console.log("Detalle del pedido enviado correctamente:", data.message);
-            limpiarCampos();
         })
         .catch((error) => {
             console.error("Error al enviar el detalle del pedido al servidor:", error);
@@ -74,8 +73,16 @@ function enviarDetallePedido(detalle, url) {
 }
 
 function limpiarCampos() {
-    document.getElementById("ProductoId").value = "";
+    document.getElementById("Clientes").value = "";
     document.getElementById("CantidadTxt").value = "";
+    document.getElementById("CantidadPorUnidad").value = "";
+
+    document.getElementById("CantidadAPlicada").value = "";
+    document.getElementById("PrecioEnviar").value = "";
+
+    document.getElementById("Descuento").value = "";
+
+
     document.getElementById("PrecioUnitario").value = "";
     document.getElementById("UnidadId").value = "";
     document.getElementById("LoteId").value = "";
@@ -85,7 +92,9 @@ function limpiarCampos() {
 
     document.getElementById("ProductoIdtxt").value = ""; // Limpiar el campo de entrada de texto
     document.getElementById("ProductoId").value = ""; // Limpiar el campo oculto
+
 }
+
 
 
 
@@ -419,9 +428,13 @@ $(document).ready(function () {
 
                     if (cantidadDisponible > 0) {
                         $('#CantidadTxt').attr('placeholder', `Disponible: ${cantidadDisponible}`);
-                    } else {
+                    } if (cantidadDisponible <= 0) {
+                        $('#btnEnviar').prop('disabled', true);
                         $('#CantidadTxt').attr('placeholder', 'No hay productos disponibles');
+
+
                     }
+
 
                     // Obtener detalles de compras y unidades
                     // Obtener detalles de compras y unidades
@@ -479,11 +492,12 @@ $(document).ready(function () {
                     if (loteProximoVencimiento !== null) {
                         const precio = loteProximoVencimiento.precioPorPresentacion;
                         const preciopormayor = loteProximoVencimiento.precioPorUnidadProducto
-                        console.log("preciomayor", preciopormayor);
 
-                        $('#PrecioUnitario').val(precio);
+                        $('#PrecioUnitario').val(preciopormayor);
+                        console.log("keienr precio ", preciopormayor);
+                        console.log("keienr precio mayor ", precio)
 
-                        $('#PrecioUnitariohiddenpormayor').val(preciopormayor);
+                        $('#PrecioUnitariohiddenpormayor').val(precio);
 
 
                         $('#LoteId').val(loteProximoVencimiento.loteId);
@@ -542,25 +556,7 @@ $(document).ready(function () {
             console.log("Valor de cantidadenviar:", cantidadenviar);
 
             // Aplicar lógica según las condiciones especificadas
-            if (UnidadId === 1) {
-                // Si la unidad es 1, aplicar lógica para precioenviar basado en precio estándar
-                if (cantidadenviar > aplicadomayor) {
-                    $('#PrecioEnviar').val(precioConDescuento);
-                    console.log("Precio con descuento aplicado (unidad estándar).");
-                } else {
-                    $('#PrecioEnviar').val(precio);
-                    console.log("Precio estándar sin descuento aplicado.");
-                }
-            } else {
-                // Si la unidad no es 1, aplicar lógica para precioenviar basado en precio mayorista
-                if (cantidadenviar > aplicadomayor) {
-                    $('#PrecioEnviar').val(precioMayorConDescuento);
-                    console.log("Precio con descuento aplicado (unidad mayorista).");
-                } else {
-                    $('#PrecioEnviar').val(preciomayor);
-                    console.log("Precio mayorista sin descuento aplicado.");
-                }
-            }
+            
 
             if (isNaN(cantidadenviar)) {
                 $('#CantidadTxt').addClass('input-validation-error'); // Agregar la clase de error al campo
@@ -695,9 +691,15 @@ $(document).ready(function () {
   
 
 })
+
+
+$(document).ready(function () {
+    // Call filtrarProductos with an empty string to load all products initially
+    filtrarProductos('');
+});
+
 function buscarProductos() {
     var busqueda = $('#busqueda').val(); // Obtener el valor del campo de búsqueda
-
     console.log(busqueda);
     // Llamar a la función para filtrar productos por categoría
     filtrarProductos(busqueda);
@@ -725,8 +727,6 @@ function filtrarProductos(busqueda) {
         }
     });
 }
-
-
 
 
 function mostrarDetallesActuales() {
