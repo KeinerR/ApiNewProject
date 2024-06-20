@@ -90,7 +90,11 @@ namespace VistaNewProject.Services
         Task<Producto> FindDatosProductoAsync(int id);
         Task<HttpResponseMessage> UpdateProductoAsync(ProductoCrearYActualizar producto);
         Task<HttpResponseMessage> AddCantidadReservadaAsync(int productoId, int? cantidad);
-        Task<HttpResponseMessage> SustraerCantidadReservadaAsync(int productoId, int? cantidad);  
+        Task<HttpResponseMessage> SustraerCantidadReservadaAsync(int productoId, int? cantidad);
+        Task<HttpResponseMessage> QuitarCantidadReservada(int productoId, int? cantidad);
+        Task<HttpResponseMessage> PedidosCancelados(int PedidoId, int? cantidad);
+
+
         Task<HttpResponseMessage> AddCantidadTotalAsync(int productoId, int? cantidad);
         Task<HttpResponseMessage> SustraerCantidadTotalAsync(int productoId, int? cantidad);
         Task<HttpResponseMessage> DeleteProductoAsync(int id);

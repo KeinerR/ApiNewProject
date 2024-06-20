@@ -52,39 +52,10 @@ namespace VistaNewProject.Controllers
         {
             try
             {
-                // Obtener todos los productos
-                var productos = await _client.GetProductoAsync();
+                // Obtener los productos filtrados
+                var productos = await _client.GetProductoAsync(busqueda);
 
-                // Convertir a IQueryable para permitir la filtración
-                var query = productos.AsQueryable();
-
-                if (!string.IsNullOrEmpty(busqueda))
-                {
-                    query = query.Where(p =>
-                        (p.NombreProducto != null && p.NombreProducto.Contains(busqueda, StringComparison.OrdinalIgnoreCase)) ||
-                        (p.Categoria != null && p.Categoria.NombreCategoria != null && p.Categoria.NombreCategoria.Contains(busqueda, StringComparison.OrdinalIgnoreCase)) ||
-                        (p.Marca != null && p.Marca.NombreMarca != null && p.Marca.NombreMarca.Contains(busqueda, StringComparison.OrdinalIgnoreCase)));
-                }
-
-                // Convertir la consulta a una lista
-                var productList = await Task.Run(() => query
-                    .Select(s => new Producto
-                    {
-                        ProductoId = s.ProductoId,
-                        PresentacionId = s.PresentacionId,
-                        MarcaId = s.MarcaId,
-                        CategoriaId = s.CategoriaId,
-                        NombreProducto = s.NombreProducto,
-                        NombreCompletoProducto = s.NombreCompletoProducto,
-                        CantidadTotal = s.CantidadTotal,
-                        CantidadReservada = s.CantidadReservada,
-                        CantidadAplicarPorMayor = s.CantidadAplicarPorMayor,
-                        DescuentoAplicarPorMayor = s.DescuentoAplicarPorMayor,
-                        Estado = s.Estado
-                    })
-                    .ToList());
-
-                return Json(productList); // Devolver productos filtrados como JSON
+                return Json(productos); // Devolver productos filtrados como JSON
             }
             catch (Exception ex)
             {
@@ -237,11 +208,14 @@ namespace VistaNewProject.Controllers
                             var productoId = detalle.ProductoId.Value;
                             var producto = await _client.FindProductoAsync(productoId);
 
+
                             if (producto != null)
                             {
-                                int Id = producto.ProductoId; ;
-                                int ?cantidad = detalle.Cantidad;
-                                var actualizarCantidadReservada= await _client.SustraerCantidadReservadaAsync(Id,cantidad);
+                                int id = producto.ProductoId;
+                                int? cantidad = detalle.Cantidad;
+
+                                var actualizarCantidadReservada = await _client.SustraerCantidadReservadaAsync(id, cantidad);
+
                                 if (!actualizarCantidadReservada.IsSuccessStatusCode)
                                 {
                                     TempData["ErrorMessage"] = $"Error al actualizar el producto: {actualizarCantidadReservada.ReasonPhrase}";

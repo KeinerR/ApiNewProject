@@ -28,6 +28,7 @@ function agregarDetalle(url) {
         mostrarDetallesPedido();
         enviarDetallePedido(detalle, url);
         mostrarDetallesActuales();
+        limpiarCampos()
     }
 }
 
@@ -90,8 +91,7 @@ function limpiarCampos() {
     document.getElementById("CantidadTxt").placeholder = "Ingrese cantidad";
     document.getElementById("unidadHidden").value = "";
 
-    document.getElementById("ProductoIdtxt").value = ""; // Limpiar el campo de entrada de texto
-    document.getElementById("ProductoId").value = ""; // Limpiar el campo oculto
+   
 
 }
 
@@ -352,6 +352,7 @@ $(document).ready(function () {
                     $("#ClienteHidden").val("");
                     $("#Clientes").val("");
                     limpiarDetallesProducto();
+
                     // Clear the Clientes input if no entity is found
                 }
             } else {
@@ -652,7 +653,10 @@ $(document).ready(function () {
                     $('#unidadHidden').val(selectedValue);
                     $('#unidadtotal').val(''); // Limpiar el campo de cantidadPorUnidad
                     $('#CantidadTxt').val(''); // Limpiar el campo de cantidad
-                    $('#PrecioEnviar').val(''); // Limpiar el campo de precio
+                    $('#PrecioEnviar').val('');
+                    $('#Clientes').val('');
+                    $('#clientes').val('');
+                    $('#ClinteHiden').val('');// Limpiar el campo de precio
                 })
                 .catch(error => {
                     console.error('There has been a problem with your fetch operation:', error);
@@ -663,6 +667,9 @@ $(document).ready(function () {
             $('#unidadtotal').val('');
             $('#CantidadTxt').val('');
             $('#PrecioEnviar').val('');
+            $('#Clientes').val('');
+            $('#clientes').val('');
+            $('#ClinteHiden').val('');
         }
     });
 
@@ -671,9 +678,10 @@ $(document).ready(function () {
     // Función para limpiar los detalles del producto
     function limpiarDetallesProducto() {
         $('#PrecioUnitario').val('');
-        $('#ProductoId').val('');
-        $('#ProductoIdtxt').val('');
-        $('#ProductosList').val('');
+        $('#Clientes').val('');
+        $('#clientes').val('');
+        $('#ClinteHiden').val('');
+
         $('#unidadHidden').val('');
         $('#UnidadId').val('');
         $('#unidadtotal').val('');
@@ -719,7 +727,7 @@ function filtrarProductos(busqueda) {
 
             // Añadir los productos filtrados al datalist
             $.each(response, function (index, producto) {
-                $('#clientes').append('<option value="' + producto.nombreProducto + '" data-id="' + producto.productoId + '">' + producto.nombreProducto + '</option>');
+                $('#clientes').append('<option value="' + producto.nombreCompletoProducto + '" data-id="' + producto.productoId + '">' + producto.nombreCompletoProducto + '</option>');
             });
         },
         error: function (xhr, status, error) {
