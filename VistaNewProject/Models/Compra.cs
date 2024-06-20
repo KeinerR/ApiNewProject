@@ -13,4 +13,12 @@
         public virtual Lote? Lotes { get; set; } = null;
 
     }
+    public class FacturaDTO
+    {
+        public string? NumeroFactura { get; set; }
+    }
+    public class LoteDTO
+    {
+        public string? NumeroLote { get; set; }
+    }
 }

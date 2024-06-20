@@ -237,6 +237,7 @@ namespace ApiNewProject.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al obtener los productos activos: " + ex.Message);
             }
         }
+
         [HttpPatch("UpdateEstadoCompra/{id}")]
         public async Task<IActionResult> UpdateEstadoCompra(int id)
         {

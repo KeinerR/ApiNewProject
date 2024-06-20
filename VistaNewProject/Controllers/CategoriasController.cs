@@ -272,6 +272,46 @@ namespace VistaNewProject.Controllers
 
             return RedirectToAction("Index");
         }
+        public async Task<IActionResult> CategoriasAsociasiones(int? id, int? page)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var categorias = await _client.GetCategoriaAsync();
+
+            var categoriaExiste = categorias.FirstOrDefault(p => p.CategoriaId == id);
+            if (categoriaExiste == null)
+            {
+                return NotFound();
+            }
+            var categoria = await _client.FindCategoriaAsync(id.Value); // Obtener la unidad directamente como int
+            var marcas = await _client.GetMarcaAsync();
+            var presentaciones = await _client.GetPresentacionAsync();
+            var unidades = await _client.GetUnidadAsync();
+            var categoriasxmarcas = await _client.GetCategoriaxMarcasAsync();
+            // Filtrar categorías asociadas a la unidad específica
+            var categoriasAsociadasIds = categoriasxmarcas
+                .Where(cu => cu.CategoriaId == id.Value) // Utilizar id.Value directamente
+                .Select(cu => cu.MarcaId)
+                .ToList();
+
+            var marcasAsociadas = marcas.Where(c => categoriasAsociadasIds.Contains(c.MarcaId)).ToList();
+            // Concatenar el nombre de la unidad con su cantidad si está disponible
+
+            ViewBag.Categoria = categoria;
+            if (!marcasAsociadas.Any())
+            {
+                return View(marcasAsociadas.ToPagedList(1, 1)); // Devuelve un modelo paginado vacío
+            }
+
+            int pageSize = 4; // Número máximo de elementos por página
+            int pageNumber = page ?? 1;
+
+            var pagedMarcas = marcasAsociadas.ToPagedList(pageNumber, pageSize);
+
+            return View(pagedMarcas);
+        }
 
         [HttpPatch("Categorias/UpdateEstadoCategoria/{id}")]
         public async Task<IActionResult> CambiarEstadoCategoria(int id)

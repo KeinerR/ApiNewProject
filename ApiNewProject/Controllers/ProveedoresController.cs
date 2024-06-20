@@ -44,7 +44,7 @@ namespace ApiNewProject.Controllers
         public async Task<ActionResult<Proveedor>> GetProveedorById(int Id)
         {
 
-            Proveedor proveedor = await _context.Proveedores.Select(
+            Proveedor? proveedor = await _context.Proveedores.Select(
                     s => new Proveedor
                     {
                         ProveedorId = s.ProveedorId,
@@ -160,21 +160,10 @@ namespace ApiNewProject.Controllers
 
 
         [HttpGet("GetNombreProveedorById")]
-        public async Task<ActionResult<Proveedor>> GetNombreProveedorById(string nombreEmpresa)
+        public async Task<ActionResult<Proveedor>> GetNombreProveedorById(int proveedorId)
         {
 
-            Proveedor proveedor = await _context.Proveedores.Select(
-                    s => new Proveedor
-                    {
-                        ProveedorId = s.ProveedorId,
-                        NombreEmpresa = s.NombreEmpresa,
-                        NombreContacto = s.NombreContacto,
-                        Direccion = s.Direccion,
-                        Telefono = s.Telefono,
-                        Correo = s.Correo,
-                        EstadoProveedor = s.EstadoProveedor,
-                    })
-                .FirstOrDefaultAsync(s => s.NombreEmpresa == nombreEmpresa);
+           var proveedor = await _context.Proveedores.FindAsync(proveedorId); 
 
             if (proveedor == null)
             {
@@ -182,7 +171,7 @@ namespace ApiNewProject.Controllers
             }
             else
             {
-                return Ok(proveedor);
+                return Ok(proveedor.NombreEmpresa);
             }
         }
 

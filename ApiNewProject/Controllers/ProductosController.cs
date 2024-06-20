@@ -274,7 +274,7 @@ namespace ApiNewProject.Controllers
             {
                 return NotFound();
             }
-            var presentacion = await _context.Presentaciones.FindAsync(id);
+            var presentacion = await _context.Presentaciones.FindAsync(producto.PresentacionId);
             int? agregarACantidadPorUnidad = 0;
 
             if (presentacion != null)
@@ -296,8 +296,8 @@ namespace ApiNewProject.Controllers
         {
             // Buscar el producto por su ID
             var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == id);
-            var presentacion = await _context.Presentaciones.FindAsync(id);
-            var cantidadValida = cantidad * presentacion.CantidadPorPresentacion;
+            var presentacion = await _context.Presentaciones.FindAsync(producto?.PresentacionId);
+            var cantidadValida = cantidad * presentacion?.CantidadPorPresentacion;
 
             if (producto == null)
             {
@@ -485,7 +485,7 @@ namespace ApiNewProject.Controllers
             {
                 return BadRequest("La cantidad a sascar de reserva no puede ser mayor que la cantidad enn reserva.");
             }
-            var presentacion = await _context.Presentaciones.FindAsync(id);
+            var presentacion = await _context.Presentaciones.FindAsync(producto.PresentacionId);
             int? agregarACantidadPorUnidad = 0;
 
             if (presentacion != null)
@@ -542,7 +542,7 @@ namespace ApiNewProject.Controllers
             {
                 return BadRequest("La cantidad a sascar de reserva no puede ser mayor que la cantidad por unidad en reserva.");
             }
-            var presentacion = await _context.Presentaciones.FindAsync(id);
+            var presentacion = await _context.Presentaciones.FindAsync(producto.PresentacionId);
             int? agregarACantidadPorUnidad = 0;
 
             if (presentacion != null)
@@ -550,7 +550,7 @@ namespace ApiNewProject.Controllers
                 agregarACantidadPorUnidad = presentacion.CantidadPorPresentacion * cantidad;
             }
             producto.CantidadPorUnidadReservada -= cantidad;
-            var cantidadPorPresentacion = presentacion.CantidadPorPresentacion;
+            var cantidadPorPresentacion = presentacion?.CantidadPorPresentacion;
             var nuevaCantidadTotalPorUnidad = producto.CantidadTotalPorUnidad - cantidad;
             int? productoCantidadTotal = 0;
             var numeroPar = nuevaCantidadTotalPorUnidad % 2;
@@ -572,8 +572,6 @@ namespace ApiNewProject.Controllers
 
             return Ok();
         }
-
-
 
         [HttpDelete("DeleteProducto/{Id}")]
         public async Task<HttpStatusCode> DeleteProducto(int Id)

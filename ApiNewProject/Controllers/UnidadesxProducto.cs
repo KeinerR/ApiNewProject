@@ -27,8 +27,6 @@ namespace ApiNewProject.Controllers
             {
                 // Incluir las entidades relacionadas (Producto y Unidad) para evitar consultas adicionales
                 var list = await _context.UnidadesxProducto
-                    .Include(up => up.Producto)
-                    .Include(up => up.Unidad)
                     .ToListAsync();
 
                 return list;
@@ -69,12 +67,9 @@ namespace ApiNewProject.Controllers
                 {
                     UnidadId = unidadxProductoAsociasion.UnidadId,
                     ProductoId = unidadxProductoAsociasion.ProductoId,
-                    NombreUnidad = unidad.NombreUnidad,
-                    NombreCompletoUnidad = unidad.NombreCompletoUnidad,
-                    EstadoUnidad = unidad.EstadoUnidad,
-                    CantidadPorUnidad = unidad.CantidadPorUnidad,
-                    Unidad = unidad, 
-                    Producto = producto 
+                    NombreCompletoUnidad = unidad.NombreUnidad,
+                    NombreCompletoProducto = producto.NombreCompletoProducto,
+                    EstadoProducto = producto.Estado
                 };
 
                 _context.UnidadesxProducto.Add(unidadxProducto);

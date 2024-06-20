@@ -34,7 +34,7 @@ namespace ApiNewProject.Entities
 
     }
 
-    public partial class CategoriaxPresentacionAsociasion
+    public partial class CategoriaxPresentacionAsosiacion
     {
         public int CategoriaId { get; set; }
         public int PresentacionId { get; set; }
@@ -67,15 +67,12 @@ namespace ApiNewProject.Entities
     {
         public int UnidadId { get; set; }
         public int ProductoId { get; set; }
-        public string? NombreUnidad { get; set; }
         public string? NombreCompletoUnidad { get; set; }
-        public ulong? EstadoUnidad { get; set; }
-        public int? CantidadPorUnidad { get; set; }
-        public virtual Producto? Producto { get; set; }
-        public virtual Unidad? Unidad { get; set; }
-
+        public string? NombreCompletoProducto { get; set; }
+        public ulong? EstadoProducto { get; set; }
 
     }
+
 
     public partial class UnidadxProductoAsosiacion
     {

@@ -2,29 +2,83 @@
 
 namespace VistaNewProject.Models
 {
-       public class CategoriaxMarca
-    {
-        public int CategoriaId { get; set; }
-        public string NombreCategoria { get; set; }
-        public int MarcaId { get; set; }
-        public bool EstaAsociada { get; set; } // Nuevo atributo para indicar si la categoría está asociada o no
-    }
-    public class CategoriaxMarcaAsosiacion
+    public partial class CategoriaxMarcaAsociacion
     {
         public int CategoriaId { get; set; }
         public int MarcaId { get; set; }
+
     }
-    public class CategoriaxPresentacion
+    public partial class CategoriaxMarca
+    {
+        public int CategoriaId { get; set; }
+        public int MarcaId { get; set; }
+        public string? NombreMarca { get; set; }
+        public string? NombreCategoria { get; set; }
+        public ulong? EstadoCategoria { get; set; }
+        public ulong? EstadoMarca { get; set; }
+
+    }
+
+    public partial class CategoriaxPresentacion
     {
         public int CategoriaId { get; set; }
         public int PresentacionId { get; set; }
-        public string? NombreCategoria { get; set; } = "No aplica";
-        public bool EstaAsociada { get; set; } // Nuevo atributo para indicar si la categoría está asociada o no
+        public string? NombreCategoria { get; set; }
+        public string? NombrePresentacion { get; set; }
+        public string? Contenido { get; set; }
+        public int? CantidadPorPresentacion { get; set; }
+        public ulong? EstadoPresentacion { get; set; }
+        public ulong? EstadoCategoria { get; set; }
+
+
     }
-    public class CategoriaxPresentacionAsosiacion
+
+    public partial class CategoriaxPresentacionAsosiacion
     {
         public int CategoriaId { get; set; }
         public int PresentacionId { get; set; }
+
     }
+
+    public partial class CategoriaxUnidad
+    {
+        public int CategoriaId { get; set; }
+        public int UnidadId { get; set; }
+        public string? NombreCategoria { get; set; }
+        public string? NombreUnidad { get; set; }
+        public int? CantidadPorUnidad { get; set; }
+        public ulong? EstadoUnidad { get; set; }
+        public ulong? EstadoCategoria { get; set; }
+
+
+
+    }
+
+    public partial class CategoriaxUnidadAsosiacion
+    {
+        public int CategoriaId { get; set; }
+        public int UnidadId { get; set; }
+
+    }
+
+
+    public partial class UnidadxProducto
+    {
+        public int UnidadId { get; set; }
+        public int ProductoId { get; set; }
+        public string? NombreCompletoUnidad { get; set; }
+        public string? NombreCompletoProducto { get; set; }
+        public ulong? EstadoProducto { get; set; }
+        public int? CantidadPorUnidad { get; set; }
+
+    }
+
+    public partial class UnidadxProductoAsosiacion
+    {
+        public int UnidadId { get; set; }
+        public int ProductoId { get; set; }
+
+    }
+
 
 }

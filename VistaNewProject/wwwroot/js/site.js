@@ -102,7 +102,7 @@ function mostrarOcultarContrasena(idCampo) {
 }
 
 // Función para manejar la selección de opciones en los datalist
-window.seleccionarOpcion = function (input, dataList, hiddenInput) {
+window.seleccionarOpcion = function (input, dataList, hiddenInput,metodoApi) {
     const selectedValue = input.value.trim();
     let selectedOptionByName = Array.from(dataList.options).find(option => option.value === selectedValue);
     let selectedOptionById = Array.from(dataList.options).find(option => option.getAttribute('data-id') === selectedValue);
@@ -112,6 +112,7 @@ window.seleccionarOpcion = function (input, dataList, hiddenInput) {
     }
 
     if (!selectedOptionByName && !selectedOptionById && /^\d+$/.test(selectedValue)) {
+
         Swal.fire({
             icon: 'warning',
             title: 'No se encontró ningún resultado con este ID',

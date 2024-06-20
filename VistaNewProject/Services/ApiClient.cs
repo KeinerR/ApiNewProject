@@ -200,12 +200,20 @@ namespace VistaNewProject.Services
             // Retorna la respuesta de la solicitud
             return response;
         }
+        public async Task<Presentacion> FindnombrePresentacionAsync(int presentacionId)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Presentacion>($"Presentaciones/NombrePresentacionById?Id={presentacionId}");
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la Presentacion con el ID especificado.");
+            }
+            return response;
+        }
 
+    /// COMPRA
 
-
-        /// COMPRA
-
-        public async Task<IEnumerable<Compra>> GetCompraAsync()
+    public async Task<IEnumerable<Compra>> GetCompraAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Compra>>("Compras/GetCompras");
 
@@ -502,8 +510,6 @@ namespace VistaNewProject.Services
             }
         }
 
-
-
         public async Task<HttpResponseMessage> UpdateMarcaAsync(MarcaUpdate marca)
         {
             try
@@ -550,10 +556,6 @@ namespace VistaNewProject.Services
             }
         }
 
-
-
-
-
         public async Task<HttpResponseMessage> DeleteMarcaAsync(int id)
         {
             try
@@ -582,9 +584,6 @@ namespace VistaNewProject.Services
                 };
             }
         }
-
-
-
         public async Task<HttpResponseMessage> CambiarEstadoMarcaAsync(int id)
         {
             // Realiza la solicitud PATCH a la API
@@ -889,6 +888,16 @@ namespace VistaNewProject.Services
             }
             return response;
         }
+        public async Task<Producto> FindnombreProductoAsync(int Id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Producto>($"Productos/GetNombreProductoPorId/{Id}");
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la unidad con el ID especificado.");
+            }
+            return response;
+        }
 
         public async Task<HttpResponseMessage> UpdateProductoAsync(ProductoCrearYActualizar producto)
         {
@@ -1012,7 +1021,6 @@ namespace VistaNewProject.Services
             // Retorna la respuesta de la solicitud
             return response;
         }
-
         public async Task<HttpResponseMessage> SustraerCantidadReservadaAsync(int productoId, int? cantidad)
         {
             // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
@@ -1024,7 +1032,28 @@ namespace VistaNewProject.Services
             // Retorna la respuesta de la solicitud
             return response;
         }
+        public async Task<HttpResponseMessage> AddCantidadPorUnidadReservadaAsync(int productoId, int? cantidad)
+        {
+            // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
+            var content = new StringContent("", Encoding.UTF8, "application/json");
 
+            // Realiza la solicitud PUT a la API
+            var response = await _httpClient.PutAsync($"Productos/AddCantidadPorUnidadReservada/{productoId}?cantidad={cantidad}", content);
+
+            // Retorna la respuesta de la solicitud
+            return response;
+        }
+        public async Task<HttpResponseMessage> SustraerCantidadPorUnidadReservadaAsync(int productoId, int? cantidad)
+        {
+            // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
+            var content = new StringContent("", Encoding.UTF8, "application/json");
+
+            // Realiza la solicitud PUT a la API
+            var response = await _httpClient.PutAsync($"Productos/SustraerCantidadPorUnidadReservada/{productoId}?cantidad={cantidad}", content);
+
+            // Retorna la respuesta de la solicitud
+            return response;
+        }
         public async Task<HttpResponseMessage> QuitarCantidadReservada(int productoId, int? cantidad)
         {
             // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
@@ -1047,7 +1076,6 @@ namespace VistaNewProject.Services
             // Retorna la respuesta de la solicitud
             return response;
         }
-
         public async Task<HttpResponseMessage> AddCantidadTotalAsync(int productoId, int? cantidad)
         {
             // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
@@ -1059,8 +1087,6 @@ namespace VistaNewProject.Services
             // Retorna la respuesta de la solicitud
             return response;
         }
-
-
         public async Task<HttpResponseMessage> SustraerCantidadTotalAsync(int productoId, int? cantidad)
         {
             // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
@@ -1072,10 +1098,30 @@ namespace VistaNewProject.Services
             // Retorna la respuesta de la solicitud
             return response;
         }
+        public async Task<HttpResponseMessage> AddCantidadTotalPorUnidadAsync(int productoId, int? cantidad)
+        {
+            // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
+            var content = new StringContent("", Encoding.UTF8, "application/json");
 
+            // Realiza la solicitud PUT a la API
+            var response = await _httpClient.PutAsync($"Productos/AddCantidadTotalPorUnidad/{productoId}?cantidad={cantidad}", content);
+
+            // Retorna la respuesta de la solicitud
+            return response;
+        }
+        public async Task<HttpResponseMessage> SustraerCantidadTotalPorUnidadAsync(int productoId, int? cantidad)
+        {
+            // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
+            var content = new StringContent("", Encoding.UTF8, "application/json");
+
+            // Realiza la solicitud PUT a la API
+            var response = await _httpClient.PutAsync($"Productos/SustraerCantidadTotalPorUnidad/{productoId}?cantidad={cantidad}", content);
+
+            // Retorna la respuesta de la solicitud
+            return response;
+        }
 
         /// PROVEEDOR
-
         public async Task<IEnumerable<Proveedor>> GetProveedorAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Proveedor>>("Proveedores/GetProveedores");
@@ -1104,7 +1150,7 @@ namespace VistaNewProject.Services
             return response;
         }
 
-        public async Task<Proveedor> FindnombreProveedorAsync(string nombreEmpresa)
+        public async Task<Proveedor> FindnombreProveedorAsync(int proveedorId)
         {
             var response = await _httpClient.GetFromJsonAsync<Proveedor>($"Proveedores/GetNombreProveedorById?nombreEmpresa={nombreEmpresa}");
             if (response == null)
@@ -1113,7 +1159,6 @@ namespace VistaNewProject.Services
                 throw new Exception("No se encontró la unidad con el ID especificado.");
             }
             return response;
-
         }
 
         public async Task<HttpResponseMessage> UpdateProveedorAsync(ProveedorUpdate proveedor)

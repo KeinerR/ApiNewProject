@@ -30,6 +30,7 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Presentacion>> GetPresentacionAsync();
         Task<HttpResponseMessage> CreatePresentacionAsync(PresentacionCrearYActualizar presentacion);
         Task<Presentacion> FindPresentacionAsync(int id);
+        Task<Presentacion> FindnombrePresentacionAsync(int id);
         Task<HttpResponseMessage> UpdatePresentacionAsync(PresentacionCrearYActualizar presentacion);
         Task<HttpResponseMessage> CambiarEstadoPresentacionAsync(int id);
 
@@ -82,28 +83,32 @@ namespace VistaNewProject.Services
 
 
         // producto
-
         Task<IEnumerable<Producto>> GetProductoAsync(string busqueda = null);
         Task<IEnumerable<Producto>> GetAllDatosProductosAsync(string busqueda = null);
         Task<HttpResponseMessage> CreateProductoAsync(ProductoCrearYActualizar producto);
         Task<Producto> FindProductoAsync(int id);
-        Task<Producto> FindDatosProductoAsync(int id);
+        Task<Proveedor> FindnombreProductoAsync(int proveedorId);
+        Task<Producto> FindDatosProductoAsync(int id); 
         Task<HttpResponseMessage> UpdateProductoAsync(ProductoCrearYActualizar producto);
         Task<HttpResponseMessage> AddCantidadReservadaAsync(int productoId, int? cantidad);
         Task<HttpResponseMessage> SustraerCantidadReservadaAsync(int productoId, int? cantidad);
+        Task<HttpResponseMessage> AddCantidadPorUnidadReservadaAsync(int productoId, int? cantidad);
+        Task<HttpResponseMessage> SustraerCantidadPorUnidadReservadaAsync(int productoId, int? cantidad);
         Task<HttpResponseMessage> QuitarCantidadReservada(int productoId, int? cantidad);
         Task<HttpResponseMessage> PedidosCancelados(int PedidoId, int? cantidad);
-
-
         Task<HttpResponseMessage> AddCantidadTotalAsync(int productoId, int? cantidad);
         Task<HttpResponseMessage> SustraerCantidadTotalAsync(int productoId, int? cantidad);
+        Task<HttpResponseMessage> AddCantidadTotalPorUnidadAsync(int productoId, int? cantidad);
+        Task<HttpResponseMessage> SustraerCantidadTotalPorUnidadAsync(int productoId, int? cantidad);
         Task<HttpResponseMessage> DeleteProductoAsync(int id);
         Task<HttpResponseMessage> CambiarEstadoProductoAsync(int id);
+
+
         // proveedor
         Task<IEnumerable<Proveedor>> GetProveedorAsync();
         Task<HttpResponseMessage> CreateProveedorAsync(Proveedor proveedor);
         Task<Proveedor> FindProveedorAsync(int? id);
-        Task<Proveedor> FindnombreProveedorAsync(string nombreEmpresa);
+        Task<Proveedor> FindnombreProveedorAsync(int proveedorId);
         Task<HttpResponseMessage> UpdateProveedorAsync(ProveedorUpdate proveedor);
         Task<HttpResponseMessage> CambiarEstadoProveedorAsync(int id);
         Task<HttpResponseMessage> DeleteProveedorAsync(int id);
@@ -195,16 +200,19 @@ namespace VistaNewProject.Services
 
         Task<HttpResponseMessage> DeleteCategoriaxPresentacionAsync(int categoriaId, int presentacionId);
 
-
         // categoria x marca
         Task<IEnumerable<CategoriaxMarca>> GetCategoriaxMarcasAsync();
-        Task<HttpResponseMessage> CreateCategoriaxMarcaAsync(CategoriaxMarca categoriaxmarca);
+        Task<HttpResponseMessage> CreateCategoriaxMarcaAsync(CategoriaxMarcaAsociacion categoriaxmarca);
 
         Task<HttpResponseMessage> DeleteCategoriaxMarcaAsync(int categoriaId, int marcaId);
 
 
+        // producto  x unidad
+        Task<IEnumerable<UnidadxProducto>> GetUnidadesxProductoAsync();
+        Task<HttpResponseMessage> CreateUnidadxProductoAsync(UnidadxProductoAsosiacion productoxunidad);
 
-       
+        Task<HttpResponseMessage> DeleteUnidadxProductoAsync(int productO, int marcaId);
+
 
 
 

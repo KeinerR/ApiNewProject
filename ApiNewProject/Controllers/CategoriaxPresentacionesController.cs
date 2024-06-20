@@ -69,7 +69,7 @@ namespace ApiNewProject.Controllers
 
 
         [HttpPost("InsertarCategoriaxPresentacion")]
-        public async Task<ActionResult<CategoriaxPresentacion>> InsertarCategoria(CategoriaxPresentacionAsociasion categoriaxPresentacionAsosiacion)
+        public async Task<ActionResult<CategoriaxPresentacion>> InsertarCategoria(CategoriaxPresentacionAsosiacion categoriaxPresentacionAsosiacion)
         {
             try
             {
