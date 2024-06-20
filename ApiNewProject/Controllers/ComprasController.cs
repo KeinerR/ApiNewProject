@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Net;
 using System.Numerics;
 
@@ -13,12 +14,12 @@ namespace ApiNewProject.Controllers
     public class ComprasController : ControllerBase
     {
         private readonly NewOptimusContext _context;
-
-        public ComprasController(NewOptimusContext context)
+        private readonly ProductosController _disparador;
+        public ComprasController(NewOptimusContext context, ProductosController disparador)
         {
             _context = context;
+            _disparador = disparador;
         }
-
 
         [HttpGet("GetCompras")]
         public async Task<ActionResult<List<Compra>>> GetCompras()
@@ -122,7 +123,7 @@ namespace ApiNewProject.Controllers
                         {
                             if (!lote.Cantidad.HasValue || !lote.FechaVencimiento.HasValue)
                             {
-                                return BadRequest("Cantidad, y FechaVencimiento son requeridos para el lote.");
+                                return BadRequest("Cantidad y FechaVencimiento son requeridos para el lote.");
                             }
 
                             newDetalleCompra.Lotes.Add(new Lote
@@ -131,39 +132,42 @@ namespace ApiNewProject.Controllers
                                 ProductoId = lote.ProductoId,
                                 NumeroLote = lote.NumeroLote,
                                 PrecioCompra = lote.PrecioCompra,
+                                PrecioPorUnidad = lote.PrecioPorUnidad,
                                 PrecioPorPresentacion = lote.PrecioPorPresentacion,
                                 PrecioPorUnidadProducto = lote.PrecioPorUnidadProducto,
-                                FechaVencimiento = lote.FechaVencimiento,
                                 Cantidad = lote.Cantidad,
+                                CantidadPorUnidad = lote.CantidadPorUnidad,
+                                PrecioPorUnidadCompra = lote.PrecioPorUnidad,
+                                PrecioPorPresentacionCompra = lote.PrecioPorPresentacion,
+                                PrecioPorUnidadProductoCompra = lote.PrecioPorUnidadProducto,
+                                CantidadCompra = lote.Cantidad,
+                                CantidadPorUnidadCompra = lote.CantidadPorUnidad,
+                                FechaVencimiento = lote.FechaVencimiento,
                                 EstadoLote = lote.EstadoLote
                             });
                         }
                     }
 
                     newCompra.Detallecompras.Add(newDetalleCompra);
+
                     foreach (var lote in newDetalleCompra.Lotes)
                     {
                         var producto = await _context.Productos.FindAsync(lote.ProductoId);
                         if (producto != null)
                         {
-                            producto.CantidadTotal += lote.Cantidad;
+                            var result = await _disparador.AddCantidadTotal(lote.ProductoId, lote.Cantidad);
                         }
                     }
-                    await _context.SaveChangesAsync();
                 }
-                // Calcular el total de la compra como decimal
+
                 decimal totalCompraDecimal = newCompra.Detallecompras.Sum(detalle => detalle.Lotes.Sum(lote => lote.PrecioCompra));
-
                 long totalCompraLong = decimal.ToInt64(totalCompraDecimal);
-
                 newCompra.ValorTotalCompra = totalCompraLong;
 
-                // Guardar newCompra en la base de datos
                 _context.Compras.Add(newCompra);
                 await _context.SaveChangesAsync();
 
                 return Ok();
-
             }
             catch (Exception ex)
             {
@@ -238,6 +242,15 @@ namespace ApiNewProject.Controllers
         {
             try
             {
+                // Obtener los lotes asociados a la compra
+                var lotesAsociados = await GetLotesPorCompraId(id);
+
+                // Verificar la validación en los lotes
+                if (!ValidarLotes(lotesAsociados))
+                {
+                    return BadRequest("Las cantidades totales y por unidad no son iguales en todos los lotes asociados a la compra.");
+                }
+
                 // Buscar el compra por su ID
                 var compra = await _context.Compras.FindAsync(id);
 
@@ -247,7 +260,7 @@ namespace ApiNewProject.Controllers
                     return NotFound();
                 }
 
-                compra.EstadoCompra = compra.EstadoCompra == 0 ? 1UL : 0UL;
+                compra.EstadoCompra = compra.EstadoCompra == 0UL ? 1UL : 0UL;
 
                 // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
@@ -260,6 +273,32 @@ namespace ApiNewProject.Controllers
                 // Si ocurre algún error, devolver un error 500 Internal Server Error
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el estado del compra: " + ex.Message);
             }
+        }
+
+        private async Task<List<Lote>> GetLotesPorCompraId(int compraId)
+        {
+            var idsDetallesCompra = await _context.Detallecompras
+                .Where(dc => dc.CompraId == compraId)
+                .Select(dc => dc.DetalleCompraId)
+                .ToListAsync();
+
+            var lotesFiltrados = await _context.Lotes
+                .Where(l => idsDetallesCompra.Contains(l.DetalleCompraId))
+                .ToListAsync();
+
+            return lotesFiltrados;
+        }
+
+        private bool ValidarLotes(List<Lote> lotes)
+        {
+            foreach (var lote in lotes)
+            {
+                if (lote.Cantidad != lote.CantidadCompra)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
 

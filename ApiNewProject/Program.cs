@@ -1,6 +1,7 @@
 using ApiNewProject.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using ApiNewProject.Controllers;
 using MySql.EntityFrameworkCore.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,10 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1"
     });
 });
+
+// Registrar los controladores para la inyección de dependencias
+builder.Services.AddScoped<ProductosController>();
+
 var app = builder.Build();
 
 // Habilitar CORS

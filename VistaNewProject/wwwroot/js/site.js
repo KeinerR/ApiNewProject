@@ -371,7 +371,7 @@ async function checkboxFiltrar() {
 
         // Limpia y rellena las listas utilizando la función fillList
         fillList('#marcas', data.marcas, 'nombreMarca', 'marcaId', 'estadoMarca', 'No hay marcas disponibles');
-        fillList('#presentaciones', data.presentaciones, 'nombrePresentacion', 'presentacionId', 'estadoPresentacion', 'No hay presentaciones disponibles');
+        fillList('#presentaciones', data.presentaciones, 'nombreCompletoPresentacion', 'presentacionId', 'estadoPresentacion', 'No hay presentaciones disponibles');
         fillList('#categorias', data.categorias, 'nombreCategoria', 'categoriaId', 'estadoCategoria', 'No hay categorías disponibles');
 
     } catch (error) {

@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 { id: 'PresentacionId', nombre: 'presentaci\u00F3n' }
             ];
 
-            if (!verificarCampos(datalist, mostrarAlertaDataList)) {
+            if (!verificarCamposDataList(datalist, mostrarAlertaDataList)) {
                 event.preventDefault();
                 return;
             }

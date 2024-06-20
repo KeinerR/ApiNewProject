@@ -100,7 +100,9 @@ namespace VistaNewProject.Models
         public int? CategoriaId { get; set; }
         public string? NombreProducto { get; set; }
         public int? CantidadTotal { get; set; } = 0;
+        public int? CantidadTotalPorUnidad { get; set; } = 0;   // Esta refleja la cantidadtotal de productos unitarios
         public int? CantidadReservada { get; set; } = 0;
+        public int? CantidadPorUnidadReservada { get; set; } = 0;
         public int? CantidadPorPresentacion { get; set; }
         public string? NombreCompletoProducto { get; set; }
         public int CantidadAplicarPorMayor { get; set; }
@@ -111,7 +113,6 @@ namespace VistaNewProject.Models
         public string? NombreCategoria { get; set; }
         public string? Contenido { get; set; }
         public ulong? Estado { get; set; }
-        public int CantidadTotalPorUnidad => CantidadTotal * CantidadPorPresentacion ?? 0;
         public virtual Categoria? Categoria { get; set; }
         public virtual Marca? Marca { get; set; }
         public virtual Presentacion? Presentacion { get; set; }
@@ -132,8 +133,6 @@ namespace VistaNewProject.Models
         public ulong? Estado { get; set; }
 
     }
-
-
     public class Proveedor
     {
         public int ProveedorId { get; set; }

@@ -9,13 +9,18 @@
         public decimal? PrecioCompra { get; set; }
         public decimal? PrecioPorPresentacion { get; set; }
         public decimal? PrecioPorUnidadProducto { get; set; }
+        public decimal? PrecioPorPresentacionCompra { get; set; }
+        public decimal? PrecioPorUnidadProductoCompra { get; set; }
+        public decimal? PrecioPorUnidadCompra { get; set; }
         public DateTime? FechaVencimiento { get; set; }
         public int? Cantidad { get; set; }
+        public int? CantidadCompra { get; set; }
+        public int? CantidadPorUnidadCompra { get; set; }
+        public int? CantidadPorUnidad { get; set; }
         public ulong? EstadoLote { get; set; }
 
         public virtual Detallecompra? DetalleCompra { get; set; }
         public virtual Unidad? Unidades { get; set; }
-
 
         public virtual Producto? Producto { get; set; }
     }

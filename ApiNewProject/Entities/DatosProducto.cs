@@ -9,7 +9,9 @@
         public string? NombreProducto { get; set; }
         public string? NombreCompletoProducto { get; set; }
         public int? CantidadTotal { get; set; } = 0;
+        public int? CantidadTotalPorUnidad { get; set; } = 0;
         public int? CantidadReservada { get; set; } = 0;
+        public int? CantidadPorUnidadReservada { get; set; } = 0;
         public int CantidadAplicarPorMayor { get; set; }
         public int DescuentoAplicarPorMayor { get; set; }
         public string? NombreMarca { get; set; }

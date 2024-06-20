@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using ZstdSharp.Unsafe;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ApiNewProject.Controllers
@@ -32,6 +33,8 @@ namespace ApiNewProject.Controllers
                     (p.Marca != null && p.Marca.NombreMarca != null && p.Marca.NombreMarca.Contains(busqueda)));
             }
 
+            // Fetch presentaciones data if needed, assuming it's a collection in the context
+            var presentaciones = await _context.Presentaciones.ToListAsync();
 
             var productList = await query
                 .Select(s => new Producto
@@ -43,19 +46,22 @@ namespace ApiNewProject.Controllers
                     NombreProducto = s.NombreProducto,
                     NombreCompletoProducto = s.NombreCompletoProducto,
                     CantidadTotal = s.CantidadTotal,
+                    CantidadTotalPorUnidad = s.CantidadTotalPorUnidad,
                     CantidadReservada = s.CantidadReservada,
+                    CantidadPorUnidadReservada = s.CantidadPorUnidadReservada,
                     CantidadAplicarPorMayor = s.CantidadAplicarPorMayor,
                     DescuentoAplicarPorMayor = s.DescuentoAplicarPorMayor,
                     Estado = s.Estado
                 })
                 .ToListAsync();
 
-            return productList;
+            return Ok(productList);
         }
 
         [HttpGet("GetProductoById")]
         public async Task<ActionResult<Producto>> GetProductoById(int Id)
         {
+            var presentacion = _context.Presentaciones.FirstOrDefaultAsync(c=> c.PresentacionId == Id);
             Producto? producto = await _context.Productos
                 .Select(s => new Producto
                 {
@@ -66,7 +72,9 @@ namespace ApiNewProject.Controllers
                     NombreProducto = s.NombreProducto, 
                     NombreCompletoProducto = s.NombreCompletoProducto,
                     CantidadTotal = s.CantidadTotal,
+                    CantidadTotalPorUnidad = s.CantidadTotalPorUnidad,
                     CantidadReservada = s.CantidadReservada,
+                    CantidadPorUnidadReservada = s.CantidadPorUnidadReservada,
                     CantidadAplicarPorMayor = s.CantidadAplicarPorMayor, 
                     DescuentoAplicarPorMayor = s.DescuentoAplicarPorMayor, 
                     Estado = s.Estado, 
@@ -103,8 +111,10 @@ namespace ApiNewProject.Controllers
                 CategoriaId = p.CategoriaId,
                 NombreProducto = p.NombreProducto,
                 NombreCompletoProducto = p.NombreCompletoProducto,
-                CantidadTotal = p.CantidadTotal,
+                CantidadTotal = p.CantidadTotal, 
+                CantidadTotalPorUnidad = p.CantidadTotalPorUnidad,
                 CantidadReservada = p.CantidadReservada,
+                CantidadPorUnidadReservada = p.CantidadPorUnidadReservada,
                 CantidadAplicarPorMayor = p.CantidadAplicarPorMayor ?? 0,
                 DescuentoAplicarPorMayor = p.DescuentoAplicarPorMayor ?? 0,
                 Estado = p.Estado,
@@ -149,8 +159,10 @@ namespace ApiNewProject.Controllers
                 CategoriaId = producto.CategoriaId,
                 NombreProducto = producto.NombreProducto,
                 NombreCompletoProducto = producto.NombreCompletoProducto,
-                CantidadTotal = producto.CantidadTotal,
+                CantidadTotal = producto.CantidadTotal, 
+                CantidadTotalPorUnidad = producto.CantidadTotalPorUnidad,
                 CantidadReservada = producto.CantidadReservada,
+                CantidadPorUnidadReservada = producto.CantidadPorUnidadReservada,
                 CantidadAplicarPorMayor = producto.CantidadAplicarPorMayor ?? 0,
                 DescuentoAplicarPorMayor = producto.DescuentoAplicarPorMayor ?? 0,
                 Estado = producto.Estado,
@@ -251,65 +263,6 @@ namespace ApiNewProject.Controllers
             return Ok("El producto se ha actualizado correctamente.");
         }
 
-
-        [HttpPut("AddCantidadReservada/{id}")]
-        public async Task<ActionResult> AddCantidadReservada(int id, int ? cantidad)
-        {
-            // Buscar el producto por su ID
-            var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == id);
-
-            var cantidadTotalEnInventario = producto?.CantidadTotal - producto?.CantidadReservada;
-            if (producto == null)
-            {
-                return NotFound();
-            }
-
-            if (cantidad > producto.CantidadTotal) {
-                return BadRequest("La cantidad a reservar no puede ser mayor que la cantidad total");
-            }
-            if (cantidad > cantidadTotalEnInventario) {
-                return BadRequest("La cantidad a reservar no puede ser mayor que la cantidad cantidadTotalEnInventario (cantidadTotal - cantidadReservada)"); 
-            }
-            // Actualizar la cantidad reservada del producto
-            producto.CantidadReservada += cantidad;
-            // Guardar los cambios en la base de datos
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        [HttpPut("SustraerCantidadReservada/{id}")]
-        public async Task<ActionResult> SustraerCantidadReservada(int id, int? cantidad)
-        {
-            // Buscar el producto por su ID
-            var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == id);
-
-            if (producto == null)
-            {
-                return NotFound();
-            }
-
-            // Verificar si la cantidad a restar es válida
-            if (cantidad > producto.CantidadReservada)
-            {
-                return BadRequest("La cantidad a restar es mayor que la cantidad reservada actual.");
-            }
-            // Verificar si la cantidad a restar es válida
-            if (cantidad > producto.CantidadTotal)
-            {
-                return BadRequest("La cantidad a restar es mayor que la cantidadTotal de productos.");
-            }
-
-            // Actualizar la cantidad reservada del producto
-            producto.CantidadReservada -= cantidad;
-            producto.CantidadTotal -= cantidad; ;
-
-            // Guardar los cambios en la base de datos
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
         [HttpPut("AddCantidadTotal/{id}")]
         public async Task<ActionResult> AddCantidadTotal(int id, int ? cantidad)
         {
@@ -320,8 +273,16 @@ namespace ApiNewProject.Controllers
             {
                 return NotFound();
             }
-            // Actualizar la cantidad reservada del producto
+            var presentacion = await _context.Presentaciones.FindAsync(id);
+            int? agregarACantidadPorUnidad = 0;
+
+            if (presentacion != null)
+            {
+                agregarACantidadPorUnidad = presentacion.CantidadPorPresentacion * cantidad;
+            }
+
             producto.CantidadTotal += cantidad;
+            producto.CantidadTotalPorUnidad += agregarACantidadPorUnidad;
 
             // Guardar los cambios en la base de datos
             await _context.SaveChangesAsync();
@@ -330,29 +291,288 @@ namespace ApiNewProject.Controllers
         }
 
         [HttpPut("SustraerCantidadTotal/{id}")]
-        public async Task<ActionResult> SustraerCantidadTotal(int id, int ? cantidad)
+        public async Task<ActionResult> SustraerCantidadTotal(int id, int? cantidad)
         {
             // Buscar el producto por su ID
             var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == id);
+            var presentacion = await _context.Presentaciones.FindAsync(id);
+            var cantidadValida = cantidad * presentacion.CantidadPorPresentacion;
 
             if (producto == null)
             {
                 return NotFound();
             }
-
             // Verificar si la cantidad a restar es válida
+            if (cantidad == null || cantidad <= 0)
+            {
+                return BadRequest("Cantidad no válida.");
+            }
+
             if (producto.CantidadTotal < cantidad)
             {
                 return BadRequest("La cantidad a restar es mayor que la cantidad total actual.");
             }
+            if (cantidadValida < (cantidad * presentacion.CantidadPorPresentacion))
+            {
+                return BadRequest("La cantidad total por unidad no es suficiente.");
+            }
+            int? agregarACantidadPorUnidad = 0;
 
-            producto.CantidadTotal -= cantidad; ;
+            if (presentacion != null)
+            {
+                agregarACantidadPorUnidad = presentacion.CantidadPorPresentacion * cantidad;
+            }
 
+            producto.CantidadTotal -= cantidad;
+            producto.CantidadTotalPorUnidad -= agregarACantidadPorUnidad;
             // Guardar los cambios en la base de datos
             await _context.SaveChangesAsync();
 
             return Ok();
         }
+
+        [HttpPut("AddCantidadTotalPorUnidad/{id}")]
+        public async Task<ActionResult> AddCantidadTotalPorUnidad(int id, int? cantidad)
+        {
+            try
+            {
+                // Validar la entrada
+                if (cantidad == null || cantidad <= 0)
+                {
+                    return BadRequest("Cantidad no válida.");
+                }
+
+                // Obtener el producto y la presentación
+                var producto = await _context.Productos
+                    .Include(p => p.Presentacion)
+                    .FirstOrDefaultAsync(p => p.ProductoId == id);
+
+                if (producto == null)
+                {
+                    return NotFound();
+                }
+
+                var presentacion = producto.Presentacion;
+                if (presentacion == null)
+                {
+                    return NotFound("Presentación no encontrada para el producto.");
+                }
+
+                // Calcular la cantidad por presentación y el resto
+                var cantidadPorPresentacion = presentacion.CantidadPorPresentacion;
+                var nuevaCantidadTotalPorUnidad = producto.CantidadTotalPorUnidad + cantidad;
+                int? productoCantidadTotal = 0;
+                var numeroPar = nuevaCantidadTotalPorUnidad % 2;
+                var restar = nuevaCantidadTotalPorUnidad % cantidadPorPresentacion;
+                if (numeroPar == 0)
+                {
+                    var cantidadLotes = nuevaCantidadTotalPorUnidad / cantidadPorPresentacion;
+                    producto.CantidadTotal = cantidadLotes;
+                }
+                else {
+                    productoCantidadTotal = (nuevaCantidadTotalPorUnidad - restar) / cantidadPorPresentacion;
+                    producto.CantidadTotal = productoCantidadTotal;
+                }
+
+                producto.CantidadTotalPorUnidad = nuevaCantidadTotalPorUnidad;
+
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Manejar errores inesperados
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
+
+        [HttpPut("SustraerCantidadTotalPorUnidad/{id}")]
+        public async Task<ActionResult> SustraerCantidadTotalPorUnidad(int id, int? cantidad)
+        {
+            try
+            {
+                // Validar la entrada
+                if (cantidad == null || cantidad <= 0)
+                {
+                    return BadRequest("Cantidad no válida.");
+                }
+
+                // Obtener el producto y la presentación
+                var producto = await _context.Productos
+                    .Include(p => p.Presentacion)
+                    .FirstOrDefaultAsync(p => p.ProductoId == id);
+
+                if (producto == null)
+                {
+                    return NotFound();
+                }
+
+                var presentacion = producto.Presentacion;
+                if (presentacion == null)
+                {
+                    return NotFound("Presentación no encontrada para el producto.");
+                }
+
+                // Calcular la cantidad por presentación y el resto
+                var cantidadPorPresentacion = presentacion.CantidadPorPresentacion;
+                var nuevaCantidadTotalPorUnidad = producto.CantidadTotalPorUnidad - cantidad;
+                int? productoCantidadTotal = 0;
+                var numeroPar = nuevaCantidadTotalPorUnidad % 2;
+                var restar = nuevaCantidadTotalPorUnidad % cantidadPorPresentacion;
+                if (numeroPar == 0)
+                {
+                    var cantidadLotes = nuevaCantidadTotalPorUnidad / cantidadPorPresentacion;
+                    producto.CantidadTotal = cantidadLotes;
+                }
+                else
+                {
+                    productoCantidadTotal = (nuevaCantidadTotalPorUnidad - restar) / cantidadPorPresentacion;
+                    producto.CantidadTotal = productoCantidadTotal;
+                }
+
+                producto.CantidadTotalPorUnidad = nuevaCantidadTotalPorUnidad;
+
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Manejar errores inesperados
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
+
+        [HttpPut("AddCantidadReservada/{id}")]
+        public async Task<ActionResult> AddCantidadReservada(int id, int? cantidad)
+        {
+            // Buscar el producto por su ID
+            var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == id);
+
+            var cantidadTotalEnInventario = producto?.CantidadTotal - producto?.CantidadReservada;
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            if (cantidad > producto.CantidadTotal)
+            {
+                return BadRequest("La cantidad a reservar no puede ser mayor que la cantidad total");
+            }
+            if (cantidad > cantidadTotalEnInventario)
+            {
+                return BadRequest("La cantidad a reservar no puede ser mayor que la cantidad cantidadTotalEnInventario (cantidadTotal - cantidadReservada)");
+            }
+            // Actualizar la cantidad reservada del producto
+            producto.CantidadReservada += cantidad;
+            // Guardar los cambios en la base de datos
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+        [HttpPut("SustraerCantidadReservada/{id}")]
+        public async Task<ActionResult> SustraerCantidadReservada(int id, int? cantidad)
+        {
+            // Buscar el producto por su ID
+            var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == id);
+            if (producto == null)
+            {
+                return NotFound("El producto no fue encontrado.");
+            }
+            if (cantidad > producto.CantidadReservada)
+            {
+                return BadRequest("La cantidad a sascar de reserva no puede ser mayor que la cantidad enn reserva.");
+            }
+            var presentacion = await _context.Presentaciones.FindAsync(id);
+            int? agregarACantidadPorUnidad = 0;
+
+            if (presentacion != null)
+            {
+                agregarACantidadPorUnidad = presentacion.CantidadPorPresentacion * cantidad;
+            }
+
+            producto.CantidadTotal -= cantidad;
+            producto.CantidadTotalPorUnidad -= agregarACantidadPorUnidad;
+            producto.CantidadReservada -= cantidad;
+            // Guardar los cambios en la base de datos
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPut("AddCantidadPorUnidadReservada/{id}")]
+        public async Task<ActionResult> AddCantidadPorUnidadReservada(int id, int? cantidad)
+        {
+            // Buscar el producto por su ID
+            var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == id);
+
+            var cantidadTotalEnInventario = producto?.CantidadTotalPorUnidad - producto?.CantidadPorUnidadReservada;
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            if (cantidad > producto.CantidadTotalPorUnidad)
+            {
+                return BadRequest("La cantidad a reservar no puede ser mayor que la cantidad total por unidad");
+            }
+            if (cantidad > cantidadTotalEnInventario)
+            {
+                return BadRequest("La cantidad a reservar no puede ser mayor que la cantidad cantidadTotalEnInventario (cantidadTotal - cantidadReservada)");
+            }
+            // Actualizar la cantidad reservada del producto
+            producto.CantidadPorUnidadReservada += cantidad;
+            // Guardar los cambios en la base de datos
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+        [HttpPut("SustraerCantidadPorUnidadReservada/{id}")]
+        public async Task<ActionResult> SustraerCantidadPorUnidadReservada(int id, int? cantidad)
+        {
+            // Buscar el producto por su ID
+            var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == id);
+            if (producto == null)
+            {
+                return NotFound("El producto no fue encontrado.");
+            }
+            if (cantidad > producto.CantidadPorUnidadReservada)
+            {
+                return BadRequest("La cantidad a sascar de reserva no puede ser mayor que la cantidad por unidad en reserva.");
+            }
+            var presentacion = await _context.Presentaciones.FindAsync(id);
+            int? agregarACantidadPorUnidad = 0;
+
+            if (presentacion != null)
+            {
+                agregarACantidadPorUnidad = presentacion.CantidadPorPresentacion * cantidad;
+            }
+            producto.CantidadPorUnidadReservada -= cantidad;
+            var cantidadPorPresentacion = presentacion.CantidadPorPresentacion;
+            var nuevaCantidadTotalPorUnidad = producto.CantidadTotalPorUnidad - cantidad;
+            int? productoCantidadTotal = 0;
+            var numeroPar = nuevaCantidadTotalPorUnidad % 2;
+            var restar = nuevaCantidadTotalPorUnidad % cantidadPorPresentacion;
+            if (numeroPar == 0)
+            {
+                var cantidadLotes = nuevaCantidadTotalPorUnidad / cantidadPorPresentacion;
+                producto.CantidadTotal = cantidadLotes;
+            }
+            else
+            {
+                productoCantidadTotal = (nuevaCantidadTotalPorUnidad - restar) / cantidadPorPresentacion;
+                producto.CantidadTotal = productoCantidadTotal;
+            }
+
+            producto.CantidadTotalPorUnidad = nuevaCantidadTotalPorUnidad;
+            // Guardar los cambios en la base de datos
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+
 
         [HttpDelete("DeleteProducto/{Id}")]
         public async Task<HttpStatusCode> DeleteProducto(int Id)

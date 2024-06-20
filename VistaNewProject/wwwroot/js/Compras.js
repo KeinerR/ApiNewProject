@@ -147,7 +147,7 @@ function agregarDetalleCompraend(objeto) {
     var detalleCompra = {
         productoId: objeto.productoId,
         unidadId: objeto.unidadId,
-        cantidad: objeto.cantidad,
+        cantidad: objeto.cantidadLote,
         lotes: [] // Inicialmente sin lotes
     };
 
@@ -161,8 +161,10 @@ function agregarDetalleCompraend(objeto) {
         precioPorUnidadProducto: objeto.precioVentaxUnidadPresentacion,
         fechaVencimiento: objeto.fechaVencimiento,
         cantidad: objeto.cantidadLote,
+        cantidadPorUnidad: objeto.cantidadPorUnidad,
         estadoLote: 1 // Estado por defecto
     };
+    console.log(nuevoLote);
 
     detalleCompra.lotes.push(nuevoLote);
     compra.detallecompras.push(detalleCompra);
@@ -202,7 +204,7 @@ function agregarDetalleCompra() {
 
     var cantidadLote = cantidad * cantidadUnidad;
     var fechaVencimiento = document.getElementById('FechaVencimiento').value;
-
+    var cantidadPorUnidadLote = cantidadLote * cantidadPresentacion;
     var todolleno = $('.Mensaje').filter(function () {
         return $(this).text() !== '';
     }).length === 0;
@@ -322,7 +324,9 @@ function agregarDetalleCompra() {
                                 precioVentaxPresentacion: precioVentaxPresentacion,
                                 precioVentaxUnidadPresentacion: precioVentaxUnidadPresentacion,
                                 cantidadLote: cantidadLote,
-                                fechaVencimiento: fechaVencimiento
+                                cantidadPorUnidad: cantidadPorUnidadLote,
+                                fechaVencimiento: fechaVencimiento,
+                                cantidadPorUnidad: cantidadPorUnidad
                             };
 
                             agregarDetalleCompraend(objeto); // Llamar a la función optimizada con el objeto
@@ -434,6 +438,7 @@ function agregarDetalleCompra() {
                                             precioVentaxPresentacion: precioVentaxPresentacion,
                                             precioVentaxUnidadPresentacion: precioVentaxUnidadPresentacion,
                                             cantidadLote: cantidadLote,
+                                            cantidadPorUnidad: cantidadPorUnidadLote,
                                             fechaVencimiento: fechaVencimiento
                                         };
 
@@ -501,6 +506,7 @@ function agregarDetalleCompra() {
                     productoId: productoId,
                     unidadId: unidad,
                     cantidad: cantidad,
+                    cantidadPorUnidad: cantidadPorUnidadLote,
                     numeroLote: numeroLote,
                     precioCompra: precioCompra,
                     precioVentaxUnidad: precioVentaxUnidad,
@@ -581,6 +587,7 @@ function agregarDetalleCompra() {
                                 productoId: productoId,
                                 unidadId: unidad,
                                 cantidad: cantidad,
+                                cantidadPorUnidad: cantidadPorUnidadLote,
                                 numeroLote: numeroLote,
                                 precioCompra: precioCompra,
                                 precioVentaxUnidad: precioVentaxUnidad,
@@ -599,7 +606,8 @@ function agregarDetalleCompra() {
                     var objeto = {
                         productoId: productoId,
                         unidadId: unidad,
-                        cantidad: cantidad, 
+                        cantidad: cantidad,
+                        cantidadPorUnidad: cantidadPorUnidadLote,
                         numeroLote: numeroLote,
                         precioCompra: precioCompra,
                         precioVentaxUnidad: precioVentaxUnidad,

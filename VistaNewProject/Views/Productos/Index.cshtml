@@ -330,22 +330,25 @@
                     producto Id
                 </th>
                 <th>
-                    CATEGORIA
+                    Categoria
                 </th>
                 <th>
                     Marca
                 </th>
                 <th class="nombreLong">
-                    NOMBRE PRODUCTO
+                    Nombre producto
                 </th>
                 <th title="cantidad total por producto">
-                    CANTIDAD
+                    Cantidad total
+                </th>
+                <th title="cantidad total por producto">
+                    Cantidad totalPorUnidad
                 </th>
                 <th class="contenedorEstado">
-                    ESTADO
+                    Estado
                 </th>
                 <th class="contenedorAcciones">
-                    ACCIONES
+                    Acciones
                 </th>
             </tr>
         </thead>
@@ -377,6 +380,9 @@
                     </td>
                     <td class="contenedorCantidad">
                         @Html.DisplayFor(modelItem => item.CantidadTotal)
+                    </td>   
+                    <td class="contenedorCantidad">
+                        @Html.DisplayFor(modelItem => item.CantidadTotalPorUnidad)
                     </td>
                     <td class="text-center align-middle">
                         <label class="switch">
@@ -413,6 +419,7 @@
                             <td>@producto.NombreMarca</td>
                             <td>@producto.NombreCompletoProducto</td>
                             <td class="">@producto.CantidadTotal</td>
+                            <td class="">@producto.CantidadTotalPorUnidad</td>
                             <td class="text-center align-middle">
                                 <label class="switch">
                                     <input type="checkbox" onchange="actualizarEstadoProducto('@producto.ProductoId')" @(producto.Estado != 0 ? "checked" : "")>
