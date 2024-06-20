@@ -5,19 +5,19 @@
 }
 <div class="ContenedorVista" id="ContenedorProducto">
     <br />
-    <div class="d-flex justify-content-between" id="ContenedorOpciones">
+    <div class="d-flex justify-content-between align-items-center">
         <!-- Formulario de búsqueda a la izquierda -->
-        <div class="mr-auto">
+      
             <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
                 <div class="input-group">
                     <input id="buscarProducto" type="text" class="form-control" oninput="searchProducto();" placeholder="Buscar producto" aria-label="Search" aria-describedby="button-addon2">
                     <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputProducto()" type="button"><i class="fas fa-search"></i></button>
                 </div>
             </form>
-        </div>
+       
 
         <button type="button" class="reporte-crear rounded-pill d-flex ov-btn-grow-ellipse justify-content-center align-items-around" data-toggle="modal" data-target="#dateModal">
-            <a asp-action="GenerarPDF" class="btn btn-primary">Generar PDF</a>
+            <a asp-action="GenerarPDF" class="btn btn-primary">Generar PDF <i class="fa-solid fa-download"></i> </a>
         </button>
 
         <!-- Botón para abrir el modal -->

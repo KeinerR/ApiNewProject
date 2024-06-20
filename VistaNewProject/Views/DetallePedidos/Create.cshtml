@@ -37,7 +37,13 @@
     }
 </style>
 <div id="createContainer">
-<h4 style="text-align:center">Agregar Productos</h4>
+    <div class="modal-cabecera">
+       
+        <div class="modal-header-view TituloModal">
+            <h2 class="modal-title">Agregar producto</h2>
+        </div>
+       
+    </div>
 <hr />
 <br />
 
@@ -60,46 +66,36 @@
             <span asp-validation-for="PedidoId" class="text-danger"></span>
         </div>
 
-         <div class="row">
 
           
 
-         <fieldset>
-                <div class="col-6">
+         
+             <div class="row">
+
+                  <div class="col-6">
                     <label for="busqueda">Filtrar Productos:</label>
-                    <input class="form-control" type="text" id="busqueda" name="busqueda" placeholder="Buscar Productos" oninput="filtrarProductos(this.value)" />
-                </div>
+                      <input class="form-control" type="text" id="busqueda" name="busqueda" placeholder="Buscar Productos" oninput="filtrarProductos(this.value)" />
+                  </div>
 
 
-                @* <div class="col-md-6">
-                <div class="form-group">
-                <label for="NombreCliente" class="control-label">Cliente</label>
-                <input list="clientes" id="Clientes" name="cliente" class="form-control" placeholder="Escribe y/o selecciona..." autocomplete="off" />
-                <datalist id="clientes">
-                <!-- Opciones de productos se llenarán dinámicamente aquí -->
-                </datalist>
-                <input id="ClinteHiden" type="hidden" name="clienteId">
-                <span id="clienteerror" class="text-danger"></span>
-                </div>
-                </div> *@
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="NombreCliente" class="control-label">Cliente</label>
+                        <label for="NombreCliente" class="control-label">Productos</label>
                         <input list="clientes" id="Clientes" name="cliente" class="form-control" placeholder="Escribe y/o selecciona..." autocomplete="off" />
                         <datalist id="clientes">
                             @foreach (var item in ViewBag.Producto)
                                 if (item.Estado != 0)
                                 {
-                                    <option value="@item.NombreProducto" data-id="@item.ProductoId">@item.NombreProducto</option>
+                                <option value="@item.NombreCompletoProducto" data-id="@item.ProductoId">@item.NombreCompletoProducto</option>
                                 }
                         </datalist>
-                        <input id="ClinteHiden" type="" name="clienteId">
+                        <input id="ClinteHiden" type="hidden" name="clienteId">
                         <span id="clienteerror" class="text-danger"></span>
                     </div>
                 </div>
-        </div>
+            </div>
 
-         </fieldset>
+             
 
         <div class="row">
             <!-- Campo de búsqueda único -->
@@ -116,7 +112,7 @@
             </div>
 
             <div class="col-4">
-                <label for="UnidadId" class="control-label">Presentación</label>
+                <label for="UnidadId" class="control-label">Unidades</label>
                 <input id="UnidadId" class="form-control" list="UnidadIdList" autocomplete="off" />
                 <datalist type="hidden" id="UnidadIdList"></datalist>
                 <input type="hidden" id="unidadHidden" name="unidadId" type="" />
@@ -155,7 +151,7 @@
                 </button>
             </div>
 
-            <div class="col-4 mt-4">
+            <div class="col-4 mt-4" style="margin-inline-end">
                 <button type="submit" id="guardarButton" class="btn btn-primary p-2" style="margin-left: 200px;">
                     <i class="fa-solid fa-cart-arrow-down"></i> Guardar
                 </button>

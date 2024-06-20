@@ -254,7 +254,7 @@ namespace VistaNewProject.Controllers
                                 {
                                     var Id = productoId;
                                     var cantidad = detallePedido.Cantidad;
-                                    var updateProducto = await _client.SustraerCantidadReservadaAsync(Id,cantidad);
+                                    var updateProducto = await _client.QuitarCantidadReservada(Id,cantidad);
                                     if (updateProducto.IsSuccessStatusCode)
                                     {
                                         Console.WriteLine("Producto actualizado correctamente");
@@ -275,27 +275,10 @@ namespace VistaNewProject.Controllers
                         {
                             foreach (var detalleCancelado in detallesPedido)
                             {
-                               
+                                var cantidad = detalleCancelado.Cantidad;
+                                var updateProducto = await _client.PedidosCancelados(id, cantidad);
 
-                                var loteId = detalleCancelado.LoteId.Value;
-                                if (loteId!=null)
-                                {
-                                    var lote = await _client.FindLoteAsync(loteId);
 
-                                    Console.WriteLine(lote);
-
-                                    if (lote != null)
-                                    {
-                                        lote.Cantidad += detalleCancelado.Cantidad;
-                                        var updateLote = await _client.UpdateLoteAsync(lote);
-
-                                        if (updateLote.IsSuccessStatusCode)
-                                        {
-                                            Console.WriteLine("Cantidad devuelta al lote correctamente");
-                                        }
-                                    }
-
-                                }
                             }
                         }
 

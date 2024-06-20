@@ -2,7 +2,6 @@
 @model X.PagedList.IPagedList<VistaNewProject.Models.Pedido>
 <meta charset="UTF-8">
 
-
 @{
     ViewData["Title"] = "Index";
     var successMessage = TempData["SuccessMessage"] as string;
@@ -140,11 +139,15 @@
     <div class="mr-auto">
         <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
             <div class="input-group">
-                <input id="buscarPedido" type="text" class="form-control" placeholder="Buscar pedido" aria-label="Search" aria-describedby="button-addon2">
-                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
+                <input id="buscarPedidos" type="text" class="form-control" oninput="searchPedidos();" placeholder="Buscar Pedidos" aria-label="Search" aria-describedby="button-addon2">
+                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputPedidos()" type="button"><i class="fas fa-search"></i></button>
             </div>
         </form>
     </div>
+   
+
+
+
 
 
 
@@ -164,60 +167,42 @@
     </a>
 </div>
 
-
 <table class="table table-custom text-center mt-4">
+    <!-- Cabecera de la tabla -->
     <thead>
         <tr>
-            <th>
-                #
-            </th>
-            <th>
-                CLIENTE
-            </th>
-            <th>
-                TIPO DE SERVICIO
-            </th>
-            <th>
-                FECHA DE PEDIDO
-            </th>
-            <th>
-                ESTADO DE PEDIDO
-            </th>
-           
-            <th>
-                ACCIONES
-            </th>
+            <th>#</th>
+            <th class="d-none">PedidoId</th>
+            <th>CLIENTE</th>
+            <th>TIPO DE SERVICIO</th>
+            <th>FECHA DE PEDIDO</th>
+            <th>ESTADO DE PEDIDO</th>
+            <th>ACCIONES</th>
         </tr>
     </thead>
     <tbody class="text-center">
+        <!-- Iteración sobre los pedidos -->
         @{
-            int contador = 1; // Inicializa el contador en 1
+            var contador = 1; // Inicialización de la variable contador
         }
+
         @foreach (var item in Model)
         {
             <tr class="pedidosPaginado">
-                <td>
-                    @contador <!-- Muestra el valor del contador -->
-                    @{
-                        contador++; // Incrementa el contador para la próxima iteración
-                    }
-                </td>
+                <td>@contador</td>
+                <td class="d-none">@Html.DisplayFor(modelItem => item.PedidoId)</td>
+
                 <td>
                     @foreach (var clientes in ViewBag.Clientes)
                     {
-                        @if (clientes.ClienteId == item.ClienteId) // Verifica si el ID del rol coincide con el ID del rol del usuario
+                        @if (clientes.ClienteId == item.ClienteId)
                         {
-                            <span>@clientes.Identificacion</span> <!-- Muestra el nombre del rol si coincide -->
+                            <span>@clientes.Identificacion</span>
                         }
                     }
                 </td>
-             
-                <td>
-                    @Html.DisplayFor(modelItem => item.TipoServicio)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FechaPedido)
-                </td>
+                <td>@Html.DisplayFor(modelItem => item.TipoServicio)</td>
+                <td>@Html.DisplayFor(modelItem => item.FechaPedido)</td>
                 <td class="text-center align-middle contenedorEstadoTabla">
                     @if (item.EstadoPedido == "Pendiente")
                     {
@@ -225,7 +210,6 @@
                             <input type="radio" name="estado_@item.PedidoId" value="Realizado" onchange="actualizarEstadoPedido('@item.PedidoId', this.value)">
                             <span class="slider" style="background-color: #00215E;"></span>
                         </label>
-                     
                     }
                     else if (item.EstadoPedido == "Realizado")
                     {
@@ -234,92 +218,27 @@
                             <span class="slider" style="background-color: #16DB25;"></span>
                         </label>
                     }
-                   
-                   
                 </td>
-
-
-               
-             
-                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
                 <td class="d-flex align-items-center justify-content-between">
-                    <a asp-action="Details" asp-controller="Pedidos" asp-route-id="@item.PedidoId" class="btn botonDetalle"><i class="fa-solid fa-file"></i></a>
-                  
+                    <a asp-action="Details" asp-route-id="@item.PedidoId" class="btn botonDetalle"><i class="fa-solid fa-file"></i></a>
                     @if (item.EstadoPedido == "Pendiente")
                     {
                         <input type="checkbox" style="margin-right:20px" name="estado_@item.PedidoId" value="Anulado" onclick="actualizarEstadoPedido('@item.PedidoId', this.value)" />
                     }
                 </td>
-
             </tr>
-        }
-        @{
-            int contadorDos = 1;
-            var pedidos = ViewData["Pedidos"] as List<Pedido>;
-            if (pedidos != null)
-            {
-                foreach (var pedido in pedidos)
-                {
-                    <tr class="Pedidos" style="display:none;">
-                        <td>@contadorDos</td>
-                        <td>
-                            @foreach (var clientes in ViewBag.Clientes)
-                            {
-                                @if (clientes.ClienteId == pedido.ClienteId) // Verifica si el ID del rol coincide con el ID del rol del usuario
-                                {
-                                    <span>@clientes.Identificacion</span> <!-- Muestra el nombre del rol si coincide -->
-                                }
-                            }
-                        </td>
-                        <td>@pedido.TipoServicio</td>
-                        <td>@pedido.FechaPedido</td>
-                        <td class="text-center align-middle contenedorEstadoTabla">
-                            @if (pedido.EstadoPedido == "Pendiente")
-                            {
-                                <label class="switch">
-                                    <input type="radio" name="estado_@pedido.PedidoId" value="Realizado" onchange="actualizarEstadoPedido('@pedido.PedidoId', this.value)">
-                                    <span class="slider" style="background-color: #00215E;"></span>
-                                </label>
-                               
-                            }
-                            else if (pedido.EstadoPedido == "Realizado")
-                            {
-                                <label class="switch">
-                                    <input type="radio" name="estado_@pedido.PedidoId" value="Cancelado" onchange="actualizarEstadoPedido('@pedido.PedidoId', this.value)">
-                                    <span class="slider" style="background-color: #E61905;"></span>
-                                </label>
-                            }
-
-
-                        </td>
-
-
-
-
-                        <!-- Agrega esto a tu tabla dentro de la sección tbody -->
-                        <td>
-                            <a asp-action="Details" asp-controller="Pedidos" asp-route-id="@pedido.PedidoId" class="btn" id="btnDetail"><i class="fa-solid fa-file"></i></a>
-                            <label class="switch">
-                                <input type="checkbox" name="estado_@pedido.PedidoId" value="Anulado" onchange="actualizarEstadoPedido('@pedido.PedidoId', this.value)">
-                                <span class="slider" style="background-color: #615E5E;"></span>
-                            </label>
-                           </td>
-                    </tr>
-                    contadorDos++;
-
-                }
-            }
+            contador++; // Incrementar el contador después de cada fila
         }
     </tbody>
-</table>
 
+</table>
 <div class="pagination-container mt-2">
     @if (Model != null && Model.PageCount > 1)
     {
         <div class="d-flex justify-content-center mb-5">
             <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-center">
-                    <!-- Botón para ir a la primera página -->
+                    <!-- Botones de navegación -->
                     @if (Model.PageNumber > 1)
                     {
                         <li class="page-item">
@@ -328,26 +247,23 @@
                             </a>
                         </li>
                     }
-                    <!-- Botón para la página anterior (oculto en la página 1) -->
                     <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
                         <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
                             <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
                         </a>
                     </li>
-                    <!-- Iterar sobre las páginas disponibles -->
+                    <!-- Números de página -->
                     @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
                     {
                         <li class="page-item @(i == Model.PageNumber ? "active" : "")">
                             <a class="page-link" href="?page=@i">@i</a>
                         </li>
                     }
-                    <!-- Botón para la página siguiente (oculto en la última página) -->
                     <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
                         <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
                             <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
                         </a>
                     </li>
-                    <!-- Botón para ir a la última página -->
                     @if (Model.PageNumber < Model.PageCount)
                     {
                         <li class="page-item">
@@ -360,14 +276,6 @@
             </nav>
         </div>
     }
-
 </div>
 
 <script src="~/js/pedidos.js"></script>
-
-<script>
-    // Función para actualizar la tabla de detalles del pedido
-   
-    // Aquí va el resto de tu código JavaScript...
-
-</script>

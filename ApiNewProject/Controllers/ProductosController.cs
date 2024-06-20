@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MySqlX.XDevAPI;
 using System.Net;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -277,7 +278,6 @@ namespace ApiNewProject.Controllers
 
             return Ok();
         }
-
         [HttpPut("SustraerCantidadReservada/{id}")]
         public async Task<ActionResult> SustraerCantidadReservada(int id, int? cantidad)
         {
@@ -294,21 +294,17 @@ namespace ApiNewProject.Controllers
             {
                 return BadRequest("La cantidad a restar es mayor que la cantidad reservada actual.");
             }
-            // Verificar si la cantidad a restar es válida
-            if (cantidad > producto.CantidadTotal)
-            {
-                return BadRequest("La cantidad a restar es mayor que la cantidadTotal de productos.");
-            }
 
             // Actualizar la cantidad reservada del producto
             producto.CantidadReservada -= cantidad;
-            producto.CantidadTotal -= cantidad; ;
+            producto.CantidadTotal -= cantidad;
 
             // Guardar los cambios en la base de datos
             await _context.SaveChangesAsync();
 
             return Ok();
         }
+
 
         [HttpPut("AddCantidadTotal/{id}")]
         public async Task<ActionResult> AddCantidadTotal(int id, int ? cantidad)
@@ -454,6 +450,100 @@ namespace ApiNewProject.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al obtener el nombre del producto: " + ex.Message);
             }
         }
+        [HttpPut("QuitarCantidadReservada/{id}")]
+        public async Task<ActionResult> QuitarCantidadReservada(int id, int? cantidad)
+        {
+            // Buscar el producto por su ID
+            var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == id);
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            // Verificar si la cantidad a restar es válida
+            
+
+            producto.CantidadReservada -= cantidad; ;
+
+            // Guardar los cambios en la base de datos
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPut("PedidosCancelados/{id}")]
+        public async Task<ActionResult> PedidosCancelados(int id, int? cantidad)
+        {
+            // Buscar todos los detalles del pedido por su PedidoId
+            var detallesPedido = await _context.Detallepedidos.Where(p => p.PedidoId == id).ToListAsync();
+
+            if (detallesPedido == null || !detallesPedido.Any())
+            {
+                return NotFound(new { message = "No se encontraron detalles del pedido con el ID proporcionado" });
+            }
+
+            try
+            {
+                foreach (var detalleCancelado in detallesPedido)
+                {
+
+                    var productoId=detalleCancelado.ProductoId;
+
+                    var loteId = detalleCancelado.LoteId;
+
+                    if (productoId != null)
+                    {
+                        // Buscar el lote asociado al LoteId
+                        var producto = await _context.Productos.FirstOrDefaultAsync(l => l.ProductoId == productoId);
+
+                        if (producto != null)
+                        {
+                            // Devolver la cantidad del detalle al lote
+                            producto.CantidadTotal += detalleCancelado.Cantidad;
+
+                            // Actualizar el lote en la base de datos
+                            _context.Productos.Update(producto); // Marca el lote como modificado
+                        }
+                        else
+                        {
+                            Console.WriteLine("Lote no encontrado para LoteId: " + loteId);
+                        }
+                    }
+
+                    if (loteId != null)
+                    {
+                        // Buscar el lote asociado al LoteId
+                        var lote = await _context.Lotes.FirstOrDefaultAsync(l => l.LoteId == loteId);
+
+                        if (lote != null)
+                        {
+                            // Devolver la cantidad del detalle al lote
+                            lote.Cantidad += detalleCancelado.Cantidad;
+
+                            // Actualizar el lote en la base de datos
+                            _context.Lotes.Update(lote); // Marca el lote como modificado
+                        }
+                        else
+                        {
+                            Console.WriteLine("Lote no encontrado para LoteId: " + loteId);
+                        }
+                    }
+                }
+
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // Manejar excepciones y errores
+                Console.WriteLine("Error: " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Ocurrió un error al procesar la solicitud", error = ex.Message });
+            }
+
+            return Ok();
+        }
+
 
     }
 }
