@@ -313,7 +313,13 @@ function eliminarDetalle(index) {
 //        obtenerDetallesProducto(clienteId);
 //    });
 //});
+let lotes = [];
+
 $(document).ready(function () {
+    // Función para cargar los productos
+    $("#UnidadId").prop("disabled", true);
+    $("#CantidadTxt").prop("disabled", true);
+
     // Función para cargar los productos
     $("#Clientes").on("change", function () {
         var inputValue = $(this).val();
@@ -332,6 +338,10 @@ $(document).ready(function () {
 
             console.log("Cliente seleccionado:", clienteIdSeleccionado);
 
+            // Enable "Unidad" and "Cantidad" fields
+            $("#UnidadId").prop("disabled", false);
+            $("#CantidadTxt").prop("disabled", false);
+
             // Llamar a la función para obtener detalles del producto pasando el clienteId
             obtenerDetallesProducto(clienteIdSeleccionado);
         } else {
@@ -346,6 +356,10 @@ $(document).ready(function () {
                     var clienteIdSeleccionado = inputValue;
                     console.log("Cliente seleccionado:", clienteIdSeleccionado);
 
+                    // Enable "Unidad" and "Cantidad" fields
+                    $("#UnidadId").prop("disabled", false);
+                    $("#CantidadTxt").prop("disabled", false);
+
                     // Llamar a la función para obtener detalles del producto pasando el clienteId
                     obtenerDetallesProducto(clienteIdSeleccionado);
                 } else {
@@ -353,15 +367,24 @@ $(document).ready(function () {
                     $("#Clientes").val("");
                     limpiarDetallesProducto();
 
+                    // Disable "Unidad" and "Cantidad" fields
+                    $("#UnidadId").prop("disabled", true);
+                    $("#CantidadTxt").prop("disabled", true);
+
                     // Clear the Clientes input if no entity is found
                 }
             } else {
                 $("#ClienteHidden").val("");
                 $("#Clientes").val("");
-                limpiarDetallesProducto();// Clear the Clientes input if the value is not a valid number
+                limpiarDetallesProducto();
+
+                // Disable "Unidad" and "Cantidad" fields
+                $("#UnidadId").prop("disabled", true);
+                $("#CantidadTxt").prop("disabled", true);
             }
         }
     });
+
 
     let unidades = [];
 
@@ -375,7 +398,9 @@ $(document).ready(function () {
                 return response.json();
             })
             .then(data => {
-                unidades = data; // Guardar unidades en una variable global
+                console.log(data);
+                unidades = data;
+                console.log(unidades);// Guardar unidades en una variable global
             });
 
         const fetchLotes = fetch(`https://localhost:7013/api/Lotes/GetLotes`)
@@ -383,7 +408,11 @@ $(document).ready(function () {
                 if (!response.ok) {
                     throw new Error('Error al obtener los lotes del producto');
                 }
+
                 return response.json();
+
+
+
             });
 
         const fetchProductos = fetch(`https://localhost:7013/api/Productos/GetProductos`)
@@ -394,21 +423,15 @@ $(document).ready(function () {
                 return response.json();
             });
 
-        const fetchDetalleCompras = fetch(`https://localhost:7013/api/Detallecompras/GetDetallecompras`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener los detalles de compras');
-                }
-                return response.json();
-            });
+        
 
         // Esperar a que todas las solicitudes se completen
-        Promise.all([fetchUnidades, fetchLotes, fetchProductos, fetchDetalleCompras])
-            .then(([unidadesData, lotesData, productosData, detalleComprasData]) => {
+        Promise.all([fetchUnidades, fetchLotes, fetchProductos])
+            .then(([unidadesData, lotesData, productosData]) => {
                 console.log("Unidades:", unidadesData);
-                console.log("Lotes:", lotesData);
+
+
                 console.log("Productos:", productosData);
-                console.log("Detalle compras:", detalleComprasData);
 
                 // Procesar datos de producto
                 const productoSeleccionado = productosData.find(producto => producto.productoId == productId);
@@ -439,43 +462,7 @@ $(document).ready(function () {
 
                     // Obtener detalles de compras y unidades
                     // Obtener detalles de compras y unidades
-                    const detalles = detalleComprasData.filter(d => d.productoId == productId);
-                    if (detalles.length > 0) {
-                        detalles.forEach(detalle => {
-                            var unidadIdDetalles = detalle.unidadId;
-
-                            // Buscar nombre de la unidad asociada al detalle
-                            var nombreUnidad = unidades.find(u => u.unidadId == unidadIdDetalles)?.nombreUnidad;
-
-                            // Buscar nombre de la unidad con unidadId igual a 1
-                            var nombreUnidadUno = unidades.find(u => u.unidadId == 1)?.nombreUnidad;
-
-                            // Asignar nombre de unidad al campo de texto usando jQuery
-                            $('#UnidadTxt').val(nombreUnidad);
-
-                            // Limpiar opciones anteriores del datalist
-                            const dataList = document.getElementById('UnidadIdList');
-                            dataList.innerHTML = '';
-
-                            // Agregar opción para nombreUnidad al datalist
-                            if (nombreUnidad) {
-                                const option = document.createElement('option');
-                                option.value = nombreUnidad;
-                                option.setAttribute('data-id', unidadIdDetalles);
-                                dataList.appendChild(option);
-                            }
-
-                            // Agregar opción para nombreUnidadUno (unidadId == 1) al datalist
-                            if (nombreUnidadUno) {
-                                const optionUno = document.createElement('option');
-                                optionUno.value = nombreUnidadUno;
-                                optionUno.setAttribute('data-id', 1); // Asignar unidadId 1
-                                dataList.appendChild(optionUno);
-                            }
-                        });
-                    } else {
-                        console.log('No se encontraron detalles para el productoId:', productId);
-                    }
+                    
 
                 }
 
@@ -494,14 +481,19 @@ $(document).ready(function () {
                         const precio = loteProximoVencimiento.precioPorPresentacion;
                         const preciopormayor = loteProximoVencimiento.precioPorUnidadProducto
 
+                        lotes.push(loteProximoVencimiento);
+
                         $('#PrecioUnitario').val(preciopormayor);
-                        console.log("keienr precio ", preciopormayor);
+                        $('#PrecioUnitariohiddenpormayordescuento').val(preciopormayor);
+
                         console.log("keienr precio mayor ", precio)
+
 
                         $('#PrecioUnitariohiddenpormayor').val(precio);
 
 
                         $('#LoteId').val(loteProximoVencimiento.loteId);
+                        habilitarUnidades()
                     } else {
                      
                         $('#PrecioEnviar').val('');
@@ -525,153 +517,9 @@ $(document).ready(function () {
     }
 
 
-    $(document).ready(function () {
-        $('#CantidadTxt').on('input', function () {
-            // Obtener el valor ingresado en el campo de cantidad y convertirlo a número
-            const cantidadIngresada = parseFloat($(this).val());
-            console.log('Cantidad ingresada:', cantidadIngresada);
-            const cantidadDisponible = parseFloat($('#CantidadTxt').attr('placeholder').split(':')[1].trim());
+   
 
-            // Obtener y convertir a número los valores de los otros campos
-            var unidadprecio = parseFloat($('#unidadtotal').val());
-            var descuento = parseFloat($('#Descuento').val());
-            var aplicadomayor = parseFloat($('#CantidadAPlicada').val());
-            var precio = parseFloat($('#PrecioUnitario').val());
-            var UnidadId = parseInt($('#unidadHidden').val()); // Asumiendo que UnidadId es un número entero
-            var preciomayor = parseFloat($('#PrecioUnitariohiddenpormayor').val());
-
-            // Calcular el descuento aplicado en función del descuento porcentual
-            var descuentoaplicar = descuento / 100;
-            var descuentoaplicado = precio * descuentoaplicar;
-            var mayordescentoaplicado = preciomayor * descuentoaplicar;
-
-            // Calcular el precio con descuento para la unidad estándar y mayorista
-            var precioConDescuento = precio - descuentoaplicado;
-            var precioMayorConDescuento = preciomayor - mayordescentoaplicado;
-
-            // Calcular la cantidad total por unidad
-            var cantidadenviar = cantidadIngresada * unidadprecio;
-            $('#CantidadPorUnidad').val(cantidadenviar);
-
-
-            console.log("Valor de cantidadenviar:", cantidadenviar);
-
-            // Aplicar lógica según las condiciones especificadas
-            
-
-            if (isNaN(cantidadenviar)) {
-                $('#CantidadTxt').addClass('input-validation-error'); // Agregar la clase de error al campo
-                $('span[data-valmsg-for="CantidadTxt"]').text('Por favor, ingrese una cantidad válida'); // Mostrar el mensaje de error
-                $('#CantidadTxt').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
-                $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
-
-                console.log("no se puede enviar");
-            }
-            else if (cantidadenviar > cantidadDisponible) {
-            // Si la cantidad ingresada es mayor que la cantidad disponible, mostrar mensaje de error
-            $('#CantidadTxt').addClass('input-validation-error');
-            // Agregar la clase de error al campo
-            $('span[data-valmsg-for="Cantidad"]').text('La cantidad ingresada no puede ser mayor que la cantidad disponible');
-            $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
-            $('#CantidadTxt').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
-            } else if (cantidadenviar <= 0) {
-            // Si la cantidad ingresada es menor o igual a 0, mostrar mensaje de error
-            $('#CantidadTxt').addClass('input-validation-error');
-            // Agregar la clase de error al campo
-            $('span[data-valmsg-for="CantidadTxt"]').text('La cantidad ingresada no puede ser menor o igual a 0');
-            $('#btnEnviar').prop('disabled', true); // Deshabilitar el botón de enviar
-            $('#CantidadTxt').addClass('is-invalid'); // Agregar la clase de error al campo para los estilos de Bootstrap
-        } else {
-            // Si la cantidad ingresada es válida, quitar la clase de error del campo
-            $('#CantidadTxt').removeClass('input-validation-error');
-            // Quitar el mensaje de error
-            $('span[data-valmsg-for="CantidadTxt"]').text('');
-            // Quitar la clase de error del campo para los estilos de Bootstrap
-            $('#CantidadTxt').removeClass('is-invalid');
-            // Habilitar el botón de enviar
-            $('#btnEnviar').prop('disabled', false);
-        }
-
-        });
-    });
-    $('#UnidadId').on('input', function () {
-        var selectedValue = $(this).val();
-        var selectedOption = $('#UnidadIdList option').filter(function () {
-            return $(this).val() === selectedValue || $(this).data('id') == selectedValue; // Utiliza '==' para permitir comparación de tipos mixtos
-        }).first();
-        var preciomayor = parseFloat($('#PrecioUnitariohiddenpormayor').val());
-        var precio = parseFloat($('#PrecioUnitario').val());
-        var aplicadomayor = parseFloat($('#CantidadAPlicada').val());
-
-        if (selectedOption.length > 0) {
-            var unidadId = selectedOption.attr('data-id');
-            console.log("ID de la unidad seleccionada:", unidadId);
-
-            // Buscar la unidad en el arreglo global "unidades"
-            var unidadSeleccionada = unidades.find(u => u.unidadId == unidadId);
-            if (unidadSeleccionada) {
-                // Asignar el valor de cantidadPorUnidad al campo "unidadtotal"
-                $('#unidadtotal').val(unidadSeleccionada.cantidadPorUnidad);
-
-                // Asignar el ID de la unidad seleccionada al campo oculto
-                $('#unidadHidden').val(unidadId);
-
-                // Actualizar el precio basado en la unidad seleccionada y cantidad
-                var cantidad = parseFloat($('#CantidadPorUnidad').val());
-                var descuento = parseFloat($('#Descuento').val()) / 100;
-
-                if (unidadId == "1") {
-                    // Si la unidad es 1, usar el precio unitario normal
-                    if (cantidad > aplicadomayor) {
-                        $('#PrecioEnviar').val(precio * (1 - descuento));
-                    } else {
-                        $('#PrecioEnviar').val(precio);
-                    }
-                } else {
-                    // Si la unidad no es 1, usar el precio por mayor
-                    if (cantidad > aplicadomayor) {
-                        $('#PrecioEnviar').val(preciomayor * (1 - descuento));
-                    } else {
-                        $('#PrecioEnviar').val(preciomayor);
-                    }
-                }
-            } else {
-                console.log("No se encontró la unidad con ID:", unidadId);
-            }
-        } else if (!isNaN(selectedValue) && selectedValue !== '') {
-            // Código para manejar la entrada de número si no se encuentra en el datalist
-            fetch(`https://localhost:7013/api/Unidades/GetunidadPorId/${selectedValue}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text();
-                })
-                .then(data => {
-                    console.log("Nombre de la unidad:", data);
-                    $('#UnidadId').val(data.trim());
-                    $('#unidadHidden').val(selectedValue);
-                    $('#unidadtotal').val(''); // Limpiar el campo de cantidadPorUnidad
-                    $('#CantidadTxt').val(''); // Limpiar el campo de cantidad
-                    $('#PrecioEnviar').val('');
-                    $('#Clientes').val('');
-                    $('#clientes').val('');
-                    $('#ClinteHiden').val('');// Limpiar el campo de precio
-                })
-                .catch(error => {
-                    console.error('There has been a problem with your fetch operation:', error);
-                });
-        } else {
-            // Limpiar campos si no se selecciona ninguna unidad válida
-            $('#unidadHidden').val('');
-            $('#unidadtotal').val('');
-            $('#CantidadTxt').val('');
-            $('#PrecioEnviar').val('');
-            $('#Clientes').val('');
-            $('#clientes').val('');
-            $('#ClinteHiden').val('');
-        }
-    });
+  
 
 
 
@@ -696,9 +544,71 @@ $(document).ready(function () {
     }
 
     // Evento input para el campo "Cantidad"
-  
+
+
 
 })
+$(document).ready(function () {
+    $('#CantidadTxt').on('input', function () {
+        const cantidadIngresada = parseFloat($(this).val()); // Obtener la cantidad ingresada y convertirla a número
+        const cantidadDisponible = parseFloat($('#CantidadTxt').attr('placeholder').split(':')[1].trim()); // Obtener la cantidad disponible
+
+        var descuento = parseFloat($('#Descuento').val()); // Obtener el descuento y convertirlo a número
+        var aplicadomayor = parseFloat($('#CantidadAPlicada').val()); // Obtener la cantidad aplicada mayor y convertirla a número
+        var precio = parseFloat($('#PrecioUnitario').val()); // Obtener el precio unitario y convertirlo a número
+
+        // Verificar si hay valores válidos para las unidades y descuentos
+        var unidad1 = parseFloat($('#unidadHidden').val());
+        var unidadfull = parseFloat($('#PrecioUnitariohiddenpormayordescuento').val());
+        var unidadfulls = parseFloat($('#PrecioUnitariohiddenpormayor').val());
+
+        var descuentoaplicar = descuento / 100;
+        var aplicar = precio * descuentoaplicar;
+        console.log(aplicar);
+        var pre = precio - aplicar;
+
+        // Aplicar el descuento si la cantidad ingresada es mayor que la cantidad aplicada mayor
+        if (!isNaN(cantidadIngresada) && cantidadIngresada > aplicadomayor && unidad1 == 1) {
+            $('#PrecioUnitario').val(pre.toFixed(2)); // Aplicar precio con descuento
+        } else if (!isNaN(cantidadIngresada) && cantidadIngresada > aplicadomayor && unidad1 == 2) {
+            $('#PrecioUnitario').val(pre.toFixed(2)); // Aplicar precio con descuento
+        } else {
+            $('#PrecioUnitario').val(precio.toFixed(2)); // Restaurar precio original
+        }
+
+        // Si la cantidad ingresada está vacía o no es un número válido, restaurar el precio original
+        if (isNaN(cantidadIngresada) || cantidadIngresada === "") {
+            $('#PrecioUnitario').val(precio.toFixed(2)); // Restaurar precio original
+        }
+
+        // Aplicar lógica según las condiciones especificadas
+        if (isNaN(cantidadIngresada)) {
+            mostrarError('Por favor, ingrese una cantidad válida');
+        } else if (cantidadIngresada > cantidadDisponible) {
+            mostrarError('La cantidad ingresada no puede ser mayor que la cantidad disponible');
+        } else if (cantidadIngresada <= 0) {
+            mostrarError('La cantidad ingresada no puede ser menor o igual a 0');
+        } else {
+            quitarError(); // Si la cantidad ingresada es válida, quitar mensaje de error
+        }
+    });
+
+    // Función para mostrar mensaje de error y deshabilitar el botón de enviar
+    function mostrarError(mensaje) {
+        $('#CantidadTxt').addClass('input-validation-error');
+        $('span[data-valmsg-for="CantidadTxt"]').text(mensaje);
+        $('#CantidadTxt').addClass('is-invalid');
+        $('#btnEnviar').prop('disabled', true);
+    }
+
+    // Función para quitar mensaje de error y habilitar el botón de enviar
+    function quitarError() {
+        $('#CantidadTxt').removeClass('input-validation-error');
+        $('span[data-valmsg-for="CantidadTxt"]').text('');
+        $('#CantidadTxt').removeClass('is-invalid');
+        $('#btnEnviar').prop('disabled', false);
+    }
+});
 
 
 $(document).ready(function () {
@@ -737,6 +647,7 @@ function filtrarProductos(busqueda) {
 }
 
 
+
 function mostrarDetallesActuales() {
     // Realizar una solicitud al servidor para obtener la lista global de detalles
     $.get('/DetallePedidos/ObtenerDetalles', function (data) {
@@ -747,4 +658,65 @@ function mostrarDetallesActuales() {
 
 
 
+
+function habilitarUnidades() {
+
+    var precio = parseFloat($('#PrecioUnitario').val());
+    var preciomayor = parseFloat($('#PrecioUnitariohiddenpormayor').val());
+    console.log("unitario", precio);
+    console.log("mayor", preciomayor);
+    $("#UnidadId").on("change", function () {
+        var inputValue = $(this).val();
+        var selectedOption = $("#UnidadIdList option").filter(function () {
+            return $(this).val() === inputValue || $(this).data("id") == inputValue; // Ensure type coercion for numeric comparison
+        });
+
+        if (selectedOption.length) {
+            $("#unidadHidden").val(selectedOption.data("id"));
+            $("#UnidadId").val(selectedOption.val()); // Set the Clientes input to the name of the entity
+            quitarError(this, document.getElementById("UnidadError"));
+
+            // Capturar el ID del cliente seleccionado en una variable
+            var clienteIdSeleccionado = selectedOption.data("id");
+            $("#unidadHidden").val(clienteIdSeleccionado);
+
+            if (clienteIdSeleccionado == 2) {
+                // Obtener el precio por mayor y actualizar el campo PrecioUnitario
+                $('#PrecioUnitario').val(preciomayor);
+                console.log("Precio por mayor:", preciomayor);
+                // Llamar a la función para obtener detalles del producto pasando el clienteId
+            }
+            if (clienteIdSeleccionado == 1) {
+                // Obtener el precio por mayor y actualizar el campo PrecioUnitario
+                $('#PrecioUnitario').val(precio);
+                console.log("Precio por mayor:", precio);
+                // Llamar a la función para obtener detalles del producto pasando el clienteId
+            }
+        } else {
+            // Check if the entered value is a number
+            if (!isNaN(parseFloat(inputValue)) && isFinite(inputValue)) {
+                var option = $("#UnidadIdList option[data-id='" + inputValue + "']");
+                if (option.length) {
+                    $("#unidadHidden").val(inputValue);
+                    $("#UnidadId").val(option.val()); // Set the Clientes input to the name of the entity
+
+                    // Capturar el ID del cliente seleccionado en una variable
+                    var clienteIdSeleccionado = inputValue;
+                    console.log("Cliente seleccionado:", clienteIdSeleccionado);
+
+                    // Llamar a la función para obtener detalles del producto pasando el clienteId
+                } else {
+                    $("#unidadHidden").val("");
+                    $("#UnidadId").val("");
+
+                    // Clear the Clientes input if no entity is found
+                }
+            } else {
+                $("#unidadHidden").val("");
+                $("#UnidadId").val("");
+            }
+        }
+    });
+
+}
 
