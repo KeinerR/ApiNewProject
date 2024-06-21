@@ -6,8 +6,8 @@ var detallesdepedidp = [];
 
 function agregarDetalle(url) {
     var unidadId = document.getElementById("unidadHidden").value;
-    var cantidad = document.getElementById("CantidadPorUnidad").value;
-    var precioUnitario = document.getElementById("PrecioEnviar").value;
+    var cantidad = document.getElementById("CantidadTxt").value;
+    var precioUnitario = document.getElementById("PrecioUnitario").value;
     var pedidoId = document.getElementById("PedidoId").value;
 
     var detalle = {
@@ -19,17 +19,18 @@ function agregarDetalle(url) {
         UnidadId: unidadId,
         Subtotal: cantidad * precioUnitario
     };
+    console.log("keienerdetalle", detalle);
+    console.log("keienerdetalle", url);
 
     // Validar el detalle del pedido
-    var isValidDetalle = validarDetalle(detalle);
-
-    if (isValidDetalle) {
+   
         detallesdepedidp.push(detalle);
-        mostrarDetallesPedido();
-        enviarDetallePedido(detalle, url);
+       
+    enviarDetallePedido(detalle, url);
+    mostrarDetallesPedido();
         mostrarDetallesActuales();
         limpiarCampos()
-    }
+    
 }
 
 function validarDetalle(detalle) {
@@ -76,10 +77,8 @@ function enviarDetallePedido(detalle, url) {
 function limpiarCampos() {
     document.getElementById("Clientes").value = "";
     document.getElementById("CantidadTxt").value = "";
-    document.getElementById("CantidadPorUnidad").value = "";
 
     document.getElementById("CantidadAPlicada").value = "";
-    document.getElementById("PrecioEnviar").value = "";
 
     document.getElementById("Descuento").value = "";
 
@@ -169,46 +168,52 @@ function quitarError(inputElement, errorElement) {
 
 
 
-
 function mostrarDetallesPedido() {
     var tablaDetalles = document.getElementById("listaDetallesPedido").getElementsByTagName("tbody")[0];
     tablaDetalles.innerHTML = "";
 
     var cantidadAcumuladaPorProducto = {};
     detallesdepedidp.forEach(function (detalle, index) {
-        // Verificar si ya se ha agregado un detalle para este producto
-        if (cantidadAcumuladaPorProducto.hasOwnProperty(detalle.ProductoId)) {
+        // Crear una clave única combinando ProductoId, PedidoId y UnidadId
+        var clave = `${detalle.ProductoId}-${detalle.PedidoId}-${detalle.UnidadId}`;
+
+        // Verificar si ya se ha agregado un detalle para esta combinación
+        if (cantidadAcumuladaPorProducto.hasOwnProperty(clave)) {
             // Si ya existe una cantidad acumulada para este producto, sumar la nueva cantidad
-            cantidadAcumuladaPorProducto[detalle.ProductoId].Cantidad += parseFloat(detalle.Cantidad);
-            cantidadAcumuladaPorProducto[detalle.ProductoId].Subtotal += parseFloat(detalle.Subtotal);
+            cantidadAcumuladaPorProducto[clave].Cantidad += parseFloat(detalle.Cantidad);
+            cantidadAcumuladaPorProducto[clave].Subtotal += parseFloat(detalle.Subtotal);
         } else {
-            // Si es la primera vez que se encuentra este producto, almacenar sus detalles
-            cantidadAcumuladaPorProducto[detalle.ProductoId] = {
+            // Si es la primera vez que se encuentra este producto con el mismo PedidoId y UnidadId, almacenar sus detalles
+            cantidadAcumuladaPorProducto[clave] = {
+                ProductoId: detalle.ProductoId,
+                PedidoId: detalle.PedidoId,
+                UnidadId: detalle.UnidadId,
                 Cantidad: parseFloat(detalle.Cantidad),
                 PrecioUnitario: parseFloat(detalle.PrecioUnitario),
-                UnidadId: detalle.UnidadId,
                 Subtotal: parseFloat(detalle.Subtotal),
                 Index: index  // Guardar el índice para la eliminación
             };
         }
     });
 
-    Object.keys(cantidadAcumuladaPorProducto).forEach(function (productoId) {
+    Object.keys(cantidadAcumuladaPorProducto).forEach(function (clave) {
         var fila = tablaDetalles.insertRow();
-        fila.insertCell(0).innerHTML = productoId; // ProductoId
-        fila.insertCell(1).innerHTML = cantidadAcumuladaPorProducto[productoId].Cantidad; // Cantidad acumulada
-        fila.insertCell(2).innerHTML = cantidadAcumuladaPorProducto[productoId].PrecioUnitario; // PrecioUnitario
-        fila.insertCell(3).innerHTML = cantidadAcumuladaPorProducto[productoId].UnidadId; // UnidadId
-        fila.insertCell(4).innerHTML = cantidadAcumuladaPorProducto[productoId].Subtotal; // Subtotal
+        fila.insertCell(0).innerHTML = cantidadAcumuladaPorProducto[clave].ProductoId; // ProductoId
+        fila.insertCell(1).innerHTML = cantidadAcumuladaPorProducto[clave].Cantidad; // Cantidad acumulada
+        fila.insertCell(2).innerHTML = cantidadAcumuladaPorProducto[clave].PrecioUnitario; // PrecioUnitario
+        fila.insertCell(3).innerHTML = cantidadAcumuladaPorProducto[clave].UnidadId; // UnidadId
+        fila.insertCell(4).innerHTML = cantidadAcumuladaPorProducto[clave].Subtotal; // Subtotal
+
         // Agregar un botón de eliminar en la última celda de cada fila
         var btnEliminar = document.createElement("button");
         btnEliminar.innerHTML = '<i class="fa-solid fa-trash-can"></i>'; // Icono de eliminación
         btnEliminar.onclick = function () {
-            eliminarDetalle(cantidadAcumuladaPorProducto[productoId].Index);
+            eliminarDetalle(cantidadAcumuladaPorProducto[clave].Index);
         };
         fila.insertCell(5).appendChild(btnEliminar); // Insertar el botón en la última celda (índice 5)
     });
 }
+
 function eliminarDetalle(index) {
     console.log(index);
     $.ajax({
@@ -429,6 +434,7 @@ $(document).ready(function () {
         Promise.all([fetchUnidades, fetchLotes, fetchProductos])
             .then(([unidadesData, lotesData, productosData]) => {
                 console.log("Unidades:", unidadesData);
+                console.log("Unidades:", lotesData);
 
 
                 console.log("Productos:", productosData);
@@ -447,8 +453,14 @@ $(document).ready(function () {
                     console.log(AplicarPormayor);
                     console.log(descuento);;
                     const cantidadTotal = productoSeleccionado.cantidadTotal;
+                    const cantidadTotalunidad = productoSeleccionado.cantidadTotalPorUnidad;
                     const cantidadReservada = productoSeleccionado.cantidadReservada;
+                    const cantidadReservadaPorunidad = productoSeleccionado.cantidadPorUnidadReservada;
                     const cantidadDisponible = cantidadTotal - cantidadReservada;
+                    const cantidadDisponibleunidad = cantidadTotalunidad - cantidadReservadaPorunidad
+                    console.log("cahjkjhfgjklkjhghjkl",cantidadDisponibleunidad)
+                    habilitarUnidades(cantidadDisponibleunidad, cantidadDisponible);
+                   
 
                     if (cantidadDisponible > 0) {
                         $('#CantidadTxt').attr('placeholder', `Disponible: ${cantidadDisponible}`);
@@ -481,12 +493,12 @@ $(document).ready(function () {
                         const precio = loteProximoVencimiento.precioPorPresentacion;
                         const preciopormayor = loteProximoVencimiento.precioPorUnidadProducto
 
-                        lotes.push(loteProximoVencimiento);
 
                         $('#PrecioUnitario').val(preciopormayor);
                         $('#PrecioUnitariohiddenpormayordescuento').val(preciopormayor);
 
                         console.log("keienr precio mayor ", precio)
+                        console.log("keienr precio mayor ", preciopormayor)
 
 
                         $('#PrecioUnitariohiddenpormayor').val(precio);
@@ -554,33 +566,17 @@ $(document).ready(function () {
         const cantidadDisponible = parseFloat($('#CantidadTxt').attr('placeholder').split(':')[1].trim()); // Obtener la cantidad disponible
 
         var descuento = parseFloat($('#Descuento').val()); // Obtener el descuento y convertirlo a número
-        var aplicadomayor = parseFloat($('#CantidadAPlicada').val()); // Obtener la cantidad aplicada mayor y convertirla a número
         var precio = parseFloat($('#PrecioUnitario').val()); // Obtener el precio unitario y convertirlo a número
 
         // Verificar si hay valores válidos para las unidades y descuentos
-        var unidad1 = parseFloat($('#unidadHidden').val());
-        var unidadfull = parseFloat($('#PrecioUnitariohiddenpormayordescuento').val());
-        var unidadfulls = parseFloat($('#PrecioUnitariohiddenpormayor').val());
+       
 
         var descuentoaplicar = descuento / 100;
         var aplicar = precio * descuentoaplicar;
         console.log(aplicar);
-        var pre = precio - aplicar;
+     
 
-        // Aplicar el descuento si la cantidad ingresada es mayor que la cantidad aplicada mayor
-        if (!isNaN(cantidadIngresada) && cantidadIngresada > aplicadomayor && unidad1 == 1) {
-            $('#PrecioUnitario').val(pre.toFixed(2)); // Aplicar precio con descuento
-        } else if (!isNaN(cantidadIngresada) && cantidadIngresada > aplicadomayor && unidad1 == 2) {
-            $('#PrecioUnitario').val(pre.toFixed(2)); // Aplicar precio con descuento
-        } else {
-            $('#PrecioUnitario').val(precio.toFixed(2)); // Restaurar precio original
-        }
-
-        // Si la cantidad ingresada está vacía o no es un número válido, restaurar el precio original
-        if (isNaN(cantidadIngresada) || cantidadIngresada === "") {
-            $('#PrecioUnitario').val(precio.toFixed(2)); // Restaurar precio original
-        }
-
+      
         // Aplicar lógica según las condiciones especificadas
         if (isNaN(cantidadIngresada)) {
             mostrarError('Por favor, ingrese una cantidad válida');
@@ -659,12 +655,18 @@ function mostrarDetallesActuales() {
 
 
 
-function habilitarUnidades() {
+function habilitarUnidades(cantidadDisponibleunidad, cantidadDisponible) {
+
+    var uni = cantidadDisponibleunidad;
+    var dispo = cantidadDisponible;
+
+    console.log("unitariassssssss", uni);
 
     var precio = parseFloat($('#PrecioUnitario').val());
     var preciomayor = parseFloat($('#PrecioUnitariohiddenpormayor').val());
     console.log("unitario", precio);
     console.log("mayor", preciomayor);
+
     $("#UnidadId").on("change", function () {
         var inputValue = $(this).val();
         var selectedOption = $("#UnidadIdList option").filter(function () {
@@ -682,14 +684,19 @@ function habilitarUnidades() {
 
             if (clienteIdSeleccionado == 2) {
                 // Obtener el precio por mayor y actualizar el campo PrecioUnitario
-                $('#PrecioUnitario').val(preciomayor);
-                console.log("Precio por mayor:", preciomayor);
-                // Llamar a la función para obtener detalles del producto pasando el clienteId
-            }
-            if (clienteIdSeleccionado == 1) {
-                // Obtener el precio por mayor y actualizar el campo PrecioUnitario
                 $('#PrecioUnitario').val(precio);
                 console.log("Precio por mayor:", precio);
+
+                $('#CantidadTxt').attr('placeholder', dispo); // Cambiar el placeholder de la cantidad a 'uni'
+
+                // Llamar a la función para obtener detalles del producto pasando el clienteId
+            } else if (clienteIdSeleccionado == 1) {
+                // Obtener el precio por mayor y actualizar el campo PrecioUnitario
+                $('#PrecioUnitario').val(preciomayor);
+                console.log("Precio por hgfghjkjhg:", preciomayor);
+                $('#CantidadTxt').attr('placeholder', uni); // Cambiar el placeholder de la cantidad a 'uni'
+
+
                 // Llamar a la función para obtener detalles del producto pasando el clienteId
             }
         } else {
@@ -717,6 +724,4 @@ function habilitarUnidades() {
             }
         }
     });
-
 }
-

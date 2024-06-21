@@ -62,7 +62,6 @@ namespace ApiNewProject.Controllers
         [HttpGet("GetProductoById")]
         public async Task<ActionResult<Producto>> GetProductoById(int Id)
         {
-            var presentacion = _context.Presentaciones.FirstOrDefaultAsync(c=> c.PresentacionId == Id);
             Producto? producto = await _context.Productos
                 .Select(s => new Producto
                 {

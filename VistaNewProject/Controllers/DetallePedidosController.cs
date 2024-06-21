@@ -96,7 +96,7 @@ namespace VistaNewProject.Controllers
             {
                 // Buscar si ya existe un detalle con el mismo ProductoId en la lista
                 var detalleExistente = listaGlobalDetalles
-                    .FirstOrDefault(d => d.ProductoId == detallePedido.ProductoId && d.PedidoId == detallePedido.PedidoId);
+                    .FirstOrDefault(d => d.ProductoId == detallePedido.ProductoId && d.PedidoId == detallePedido.PedidoId && d.UnidadId==detallePedido.UnidadId);
 
                 if (detalleExistente != null)
                 {
@@ -116,6 +116,8 @@ namespace VistaNewProject.Controllers
 
                 var producto = await _client.FindProductoAsync(detallePedido.ProductoId.Value);
 
+                var unidadid = detallePedido.UnidadId;
+
                 if (producto == null)
                 {
                     return NotFound(new { message = "Producto no encontrado" });
@@ -123,16 +125,39 @@ namespace VistaNewProject.Controllers
 
                 var id = producto.ProductoId;
                 var cantidad= detallePedido.Cantidad;
+                if (unidadid != null )
+                {
+
+                    if (unidadid == 1)
+                    {
+                        var updateProductoUnidad = await _client.AddCantidadReservadaAsync(id, cantidad);
+                        if (updateProductoUnidad.IsSuccessStatusCode)
+                        {
+                            Console.WriteLine("Cantidad reservada actualizada en el producto.");
+                        }
+                        else
+                        {
+                            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Error al actualizar el producto en la base de datos" });
+                        }
+                    }
+                    else if (unidadid == 2) 
+                    {
+                        var updateProductoUnidadindividual = await _client.AddCantidadPorUnidadReservadaAsync(id, cantidad);
+                        if (updateProductoUnidadindividual.IsSuccessStatusCode)
+                        {
+                            Console.WriteLine("Cantidad reservada actualizada en el producto.");
+                        }
+                        else
+                        {
+                            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Error al actualizar el producto en la base de datos" });
+                        }
+                    }
+                   
+
+                }
+
                 // Actualizar el producto en la base de datos
-                var updateProductResult = await _client.AddCantidadReservadaAsync(id, cantidad);
-                if (updateProductResult.IsSuccessStatusCode)
-                {
-                    Console.WriteLine("Cantidad reservada actualizada en el producto.");
-                }
-                else
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Error al actualizar el producto en la base de datos" });
-                }
+              
                 // Imprimir los valores de las propiedades del detalle recibido en la consola
                 Console.WriteLine("Detalle recibido:");
                 Console.WriteLine("PedidoId: " + detallePedido.PedidoId);
@@ -208,6 +233,8 @@ namespace VistaNewProject.Controllers
 
                         foreach (var detalle in listaGlobalDetalles)
                         {
+
+                            var uniddaId=detalle.UnidadId;
                             var productoId = detalle.ProductoId.Value;
                             var producto = await _client.FindProductoAsync(productoId);
 
@@ -217,13 +244,30 @@ namespace VistaNewProject.Controllers
                                 int id = producto.ProductoId;
                                 int? cantidad = detalle.Cantidad;
 
-                                var actualizarCantidadReservada = await _client.SustraerCantidadReservadaAsync(id, cantidad);
-
-                                if (!actualizarCantidadReservada.IsSuccessStatusCode)
+                                if (uniddaId == 1)
                                 {
-                                    TempData["ErrorMessage"] = $"Error al actualizar el producto: {actualizarCantidadReservada.ReasonPhrase}";
-                                    return RedirectToAction("Index", "Pedidos");
+                                    var actualizarCantidadReservada = await _client.SustraerCantidadReservadaAsync(id, cantidad);
+
+                                    if (!actualizarCantidadReservada.IsSuccessStatusCode)
+                                    {
+                                        TempData["ErrorMessage"] = $"Error al actualizar el producto: {actualizarCantidadReservada.ReasonPhrase}";
+                                        return RedirectToAction("Index", "Pedidos");
+                                    }
                                 }
+                                if (uniddaId == 2)
+                                {
+
+                                    var actualizarCantidadUniddaReservada = await _client.SustraerCantidadPorUnidadReservadaAsync(id, cantidad);
+                                    if (!actualizarCantidadUniddaReservada.IsSuccessStatusCode)
+                                    {
+                                        TempData["ErrorMessage"] = $"Error al actualizar el producto: {actualizarCantidadUniddaReservada.ReasonPhrase}";
+                                        return RedirectToAction("Index", "Pedidos");
+                                    }
+
+                                }
+
+
+
                             }
 
                             // Obtener los lotes disponibles para el producto actual
