@@ -71,6 +71,7 @@ namespace VistaNewProject.Controllers
         {
             var producto = await _client.GetProductoAsync();
             var pedidos = await _client.GetPedidoAsync();
+            var unidades=await _client.GetUnidadAsync();
 
             var ultimoPedido = pedidos.OrderByDescending(p => p.PedidoId).FirstOrDefault();
 
@@ -78,6 +79,8 @@ namespace VistaNewProject.Controllers
             ViewBag.UltimoPedidoId = ultimoPedido?.PedidoId ?? 0;
 
             ViewBag.Producto = producto;
+            ViewBag.Unidades = unidades;
+
 
             return View();
         }
