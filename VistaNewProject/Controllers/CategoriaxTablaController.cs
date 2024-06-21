@@ -57,7 +57,7 @@ namespace VistaNewProject.Controllers
         }
 
         [HttpPost("CrearCategoriaxMarca")]
-        public async Task<IActionResult> CrearCategoriaxMarca([FromBody] CategoriaxMarca categoriaxmarca)
+        public async Task<IActionResult> CrearCategoriaxMarca([FromBody] CategoriaxMarcaAsosiacion categoriaxmarca)
         {
             if (categoriaxmarca == null || categoriaxmarca.CategoriaId <= 0 || categoriaxmarca.MarcaId <= 0)
             {

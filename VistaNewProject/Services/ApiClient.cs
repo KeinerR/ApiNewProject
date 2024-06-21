@@ -1152,7 +1152,7 @@ namespace VistaNewProject.Services
 
         public async Task<Proveedor> FindnombreProveedorAsync(int proveedorId)
         {
-            var response = await _httpClient.GetFromJsonAsync<Proveedor>($"Proveedores/GetNombreProveedorById?nombreEmpresa={nombreEmpresa}");
+            var response = await _httpClient.GetFromJsonAsync<Proveedor>($"Proveedores/GetNombreProveedorById?nombreEmpresa={proveedorId}");
             if (response == null)
             {
                 // Manejar el caso en el que response sea nulo
@@ -1504,8 +1504,7 @@ namespace VistaNewProject.Services
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"CategoriaxPresentacion/DeleteCategoriaxPresentacion/{categoriaId}/{presentacionId}"
-);
+                var response = await _httpClient.DeleteAsync($"CategoriaxPresentacion/DeleteCategoriaxPresentacion/{categoriaId}/{presentacionId}");
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -1539,7 +1538,7 @@ namespace VistaNewProject.Services
             return response;
         
         }
-        public async Task<HttpResponseMessage> CreateCategoriaxMarcaAsync(CategoriaxMarca categoriaxmarca)
+        public async Task<HttpResponseMessage> CreateCategoriaxMarcaAsync(CategoriaxMarcaAsosiacion categoriaxmarca)
         {
             var response = await _httpClient.PostAsJsonAsync("CategoriaxMarca/InsertarCategoria", categoriaxmarca);
             return response;
@@ -1570,7 +1569,88 @@ namespace VistaNewProject.Services
             }
         }
 
-       
+        public async Task<IEnumerable<UnidadxProducto>> GetUnidadesxProductosAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<UnidadxProducto>>("UnidadesxProducto/GetUnidadesxProducto");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la unidad con el ID especificado.");
+            }
+            return response;
+
+        }
+        public async Task<HttpResponseMessage> CreateUnidadxProductoAsync(UnidadxProductoAsosiacion productoxUnidad)
+        {
+            var response = await _httpClient.PostAsJsonAsync("UnidadesxProducto/InsertarUnidad", productoxUnidad);
+            return response;
+        }
+        public async Task<HttpResponseMessage> DeleteUnidadxProductoAsync(int unidadId, int productoId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"UnidadesxProducto/DeleteUnidadesxProducto/{unidadId}/{productoId}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    // Log or handle the response status code
+                }
+
+                return response;
+            }
+            catch (HttpRequestException ex)
+            {
+                // Log or handle HTTP request exceptions
+                throw new Exception($"Error en la solicitud HTTP: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                // Log or handle any other exceptions
+                throw new Exception($"Error inesperado: {ex.Message}", ex);
+            }
+        }
+        
+        
+        public async Task<UsuarioAcceso> GetAccesoAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<UsuarioAcceso>($"RolesxPermisos/GetRolxPermisosByUsuarioId/{id}");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontraron los permisos asociados al usuario con el ID especificado.");
+            }
+
+            return response;
+        }
+
+ 
+        public async Task<(IEnumerable<FacturaDTO>, IEnumerable<LoteDTO>)> GetFacturasYLotesAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<List<object>>("FacturasYLotes");
+
+            if (response == null || response.Count != 2)
+            {
+                // Manejar el caso en el que response sea nulo o no tenga el formato esperado
+                throw new Exception("No se encontraron facturas y lotes o la respuesta no es válida.");
+            }
+
+            var facturas = response[0] as IEnumerable<FacturaDTO>;
+            var lotes = response[1] as IEnumerable<LoteDTO>;
+
+            if (facturas == null || lotes == null)
+            {
+                throw new Exception("Error en el formato de los datos recibidos.");
+            }
+
+            return (facturas, lotes);
+        }
+
+
+
+
+
     }
 }
 

@@ -2,7 +2,7 @@
 
 namespace VistaNewProject.Models
 {
-    public partial class CategoriaxMarcaAsociacion
+    public partial class CategoriaxMarcaAsosiacion
     {
         public int CategoriaId { get; set; }
         public int MarcaId { get; set; }
@@ -15,6 +15,7 @@ namespace VistaNewProject.Models
         public string? NombreMarca { get; set; }
         public string? NombreCategoria { get; set; }
         public ulong? EstadoCategoria { get; set; }
+        public bool EstaAsociada { get; set; }
         public ulong? EstadoMarca { get; set; }
 
     }
@@ -29,6 +30,7 @@ namespace VistaNewProject.Models
         public int? CantidadPorPresentacion { get; set; }
         public ulong? EstadoPresentacion { get; set; }
         public ulong? EstadoCategoria { get; set; }
+        public bool EstaAsociada { get; set; }
 
 
     }
@@ -49,6 +51,7 @@ namespace VistaNewProject.Models
         public int? CantidadPorUnidad { get; set; }
         public ulong? EstadoUnidad { get; set; }
         public ulong? EstadoCategoria { get; set; }
+        public bool EstaAsociada { get; set; }
 
 
 
@@ -70,6 +73,7 @@ namespace VistaNewProject.Models
         public string? NombreCompletoProducto { get; set; }
         public ulong? EstadoProducto { get; set; }
         public int? CantidadPorUnidad { get; set; }
+        public bool EstaAsociada { get; set; }
 
     }
 

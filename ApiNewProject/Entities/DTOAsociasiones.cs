@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace ApiNewProject.Entities
 {
-    public partial class CategoriaxMarcaAsociacion
+    public partial class CategoriaxMarcaAsosiacion
     {
         public int CategoriaId { get; set; }
         public int MarcaId { get; set; }

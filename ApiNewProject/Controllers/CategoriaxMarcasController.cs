@@ -58,21 +58,21 @@ namespace ApiNewProject.Controllers
 
 
         [HttpPost("InsertarCategoriaxMarca")]
-        public async Task<ActionResult<CategoriaxMarcaAsociacion>> InsertarCategoriaxMarca(CategoriaxMarcaAsociacion categoriaxMarcaAsociacion)
+        public async Task<ActionResult<CategoriaxMarcaAsosiacion>> InsertarCategoriaxMarca(CategoriaxMarcaAsosiacion CategoriaxMarcaAsosiacion)
         {
             try
             {
-                if (categoriaxMarcaAsociacion == null)
+                if (CategoriaxMarcaAsosiacion == null)
                 {
                     return BadRequest("Los datos de la categoría no pueden ser nulos.");
                 }
-                if (CategoriaxPresentacionExists(categoriaxMarcaAsociacion.CategoriaId, categoriaxMarcaAsociacion.MarcaId))
+                if (CategoriaxPresentacionExists(CategoriaxMarcaAsosiacion.CategoriaId, CategoriaxMarcaAsosiacion.MarcaId))
                 {
                     return Conflict("La relación entre esta categoría y esta marca ya existe.");
                 }
 
-                var categoria = await _context.Categorias.FirstOrDefaultAsync(s => s.CategoriaId == categoriaxMarcaAsociacion.CategoriaId);
-                var marca = await _context.Marcas.FirstOrDefaultAsync(m => m.MarcaId == categoriaxMarcaAsociacion.MarcaId);
+                var categoria = await _context.Categorias.FirstOrDefaultAsync(s => s.CategoriaId == CategoriaxMarcaAsosiacion.CategoriaId);
+                var marca = await _context.Marcas.FirstOrDefaultAsync(m => m.MarcaId == CategoriaxMarcaAsosiacion.MarcaId);
 
                 // Validación adicional: Asegurarse de que la categoría y la marca existen
                 if (categoria == null || marca == null)
@@ -83,8 +83,8 @@ namespace ApiNewProject.Controllers
                 // Crear instancia de CategoriaxMarca y llenar con datos
                 var categoriaxMarca = new CategoriaxMarca
                 {
-                    CategoriaId = categoriaxMarcaAsociacion.CategoriaId,
-                    MarcaId = categoriaxMarcaAsociacion.MarcaId,
+                    CategoriaId = CategoriaxMarcaAsosiacion.CategoriaId,
+                    MarcaId = CategoriaxMarcaAsosiacion.MarcaId,
                     NombreCategoria = categoria.NombreCategoria,
                     EstadoCategoria = categoria.EstadoCategoria,
                     NombreMarca = marca.NombreMarca,
