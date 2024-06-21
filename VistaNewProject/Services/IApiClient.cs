@@ -87,7 +87,7 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Producto>> GetAllDatosProductosAsync(string busqueda = null);
         Task<HttpResponseMessage> CreateProductoAsync(ProductoCrearYActualizar producto);
         Task<Producto> FindProductoAsync(int id);
-        Task<Proveedor> FindnombreProductoAsync(int proveedorId);
+        Task<Producto> FindnombreProductoAsync(int productoId);
         Task<Producto> FindDatosProductoAsync(int id); 
         Task<HttpResponseMessage> UpdateProductoAsync(ProductoCrearYActualizar producto);
         Task<HttpResponseMessage> AddCantidadReservadaAsync(int productoId, int? cantidad);
@@ -186,7 +186,11 @@ namespace VistaNewProject.Services
 
         // rolxpermiso
 
-        Task<IEnumerable<Rolxpermiso>> GetRolxpermisoAsync();
+        Task<UsuarioAcceso> GetAccesoAsync(int id);
+        //Task<IEnumerable<Rolxpermiso>> GetRolesxPermisosAsync();
+        //Task<HttpResponseMessage> CreateRolxPermisoAsync(Rolxpermiso rolxpermiso);
+        //Task<HttpResponseMessage> DeleteRolxPermisoAsync(int rolId, int permisoId);
+
 
         // categoria x unidad
         Task<IEnumerable<CategoriaxUnidad>> GetCategoriaxUnidadesAsync();
@@ -202,19 +206,16 @@ namespace VistaNewProject.Services
 
         // categoria x marca
         Task<IEnumerable<CategoriaxMarca>> GetCategoriaxMarcasAsync();
-        Task<HttpResponseMessage> CreateCategoriaxMarcaAsync(CategoriaxMarcaAsociacion categoriaxmarca);
+        Task<HttpResponseMessage> CreateCategoriaxMarcaAsync(CategoriaxMarcaAsosiacion categoriaxmarca);
 
         Task<HttpResponseMessage> DeleteCategoriaxMarcaAsync(int categoriaId, int marcaId);
 
 
         // producto  x unidad
-        Task<IEnumerable<UnidadxProducto>> GetUnidadesxProductoAsync();
+        Task<IEnumerable<UnidadxProducto>> GetUnidadesxProductosAsync();
         Task<HttpResponseMessage> CreateUnidadxProductoAsync(UnidadxProductoAsosiacion productoxunidad);
-
-        Task<HttpResponseMessage> DeleteUnidadxProductoAsync(int productO, int marcaId);
-
-
-
+        Task<HttpResponseMessage> DeleteUnidadxProductoAsync(int unidadId, int productoId);
+        Task<(IEnumerable<FacturaDTO>, IEnumerable<LoteDTO>)> GetFacturasYLotesAsync();
 
     }
 }

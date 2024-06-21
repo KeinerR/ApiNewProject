@@ -37,44 +37,85 @@ namespace VistaNewProject.Controllers
             }
 
             var usuarios = await _client.GetUsuarioAsync(); // Obtener todos los usuarios
-
             var usuarioValido = usuarios.FirstOrDefault(u => u.Usuario1 == model.Usuario1);
 
             if (usuarioValido != null && _passwordHasherService.VerifyPassword(model.Contraseña, usuarioValido.Contraseña))
             {
-                // Crear identidad del usuario
-                var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, usuarioValido.Usuario1),
-            new Claim("RolId", usuarioValido.RolId.ToString()),
-            new Claim(ClaimTypes.NameIdentifier, usuarioValido.UsuarioId.ToString()) // Identificador único del usuario
-            // Otros claims según la lógica de tu aplicación
-            // Agrega más claims según tus necesidades (roles, etc.)
-        };
+                var DatosDeAcceso = await _client.GetAccesoAsync(usuarioValido.UsuarioId);
 
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                // Crear las propiedades de autenticación
-                var authProperties = new AuthenticationProperties
+                if (DatosDeAcceso.EstadoAcceso == 1)
                 {
-                    IsPersistent = true, // Opcional: para mantener la cookie persistente entre sesiones
-                };
+                    // Crear identidad del usuario
+                    var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, usuarioValido.Usuario1),
+                new Claim("RolId", usuarioValido.RolId.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, usuarioValido.UsuarioId.ToString())
+            };
 
-                // Iniciar sesión con la cookie de autenticación
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                    // Agregar permisos a los claims
+                    if (DatosDeAcceso.RolxPermisoAcceso != null)
+                    {
+                        foreach (var permiso in DatosDeAcceso.RolxPermisoAcceso)
+                        {
+                            if (permiso.NombrePermiso != null)
+                            {
+                                claims.Add(new Claim("Permiso", permiso.NombrePermiso));
+                            }
 
-                ViewData["UserName"] = usuarioValido.Usuario1;
-                ViewData["Nombre"] = usuarioValido.UsuarioId;
+                            // Agregar nombres de permisos por rol
+                            if (permiso.RolxPermisoNombres != null)
+                            {
+                                foreach (var permisoNombre in permiso.RolxPermisoNombres)
+                                {
+                                    if (permisoNombre.NombrePermisoxRol != null)
+                                    {
+                                        claims.Add(new Claim("NombrePermisoxRol", permisoNombre.NombrePermisoxRol));
+                                    }
+                                }
+                            }
+                        }
+                    }
 
-                // Redirigir al controlador "Home" después del inicio de sesión
-                return RedirectToAction("Index", "Home");
+                    // Imprimir claims en la consola
+                    foreach (var claim in claims)
+                    {
+                        Console.WriteLine($"Claim type: {claim.Type}, value: {claim.Value}");
+                    }
+
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                    // Crear las propiedades de autenticación
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = true, // Opcional: para mantener la cookie persistente entre sesiones
+                    };
+
+                    // Iniciar sesión con la cookie de autenticación
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                    ViewData["UserName"] = usuarioValido.Usuario1;
+                    ViewData["Nombre"] = usuarioValido.UsuarioId;
+
+                    // Redirigir al controlador "Acceso" después del inicio de sesión
+                    //return RedirectToAction("GetAcceso", "Acceso", new { usuarioId = usuarioValido.UsuarioId });
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ViewData["MostrarAlerta"] = "El usuario o rol están inactivos. Por favor, contacta al dueño de la empresa o al equipo de soporte para más información.";
+                    return View("Index", model);
+                }
             }
             else
             {
-                ViewData["MostrarAlerta"] = "El usuario o contraseña son incorrectos, intentalo de nuevo";
+                ViewData["MostrarAlerta"] = "El usuario o contraseña son incorrectos, inténtalo de nuevo.";
                 return View("Index", model);
             }
         }
+
+
+
 
         public async Task<IActionResult> Logout(Usuario model)
         {
