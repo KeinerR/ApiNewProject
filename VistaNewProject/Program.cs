@@ -1,13 +1,11 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Threading.Tasks;
-using VistaNewProject.Services;
+using VistaNewProject.Services; // Importar el namespace correcto
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,17 +18,13 @@ builder.Services.AddHttpClient("ApiHttpClient", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["AppSettings:ApiBaseUrl"]); // Base URL de la API desde la configuración
 });
-
 builder.Services.AddScoped<IApiClient, ApiClient>(); // Registrar ApiClient como un servicio scoped
-
-builder.Services.AddScoped<RolService>(); // Registrar RoleService
 
 // Registrar IHttpContextAccessor
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 // Registrar el servicio de hashing de contraseñas
 builder.Services.AddSingleton<PasswordHasherService>();
-
 builder.Services.AddScoped<ProductoService>();
 
 // Configurar autenticación basada en cookies
@@ -43,6 +37,17 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Login/Index"; // Ruta de inicio de sesión
         options.LogoutPath = "/Login/Logout"; // Ruta de cierre de sesión
     });
+
+// Configurar políticas de autorización
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RolAdministrador", policy =>
+        policy.RequireClaim("RolId", "1")); // Requiere RolId "1"
+    options.AddPolicy("RolCajero", policy =>
+        policy.RequireClaim("RolId", "2")); // Requiere RolId "2"
+    options.AddPolicy("RolDomiciliario", policy =>
+        policy.RequireClaim("RolId", "3")); // Requiere RolId "3"
+});
 
 var app = builder.Build();
 
@@ -75,14 +80,4 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Login}/{action=Index}");
 
- 
 app.Run(); // Ejecutar la aplicación
-
-
-
-
-
-
-
-
-
