@@ -21,47 +21,15 @@ namespace ApiNewProject.Controllers
         [HttpGet("GetLotes")]
         public async Task<ActionResult<List<Lote>>> GetLote()
         {
-            var List = await _context.Lotes.Select(
-                s => new Lote
-                {
-                    LoteId = s.LoteId,
-                    DetalleCompraId = s.DetalleCompraId,
-                    ProductoId = s.ProductoId,
-                    NumeroLote = s.NumeroLote,
-                    PrecioCompra = s.PrecioCompra,
-                    PrecioPorUnidadProducto = s.PrecioPorUnidadProducto,
-                    PrecioPorPresentacion = s.PrecioPorPresentacion,
-                    FechaVencimiento = s.FechaVencimiento,
-                    Cantidad = s.Cantidad,
-                    EstadoLote = s.EstadoLote,
-                }
-            ).ToListAsync();
-
-
-
-            return List;
+            var Lotes = await _context.Lotes.ToListAsync();
+            return Lotes;
 
         }
 
         [HttpGet("GetLoteById")]
         public async Task<ActionResult<Lote>> GetLoteById(int Id)
         {
-
-            Lote? lote = await _context.Lotes.Select(
-                    s => new Lote
-                    {
-                        LoteId = s.LoteId,
-                        DetalleCompraId = s.DetalleCompraId,
-                        ProductoId = s.ProductoId,
-                        NumeroLote = s.NumeroLote,
-                        PrecioCompra = s.PrecioCompra,
-                        PrecioPorUnidadProducto = s.PrecioPorUnidadProducto,
-                        PrecioPorPresentacion = s.PrecioPorPresentacion,
-                        FechaVencimiento = s.FechaVencimiento,
-                        Cantidad = s.Cantidad,
-                        EstadoLote = s.EstadoLote,
-                    })
-                .FirstOrDefaultAsync(s => s.LoteId == Id);
+            var lote = await _context.Lotes.FindAsync(Id);
 
             if (lote == null)
             {
@@ -77,21 +45,7 @@ namespace ApiNewProject.Controllers
         public async Task<ActionResult<IEnumerable<Lote>>> GetLotesByProductId(int productId)
         {
             var lotes = await _context.Lotes
-                .Where(l => l.ProductoId == productId)
-                .Select(l => new Lote
-                {
-                    LoteId = l.LoteId,
-                    DetalleCompraId = l.DetalleCompraId,
-                    ProductoId = l.ProductoId,
-                    NumeroLote = l.NumeroLote,
-                    PrecioCompra = l.PrecioCompra,
-                    PrecioPorUnidadProducto = l.PrecioPorUnidadProducto,
-                    PrecioPorPresentacion = l.PrecioPorPresentacion,
-                    FechaVencimiento = l.FechaVencimiento,
-                    Cantidad = l.Cantidad,
-                    EstadoLote = l.EstadoLote
-                })
-                .ToListAsync();
+                .Where(l => l.ProductoId == productId).ToListAsync();
 
             if (lotes == null || !lotes.Any())
             {

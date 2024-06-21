@@ -89,8 +89,14 @@ namespace ApiNewProject.Controllers
         [HttpPost("InsertCompras")]
         public async Task<IActionResult> InsertCompras(Compra compra)
         {
+            if (compra == null)
+            {
+                return BadRequest("La compra no puede ser nula.");
+            }
+
             try
             {
+                // Creación de una nueva compra
                 var newCompra = new Compra
                 {
                     ProveedorId = compra.ProveedorId,
@@ -108,6 +114,7 @@ namespace ApiNewProject.Controllers
                         return BadRequest("La cantidad es requerida para el detalle de la compra.");
                     }
 
+                    // Creación de un nuevo detalle de compra
                     var newDetalleCompra = new Detallecompra
                     {
                         CompraId = newCompra.CompraId,
@@ -121,59 +128,88 @@ namespace ApiNewProject.Controllers
                     {
                         foreach (var lote in detalleCompra.Lotes)
                         {
-                            if (!lote.Cantidad.HasValue || !lote.FechaVencimiento.HasValue)
+                            // Validación de todos los campos requeridos del lote
+                            if (!lote.Cantidad.HasValue ||
+                                !lote.FechaVencimiento.HasValue ||
+                                lote.NumeroLote == null ||
+                                lote.PrecioCompra == null ||
+                                lote.PrecioPorUnidad == null ||
+                                lote.PrecioPorPresentacion == null ||
+                                lote.PrecioPorUnidadProducto == null ||
+                                lote.CantidadPorUnidad == null ||
+                                lote.PrecioPorUnidadCompra == null ||
+                                lote.PrecioPorPresentacionCompra == null ||
+                                lote.PrecioPorUnidadProductoCompra == null ||
+                                lote.CantidadCompra == null ||
+                                lote.CantidadPorUnidadCompra == null ||
+                                lote.EstadoLote == null)
                             {
-                                return BadRequest("Cantidad y FechaVencimiento son requeridos para el lote.");
+                                return BadRequest("Todos los campos del lote son requeridos y no pueden ser nulos.");
                             }
 
-                            newDetalleCompra.Lotes.Add(new Lote
+                            // Creación de un nuevo lote
+                            var newLote = new Lote
                             {
                                 DetalleCompraId = newDetalleCompra.DetalleCompraId,
                                 ProductoId = lote.ProductoId,
                                 NumeroLote = lote.NumeroLote,
                                 PrecioCompra = lote.PrecioCompra,
-                                PrecioPorUnidad = lote.PrecioPorUnidad,
-                                PrecioPorPresentacion = lote.PrecioPorPresentacion,
-                                PrecioPorUnidadProducto = lote.PrecioPorUnidadProducto,
-                                Cantidad = lote.Cantidad,
-                                CantidadPorUnidad = lote.CantidadPorUnidad,
-                                PrecioPorUnidadCompra = lote.PrecioPorUnidad,
-                                PrecioPorPresentacionCompra = lote.PrecioPorPresentacion,
-                                PrecioPorUnidadProductoCompra = lote.PrecioPorUnidadProducto,
-                                CantidadCompra = lote.Cantidad,
-                                CantidadPorUnidadCompra = lote.CantidadPorUnidad,
-                                FechaVencimiento = lote.FechaVencimiento,
-                                EstadoLote = lote.EstadoLote
-                            });
+                                PrecioPorUnidad = lote.PrecioPorUnidad.Value,
+                                PrecioPorPresentacion = lote.PrecioPorPresentacion.Value,
+                                PrecioPorUnidadProducto = lote.PrecioPorUnidadProducto.Value,
+                                Cantidad = lote.Cantidad.Value,
+                                CantidadPorUnidad = lote.CantidadPorUnidad.Value,
+                                PrecioPorUnidadCompra = lote.PrecioPorUnidadCompra.Value,
+                                PrecioPorPresentacionCompra = lote.PrecioPorPresentacionCompra.Value,
+                                PrecioPorUnidadProductoCompra = lote.PrecioPorUnidadProductoCompra.Value,
+                                CantidadCompra = lote.CantidadCompra.Value,
+                                CantidadPorUnidadCompra = lote.CantidadPorUnidadCompra.Value,
+                                FechaVencimiento = lote.FechaVencimiento.Value,
+                                EstadoLote = lote.EstadoLote.Value
+                            };
+
+                            newDetalleCompra.Lotes.Add(newLote);
                         }
                     }
 
                     newCompra.Detallecompras.Add(newDetalleCompra);
 
+                    // Actualización de la cantidad del producto en stock
                     foreach (var lote in newDetalleCompra.Lotes)
                     {
                         var producto = await _context.Productos.FindAsync(lote.ProductoId);
                         if (producto != null)
                         {
                             var result = await _disparador.AddCantidadTotal(lote.ProductoId, lote.Cantidad);
+                            if (result == null)
+                            {
+                                return BadRequest($"Error al actualizar la cantidad del producto en stock para el producto ID: {lote.ProductoId}");
+                            }
+                        }
+                        else
+                        {
+                            return BadRequest($"El producto con ID: {lote.ProductoId} no se encontró.");
                         }
                     }
                 }
 
-                decimal totalCompraDecimal = newCompra.Detallecompras.Sum(detalle => detalle.Lotes.Sum(lote => lote.PrecioCompra));
-                long totalCompraLong = decimal.ToInt64(totalCompraDecimal);
+                // Calcular el valor total de la compra
+                decimal? totalCompraDecimal = newCompra.Detallecompras.Sum(detalle => detalle.Lotes.Sum(lote => lote.PrecioCompra * lote.Cantidad));
+                long totalCompraLong = Convert.ToInt64(totalCompraDecimal);
                 newCompra.ValorTotalCompra = totalCompraLong;
 
+                // Guardar la compra en la base de datos
                 _context.Compras.Add(newCompra);
                 await _context.SaveChangesAsync();
 
-                return Ok();
+                return Ok(newCompra);
             }
             catch (Exception ex)
             {
                 return BadRequest("Error al insertar la compra: " + ex.Message);
             }
         }
+
 
         [HttpPut("UpdateCompras")]
         public async Task<ActionResult> UpdateCompras(Compra compra)

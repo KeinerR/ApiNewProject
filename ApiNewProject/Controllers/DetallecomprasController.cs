@@ -42,7 +42,7 @@ namespace ApiNewProject.Controllers
         public async Task<ActionResult<Detallecompra>> GetDetallecompraById(int Id)
         {
 
-            Detallecompra detallecompra = await _context.Detallecompras.Select(
+            Detallecompra? detallecompra = await _context.Detallecompras.Select(
                     s => new Detallecompra
                     {
                         DetalleCompraId = s.DetalleCompraId,
