@@ -1,4 +1,4 @@
-﻿//Hacer que el menu de oocu¡iones de perfil aparezca u desaparezca ann sweet aoert de confirmacion
+﻿//Funcion que hace aparecer las opcione de ir a mi perfil o cerrar sesion
 function opcionesDePerfil() {
     var profilePopup = document.getElementById("perfilVentanaEmergente");
     if (profilePopup.style.display === "none") {
@@ -65,6 +65,7 @@ $(function () {
     
 });
 
+
 /*---------------------------------------------Funciones generales-------------------------------------------------------- */
 /*Mostrar la hora actual en un campo solo llamarla i pasarle el id del campo al que se dese aagregar la fecha*/
 function setHoraActual(campo) {
@@ -84,10 +85,13 @@ function setHoraActual(campo) {
     document.getElementById(x).value = fechaHoraFormateada;
 }
 
-function reiniciarFormulario() {
+function recargarPagina() {
     location.reload(); //quitar despues de berig¿ficar que no se usa
 }
 
+
+
+/*---------------------------------------------Funcionalidades generales-------------------------------------------------------- */
 function mostrarOcultarContrasena(idCampo) {
     var inputContrasena = document.getElementById(idCampo);
     /*var iconoOjo = document.getElementById("MostrarOcultar" + idCampo.charAt(idCampo.length - 1)).querySelector("img");*/
@@ -102,7 +106,7 @@ function mostrarOcultarContrasena(idCampo) {
 }
 
 // Función para manejar la selección de opciones en los datalist
-window.seleccionarOpcion = function (input, dataList, hiddenInput,metodoApi) {
+window.seleccionarOpcion = function (input, dataList, hiddenInput) {
     const selectedValue = input.value.trim();
     let selectedOptionByName = Array.from(dataList.options).find(option => option.value === selectedValue);
     let selectedOptionById = Array.from(dataList.options).find(option => option.getAttribute('data-id') === selectedValue);
@@ -132,10 +136,42 @@ window.seleccionarOpcion = function (input, dataList, hiddenInput,metodoApi) {
         hiddenInput.value = selectedOptionById.getAttribute('data-id');
     }
 }
-/*------------------------------------------Funciones patra mostrar alertas--------------------------------------------*/
-//Funcion para mostrar un sweet alert en caso de que se ingrese un numero de id que no tiene coincidencias
 
-// Función general para mostrar el Sweet Alert si no hay opciones disponibles
+function obtenerValoresFormulario(ids) {
+    const valores = {};
+    ids.forEach(id => {
+        valores[id] = $(`#${id}`).val();
+    });
+    return valores;
+}
+//Vuelve el vaor a todoen minusculas para luego ser comparado
+function normalizar(texto) {
+    return texto ? texto.toLowerCase().replace(/\s/g, '') : '';
+}
+// Función para formatear números enteros con puntos de mil
+function formatNumber(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+// Función para formatear números enteros con puntos de mil y verlo en el input entiempo real
+function formatoNumeroINT(input) {
+    // Obtener el valor del input y quitar los puntos
+    let cleanedValue = input.value.replace(/\./g, '');
+    // Eliminar cualquier carácter que no sea número
+    cleanedValue = cleanedValue.replace(/[^\d]/g, '');
+    // Verificar si el valor es cero y reemplazarlo por uno si es necesario
+    if (parseInt(cleanedValue, 10) === 0) {
+        cleanedValue = '1';
+    }
+    // Formatear el valor con puntos para separar los miles
+    const formattedValue = cleanedValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    // Asignar el valor formateado al campo
+    input.value = formattedValue;
+}
+
+
+/*------------------------------------------Funciones patra mostrar alertas--------------------------------------------*/
+
+// Función general para mostrar el Sweet Alert si no hay opciones disponibles 
 function showAlertIfNoOptions(elementId, alertTitle, alertText) {
     var options = document.getElementById(elementId).getElementsByTagName("option");
     if (options.length === 0) {
@@ -149,6 +185,8 @@ function showAlertIfNoOptions(elementId, alertTitle, alertText) {
     }
 }
 
+
+//Funcion para mostrar un sweet alert en caso de que se ingrese un numero de id que no tiene coincidencias
 function showNoMarcasAlert(input) {
 
     showAlertIfNoOptions("marcas", "No hay marcas activas", "No hay marcas disponibles en este momento.");
@@ -162,6 +200,16 @@ function showNoCategoriasAlert(input) {
     showAlertIfNoOptions("categorias", "No hay categorias ", "No hay categorias disponibles en este momento.");
 }
 
+function mostrarAlertaCampoVacio(campo) {
+    Swal.fire({
+        position: "center",
+        icon: 'warning',
+        title: '\u00A1Atenci\u00F3n!',
+        html: `<p>Completa el campo: ${campo}.</p>`,
+        showConfirmButton: false,
+        timer: 6000
+    });
+}
 function mostrarAlertaCampoVacioPersonalizada(mensaje) {
     Swal.fire({
         position: "center",
@@ -172,48 +220,17 @@ function mostrarAlertaCampoVacioPersonalizada(mensaje) {
         timer: 6000
     });
 }
-
-//----------------------------------------------------Funcion para validar campos-------------------------------------------
-// Función para verificar los campos
-window.verificarCamposDataList = function (lista) {
-    for (var i = 0; i < lista.length; i++) {
-        var campo = lista[i];
-        if ($(`#${campo.id}`).val() === '') {
-            mostrarAlertaDataList(campo.nombre);
-            return false;
-        }
-    }
-    return true;
-}
-
-window.mostrarAlertaCampoVacio = function (campo) {
+function mostrarAlertaAtencionPersonalizadaConBoton(mensaje) {
     Swal.fire({
         position: "center",
         icon: 'warning',
-        title: '\u00A1Atenci\u00F3n!',
-        html: `<p>Completa el campo: ${campo}.</p>`,
-        showConfirmButton: false,
-        timer: 6000
+        title: '\u00A1Atención!',
+        html: `<p>${mensaje}</p>`,
+        showConfirmButton: true
     });
 }
 
-window.verificarCampos = function (lista) {
-    for (var i = 0; i < lista.length; i++) {
-        var campo = lista[i];
-        if ($(`#${campo.id}`).val() === '') {
-            window.mostrarAlertaCampoVacio(campo.nombre);
-            return false;
-        }
-    }
-    return true;
-}
-
-window.esURLValida = function (parametro) {
-    var urlActual = window.location.href;
-    // Verificar si la URL contiene el parámetro deseado
-    return urlActual.includes(parametro);
-}
-window.mostrarAlertaDataList = function (campo) {
+function mostrarAlertaDataList(campo) {
     Swal.fire({
         position: "center",
         icon: 'warning',
@@ -230,22 +247,36 @@ window.mostrarAlertaDataList = function (campo) {
     });
 }
 
-window.mostrarAlertaAtencionPersonalizadaConBoton = function (mensaje) {
-    Swal.fire({
-        position: "center",
-        icon: 'warning',
-        title: '\u00A1Atención!',
-        html: `<p>${mensaje}</p>`,
-        showConfirmButton: true
-    });
+
+//----------------------------------------------------Funcion para validar campos-------------------------------------------
+// Función para verificar los campos
+function verificarCamposDataList(lista) {
+    for (var i = 0; i < lista.length; i++) {
+        var campo = lista[i];
+        if ($(`#${campo.id}`).val() === '') {
+            mostrarAlertaDataList(campo.nombre);
+            return false;
+        }
+    }
+    return true;
 }
 
-function obtenerValoresFormulario(ids) {
-    const valores = {};
-    ids.forEach(id => {
-        valores[id] = $(`#${id}`).val();
-    });
-    return valores;
+function verificarCampos(lista) {
+    for (var i = 0; i < lista.length; i++) {
+        var campo = lista[i];
+        if ($(`#${campo.id}`).val() === '') {
+            window.mostrarAlertaCampoVacio(campo.nombre);
+            return false;
+        }
+    }
+    return true;
+}
+
+
+window.esURLValida = function (parametro) {
+    var urlActual = window.location.href;
+    // Verificar si la URL contiene el parámetro deseado
+    return urlActual.includes(parametro);
 }
 
 
@@ -300,29 +331,6 @@ function iconoLimpiarCampo(idsCampos,id) {
     removerIconoparalimpiarElCampo(id);
 }
 
-//Vuelve el vaor a todoen minusculas para luego ser comparado
-function normalizar(texto) {
-    return texto ? texto.toLowerCase().replace(/\s/g, '') : '';
-}
-// Función para formatear números enteros con puntos de mil
-function formatNumber(number) {
-    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-}
-// Función para formatear números enteros con puntos de mil y verlo en el input entiempo real
-function formatoNumeroINT(input) {
-    // Obtener el valor del input y quitar los puntos
-    let cleanedValue = input.value.replace(/\./g, '');
-    // Eliminar cualquier carácter que no sea número
-    cleanedValue = cleanedValue.replace(/[^\d]/g, '');
-    // Verificar si el valor es cero y reemplazarlo por uno si es necesario
-    if (parseInt(cleanedValue, 10) === 0) {
-        cleanedValue = '1';
-    }
-    // Formatear el valor con puntos para separar los miles
-    const formattedValue = cleanedValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    // Asignar el valor formateado al campo
-    input.value = formattedValue;
-}
 
 /*---------------------------- Funciones para detalle de producto ---------------------------------------------- */
 
@@ -341,7 +349,6 @@ function fillList(selector, data, nameKey, idKey, stateKey, emptyMessage) {
         $list.append(option);
     }
 }
-
 async function checkboxFiltrar() {
     try {
         const filtrar = document.getElementById('filtrarActivos').checked ? 1 : 0;
@@ -475,4 +482,5 @@ function actualizarLotes(id) {
             console.error('Error:', error.message);
         });
 }
+
 

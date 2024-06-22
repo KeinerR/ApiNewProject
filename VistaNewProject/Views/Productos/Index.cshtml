@@ -131,7 +131,7 @@
                             <div class="modal-contenedor-check">
                                 <div class="contenedorDatos">
                                     <label class="form-check-label labelDescuentoPorMayor" for="checkboxDescuentoPorMayor">Aplicar Descuento por mayor</label>
-                                    <input type="checkbox" class="form-check-input" onclick="Llamar();" onchange="Llamar();" id="checkboxDescuentoPorMayor" />
+                                    <input type="checkbox" class="form-check-input" onchange="Llamar();" id="checkboxDescuentoPorMayor" />
                                 </div>
                             </div>
                             <div class="col-md-6 noBe PorMayor">
@@ -496,6 +496,12 @@
         }
     </div>
 </div>
+<script>
+    window.addEventListener('load', function (event) {
+        limpiarFormularioProducto();
+    });
+
+</script>
 
 
 

@@ -13,7 +13,6 @@ function obtenerDatosProductos() {
         })
         .catch(error => console.error('Error al obtener los productos:', error));
 }
-
 // Función para comparar productos durante la creación
 function compararProductos(nuevoProducto, productosExistentes) {
     const nombreProductoNormalizado = normalizar(nuevoProducto.NombreProducto);
@@ -40,7 +39,6 @@ function compararProductos(nuevoProducto, productosExistentes) {
 
     return false; // No se encontraron coincidencias
 }
-
 // Función para comparar productos durante la actualización
 function compararProductosAct(nuevoProducto, productosExistentes) {
     const nombreProductoNormalizado = normalizar(nuevoProducto.NombreProductoAct);
@@ -74,7 +72,6 @@ function compararProductosAct(nuevoProducto, productosExistentes) {
 
     return false; // No se encontraron coincidencias
 }
-
 function mostrarValoresFormularioInicialProducto() {
     const idsCrear = [
         'CategoriaId',
@@ -85,7 +82,6 @@ function mostrarValoresFormularioInicialProducto() {
     const valoresCrear = obtenerValoresFormulario(idsCrear);
     return valoresCrear;
 }
-
 function mostrarValoresFormularioProductoAct() {
     const idsActualizar = [
         'CategoriaIdAct',
@@ -474,7 +470,6 @@ document.addEventListener('DOMContentLoaded', function () {
 /*---------------------------------------------------- Al dar click en el boton de agregar usuario  ---------------------------------------------------- */
 function simularClickProducto() {
     obtenerDatosProductos();
-    Llamar();
 }
 /*--------------------Atajo para abrir modal -------------------------------*/
 document.addEventListener('keydown', function (event) {
@@ -502,6 +497,29 @@ document.addEventListener('keydown', function (event) {
 
 /*------------------------------ Limpiar formularios y url ---------------------------------------------------------------------------------------------------- */
 
+
+
+//Se llama al dar click en cancelar en la modal de agregar producto
+function limpiarDatosFormularioProductoAgregar() {
+    removerIconoparalimpiarElCampo(['NombreMarca', 'NombrePresentacion', 'NombreMarca']);
+    limpiarFiltroProductoAgregar();
+    history.replaceState(null, '', location.pathname);
+    var mensajes = document.querySelectorAll('.Mensaje');
+    var mensajesText = document.querySelectorAll('.text-danger');
+    for (var i = 0; i < mensajes.length - 8; i++) {
+        mensajes[i].textContent = '*';
+    }
+    for (var i = 0; i < mensajesText.length - 3; i++) {
+        mensajesText[i].textContent = '';
+    }
+    actualizarFormularioParaDescuentoCrear(false);
+    var checkbox = $('#checkboxDescuentoPorMayor');
+    if (checkbox.prop('checked')) {
+        checkbox.prop('checked', false); // Desmarca el checkbox
+        checkbox.trigger('change'); // Dispara el evento change para asegurar que se manejen los cambios asociados
+    }
+}
+
 //Se llama al daar click en la x
 function limpiarFormularioProducto() {
     limpiarDatosFormularioProductoAgregar();
@@ -517,6 +535,7 @@ function limpiarFormularioProducto() {
     limpiarCampo('DescuentoAplicarPorMayor');
 
 }
+
 function limpiarFormularioProductoAct() {
     limpiarDatosFormularioProductoAct();
     // Limpiar la URL eliminando los parámetros de consulta
@@ -533,33 +552,6 @@ function limpiarFormularioProductoAct() {
     limpiarCampo('CantidadAplicarPorMayorAct');
     limpiarCampo('DescuentoAplicarPorMayorAct');
 
-}
-//Se llama al daar click en cancelar en la modal de agregar producto
-function limpiarDatosFormularioProductoAgregar() {
-    removerIconoparalimpiarElCampo(['NombreMarca', 'NombrePresentacion', 'NombreMarca']);
-    limpiarFiltroProductoAgregar();
-    history.replaceState(null, '', location.pathname);
-    var mensajes = document.querySelectorAll('.Mensaje');
-    var mensajesText = document.querySelectorAll('.text-danger');
-    for (var i = 0; i < mensajes.length - 8; i++) {
-        mensajes[i].textContent = '*';
-    }
-    for (var i = 0; i < mensajesText.length - 3; i++) {
-        mensajesText[i].textContent = '';
-    }
-    document.querySelectorAll('.MensajeInicial').forEach(function (element) {
-        element.textContent = '';
-    });
-    document.querySelectorAll('.MensajeErrores').forEach(function (element) {
-        element.textContent = '';
-    });
-    // Simular clic en el checkboxDescuentoPorMayor si está marcado
-    var checkbox = $('#checkboxDescuentoPorMayor');
-    if (checkbox.checked) {
-        checbox.trigger('click');
-        $('#filtrarxCategoriaAct').trigger('click');
-    }
-    actualizarFormularioParaDescuentoCrear(false);
 }
 function limpiarDatosFormularioProductoAct() {
 
@@ -596,7 +588,6 @@ function limpiarDatosFormularioProductoAct() {
 
 
 }
-
 function limpiarFiltroProductoAgregar() {
     var filtroTodos = $('#filtrarActivos').prop('checked');
     var filtroCategoria = $('#filtrarxCategoria').prop('checked');
@@ -609,9 +600,7 @@ function limpiarFiltroProductoAgregar() {
     }
 }
 
-
-//Se llama al perder el foco de la modal para limpiar el formulario actualizar
-//Función para limpiar la url si el usuario da fuera de ella 
+//Se llama al perder el foco de la modal para limpiar el formulario actualizar y la url 
 $('.modal').on('click', function (e) {
     if (e.target === this) {
         // Limpiar la URL eliminando los parámetros de consulta
@@ -878,8 +867,6 @@ function actualizarFormularioParaDescuentoCrear(activar) {
     document.getElementById('CantidadAplicarPorMayor').value = activar ? '' : '0';
     document.getElementById('DescuentoAplicarPorMayor').value = activar ? '' : '0';
 }
-
-
 function Llamar2() {
     var checkbox = document.getElementById('checkboxDescuentoPorMayorAct');
     var mensajes = document.querySelectorAll('.Mensaje');
@@ -948,20 +935,6 @@ function actualizarFormularioParaDescuento(activar) {
         document.getElementById('DescuentoAplicarPorMayorAct').value = '0';
     }
 }
-
-window.addEventListener('beforeunload', function (event) {
-    // Obtener la URL actual
-    var currentUrl = window.location.href;
-
-    // Verificar si la URL contiene la palabra "Productos"
-    if (currentUrl.includes("Productos")) {
-        // Mostrar mensaje de confirmación solo si está en la página de productos
-        var confirmationMessage = '¿Estás seguro de que quieres salir de esta página?';
-        event.returnValue = confirmationMessage;
-        return confirmationMessage;
-    }
-});
-
 
 
 
