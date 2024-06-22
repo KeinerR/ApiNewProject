@@ -132,7 +132,7 @@ namespace ApiNewProject.Controllers
                             if (!lote.Cantidad.HasValue ||
                                 !lote.FechaVencimiento.HasValue ||
                                 lote.NumeroLote == null ||
-                                lote.PrecioCompra == null ||
+                                lote?.PrecioCompra == null ||
                                 lote.PrecioPorUnidad == null ||
                                 lote.PrecioPorPresentacion == null ||
                                 lote.PrecioPorUnidadProducto == null ||

@@ -948,3 +948,16 @@ function actualizarFormularioParaDescuento(activar) {
         document.getElementById('DescuentoAplicarPorMayorAct').value = '0';
     }
 }
+
+window.addEventListener('beforeunload', function (event) {
+    // Aquí puedes ejecutar el código que desees al cerrar la página
+    // Por ejemplo, puedes mostrar un mensaje de confirmación al usuario
+    var confirmationMessage = '¿Estás seguro de que quieres salir de esta página?';
+
+    // La propiedad returnValue permite mostrar un mensaje al usuario
+    event.returnValue = confirmationMessage;
+    return confirmationMessage;
+});
+
+
+

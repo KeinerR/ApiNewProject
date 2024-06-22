@@ -1,83 +1,108 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using System;
-using VistaNewProject.Services; // Importar el namespace correcto
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using VistaNewProject.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Agregar servicios al contenedor
-builder.Services.AddControllersWithViews(); // Soporte para controladores y vistas
-builder.Services.AddSession(); // Habilitar sesiones
-
-// Configurar cliente HTTP para la API
+builder.Services.AddControllersWithViews();
+builder.Services.AddSession();
 builder.Services.AddHttpClient("ApiHttpClient", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["AppSettings:ApiBaseUrl"]); // Base URL de la API desde la configuración
+    client.BaseAddress = new Uri(builder.Configuration["AppSettings:ApiBaseUrl"]);
 });
-builder.Services.AddScoped<IApiClient, ApiClient>(); // Registrar ApiClient como un servicio scoped
-
-// Registrar IHttpContextAccessor
+builder.Services.AddScoped<IApiClient, ApiClient>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-// Registrar el servicio de hashing de contraseñas
 builder.Services.AddSingleton<PasswordHasherService>();
 builder.Services.AddScoped<ProductoService>();
+builder.Services.AddScoped<RolService>();
+
 
 // Configurar autenticación basada en cookies
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Cookies solo a través de HTTPS
-        options.Cookie.HttpOnly = true; // Cookies no accesibles a JavaScript
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(100000); // Duración de la sesión
-        options.LoginPath = "/Login/Index"; // Ruta de inicio de sesión
-        options.LogoutPath = "/Login/Logout"; // Ruta de cierre de sesión
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(100000);
+        options.LoginPath = "/Login/Index";
+        options.LogoutPath = "/Login/Logout";
     });
 
-// Configurar políticas de autorización
-builder.Services.AddAuthorization(options =>
+// Agregar el servicio de autorización aquí
+builder.Services.AddAuthorization(async options =>
 {
-    options.AddPolicy("RolAdministrador", policy =>
-        policy.RequireClaim("RolId", "1")); // Requiere RolId "1"
-    options.AddPolicy("RolCajero", policy =>
-        policy.RequireClaim("RolId", "2")); // Requiere RolId "2"
-    options.AddPolicy("RolDomiciliario", policy =>
-        policy.RequireClaim("RolId", "3")); // Requiere RolId "3"
+    // Obtener roles de manera asíncrona dentro de la configuración de políticas
+    var roles = await ObtenerRolesAsync(builder.Services);
+
+    foreach (var rol in roles)
+    {
+        options.AddPolicy($"{rol.NombreRol}", policy =>
+            policy.RequireClaim("RolId", rol.RolId));
+    }
 });
 
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
+// Configurar el entorno de desarrollo
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error"); // Manejo de errores en producción
-    app.UseHsts(); // Habilitar HSTS para seguridad
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
 }
 
 // Middleware base para la aplicación web
-app.UseHttpsRedirection(); // Redirigir HTTP a HTTPS
-app.UseStaticFiles(); // Servir archivos estáticos
-app.UseRouting(); // Habilitar el enrutamiento
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
 
 // Habilitar autenticación, autorización y sesiones
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession();
 
 app.UseCors(builder =>
 {
-    builder.WithOrigins("https://localhost:7226") // Permitir CORS desde este origen
+    builder.WithOrigins("https://localhost:7226")
            .AllowAnyHeader()
            .AllowAnyMethod()
-           .AllowCredentials(); // Permitir el uso de cookies en solicitudes CORS
+           .AllowCredentials();
 });
 
 // Configurar el enrutamiento predeterminado de controladores
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Login}/{action=Index}");
+app.MapDefaultControllerRoute();
 
-app.Run(); // Ejecutar la aplicación
+app.Run();
+
+// Método asincrónico para obtener roles
+async Task<List<RolService.RolList>> ObtenerRolesAsync(IServiceCollection services)
+{
+    using var scope = services.BuildServiceProvider().CreateScope();
+    var rolesService = scope.ServiceProvider.GetRequiredService<RolService>();
+    var roles = await rolesService.ObtenerRolesAsync();
+
+    if (roles == null || roles.Count == 0)
+    {
+        Console.WriteLine("No se encontraron roles.");
+    }
+    else
+    {
+        Console.WriteLine("Roles encontrados:");
+        foreach (var rol in roles)
+        {
+            Console.WriteLine($"Nombre del Rol: {rol.NombreRol}, ID del Rol: {rol.RolId}");
+        }
+    }
+
+    return roles;
+}

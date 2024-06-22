@@ -12,6 +12,7 @@ using X.PagedList;
 
 namespace VistaNewProject.Controllers
 {
+    [Authorize(Policy = "Administrador")]
     public class UsuariosController : Controller
     {
         private readonly IApiClient _client;

@@ -159,9 +159,14 @@ function agregarDetalleCompraend(objeto) {
         precioPorUnidad: objeto.precioVentaxUnidad,
         precioPorPresentacion: objeto.precioVentaxPresentacion,
         precioPorUnidadProducto: objeto.precioVentaxUnidadPresentacion,
+        precioPorUnidadCompra: objeto.precioxUnidadCompra,
+        precioPorPresentacionCompra: objeto.precioxPresentacionCompra,
+        precioPorUnidadProductoCompra: objeto.precioxUnidadPresentacionCompra,
         fechaVencimiento: objeto.fechaVencimiento,
         cantidad: objeto.cantidadLote,
         cantidadPorUnidad: objeto.cantidadPorUnidad,
+        cantidadCompra: objeto.cantidadLote,
+        cantidadPorUnidadCompra: objeto.cantidadPorUnidad,
         estadoLote: 1 // Estado por defecto
     };
     console.log(nuevoLote);
@@ -320,6 +325,9 @@ function agregarDetalleCompra() {
                                 cantidad: cantidad,
                                 numeroLote: numeroLote,
                                 precioCompra: precioCompra,
+                                precioxUnidadCompra: precioCompraUnidad,
+                                precioxPresentacionCompra: precioCompraPorProducto,
+                                precioxUnidadPresentacionCompra: PrecioDeCompraUnitario,
                                 precioVentaxUnidad: precioVentaxUnidad,
                                 precioVentaxPresentacion: precioVentaxPresentacion,
                                 precioVentaxUnidadPresentacion: precioVentaxUnidadPresentacion,
@@ -434,12 +442,16 @@ function agregarDetalleCompra() {
                                             cantidad: cantidad,
                                             numeroLote: numeroLote,
                                             precioCompra: precioCompra,
+                                            precioxUnidadCompra: precioCompraUnidad,
+                                            precioxPresentacionCompra: precioCompraPorProducto,
+                                            precioxUnidadPresentacionCompra: PrecioDeCompraUnitario,
                                             precioVentaxUnidad: precioVentaxUnidad,
                                             precioVentaxPresentacion: precioVentaxPresentacion,
                                             precioVentaxUnidadPresentacion: precioVentaxUnidadPresentacion,
                                             cantidadLote: cantidadLote,
                                             cantidadPorUnidad: cantidadPorUnidadLote,
-                                            fechaVencimiento: fechaVencimiento
+                                            fechaVencimiento: fechaVencimiento,
+                                            cantidadPorUnidad: cantidadPorUnidad
                                         };
 
                                         agregarDetalleCompraend(objeto); // Llamar a la función optimizada con el objeto
@@ -506,14 +518,18 @@ function agregarDetalleCompra() {
                     productoId: productoId,
                     unidadId: unidad,
                     cantidad: cantidad,
-                    cantidadPorUnidad: cantidadPorUnidadLote,
                     numeroLote: numeroLote,
                     precioCompra: precioCompra,
+                    precioxUnidadCompra: precioCompraUnidad,
+                    precioxPresentacionCompra: precioCompraPorProducto,
+                    precioxUnidadPresentacionCompra: PrecioDeCompraUnitario,
                     precioVentaxUnidad: precioVentaxUnidad,
                     precioVentaxPresentacion: precioVentaxPresentacion,
                     precioVentaxUnidadPresentacion: precioVentaxUnidadPresentacion,
                     cantidadLote: cantidadLote,
-                    fechaVencimiento: fechaVencimiento
+                    cantidadPorUnidad: cantidadPorUnidadLote,
+                    fechaVencimiento: fechaVencimiento,
+                    cantidadPorUnidad: cantidadPorUnidad
                 };
 
                 agregarDetalleCompraend(objeto); // Llamar a la función optimizada con el objeto
@@ -587,14 +603,18 @@ function agregarDetalleCompra() {
                                 productoId: productoId,
                                 unidadId: unidad,
                                 cantidad: cantidad,
-                                cantidadPorUnidad: cantidadPorUnidadLote,
                                 numeroLote: numeroLote,
                                 precioCompra: precioCompra,
+                                precioxUnidadCompra: precioCompraUnidad,
+                                precioxPresentacionCompra: precioCompraPorProducto,
+                                precioxUnidadPresentacionCompra: PrecioDeCompraUnitario,
                                 precioVentaxUnidad: precioVentaxUnidad,
                                 precioVentaxPresentacion: precioVentaxPresentacion,
                                 precioVentaxUnidadPresentacion: precioVentaxUnidadPresentacion,
                                 cantidadLote: cantidadLote,
-                                fechaVencimiento: fechaVencimiento
+                                cantidadPorUnidad: cantidadPorUnidadLote,
+                                fechaVencimiento: fechaVencimiento,
+                                cantidadPorUnidad: cantidadPorUnidad
                             };
 
                             agregarDetalleCompraend(objeto); // Llamar a la función optimizada con el objeto
@@ -607,14 +627,18 @@ function agregarDetalleCompra() {
                         productoId: productoId,
                         unidadId: unidad,
                         cantidad: cantidad,
-                        cantidadPorUnidad: cantidadPorUnidadLote,
                         numeroLote: numeroLote,
                         precioCompra: precioCompra,
+                        precioxUnidadCompra: precioCompraUnidad,
+                        precioxPresentacionCompra: precioCompraPorProducto,
+                        precioxUnidadPresentacionCompra: PrecioDeCompraUnitario,
                         precioVentaxUnidad: precioVentaxUnidad,
                         precioVentaxPresentacion: precioVentaxPresentacion,
                         precioVentaxUnidadPresentacion: precioVentaxUnidadPresentacion,
                         cantidadLote: cantidadLote,
-                        fechaVencimiento: fechaVencimiento
+                        cantidadPorUnidad: cantidadPorUnidadLote,
+                        fechaVencimiento: fechaVencimiento,
+                        cantidadPorUnidad: cantidadPorUnidad
                     };
 
                     agregarDetalleCompraend(objeto); // Llamar a la función optimizada con el objeto

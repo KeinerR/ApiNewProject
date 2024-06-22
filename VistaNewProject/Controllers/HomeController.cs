@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Net;
@@ -15,7 +16,7 @@ namespace VistaNewProject.Controllers
         {
             _api = api;
         }
-
+    
         public async Task<IActionResult> Index()
         {
             // ------------- REPORTE PRODUCTOS -------------
