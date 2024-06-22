@@ -950,14 +950,18 @@ function actualizarFormularioParaDescuento(activar) {
 }
 
 window.addEventListener('beforeunload', function (event) {
-    // Aquí puedes ejecutar el código que desees al cerrar la página
-    // Por ejemplo, puedes mostrar un mensaje de confirmación al usuario
-    var confirmationMessage = '¿Estás seguro de que quieres salir de esta página?';
+    // Obtener la URL actual
+    var currentUrl = window.location.href;
 
-    // La propiedad returnValue permite mostrar un mensaje al usuario
-    event.returnValue = confirmationMessage;
-    return confirmationMessage;
+    // Verificar si la URL contiene la palabra "Productos"
+    if (currentUrl.includes("Productos")) {
+        // Mostrar mensaje de confirmación solo si está en la página de productos
+        var confirmationMessage = '¿Estás seguro de que quieres salir de esta página?';
+        event.returnValue = confirmationMessage;
+        return confirmationMessage;
+    }
 });
+
 
 
 
