@@ -298,13 +298,13 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#NombreRol').on('input', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
-            seleccionarOpcion(this, document.getElementById('roles'), document.getElementById('RolId'));
+            seleccionarOpcion(this, document.getElementById('roles'), document.getElementById('RolId'),"Rol");
         }, 650);
     });
     $('#NombreRolAct').on('input', function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
-            seleccionarOpcion(this, document.getElementById('roles'), document.getElementById('RolIdAct'));
+            seleccionarOpcion(this, document.getElementById('roles'), document.getElementById('RolIdAct'),"Rol");
         }, 650);
     });
 
@@ -517,7 +517,7 @@ function actualizarUsuario(campo) {
             formActualizar.find('#TelefonoUsuarioAct').val(data.telefono);
             formActualizar.find('#CorreoUsuarioAct').val(data.correo);
             formActualizar.find('#EstadoProductoAct').val(data.correo);
-            seleccionarOpcion(document.getElementById('NombreRolAct'), document.getElementById('roles'), document.getElementById('RolIdAct'));
+            seleccionarOpcion(document.getElementById('NombreRolAct'), document.getElementById('roles'), document.getElementById('RolIdAct'),"Rol");
             obtenerDatosUsuarios();
         },
         error: function () {

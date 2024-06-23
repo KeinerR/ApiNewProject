@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
+using QuestPDF.Infrastructure;
+using QuestPDF.Helpers;
 
 namespace VistaNewProject.Controllers
 {
@@ -364,129 +366,10 @@ namespace VistaNewProject.Controllers
             return View(pagedProductos);
         }
 
-        public async Task<IActionResult> GenerarPDF(int pedidoId)
-        {
-            try
-            {
-                // Obtener detalles del pedido filtrados por pedidoId
-                var detallepedidos = await _client.GetDetallepedidoAsync();
-                var filteredDetallepedidos = detallepedidos.Where(dp => dp.PedidoId == pedidoId).ToList();
 
-                // Obtener información general del pedido
-                var pedido = await _client.FindPedidosAsync(pedidoId);
-                var cliente = await _client.FindClienteAsync(pedido.ClienteId.Value);
 
-               
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    Document document = new Document();
-                    PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
-                    document.Open();
+     
 
-                    // Título del documento
-                    Paragraph title = new Paragraph("Reporte De Ventas", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.BLACK));
-                    title.Alignment = Element.ALIGN_CENTER;
-                    document.Add(title);
-
-                    // Espacio entre título y tablas
-                    document.Add(new Paragraph("\n"));
-
-                    // Tabla para la información general del pedido
-                    PdfPTable pedidoTable = new PdfPTable(2)
-                    {
-                        WidthPercentage = 100,
-                        SpacingBefore = 10f,
-                        SpacingAfter = 10f
-                    };
-                    pedidoTable.SetWidths(new float[] { 30f, 70f });
-
-                    // Encabezado de la tabla de pedido
-                    AddCellToHeader(pedidoTable, "Campo");
-                    AddCellToHeader(pedidoTable, "Valor");
-
-                    // Agregar filas con datos del pedido
-                    AddRow(pedidoTable, "PedidoId", pedido.PedidoId.ToString());
-                    AddRow(pedidoTable, "Cliente", cliente.NombreEntidad);
-                    AddRow(pedidoTable, "Tipo de Servicio", pedido.TipoServicio ?? "No disponible");
-                    AddRow(pedidoTable, "Fecha del Pedido", pedido.FechaPedido.HasValue ? pedido.FechaPedido.Value.ToShortDateString() : "No disponible");
-                    AddRow(pedidoTable, "Valor Total", pedido.ValorTotalPedido?.ToString("C") ?? "No disponible");
-                    AddRow(pedidoTable, "Estado", pedido.EstadoPedido ?? "No disponible");
-
-                   
-
-                    // Agregar tabla de pedido al documento
-                    document.Add(pedidoTable);
-
-                    // Espacio entre tablas
-                    document.Add(new Paragraph("\n"));
-
-                    // Tabla para los detalles del pedido
-                    PdfPTable detalleTable = new PdfPTable(5)
-                    {
-                        WidthPercentage = 100,
-                        SpacingBefore = 10f,
-                        SpacingAfter = 10f
-                    };
-                    detalleTable.SetWidths(new float[] { 10f, 30f, 10f, 10f, 10f });
-
-                    // Encabezados de la tabla de detalles
-                    AddCellToHeader(detalleTable, "Pedido");
-                    AddCellToHeader(detalleTable, "Nombre Producto");
-                    AddCellToHeader(detalleTable, "Cantidad");
-                    AddCellToHeader(detalleTable, "Precio");
-                    AddCellToHeader(detalleTable, "Unidad");
-
-                    // Agregar datos de los detalles del pedido a la tabla
-                    foreach (var detalle in filteredDetallepedidos)
-                    {
-                        // Obtener producto y unidad asociada para cada detalle de pedido
-                        var producto = await _client.FindProductoAsync(detalle.ProductoId.Value);
-                        var unidad = await _client.FindUnidadAsync(detalle.UnidadId.Value);
-
-                        AddRow(detalleTable, detalle.PedidoId.ToString(),
-                            producto?.NombreProducto ?? "No disponible", detalle.Cantidad.ToString(),
-                            detalle.PrecioUnitario?.ToString("C") ?? "No disponible", unidad?.NombreUnidad ?? "No disponible");
-                    }
-
-                    // Agregar tabla de detalles al documento
-                    document.Add(detalleTable);
-
-                    // Cerrar el documento
-                    document.Close();
-
-                    // Devolver el archivo PDF como FileResult
-                    return File(memoryStream.ToArray(), "application/pdf", "ReporteProductos.pdf");
-                }
-            }
-            catch (HttpRequestException ex)
-            {
-                // Manejar el error y mostrar un mensaje adecuado
-                return BadRequest($"Error al obtener datos: {ex.Message}");
-            }
-        }
-
-        private void AddCellToHeader(PdfPTable table, string cellText)
-        {
-            PdfPCell cell = new PdfPCell(new Phrase(cellText, FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE)))
-            {
-                BackgroundColor = BaseColor.GRAY,
-                HorizontalAlignment = Element.ALIGN_CENTER,
-                VerticalAlignment = Element.ALIGN_MIDDLE
-            };
-            table.AddCell(cell);
-        }
-
-        private void AddRow(PdfPTable table, params string[] cellTexts)
-        {
-            foreach (var text in cellTexts)
-            {
-                table.AddCell(new Phrase(text, FontFactory.GetFont(FontFactory.HELVETICA, 10, BaseColor.BLACK)));
-            }
-        }
     }
-
-
-
-
 }
 

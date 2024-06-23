@@ -6,12 +6,13 @@ using System.Linq;
 using System.Net;
 using System;
 using Microsoft.AspNetCore.Http;
-
+using QuestPDF;
 using QuestPDF.Fluent;
-using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
 using System.IO;
-using System.Threading.Tasks;
+using QuestPDF.Drawing.Exceptions;
+using iTextSharp.text.pdf;
+using QuestPDF.Infrastructure;
+using QuestPDF.Helpers;
 
 
 
@@ -667,72 +668,90 @@ namespace VistaNewProject.Controllers
             }
         }
 
-
         public async Task<IActionResult> GenerarPDF()
         {
-            var productos = await _client.GetAllDatosProductosAsync(); // Obtener la lista de productos desde el servicio
+            // Obtener la lista de productos desde el servicio de forma asíncrona
+            var productos = await _client.GetAllDatosProductosAsync();
 
             // Crear el documento PDF
             byte[] pdfDocument = Document.Create(container =>
             {
+                // Definir el contenedor del documento PDF
                 container.Page(page =>
                 {
-                    page.Size(PageSizes.A4);
-                    page.Margin(2, Unit.Centimetre);
-                    page.PageColor(Colors.White);
-                    page.DefaultTextStyle(x => x.FontSize(12));
+                    // Configurar la página del PDF
+                    page.Size(297, 210, Unit.Millimetre); // Tamaño A4 horizontal
+                    page.Margin(2, Unit.Centimetre); // Márgenes de 2 centímetros
+                    page.PageColor(Colors.White); // Color de fondo de la página
+                    page.DefaultTextStyle(x => x.FontSize(12)); // Estilo de texto por defecto
 
+
+                    // Configurar el header de la página
                     page.Header()
-                        .Text("Reporte de Productos")
-                        .SemiBold().FontSize(18).FontColor(Colors.Black)
-                        .AlignCenter();
-
+                        .PaddingVertical(1, Unit.Millimetre) // Ajuste de padding vertical en el header
+                        .Text("Reporte de Productos") // Texto del encabezado
+                        .SemiBold().FontSize(18).FontColor(Colors.Black) // Estilo de fuente
+                        .AlignCenter(); // Alineación del texto al centro
+                                        // Estilo de las celdas del encabezado y de los datos en la tabla
+                    static IContainer CellStyle(IContainer container)
+                    {
+                        return container.DefaultTextStyle(x => x.SemiBold())
+                            .PaddingVertical(4) // Padding vertical de 4 unidades
+                            .Background(Colors.Grey.Lighten2) // Fondo de color gris claro
+                            .BorderBottom(1) // Borde inferior de 1 unidad
+                            .BorderColor(Colors.Black); // Color del borde negro
+                    }
+                    // Configurar el contenido principal de la página
                     page.Content()
-                        .PaddingVertical(1, Unit.Centimetre)
+                         .PaddingVertical(2, Unit.Millimetre) // Ajuste de padding vertical en el cuerpo de la tabla
                         .Table(table =>
                         {
-                            // Definir las columnas
+                            // Definir las columnas de la tabla
                             table.ColumnsDefinition(columns =>
                             {
-                                columns.RelativeColumn(2); // Categoría
-                                columns.RelativeColumn(2); // Marca
+                                columns.RelativeColumn(1); // Categoría
+                                columns.RelativeColumn(1); // Marca
                                 columns.RelativeColumn(4); // Nombre completo producto
                                 columns.RelativeColumn(2); // Cantidad total
-                                columns.RelativeColumn(2); // Cantidad total por unidad
+                                columns.RelativeColumn(3); // Cantidad total por unidad
                                 columns.RelativeColumn(2); // Estado
                             });
 
-                            // Definir el encabezado
+                            // Definir el encabezado de la tabla
                             table.Header(header =>
                             {
-                                header.Cell().Element(CellStyle).Text("Categoría");
-                                header.Cell().Element(CellStyle).Text("Marca");
-                                header.Cell().Element(CellStyle).Text("Nombre completo producto");
-                                header.Cell().Element(CellStyle).Text("Cantidad total");
-                                header.Cell().Element(CellStyle).Text("Cantidad total por unidad");
-                                header.Cell().Element(CellStyle).Text("Estado");
+                                header.Cell().Element(CellStyle).Text("Categoría").AlignCenter(); 
+                                header.Cell().Element(CellStyle).Text("Marca").AlignCenter(); 
+                                header.Cell().Element(CellStyle).Text("Nombre completo producto").AlignCenter();
+                                header.Cell().Element(CellStyle).Text("Cantidad total").AlignCenter();
+                                header.Cell().Element(CellStyle).Text("Cantidad total por unidad").AlignCenter();
+                                header.Cell().Element(CellStyle).Text("Estado").AlignCenter();
 
+                                // Estilo de las celdas del encabezado
                                 static IContainer CellStyle(IContainer container)
                                 {
-                                    return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).Background(Colors.Grey.Lighten2).BorderBottom(1).BorderColor(Colors.Black);
+                                    return container.DefaultTextStyle(x => x.SemiBold())
+                                        .PaddingVertical(4) // Padding vertical de 10 unidades
+                                        .Background(Colors.Grey.Lighten2) // Fondo de color gris claro
+                                        .BorderBottom(1) // Borde inferior de 1 unidad
+                                        .BorderColor(Colors.Black); // Color del borde negro
                                 }
                             });
 
-                            // Llenar tabla con datos de productos
+                            // Llenar la tabla con los datos de los productos
                             foreach (var producto in productos)
                             {
                                 // Calcular las cantidades disponibles
                                 var cantidadTotalPP = producto.CantidadTotal - producto.CantidadReservada ?? 0;
                                 var cantidadTotalPorUnidadPU = producto.CantidadTotalPorUnidad - producto.CantidadPorUnidadReservada ?? 0;
 
-                                // Obtener los nombres de la categoría y la marca, asegurándose de manejar nulos correctamente
+                                // Obtener los nombres de la categoría y la marca, manejando nulos correctamente
                                 string categoriaNombre = producto.NombreCategoria ?? "Sin categoría";
-                                string marcaNombre = producto.Marca?.NombreMarca ?? "Sin marca";
-
-                                // Obtener el nombre del producto, asegurándose de manejar nulos correctamente
+                                string marcaNombre = producto.NombreMarca ?? "Sin marca";
+                                // Obtener el nombre del producto, manejando nulos correctamente
                                 string nombreProducto = producto.NombreCompletoProducto ?? "Sin nombre";
 
-                                // Convertir las cantidades a string
+                                // Convertir las cantidades a texto
                                 string cantidadTotal = cantidadTotalPP.ToString();
                                 string cantidadTotalPorUnidad = cantidadTotalPorUnidadPU.ToString();
 
@@ -743,27 +762,26 @@ namespace VistaNewProject.Controllers
                                 table.Cell().Element(CellDataStyle).Text(categoriaNombre);
                                 table.Cell().Element(CellDataStyle).Text(marcaNombre);
                                 table.Cell().Element(CellDataStyle).Text(nombreProducto);
-                                table.Cell().Element(CellDataStyle).Text(cantidadTotal);
-                                table.Cell().Element(CellDataStyle).Text(cantidadTotalPorUnidad);
-                                table.Cell().Element(CellDataStyle).Text(estado);
+                                table.Cell().Element(CellDataStyle).Text(cantidadTotal).AlignCenter(); ;
+                                table.Cell().Element(CellDataStyle).Text(cantidadTotalPorUnidad).AlignCenter(); ;
+                                table.Cell().Element(CellDataStyle).Text(estado).AlignCenter();
 
+                                // Estilo de las celdas de los datos en la tabla
                                 static IContainer CellDataStyle(IContainer container)
                                 {
-                                    return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(5);
+                                    return container.BorderBottom(1) // Borde inferior de 1 unidad
+                                        .BorderColor(Colors.Grey.Lighten2) // Color del borde gris claro
+                                        .PaddingVertical(10); // Padding vertical de 5 unidades
                                 }
                             }
                         });
                 });
-            }).GeneratePdf();
+            }).GeneratePdf(); // Generar el PDF
 
-            // Devolver el archivo PDF como FileResult
+            // Devolver el archivo PDF como FileResult para descargarlo
             return File(pdfDocument, "application/pdf", "Reporte_de_productos.pdf");
         }
 
-
-
-
-
-
     }
+
 }

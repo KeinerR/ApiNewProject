@@ -76,12 +76,19 @@ namespace VistaNewProject.Controllers
            
         }
 
-        [HttpPost]
-        public async Task<JsonResult> FindCategoria(int categoriaId)
+        [HttpPost("Categorias/FindCategoria/{id}")]
+        public async Task<JsonResult> FindCategoria(int id)
         {
-            var categoria = await _client.FindCategoriaAsync(categoriaId);
+            var categoria = await _client.FindCategoriaAsync(id);
+
+            if (categoria == null)
+            {
+                return Json("null");
+            }
+
             return Json(categoria);
         }
+
 
         [HttpPost]
         public async Task<JsonResult> FindCategorias()

@@ -16,7 +16,6 @@ function confirmLogout() {
     }
 }
 
-
 //Funcion que hace desplegar o reducir el menu de navegacion
 $(function () {
    $("#menu-toggle").on("click", function (e) {
@@ -64,8 +63,6 @@ $(function () {
     }
     
 });
-
-
 /*---------------------------------------------Funciones generales-------------------------------------------------------- */
 /*Mostrar la hora actual en un campo solo llamarla i pasarle el id del campo al que se dese aagregar la fecha*/
 function setHoraActual(campo) {
@@ -104,19 +101,21 @@ function mostrarOcultarContrasena(idCampo) {
         // iconoOjo.src = "ruta/para/el/ícono-de-ojo-abierto.svg";
     }
 }
-
 // Función para manejar la selección de opciones en los datalist
-window.seleccionarOpcion = function (input, dataList, hiddenInput) {
+window.seleccionarOpcion = function (input, dataList, hiddenInput,Peticion) {
     const selectedValue = input.value.trim();
     let selectedOptionByName = Array.from(dataList.options).find(option => option.value === selectedValue);
     let selectedOptionById = Array.from(dataList.options).find(option => option.getAttribute('data-id') === selectedValue);
-
     if (/^\d+[a-zA-Z]$/.test(selectedValue)) {
         selectedOptionByName = Array.from(dataList.options).find(option => option.value === selectedValue);
     }
-
     if (!selectedOptionByName && !selectedOptionById && /^\d+$/.test(selectedValue)) {
-
+        if (!selectedOptionByName) {
+            if (Peticion == "Categoria") {
+                manejarCategoria(selectedValue);
+                return;
+            }
+        }
         Swal.fire({
             icon: 'warning',
             title: 'No se encontró ningún resultado con este ID',
@@ -135,6 +134,27 @@ window.seleccionarOpcion = function (input, dataList, hiddenInput) {
         input.value = selectedOptionById.value;
         hiddenInput.value = selectedOptionById.getAttribute('data-id');
     }
+    if (Peticion.includes("Categoria")) {
+        checkboxFiltrar();
+    }
+   
+
+}
+async function manejarCategoria(selectedValue) {
+        try {
+            var categoria = await buscarCategoria(selectedValue);
+
+            if (categoria && categoria.NombreCategoria) {
+                console.log(categoria.NombreCategoria);
+                input.value = categoria.NombreCategoria;
+                hiddenInput.value = categoria.NombreCategoria;
+            } else {
+                alert("Jer");
+                console.log("Categoría no encontrada");
+            }
+        } catch (error) {
+            console.error('Error al manejar la categoría:', error);
+        }
 }
 
 function obtenerValoresFormulario(ids) {
@@ -167,6 +187,26 @@ function formatoNumeroINT(input) {
     // Asignar el valor formateado al campo
     input.value = formattedValue;
 }
+
+/*------------------------------------------------------------------------------------------------------------------------------ */
+function buscarCategoria(categoriaId) {
+    return $.ajax({
+        url: `/Categorias/FindCategoria/${categoriaId}`,
+        type: 'POST',
+        contentType: 'application/json'
+    }).then(categoria => {
+        return categoria;
+    }).catch(xhr => {
+        console.error('Error al actualizar el estado de la categoría:', xhr.responseText);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Hubo un error al actualizar el estado de la categoría. Por favor, inténtalo de nuevo.'
+        });
+        return null;
+    });
+}
+
 
 
 /*------------------------------------------Funciones patra mostrar alertas--------------------------------------------*/
@@ -297,7 +337,6 @@ function agregarIconoparalimpiarElCampo(input) {
         $icono.addClass('noBe'); // Add the 'noBe' class to the icon
     }
 }
-
 function agregarIconoParalimpiarElCampoActinput(input) {
     var $input = $(input); // Get the input element using 'input'
     var $icono = $input.closest('.icono-input').find('i'); // Find the icon within the 'icono-input' container
@@ -309,10 +348,13 @@ function limpiarCampoIcono(inputId) {
     $input.val(''); // Clear the value of the input field
     agregarIconoParalimpiarElCampoActinput($input); // Call your existing function to handle the icon class
 }
-
 function removerIconoparalimpiarElCampo(inputs) {
     if (!Array.isArray(inputs)) {
         inputs = [inputs];
+    }
+    // Verifica si el array de inputs contiene "NombreCategoria"
+    if (inputs.includes("NombreCategoria")) {
+        checkboxFiltrar();
     }
     inputs.forEach(function (input) {
         var $input = $('#' + input); // Obtener el elemento input usando 'input'
