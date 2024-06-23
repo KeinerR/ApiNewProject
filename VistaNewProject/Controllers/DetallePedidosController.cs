@@ -342,12 +342,27 @@ namespace VistaNewProject.Controllers
                 // Ajustar las cantidades reservadas
                 foreach (var detalle in detallesPedidoACancelar)
                 {
+
+                    var unidadId = detalle.UnidadId;
                     var producto = await _client.FindProductoAsync(detalle.ProductoId.Value);
                     if (producto != null)
                     {
                         var Id = producto.ProductoId;
-                        int ? cantidad = detalle.Cantidad;
-                        await _client.SustraerCantidadReservadaAsync(Id,cantidad);
+                        int? cantidad = detalle.Cantidad;
+                        if (unidadId == 1)
+                        {
+
+
+                        
+                            await _client.QuitarCantidadReservada(Id, cantidad);
+                        }
+                        if (unidadId == 2)
+                        {
+
+                            await _client.QuitarCantidadReservadaUnidad(Id, cantidad);
+                        }
+
+
                     }
                 }
 
@@ -391,12 +406,20 @@ namespace VistaNewProject.Controllers
                 {
                     return NotFound(new { message = "Producto no encontrado" });
                 }
+
                 int id = producto.ProductoId;
-                int ? cantidad = detalleAEliminar.Cantidad;
+                int? cantidad = detalleAEliminar.Cantidad;
+
                 // Actualizar la cantidad reservada del producto
-
-                var updateProductResult = await _client.SustraerCantidadReservadaAsync(id,cantidad);
-
+                var unidadId = detalleAEliminar.UnidadId;
+                if (unidadId == 1)
+                {
+                    await _client.QuitarCantidadReservada(id, cantidad);
+                }
+                else if (unidadId == 2)
+                {
+                    await _client.QuitarCantidadReservadaUnidad(id, cantidad);
+                }
 
                 // Eliminar el detalle de la lista
                 listaGlobalDetalles.RemoveAt(index);

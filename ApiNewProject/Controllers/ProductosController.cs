@@ -694,6 +694,29 @@ namespace ApiNewProject.Controllers
             return Ok();
         }
 
+        [HttpPut("QuitarCantidadReservadaUnidad/{id}")]
+        public async Task<ActionResult> QuitarCantidadReservadaUnidad(int id, int? cantidad)
+        {
+            // Buscar el producto por su ID
+            var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == id);
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            // Verificar si la cantidad a restar es válida
+
+
+            producto.CantidadPorUnidadReservada -= cantidad; ;
+
+            // Guardar los cambios en la base de datos
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+
         [HttpPut("PedidosCancelados/{id}")]
         public async Task<ActionResult> PedidosCancelados(int id, int? cantidad)
         {
