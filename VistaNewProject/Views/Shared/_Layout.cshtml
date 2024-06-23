@@ -156,7 +156,18 @@
     <script src="~/js/marcas.js"></script>
     <script src="~/js/presentaciones.js"></script>
     <script src="~/js/clientes.js"></script>
-
+    @if (TempData["ActualizadoConExito"] != null)
+    {
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: '@TempData["ActualizadoConExito"]',
+                timer: 3000,
+                onClose: () => recargarPagina()
+            });
+        </script>
+    }
     @if (TempData["SweetAlertMessage"] != null)
     {
         <script>
