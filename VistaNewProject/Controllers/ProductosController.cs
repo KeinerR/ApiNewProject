@@ -7,17 +7,11 @@ using System.Net;
 using System;
 using Microsoft.AspNetCore.Http;
 
-
-using Microsoft.CodeAnalysis.Operations;
-using System.Collections.Immutable;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-using System.Drawing.Printing;
-using System.Drawing;
-using Microsoft.CSharp;
-using System.Xml.Linq;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using System.IO;
+using System.Threading.Tasks;
 
 
 
@@ -334,7 +328,7 @@ namespace VistaNewProject.Controllers
                 var response = await _client.UpdateProductoAsync(producto);
                 if (response.IsSuccessStatusCode)
                 {
-                    MensajeSweetAlert("success", "Éxito", "Se ha actualizado exitosamente el producto", "false", 3000);
+                    MensajeSweetAlert("success", "Éxito", $"Se ha actualizado exitosamente el producto con ID: {producto.ProductoId}", "false", 6000);
                     return RedirectToAction("Index");
                 }
                 else
@@ -673,67 +667,97 @@ namespace VistaNewProject.Controllers
             }
         }
 
+
         public async Task<IActionResult> GenerarPDF()
         {
-            var productos = await _client.GetProductoAsync(); // Obtener la lista de productos desde el servicio
+            var productos = await _client.GetAllDatosProductosAsync(); // Obtener la lista de productos desde el servicio
 
             // Crear el documento PDF
-            using (MemoryStream memoryStream = new MemoryStream())
+            byte[] pdfDocument = Document.Create(container =>
             {
-                Document document = new Document();
-                PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
-                document.Open();
-
-                // Título del documento
-                Paragraph title = new Paragraph("Reporte de Productos", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.BLACK));
-                title.Alignment = Element.ALIGN_CENTER;
-                document.Add(title);
-
-                // Agregar tabla de productos
-                PdfPTable table = new PdfPTable(4); // 4 columnas para Categoría, Marca, Nombre Producto, Cantidad
-                table.WidthPercentage = 100;
-                table.SpacingBefore = 10f;
-                table.SpacingAfter = 10f;
-
-                // Encabezados de tabla
-                PdfPCell cell = new PdfPCell(new Phrase("Categoría", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE)));
-                cell.BackgroundColor = BaseColor.GRAY;
-                table.AddCell(cell);
-
-                cell = new PdfPCell(new Phrase("Marca", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE)));
-                cell.BackgroundColor = BaseColor.GRAY;
-                table.AddCell(cell);
-
-                cell = new PdfPCell(new Phrase("Nombre Producto", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE)));
-                cell.BackgroundColor = BaseColor.GRAY;
-                table.AddCell(cell);
-
-                cell = new PdfPCell(new Phrase("Cantidad", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE)));
-                cell.BackgroundColor = BaseColor.GRAY;
-                table.AddCell(cell);
-
-                // Llenar tabla con datos de productos
-                foreach (var producto in productos)
+                container.Page(page =>
                 {
-                    string categoriaNombre = producto.Categoria != null ? producto.Categoria.NombreCategoria : ""; // Ajustar según la propiedad correcta de Categoria
-                    string marcaNombre = producto.Marca != null ? producto.Marca.NombreMarca : ""; // Ajustar según la propiedad correcta de Marca
-                    string nombreProducto = producto.NombreProducto ?? "";
-                    string cantidadTotal = producto.CantidadTotal.ToString();
+                    page.Size(PageSizes.A4);
+                    page.Margin(2, Unit.Centimetre);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x.FontSize(12));
 
-                    table.AddCell(categoriaNombre);
-                    table.AddCell(marcaNombre);
-                    table.AddCell(nombreProducto);
-                    table.AddCell(cantidadTotal);
-                }
+                    page.Header()
+                        .Text("Reporte de Productos")
+                        .SemiBold().FontSize(18).FontColor(Colors.Black)
+                        .AlignCenter();
 
-                // Agregar tabla al documento
-                document.Add(table);
+                    page.Content()
+                        .PaddingVertical(1, Unit.Centimetre)
+                        .Table(table =>
+                        {
+                            // Definir las columnas
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn(2); // Categoría
+                                columns.RelativeColumn(2); // Marca
+                                columns.RelativeColumn(4); // Nombre completo producto
+                                columns.RelativeColumn(2); // Cantidad total
+                                columns.RelativeColumn(2); // Cantidad total por unidad
+                                columns.RelativeColumn(2); // Estado
+                            });
 
-                document.Close();
+                            // Definir el encabezado
+                            table.Header(header =>
+                            {
+                                header.Cell().Element(CellStyle).Text("Categoría");
+                                header.Cell().Element(CellStyle).Text("Marca");
+                                header.Cell().Element(CellStyle).Text("Nombre completo producto");
+                                header.Cell().Element(CellStyle).Text("Cantidad total");
+                                header.Cell().Element(CellStyle).Text("Cantidad total por unidad");
+                                header.Cell().Element(CellStyle).Text("Estado");
 
-                // Devolver el archivo PDF como FileResult
-                return File(memoryStream.ToArray(), "application/pdf", "ReporteProductos.pdf");
-            }
+                                static IContainer CellStyle(IContainer container)
+                                {
+                                    return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).Background(Colors.Grey.Lighten2).BorderBottom(1).BorderColor(Colors.Black);
+                                }
+                            });
+
+                            // Llenar tabla con datos de productos
+                            foreach (var producto in productos)
+                            {
+                                // Calcular las cantidades disponibles
+                                var cantidadTotalPP = producto.CantidadTotal - producto.CantidadReservada ?? 0;
+                                var cantidadTotalPorUnidadPU = producto.CantidadTotalPorUnidad - producto.CantidadPorUnidadReservada ?? 0;
+
+                                // Obtener los nombres de la categoría y la marca, asegurándose de manejar nulos correctamente
+                                string categoriaNombre = producto.NombreCategoria ?? "Sin categoría";
+                                string marcaNombre = producto.Marca?.NombreMarca ?? "Sin marca";
+
+                                // Obtener el nombre del producto, asegurándose de manejar nulos correctamente
+                                string nombreProducto = producto.NombreCompletoProducto ?? "Sin nombre";
+
+                                // Convertir las cantidades a string
+                                string cantidadTotal = cantidadTotalPP.ToString();
+                                string cantidadTotalPorUnidad = cantidadTotalPorUnidadPU.ToString();
+
+                                // Determinar el estado del producto
+                                string estado = producto.Estado == 1 ? "Activo" : "Inactivo";
+
+                                // Agregar datos a la tabla
+                                table.Cell().Element(CellDataStyle).Text(categoriaNombre);
+                                table.Cell().Element(CellDataStyle).Text(marcaNombre);
+                                table.Cell().Element(CellDataStyle).Text(nombreProducto);
+                                table.Cell().Element(CellDataStyle).Text(cantidadTotal);
+                                table.Cell().Element(CellDataStyle).Text(cantidadTotalPorUnidad);
+                                table.Cell().Element(CellDataStyle).Text(estado);
+
+                                static IContainer CellDataStyle(IContainer container)
+                                {
+                                    return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(5);
+                                }
+                            }
+                        });
+                });
+            }).GeneratePdf();
+
+            // Devolver el archivo PDF como FileResult
+            return File(pdfDocument, "application/pdf", "Reporte_de_productos.pdf");
         }
 
 

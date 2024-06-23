@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using VistaNewProject.Services;
+using Humanizer;
+using System.ComponentModel.DataAnnotations;
 
 namespace VistaNewProject.Controllers
 {
@@ -34,7 +36,7 @@ namespace VistaNewProject.Controllers
             {
                 ViewData["MostrarAlerta"] = "Por favor, completa todos los campos.";
                 return View("Index", model);
-            }
+            }   
 
             var usuarios = await _client.GetUsuarioAsync(); // Obtener todos los usuarios
             var usuarioValido = usuarios.FirstOrDefault(u => u.Usuario1 == model.Usuario1);
@@ -47,11 +49,12 @@ namespace VistaNewProject.Controllers
                 {
                     // Crear identidad del usuario
                     var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, usuarioValido.Usuario1),
-                new Claim("RolId", usuarioValido.RolId.ToString()),
-                new Claim(ClaimTypes.NameIdentifier, usuarioValido.UsuarioId.ToString())
-            };
+                    {
+                        new Claim(ClaimTypes.Role, "UsuarioRegistrado"),
+                        new Claim(ClaimTypes.Name, usuarioValido.Usuario1),
+                        new Claim("NombreRol", DatosDeAcceso.NombreRol),
+                        new Claim(ClaimTypes.NameIdentifier, usuarioValido.UsuarioId.ToString())
+                    };
 
                     // Agregar permisos a los claims
                     if (DatosDeAcceso.RolxPermisoAcceso != null)
@@ -60,9 +63,8 @@ namespace VistaNewProject.Controllers
                         {
                             if (permiso.NombrePermiso != null)
                             {
-                                claims.Add(new Claim("Permiso", permiso.NombrePermiso));
+                                claims.Add(new Claim("NombrePermiso", permiso.NombrePermiso));
                             }
-
                             // Agregar nombres de permisos por rol
                             if (permiso.RolxPermisoNombres != null)
                             {
@@ -70,7 +72,7 @@ namespace VistaNewProject.Controllers
                                 {
                                     if (permisoNombre.NombrePermisoxRol != null)
                                     {
-                                        claims.Add(new Claim("NombrePermisoxRol", permisoNombre.NombrePermisoxRol));
+                                        claims.Add(new Claim("NombreAcceso", permisoNombre.NombrePermisoxRol));
                                     }
                                 }
                             }
@@ -113,9 +115,6 @@ namespace VistaNewProject.Controllers
                 return View("Index", model);
             }
         }
-
-
-
 
         public async Task<IActionResult> Logout(Usuario model)
         {

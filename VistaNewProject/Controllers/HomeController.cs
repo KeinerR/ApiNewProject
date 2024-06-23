@@ -2,12 +2,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
 
 namespace VistaNewProject.Controllers
 {
+    [Authorize(Policy = "CualquierRol" )]
     public class HomeController : Controller
     {
         private readonly IApiClient _api;

@@ -219,22 +219,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-
-    // Validar campos en cada cambio para cambiar el mensaje inicial que aparece arriba de los botones del formulario
-    $('.modal-formulario-crear-producto input, .modal-formulario-crear-producto select').on('input', function () {
-        NoCamposVaciosProductoInicial();
-        NoCamposConErroresProductoInicial();
-
-    });
-
-    $('.modal-formulario-actualizar-producto input, .modal-formulario-actualizar-producto select').on('input', function () {
-        NoCamposVaciosProductoInicialAct();
-        NoCamposConErroresProductoInicialAct();
-    });
-
     // Asignar función de selección a los campos
     $('#NombreMarca').on('input', function () {
-        if (this.value.length > 5) {
+        if (this.value.length > 4) {
             clearTimeout(timeout);
             seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaId'));
         } else {
@@ -246,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     $('#NombreCategoria').on('input', function () {
-        if (this.value.length > 5) {
+        if (this.value.length > 4) {
             clearTimeout(timeout);
             seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaId'));
             checkboxFiltrar();
@@ -262,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     $('#NombrePresentacion').on('input', function () {
-        if (this.value.length > 5) {
+        if (this.value.length > 4) {
             clearTimeout(timeout);
             seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionId'));
         } else {
@@ -274,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     $('#NombreMarcaAct').on('input', function () {
-        if (this.value.length > 5) {
+        if (this.value.length > 4) {
             clearTimeout(timeout);
             seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaIdAct'));
         } else {
@@ -287,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     $('#NombreCategoriaAct').on('input', function () {
 
-        if (this.value.length > 5) {
+        if (this.value.length > 4) {
             clearTimeout(timeout);
             seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaIdAct'));
         } else {
@@ -299,7 +286,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     $('#NombrePresentacionAct').on('input', function () {
-        if (this.value.length > 5) {
+        if (this.value.length > 4) {
             clearTimeout(timeout);
             seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'));
         } else {
@@ -318,12 +305,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }).length;
 
         if (camposConTexto == 4) { // Cambiamos la condición para verificar si hay campos sin texto.
-            $('.MensajeInicial').text('Por favor, complete todos los campos con *.');
             mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos con *');
             return false;
         }
         if (camposConTexto > 1 && camposConTexto < 4) { // Cambiamos la condición para verificar si hay campos sin texto.
-            $('.MensajeInicial').text('Por favor, complete los campos con *.');
             mostrarAlertaAtencionPersonalizadaConBoton('Completa los campos con *');
             return false;
         }
@@ -339,17 +324,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (camposConTexto == 4) { // Cambiamos la condición para verificar si hay campos sin texto.
             mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente todos los campos');
-            $('.MensajeErrores').text('Todos los campos son invalidos.');
             return false;
         }
         if (camposConTexto > 1 && camposConTexto < 3) {
             mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente los campos');
-            $('.MensajeErrores').text('Hay campos invalidos.');
             return false;
         }
         if (camposConTexto === 1) {
             mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente el campo');
-            $('.MensajeErrores').text('Un campo es invalido.');
             return false;
         }
 
@@ -365,17 +347,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (camposConTexto === 6) { // Cambiamos la condición para verificar si hay campos sin texto.
             mostrarAlertaAtencionPersonalizadaConBoton('Completa todos los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos con *.');
             return false;
         }
         if (camposConTexto > 1 && camposConTexto < 6) { // Cambiamos la condición para verificar si hay campos sin texto.
             mostrarAlertaAtencionPersonalizadaConBoton('Completa los campos con *');
-            $('.MensajeInicial').text('Por favor, complete los campos con *.');
             return false;
         }
         if (camposConTexto === 1) { // Cambiamos la condición para verificar si hay campos sin texto.
-            mostrarAlertaAtencionPersonalizadaConBoton('Completa los campos con *');
-            $('.MensajeInicial').text('Por favor, complete el campo con *.');
             return false;
         }
 
@@ -391,79 +369,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (camposConTexto === 3) { // Cambiamos la condición para verificar si hay campos sin texto.
             mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente todos los campos');
-            $('.MensajeErrores').text('Todos los campos son invalidos.');
             return false;
         }
         if (camposConTexto > 1 && camposConTexto < 3) {
             mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente los campos');
-            $('.MensajeErrores').text('Hay campos invalidos.');
             return false;
         }
         if (camposConTexto === 1) {
             mostrarAlertaAtencionPersonalizadaConBoton('Complete correctamente el campo');
-            $('.MensajeErrores').text('Un campo es invalido.');
             return false;
         }
         return true;
     }
-
-    function NoCamposVaciosProductoInicial() {
-        const mensajeElements = $('.Mensaje');
-
-        const mensajeSlice = mensajeElements.slice(0, 6);
-
-
-        const todosLlenos = mensajeSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
-
-        if (todosLlenos) {
-            $('.MensajeInicial').text('');
-        }
-
-    }
-    function NoCamposVaciosProductoInicialAct() {
-
-        const mensajeElements = $('.Mensaje');
-
-        const mensajeSlice = mensajeElements.slice(-6);
-
-        const todosLlenos = mensajeSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
-        if (todosLlenos) {
-            $('.MensajeInicial').text('');
-        }
-
-    }
-
-    function NoCamposConErroresProductoInicial() {
-        const textDangerElements = $('.text-danger');
-        const textDangerSlice = textDangerElements.slice(0, 3);
-        const todoValido = textDangerSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-
-        if (todoValido) {
-            $('.MensajeErrores').text('');
-        }
-
-    }
-    function NoCamposConErroresProductoInicialAct() {
-
-        const textDangerElements = $('.text-danger');
-        const textDangerSlice = textDangerElements.slice(-3);
-        const todoValido = textDangerSlice.filter(function () {
-            return $(this).text() !== '';
-        }).length === 0;
-        if (todoValido) {
-            $('.MensajeErrores').text('');
-        }
-
-    }
-
 
 });
 
@@ -473,7 +390,7 @@ function simularClickProducto() {
 }
 /*--------------------Atajo para abrir modal -------------------------------*/
 document.addEventListener('keydown', function (event) {
-    if (event.ctrlKey && event.key === 'm') {
+    if (event.ctrlKey && event.key === ' ') {
         try {
             if (esURLValida('Productos')) {
                 const modalProducto = $('#ModalProducto');
@@ -486,7 +403,8 @@ document.addEventListener('keydown', function (event) {
                 if (modalProducto.hasClass('show')) {
                     modalProducto.modal('hide'); // Cerrar la modal
                 } else {
-                    botonAbrirModal.click();
+                    modalProducto.modal('show'); // Cerrar la modal
+                   
                 }
             }
         } catch (error) {
@@ -497,11 +415,9 @@ document.addEventListener('keydown', function (event) {
 
 /*------------------------------ Limpiar formularios y url ---------------------------------------------------------------------------------------------------- */
 
-
-
 //Se llama al dar click en cancelar en la modal de agregar producto
 function limpiarDatosFormularioProductoAgregar() {
-    removerIconoparalimpiarElCampo(['NombreMarca', 'NombrePresentacion', 'NombreMarca']);
+    removerIconoparalimpiarElCampo(['NombreCategoria', 'NombrePresentacion', 'NombreMarca']);
     limpiarFiltroProductoAgregar();
     history.replaceState(null, '', location.pathname);
     var mensajes = document.querySelectorAll('.Mensaje');
@@ -520,7 +436,7 @@ function limpiarDatosFormularioProductoAgregar() {
     }
 }
 
-//Se llama al daar click en la x
+//Se llama al dar click en la x
 function limpiarFormularioProducto() {
     limpiarDatosFormularioProductoAgregar();
     // Limpiar campos y elementos específicos
@@ -531,8 +447,8 @@ function limpiarFormularioProducto() {
     limpiarCampo('NombrePresentacion');
     limpiarCampo('PresentacionId');
     limpiarCampo('NombreProducto');
-    limpiarCampo('CantidadAplicarPorMayor');
-    limpiarCampo('DescuentoAplicarPorMayor');
+    document.getElementByid('DescuentoAplicarPorMayor').value = "0";
+    document.getElementByid('CantidadAplicarPorMayor').value = "0"; 
 
 }
 

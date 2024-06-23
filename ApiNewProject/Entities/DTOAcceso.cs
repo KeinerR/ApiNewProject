@@ -80,9 +80,18 @@ namespace ApiNewProject.Entities
         public int PermisoId { get; set; }
         public string? NombrePermiso { get; set; }
         public ulong? EstadoPermiso { get; set; }
-        [JsonIgnore]
+
         public virtual ICollection<Rolxpermiso> Rolxpermisos { get; set; }
+    }  
+    public partial class PermisoCrearyActualizar
+    {
+        public int PermisoId { get; set; }
+        public string? NombrePermiso { get; set; }
+        public ulong? EstadoPermiso { get; set; }
+
     }
+
+
     public class UsuarioAcceso
     {
         public int UsuarioId { get; set; }
