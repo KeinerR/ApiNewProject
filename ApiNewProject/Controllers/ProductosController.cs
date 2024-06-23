@@ -15,7 +15,7 @@ namespace ApiNewProject.Controllers
     public class ProductosController : ControllerBase
     {
         private readonly NewOptimusContext _context;
-
+        
         public ProductosController(NewOptimusContext context)
         {
             _context = context;
@@ -717,63 +717,41 @@ namespace ApiNewProject.Controllers
         }
 
 
-        [HttpPut("PedidosCancelados/{id}")]
-        public async Task<ActionResult> PedidosCancelados(int id, int? cantidad)
+
+        [HttpPut("PedidosCancelados/{productoId}")]
+        public async Task<ActionResult> PedidosCancelados(int productoId, int cantidad)
         {
-            // Buscar todos los detalles del pedido por su PedidoId
-            var detallesPedido = await _context.Detallepedidos.Where(p => p.PedidoId == id).ToListAsync();
-
-            if (detallesPedido == null || !detallesPedido.Any())
-            {
-                return NotFound(new { message = "No se encontraron detalles del pedido con el ID proporcionado" });
-            }
-
             try
             {
-                foreach (var detalleCancelado in detallesPedido)
+                // Buscar el producto por su ID
+                var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == productoId);
+
+                if (producto != null)
                 {
+                    // Incrementar la cantidad total del producto
+                    producto.CantidadTotal += cantidad;
+                    _context.Productos.Update(producto); // Marca el producto como modificado
+                }
+                else
+                {
+                    return NotFound(new { message = "Producto no encontrado" });
+                }
 
-                    var productoId=detalleCancelado.ProductoId;
+                // Buscar los lotes asociados al producto
+                var lotes = await _context.Lotes.Where(l => l.ProductoId == productoId).ToListAsync();
 
-                    var loteId = detalleCancelado.LoteId;
-
-                    if (productoId != null)
+                if (lotes.Any())
+                {
+                    foreach (var lote in lotes)
                     {
-                        // Buscar el lote asociado al LoteId
-                        var producto = await _context.Productos.FirstOrDefaultAsync(l => l.ProductoId == productoId);
-
-                        if (producto != null)
-                        {
-                            // Devolver la cantidad del detalle al lote
-                            producto.CantidadTotal += detalleCancelado.Cantidad;
-
-                            // Actualizar el lote en la base de datos
-                            _context.Productos.Update(producto); // Marca el lote como modificado
-                        }
-                        else
-                        {
-                            Console.WriteLine("Lote no encontrado para LoteId: " + loteId);
-                        }
+                        // Incrementar la cantidad del lote
+                        lote.Cantidad += cantidad;
+                        _context.Lotes.Update(lote); // Marca el lote como modificado
                     }
-
-                    if (loteId != null)
-                    {
-                        // Buscar el lote asociado al LoteId
-                        var lote = await _context.Lotes.FirstOrDefaultAsync(l => l.LoteId == loteId);
-
-                        if (lote != null)
-                        {
-                            // Devolver la cantidad del detalle al lote
-                            lote.Cantidad += detalleCancelado.Cantidad;
-
-                            // Actualizar el lote en la base de datos
-                            _context.Lotes.Update(lote); // Marca el lote como modificado
-                        }
-                        else
-                        {
-                            Console.WriteLine("Lote no encontrado para LoteId: " + loteId);
-                        }
-                    }
+                }
+                else
+                {
+                    Console.WriteLine("No se encontraron lotes para el productoId: " + productoId);
                 }
 
                 // Guardar los cambios en la base de datos
@@ -788,6 +766,56 @@ namespace ApiNewProject.Controllers
 
             return Ok();
         }
+
+        [HttpPut("PedidosCanceladosUnidad/{productoId}")]
+        public async Task<ActionResult> PedidosCanceladosUnidad(int productoId, int cantidad)
+        {
+            try
+            {
+                // Buscar el producto por su ID
+                var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == productoId);
+
+                if (producto != null)
+                {
+                    // Descontar la cantidad total por unidad del producto
+                    producto.CantidadTotalPorUnidad += cantidad;
+                    _context.Productos.Update(producto); // Marca el producto como modificado
+                }
+                else
+                {
+                    return NotFound(new { message = "Producto no encontrado" });
+                }
+
+                // Buscar los lotes asociados al producto
+                var lotes = await _context.Lotes.Where(l => l.ProductoId == productoId).ToListAsync();
+
+                if (lotes.Any())
+                {
+                    foreach (var lote in lotes)
+                    {
+                        // Descontar la cantidad del lote por unidad
+                        lote.CantidadPorUnidad += cantidad;
+                        _context.Lotes.Update(lote); // Marca el lote como modificado
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No se encontraron lotes para el productoId: " + productoId);
+                }
+
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // Manejar excepciones y errores
+                Console.WriteLine("Error: " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Ocurrió un error al procesar la solicitud", error = ex.Message });
+            }
+
+            return Ok();
+        }
+
 
 
     }

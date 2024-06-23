@@ -288,6 +288,15 @@ namespace VistaNewProject.Controllers
 
                                     int cantidadDescontar = Math.Min(cantidadRestante, lote.Cantidad.Value);
 
+                                    if (uniddaId == 1)
+                                    {
+                                        lote.Cantidad -= cantidadDescontar;
+                                    }
+                                    else if (uniddaId == 2)
+                                    {
+                                        lote.CantidadPorUnidad -= cantidadDescontar;
+                                    }
+
                                     // Actualizar la cantidad del lote
                                     lote.Cantidad -= cantidadDescontar;
                                     cantidadRestante -= cantidadDescontar;
@@ -480,7 +489,7 @@ namespace VistaNewProject.Controllers
             {
                 // Buscar si ya existe un detalle con el mismo ProductoId en la lista
                 var detalleExistente = listaGlobalDetalles
-                    .FirstOrDefault(d => d.ProductoId == detallePedido.ProductoId && d.PedidoId == detallePedido.PedidoId);
+                    .FirstOrDefault(d => d.ProductoId == detallePedido.ProductoId && d.PedidoId == detallePedido.PedidoId && d.UnidadId == detallePedido.UnidadId);
 
                 if (detalleExistente != null)
                 {
@@ -500,23 +509,47 @@ namespace VistaNewProject.Controllers
 
                 var producto = await _client.FindProductoAsync(detallePedido.ProductoId.Value);
 
+                var unidadid = detallePedido.UnidadId;
+
                 if (producto == null)
                 {
                     return NotFound(new { message = "Producto no encontrado" });
                 }
 
-                var Id = producto.ProductoId;
-                int? cantidad = detallePedido.Cantidad;
+                var id = producto.ProductoId;
+                var cantidad = detallePedido.Cantidad;
+                if (unidadid != null)
+                {
+
+                    if (unidadid == 1)
+                    {
+                        var updateProductoUnidad = await _client.AddCantidadReservadaAsync(id, cantidad);
+                        if (updateProductoUnidad.IsSuccessStatusCode)
+                        {
+                            Console.WriteLine("Cantidad reservada actualizada en el producto.");
+                        }
+                        else
+                        {
+                            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Error al actualizar el producto en la base de datos" });
+                        }
+                    }
+                    else if (unidadid == 2)
+                    {
+                        var updateProductoUnidadindividual = await _client.AddCantidadPorUnidadReservadaAsync(id, cantidad);
+                        if (updateProductoUnidadindividual.IsSuccessStatusCode)
+                        {
+                            Console.WriteLine("Cantidad reservada actualizada en el producto.");
+                        }
+                        else
+                        {
+                            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Error al actualizar el producto en la base de datos" });
+                        }
+                    }
+
+
+                }
+
                 // Actualizar el producto en la base de datos
-                var updateProductResult = await _client.AddCantidadReservadaAsync(Id,cantidad);
-                if (updateProductResult.IsSuccessStatusCode)
-                {
-                    Console.WriteLine("Cantidad reservada actualizada en el producto.");
-                }
-                else
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Error al actualizar el producto en la base de datos" });
-                }
 
                 // Imprimir los valores de las propiedades del detalle recibido en la consola
                 Console.WriteLine("Detalle recibido:");

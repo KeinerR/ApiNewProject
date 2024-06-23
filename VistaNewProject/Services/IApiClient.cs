@@ -98,7 +98,10 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> QuitarCantidadReservadaUnidad(int productoId, int? cantidad);
 
         
-        Task<HttpResponseMessage> PedidosCancelados(int PedidoId, int? cantidad);
+        Task<HttpResponseMessage> PedidosCancelados(int productoId, int? cantidad);
+        Task<HttpResponseMessage> PedidosCanceladosUnidad(int productoId, int? cantidad);
+
+        
         Task<HttpResponseMessage> AddCantidadTotalAsync(int productoId, int? cantidad);
         Task<HttpResponseMessage> SustraerCantidadTotalAsync(int productoId, int? cantidad);
         Task<HttpResponseMessage> AddCantidadTotalPorUnidadAsync(int productoId, int? cantidad);

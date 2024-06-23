@@ -277,10 +277,18 @@ namespace VistaNewProject.Controllers
                         {
                             foreach (var detalleCancelado in detallesPedido)
                             {
+                                var unidadId = detalleCancelado.UnidadId;
                                 var cantidad = detalleCancelado.Cantidad;
-                                var updateProducto = await _client.PedidosCancelados(id, cantidad);
+                                var productoId = detalleCancelado.ProductoId;
 
-
+                                if (unidadId == 1 && productoId.HasValue)
+                                {
+                                    await _client.PedidosCancelados(productoId.Value, cantidad);
+                                }
+                                else if (unidadId == 2 && productoId.HasValue)
+                                {
+                                    await _client.PedidosCanceladosUnidad(productoId.Value, cantidad);
+                                }
                             }
                         }
 
