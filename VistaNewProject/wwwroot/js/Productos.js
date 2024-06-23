@@ -223,11 +223,11 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#NombreMarca').on('input', function () {
         if (this.value.length > 4) {
             clearTimeout(timeout);
-            seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaId'));
+            seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaId'),"Marca");
         } else {
             clearTimeout(timeout);
             timeout = setTimeout(() => {
-                seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaId'));
+                seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaId'),"Marca");
             }, 590);
         }
     });
@@ -235,27 +235,23 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#NombreCategoria').on('input', function () {
         if (this.value.length > 4) {
             clearTimeout(timeout);
-            seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaId'));
-            checkboxFiltrar();
+            seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaId'), "Categoria"); 
         } else {
             clearTimeout(timeout);
             timeout = setTimeout(() => {
-                seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaId'));
-                checkboxFiltrar();
+                seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaId'),"Categoria"); 
             }, 590);
-
-
         }
     });
 
     $('#NombrePresentacion').on('input', function () {
         if (this.value.length > 4) {
             clearTimeout(timeout);
-            seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionId'));
+            seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionId'),"Presentacion");
         } else {
             clearTimeout(timeout);
             timeout = setTimeout(() => {
-                seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionId'));
+                seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionId'),"Presentacion");
             }, 590);
         }
     });
@@ -263,11 +259,11 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#NombreMarcaAct').on('input', function () {
         if (this.value.length > 4) {
             clearTimeout(timeout);
-            seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaIdAct'));
+            seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaIdAct'),"Marca");
         } else {
-            clearTimeout(timeout);
+            clearTimeout(timeout);  
             timeout = setTimeout(() => {
-                seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaIdAct'));
+                seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaIdAct'), "Marca");
             }, 590);
         }
     });
@@ -276,11 +272,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (this.value.length > 4) {
             clearTimeout(timeout);
-            seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaIdAct'));
+            seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaIdAct'),"Categoria");
         } else {
             clearTimeout(timeout);
             timeout = setTimeout(() => {
-                seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaIdAct'));
+                seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaIdAct'), "Categoria");
             }, 590);
         }
     });
@@ -288,11 +284,11 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#NombrePresentacionAct').on('input', function () {
         if (this.value.length > 4) {
             clearTimeout(timeout);
-            seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'));
+            seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'),"Presentacion");
         } else {
             clearTimeout(timeout);
             timeout = setTimeout(() => {
-                seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'));
+                seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'),"Presentacion");
             }, 590);
         }
     });
@@ -434,6 +430,7 @@ function limpiarDatosFormularioProductoAgregar() {
         checkbox.prop('checked', false); // Desmarca el checkbox
         checkbox.trigger('change'); // Dispara el evento change para asegurar que se manejen los cambios asociados
     }
+   
 }
 
 //Se llama al dar click en la x
@@ -447,11 +444,7 @@ function limpiarFormularioProducto() {
     limpiarCampo('NombrePresentacion');
     limpiarCampo('PresentacionId');
     limpiarCampo('NombreProducto');
-    document.getElementByid('DescuentoAplicarPorMayor').value = "0";
-    document.getElementByid('CantidadAplicarPorMayor').value = "0"; 
-
 }
-
 function limpiarFormularioProductoAct() {
     limpiarDatosFormularioProductoAct();
     // Limpiar la URL eliminando los parámetros de consulta
@@ -505,15 +498,16 @@ function limpiarDatosFormularioProductoAct() {
 
 }
 function limpiarFiltroProductoAgregar() {
+    $('#CategoriaId').val("");
     var filtroTodos = $('#filtrarActivos').prop('checked');
     var filtroCategoria = $('#filtrarxCategoria').prop('checked');
-
     if (filtroTodos) {
         $('#filtrarActivos').trigger('click');
     }
     if (filtroCategoria) {
         $('#filtrarxCategoria').trigger('click');
     }
+
 }
 
 //Se llama al perder el foco de la modal para limpiar el formulario actualizar y la url 
@@ -555,9 +549,9 @@ function actualizarProducto(campo) {
                 formActualizar.find('#NombreProductoAct').val(data.nombreProducto);
                 formActualizar.find('#NombrePresentacionAct').val(data.presentacionId);
                 formActualizar.find('#NombreCategoriaAct').val(data.categoriaId);
-                seleccionarOpcion(document.getElementById('NombreMarcaAct'), document.getElementById('marcas'), document.getElementById('MarcaIdAct'));
-                seleccionarOpcion(document.getElementById('NombreCategoriaAct'), document.getElementById('categorias'), document.getElementById('CategoriaIdAct'));
-                seleccionarOpcion(document.getElementById('NombrePresentacionAct'), document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'));
+                seleccionarOpcion(document.getElementById('NombreMarcaAct'), document.getElementById('marcas'), document.getElementById('MarcaIdAct'),"Marca");
+                seleccionarOpcion(document.getElementById('NombreCategoriaAct'), document.getElementById('categorias'), document.getElementById('CategoriaIdAct'),"Categoria");
+                seleccionarOpcion(document.getElementById('NombrePresentacionAct'), document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'),"Presentacion");
                 if (data.cantidadAplicarPorMayor > 0) {
                     // Marcar el checkbox DescuentoPorMayorAct como seleccionado
                     $('#checkboxDescuentoPorMayorAct').prop('checked', true);

@@ -1,17 +1,19 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using QuestPDF;
 using System;
-using System.Linq;
-using Microsoft.AspNetCore.Http;
-using VistaNewProject.Services;
-using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Security.Claims;
+using System.Threading.Tasks;
+using VistaNewProject.Services;
+using QuestPDF.Infrastructure;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
+
+QuestPDF.Settings.License = LicenseType.Community; // Add this line for configuring QuestPDF
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
