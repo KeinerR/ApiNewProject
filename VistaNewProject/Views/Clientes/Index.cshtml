@@ -12,8 +12,8 @@
         <div class="mr-auto">
             <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
                 <div class="input-group">
-                    <input id="buscarCliente" type="text" class="form-control" placeholder="Buscar cliente" aria-label="Search" aria-describedby="button-addon2">
-                    <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
+                    <input id="buscarCliente" type="text" class="form-control" oninput="searchCliente();" placeholder="Buscar cliente" aria-label="Search" aria-describedby="button-addon2">
+                    <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputCliente();" type="button"><i class="fas fa-search"></i></button>
                 </div>
             </form>
         </div>
@@ -315,7 +315,8 @@
     <table class="table table-custom text-center">
         <thead>
             <tr>
-                <th> #</th>
+                <th class="contadorB consecutivo noIs">#</th>
+                <th class="contador consecutivo">#</th>
                 <th class="d-none">
                     ClienteId
                 </th>
@@ -416,95 +417,102 @@
 
                 </tr>
             }
-            @{
-                var clientes = ViewData["Clientes"] as List<Cliente>;
-                if (clientes != null)
+        @{
+
+            var clientes = ViewData["Clientes"] as List<Cliente>;
+            if (clientes != null)
+            {
+                int contadorC = 1;
+                foreach (var cliente in clientes)
                 {
-                    foreach (var cliente in clientes)
-                    {
-                        <tr class="Clientes" style="display:none;">
-                            <td>@cliente.ClienteId</td>
-                            <td>@cliente.Identificacion</td>
-                            <td>@cliente.NombreEntidad</td>
-                            <td>@cliente.NombreCompleto</td>
-                            <td>@cliente.TipoCliente</td>
-                            <td>@cliente.Telefono</td>
-                            <td>@cliente.Correo</td>
-                            <td>@cliente.Direccion</td>
 
-                            <td class="text-center align-middle contenedorEstadoTabla">
-                                <label class="switch">
-                                    <input type="checkbox" @(cliente.EstadoCliente != 0 ? "checked" : "") onchange="actualizarEstadoCliente('@cliente.ClienteId', this.checked)">
-                                    <span class="slider"></span>
-                                </label>
-                            </td>
+                    <tr class="Clientes noIs">
+                        <td class="contadorB noIs">
+                            @contadorC <!-- Muestra el valor del contador -->
+                        </td>
+                        <td>@cliente.ClienteId</td>
+                        <td>@cliente.NombreEntidad</td>
+                        <td>@cliente.NombreCompleto</td>
+                        <td>@cliente.Telefono</td>
+                        <td>@cliente.Correo</td>
+                        <td>@cliente.Direccion</td>
 
-                            <td class="text-center align-middle">
-                                <div class="btn-group" role="group">
-                                <button class="btn botonEditarCaoria" id="botonEditar" data-cliente-id="@cliente.ClienteId" data-bs-toggle="modal" data-bs-target="#clienteModal"><i class="fas fa-edit"></i></button>
-                                <a asp-action="Details" asp-route-id="@cliente.ClienteId" class="btn botonDetalle"><i class="fas fa-file"></i></a>teg
-                                    <form style="display:inline-block;" asp-controller="Clientes" asp-action="Delete" method="post" class="delete-form">
-                                        <input type="hidden" name="id" value="@cliente.ClienteId" />
-                                        <button type="button" onclick="confirmarEliminacion()" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
-                                    </form>
-                                </div>
-                            </td>
+                        <td class="text-center align-middle contenedorEstadoTabla">
+                            <label class="switch">
+                                <input type="checkbox" @(cliente.EstadoCliente != 0 ? "checked" : "") onchange="actualizarEstadoCliente('@cliente.ClienteId', this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </td>
+                        <td class="botonesTabla">
+                            <div class="botonesTablaContenedor">
+                                <button class="btn botonEditar" onclick="mostrarModalConRetrasoCliente(@cliente.ClienteId)"><i class="fas fa-edit"></i></button>
+
+                                <a asp-action="Details" asp-route-id="@cliente.ClienteId" class="btn botonDetalle"><i class="fas fa-file"></i></a>
 
 
-                        </tr>
-                    }
+                                <form asp-controller="Clientes" asp-action="Delete" method="post" class="delete-form-cliente">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@cliente.ClienteId" />
+                                    <button type="submit" class="btn botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    contadorC++;
                 }
             }
+        }
         </tbody>
     </table>
 
 
-    <div class="pagination-container mt-2">
-        @if (Model != null && Model.PageCount > 1)
-        {
-            <div class="d-flex justify-content-center mb-5">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center">
-                        <!-- Botón para ir a la primera página -->
-                        @if (Model.PageNumber > 1)
-                        {
-                            <li class="page-item">
-                                <a class="page-link" href="?page=1" aria-label="First">
-                                    <span aria-hidden="true">Primero</span>
-                                </a>
-                            </li>
-                        }
-                        <!-- Botón para la página anterior (oculto en la página 1) -->
-                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                            <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
-                                <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+<div class="pagination-container mt-2" id="paginationContainer">
+    @if (Model != null && Model.PageCount > 1)
+    {
+        <div class="d-flex justify-content-center mb-5">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <!-- Botón para ir a la primera página -->
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1&order=@ViewBag.Order" aria-label="First">
+                                <span aria-hidden="true">Primero</span>
                             </a>
                         </li>
-                        <!-- Iterar sobre las páginas disponibles -->
-                        @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
-                        {
-                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                                <a class="page-link" href="?page=@i">@i</a>
-                            </li>
-                        }
-                        <!-- Botón para la página siguiente (oculto en la última página) -->
-                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                            <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
-                                <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                    }
+                    <!-- Botón para la página anterior (oculto en la página 1) -->
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber - 1)&order=@ViewBag.Order" aria-label="Previous">
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                        </a>
+                    </li>
+                    <!-- Iterar sobre las páginas disponibles -->
+                    @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                            <a class="page-link" href="?page=@i&order=@ViewBag.Order">@i</a>
+                        </li>
+                    }
+                    <!-- Botón para la página siguiente (oculto en la última página) -->
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber + 1)&order=@ViewBag.Order" aria-label="Next">
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                        </a>
+                    </li>
+                    <!-- Botón para ir a la última página -->
+                    @if (Model.PageNumber < Model.PageCount)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@Model.PageCount&order=@ViewBag.Order" aria-label="Last">
+                                <span aria-hidden="true">Último</span>
                             </a>
                         </li>
-                        <!-- Botón para ir a la última página -->
-                        @if (Model.PageNumber < Model.PageCount)
-                        {
-                            <li class="page-item">
-                                <a class="page-link" href="?page=@Model.PageCount" aria-label="Last">
-                                    <span aria-hidden="true">Último</span>
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                </nav>
-            </div>
-        }
-    </div>
+                    }
+                </ul>
+            </nav>
+        </div>
+    }
+</div>
+
 </div>

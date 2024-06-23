@@ -502,53 +502,70 @@ function mostrarOcultarError(spanId, mensaje) {
 }
 
 // Evento para capturar cuando se comienza a escribir en el campo
+function searchCliente() {
+    var input = $('#buscarCliente').val().trim().toLowerCase();    //Obtiene el valor del buscadpor
+    var rows = document.querySelectorAll('.clientesPaginado');    //Obtiene el tr de Usuario Paginado.
+    var rowsTodos = document.querySelectorAll('.Clientes');      //Obtiene el tr de Usuario que esta en none
+    var icon = document.querySelector('#btnNavbarSearch i');    //Obtiene el icino de buscar
+    var contador = document.querySelector('.contador');        //Obtiene la columna que tiene el # 
+    var contadores = document.querySelectorAll('.contadorB'); //Obtiene el contadorB que esta en none y lo hace visible para mostrar el consecutivo y el ID
+    var paginationContainer = document.getElementById('paginationContainer');
+    if (input === "") {
+        rows.forEach(function (row) { //Esconde los usuarios paginado
+            row.style.display = '';
+        });
+        contadores.forEach(function (contador) {
+            contador.classList.add('noIs'); // Removemos la clase 'noIs' para mostrar la columna
+        });
+        icon.className = 'fas fa-search';
+        icon.style.color = 'white';
+        contador.innerText = '#';
+        paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
+
+    } else {
+        rows.forEach(function (row) {
+            row.style.display = 'none';
+        });
+        contadores.forEach(function (contador) {
+            contador.classList.remove('noIs'); // Removemos la clase 'noIs'
+        });
+        icon.className = 'fas fa-times';
+        icon.style.color = 'white';
+        contador.innerText = 'ID';
+        paginationContainer.classList.add('noBe'); // Oculta el contenedor de paginación
 
 
+    }
 
-//document.getElementById('buscarCliente').addEventListener('input', function () {
-//    var input = this.value.trim().toLowerCase();
-//    var rows = document.querySelectorAll('.clientesPaginado');
+    rowsTodos.forEach(function (row) {
+        if (input === "") {
+            row.style.display = 'none';
+        } else {
+            var clienteId = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var nombreE = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+            var nombreC = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
+            var telefono = row.querySelector('td:nth-child(5').textContent.trim().toLowerCase();
+            var correo = row.querySelector('td:nth-child(6').textContent.trim().toLowerCase();
+            var direccion = row.querySelector('td:nth-child(7').textContent.trim().toLowerCase();
 
-//    if (input === "") {
-//        rows.forEach(function (row) {
-//            row.style.display = '';
-//        });
-//        var icon = document.querySelector('#btnNavbarSearch i');
-//        icon.className = 'fas fa-search';
-//        icon.style.color = 'gray';
-//    } else {
-//        rows.forEach(function (row) {
-//            row.style.display = 'none';
-//        });
-//        var icon = document.querySelector('#btnNavbarSearch i');
-//        icon.className = 'fas fa-times';
-//        icon.style.color = 'gray';
-//    }
-//    var rowsTodos = document.querySelectorAll('.Clientes');
+            row.style.display = (input === "" || clienteId.includes(input)  || nombreE.includes(input) || nombreC.includes(input)  || telefono.includes(input) || correo.includes(input) || direccion.includes(input)) ? 'table-row' : 'none';
+        }
+    });
+}
 
-//    rowsTodos.forEach(function (row) {
-//        if (input === "") {
-//            row.style.display = 'none';
-//        } else {
-//            var clienteId = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
-//            var identificacion = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-//            var nombreE = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-//            var nombreC = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-//            var tipoC = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-//            var telefono = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-//            var correo = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-//            var direccion = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-
-//            row.style.display = (clienteId.includes(input) || identificacion.includes(input) || nombreE.includes(input) || nombreC.includes(input) || tipoC.includes(input) || telefono.includes(input) || correo.includes(input) || direccion.includes(input)) ? 'table-row' : 'none';
-//        }
-//    });
-//});
-
-function vaciarInput() {
+function vaciarInputCliente() {
+    var paginationContainer = document.getElementById('paginationContainer');
     document.getElementById('buscarCliente').value = "";
     var icon = document.querySelector('#btnNavbarSearch i');
     icon.className = 'fas fa-search';
-    icon.style.color = 'gray';
+    icon.style.color = 'white';
+
+    var contador = document.querySelector('.contador');
+    contador.innerText = '#';
+    var contadores = document.querySelectorAll('.contadorB');
+    contadores.forEach(function (contador) {
+        contador.classList.add('noIs'); // Removemos la clase 'noIs'
+    });
 
     var rows = document.querySelectorAll('.clientesPaginado');
     rows.forEach(function (row) {
@@ -560,7 +577,11 @@ function vaciarInput() {
     rowsTodos.forEach(function (row) {
         row.style.display = 'none';
     });
+    paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
+
 }
+
+
 
 
 

@@ -11,8 +11,8 @@
     <div class="mr-auto">
         <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
             <div class="input-group">
-                <input id="buscarLote" type="text" class="form-control" placeholder="Buscar lote" aria-label="Search" aria-describedby="button-addon2">
-                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInput()" type="button"><i class="fas fa-search"></i></button>
+                <input id="buscarLote" type="text" class="form-control" oninput="searchLote();" placeholder="Buscar lote" aria-label="Search" aria-describedby="button-addon2">
+                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputLote();" type="button"><i class="fas fa-search"></i></button>
             </div>
         </form>
     </div>
@@ -91,9 +91,8 @@
 <table class="table table-custom text-center">
     <thead>
         <tr>
-            <th>
-                #
-            </th>
+            <th class="contadorB consecutivo noIs">#</th>
+            <th class="contador consecutivo">#</th>
             <th class="d-none">
                 Lote Id
             </th>
@@ -176,12 +175,18 @@
             </tr>
         }
         @{
+
             var lotes = ViewData["Lotes"] as List<Lote>;
             if (lotes != null)
             {
+                int contadorC = 1;
                 foreach (var lote in lotes)
                 {
-                    <tr class="Lotes" style="display:none;">
+
+                    <tr class="Lotes noIs">
+                        <td class="contadorB noIs">
+                            @contadorC <!-- Muestra el valor del contador -->
+                        </td>
                         <td>@lote.LoteId</td>
                         <td>@lote.DetalleCompraId</td>
                         <td>@lote.ProductoId</td>
@@ -193,7 +198,19 @@
                         <td>
                             @Html.DisplayFor(modelItem => lote.EstadoLote)
                         </td>
+                        <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                        <td class="d-none">
+                            <button class="btn btn-warning" onclick="obtenerDatosLote('@lote.LoteId')" data-cliente-id="@lote.LoteId" data-bs-toggle="modal" data-bs-target="#LoteModal">Editar</button>
+                            <button class="btn btn-danger" onclick="eliminarLote('@lote.LoteId')">Eliminar</button>
+                        </td>
+
+                        
+                        
+
+
+
                     </tr>
+                    contadorC++;
                 }
             }
         }
@@ -248,6 +265,7 @@
         </div>
     }
 </div>
+
 
 <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="~/js/lotes.js"></script>
