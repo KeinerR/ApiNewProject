@@ -155,7 +155,7 @@ namespace VistaNewProject.Controllers
             }
 
             var categorias = await _client.GetCategoriaAsync();
-            var categoriasxpresentaciones = await _client.GetCategoriasxPresentacionByIdAsync(id.Value);
+            var categoriasxpresentaciones = await _client.GetCategoriasxPresentacionByIdPresentacionAsync(id.Value);
 
             var categoriasAsociadasIds = categoriasxpresentaciones
                 .Where(cu => cu.PresentacionId == id.Value)
@@ -216,7 +216,7 @@ namespace VistaNewProject.Controllers
             }
 
             // Obtener las categorías asociadas a la presentación específica
-            var categoriasAsociadas = await _client.GetCategoriasxPresentacionByIdAsync(id.Value);
+            var categoriasAsociadas = await _client.GetCategoriasxPresentacionByIdPresentacionAsync(id.Value);
             ViewBag.Presentacion = presentacion;
             if (!categoriasAsociadas.Any())
             {

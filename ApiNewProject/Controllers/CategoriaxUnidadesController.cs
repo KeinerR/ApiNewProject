@@ -24,19 +24,7 @@ namespace ApiNewProject.Controllers
         [HttpGet("GetCategoriasxUnidades")]
         public async Task<ActionResult<List<CategoriaxUnidad>>> GetCategoriasxUnidades()
         {
-            var lista = await _context.CategoriaxUnidades.Select(
-                s => new CategoriaxUnidad
-                {
-                    CategoriaId = s.CategoriaId,
-                    UnidadId = s.UnidadId,
-                    NombreCategoria = s.NombreCategoria,
-                    EstadoCategoria = s.EstadoCategoria,
-                    NombreUnidad = s.NombreUnidad,
-                    NombreCompletoUnidad  = s.NombreCompletoUnidad,
-                    CantidadPorUnidad = s.CantidadPorUnidad,
-                    EstadoUnidad = s.EstadoUnidad
-                }
-            ).ToListAsync();
+            var lista = await _context.CategoriaxUnidades.ToListAsync();
             return lista;
         }
 
@@ -46,7 +34,7 @@ namespace ApiNewProject.Controllers
             try
             {
                 var categoriasxUnidades = await _context.CategoriaxUnidades
-                 .Where(cm => cm.UnidadId == id)
+                 .Where(cm => cm.CategoriaId == id)
                 .ToListAsync();
 
                 return categoriasxUnidades;

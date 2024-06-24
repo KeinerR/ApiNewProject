@@ -33,7 +33,6 @@ namespace VistaNewProject.Services
         Task<Presentacion> FindnombrePresentacionAsync(int id);
         Task<HttpResponseMessage> UpdatePresentacionAsync(PresentacionCrearYActualizar presentacion);
         Task<HttpResponseMessage> CambiarEstadoPresentacionAsync(int id);
-
         Task<HttpResponseMessage> DeletePresentacionAsync(int id);
 
 
@@ -201,24 +200,29 @@ namespace VistaNewProject.Services
         // categoria x unidad
         Task<IEnumerable<CategoriaxUnidad>> GetCategoriaxUnidadesAsync();
         Task<HttpResponseMessage> CreateCategoriaxUnidadAsync(CategoriaxUnidad categoriaxunidad);
+        Task<IEnumerable<CategoriaxUnidad>> GetCategoriaxUnidadesByIdAsync(int categoriaId);
+        Task<IEnumerable<CategoriaxUnidad>> GetCategoriasxUnidadByIdUnidadAsync(int unidadId);
         Task<HttpResponseMessage> DeleteCategoriaxUnidadAsync(int categoriaId, int unidadId);
 
         // categoria x presentacion
         Task<IEnumerable<CategoriaxPresentacion>> GetCategoriaxPresentacionesAsync();
-        Task<IEnumerable<CategoriaxPresentacion>> GetCategoriasxPresentacionByIdAsync(int presentacionId);
+        Task<IEnumerable<CategoriaxPresentacion>> GetCategoriaxPresentacionesByIdAsync(int categoriaId);
+        Task<IEnumerable<CategoriaxPresentacion>> GetCategoriasxPresentacionByIdPresentacionAsync(int presentacionId);
         Task<HttpResponseMessage> CreateCategoriaxPresentacionAsync(CategoriaxPresentacionAsosiacion categoriaxpresentacion);
-
         Task<HttpResponseMessage> DeleteCategoriaxPresentacionAsync(int categoriaId, int presentacionId);
 
         // categoria x marca
         Task<IEnumerable<CategoriaxMarca>> GetCategoriaxMarcasAsync();
+        Task<IEnumerable<CategoriaxMarca>> GetCategoriaxMarcasByIdAsync(int categoriaId);
+        Task<IEnumerable<CategoriaxMarca>> GetCategoriasxMarcaByIdMarcaAsync(int marcaId);
         Task<HttpResponseMessage> CreateCategoriaxMarcaAsync(CategoriaxMarcaAsosiacion categoriaxmarca);
-
         Task<HttpResponseMessage> DeleteCategoriaxMarcaAsync(int categoriaId, int marcaId);
 
 
         // producto  x unidad
         Task<IEnumerable<UnidadxProducto>> GetUnidadesxProductosAsync();
+        Task<IEnumerable<UnidadxProducto>> GetUnidadxProductosByIdAsync(int unidadId );
+        Task<IEnumerable<UnidadxProducto>> GetUnidadesxProductosByIdProductoAsync(int productoId);
         Task<HttpResponseMessage> CreateUnidadxProductoAsync(UnidadxProductoAsosiacion productoxunidad);
         Task<HttpResponseMessage> DeleteUnidadxProductoAsync(int unidadId, int productoId);
         Task<(IEnumerable<FacturaDTO>, IEnumerable<LoteDTO>)> GetFacturasYLotesAsync();

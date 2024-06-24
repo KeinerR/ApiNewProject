@@ -25,20 +25,7 @@ namespace ApiNewProject.Controllers
         {
             try
             {
-                var list = await _context.CategoriaxPresentaciones // Corrección en el nombre de la tabla
-                    .Select(cp => new CategoriaxPresentacion
-                    {
-                        CategoriaId = cp.CategoriaId,
-                        PresentacionId = cp.PresentacionId,
-                        NombrePresentacion = cp.NombrePresentacion, 
-                        NombreCategoria = cp.NombreCategoria,
-                        NombreCompletoPresentacion = cp.NombreCompletoPresentacion,
-                        CantidadPorPresentacion = cp.CantidadPorPresentacion,
-                        Contenido = cp.Contenido,
-                        EstadoPresentacion = cp.EstadoPresentacion, 
-                        EstadoCategoria = cp.EstadoCategoria 
-                    })
-                    .ToListAsync();
+                var list = await _context.CategoriaxPresentaciones.ToListAsync();
 
                 return list;
             }
@@ -55,7 +42,7 @@ namespace ApiNewProject.Controllers
             try
             {
                 var categoriasxPresentaciones = await _context.CategoriaxPresentaciones
-                 .Where(cm => cm.PresentacionId == id)
+                 .Where(cm => cm.CategoriaId == id)
                 .ToListAsync();
 
                 return categoriasxPresentaciones;
