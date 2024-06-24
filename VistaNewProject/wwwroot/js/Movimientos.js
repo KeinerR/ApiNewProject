@@ -436,3 +436,84 @@ $(document).ready(function () {
     // Establecer el valor del campo FechaMovimiento
     $('#FechaMovimiento').val(fechaActualISO);
 });
+
+// Evento para capturar cuando se comienza a escribir en el campo
+function searchMovimiento() {
+    var input = $('#buscarMovimiento').val().trim().toLowerCase();    //Obtiene el valor del buscadpor
+    var rows = document.querySelectorAll('.movimientosPaginado');    //Obtiene el tr de Usuario Paginado.
+    var rowsTodos = document.querySelectorAll('.Movimientos');      //Obtiene el tr de Usuario que esta en none
+    var icon = document.querySelector('#btnNavbarSearch i');    //Obtiene el icino de buscar
+    var contador = document.querySelector('.contador');        //Obtiene la columna que tiene el # 
+    var contadores = document.querySelectorAll('.contadorB'); //Obtiene el contadorB que esta en none y lo hace visible para mostrar el consecutivo y el ID
+    var paginationContainer = document.getElementById('paginationContainer');
+    if (input === "") {
+        rows.forEach(function (row) { //Esconde los usuarios paginado
+            row.style.display = '';
+        });
+        contadores.forEach(function (contador) {
+            contador.classList.add('noIs'); // Removemos la clase 'noIs' para mostrar la columna
+        });
+        icon.className = 'fas fa-search';
+        icon.style.color = 'white';
+        contador.innerText = '#';
+        paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
+
+    } else {
+        rows.forEach(function (row) {
+            row.style.display = 'none';
+        });
+        contadores.forEach(function (contador) {
+            contador.classList.remove('noIs'); // Removemos la clase 'noIs'
+        });
+        icon.className = 'fas fa-times';
+        icon.style.color = 'white';
+        contador.innerText = 'ID';
+        paginationContainer.classList.add('noBe'); // Oculta el contenedor de paginación
+
+
+    }
+
+    rowsTodos.forEach(function (row) {
+        if (input === "") {
+            row.style.display = 'none';
+        } else {
+            var movimientoId = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var tipoA = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+            var tipoM = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
+            var buscarId = row.querySelector('td:nth-child(5').textContent.trim().toLowerCase();
+            var fechaM = row.querySelector('td:nth-child(6').textContent.trim().toLowerCase();
+            
+
+            row.style.display = (input === "" || movimientoId.includes(input) || tipoA.includes(input) || tipoM.includes(input) || buscarId.includes(input) || fechaM.includes(input)) ? 'table-row' : 'none';
+        }
+    });
+}
+
+function vaciarInputMovimiento() {
+    var paginationContainer = document.getElementById('paginationContainer');
+    document.getElementById('buscarMovimiento').value = "";
+    var icon = document.querySelector('#btnNavbarSearch i');
+    icon.className = 'fas fa-search';
+    icon.style.color = 'white';
+
+    var contador = document.querySelector('.contador');
+    contador.innerText = '#';
+    var contadores = document.querySelectorAll('.contadorB');
+    contadores.forEach(function (contador) {
+        contador.classList.add('noIs'); // Removemos la clase 'noIs'
+    });
+
+    var rows = document.querySelectorAll('.movimientosPaginado');
+    rows.forEach(function (row) {
+        row.style.display = 'table-row';
+    });
+
+    var rowsTodos = document.querySelectorAll('.Movimientos');
+
+    rowsTodos.forEach(function (row) {
+        row.style.display = 'none';
+    });
+    paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
+
+}
+
