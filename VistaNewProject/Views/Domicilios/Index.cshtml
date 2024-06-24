@@ -5,6 +5,10 @@
 }
 
 <br />
+@{
+    // Obtener domicilios realizados desde ViewData
+    var domiciliosRealizados = ViewData["DomiciliosRealizados"] as List<VistaNewProject.Models.Domicilio>;
+}
 
 <div class="d-flex justify-content-between">
     <!-- Formulario de búsqueda a la izquierda -->
@@ -18,9 +22,24 @@
     </div>
 
     <!-- Botón para abrir el modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#DomicilioModal">
-        <i class="fas fa-plus-circle"></i>  Agregar Domicilio
-    </button>
+    @if (domiciliosRealizados != null && domiciliosRealizados.Any())
+    {
+        <!-- Notificación de domicilios realizados -->
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            Tienes domicilios realizados pendientes de revisión.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <!-- Botón para ver domicilios realizados -->
+        <div class="text-center mb-3">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#DomiciliosRealizadosModal">
+                Ver Domicilios Realizados
+            </button>
+        </div>
+    }
+
 </div>
 
 

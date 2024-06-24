@@ -270,46 +270,48 @@ namespace VistaNewProject.Controllers
 
                             }
 
-                            // Obtener los lotes disponibles para el producto actual
-                            var lotes = await _client.GetLoteAsync();
-                            var lotesFiltrados = lotes
-                                .Where(l => l.ProductoId == productoId && l.Cantidad > 0 && l.EstadoLote != 0)
-                                .OrderBy(l => l.FechaVencimiento)
-                                .ThenByDescending(l => l.Cantidad);
 
-                            if (lotesFiltrados.Any())
+                            if(uniddaId == 1)
                             {
-                                int cantidadRestante = detalle.Cantidad.Value;
 
-                                foreach (var lote in lotesFiltrados)
+                                var lotes = await _client.GetLoteAsync();
+                                var lotesFiltrados = lotes
+                                    .Where(l => l.ProductoId == productoId && l.Cantidad > 0 && l.EstadoLote != 0)
+                                    .OrderBy(l => l.FechaVencimiento)
+                                    .ThenByDescending(l => l.Cantidad);
+
+                                if (lotesFiltrados.Any())
                                 {
-                                    if (cantidadRestante <= 0)
-                                        break;
+                                    int cantidadRestante = detalle.Cantidad.Value;
 
-                                    int cantidadDescontar = Math.Min(cantidadRestante, lote.Cantidad.Value);
-
-                                    if (uniddaId == 1)
+                                    foreach (var lote in lotesFiltrados)
                                     {
+                                        if (cantidadRestante <= 0)
+                                            break;
+
+                                        int cantidadDescontar = Math.Min(cantidadRestante, lote.Cantidad.Value);
+
+
                                         lote.Cantidad -= cantidadDescontar;
-                                    }
-                                    else if (uniddaId == 2)
-                                    {
-                                        lote.CantidadPorUnidad -= cantidadDescontar;
-                                    }
 
-                                    // Actualizar la cantidad del lote
-                                    cantidadRestante -= cantidadDescontar;
 
-                                    // Actualizar el lote en la base de datos
-                                    var updateLoteResponse = await _client.UpdateLoteAsync(lote);
 
-                                    if (!updateLoteResponse.IsSuccessStatusCode)
-                                    {
-                                        TempData["ErrorMessage"] = $"Error al actualizar el lote: {updateLoteResponse.ReasonPhrase}";
-                                        return RedirectToAction("Index", "Pedidos");
+                                        // Actualizar la cantidad del lote
+                                        cantidadRestante -= cantidadDescontar;
+
+                                        // Actualizar el lote en la base de datos
+                                        var updateLoteResponse = await _client.UpdateLoteAsync(lote);
+
+                                        if (!updateLoteResponse.IsSuccessStatusCode)
+                                        {
+                                            TempData["ErrorMessage"] = $"Error al actualizar el lote: {updateLoteResponse.ReasonPhrase}";
+                                            return RedirectToAction("Index", "Pedidos");
+                                        }
                                     }
                                 }
                             }
+                            // Obtener los lotes disponibles para el producto actual
+                           
                         }
 
                         // Limpiar la lista de detalles globales después de descontar el inventario y los lotes

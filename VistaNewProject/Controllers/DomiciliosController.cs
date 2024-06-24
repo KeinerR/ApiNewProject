@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
+
+
 
 namespace VistaNewProject.Controllers
 {
@@ -10,12 +13,13 @@ namespace VistaNewProject.Controllers
         private readonly IApiClient _client;
 
 
+
+      
+
         public DomiciliosController(IApiClient client)
         {
             _client = client;
         }
-
-
         public async Task<IActionResult> Index(int? page)
         {
             int pageSize = 5; // Tamaño de página
@@ -23,17 +27,19 @@ namespace VistaNewProject.Controllers
 
             try
             {
-                // Obtener todos los domicilios con estado pendiente
+                // Obtener todos los domicilios
                 var domicilios = await _client.GetDomicilioAsync();
-                var domiciliosPendientes = domicilios.Where(d => d.EstadoDomicilio == "Pendiente");
+                var domiciliosPendientes = domicilios.Where(d => d.EstadoDomicilio == "Pendiente").ToList();
 
+                // Si no se encuentran domicilios pendientes, crear una lista vacía
                 if (!domiciliosPendientes.Any())
                 {
-                    return NotFound("No se encontraron domicilios pendientes.");
+                    domiciliosPendientes = new List<Domicilio>();
                 }
 
                 var pageDomicilio = await domiciliosPendientes.ToPagedListAsync(pageNumber, pageSize);
 
+                // Ajustar el paginado si es necesario
                 if (!pageDomicilio.Any() && pageDomicilio.PageNumber > 1)
                 {
                     pageDomicilio = await domiciliosPendientes.ToPagedListAsync(pageDomicilio.PageCount, pageSize);
@@ -48,6 +54,11 @@ namespace VistaNewProject.Controllers
                 TempData["Message"] = mensaje;
 
                 ViewData["Domicilios"] = domiciliosPendientes;
+
+                // Obtener domicilios realizados y pasarlos a ViewData
+                var domiciliosRealizados = domicilios.Where(d => d.EstadoDomicilio == "Realizado").ToList();
+                ViewData["DomiciliosRealizados"] = domiciliosRealizados;
+
                 return View(pageDomicilio);
             }
             catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
@@ -61,7 +72,6 @@ namespace VistaNewProject.Controllers
                 return RedirectToAction("LogOut", "Accesos");
             }
         }
-
 
         public async Task<IActionResult> DomiciliosRealizados(int? page)
         {
