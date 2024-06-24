@@ -27,19 +27,17 @@ namespace VistaNewProject.Controllers
 
             try
             {
-                // Obtener todos los domicilios
+                // Obtener todos los domicilios con estado pendiente
                 var domicilios = await _client.GetDomicilioAsync();
-                var domiciliosPendientes = domicilios.Where(d => d.EstadoDomicilio == "Pendiente").ToList();
+                var domiciliosPendientes = domicilios.Where(d => d.EstadoDomicilio == "Pendiente");
 
-                // Si no se encuentran domicilios pendientes, crear una lista vacía
                 if (!domiciliosPendientes.Any())
                 {
-                    domiciliosPendientes = new List<Domicilio>();
+                    return NotFound("No se encontraron domicilios pendientes.");
                 }
 
                 var pageDomicilio = await domiciliosPendientes.ToPagedListAsync(pageNumber, pageSize);
 
-                // Ajustar el paginado si es necesario
                 if (!pageDomicilio.Any() && pageDomicilio.PageNumber > 1)
                 {
                     pageDomicilio = await domiciliosPendientes.ToPagedListAsync(pageDomicilio.PageCount, pageSize);
@@ -72,6 +70,8 @@ namespace VistaNewProject.Controllers
                 return RedirectToAction("LogOut", "Accesos");
             }
         }
+
+
 
         public async Task<IActionResult> DomiciliosRealizados(int? page)
         {
