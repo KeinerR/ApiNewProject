@@ -5,10 +5,6 @@
 }
 
 <br />
-@{
-    // Obtener domicilios realizados desde ViewData
-    var domiciliosRealizados = ViewData["DomiciliosRealizados"] as List<VistaNewProject.Models.Domicilio>;
-}
 
 <div class="d-flex justify-content-between">
     <!-- Formulario de búsqueda a la izquierda -->
@@ -22,24 +18,9 @@
     </div>
 
     <!-- Botón para abrir el modal -->
-    @if (domiciliosRealizados != null && domiciliosRealizados.Any())
-    {
-        <!-- Notificación de domicilios realizados -->
-        <div class="alert alert-info alert-dismissible fade show" role="alert">
-            Tienes domicilios realizados pendientes de revisión.
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-
-        <!-- Botón para ver domicilios realizados -->
-        <div class="text-center mb-3">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#DomiciliosRealizadosModal">
-                Ver Domicilios Realizados
-            </button>
-        </div>
-    }
-
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#DomicilioModal">
+        <i class="fas fa-plus-circle"></i>  Agregar Domicilio
+    </button>
 </div>
 
 
@@ -54,28 +35,28 @@
             <th class="contadorB consecutivo noIs">#</th>
             <th class="contador consecutivo">#</th>
             <th class="d-none">
-                Domicilio id
+                DOMICILIO ID
             </th>
             <th>
-                Pedido id
+                PEDIDIO ID
             </th>
             <th>
-                Usuario id
+                USUARIO ID
             </th>
             <th>
-                Observación
+                OBSERVACION
             </th>
             <th>
-                Fecha entrega
+                FECHA ENTREGA
             </th>
             <th>
-                Dirección
+                DIRECCION
             </th>
             <th>
                 Estado domicilio
             </th>
             <th>
-                Acciones
+                ACCIONES
             </th>
         </tr>
     </thead>
@@ -137,9 +118,9 @@
                             <button class="btn btn-warning" onclick="obtenerDatosDomicilio('@domicilio.DomicilioId')" data-cliente-id="@domicilio.DomicilioId" data-bs-toggle="modal" data-bs-target="#DomicilioModal">Editar</button>
                             <button class="btn btn-danger" onclick="eliminarDomicilio('@domicilio.DomicilioId')">Eliminar</button>
                         </td>
-                        
 
-                        
+
+
                     </tr>
                     contadorC++;
                 }

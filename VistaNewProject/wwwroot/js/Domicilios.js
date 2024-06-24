@@ -269,16 +269,12 @@ function validarObservacion(observacion) {
 }
 
 function validarDomiciliario(domiciliario) {
-    var regex = /^(calle|cr)\d+([#]\d+[a-zA-Z]*)?( numero\d+)?$/;
     var domiciliarioInput = document.getElementById("DireccionDomiciliario");
     var domiciliarioError = document.getElementById("DireccionDomiciliariospan");
 
     domiciliario = domiciliario.trim();
 
-    if (!regex.test(domiciliario)) {
-        mostrarError(domiciliarioInput, domiciliarioError, "El campo no cumple con los requisitos.");
-        return false;
-    }
+    
 
     if (domiciliario.length < 4 || domiciliario.length > 60) {
         mostrarError(domiciliarioInput, domiciliarioError, "El campo no puede tener menos de 4 letras o más de 60.");
@@ -408,13 +404,12 @@ function validarObservacionAct(observacion) {
 }
 
 function validarDomiciliarioAct(domiciliario) {
-    var regex = /^(calle|cr)\d+([#]\d+[a-zA-Z]*)?( numero\d+)?$/;
     var domiciliarioInput = document.getElementById("DireccionDomiciliarioAct");
     var domiciliarioError = document.getElementById("MensajeDireccionDomiciliario");
 
     domiciliario = domiciliario.trim();
 
-    if (!regex.test(domiciliario)) {
+    if (!direccionRegex.test(domiciliario)) {
         mostrarError(domiciliarioInput, domiciliarioError, "El campo no cumple con los requisitos.");
         return false;
     }

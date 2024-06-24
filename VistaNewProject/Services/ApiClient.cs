@@ -1076,17 +1076,31 @@ namespace VistaNewProject.Services
             // Retorna la respuesta de la solicitud
             return response;
         }
-        public async Task<HttpResponseMessage> PedidosCancelados(int pedidoId, int? cantidad)
+        public async Task<HttpResponseMessage> PedidosCancelados(int productoId, int? cantidad)
         {
             // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
             var content = new StringContent("", Encoding.UTF8, "application/json");
 
             // Realiza la solicitud PUT a la API
-            var response = await _httpClient.PutAsync($"Productos/PedidosCancelados/{pedidoId}?cantidad={cantidad}", content);
+            var response = await _httpClient.PutAsync($"Productos/PedidosCancelados/{productoId}?cantidad={cantidad}", content);
 
             // Retorna la respuesta de la solicitud
             return response;
         }
+        public async Task<HttpResponseMessage> PedidosCanceladosUnidad(int productoId, int? cantidad)
+        {
+            // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
+            var content = new StringContent("", Encoding.UTF8, "application/json");
+
+            // Realiza la solicitud PUT a la API
+            var response = await _httpClient.PutAsync($"Productos/PedidosCanceladosUnidad/{productoId}?cantidad={cantidad}", content);
+
+            // Retorna la respuesta de la solicitud
+            return response;
+        }
+
+       
+
         public async Task<HttpResponseMessage> AddCantidadTotalAsync(int productoId, int? cantidad)
         {
             // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
@@ -1300,7 +1314,7 @@ namespace VistaNewProject.Services
 
 
 
-
+        
 
 
 
@@ -1445,7 +1459,7 @@ namespace VistaNewProject.Services
 
         public async Task<HttpResponseMessage> CreateCategoriaxUnidadAsync(CategoriaxUnidad categoriaxunidad)
         {
-            var response = await _httpClient.PostAsJsonAsync("CategoriaxUnidad/InsertarCategoria", categoriaxunidad);
+            var response = await _httpClient.PostAsJsonAsync("CategoriaxUnidad/InsertarCategoriaxUnidad", categoriaxunidad);
             return response;
         }
 
@@ -1551,14 +1565,14 @@ namespace VistaNewProject.Services
         }
         public async Task<HttpResponseMessage> CreateCategoriaxMarcaAsync(CategoriaxMarcaAsosiacion categoriaxmarca)
         {
-            var response = await _httpClient.PostAsJsonAsync("CategoriaxMarca/InsertarCategoria", categoriaxmarca);
+            var response = await _httpClient.PostAsJsonAsync("CategoriaxMarca/InsertarCategoriaxMarca", categoriaxmarca);
             return response;
         }
         public async Task<HttpResponseMessage> DeleteCategoriaxMarcaAsync(int categoriaId, int marcaId)
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"CategoriaxMarca/DeleteUnidadxProducto/{categoriaId}/{marcaId}"
+                var response = await _httpClient.DeleteAsync($"CategoriaxMarca/DeleteCategoriaxMarca/{categoriaId}/{marcaId}"
 );
 
                 if (!response.IsSuccessStatusCode)

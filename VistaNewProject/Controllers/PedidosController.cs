@@ -175,7 +175,7 @@ namespace VistaNewProject.Controllers
                     var domicilios = await _client.GetDomicilioAsync();
                     var domicilioDetalle = domicilios.FirstOrDefault(d => d.PedidoId == id);
 
-                    if ((pedidostraidos != null && pedidostraidos.EstadoPedido == "Realizado") || (domicilioDetalle != null && domicilioDetalle.EstadoDomicilio == "Realizado"))
+                    if (pedidostraidos != null && pedidostraidos.EstadoPedido == "Realizado") 
                     {
                         var detalles = await _client.GetDetallepedidoAsync();
                         var detallesPedido = detalles.Where(d => d.PedidoId == id).ToList();
@@ -186,51 +186,75 @@ namespace VistaNewProject.Controllers
                                 var productoId = detallePedido.ProductoId.Value;
                                 var producto = await _client.FindProductoAsync(productoId);
 
+                                var Id = productoId;
+                                var cantidad = detallePedido.Cantidad;
+                                var UniddadId = detallePedido.UnidadId;
                                 if (producto != null)
                                 {
-                                    var Id = productoId;
-                                    var cantidad = detallePedido.Cantidad;
-                                    var updateProducto = await _client.SustraerCantidadReservadaAsync(Id,cantidad);
-                                    if (updateProducto.IsSuccessStatusCode)
+                                 
+                                    if(UniddadId==1 )
                                     {
-                                        Console.WriteLine("Producto actualizado correctamente");
+                                        var updateProducto = await _client.SustraerCantidadReservadaAsync(Id, cantidad);
+                                        if (updateProducto.IsSuccessStatusCode)
+                                        {
+                                            Console.WriteLine("Producto actualizado correctamente");
+                                        }
+
                                     }
+                                    if (UniddadId == 2)
+                                    {
+                                        var updateProducto = await _client.SustraerCantidadPorUnidadReservadaAsync(Id, cantidad);
+                                        if (updateProducto.IsSuccessStatusCode)
+                                        {
+                                            Console.WriteLine("Producto actualizado correctamente");
+                                        }
+
+                                    }
+                                   
                                 }
 
-
-
-                                // Obtener los lotes disponibles para el producto actual
-                                var lotes = await _client.GetLoteAsync();
-                                var lotesFiltrados = lotes
-                                    .Where(l => l.ProductoId == productoId && l.Cantidad > 0 && l.EstadoLote!=0)
-                                    .OrderBy(l => l.FechaVencimiento)
-                                    .ThenByDescending(l => l.Cantidad);
-
-                                if (lotesFiltrados.Any())
+                                if (UniddadId == 1)
                                 {
-                                    int cantidadRestante = detallePedido.Cantidad.Value;
+                                    var lotes = await _client.GetLoteAsync();
+                                    var lotesFiltrados = lotes
+                                        .Where(l => l.ProductoId == productoId && l.Cantidad > 0 && l.EstadoLote != 0)
+                                        .OrderBy(l => l.FechaVencimiento)
+                                        .ThenByDescending(l => l.Cantidad);
 
-                                    foreach (var lote in lotesFiltrados)
+                                    if (lotesFiltrados.Any())
                                     {
-                                        if (cantidadRestante <= 0)
-                                            break;
+                                        int cantidadRestante = detallePedido.Cantidad.Value;
 
-                                        int cantidadDescontar = Math.Min(cantidadRestante, lote.Cantidad.Value);
-
-                                        // Actualizar la cantidad del lote
-                                        lote.Cantidad -= cantidadDescontar;
-                                        cantidadRestante -= cantidadDescontar;
-
-                                        // Actualizar el lote en la base de datos
-                                        var updateLoteResponse = await _client.UpdateLoteAsync(lote);
-
-                                        if (!updateLoteResponse.IsSuccessStatusCode)
+                                        foreach (var lote in lotesFiltrados)
                                         {
-                                            TempData["ErrorMessage"] = $"Error al actualizar el lote: {updateLoteResponse.ReasonPhrase}";
-                                            return RedirectToAction("Index", "Pedidos");
+                                            if (cantidadRestante <= 0)
+                                                break;
+
+                                            int cantidadDescontar = Math.Min(cantidadRestante, lote.Cantidad.Value);
+
+                                            lote.Cantidad -= cantidadDescontar;
+
+
+                                            // Actualizar la cantidad restante
+                                            cantidadRestante -= cantidadDescontar;
+
+                                            // Actualizar el lote en la base de datos
+                                            var updateLoteResponse = await _client.UpdateLoteAsync(lote);
+
+
+                                            if (!updateLoteResponse.IsSuccessStatusCode)
+                                            {
+                                                TempData["ErrorMessage"] = $"Error al actualizar el lote: {updateLoteResponse.ReasonPhrase}";
+                                                return RedirectToAction("Index", "Pedidos");
+                                            }
                                         }
                                     }
+
                                 }
+
+
+                                    // Obtener los lotes disponibles para el producto actual
+                            
 
                             }
                            
@@ -251,16 +275,31 @@ namespace VistaNewProject.Controllers
                             {
                                 var productoId = detallePedido.ProductoId.Value;
                                 var producto = await _client.FindProductoAsync(productoId);
+                                var unidadId = detallePedido.UnidadId;
 
+                                var Id = productoId;
+                                var cantidad = detallePedido.Cantidad;
                                 if (producto != null)
                                 {
-                                    var Id = productoId;
-                                    var cantidad = detallePedido.Cantidad;
-                                    var updateProducto = await _client.QuitarCantidadReservada(Id,cantidad);
-                                    if (updateProducto.IsSuccessStatusCode)
+
+                                    if (unidadId == 1)
                                     {
-                                        Console.WriteLine("Producto actualizado correctamente");
+                                        var updateProducto = await _client.QuitarCantidadReservada(Id, cantidad);
+                                        if (updateProducto.IsSuccessStatusCode)
+                                        {
+                                            Console.WriteLine("Producto actualizado correctamente");
+                                        }
                                     }
+                                    if(unidadId == 2)
+                                    {
+                                        var updateProductounidad = await _client.QuitarCantidadReservadaUnidad(Id, cantidad);
+                                        if (updateProductounidad.IsSuccessStatusCode)
+                                        {
+                                            Console.WriteLine("Producto actualizado correctamente");
+                                        }
+                                    }
+                                   
+                                   
                                 }
 
                             }
@@ -273,19 +312,71 @@ namespace VistaNewProject.Controllers
                         var detalles = await _client.GetDetallepedidoAsync();
                         var detallesPedido = detalles.Where(d => d.PedidoId == id).ToList();
 
-                        if (detallesPedido != null)
+                        if (detallesPedido != null && detallesPedido.Any())
                         {
                             foreach (var detalleCancelado in detallesPedido)
                             {
+                                var unidadId = detalleCancelado.UnidadId;
                                 var cantidad = detalleCancelado.Cantidad;
-                                var updateProducto = await _client.PedidosCancelados(id, cantidad);
+                                var productoId = detalleCancelado.ProductoId;
+
+                                if (unidadId == 1 && productoId.HasValue)
+                                {
+                                    // Llamar al método para cancelar pedidos en producto
+                                    await _client.PedidosCancelados(productoId.Value, cantidad);
+                                }
+                                else if (unidadId == 2 && productoId.HasValue)
+                                {
+                                    // Llamar al método para cancelar pedidos en producto por unidad
+                                    await _client.PedidosCanceladosUnidad(productoId.Value, cantidad);
+                                }
 
 
+                                if (unidadId == 1)
+                                {
+
+                                    var lotes = await _client.GetLoteAsync();
+                                    var lotesFiltrados = lotes
+                                        .Where(l => l.ProductoId == productoId && l.Cantidad > 0 && l.EstadoLote != 0)
+                                        .OrderBy(l => l.FechaVencimiento)
+                                        .ThenByDescending(l => l.Cantidad);
+
+                                    if (lotesFiltrados.Any())
+                                    {
+                                        int cantidadRestante = detalleCancelado.Cantidad.Value;
+
+                                        foreach (var lote in lotesFiltrados)
+                                        {
+                                            if (cantidadRestante <= 0)
+                                                break;
+
+                                            int cantidadDescontar = Math.Min(cantidadRestante, lote.Cantidad.Value);
+
+                                            // Incrementar la cantidad del lote cancelado
+                                            lote.Cantidad += cantidadDescontar;
+
+
+
+                                            // Actualizar el lote en la base de datos
+                                            var updateLoteResponse = await _client.UpdateLoteAsync(lote);
+
+                                            if (!updateLoteResponse.IsSuccessStatusCode)
+                                            {
+                                                TempData["ErrorMessage"] = $"Error al actualizar el lote: {updateLoteResponse.ReasonPhrase}";
+                                                return RedirectToAction("Index", "Pedidos");
+                                            }
+
+                                            // Reducir la cantidad restante
+                                            cantidadRestante -= cantidadDescontar;
+                                        }
+                                    }
+                                }
+                                    // Obtener y actualizar los lotes asociados al producto cancelado
+                                  
                             }
                         }
-
-
                     }
+
                 }    // Retorna una respuesta exitosa si el proceso se realizó correctamente
                 return Ok("Inventario descontado correctamente.");
 

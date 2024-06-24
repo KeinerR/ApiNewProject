@@ -89,7 +89,7 @@
                                 <option value="@item.NombreCompletoProducto" data-id="@item.ProductoId">@item.NombreCompletoProducto</option>
                             }
                     </datalist>
-                    <input id="ClinteHiden" type="" name="clienteId">
+                    <input id="ClinteHiden" type="hidden" name="clienteId">
                     <span id="clienteerror" class="text-danger"></span>
                 </div>
             </div>
@@ -102,7 +102,7 @@
 
 
 
-            <div class=" d-none">
+            <div class="d-none ">
                 <label asp-for="LoteId" class="control-label"></label>
                 <input asp-for="LoteId" name="LoteId" id="LoteId" readonly class="form-control" list="LoteList" />
                 <datalist id="LoteList">
@@ -110,23 +110,29 @@
                 </datalist>
                 <span asp-validation-for="LoteId" class="text-danger"></span>
             </div>
-
             <div class="col-4">
                 <label for="UnidadId" class="control-label">Unidades</label>
                 <input id="UnidadId" class="form-control" list="UnidadIdList" autocomplete="off" />
-                <datalist type="hidden" id="UnidadIdList"></datalist>
-                <input type="hidden" id="unidadHidden" name="unidadId" type="" />
-                <input type="hidden" id="unidadtotal" name="unidadId" class="form-control" />
+
+                <datalist id="UnidadIdList">
+                    @foreach (var item in ViewBag.Unidades)
+                    {
+                        if (item.EstadoUnidad != 0 && (item.UnidadId == 1 || item.UnidadId == 2))
+                        {
+                            <option value="@item.NombreCompletoUnidad" data-id="@item.UnidadId">@item.NombreCompletoUnidad</option>
+                        }
+                    }
+                </datalist>
+                <input type="hidden" id="unidadHidden" class="form-control" name="unidadId" />
                 <span id="UnidadError" class="text-danger"></span>
             </div>
 
+
             <div class="col-4">
                 <label asp-for="PrecioUnitario" class="control-label"></label>
-                <input type="hidden" class="form-control" id="PrecioUnitario">
-                <input type="hidden" class="form-control" id="PrecioUnitariohidden" readonly>
-                <input type="hidden" class="form-control" id="PrecioUnitariohiddenpormayor" readonly>
-                <input type="hidden" class="form-control" id="PrecioUnitariohiddenpormayordescuento" readonly>
-                <input class="form-control" id="PrecioEnviar" readonly>
+                <input type="" class="form-control" id="PrecioUnitario">
+                <input type="" class="form-control" id="PrecioUnitariohiddenpormayor" readonly>
+                <input type="" class="form-control" id="PrecioUnitariohiddenpormayordescuento" readonly>
 
 
 
@@ -136,10 +142,9 @@
 
             <div class="col-4">
                 <label asp-for="Cantidad" class="control-label"></label>
-                <input type="number" name="Cantidad" id="CantidadTxt" class="form-control" />
-                <input type="hidden" id="CantidadPorUnidad" class="form-control" />
-                <input type="hidden" id="Descuento" class="form-control" />
-                <input type="hidden" id="CantidadAPlicada" class="form-control" />
+                <input asp-for="Cantidad" id="CantidadTxt" class="form-control" />
+                <input type="" id="Descuento" class="form-control" />
+                <input type="" id="CantidadAPlicada" class="form-control" />
 
 
                 <span id="CantidadError" class="text-danger"></span>
@@ -197,6 +202,10 @@
             }
         });
     }
+
+
+
+
 </script>
 
 

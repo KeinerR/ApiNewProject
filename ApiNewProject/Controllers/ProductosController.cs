@@ -15,7 +15,7 @@ namespace ApiNewProject.Controllers
     public class ProductosController : ControllerBase
     {
         private readonly NewOptimusContext _context;
-
+        
         public ProductosController(NewOptimusContext context)
         {
             _context = context;
@@ -717,77 +717,59 @@ namespace ApiNewProject.Controllers
         }
 
 
-        [HttpPut("PedidosCancelados/{id}")]
-        public async Task<ActionResult> PedidosCancelados(int id, int? cantidad)
+
+        [HttpPut("PedidosCancelados/{productoId}")]
+        public async Task<ActionResult> PedidosCancelados(int productoId, int cantidad)
         {
-            // Buscar todos los detalles del pedido por su PedidoId
-            var detallesPedido = await _context.Detallepedidos.Where(p => p.PedidoId == id).ToListAsync();
+              // Buscar el producto por su ID
+                var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == productoId);
 
-            if (detallesPedido == null || !detallesPedido.Any())
-            {
-                return NotFound(new { message = "No se encontraron detalles del pedido con el ID proporcionado" });
-            }
-
-            try
-            {
-                foreach (var detalleCancelado in detallesPedido)
+                if (producto == null)
                 {
 
-                    var productoId=detalleCancelado.ProductoId;
+                return NotFound();
+                }
+                // Incrementar la cantidad total del producto
+                    producto.CantidadTotal += cantidad;
 
-                    var loteId = detalleCancelado.LoteId;
 
-                    if (productoId != null)
-                    {
-                        // Buscar el lote asociado al LoteId
-                        var producto = await _context.Productos.FirstOrDefaultAsync(l => l.ProductoId == productoId);
+                    await _context.SaveChangesAsync();
 
-                        if (producto != null)
-                        {
-                            // Devolver la cantidad del detalle al lote
-                            producto.CantidadTotal += detalleCancelado.Cantidad;
+              
+            
+           
+          
+            return Ok();
+        }
 
-                            // Actualizar el lote en la base de datos
-                            _context.Productos.Update(producto); // Marca el lote como modificado
-                        }
-                        else
-                        {
-                            Console.WriteLine("Lote no encontrado para LoteId: " + loteId);
-                        }
-                    }
+        [HttpPut("PedidosCanceladosUnidad/{productoId}")]
+        public async Task<ActionResult> PedidosCanceladosUnidad(int productoId, int cantidad)
+        {
+               // Buscar el producto por su ID
+                var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == productoId);
 
-                    if (loteId != null)
-                    {
-                        // Buscar el lote asociado al LoteId
-                        var lote = await _context.Lotes.FirstOrDefaultAsync(l => l.LoteId == loteId);
+                if (producto == null)
+                {
 
-                        if (lote != null)
-                        {
-                            // Devolver la cantidad del detalle al lote
-                            lote.Cantidad += detalleCancelado.Cantidad;
+                return NotFound();
+                   
 
-                            // Actualizar el lote en la base de datos
-                            _context.Lotes.Update(lote); // Marca el lote como modificado
-                        }
-                        else
-                        {
-                            Console.WriteLine("Lote no encontrado para LoteId: " + loteId);
-                        }
-                    }
+                // Marca el producto como modificado
                 }
 
-                // Guardar los cambios en la base de datos
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                // Manejar excepciones y errores
-                Console.WriteLine("Error: " + ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Ocurrió un error al procesar la solicitud", error = ex.Message });
-            }
+            // Descontar la cantidad total por unidad del producto
+            producto.CantidadTotalPorUnidad += cantidad;
+            _context.Productos.Update(producto);
+            await _context.SaveChangesAsync();
+
+
+
+            // Guardar los cambios en la base de datos
+
 
             return Ok();
         }
+
 
 
     }

@@ -36,8 +36,27 @@ namespace ApiNewProject.Controllers
             return lista;
         }
 
-        [HttpGet("GetCategoriasxMarcaById")]
+        [HttpGet("GetCategoriasxMarcaById/{id}")]
         public async Task<ActionResult<List<CategoriaxMarca>>> GetCategoriasxMarcaById(int id)
+        {
+            try
+            {
+                var categoriasxMarcas = await _context.CategoriaxMarcas
+                    .Where(cm => cm.CategoriaId == id)
+                    .ToListAsync(); // Asegúrate de ejecutar la consulta con ToListAsync()
+
+                return categoriasxMarcas;
+            }
+            catch (Exception ex)
+            {
+                // Considera registrar el error en un log aquí
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                                  "Error al obtener las asociaciones categoría-marca: " + ex.Message);
+            }
+        }
+
+        [HttpGet("GetCategoriasxMarcaByIdMarca")]
+        public async Task<ActionResult<List<CategoriaxMarca>>> GetCategoriasxMarcaByIdMarca(int id)
         {
             try
             {
@@ -54,8 +73,6 @@ namespace ApiNewProject.Controllers
                                  "Error al obtener las asociaciones categoría-marca: " + ex.Message);
             }
         }
-
-
 
         [HttpPost("InsertarCategoriaxMarca")]
         public async Task<ActionResult<CategoriaxMarcaAsosiacion>> InsertarCategoriaxMarca(CategoriaxMarcaAsosiacion CategoriaxMarcaAsosiacion)
