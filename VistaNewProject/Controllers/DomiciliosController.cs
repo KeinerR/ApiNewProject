@@ -29,20 +29,25 @@ namespace VistaNewProject.Controllers
             {
                 // Obtener todos los domicilios
                 var domicilios = await _client.GetDomicilioAsync();
+
+                // Obtener domicilios pendientes
                 var domiciliosPendientes = domicilios.Where(d => d.EstadoDomicilio == "Pendiente").ToList();
 
-                // Si no se encuentran domicilios pendientes, crear una lista vacía
-                if (!domiciliosPendientes.Any())
-                {
-                    domiciliosPendientes = new List<Domicilio>();
-                }
-
+                // Configurar paginación para los domicilios pendientes
                 var pageDomicilio = await domiciliosPendientes.ToPagedListAsync(pageNumber, pageSize);
 
-                // Ajustar el paginado si es necesario
-                if (!pageDomicilio.Any() && pageDomicilio.PageNumber > 1)
+                // Si no hay domicilios pendientes, mostrar la vista Index con una lista vacía
+                if (!domiciliosPendientes.Any())
                 {
-                    pageDomicilio = await domiciliosPendientes.ToPagedListAsync(pageDomicilio.PageCount, pageSize);
+                    pageDomicilio = new PagedList<Domicilio>(new List<Domicilio>(), pageNumber, pageSize);
+                }
+                else
+                {
+                    // Ajustar el paginado si es necesario
+                    if (!pageDomicilio.Any() && pageDomicilio.PageNumber > 1)
+                    {
+                        pageDomicilio = await domiciliosPendientes.ToPagedListAsync(pageDomicilio.PageCount, pageSize);
+                    }
                 }
 
                 int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
@@ -72,6 +77,8 @@ namespace VistaNewProject.Controllers
                 return RedirectToAction("LogOut", "Accesos");
             }
         }
+
+
 
         public async Task<IActionResult> DomiciliosRealizados(int? page)
         {

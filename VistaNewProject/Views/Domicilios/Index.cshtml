@@ -1,14 +1,10 @@
 ﻿@using X.PagedList
-@model X.PagedList.IPagedList<VistaNewProject.Models.Domicilio>
+@model IPagedList<VistaNewProject.Models.Domicilio>
 @{
     ViewData["Title"] = "Index";
 }
 
 <br />
-@{
-    // Obtener domicilios realizados desde ViewData
-    var domiciliosRealizados = ViewData["DomiciliosRealizados"] as List<VistaNewProject.Models.Domicilio>;
-}
 
 <div class="d-flex justify-content-between">
     <!-- Formulario de búsqueda a la izquierda -->
@@ -21,29 +17,8 @@
         </form>
     </div>
 
-    <!-- Botón para abrir el modal -->
-    @if (domiciliosRealizados != null && domiciliosRealizados.Any())
-    {
-        <!-- Notificación de domicilios realizados -->
-        <div class="alert alert-info alert-dismissible fade show" role="alert">
-            Tienes domicilios realizados pendientes de revisión.
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-
-        <!-- Botón para ver domicilios realizados -->
-        <div class="text-center mb-3">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#DomiciliosRealizadosModal">
-                Ver Domicilios Realizados
-            </button>
-        </div>
-    }
-
+ 
 </div>
-
-
-
 
 <br />
 <hr>
@@ -54,36 +29,33 @@
             <th class="contadorB consecutivo noIs">#</th>
             <th class="contador consecutivo">#</th>
             <th class="d-none">
-                Domicilio id
+                DOMICILIO ID
             </th>
             <th>
-                Pedido id
+                PEDIDO ID
             </th>
             <th>
-                Usuario id
+                USUARIO ID
             </th>
             <th>
-                Observación
+                OBSERVACION
             </th>
             <th>
-                Fecha entrega
+                FECHA ENTREGA
             </th>
             <th>
-                Dirección
+                DIRECCION
             </th>
             <th>
                 Estado domicilio
             </th>
-            <th>
-                Acciones
-            </th>
+        
         </tr>
     </thead>
     <tbody class="text-center">
         @{
             int contador = ViewBag.Contador ?? 1;
             int contadorNew = ViewBag.Contador ?? 1;
-
         }
         @foreach (var item in Model)
         {
@@ -103,51 +75,11 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.EstadoDomicilio)
                 </td>
-                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
-                <td>
-                    <button class="btn btn-warning" onclick="obtenerDatosDomicilio('@item.DomicilioId')" data-cliente-id="@item.DomicilioId" data-bs-toggle="modal" data-bs-target="#DomicilioModal">Editar</button>
-                    <button class="btn btn-danger" onclick="eliminarDomicilio('@item.DomicilioId')">Eliminar</button>
-                </td>
+               
             </tr>
-        }
-        @{
-
-            var domicilios = ViewData["Domicilios"] as List<Domicilio>;
-            if (domicilios != null)
-            {
-                int contadorC = 1;
-                foreach (var domicilio in domicilios)
-                {
-
-                    <tr class="Domicilios noIs">
-                        <td class="contadorB noIs">
-                            @contadorC <!-- Muestra el valor del contador -->
-                        </td>
-                        <td>@domicilio.DomicilioId</td>
-                        <td>@domicilio.PedidoId</td>
-                        <td>@domicilio.UsuarioId</td>
-                        <td>@domicilio.Observacion</td>
-                        <td>@domicilio.FechaEntrega</td>
-                        <td>@domicilio.DireccionDomiciliario</td>
-                        <td>
-                            @Html.DisplayFor(modelItem => domicilio.EstadoDomicilio)
-                        </td>
-                        <!-- Agrega esto a tu tabla dentro de la sección tbody -->
-                        <td>
-                            <button class="btn btn-warning" onclick="obtenerDatosDomicilio('@domicilio.DomicilioId')" data-cliente-id="@domicilio.DomicilioId" data-bs-toggle="modal" data-bs-target="#DomicilioModal">Editar</button>
-                            <button class="btn btn-danger" onclick="eliminarDomicilio('@domicilio.DomicilioId')">Eliminar</button>
-                        </td>
-                        
-
-                        
-                    </tr>
-                    contadorC++;
-                }
-            }
         }
     </tbody>
 </table>
-
 
 <div class="pagination-container mt-2">
     @if (Model != null && Model.PageCount > 1)
@@ -198,6 +130,63 @@
     }
 </div>
 
+<!-- Modal para mostrar detalles de domicilio -->
+<div class="modal fade" id="DomicilioModal" tabindex="-1" role="dialog" aria-labelledby="DomicilioModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="DomicilioModalLabel">Detalles del Domicilio</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Contenido del modal -->
+                <div id="modalContent">
+                    <p>Detalle del domicilio aquí</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Función para obtener los datos del domicilio y mostrarlos en el modal
+    function obtenerDatosDomicilio(domicilioId) {
+        // Aquí deberías hacer una llamada AJAX para obtener los detalles del domicilio según domicilioId
+        // Por simplicidad, supongamos que ya tienes los datos y los pones en el modal
+
+        // Ejemplo de datos de domicilio (simulado)
+        var datosDomicilio = {
+            DomicilioId: domicilioId,
+            PedidoId: "12345",
+            UsuarioId: "Usuario123",
+            Observacion: "Lorem ipsum dolor sit amet.",
+            FechaEntrega: "2024-06-24 10:00 AM",
+            DireccionDomiciliario: "Calle Principal #123",
+            EstadoDomicilio: "Realizado"
+        };
+
+        // Construir el contenido del modal con los datos del domicilio
+        var contenidoModal = `
+                <p><strong>Pedido ID:</strong> ${datosDomicilio.PedidoId}</p>
+                <p><strong>Usuario ID:</strong> ${datosDomicilio.UsuarioId}</p>
+                <p><strong>Observación:</strong> ${datosDomicilio.Observacion}</p>
+                <p><strong>Fecha de Entrega:</strong> ${datosDomicilio.FechaEntrega}</p>
+                <p><strong>Dirección:</strong> ${datosDomicilio.DireccionDomiciliario}</p>
+                <p><strong>Estado del Domicilio:</strong> ${datosDomicilio.EstadoDomicilio}</p>
+            `;
+
+        // Mostrar el contenido en el modal
+        $("#modalContent").html(contenidoModal);
+
+        // Mostrar el modal
+        $("#DomicilioModal").modal("show");
+    }
+</script>
 
 <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="~/js/domicilios.js"></script>

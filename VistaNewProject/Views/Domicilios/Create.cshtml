@@ -18,20 +18,20 @@
                 <input asp-for="PedidoId" name="PedidoId" class="form-control" value="@ViewBag.UltimoPedidoId" />
                 <span asp-validation-for="PedidoId" class="text-danger"></span>
             </div>
-            <div class="col-6">
-                <label asp-for="UsuarioId" class="control-label"> Domiciliario</label>
-                <input id="NombreUsuario" class="form-control" list="usuarioList" />
-                <datalist id="usuarioList">
-                    @foreach (var usuario in ViewBag.Usuarios)
-                    {
-                        if (usuario.EstadoUsuario != 0)
-                        {
-                            <option value="@usuario.Nombre" data-id="@usuario.UsuarioId">@usuario.Nombre</option>
-                        }
-                    }
-                </datalist>
-                <input type="" id="UsuarioId" name="UsuarioId" value="" />
-                <span id="NombreUsuarioError" class="text-danger"></span>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="NombreCliente" class="control-label">Domiciliario</label>
+                    <input list="clientes" id="Clientes" name="cliente" class="form-control" placeholder="Escribe y/o selecciona..." autocomplete="off" />
+                    <datalist id="clientes">
+                        @foreach (var item in ViewBag.Usuarios)
+                            if (item.EstadoUsuario != 0)
+                            {
+                                <option value="@item.Nombre" data-id="@item.UsuarioId">@item.Nombre</option>
+                            }
+                    </datalist>
+                    <input id="ClinteHiden" type="hidden" name="clienteId">
+                    <span id="clienteerror" class="text-danger"></span>
+                </div>
             </div>
             <div class="col-6">
                 <label asp-for="Observacion" class="control-label">Observación</label>
@@ -77,58 +77,6 @@
 
 
 </div>
-<script>
-    // Crear un objeto para mapear IDs de usuario con nombres
-    var usuariosNombreMap = {};
-    var usuariosMap = {};
-
-    // Iterar sobre los usuarios y agregarlos al mapa de nombres y al mapa de IDs
-    @foreach (var usuario in ViewBag.Usuarios)
-    {
-        <text>
-            usuariosNombreMap["@usuario.UsuarioId"] = "@usuario.Nombre";
-        usuariosMap["@usuario.Nombre"] = "@usuario.UsuarioId";
-        </text>
-    }
-
-        // Función para actualizar el campo UsuarioId con el ID correspondiente
-        $("#NombreUsuario").on("change", function () {
-            var selectedOption = $("#usuarioList option[value='" + $(this).val() + "']");
-            if (selectedOption.length) {
-                $("#UsuarioId").val(selectedOption.data("id"));
-                actualizarNombreUsuario();
-                quitarError(this, document.getElementById("NombreUsuarioError"));
-            } else {
-                // Verificar si el valor ingresado es un ID
-                var valor = $(this).val();
-                if (!isNaN(parseFloat(valor)) && isFinite(valor)) {
-                    $("#UsuarioId").val(valor);
-                    actualizarNombreUsuario();
-                } else {
-                    $("#UsuarioId").val("");
-                    $("#NombreUsuario").val(""); // Limpiar el campo NombreUsuario si no se encuentra un usuario
-                }
-            }
-        });
-
-    // Función para actualizar el campo NombreUsuario con el nombre correspondiente
-    function actualizarNombreUsuario() {
-        var usuarioId = $("#UsuarioId").val().trim();
-        var nombreUsuario = usuariosNombreMap[usuarioId];
-        if (nombreUsuario) {
-            $("#NombreUsuario").val(nombreUsuario);
-            quitarError(document.getElementById("NombreUsuario"), document.getElementById("NombreUsuarioError"));
-        }
-    }
-
-    // Llamar a la función para establecer el nombre de usuario inicialmente
-    actualizarNombreUsuario();
-
-    // Escuchar cambios en el campo oculto UsuarioId para actualizar el nombre de usuario
-    $("#UsuarioId").on("change", function () {
-        actualizarNombreUsuario();
-    });
-</script>
 
 
 <script src="~/js/domicilios.js"></script>

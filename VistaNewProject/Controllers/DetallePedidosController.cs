@@ -364,12 +364,12 @@ namespace VistaNewProject.Controllers
 
 
                         
-                            await _client.QuitarCantidadReservada(Id, cantidad);
+                            await _client.AddCantidadTotalAsync(Id, cantidad);
                         }
                         if (unidadId == 2)
                         {
 
-                            await _client.QuitarCantidadReservadaUnidad(Id, cantidad);
+                            await _client.AddCantidadPorUnidadReservadaAsync(Id, cantidad);
                         }
 
 
@@ -424,11 +424,11 @@ namespace VistaNewProject.Controllers
                 var unidadId = detalleAEliminar.UnidadId;
                 if (unidadId == 1)
                 {
-                    await _client.QuitarCantidadReservada(id, cantidad);
+                    await _client.SustraerCantidadReservadaAsync(id, cantidad);
                 }
                 else if (unidadId == 2)
                 {
-                    await _client.QuitarCantidadReservadaUnidad(id, cantidad);
+                    await _client.SustraerCantidadPorUnidadReservadaAsync(id, cantidad);
                 }
 
                 // Eliminar el detalle de la lista

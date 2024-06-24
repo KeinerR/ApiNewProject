@@ -323,12 +323,12 @@ namespace VistaNewProject.Controllers
                                 if (unidadId == 1 && productoId.HasValue)
                                 {
                                     // Llamar al método para cancelar pedidos en producto
-                                    await _client.PedidosCancelados(productoId.Value, cantidad);
+                                    await _client.AddCantidadTotalAsync(productoId.Value, cantidad);
                                 }
                                 else if (unidadId == 2 && productoId.HasValue)
                                 {
                                     // Llamar al método para cancelar pedidos en producto por unidad
-                                    await _client.PedidosCanceladosUnidad(productoId.Value, cantidad);
+                                    await _client.AddCantidadTotalPorUnidadAsync(productoId.Value, cantidad);
                                 }
 
 
