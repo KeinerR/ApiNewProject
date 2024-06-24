@@ -26,6 +26,7 @@ namespace VistaNewProject.Controllers
             }
 
             var pageMovimiento = await movimientos.ToPagedListAsync(pageNumber, pageSize);
+
             if (!pageMovimiento.Any() && pageMovimiento.PageNumber > 1)
             {
                 pageMovimiento = await movimientos.ToPagedListAsync(pageMovimiento.PageCount, pageSize);
@@ -34,6 +35,9 @@ namespace VistaNewProject.Controllers
             int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
 
             ViewBag.Contador = contador;
+            ViewData["Movimiento"] = movimientos;
+            return View(pageMovimiento);
+
 
             // Código del método Index que querías integrar
             string mensaje = HttpContext.Session.GetString("Message");

@@ -721,66 +721,51 @@ namespace ApiNewProject.Controllers
         [HttpPut("PedidosCancelados/{productoId}")]
         public async Task<ActionResult> PedidosCancelados(int productoId, int cantidad)
         {
-            try
-            {
-                // Buscar el producto por su ID
+              // Buscar el producto por su ID
                 var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == productoId);
 
-                if (producto != null)
+                if (producto == null)
                 {
-                    // Incrementar la cantidad total del producto
+
+                return NotFound();
+                }
+                // Incrementar la cantidad total del producto
                     producto.CantidadTotal += cantidad;
-                    _context.Productos.Update(producto); // Marca el producto como modificado
-                }
-                else
-                {
-                    return NotFound(new { message = "Producto no encontrado" });
-                }
 
-               
 
-                // Guardar los cambios en la base de datos
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                // Manejar excepciones y errores
-                Console.WriteLine("Error: " + ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Ocurrió un error al procesar la solicitud", error = ex.Message });
-            }
+                    await _context.SaveChangesAsync();
 
+              
+            
+           
+          
             return Ok();
         }
 
         [HttpPut("PedidosCanceladosUnidad/{productoId}")]
         public async Task<ActionResult> PedidosCanceladosUnidad(int productoId, int cantidad)
         {
-            try
-            {
-                // Buscar el producto por su ID
+               // Buscar el producto por su ID
                 var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == productoId);
 
-                if (producto != null)
+                if (producto == null)
                 {
-                    // Descontar la cantidad total por unidad del producto
-                    producto.CantidadTotalPorUnidad += cantidad;
-                    _context.Productos.Update(producto); // Marca el producto como modificado
-                }
-                else
-                {
-                    return NotFound(new { message = "Producto no encontrado" });
+
+                return NotFound();
+                   
+
+                // Marca el producto como modificado
                 }
 
-               
-                // Guardar los cambios en la base de datos
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                // Manejar excepciones y errores
-                Console.WriteLine("Error: " + ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Ocurrió un error al procesar la solicitud", error = ex.Message });
-            }
+            // Descontar la cantidad total por unidad del producto
+            producto.CantidadTotalPorUnidad += cantidad;
+            _context.Productos.Update(producto);
+            await _context.SaveChangesAsync();
+
+
+
+            // Guardar los cambios en la base de datos
+
 
             return Ok();
         }
