@@ -1,6 +1,6 @@
 function obtenerClienteId(DomicilioId) {
 
-    fetch(`https://localhost:7013/api/Domicilios/GetDomicilioById?Id=${DomicilioId}`)
+    fetch(`http://optimusweb-001-site1.ctempurl.com/api/Domicilios/GetDomicilioById?Id=${DomicilioId}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Error al obtener los datos');
@@ -409,11 +409,7 @@ function validarDomiciliarioAct(domiciliario) {
 
     domiciliario = domiciliario.trim();
 
-    if (!direccionRegex.test(domiciliario)) {
-        mostrarError(domiciliarioInput, domiciliarioError, "El campo no cumple con los requisitos.");
-        return false;
-    }
-
+    
     if (domiciliario.length < 4 || domiciliario.length > 60) {
         mostrarError(domiciliarioInput, domiciliarioError, "El campo no puede tener menos de 4 letras o más de 60.");
         return false;

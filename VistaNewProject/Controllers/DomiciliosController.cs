@@ -80,6 +80,7 @@ namespace VistaNewProject.Controllers
 
 
 
+
         public async Task<IActionResult> DomiciliosRealizados(int? page)
         {
             int pageSize = 5; // Tamaño de página
@@ -188,9 +189,22 @@ namespace VistaNewProject.Controllers
             return Json(domicilio);
         }
 
+       
+
+        public async Task<IActionResult>Detail(int id)
+        {
+
+            var detalles=await _client.FindDomicilioAsync(id);
+
+             return View(detalles);
 
 
-        
+
+        }
+
+
+      
+
         public async Task<IActionResult> Update([FromBody] Domicilio domicilio)
         {
             Console.WriteLine(domicilio);

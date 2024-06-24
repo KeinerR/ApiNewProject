@@ -10,7 +10,7 @@ function agregarDetalleCompra() {
         Cantidad: cantidad
     };
 
-    fetch('https://localhost:7013/api/Detallecompras/InsertarDetallecompra', {
+    fetch('http://optimusweb-001-site1.ctempurl.com/api/Detallecompras/InsertarDetallecompra', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -35,7 +35,7 @@ function agregarDetalleCompra() {
 
 
 function obtenerDatosDetalleCompra(detalleCompraId) {
-    fetch(`https://localhost:7013/api/Detallecompras/GetDetallecompraById?Id=${detalleCompraId}`)
+    fetch(`http://optimusweb-001-site1.ctempurl.com/api/Detallecompras/GetDetallecompraById?Id=${detalleCompraId}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Error al obtener los datos de la detalleCompra.');
@@ -75,7 +75,7 @@ function ActualizarDetalleCompra() {
         Cantidad: cantidad
     };
 
-    fetch(`https://localhost:7013/api/DetalleCompras/UpdateDetalleCompras`, {
+    fetch(`http://optimusweb-001-site1.ctempurl.com/api/DetalleCompras/UpdateDetalleCompras`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -98,7 +98,7 @@ function ActualizarDetalleCompra() {
 
 function eliminarDetalleCompra(detalleCompraId) {
     // Hacer la solicitud DELETE al servidor para eliminar la detalleCompraId
-    fetch(`https://localhost:7013/api/Detallecompras/DeleteDetallecompra/${detalleCompraId}`, {
+    fetch(`http://optimusweb-001-site1.ctempurl.com/api/Detallecompras/DeleteDetallecompra/${detalleCompraId}`, {
         method: 'DELETE',
     })
         .then(response => {

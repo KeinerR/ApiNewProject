@@ -13,7 +13,7 @@ function actualizarEstadoPedido(PedidoId, estado) {
 
     console.log("Current order status:", estadoPedido); // Print the current order status
 
-    fetch(`https://localhost:7013/api/Pedidos/UpdateEstadoPedido/${PedidoId}`, {
+    fetch(`http://optimusweb-001-site1.ctempurl.com/api/Pedidos/UpdateEstadoPedido/${PedidoId}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'

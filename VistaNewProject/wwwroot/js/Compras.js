@@ -49,7 +49,7 @@ function RegistrarBuy() {
     }).then((result) => {
         if (result.isConfirmed) {
             // Si el usuario confirma, enviar la solicitud POST al servidor utilizando la Fetch API
-            fetch('https://localhost:7013/api/Compras/InsertCompras', {
+            fetch('http://optimusweb-001-site1.ctempurl.com/api/Compras/InsertCompras', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

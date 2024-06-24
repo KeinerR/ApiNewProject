@@ -245,9 +245,9 @@ $(document).ready(function () {
         var url = '';
 
         if (tipo === "Pedido") {
-            url = 'https://localhost:7013/api/Pedidos/GetPedidosRealizado';
+            url = 'http://optimusweb-001-site1.ctempurl.com/api/Pedidos/GetPedidosRealizado';
         } else if (tipo === "Compra") {
-            url = 'https://localhost:7013/api/Compras/GetComprasRealizada';
+            url = 'http://optimusweb-001-site1.ctempurl.com/api/Compras/GetComprasRealizada';
         }
 
         fetch(url)

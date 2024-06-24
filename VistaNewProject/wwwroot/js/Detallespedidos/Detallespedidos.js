@@ -243,7 +243,7 @@ $(document).ready(function () {
 
     function obtenerDetallesProducto(productId) {
         // Llamada para obtener los datos de la unidad y los lotes
-        const fetchUnidades = fetch(`https://localhost:7013/api/Unidades/GetUnidades`)
+        const fetchUnidades = fetch(`http://optimusweb-001-site1.ctempurl.com/api/Unidades/GetUnidades`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al obtener las unidades');
@@ -256,7 +256,7 @@ $(document).ready(function () {
                 console.log(unidades);// Guardar unidades en una variable global
             });
 
-        const fetchLotes = fetch(`https://localhost:7013/api/Lotes/GetLotes`)
+        const fetchLotes = fetch(`http://optimusweb-001-site1.ctempurl.com/api/Lotes/GetLotes`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al obtener los lotes del producto');
@@ -268,7 +268,7 @@ $(document).ready(function () {
 
             });
 
-        const fetchProductos = fetch(`https://localhost:7013/api/Productos/GetProductos`)
+        const fetchProductos = fetch(`http://optimusweb-001-site1.ctempurl.com/api/Productos/GetProductos`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al obtener los productos');
@@ -617,7 +617,7 @@ $(document).ready(function () {
 
     function obtenerDetallesProducto(productId) {
         // Llamadas para obtener los datos de las unidades, lotes y productos
-        const fetchUnidades = fetch(`https://localhost:7013/api/Unidades/GetUnidades`)
+        const fetchUnidades = fetch(`http://optimusweb-001-site1.ctempurl.com/api/Unidades/GetUnidades`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al obtener las unidades');
@@ -628,7 +628,7 @@ $(document).ready(function () {
                 unidades = data;
             });
 
-        const fetchLotes = fetch(`https://localhost:7013/api/Lotes/GetLotes`)
+        const fetchLotes = fetch(`http://optimusweb-001-site1.ctempurl.com/api/Lotes/GetLotes`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al obtener los lotes del producto');
@@ -636,7 +636,7 @@ $(document).ready(function () {
                 return response.json();
             });
 
-        const fetchProductos = fetch(`https://localhost:7013/api/Productos/GetProductos`)
+        const fetchProductos = fetch(`http://optimusweb-001-site1.ctempurl.com/api/Productos/GetProductos`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al obtener los productos');

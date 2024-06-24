@@ -1,5 +1,5 @@
 ﻿function obtenerDatosclientes() {
-    fetch('https://localhost:7013/api/Clientes/GetClientes')
+    fetch('http://optimusweb-001-site1.ctempurl.com/api/Clientes/GetClientes')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Error al obtener los Clientes.');

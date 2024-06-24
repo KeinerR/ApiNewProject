@@ -168,7 +168,6 @@ namespace VistaNewProject.Controllers
                     CategoriaId = c.CategoriaId,
                     NombreCategoria = c?.NombreCategoria,
                     PresentacionId = id.Value,
-                    EstaAsociada = categoriasAsociadasIds.Contains(c.CategoriaId)
                 })
                 .ToList();
 
