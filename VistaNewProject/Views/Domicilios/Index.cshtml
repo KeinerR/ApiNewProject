@@ -24,9 +24,15 @@
     <!-- Botón para abrir el modal -->
     @if (domiciliosRealizados != null && domiciliosRealizados.Any())
     {
-        <!-- Notificación de domicilios realizados -->
+        <!-- Notificación de domicilios realizados pendientes -->
         <div class="alert alert-info alert-dismissible fade show" role="alert">
-            Tienes domicilios realizados pendientes de revisión.
+            Tienes domicilios realizados pendientes de revisión:
+            <ul>
+                @foreach (var domicilio in domiciliosRealizados.Where(d => d.EstadoDomicilio == "Pendiente"))
+                {
+                    <li>@domicilio.DomicilioId</li>
+                }
+            </ul>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -39,6 +45,7 @@
             </button>
         </div>
     }
+
 
 </div>
 
