@@ -45,7 +45,7 @@ namespace ApiNewProject.Controllers
         public async Task<ActionResult<Detallepedido>> GetDetallepedidoById(int Id)
         {
 
-            Detallepedido detallepedido = await _context.Detallepedidos.Select(
+            Detallepedido ? detallepedido = await _context.Detallepedidos.Select(
                     s => new Detallepedido
                     {
                         DetallePedidoId = s.DetallePedidoId,
