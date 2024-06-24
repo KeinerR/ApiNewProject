@@ -18,33 +18,36 @@ namespace VistaNewProject.Controllers
 
         public async Task<IActionResult> Index(int? page)
         {
-            int pageSize = 5; // Cambiado a 5 para que la paginación se haga cada 5 registros
-            int pageNumber = page ?? 1; // Número de página actual (si no se especifica, es 1)
-
-            var domicilios = await _client.GetDomicilioAsync(); // Obtener todas las marcas
-
-            if (domicilios == null)
-            {
-                return NotFound("error");
-            }
-
-            var pageDomicilio = await domicilios.ToPagedListAsync(pageNumber, pageSize);
-            if (!pageDomicilio.Any() && pageDomicilio.PageNumber > 1)
-            {
-                pageDomicilio = await domicilios.ToPagedListAsync(pageDomicilio.PageCount, pageSize);
-            }
-
-            int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
-
-            ViewBag.Contador = contador;
-
-            // Código del método Index que querías integrar
-            string mensaje = HttpContext.Session.GetString("Message");
-            TempData["Message"] = mensaje;
+            int pageSize = 5; // Tamaño de página
+            int pageNumber = page ?? 1; // Número de página actual (por defecto es 1)
 
             try
             {
-                ViewData["Domicilios"] = domicilios;
+                // Obtener todos los domicilios con estado pendiente
+                var domicilios = await _client.GetDomicilioAsync();
+                var domiciliosPendientes = domicilios.Where(d => d.EstadoDomicilio == "Pendiente");
+
+                if (!domiciliosPendientes.Any())
+                {
+                    return NotFound("No se encontraron domicilios pendientes.");
+                }
+
+                var pageDomicilio = await domiciliosPendientes.ToPagedListAsync(pageNumber, pageSize);
+
+                if (!pageDomicilio.Any() && pageDomicilio.PageNumber > 1)
+                {
+                    pageDomicilio = await domiciliosPendientes.ToPagedListAsync(pageDomicilio.PageCount, pageSize);
+                }
+
+                int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
+
+                ViewBag.Contador = contador;
+
+                // Código del método Index que querías integrar
+                string mensaje = HttpContext.Session.GetString("Message");
+                TempData["Message"] = mensaje;
+
+                ViewData["Domicilios"] = domiciliosPendientes;
                 return View(pageDomicilio);
             }
             catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
@@ -52,14 +55,60 @@ namespace VistaNewProject.Controllers
                 HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
                 return RedirectToAction("Index", "Home");
             }
-            catch
+            catch (Exception ex)
             {
-                HttpContext.Session.SetString("Message", "Error en el aplicativo");
+                HttpContext.Session.SetString("Message", "Error en el aplicativo: " + ex.Message);
                 return RedirectToAction("LogOut", "Accesos");
             }
-
-
         }
+
+
+        public async Task<IActionResult> DomiciliosRealizados(int? page)
+        {
+            int pageSize = 5; // Tamaño de página
+            int pageNumber = page ?? 1; // Número de página actual (por defecto es 1)
+
+            try
+            {
+                // Obtener todos los domicilios con estado realizado
+                var domicilios = await _client.GetDomicilioAsync();
+                var domiciliosRealizados = domicilios.Where(d => d.EstadoDomicilio == "Realizado");
+
+                if (!domiciliosRealizados.Any())
+                {
+                    return NotFound("No se encontraron domicilios realizados.");
+                }
+
+                var pageDomicilio = await domiciliosRealizados.ToPagedListAsync(pageNumber, pageSize);
+
+                if (!pageDomicilio.Any() && pageDomicilio.PageNumber > 1)
+                {
+                    pageDomicilio = await domiciliosRealizados.ToPagedListAsync(pageDomicilio.PageCount, pageSize);
+                }
+
+                int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
+
+                ViewBag.Contador = contador;
+
+                // Código del método Index que querías integrar
+                string mensaje = HttpContext.Session.GetString("Message");
+                TempData["Message"] = mensaje;
+
+                ViewData["Domicilios"] = domiciliosRealizados;
+                return View(pageDomicilio);
+            }
+            catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
+            {
+                HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                HttpContext.Session.SetString("Message", "Error en el aplicativo: " + ex.Message);
+                return RedirectToAction("LogOut", "Accesos");
+            }
+        }
+
 
         public async Task<IActionResult> Create()
         {

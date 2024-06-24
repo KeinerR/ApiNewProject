@@ -298,7 +298,6 @@ namespace VistaNewProject.Controllers
                                     }
 
                                     // Actualizar la cantidad del lote
-                                    lote.Cantidad -= cantidadDescontar;
                                     cantidadRestante -= cantidadDescontar;
 
                                     // Actualizar el lote en la base de datos

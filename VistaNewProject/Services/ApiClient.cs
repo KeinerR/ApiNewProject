@@ -1098,6 +1098,9 @@ namespace VistaNewProject.Services
             // Retorna la respuesta de la solicitud
             return response;
         }
+
+       
+
         public async Task<HttpResponseMessage> AddCantidadTotalAsync(int productoId, int? cantidad)
         {
             // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
@@ -1311,7 +1314,7 @@ namespace VistaNewProject.Services
 
 
 
-
+        
 
 
 

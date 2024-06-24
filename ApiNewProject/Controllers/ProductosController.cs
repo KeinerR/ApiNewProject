@@ -737,22 +737,7 @@ namespace ApiNewProject.Controllers
                     return NotFound(new { message = "Producto no encontrado" });
                 }
 
-                // Buscar los lotes asociados al producto
-                var lotes = await _context.Lotes.Where(l => l.ProductoId == productoId).ToListAsync();
-
-                if (lotes.Any())
-                {
-                    foreach (var lote in lotes)
-                    {
-                        // Incrementar la cantidad del lote
-                        lote.Cantidad += cantidad;
-                        _context.Lotes.Update(lote); // Marca el lote como modificado
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No se encontraron lotes para el productoId: " + productoId);
-                }
+               
 
                 // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
@@ -786,23 +771,7 @@ namespace ApiNewProject.Controllers
                     return NotFound(new { message = "Producto no encontrado" });
                 }
 
-                // Buscar los lotes asociados al producto
-                var lotes = await _context.Lotes.Where(l => l.ProductoId == productoId).ToListAsync();
-
-                if (lotes.Any())
-                {
-                    foreach (var lote in lotes)
-                    {
-                        // Descontar la cantidad del lote por unidad
-                        lote.CantidadPorUnidad += cantidad;
-                        _context.Lotes.Update(lote); // Marca el lote como modificado
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No se encontraron lotes para el productoId: " + productoId);
-                }
-
+               
                 // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
             }

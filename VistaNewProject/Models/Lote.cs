@@ -9,6 +9,7 @@
         public decimal? PrecioCompra { get; set; }
         public decimal? PrecioPorPresentacion { get; set; }
         public decimal? PrecioPorUnidadProducto { get; set; }
+   
         public decimal? PrecioPorPresentacionCompra { get; set; }
         public decimal? PrecioPorUnidadProductoCompra { get; set; }
         public decimal? PrecioPorUnidadCompra { get; set; }

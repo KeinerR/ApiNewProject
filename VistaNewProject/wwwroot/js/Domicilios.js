@@ -269,13 +269,13 @@ function validarObservacion(observacion) {
 }
 
 function validarDomiciliario(domiciliario) {
-    var regex = /^(calle|cr)\d+([#]\d+[a-zA-Z]*)?( numero\d+)?$/;
+    var direccionRegex = "^[A-Za-z0-9\s\.,#\-]+$";
     var domiciliarioInput = document.getElementById("DireccionDomiciliario");
     var domiciliarioError = document.getElementById("DireccionDomiciliariospan");
 
     domiciliario = domiciliario.trim();
 
-    if (!regex.test(domiciliario)) {
+    if (!direccionRegex.test(domiciliario)) {
         mostrarError(domiciliarioInput, domiciliarioError, "El campo no cumple con los requisitos.");
         return false;
     }
@@ -408,13 +408,13 @@ function validarObservacionAct(observacion) {
 }
 
 function validarDomiciliarioAct(domiciliario) {
-    var regex = /^(calle|cr)\d+([#]\d+[a-zA-Z]*)?( numero\d+)?$/;
+    var direccionRegex = /^[A-Za-z0-9\s\.,#\-]+$/;
     var domiciliarioInput = document.getElementById("DireccionDomiciliarioAct");
     var domiciliarioError = document.getElementById("MensajeDireccionDomiciliario");
 
     domiciliario = domiciliario.trim();
 
-    if (!regex.test(domiciliario)) {
+    if (!direccionRegex.test(domiciliario)) {
         mostrarError(domiciliarioInput, domiciliarioError, "El campo no cumple con los requisitos.");
         return false;
     }
