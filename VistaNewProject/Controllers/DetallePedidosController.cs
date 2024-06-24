@@ -5,6 +5,7 @@ using AutoMapper.QueryableExtensions;
 
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace VistaNewProject.Controllers
 {
@@ -34,6 +35,26 @@ namespace VistaNewProject.Controllers
             return View(detallepedido);
         }
 
+
+
+        public async Task<IActionResult> GetProductos()
+        {
+            var productos = await _client.GetProductoAsync();
+            return Json(productos);
+        }
+
+        public async Task<IActionResult> GeUnidades()
+        {
+            var unidades = await _client.GetUnidadAsync();
+            return Json(unidades);
+        }
+
+
+        public async Task<IActionResult> GetLotes()
+        {
+            var lotes = await _client.GetLoteAsync();
+            return Json(lotes);
+        }
 
 
         [HttpGet]

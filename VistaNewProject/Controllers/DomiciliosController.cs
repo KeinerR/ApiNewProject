@@ -246,5 +246,26 @@ namespace VistaNewProject.Controllers
 
         }
 
+
+        public async Task<IActionResult> GetDomicilioById(int id)
+        {
+            try
+            {
+                var domicilio = await _client.FindDomicilioAsync(id);
+
+                if (domicilio == null)
+                {
+                    return NotFound(); // Devolver un resultado NotFound si no se encuentra el domicilio
+                }
+
+                return Ok(domicilio); // Devolver el domicilio encontrado como resultado JSON
+            }
+            catch (Exception ex)
+            {
+                // Manejar errores y devolver un resultado BadRequest con un mensaje de error si es necesario
+                return BadRequest(new { message = $"Error al obtener el domicilio: {ex.Message}" });
+            }
+        }
+
     }
 }
