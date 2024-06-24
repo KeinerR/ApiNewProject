@@ -95,6 +95,7 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> SustraerCantidadReservadaAsync(int productoId, int? cantidad);
         Task<HttpResponseMessage> AddCantidadPorUnidadReservadaAsync(int productoId, int? cantidad);
         Task<HttpResponseMessage> SustraerCantidadPorUnidadReservadaAsync(int productoId, int? cantidad);
+
         Task<HttpResponseMessage> QuitarCantidadReservada(int productoId, int? cantidad);
         Task<HttpResponseMessage> QuitarCantidadReservadaUnidad(int productoId, int? cantidad);
 
@@ -138,7 +139,6 @@ namespace VistaNewProject.Services
 
 
         // lote
-
         Task<IEnumerable<Lote>> GetLoteAsync();
         Task<HttpResponseMessage> CreateLoteAsync(Lote lote);
         Task<Lote> FindLoteAsync(int id);
@@ -147,8 +147,10 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> DeleteLoteAsync(int id);
         Task<HttpResponseMessage> UpdatePrecioLotesAsync(int productoId, decimal precioxunidad, decimal precioxproducto );
         Task<HttpResponseMessage> UpdatePrecioLoteAsync(int productoId, string numeroLote, decimal precioxunidad, decimal precioxproducto );
-
-
+        Task<HttpResponseMessage> AddCantidadALoteAsync(int loteId, int? cantidad);
+        Task<HttpResponseMessage> SustraerCantidadALoteAsync(int loteId, int? cantidad);
+        Task<HttpResponseMessage> AddCantidadPorUnidadALoteAsync(int loteId, int? cantidad);
+        Task<HttpResponseMessage> SustraerCantidadPorUnidadALoteAsync(int loteId, int? cantidad);
 
         // domicilio
 
@@ -183,13 +185,21 @@ namespace VistaNewProject.Services
         // permiso
 
         Task<IEnumerable<Permiso>> GetPermisoAsync();
+        Task<HttpResponseMessage> CreatePermisoAsync(Permiso permiso);
+        Task<Permiso> FindPermisoAsync(int id);
+        Task<HttpResponseMessage> UpdatePermisoAsync(Permiso permiso);
+        Task<HttpResponseMessage> DeletePermisoAsync(int id);
 
 
         // rol
 
         Task<IEnumerable<Rol>> GetRolAsync();
+        Task<HttpResponseMessage> CreateRolAsync(Rol rol);
+        Task<Rol> FindRolAsync(int id);
+        Task<HttpResponseMessage> UpdateRolAsync(Rol rol);
+        Task<HttpResponseMessage> DeleteRolAsync(int id);
 
-       
+
 
         // rolxpermiso
 

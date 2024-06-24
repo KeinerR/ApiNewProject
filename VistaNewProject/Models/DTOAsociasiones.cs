@@ -15,6 +15,7 @@ namespace VistaNewProject.Models
         public string? NombreMarca { get; set; }
         public string? NombreCategoria { get; set; }
         public ulong? EstadoCategoria { get; set; }
+        public bool  EstaAsociada { get; set; }
         public ulong? EstadoMarca { get; set; }
 
     }
@@ -29,6 +30,7 @@ namespace VistaNewProject.Models
         public string? Contenido { get; set; }
         public int? CantidadPorPresentacion { get; set; }
         public ulong? EstadoPresentacion { get; set; }
+        public bool EstaAsociada { get; set; }
         public ulong? EstadoCategoria { get; set; }
 
 
@@ -50,6 +52,7 @@ namespace VistaNewProject.Models
         public string? NombreCompletoUnidad { get; set; }
         public int? CantidadPorUnidad { get; set; }
         public ulong? EstadoUnidad { get; set; }
+        public bool EstaAsociada { get; set; }
         public ulong? EstadoCategoria { get; set; }
 
 
@@ -70,6 +73,7 @@ namespace VistaNewProject.Models
         public int ProductoId { get; set; }
         public string? NombreCompletoUnidad { get; set; }
         public string? NombreCompletoProducto { get; set; }
+        public bool EstaAsociada { get; set; }
         public ulong? EstadoProducto { get; set; }
 
     }
