@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.XPath;
 
 namespace ApiNewProject.Controllers
 {
@@ -31,6 +32,7 @@ namespace ApiNewProject.Controllers
                         PresentacionId = cp.PresentacionId,
                         NombrePresentacion = cp.NombrePresentacion, 
                         NombreCategoria = cp.NombreCategoria,
+                        NombreCompletoPresentacion = cp.NombreCompletoPresentacion,
                         CantidadPorPresentacion = cp.CantidadPorPresentacion,
                         Contenido = cp.Contenido,
                         EstadoPresentacion = cp.EstadoPresentacion, 
@@ -66,6 +68,24 @@ namespace ApiNewProject.Controllers
             }
         }
 
+        [HttpGet("GetCategoriasxPresentacionByIdPresentacion/{id}")]
+        public async Task<ActionResult<List<CategoriaxPresentacion>>> GetCategoriasxPresentacionByIdPresentacion(int id)
+        {
+            try
+            {
+                var categoriasxPresentacion = await _context.CategoriaxPresentaciones
+                    .Where(cm => cm.PresentacionId == id)
+                    .ToListAsync(); // Asegúrate de ejecutar la consulta con ToListAsync()
+
+                return categoriasxPresentacion;
+            }
+            catch (Exception ex)
+            {
+                // Considera registrar el error en un log aquí
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                                  "Error al obtener las asociaciones categoría-Presentacion: " + ex.Message);
+            }
+        }
 
 
         [HttpPost("InsertarCategoriaxPresentacion")]
@@ -99,6 +119,7 @@ namespace ApiNewProject.Controllers
                     NombreCategoria = categoria.NombreCategoria,
                     EstadoCategoria = categoria.EstadoCategoria,
                     NombrePresentacion = presentacion.NombrePresentacion,
+                    NombreCompletoPresentacion = presentacion.NombreCompletoPresentacion,
                     CantidadPorPresentacion = presentacion.CantidadPorPresentacion,
                     Contenido = presentacion.Contenido,
                     EstadoPresentacion = presentacion.EstadoPresentacion

@@ -1445,7 +1445,7 @@ namespace VistaNewProject.Services
 
         public async Task<HttpResponseMessage> CreateCategoriaxUnidadAsync(CategoriaxUnidad categoriaxunidad)
         {
-            var response = await _httpClient.PostAsJsonAsync("CategoriaxUnidad/InsertarCategoria", categoriaxunidad);
+            var response = await _httpClient.PostAsJsonAsync("CategoriaxUnidad/InsertarCategoriaxUnidad", categoriaxunidad);
             return response;
         }
 
@@ -1551,14 +1551,14 @@ namespace VistaNewProject.Services
         }
         public async Task<HttpResponseMessage> CreateCategoriaxMarcaAsync(CategoriaxMarcaAsosiacion categoriaxmarca)
         {
-            var response = await _httpClient.PostAsJsonAsync("CategoriaxMarca/InsertarCategoria", categoriaxmarca);
+            var response = await _httpClient.PostAsJsonAsync("CategoriaxMarca/InsertarCategoriaxMarca", categoriaxmarca);
             return response;
         }
         public async Task<HttpResponseMessage> DeleteCategoriaxMarcaAsync(int categoriaId, int marcaId)
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"CategoriaxMarca/DeleteUnidadxProducto/{categoriaId}/{marcaId}"
+                var response = await _httpClient.DeleteAsync($"CategoriaxMarca/DeleteCategoriaxMarca/{categoriaId}/{marcaId}"
 );
 
                 if (!response.IsSuccessStatusCode)

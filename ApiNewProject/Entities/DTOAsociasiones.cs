@@ -24,6 +24,7 @@ namespace ApiNewProject.Entities
     {
         public int CategoriaId { get; set; }
         public int PresentacionId { get; set; }
+        public string? NombreCompletoPresentacion { get; set; }
         public string? NombreCategoria { get; set; }
         public string? NombrePresentacion { get; set; }
         public string? Contenido { get; set; }
@@ -47,6 +48,7 @@ namespace ApiNewProject.Entities
         public int UnidadId { get; set; }
         public string? NombreCategoria { get; set; }
         public string? NombreUnidad { get; set; }
+        public string? NombreCompletoUnidad { get; set; }
         public int? CantidadPorUnidad { get; set; }
         public ulong? EstadoUnidad { get; set; }
         public ulong? EstadoCategoria { get; set; }

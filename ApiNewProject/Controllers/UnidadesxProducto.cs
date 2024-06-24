@@ -21,23 +21,24 @@ namespace ApiNewProject.Controllers
 
 
         [HttpGet("GetUnidadesxProducto")]
-        public async Task<ActionResult<List<UnidadxProducto>>> GetUnidadesxProducto()
+        public async Task<ActionResult<List<UnidadxProducto>>> GetUnidadesxProducto(int productoId)
         {
             try
             {
-                // Incluir las entidades relacionadas (Producto y Unidad) para evitar consultas adicionales
                 var list = await _context.UnidadesxProducto
+                    .Where(up => up.ProductoId == productoId)
                     .ToListAsync();
 
                 return list;
             }
-            catch (Exception ex)
+            catch
             {
-                // Considera registrar el error en un log aquí
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                                 "Error al obtener las asociaciones unidad-producto: " + ex.Message);
+                    "Error al obtener las asociaciones unidad-producto por ID de producto.");
             }
         }
+
+
 
         [HttpPost("InsertarUnidad")]
         public async Task<ActionResult<UnidadxProducto>> InsertarUnidad(UnidadxProductoAsosiacion unidadxProductoAsociasion)

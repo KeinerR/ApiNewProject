@@ -9,11 +9,11 @@
 @if (ViewBag.Presentacion != null)
 {
     <div class="contenedor-botones-detalle">
-        <a asp-action="Details" asp-controller="Presentaciones" asp-route-id="@ViewBag.Presentacion.PresentacionId" class="btn botonAsociar">
+        <a asp-action="Index" class="btn botonVolver">
             <i class="fas fa-arrow-left"></i> Volver
         </a>
-        <a asp-action="PresentacionxCategoriasAsociadas" asp-controller="Presentaciones" asp-route-id="@ViewBag.Presentacion.PresentacionId" class="btn botonVolver">
-            Asociar categorías<i class="fa-solid fa-handshake-simple manoAsociasion"></i>
+        <a asp-action="PresentacionxCategoriasAsociadas" asp-controller="Presentaciones" asp-route-id="@ViewBag.Presentacion.PresentacionId" class="btn botonAsociar">
+            Categorias asociadas<i class="fa-solid fa-handshake-simple manoAsociasion"></i>
         </a>
     </div>
 }

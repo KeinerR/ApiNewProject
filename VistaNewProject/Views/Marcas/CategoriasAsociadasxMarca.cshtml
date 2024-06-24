@@ -7,11 +7,11 @@
 
 <br />
 <div class="contenedor-botones-detalle">
-    <a asp-action="Details" asp-controller="Marcas" asp-route-id="@ViewBag.Marca.MarcaId" class="btn botonAsociar">
+    <a asp-action="Index" class="btn botonVolver">
         <i class="fas fa-arrow-left"></i> Volver
     </a>
-    <a asp-action="MarcaxCategoriasAsociadas" asp-controller="Marcas" asp-route-id="@ViewBag.Marca.MarcaId" class="btn botonVolver">
-        Categorias asociadas<i class="fa-solid fa-handshake-simple manoAsociasion"></i></i>
+    <a asp-action="MarcaxCategoriasAsociadas" asp-controller="Marcas" asp-route-id="@ViewBag.Marca.MarcaId" class="btn botonAsociar">
+        Categorías asociadas<i class="fa-solid fa-handshake-simple manoAsociasion"></i>
     </a>
 </div>
 <br />

@@ -16,6 +16,9 @@
         </a>
         <!-- Agrega esto en tu enlace de "Editar" en Details.cshtml -->
         <a href="#" onclick="redireccionarYEditar('@ViewBag.Producto.ProductoId ', 'Productos','producto')" class="btn botonEnviarDetalle"><i class="fa-solid fa-pen"></i> Editar</a>
+        <a asp-action="UnidadesAsociadasxProducto" asp-controller="Productos" asp-route-id="@ViewBag.Producto.ProductoId" class="btn botonAsociar">
+            Unidades asociadas<i class="fa-solid fa-handshake-simple manoAsociasion"></i>
+        </a>
     </div>
     <br />
     @if (((int?)ViewData["Pagina"] ?? 1) < 2)

@@ -32,6 +32,7 @@ namespace ApiNewProject.Controllers
                     NombreCategoria = s.NombreCategoria,
                     EstadoCategoria = s.EstadoCategoria,
                     NombreUnidad = s.NombreUnidad,
+                    NombreCompletoUnidad  = s.NombreCompletoUnidad,
                     CantidadPorUnidad = s.CantidadPorUnidad,
                     EstadoUnidad = s.EstadoUnidad
                 }
@@ -55,6 +56,24 @@ namespace ApiNewProject.Controllers
                 // Considera registrar el error en un log aquí
                 return StatusCode(StatusCodes.Status500InternalServerError,
                                  "Error al obtener las asociaciones categoría-marca: " + ex.Message);
+            }
+        }
+        [HttpGet("GetCategoriasxUnidadByIdUnidad/{id}")]
+        public async Task<ActionResult<List<CategoriaxUnidad>>> GetCategoriasxUnidadByIdUnidad(int id)
+        {
+            try
+            {
+                var categoriasxUnidades = await _context.CategoriaxUnidades
+                    .Where(cm => cm.UnidadId == id)
+                    .ToListAsync(); // Asegúrate de ejecutar la consulta con ToListAsync()
+
+                return categoriasxUnidades;
+            }
+            catch (Exception ex)
+            {
+                // Considera registrar el error en un log aquí
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                                  "Error al obtener las asociaciones categoría-Unidad: " + ex.Message);
             }
         }
 
@@ -81,6 +100,7 @@ namespace ApiNewProject.Controllers
                     NombreCategoria = categoria?.NombreCategoria,
                     EstadoCategoria = categoria?.EstadoCategoria,
                     NombreUnidad = unidad?.NombreUnidad,
+                    NombreCompletoUnidad = unidad?.NombreCompletoUnidad,
                     CantidadPorUnidad =  unidad?.CantidadPorUnidad,
                     EstadoUnidad = unidad?.EstadoUnidad
                 };
