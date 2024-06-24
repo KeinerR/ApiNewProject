@@ -179,7 +179,6 @@ namespace VistaNewProject.Services
             return response;
         }
 
-
         public async Task<HttpResponseMessage> UpdatePresentacionAsync(PresentacionCrearYActualizar presentacion)
         {
             var response = await _httpClient.PutAsJsonAsync($"Presentaciones/UpdatePresentaciones/", presentacion);
@@ -1060,6 +1059,7 @@ namespace VistaNewProject.Services
             // Retorna la respuesta de la solicitud
             return response;
         }
+
         public async Task<HttpResponseMessage> QuitarCantidadReservada(int productoId, int? cantidad)
         {
             // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
@@ -1104,8 +1104,6 @@ namespace VistaNewProject.Services
             // Retorna la respuesta de la solicitud
             return response;
         }
-
-       
 
         public async Task<HttpResponseMessage> AddCantidadTotalAsync(int productoId, int? cantidad)
         {
@@ -1232,13 +1230,11 @@ namespace VistaNewProject.Services
             }
             return lotes;
         }
-
         public async Task<HttpResponseMessage> CreateLoteAsync(Lote lote)
         {
             var response = await _httpClient.PostAsJsonAsync("Lotes/InsertarLote", lote);
             return response;
         }
-
         public async Task<Lote> FindLoteAsync(int id)
         {
             var response = await _httpClient.GetFromJsonAsync<Lote>($"Lotes/GetLoteById?id={id}");
@@ -1249,21 +1245,17 @@ namespace VistaNewProject.Services
             }
             return response;
         }
-
-
-
         public async Task<HttpResponseMessage> UpdateLoteAsync(Lote lote)
         {
             var response = await _httpClient.PutAsJsonAsync($"Lotes/UpdateLotes/", lote);
             return response;
         }
-
         public async Task<HttpResponseMessage> DeleteLoteAsync(int id)
         {
             var response = await _httpClient.DeleteAsync($"Lotes/DeleteLote/{id}");
             return response;
         }
-
+        
         public async Task<HttpResponseMessage> UpdatePrecioLotesAsync(int productoId, decimal precioxunidad, decimal precioxproducto)
         {
             // Crear el objeto con los datos a enviar en la solicitud
@@ -1300,6 +1292,52 @@ namespace VistaNewProject.Services
             // Enviar la solicitud HTTP PUT con los datos proporcionados
             var response = await _httpClient.PutAsJsonAsync("Lotes/UpdatePrecioLote", data);
 
+            return response;
+        }
+
+
+        public async Task<HttpResponseMessage> AddCantidadALoteAsync(int loteId, int? cantidad)
+        {
+            // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
+            var content = new StringContent("", Encoding.UTF8, "application/json");
+
+            // Realiza la solicitud PUT a la API
+            var response = await _httpClient.PutAsync($"Lotes/AddCantidadALote/{loteId}?cantidad={cantidad}", content);
+
+            // Retorna la respuesta de la solicitud
+            return response;
+        }
+        public async Task<HttpResponseMessage> SustraerCantidadALoteAsync(int loteId, int? cantidad)
+        {
+            // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
+            var content = new StringContent("", Encoding.UTF8, "application/json");
+
+            // Realiza la solicitud PUT a la API
+            var response = await _httpClient.PutAsync($"Lotes/SustraerCantidadALote/{loteId}?cantidad={cantidad}", content);
+
+            // Retorna la respuesta de la solicitud
+            return response;
+        }
+        public async Task<HttpResponseMessage> AddCantidadPorUnidadALoteAsync(int loteId, int? cantidad)
+        {
+            // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
+            var content = new StringContent("", Encoding.UTF8, "application/json");
+
+            // Realiza la solicitud PUT a la API
+            var response = await _httpClient.PutAsync($"Lotes/AddCantidadPorUnidadALote/{loteId}?cantidad={cantidad}", content);
+
+            // Retorna la respuesta de la solicitud
+            return response;
+        }
+        public async Task<HttpResponseMessage> SustraerCantidadPorUnidadALoteAsync(int loteId, int? cantidad)
+        {
+            // Objeto JSON para enviar en el cuerpo de la solicitud, aunque en este caso no se envía contenido en el cuerpo de la solicitud según el ejemplo curl proporcionado
+            var content = new StringContent("", Encoding.UTF8, "application/json");
+
+            // Realiza la solicitud PUT a la API
+            var response = await _httpClient.PutAsync($"Lotes/SustraerCantidadPorUnidadALote/{loteId}?cantidad={cantidad}", content);
+
+            // Retorna la respuesta de la solicitud
             return response;
         }
 
@@ -1422,16 +1460,55 @@ namespace VistaNewProject.Services
         //permiso
         public async Task<IEnumerable<Permiso>> GetPermisoAsync()
         {
-            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Permiso>>("");
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Permiso>>("Presentaciones/GetPresentaciones");
             if (response == null)
             {
                 throw new NotImplementedException();
             }
             return response;
         }
+        public async Task<HttpResponseMessage> CreatePermisoAsync(Permiso permiso)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Permiso/InsertPermiso", permiso);
 
+            if (response == null)
+            {
+                throw new Exception("Error al crear el Permiso.");
+            }
+            return response;
+        }
 
-        //rolo
+        public async Task<Permiso> FindPermisoAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Permiso>($"Permisos/GetPermisoById?id={id}");
+            if (response == null)
+            {
+                throw new Exception("Error al crear el Permiso.");
+            }
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdatePermisoAsync(Permiso permiso)
+        {
+            var response = await _httpClient.PutAsJsonAsync("Permisos/UpdatePermiso/", permiso);
+            if (response == null)
+            {
+                throw new Exception("Error al crear el Permiso.");
+            }
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> DeletePermisoAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"Permisos/DeletePermiso/{id}");
+            if (response == null)
+            {
+                throw new Exception("Error al eliminar el Permiso.");
+            }
+            return response;
+        }
+
+        //rol
         public async Task<IEnumerable<Rol>> GetRolAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Rol>>("Roles/GetRoles");
@@ -1440,6 +1517,46 @@ namespace VistaNewProject.Services
             {
                 // Manejar el caso en el que response sea nulo
                 throw new Exception("No se encontró la compra con el ID especificado.");
+            }
+            return response;
+        }
+        public async Task<HttpResponseMessage> CreateRolAsync(Rol rol)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Roles/InsertRol", rol);
+
+            if (response == null)
+            {
+                throw new Exception("Error al crear el rol.");
+            }
+            return response;
+        }
+
+        public async Task<Rol> FindRolAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Rol>($"Roles/GetRolById?id={id}");
+            if (response == null)
+            {
+                throw new Exception("Error al crear el rol.");
+            }
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateRolAsync(Rol rol)
+        {
+            var response = await _httpClient.PutAsJsonAsync("Roles/UpdateRol/", rol);
+            if (response == null)
+            {
+                throw new Exception("Error al crear el rol.");
+            }
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> DeleteRolAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"Roles/DeleteRol/{id}");
+            if (response == null)
+            {
+                throw new Exception("Error al eliminar el rol.");
             }
             return response;
         }
