@@ -130,9 +130,9 @@
 
             <div class="col-4">
                 <label asp-for="PrecioUnitario" class="control-label"></label>
-                <input type="" class="form-control" id="PrecioUnitario">
-                <input type="" class="form-control" id="PrecioUnitariohiddenpormayor" readonly>
-                <input type="" class="form-control" id="PrecioUnitariohiddenpormayordescuento" readonly>
+                <input type="number" class="form-control" id="PrecioUnitario" readonly>
+                <input type="hidden" class="form-control" id="PrecioUnitariohiddenpormayor" readonly>
+                <input type="hidden" class="form-control" id="PrecioUnitariohiddenpormayordescuento" readonly>
 
 
 
@@ -143,8 +143,8 @@
             <div class="col-4">
                 <label asp-for="Cantidad" class="control-label"></label>
                 <input asp-for="Cantidad" id="CantidadTxt" class="form-control" />
-                <input type="" id="Descuento" class="form-control" />
-                <input type="" id="CantidadAPlicada" class="form-control" />
+                <input type="hidden" id="Descuento" class="form-control" />
+                <input type="hidden" id="CantidadAPlicada" class="form-control" />
 
 
                 <span id="CantidadError" class="text-danger"></span>

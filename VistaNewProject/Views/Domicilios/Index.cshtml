@@ -49,9 +49,7 @@
             <th>
                 Estado domicilio
             </th>
-            <th>
-                ACCIONES
-            </th>
+        
         </tr>
     </thead>
     <tbody class="text-center">
@@ -77,11 +75,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.EstadoDomicilio)
                 </td>
-                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
-                <td>
-                    <button class="btn btn-warning" onclick="obtenerDatosDomicilio('@item.DomicilioId')" data-cliente-id="@item.DomicilioId" data-bs-toggle="modal" data-bs-target="#DomicilioModal">Editar</button>
-                    <button class="btn btn-danger" onclick="eliminarDomicilio('@item.DomicilioId')">Eliminar</button>
-                </td>
+               
             </tr>
         }
     </tbody>
