@@ -21,7 +21,7 @@ namespace ApiNewProject.Controllers
             var list = await _context.Rolxpermisos.ToListAsync();
             return Ok(list);
         }
-        // GET: api/Rolxpermisos/GetRolxPermisosById/5
+
         [HttpGet("GetRolxPermisosById/{id}")]
         public async Task<ActionResult<Rolxpermiso>> GetRolxPermisosById(int id)
         {
@@ -41,6 +41,103 @@ namespace ApiNewProject.Controllers
             }
 
             return Ok(rolxpermiso);
+        }
+        // GET: api/Rolxpermisos/GetRolxPermisosById/5
+        [HttpGet("GetRolxPermisosByRolId/{id}")]
+        public async Task<ActionResult<RolAcceso>> GetRolxPermisosByRolId(int id)
+        {
+            if (id == 0)
+            {
+                return BadRequest("Id no puede ser cero.");
+            }
+
+            var rol = await _context.Rols.FindAsync(id);
+            if (rol == null)
+            {
+                return BadRequest("El rol asociado al usuario no fue encontrado.");
+            }
+
+            var permisosAlAplicativo = await _context.Rolxpermisos.Where(c => c.RolId == id).ToListAsync();
+            var permisosIds = permisosAlAplicativo.Select(pa => pa.PermisoId).ToList();
+
+            var permisos = await _context.Permisos.Where(p => permisosIds.Contains(p.PermisoId)).ToListAsync();
+
+            var listaDenombresPermiso = await _context.Rolxpermisos.Where(p => permisosIds.Contains(p.PermisoId)).ToListAsync();
+
+            var rolAcceso = new RolAcceso
+            {
+                RolId = rol.RolId,
+                NombreRol = rol.NombreRol,
+                EstadoRol = rol.EstadoRol,
+                RolxPermisoAcceso = new List<RolxpermisoAcceso>()
+            };
+
+            foreach (var permiso in permisos)
+            {
+                var rolxPermisoAcceso = new RolxpermisoAcceso
+                {
+                    PermisoId = permiso.PermisoId,
+                    NombrePermiso = permiso.NombrePermiso,
+                    RolxPermisoNombres = new List<RolxpermisoNombres>()
+                };
+
+                rolAcceso.RolxPermisoAcceso.Add(rolxPermisoAcceso);
+
+                foreach (var permisoNombre in listaDenombresPermiso.Where(p => p.PermisoId == permiso.PermisoId))
+                {
+                    rolxPermisoAcceso.RolxPermisoNombres.Add(new RolxpermisoNombres
+                    {
+                        RolxPermisoId = permisoNombre.RolxPermisoId,
+                        NombrePermisoxRol = permisoNombre.NombrePermisoxRol
+                    });
+                }
+            }
+
+            return Ok(rolAcceso);
+        }
+
+        // Método para obtener PermisoAcceso por ID
+        [HttpGet("GetRolxPermisosByIdPermiso/{id}")]
+        public async Task<ActionResult<PermisoAcceso>> GetRolxPermisosByIdPermiso(int id)
+        {
+            if (id == 0)
+            {
+                return BadRequest("Id no puede ser cero.");
+            }
+
+            // Recuperar el permiso
+            var permiso = await _context.Permisos.FirstOrDefaultAsync(p => p.PermisoId == id);
+            if (permiso == null)
+            {
+                return NotFound("Permiso no encontrado.");
+            }
+
+            // Recuperar los roles asociados con el permiso
+            var rolesXPermiso = await _context.Rolxpermisos
+                .Where(rxp => rxp.PermisoId == id)
+                .ToListAsync();
+
+            // Crear una lista de nombres de roles
+            var rolxPermisoNombres = new List<RolxpermisoNombres>();
+            foreach (var rolxpermiso in rolesXPermiso)
+            {
+                rolxPermisoNombres.Add(new RolxpermisoNombres
+                {
+                    RolxPermisoId = rolxpermiso.RolxPermisoId,
+                    NombrePermisoxRol = rolxpermiso.NombrePermisoxRol
+                });
+
+            }
+
+            // Crear el objeto PermisoAcceso
+            var permisoAcceso = new PermisoAcceso
+            {
+                PermisoId = permiso.PermisoId,
+                NombrePermiso = permiso.NombrePermiso,
+                RolxPermisoNombres = rolxPermisoNombres
+            };
+
+            return Ok(permisoAcceso);
         }
 
         [HttpGet("GetRolxPermisosByUsuarioId/{id}")]
@@ -128,30 +225,12 @@ namespace ApiNewProject.Controllers
             }
         }
 
-        // PUT: api/Rolxpermisos/UpdateRolxpermiso
-        [HttpPut("UpdateRolxpermiso")]
-        public async Task<ActionResult> UpdateRolxpermiso(Rolxpermiso rolxpermiso)
+        // DELETE: api/Rolxpermisos/DeleteRolxpermiso/{rolId}/{permisoId}/{nombrePermisoxRol}
+        [HttpDelete("DeleteRolxpermiso/{rolId}/{permisoId}/{nombrePermisoxRol}")]
+        public async Task<IActionResult> DeleteRolxpermiso(int rolId, int permisoId, string nombrePermisoxRol)
         {
-            var existingRolxpermiso = await _context.Rolxpermisos.FirstOrDefaultAsync(rxp => rxp.RolxPermisoId == rolxpermiso.RolxPermisoId);
-
-            if (existingRolxpermiso == null)
-            {
-                return NotFound();
-            }
-
-            existingRolxpermiso.PermisoId = rolxpermiso.PermisoId;
-            existingRolxpermiso.RolId = rolxpermiso.RolId;
-            existingRolxpermiso.NombrePermisoxRol = rolxpermiso.NombrePermisoxRol;
-
-            await _context.SaveChangesAsync();
-            return Ok();
-        }
-
-        // DELETE: api/Rolxpermisos/DeleteRolxpermiso/5
-        [HttpDelete("DeleteRolxpermiso/{id}")]
-        public async Task<IActionResult> DeleteRolxpermiso(int id)
-        {
-            var rolxpermiso = await _context.Rolxpermisos.FindAsync(id);
+            var rolxpermiso = await _context.Rolxpermisos
+                .FirstOrDefaultAsync(rp => rp.RolId == rolId && rp.PermisoId == permisoId && rp.NombrePermisoxRol == nombrePermisoxRol);
 
             if (rolxpermiso == null)
             {

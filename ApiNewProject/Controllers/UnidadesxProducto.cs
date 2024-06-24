@@ -37,6 +37,25 @@ namespace ApiNewProject.Controllers
                     "Error al obtener las asociaciones unidad-producto por ID de producto.");
             }
         }
+       
+        [HttpGet("GetUnidadesxProductoById")]
+        public async Task<ActionResult<List<UnidadxProducto>>> GetUnidadesxProductoById(int Id)
+        {
+            try
+            {
+                var list = await _context.UnidadesxProducto
+                    .Where(up => up.UnidadId == Id)
+                    .ToListAsync();
+
+                return list;
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error al obtener las asociaciones unidad-producto por ID de producto.");
+            }
+        }
+
         [HttpGet("GetUnidadesxProductoByProductoId")]
         public async Task<ActionResult<List<UnidadxProducto>>> GetUnidadesxProductoByProductoId(int productoId)
         {

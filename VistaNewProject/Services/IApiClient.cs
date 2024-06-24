@@ -75,8 +75,10 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Unidad>> GetUnidadAsync();
         Task<HttpResponseMessage> CreateUnidadAsync(Unidad unidad);
         Task<Unidad> FindUnidadAsync(int id);
+        Task<Unidad> FindNombreUnidadAsync(int id);
         Task<HttpResponseMessage> UpdateUnidadAsync(Unidad unidad);
         Task<HttpResponseMessage> DeleteUnidadAsync(int id);
+
         Task<HttpResponseMessage> CambiarEstadoUnidadAsync(int id);
 
 
@@ -191,13 +193,18 @@ namespace VistaNewProject.Services
 
         // rolxpermiso
 
-        Task<UsuarioAcceso> GetAccesoAsync(int id);
-        //Task<IEnumerable<Rolxpermiso>> GetRolesxPermisosAsync();
-        //Task<HttpResponseMessage> CreateRolxPermisoAsync(Rolxpermiso rolxpermiso);
-        //Task<HttpResponseMessage> DeleteRolxPermisoAsync(int rolId, int permisoId);
+        Task<IEnumerable<Rolxpermiso>> GetRolesxPermisosAsync();
+        Task<UsuarioAcceso> GetAccesoAsync(int usuarioId);
+        Task<Rolxpermiso> GetRolesxPermisosByIdAsync(int rolxPermisoId);
+        Task<PermisoAcceso> GetPermisosByPermisoIdAsync(int permisoId);
+        Task<RolAcceso> GetPermisosByRolIdAsync(int rolId);
+        Task<HttpResponseMessage> CreateRolxPermisoAsync(RolxpermisoCrear rolxpermiso);
+        Task<HttpResponseMessage> DeleteRolxPermisoAsync(int rolId, int permisoId, string NombreRolxpermiso);
+
 
 
         // categoria x unidad
+
         Task<IEnumerable<CategoriaxUnidad>> GetCategoriaxUnidadesAsync();
         Task<HttpResponseMessage> CreateCategoriaxUnidadAsync(CategoriaxUnidad categoriaxunidad);
         Task<IEnumerable<CategoriaxUnidad>> GetCategoriaxUnidadesByIdAsync(int categoriaId);

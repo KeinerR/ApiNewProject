@@ -720,8 +720,6 @@ namespace VistaNewProject.Services
 
 
         //Unidad
-
-        //Unidad
         public async Task<IEnumerable<Unidad>> GetUnidadAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<IEnumerable<Unidad>>("unidades/GetUnidades");
@@ -752,8 +750,16 @@ namespace VistaNewProject.Services
             return response;
         }
 
-
-
+        public async Task<Unidad> FindNombreUnidadAsync(int id)
+        {
+            var response = await _httpClient.GetFromJsonAsync<Unidad>($"Unidades/GetNombreUnidadPorId?id={id}");
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontró la unidad con el ID especificado.");
+            }
+            return response;
+        }
 
 
         public async Task<HttpResponseMessage> UpdateUnidadAsync(Unidad unidad)
@@ -1438,12 +1444,123 @@ namespace VistaNewProject.Services
             return response;
         }
 
-
-        public Task<IEnumerable<Rolxpermiso>> GetRolxpermisoAsync()
+        //roles x permisos
+        public async Task<IEnumerable<Rolxpermiso>> GetRolesxPermisosAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<IEnumerable<Rolxpermiso>>("RolesxPermisos/GetRolesxPermisos");
+                if (response == null)
+                {
+                    throw new Exception("No se encontró ninguna entidad.");
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al obtener los roles y permisos: {ex.Message}", ex);
+            }
         }
 
+        public async Task<UsuarioAcceso> GetAccesoAsync(int usuarioId)
+        {
+            var response = await _httpClient.GetFromJsonAsync<UsuarioAcceso>($"RolesxPermisos/GetRolxPermisosByUsuarioId/{usuarioId}");
+
+            if (response == null)
+            {
+                // Manejar el caso en el que response sea nulo
+                throw new Exception("No se encontraron los permisos asociados al usuario con el ID especificado.");
+            }
+
+            return response;
+        }
+
+        public async Task<Rolxpermiso> GetRolesxPermisosByIdAsync(int rolxPermisoId)
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<Rolxpermiso>($"RolesxPermisos/GetRolxPermisosById/{rolxPermisoId}");
+                if (response == null)
+                {
+                    throw new Exception("No se encontró la entidad con el ID especificado.");
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al obtener el rol y permiso por ID: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<PermisoAcceso> GetPermisosByPermisoIdAsync(int permisoId)
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<PermisoAcceso>($"RolesxPermisos/GetRolxPermisosByIdPermiso/{permisoId}");
+                if (response == null)
+                {
+                    throw new Exception("No se encontró la entidad con el ID especificado.");
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al obtener el permiso por ID: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<RolAcceso> GetPermisosByRolIdAsync(int rolId)
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<RolAcceso>($"RolesxPermisos/GetRolxPermisosByRolId/{rolId}");
+                if (response == null)
+                {
+                    throw new Exception("No se encontró la entidad con el ID especificado.");
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al obtener el permiso por ID de rol: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<HttpResponseMessage> CreateRolxPermisoAsync(RolxpermisoCrear rolxpermiso)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("RolesxPermisos/InsertRolxpermiso", rolxpermiso);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al crear el rol y permiso: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<HttpResponseMessage> DeleteRolxPermisoAsync(int rolId, int permisoId, string NombreRolxPermiso)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"RolesxPermisos/DeleteRolxPermiso/{rolId}/{permisoId}/{NombreRolxPermiso}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    // Log or handle the response status code
+                }
+
+                return response;
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new Exception($"Error en la solicitud HTTP: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error inesperado: {ex.Message}", ex);
+            }
+        }
 
 
 
@@ -1679,7 +1796,7 @@ namespace VistaNewProject.Services
         }
         public async Task<IEnumerable<UnidadxProducto>> GetUnidadesxProductosByIdProductoAsync(int productoId)
         {
-            var response = await _httpClient.GetFromJsonAsync<IEnumerable<UnidadxProducto>>("UnidadesxProducto/GetUnidadesxProducto");
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<UnidadxProducto>>("UnidadesxProducto/GetUnidadesxProductoByProductoId");
 
             if (response == null)
             {
@@ -1720,23 +1837,11 @@ namespace VistaNewProject.Services
         }
         
         
-        public async Task<UsuarioAcceso> GetAccesoAsync(int id)
-        {
-            var response = await _httpClient.GetFromJsonAsync<UsuarioAcceso>($"RolesxPermisos/GetRolxPermisosByUsuarioId/{id}");
-
-            if (response == null)
-            {
-                // Manejar el caso en el que response sea nulo
-                throw new Exception("No se encontraron los permisos asociados al usuario con el ID especificado.");
-            }
-
-            return response;
-        }
-
+   
  
         public async Task<(IEnumerable<FacturaDTO>, IEnumerable<LoteDTO>)> GetFacturasYLotesAsync()
         {
-            var response = await _httpClient.GetFromJsonAsync<List<object>>("FacturasYLotes");
+            var response = await _httpClient.GetFromJsonAsync<List<object>>("Compras/FacturasYLotes");
 
             if (response == null || response.Count != 2)
             {

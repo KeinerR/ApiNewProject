@@ -163,74 +163,8 @@ namespace ApiNewProject.Controllers
             }
         }
 
-        [HttpGet("GetPresentacionesxCategoria")]
-        public async Task<ActionResult<List<CategoriaxPresentacion>>> GetPresentacionesxCategoria(int id)
-        {
-            try
-            {
-                var categoriasxPresentaciones = await _context.CategoriaxPresentaciones
-                 .Where(cm => cm.CategoriaId == id)
-                .ToListAsync();
-
-                return categoriasxPresentaciones;
-            }
-            catch (Exception ex)
-            {
-                // Considera registrar el error en un log aquí
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                                 "Error al obtener las asociaciones categoría-marca: " + ex.Message);
-            }
-        }
-
-        [HttpGet("GetUnidadesxCategoria")]
-        public async Task<ActionResult<List<CategoriaxUnidad>>> GetUnidadesxCategoria(int id)
-        {
-            try
-            {
-                var categoriasxUnidades = await _context.CategoriaxUnidades
-                 .Where(cm => cm.CategoriaId == id)
-                .ToListAsync();
-
-                return categoriasxUnidades;
-            }
-            catch (Exception ex)
-            {
-                // Considera registrar el error en un log aquí
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                                 "Error al obtener las asociaciones categoría-marca: " + ex.Message);
-            }
-        }
-
-
-        [HttpGet("GetMarcasxCategoria")]
-        public async Task<ActionResult<List<CategoriaxMarca>>> GetMarcasxCategoria(int id)
-        {
-            try
-            {
-                var categoriasxMarcas = await _context.CategoriaxMarcas
-                 .Where(cm => cm.CategoriaId == id)
-                .ToListAsync();
-
-                return categoriasxMarcas;
-            }
-            catch (Exception ex)
-            {
-                // Considera registrar el error en un log aquí
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                                 "Error al obtener las asociaciones categoría-marca: " + ex.Message);
-            }
-        }
-
-
-
-
-
-
 
     }
-
-
-
 
 }
 

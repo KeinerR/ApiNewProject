@@ -91,7 +91,19 @@ namespace ApiNewProject.Entities
 
     }
 
+    public class RolAcceso {
+        public int? RolId { get; set; }
+        public string? NombreRol { get; set; }
+        public ulong? EstadoRol { get; set; }
+        public virtual List<RolxpermisoAcceso>? RolxPermisoAcceso { get; set; }
 
+    }
+    public class PermisoAcceso {
+        public int? PermisoId { get; set; }
+        public string? NombrePermiso { get; set; }
+        public virtual List<RolxpermisoNombres>? RolxPermisoNombres { get; set; }
+
+    }
     public class UsuarioAcceso
     {
         public int UsuarioId { get; set; }
@@ -116,3 +128,6 @@ namespace ApiNewProject.Entities
     }
 
 }
+
+
+
