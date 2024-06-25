@@ -30,14 +30,31 @@ namespace VistaNewProject.Controllers
                 // Obtener todos los domicilios
                 var domicilios = await _client.GetDomicilioAsync();
 
-                // Obtener domicilios pendientes
+                // Filtrar domicilios pendientes
                 var domiciliosPendientes = domicilios.Where(d => d.EstadoDomicilio == "Pendiente").ToList();
 
-                // Configurar paginación para los domicilios pendientes
-                var pageDomicilio = await domiciliosPendientes.ToPagedListAsync(pageNumber, pageSize);
+                // Excluir domicilios con pedidos cancelados o anulados
+                var domiciliosFiltrados = new List<Domicilio>();
 
-                // Si no hay domicilios pendientes, mostrar la vista Index con una lista vacía
-                if (!domiciliosPendientes.Any())
+                foreach (var domicilio in domiciliosPendientes)
+                {
+                    // Obtener los pedidos asociados al domicilio
+                    var pedido = await _client.FindPedidosAsync(domicilio.PedidoId.Value);
+
+                    // Verificar si el pedido tiene estado "Cancelado" o "Anulado"
+                    bool tienePedidosCanceladosOAnulados = pedido.EstadoPedido == "Cancelado" || pedido.EstadoPedido == "Anulado";
+
+                    if (!tienePedidosCanceladosOAnulados)
+                    {
+                        domiciliosFiltrados.Add(domicilio);
+                    }
+                }
+
+                // Configurar paginación para los domicilios filtrados
+                var pageDomicilio = await domiciliosFiltrados.ToPagedListAsync(pageNumber, pageSize);
+
+                // Si no hay domicilios filtrados, mostrar la vista Index con una lista vacía
+                if (!domiciliosFiltrados.Any())
                 {
                     pageDomicilio = new PagedList<Domicilio>(new List<Domicilio>(), pageNumber, pageSize);
                 }
@@ -46,7 +63,7 @@ namespace VistaNewProject.Controllers
                     // Ajustar el paginado si es necesario
                     if (!pageDomicilio.Any() && pageDomicilio.PageNumber > 1)
                     {
-                        pageDomicilio = await domiciliosPendientes.ToPagedListAsync(pageDomicilio.PageCount, pageSize);
+                        pageDomicilio = await domiciliosFiltrados.ToPagedListAsync(pageDomicilio.PageCount, pageSize);
                     }
                 }
 
@@ -58,7 +75,7 @@ namespace VistaNewProject.Controllers
                 string mensaje = HttpContext.Session.GetString("Message");
                 TempData["Message"] = mensaje;
 
-                ViewData["Domicilios"] = domiciliosPendientes;
+                ViewData["Domicilios"] = domiciliosFiltrados;
 
                 // Obtener domicilios realizados y pasarlos a ViewData
                 var domiciliosRealizados = domicilios.Where(d => d.EstadoDomicilio == "Realizado").ToList();
@@ -77,9 +94,6 @@ namespace VistaNewProject.Controllers
                 return RedirectToAction("LogOut", "Accesos");
             }
         }
-
-
-
 
         public async Task<IActionResult> DomiciliosRealizados(int? page)
         {

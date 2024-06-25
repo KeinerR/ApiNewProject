@@ -101,18 +101,21 @@ namespace VistaNewProject.Controllers
                 .Take(7)
                 .ToList();
 
-            decimal totalPedidos = 0;
+            decimal totalPedidosRealizados = 0;
             foreach (var pedido in registroPedidos)
             {
-                decimal precioTotal = pedido.ValorTotalPedido ?? 1;
-                totalPedidos += precioTotal;
+                if (pedido.EstadoPedido == "Realizado")
+                {
+                    decimal precioTotal = pedido.ValorTotalPedido ?? 0; // Usa 0 como valor por defecto en lugar de 1
+                    totalPedidosRealizados += precioTotal;
+                }
             }
 
-            TempData["TotalPedidos"] = totalPedidos.ToString("$ #,##0");
+            TempData["TotalPedidos"] = totalPedidosRealizados.ToString("$ #,##0");
             TempData["Mensaje"] = fechaInicioPedidos.ToString("dd/MM/yyyy");
 
             // Calcular la diferencia entre totalPedidos y totalCompras
-            decimal diferencia = totalPedidos - totalCompras;
+            decimal diferencia = totalPedidosRealizados - totalCompras;
             TempData["Diferencia"] = diferencia;
 
             // ----------------------- REPORTE CLIENTES -----------------------
