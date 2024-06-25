@@ -318,6 +318,7 @@ function mostrarModalCategoria(categoriaId) {
 
 function actualizarCategoria(campo) {
     var categoriaId = campo;
+    actualizarCategoria
     $.ajax({
         url: '/Categorias/FindCategoria', // Ruta relativa al controlador y la acción
         type: 'POST',
