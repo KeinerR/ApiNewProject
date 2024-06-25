@@ -38,60 +38,134 @@
 
         <div>
             <i id="campanaIcon" class="campana fa fa-bell"></i>
-            <span id="domiciliosRealizadosBadge" class="badge" style="display:none;"></span>
+            <span id="domiciliosRealizadosBadge" class="badge badge-primary" style="display:none;"></span>
         </div>
 
-     
+
+
 
         <!-- Modal -->
         <div class="modal fade" id="detalleModal" tabindex="-1" role="dialog" aria-labelledby="detalleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="detalleModalLabel">Detalles del Domicilio y Pedido</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <h5 class="modal-title" id="detalleModalLabel"> Domicilios recibidos</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p>ID del Domicilio: <span id="modalDomicilioId"></span></p>
-                        <p>ID del Pedido: <span id="modalPedidoId"></span></p>
+                        <div class="table-responsive">
+                            <table class="table table-custom text-center">
+                                <thead>
+                                    <tr>
+                                        <th> Domicilio</th>
+                                        <th> Pedido</th>
+                                        <th>Observación</th>
+                                        <th>Fecha de Entrega</th>
+                                        <th> Domiciliario</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modalTableBody">
+                                    <!-- Aquí se agregarán los datos de los domicilios -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Paginación -->
+                        <div id="modalPagination" class="mt-3 text-center">
+                            <!-- Aquí se generarán los botones de paginación -->
+                        </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
             </div>
         </div>
+
         <script>
+                // Función para cerrar la modal
+               
+
+                // Aquí puedes colocar más lógica relacionada con la modal y sus eventos
+          
+
             $(document).ready(function () {
                 var domiciliosRealizados = @Html.Raw(Json.Serialize(domiciliosRealizados));
 
-                // Contar la cantidad de domicilios realizados
-                var cantidadDomiciliosRealizados = domiciliosRealizados.length;
+                console.log("Domicilios realizados:", domiciliosRealizados);
 
-                // Mostrar el número de domicilios realizados en el badge de la campana
-                if (cantidadDomiciliosRealizados > 0) {
-                    $('#domiciliosRealizadosBadge').text(cantidadDomiciliosRealizados);
-                    $('#domiciliosRealizadosBadge').show();
-                    $('#campanaIcon').addClass('campana-realizado');
+                // Cantidad de domicilios por página
+                var domiciliosPorPagina = 5; // Puedes ajustar el número según tus necesidades
+
+                function cerrarModal() {
+                    $('#detalleModal').modal('hide');
                 }
 
-                // Manejar clic en la campana para abrir el modal
-                $('#campanaIcon').click(function () {
-                    // Obtener los datos del domicilio y pedido del primer elemento de domicilios realizados (solo como ejemplo)
-                    var domicilio = domiciliosRealizados[0]; // Puedes ajustar esto según tu lógica
-
-                    // Mostrar los IDs en el modal
-                    $('#modalDomicilioId').text(domicilio.DomicilioId);
-                    $('#modalPedidoId').text(domicilio.PedidoId);
-
-                    // Mostrar el modal
-                    $('#detalleModal').modal('show');
+                // Ejemplo de uso para cerrar la modal desde otro evento, por ejemplo un botón
+                $('#cerrarModalBtn').click(function () {
+                    cerrarModal();
                 });
-            });
-        </script>
 
+                if (domiciliosRealizados.length > 0) {
+                    $('#campanaIcon').removeClass('campana').addClass('campana-realizado');
+                }
+
+
+                // Función para mostrar los domicilios en el modal
+                function mostrarDomiciliosEnModal(page) {
+                    // Limpiar el contenido del modal antes de cargar nuevos datos
+                    $('#modalTableBody').empty();
+
+                    // Calcular el índice de inicio y fin de los domicilios a mostrar
+                    var startIndex = (page - 1) * domiciliosPorPagina;
+                    var endIndex = Math.min(startIndex + domiciliosPorPagina, domiciliosRealizados.length);
+
+                    // Iterar sobre los domicilios de la página actual
+                    for (var i = startIndex; i < endIndex; i++) {
+                        var domicilio = domiciliosRealizados[i];
+
+                        // Construir la fila de la tabla para cada domicilio
+                        var filaDomicilio = `
+                                <tr>
+                                    <td>${domicilio.domicilioId}</td>
+                                    <td>${domicilio.pedidoId}</td>
+                                    <td>${domicilio.observacion}</td>
+                                    <td>${domicilio.fechaEntrega}</td>
+                                    <td>${domicilio.direccionDomiciliario}</td>
+                                    <td>${domicilio.estadoDomicilio}</td>
+                                </tr>
+                            `;
+
+                        // Agregar la fila a la tabla en el modal
+                        $('#modalTableBody').append(filaDomicilio);
+                    }
+
+                    // Mostrar el modal después de cargar los datos
+                    $('#detalleModal').modal('show');
+                }
+
+                // Manejar clic en el ícono de la campana
+                $('#campanaIcon').click(function () {
+                    // Mostrar la primera página de domicilios al abrir el modal
+                    mostrarDomiciliosEnModal(1);
+
+                    // Generar botones de paginación
+                    var totalPages = Math.ceil(domiciliosRealizados.length / domiciliosPorPagina);
+                    var paginationHtml = '';
+                    for (var i = 1; i <= totalPages; i++) {
+                        paginationHtml += `<button class="btn btn-sm btn-outline-secondary mx-1" onclick="mostrarDomiciliosEnModal(${i})">${i}</button>`;
+                    }
+                    $('#modalPagination').html(paginationHtml);
+                });
+
+
+
+            });
+           
+           
+        </script>
 
     </div>
 
@@ -130,7 +204,7 @@
         
         </tr>
     </thead>
-    <tbody class="text-center">
+    <tbody class="text-center" >
         @{
             int contador = ViewBag.Contador ?? 1;
             int contadorNew = ViewBag.Contador ?? 1;
