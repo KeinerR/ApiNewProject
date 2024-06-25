@@ -320,7 +320,6 @@ function AlPerderFocoMarca() {
 /*--------------------------------------------------------- Modal de actualizar usuario ---------------------------------------*/
 function mostrarModalActualizarMarca(marcaId) {
     limpiarFormularioMarcaAct();
-    alert(marcaId);
     actualizarMarca(marcaId);
     setTimeout(function () {
         var myModal = new bootstrap.Modal(document.getElementById('ModalActualizarMarca'));
