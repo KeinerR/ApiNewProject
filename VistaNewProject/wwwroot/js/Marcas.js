@@ -346,36 +346,36 @@ function actualizarMarca(campo) {
             alert('Error al obtener los datos de la  marca.');
         }
     });
-
 }
 function actualizarEstadoMarca(MarcaId) {
-    $.ajax({
-        url: `/Marcas/UpdateEstadoMarca/${MarcaId}`,
-        type: 'PATCH',
-        contentType: 'application/json',
-        success: function (response) {
-            console.log("Estado actualizado:", EstadoMarca);
-            // Mostrar SweetAlert
-            Swal.fire({
-                icon: 'success',
-                title: '¡Estado actualizado!',
-                showConfirmButton: false,
-                timer: 1500 // Duración del SweetAlert en milisegundos
-            }).then(() => {
-                location.reload(); // Recargar la página después de que la alerta haya terminado
-            });
-        },
-        error: function (xhr, status, error) {
-            console.error('Error al actualizar el estado del marca:', xhr.responseText);
-            // Mostrar SweetAlert de error si es necesario
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Hubo un error al actualizar el estado del marca. Por favor, inténtalo de nuevo.'
-            });
-        }
-    });
+        $.ajax({
+            url: `/Marcas/UpdateEstadoMarca/${MarcaId}`,
+            type: 'PATCH',
+            contentType: 'application/json',
+            success: function (response) {
+                console.log("Estado actualizado:", EstadoMarca);
+                // Mostrar SweetAlert
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Estado actualizado!',
+                    showConfirmButton: false,
+                    timer: 1500 // Duración del SweetAlert en milisegundos
+                }).then(() => {
+                    location.reload(); // Recargar la página después de que la alerta haya terminado
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al actualizar el estado del marca:', xhr.responseText);
+                // Mostrar SweetAlert de error si es necesario
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Hubo un error al actualizar el estado del marca. Por favor, inténtalo de nuevo.'
+                });
+            }
+        });
 }
+
 
 
 function searchMarca() {

@@ -79,8 +79,7 @@ namespace VistaNewProject.Controllers
 
                 // Obtener domicilios realizados y pasarlos a ViewData
                 var domiciliosRealizados = domicilios.Where(d => d.EstadoDomicilio == "Realizado").ToList();
-                ViewData["DomiciliosRealizados"] = domiciliosRealizados;
-
+                 ViewBag.domiciliosRealizados= domiciliosRealizados;
                 return View(pageDomicilio);
             }
             catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)

@@ -23,8 +23,8 @@ namespace VistaNewProject.Services
         public ApiClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri("https://localhost:7013/api/");
-            //_httpClient.BaseAddress = new Uri("http://optimusweb-001-site1.ctempurl.com/api/");
+            //_httpClient.BaseAddress = new Uri("https://localhost:7013/api/");
+            _httpClient.BaseAddress = new Uri("http://oarincon-001-site1.etempurl.com/api/");
         }
 
         //cliente
