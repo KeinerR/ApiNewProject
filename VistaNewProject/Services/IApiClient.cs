@@ -40,11 +40,11 @@ namespace VistaNewProject.Services
         // compra
 
         Task<IEnumerable<Compra>> GetCompraAsync();
-        Task<HttpResponseMessage> CreateComprasAsync(Compra compra);
+        Task<HttpResponseMessage> CreateComprasAsync(CrearCompra compra);
         Task<Compra> FinComprasAsync(int id);
         Task<HttpResponseMessage> UpdateComprasAsync(Compra compra);
-
         Task<HttpResponseMessage> DeleteComprasAsync(int id);
+        Task<(IEnumerable<FacturaDTO>, IEnumerable<LoteDTO>)> GetFacturasYLotesAsync();
 
 
 
@@ -242,7 +242,7 @@ namespace VistaNewProject.Services
         Task<IEnumerable<UnidadxProducto>> GetUnidadesxProductosByIdProductoAsync(int productoId);
         Task<HttpResponseMessage> CreateUnidadxProductoAsync(UnidadxProductoAsosiacion productoxunidad);
         Task<HttpResponseMessage> DeleteUnidadxProductoAsync(int unidadId, int productoId);
-        Task<(IEnumerable<FacturaDTO>, IEnumerable<LoteDTO>)> GetFacturasYLotesAsync();
+  
 
     }
 }

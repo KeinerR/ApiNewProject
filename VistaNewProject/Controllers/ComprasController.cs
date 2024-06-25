@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using VistaNewProject.Models;
 using VistaNewProject.Services;
 using X.PagedList;
 
@@ -11,7 +13,7 @@ namespace VistaNewProject.Controllers
         {
             _client = client;
         }
-        public async Task<IActionResult> Index(int? page , string order = "default")
+        public async Task<IActionResult> Index(int? page, string order = "default")
         {
             int pageSize = 5;
             int pageNumber = page ?? 1;
@@ -48,7 +50,7 @@ namespace VistaNewProject.Controllers
             {
                 return NotFound("error");
             }
- 
+
             var pageCompra = await compras.ToPagedListAsync(pageNumber, pageSize);
             if (!pageCompra.Any() && pageCompra.PageNumber > 1)
             {
@@ -112,5 +114,86 @@ namespace VistaNewProject.Controllers
             ViewBag.Categorias = categorias;
             return View(pagedCompra);
         }
+
+
+        [HttpPost("/Compras/InsertarCompra")]
+        public async Task<IActionResult> InsertarCompra([FromBody] CrearCompra compra)
+        {
+            if (compra == null)
+            {
+                return BadRequest("La compra no puede ser null");
+            }
+
+            var nuevaCompra = new CrearCompra
+            {
+                CompraId = compra.CompraId,
+                ProveedorId = compra.ProveedorId,
+                NumeroFactura = compra.NumeroFactura,
+                FechaCompra = compra.FechaCompra,
+                ValorTotalCompra = compra.ValorTotalCompra,
+                EstadoCompra = compra.EstadoCompra,
+                Detallecompras = new List<CrearDetallecompra>() // Inicializa la lista como vacía
+            };
+
+            // Imprime los detalles de la compra
+            foreach (var detalle in compra.Detallecompras)
+            {
+                var nuevoDetalleCompra = new CrearDetallecompra
+                {
+                    CompraId = 0,
+                    DetalleCompraId = 0,
+                    ProductoId = detalle.ProductoId,
+                    UnidadId = detalle.UnidadId,
+                    Cantidad = detalle.Cantidad,
+                    Lotes = new List<LoteCrear>() // Inicialización como colección vacía
+                };
+
+                foreach (var lote in detalle.Lotes)
+                {
+                    var nuevoLote = new LoteCrear
+                    {
+                        LoteId = 0,
+                        DetalleCompraId = 0,
+                        ProductoId = lote.ProductoId,
+                        NumeroLote = lote.NumeroLote,
+                        PrecioCompra = lote.PrecioCompra,
+                        PrecioPorUnidad = lote.PrecioPorUnidad,
+                        PrecioPorPresentacion = lote.PrecioPorPresentacion,
+                        PrecioPorUnidadProducto = lote.PrecioPorUnidadProducto,
+                        PrecioPorPresentacionCompra = lote.PrecioPorPresentacionCompra,
+                        PrecioPorUnidadProductoCompra = lote.PrecioPorUnidadProductoCompra,
+                        PrecioPorUnidadCompra = lote.PrecioPorUnidadCompra,
+                        FechaVencimiento = lote.FechaVencimiento,
+                        Cantidad = lote.Cantidad,
+                        CantidadCompra = lote.CantidadCompra,
+                        CantidadPorUnidadCompra = lote.CantidadPorUnidadCompra,
+                        CantidadPorUnidad = lote.CantidadPorUnidad,
+                        EstadoLote = lote.EstadoLote
+                    };
+
+                    nuevoDetalleCompra.Lotes.Add(nuevoLote); // Agrega el lote al detalle
+                }
+
+                nuevaCompra.Detallecompras.Add(nuevoDetalleCompra); // Agrega el detalle a la compra
+            }
+
+            var respuestaServidor = await _client.CreateComprasAsync(nuevaCompra);
+
+            if (respuestaServidor != null)
+            {
+                Console.WriteLine("Nueva Compra:");
+                Console.WriteLine(JsonConvert.SerializeObject(nuevaCompra, Formatting.Indented)); // Imprime la nuevaCompra por consola con formato indentado
+                return Ok(nuevaCompra); // Si la compra se creó correctamente, devuelve una respuesta OK
+            }
+            else
+            {
+                return StatusCode(500, "Error al procesar la solicitud"); // Si hubo un error en el servidor, devuelve un código de error 500
+            }
+        }
+
+
+
+
+
     }
 }

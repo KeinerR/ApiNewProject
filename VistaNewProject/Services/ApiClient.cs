@@ -224,10 +224,9 @@ namespace VistaNewProject.Services
             return response;
         }
 
-        public async Task<HttpResponseMessage> CreateComprasAsync(Compra compra)
+        public async Task<HttpResponseMessage> CreateComprasAsync(CrearCompra compra)
         {
             var response = await _httpClient.PostAsJsonAsync("Compras/InsertCompras", compra);
-
             if (response == null)
             {
                 // Manejar el caso en el que response sea nulo

@@ -128,29 +128,9 @@ namespace ApiNewProject.Controllers
                     {
                         foreach (var lote in detalleCompra.Lotes)
                         {
-                            // Validación de todos los campos requeridos del lote
-                            if (!lote.Cantidad.HasValue ||
-                                !lote.FechaVencimiento.HasValue ||
-                                lote.NumeroLote == null ||
-                                lote?.PrecioCompra == null ||
-                                lote.PrecioPorUnidad == null ||
-                                lote.PrecioPorPresentacion == null ||
-                                lote.PrecioPorUnidadProducto == null ||
-                                lote.CantidadPorUnidad == null ||
-                                lote.PrecioPorUnidadCompra == null ||
-                                lote.PrecioPorPresentacionCompra == null ||
-                                lote.PrecioPorUnidadProductoCompra == null ||
-                                lote.CantidadCompra == null ||
-                                lote.CantidadPorUnidadCompra == null ||
-                                lote.EstadoLote == null)
-                            {
-                                return BadRequest("Todos los campos del lote son requeridos y no pueden ser nulos.");
-                            }
-
-                            // Creación de un nuevo lote
                             var newLote = new Lote
                             {
-                                DetalleCompraId = newDetalleCompra.DetalleCompraId,
+                                DetalleCompraId = lote.DetalleCompraId,
                                 ProductoId = lote.ProductoId,
                                 NumeroLote = lote.NumeroLote,
                                 PrecioCompra = lote.PrecioCompra,
@@ -190,7 +170,7 @@ namespace ApiNewProject.Controllers
                         {
                             return BadRequest($"El producto con ID: {lote.ProductoId} no se encontró.");
                         }
-                    }
+                    }       
                 }
 
                 // Calcular el valor total de la compra
