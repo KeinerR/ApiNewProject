@@ -1,6 +1,7 @@
 ﻿
     // Objeto de compra
-    var compra = {
+var compra = {
+        CompraId:0,
         proveedorId: 0,
         numeroFactura: 0,
         fechaCompra: new Date().toISOString(), // Obtener la fecha actual en formato ISO
@@ -22,20 +23,22 @@ let timeout = null;
 var nombreProducto = "";
 
 // Función para registrar la compra
+// Función para registrar la compra
 function RegistrarBuy() {
+    console.log(compra);
+    // Verifica si hay al menos un detalle de compra
     if (compra.detallecompras.length === 0) {
-
         Swal.fire({
-            position:"center",
+            position: "center",
             icon: 'warning',
-            title: '¡Atencion!',
-            text: 'Debes agregar minimo un producto a la compra.',
-            showConfirmButton: false, // Mostrar botón de confirmación
+            title: '¡Atención!',
+            text: 'Debes agregar al menos un producto a la compra.',
+            showConfirmButton: false,
             timer: 3000
-        })
+        });
         return;
     }
-    
+
     // Mostrar una alerta de confirmación antes de enviar la solicitud
     Swal.fire({
         title: '¿Estás seguro?',
@@ -48,51 +51,44 @@ function RegistrarBuy() {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Si el usuario confirma, enviar la solicitud POST al servidor utilizando la Fetch API
-            fetch('https://localhost:7013/api/Compras/InsertCompras', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
+            // Imprimir la compra por consola antes de enviarla al servidor
+            console.log("Compra a enviar al servidor:", compra);
+
+            // Si el usuario confirma, enviar la solicitud POST al servidor utilizando AJAX
+            $.ajax({
+                url: '/Compras/InsertarCompra',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(compra),
+                success: function (response) {
+                    Swal.fire({
+                        position: "center",
+                        icon: 'success',
+                        title: '¡Compra guardada!',
+                        text: 'La compra se ha registrado correctamente.',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                    // Recargar la página después de la actualización
+                    setTimeout(() => {
+                        location.reload(true);
+                    }, 3000); // Esperar 3 segundos antes de recargar la página
                 },
-                body: JSON.stringify(compra)
-            })
-                .then(response => {
-                    if (response.ok) {
-                        Swal.fire({
-                            position: "center",
-                            icon: 'success',
-                            title: '¡Compra guardada!',
-                            text: 'La compra se ha registrado correctamente.',
-                            showConfirmButton: false, // No mostrar botón de confirmación
-                            timer: 3000
-                        });
-                        location.reload(true); // Recargar la página después de la actualización
-                    } else {
-                        console.log(compra);
-                        Swal.fire({
-                            position: "center",
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Error en la actualización. Por favor, inténtalo de nuevo más tarde.',
-                            showConfirmButton: false, // No mostrar botón de confirmación
-                            timer: 3000
-                        });
-                    }
-                })
-                .catch(error => {
+                error: function (xhr, status, error) {
                     console.error('Error:', error);
                     Swal.fire({
                         position: "center",
                         icon: 'error',
                         title: 'Error',
                         text: 'Error en la actualización. Por favor, inténtalo de nuevo más tarde.',
-                        showConfirmButton: false, // No mostrar botón de confirmación
+                        showConfirmButton: false,
                         timer: 3000
                     });
-                });
+                }
+            });
         }
     });
-};
+}
 
 
 // Función para llenar correcgtamente la compra antes agregar productos a la compra
@@ -146,6 +142,7 @@ function agregarDetalleCompraend(objeto) {
     nombreProducto = document.getElementById('NombreProducto').value;
     var detalleCompra = {
         productoId: objeto.productoId,
+        compraId:0,
         unidadId: objeto.unidadId,
         cantidad: objeto.cantidadLote,
         lotes: [] // Inicialmente sin lotes
@@ -154,6 +151,7 @@ function agregarDetalleCompraend(objeto) {
     // Aquí es donde se crea el detalle de compra después de la validación del cliente
     var nuevoLote = {
         productoId: detalleCompra.productoId,
+        detalleCompraId: 0,
         numeroLote: objeto.numeroLote,
         precioCompra: objeto.precioCompra,
         precioPorUnidad: objeto.precioVentaxUnidad,

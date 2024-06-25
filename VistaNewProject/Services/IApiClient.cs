@@ -41,11 +41,11 @@ namespace VistaNewProject.Services
         // compra
 
         Task<IEnumerable<Compra>> GetCompraAsync();
-        Task<HttpResponseMessage> CreateComprasAsync(Compra compra);
+        Task<HttpResponseMessage> CreateComprasAsync(CrearCompra compra);
         Task<Compra> FinComprasAsync(int id);
         Task<HttpResponseMessage> UpdateComprasAsync(Compra compra);
-
         Task<HttpResponseMessage> DeleteComprasAsync(int id);
+        Task<(IEnumerable<FacturaDTO>, IEnumerable<LoteDTO>)> GetFacturasYLotesAsync();
 
 
 
@@ -76,8 +76,10 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Unidad>> GetUnidadAsync();
         Task<HttpResponseMessage> CreateUnidadAsync(Unidad unidad);
         Task<Unidad> FindUnidadAsync(int id);
+        Task<Unidad> FindNombreUnidadAsync(int id);
         Task<HttpResponseMessage> UpdateUnidadAsync(Unidad unidad);
         Task<HttpResponseMessage> DeleteUnidadAsync(int id);
+
         Task<HttpResponseMessage> CambiarEstadoUnidadAsync(int id);
 
 
@@ -94,6 +96,7 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> SustraerCantidadReservadaAsync(int productoId, int? cantidad);
         Task<HttpResponseMessage> AddCantidadPorUnidadReservadaAsync(int productoId, int? cantidad);
         Task<HttpResponseMessage> SustraerCantidadPorUnidadReservadaAsync(int productoId, int? cantidad);
+
         Task<HttpResponseMessage> QuitarCantidadReservada(int productoId, int? cantidad);
         Task<HttpResponseMessage> QuitarCantidadReservadaUnidad(int productoId, int? cantidad);
 
@@ -137,7 +140,6 @@ namespace VistaNewProject.Services
 
 
         // lote
-
         Task<IEnumerable<Lote>> GetLoteAsync();
         Task<HttpResponseMessage> CreateLoteAsync(Lote lote);
         Task<Lote> FindLoteAsync(int id);
@@ -146,8 +148,10 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> DeleteLoteAsync(int id);
         Task<HttpResponseMessage> UpdatePrecioLotesAsync(int productoId, decimal precioxunidad, decimal precioxproducto );
         Task<HttpResponseMessage> UpdatePrecioLoteAsync(int productoId, string numeroLote, decimal precioxunidad, decimal precioxproducto );
-
-
+        Task<HttpResponseMessage> AddCantidadALoteAsync(int loteId, int? cantidad);
+        Task<HttpResponseMessage> SustraerCantidadALoteAsync(int loteId, int? cantidad);
+        Task<HttpResponseMessage> AddCantidadPorUnidadALoteAsync(int loteId, int? cantidad);
+        Task<HttpResponseMessage> SustraerCantidadPorUnidadALoteAsync(int loteId, int? cantidad);
 
         // domicilio
 
@@ -182,23 +186,36 @@ namespace VistaNewProject.Services
         // permiso
 
         Task<IEnumerable<Permiso>> GetPermisoAsync();
+        Task<HttpResponseMessage> CreatePermisoAsync(Permiso permiso);
+        Task<Permiso> FindPermisoAsync(int id);
+        Task<HttpResponseMessage> UpdatePermisoAsync(Permiso permiso);
+        Task<HttpResponseMessage> DeletePermisoAsync(int id);
 
 
         // rol
 
         Task<IEnumerable<Rol>> GetRolAsync();
+        Task<HttpResponseMessage> CreateRolAsync(Rol rol);
+        Task<Rol> FindRolAsync(int id);
+        Task<HttpResponseMessage> UpdateRolAsync(Rol rol);
+        Task<HttpResponseMessage> DeleteRolAsync(int id);
 
-       
+
 
         // rolxpermiso
 
-        Task<UsuarioAcceso> GetAccesoAsync(int id);
-        //Task<IEnumerable<Rolxpermiso>> GetRolesxPermisosAsync();
-        //Task<HttpResponseMessage> CreateRolxPermisoAsync(Rolxpermiso rolxpermiso);
-        //Task<HttpResponseMessage> DeleteRolxPermisoAsync(int rolId, int permisoId);
+        Task<IEnumerable<Rolxpermiso>> GetRolesxPermisosAsync();
+        Task<UsuarioAcceso> GetAccesoAsync(int usuarioId);
+        Task<Rolxpermiso> GetRolesxPermisosByIdAsync(int rolxPermisoId);
+        Task<PermisoAcceso> GetPermisosByPermisoIdAsync(int permisoId);
+        Task<RolAcceso> GetPermisosByRolIdAsync(int rolId);
+        Task<HttpResponseMessage> CreateRolxPermisoAsync(RolxpermisoCrear rolxpermiso);
+        Task<HttpResponseMessage> DeleteRolxPermisoAsync(int rolId, int permisoId, string NombreRolxpermiso);
+
 
 
         // categoria x unidad
+
         Task<IEnumerable<CategoriaxUnidad>> GetCategoriaxUnidadesAsync();
         Task<HttpResponseMessage> CreateCategoriaxUnidadAsync(CategoriaxUnidad categoriaxunidad);
         Task<IEnumerable<CategoriaxUnidad>> GetCategoriaxUnidadesByIdAsync(int categoriaId);
@@ -226,7 +243,7 @@ namespace VistaNewProject.Services
         Task<IEnumerable<UnidadxProducto>> GetUnidadesxProductosByIdProductoAsync(int productoId);
         Task<HttpResponseMessage> CreateUnidadxProductoAsync(UnidadxProductoAsosiacion productoxunidad);
         Task<HttpResponseMessage> DeleteUnidadxProductoAsync(int unidadId, int productoId);
-        Task<(IEnumerable<FacturaDTO>, IEnumerable<LoteDTO>)> GetFacturasYLotesAsync();
+  
 
     }
 }

@@ -12,74 +12,103 @@
     <h4>Productos asociados:</h4>
     @if (Model.Any())
     {
-        foreach (var detalle in Model)
-        {
-    var lotesDetalle = ViewBag.Lotes as List<VistaNewProject.Models.Lote>;
-    var lotesAsociados = lotesDetalle?.Where(l => l.DetalleCompraId == detalle.DetalleCompraId).ToList();
-
-
-<div class="detalle-compra">
-                <header>Detalle de Compra ID: @detalle.DetalleCompraId   Fecha de compra: @ViewBag.Compra.FechaCompra </header>
-    <div class="pedido-info">
-              
+            <div class="detalle-compra">
+                <div class="pedido-info">
                     <div class="detalle-compra">
                         <div class="pedido-info">
                             <table class="table tablaDetalle">
                                 <thead>
                                     <tr>
+                                        <th>Número lote</th>
                                         <th>Producto ID</th>
-                                        <th>Nombre Producto</th>
-                                        <th>Nombre Unidad</th>
-                                        <th>Cantidad</th>
-                                        <th>Número Lote</th>
-                                        <th>Precio por Producto</th>
-                                        <th>Precio por Unidad</th>
+                                        <th>Nombre producto</th>
+                                        <th>Nombre unidad</th>
+                                        <th>Cantidad x producto</th>
+                                        <th>Cantidad x unidad de producto</th>
+                                        <th>Precio x unidad</th>
+                                        <th>Precio x producto</th>
+                                        <th>Precio x unidad de Producto</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                @foreach (var detalle in Model)
+                                {
+                                    var lotesDetalle = ViewBag.Lotes as List<VistaNewProject.Models.Lote>;
+                                    var lotesAsociados = lotesDetalle?.Where(l => l.DetalleCompraId == detalle.DetalleCompraId).ToList();
                                     @if (lotesAsociados != null && lotesAsociados.Any())
                                     {
                                         foreach (var lote in lotesAsociados)
                                         {
                                             <tr>
+                                                <td>@lote.NumeroLote</td>
                                                 <td>@detalle.ProductoId</td>
-                                                <td>@(detalle.Producto != null ? detalle.Producto.NombreProducto : "No se encontró información")</td>
-                                                <td>@(detalle.Unidad != null ? detalle.Unidad.NombreUnidad + " x " + detalle.Unidad.CantidadPorUnidad : "No se encontró información")</td>
-                                                <td>@detalle.Cantidad</td>
-                                                <td>@lote.LoteId</td>
+                                                <td>@(detalle.Producto != null ? detalle.Producto.NombreCompletoProducto : "No se encontró información")</td>
+                                                <td>@(detalle.Unidad != null ? detalle.Unidad.NombreCompletoUnidad: "No se encontró información")</td>
+                                                <td>@lote.CantidadCompra</td>
+                                                <td>@lote.CantidadPorUnidadCompra</td>
+                                                <td>@lote.PrecioPorUnidad</td>
                                                 <td>@lote.PrecioPorPresentacion</td>
                                                 <td>@lote.PrecioPorUnidadProducto</td>
                                             </tr>
                                         }
                                     }
-                                    else
-                                    {
-                                        <tr>
-                                            <td>@detalle.ProductoId</td>
-                                            <td>@(detalle.Producto != null ? detalle.Producto.NombreProducto : "No se encontró información")</td>
-                                            <td>@(detalle.Unidad != null ? detalle.Unidad.NombreUnidad + " x " + detalle.Unidad.CantidadPorUnidad : "No se encontró información")</td>
-                                            <td>@detalle.Cantidad</td>
-                                            <td colspan="3">No hay lotes asociados</td>
-                                        </tr>
-                                    }
+                                }
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
-    </div>
-</div>
+                </div>
+            </div>
 
-        }
-        <div class="pagination-detail">
-            <a href="@Url.Action("Details", new { id = ViewBag.Compra.CompraId, page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 })" class="prev-next @(Model.HasPreviousPage ? "" : "disabled")">Anterior</a>
 
-            @for (int i = 1; i <= Model.PageCount; i++)
+        <div class="pagination-container mt-2">
+            @if (Model != null && Model.PageCount > 1)
             {
-                <a href="@Url.Action("Details", new { id = ViewBag.Compra.CompraId, page = i })" class="@(i == Model.PageNumber ? "active" : "")">@i</a>
+                <div class="d-flex justify-content-center mb-5">
+                    <nav aria-label="Page navig ation">
+                        <ul class="pagination justify-content-center">
+                            <!-- Botón para ir a la primera página -->
+                            @if (Model.PageNumber > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Compra.CompraId, page = 1, order = ViewBag.CurrentOrder })" aria-label="First">
+                                        <span aria-hidden="true">Primero</span>
+                                    </a>
+                                </li>
+                            }
+                            <!-- Botón para la página anterior (oculto en la página 1) -->
+                            <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                                <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Compra.CompraId, page = Model.PageNumber - 1, order = ViewBag.CurrentOrder })" aria-label="Previous">
+                                    <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                                </a>
+                            </li>
+                            <!-- Iterar sobre las páginas disponibles -->
+                            @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                            {
+                                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                    <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Compra.CompraId, page = i, order = ViewBag.CurrentOrder })">@i</a>
+                                </li>
+                            }
+                            <!-- Botón para la página siguiente (oculto en la última página) -->
+                            <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                                <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Compra.CompraId, page = Model.PageNumber + 1, order = ViewBag.CurrentOrder })" aria-label="Next">
+                                    <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                                </a>
+                            </li>
+                            <!-- Botón para ir a la última página -->
+                            @if (Model.PageNumber < Model.PageCount)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Compra.CompraId, page = Model.PageCount, order = ViewBag.CurrentOrder })" aria-label="Last">
+                                        <span aria-hidden="true">Último</span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                </div>
             }
-
-            <a href="@Url.Action("Details", new { id = ViewBag.Compra.CompraId, page = Model.HasNextPage ? Model.PageNumber + 1 : Model.PageCount })" class="prev-next @(Model.HasNextPage ? "" : "disabled")">Siguiente</a>
         </div>
     }
     else

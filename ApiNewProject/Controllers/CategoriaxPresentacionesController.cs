@@ -51,7 +51,7 @@ namespace ApiNewProject.Controllers
             {
                 // Considera registrar el error en un log aquí
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                                 "Error al obtener las asociaciones categoría-marca: " + ex.Message);
+                                 "Error al obtener las asociaciones categoría-presentacion: " + ex.Message);
             }
         }
 

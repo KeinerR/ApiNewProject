@@ -10,21 +10,20 @@ function obtenerClienteId(DomicilioId) {
         .then(domicilio => {
             console.log(domicilio);
 
+            // Asignar valores a los campos de formulario o donde los necesites
             document.getElementById('DomicilioIdAct').value = domicilio.domicilioId;
             document.getElementById('PedidoIdAct').value = domicilio.pedidoId;
             document.getElementById('ClientesAct').value = domicilio.usuariId;
             document.getElementById('EstadoDomicilioAct').value = domicilio.estadoDomicilio;
             document.getElementById('ObservacionAct').value = domicilio.observacion;
             document.getElementById('DireccionDomiciliarioAct').value = domicilio.direccionDomiciliario;
-            document.getElementById('FechaEntregaAct').value = domicilio.fechaEnntrega;
-           
-
-
+            document.getElementById('FechaEntregaAct').value = domicilio.fechaEntrega; // Corregido fechaEntrega según la respuesta del servidor
 
             console.log(domicilio);
         })
         .catch(error => {
-            console.error("Error :", error)
+            console.error("Error:", error);
+            // Aquí podrías mostrar un mensaje de error al usuario si lo deseas
         });
 }
 

@@ -261,7 +261,6 @@ $(document).ready(function () {
                 const dataList = document.getElementById('buscarList');
                 dataList.innerHTML = ''; // Limpiar opciones existentes
 
-
                 // Agregar nuevas opciones al datalist
                 data.forEach(item => {
                     let option = document.createElement('option');
@@ -269,14 +268,13 @@ $(document).ready(function () {
                     dataList.appendChild(option);
                 });
             })
-             
-           
             .catch(error => {
                 console.error('Error:', error);
                 alert('Error al obtener los datos');
             });
     });
 });
+
 function actualizardetallelotes(detalleId) {
     console.log(detalleId);
     var modalElement = document.getElementById('ModalDomicilio');

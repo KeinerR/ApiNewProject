@@ -336,7 +336,7 @@
                 </th>
                 <th>Valor Total</th>
                 <th class="contenedorEstado">
-                    Estado
+                    Inhabilitar
                 </th>
                 <th class="contenedorAcciones">
                     Acciones
@@ -388,7 +388,7 @@
                             <a asp-action="Details" asp-controller="Compras" asp-route-id="@item.CompraId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
                             <form asp-controller="Categorias" class="eliminarCategoria" asp-action="Delete" method="post">
                                 <input type="hidden" name="compraId" id="campoId" value="@item.CompraId" />
-                                <button type="submit" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                <button type="submit" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-ban"></i></button>
                             </form>
                         </div>
                     </td>
@@ -429,7 +429,7 @@
                                     <a asp-action="Details" asp-controller="Compras" asp-route-id="@compra.CompraId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
                                     <form asp-controller="Categorias" class="eliminarCategoria" asp-action="Delete" method="post">
                                         <input type="hidden" name="compraId" id="campoId" value="@compra.CompraId" />
-                                        <button type="submit" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                        <button type="submit" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-ban"></i></button>
                                     </form>
                                 </div>
                             </td>

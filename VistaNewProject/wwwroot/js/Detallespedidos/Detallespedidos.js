@@ -265,8 +265,8 @@ $(document).ready(function () {
                 if (!response.ok) {
                     throw new Error('Error al obtener los lotes del producto');
                 }
-
                 return response.json();
+            })
 
 
 
@@ -275,11 +275,10 @@ $(document).ready(function () {
         const fetchProductos = fetch(`/DetallePedidos/GetProductos`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Error al obtener los productos');
+                    throw new Error('Error al obtener las compras');
                 }
                 return response.json();
-            });
-
+            })
         
 
         // Esperar a que todas las solicitudes se completen

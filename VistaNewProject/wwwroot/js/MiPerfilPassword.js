@@ -12,7 +12,7 @@
 
     function obtenerDatosUsuario(usuarioId) {
         return new Promise((resolve, reject) => {
-            $.get(`https://localhost:7013/api/Usuarios/GetUsuarioById?Id=${usuarioId}`)
+            $.get(`http://optimusweb-001-site1.ctempurl.com/api/Usuarios/GetUsuarioById?Id=${usuarioId}`)
                 .done(usuario => {
                     usuarioInicial = {
                         id: usuario.usuarioId,
@@ -120,7 +120,7 @@
             EstadoUsuario: estadoUsuario
         };
 
-        fetch(`https://localhost:7013/api/Usuarios/UpdateUsuarios`, {
+        fetch(`http://optimusweb-001-site1.ctempurl.com/api/Usuarios/UpdateUsuarios`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'

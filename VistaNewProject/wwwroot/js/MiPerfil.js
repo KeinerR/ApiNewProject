@@ -8,7 +8,7 @@ $(function () {
     var usuarioId = document.getElementById('UsuarioId').value;
     obtenerDatosUsuario(usuarioId);
 
-    fetch('https://localhost:7013/api/Usuarios/GetUsuarios')
+    fetch('http://optimusweb-001-site1.ctempurl.com/api/Usuarios/GetUsuarios')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Error al obtener los usuarios.');
@@ -154,7 +154,7 @@ $(function () {
 
         function obtenerDatosUsuario(usuarioId) {
             return new Promise((resolve, reject) => {
-                fetch(`https://localhost:7013/api/Usuarios/GetUsuarioById?Id=${usuarioId}`)
+                fetch(`http://optimusweb-001-site1.ctempurl.com/api/Usuarios/GetUsuarioById?Id=${usuarioId}`)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Error al obtener los datos del usuario.');
@@ -217,7 +217,7 @@ $(function () {
                 EstadoUsuario: estadoUsuario
             };
 
-            fetch(`https://localhost:7013/api/Usuarios/UpdateUsuarios`, {
+            fetch(`http://optimusweb-001-site1.ctempurl.com/api/Usuarios/UpdateUsuarios`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'

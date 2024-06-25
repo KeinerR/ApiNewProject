@@ -31,4 +31,6 @@ namespace ApiNewProject.Entities
     {
         public string? NumeroLote { get; set; }
     }
+
+ 
 }

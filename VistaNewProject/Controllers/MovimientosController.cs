@@ -200,14 +200,13 @@ namespace VistaNewProject.Controllers
 
             // 5. Filtrar los lotes para obtener solo los que corresponden a la compra actual
             var detallecompras = detalles.Where(p => p.CompraId == CompraId).ToList();
-
+            var lotes = await _client.GetLoteAsync();
             // 6. Para cada detalle de compra, obtener el producto y el detalle de la compra asociados
             var productosTasks = detallecompras.Select(async detalle =>
             {
                 detalle.Producto = await _client.FindProductoAsync(detalle.ProductoId.Value);
                 detalle.Compra = await _client.FinComprasAsync(detalle.CompraId.Value);
-                detalle.lote = await _client.FindLoteAsync(detalle.DetalleCompraId);
-
+                detalle.Lotes = lotes.Where(l => l.DetalleCompraId == detalle.DetalleCompraId).ToList();
                 detalle.Unidad = await _client.FindUnidadAsync(detalle.UnidadId.Value);
             });
 

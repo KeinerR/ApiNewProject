@@ -146,7 +146,6 @@ namespace ApiNewProject.Controllers
 
             return Ok($"Se actualizó el precio del lote con ID {loteId}");
         }
-       
         [HttpPut("AddCantidadALote/{id}")]
         public async Task<ActionResult> AddCantidadALote(int id, int? cantidad)
         {
@@ -157,8 +156,28 @@ namespace ApiNewProject.Controllers
             {
                 return NotFound();
             }
-            // Actualizar la cantidad reservada del producto
+            if (cantidad > lote.CantidadCompra)
+            {
+                return Conflict("La a agregar al lote no puede ser mayor a la cantidad cuando se compro el lote.");
+            }
+            var producto = await _context.Productos.FindAsync(lote.ProductoId);
+            if (producto == null)
+            {
+                return NotFound();
+            }
+            var presentacion = await _context.Presentaciones.FindAsync(producto.ProductoId);
+            int? agregarACantidadPorUnidad = 0;
+
+            if (presentacion != null)
+            {
+                agregarACantidadPorUnidad = presentacion.CantidadPorPresentacion * cantidad;
+            }
+
             lote.Cantidad += cantidad;
+            lote.CantidadPorUnidad += agregarACantidadPorUnidad;
+            if (lote.Cantidad > lote.CantidadCompra) {
+                return Conflict("La suma de la cantidad agregada y la cantidad en lote no puede ser mayor a la cantidad cuando se compro el lote.");
+            }
 
             // Guardar los cambios en la base de datos
             await _context.SaveChangesAsync();
@@ -176,19 +195,174 @@ namespace ApiNewProject.Controllers
             {
                 return NotFound();
             }
+            var producto = await _context.Productos.FirstOrDefaultAsync(p => p.ProductoId == lote.ProductoId);
+            var presentacion = await _context.Presentaciones.FindAsync(producto?.PresentacionId);
+            var cantidadValida = cantidad * presentacion?.CantidadPorPresentacion;
 
-            // Verificar si la cantidad a restar es válida
-            if (lote.Cantidad < cantidad)
+            if (producto == null || presentacion == null)
             {
-                return BadRequest("La cantidad a restar es mayor que la cantidad en lote actual.");
+                return NotFound();
+            }
+            
+            // Verificar si la cantidad a restar es válida
+            if (cantidad == null || cantidad <= 0)
+            {
+                return BadRequest("Cantidad no válida.");
             }
 
-            lote.Cantidad -= cantidad; ;
+            if (lote.Cantidad < cantidad)
+            {
+                return BadRequest("La cantidad a restar es mayor que la cantidad total actual en lote.");
+            }
+            if (cantidadValida < (cantidad * presentacion.CantidadPorPresentacion))
+            {
+                return BadRequest("La cantidad total por unidad no es suficiente.");
+            }
+            int? agregarACantidadPorUnidad = 0;
 
+            if (presentacion != null)
+            {
+                agregarACantidadPorUnidad = presentacion.CantidadPorPresentacion * cantidad;
+            }
+
+            lote.Cantidad -= cantidad;
+            lote.CantidadPorUnidad -= agregarACantidadPorUnidad;
             // Guardar los cambios en la base de datos
             await _context.SaveChangesAsync();
 
             return Ok();
+        }
+
+        [HttpPut("AddCantidadPorUnidadALote/{id}")]
+        public async Task<ActionResult> AddCantidadPorUnidadLote(int id, int? cantidad)
+        {
+            try
+            {
+                var lote = await _context.Lotes.FirstOrDefaultAsync(p => p.LoteId == id);
+                if (lote == null)
+                {
+                    return NotFound();
+                }
+                // Validar la entrada
+                if (cantidad == null || cantidad <= 0)
+                {
+                    return BadRequest("Cantidad no válida.");
+                }
+
+                // Obtener el producto y la presentación
+                var producto = await _context.Productos
+                    .Include(p => p.Presentacion)
+                    .FirstOrDefaultAsync(p => p.ProductoId == lote.ProductoId);
+
+                if (producto == null || producto.Presentacion == null)
+                {
+                    return NotFound();
+                }
+                // Calcular la cantidad por presentación y el resto
+                var cantidadPorPresentacion = producto.Presentacion.CantidadPorPresentacion;
+                var nuevaCantidadTotalPorUnidad = lote.CantidadPorUnidad + cantidad;
+                int? loteCantidadTotal = 0;
+                var numeroPar = nuevaCantidadTotalPorUnidad % 2;
+                var restar = nuevaCantidadTotalPorUnidad % cantidadPorPresentacion;
+                var presentacion = producto.Presentacion;
+                if (nuevaCantidadTotalPorUnidad > lote.CantidadPorUnidadCompra) {
+                    return Conflict("La cantidad a retornar a lote no puede ser mayor que la cantidad total por unidad que se compro al momento de generar el lote.");
+                }
+                if (presentacion == null)
+                {
+                    return NotFound("Presentación no encontrada para el producto.");
+                }
+               
+                if (numeroPar == 0)
+                {
+                    var cantidadLotes = nuevaCantidadTotalPorUnidad / cantidadPorPresentacion;
+                    lote.Cantidad = cantidadLotes;
+                }
+                else
+                {
+                    loteCantidadTotal = (nuevaCantidadTotalPorUnidad - restar) / cantidadPorPresentacion;
+                    lote.Cantidad = loteCantidadTotal;
+                }
+
+                lote.CantidadPorUnidad= nuevaCantidadTotalPorUnidad;
+                if (lote.CantidadPorUnidad > lote.CantidadPorUnidadCompra) {
+                    return Conflict("La cantidad a retornar mas la cantidad en lote por uniadad no puede ser mayor que la cantidad total por unidad al momento de generar el lote.");
+
+                }
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Manejar errores inesperados
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
+
+        [HttpPut("SustraerCantidadPorUnidadALote/{id}")]
+        public async Task<ActionResult> SustraerCantidadPorUnidadALote(int id, int? cantidad)
+        {
+            try
+            {
+                var lote = await _context.Lotes.FirstOrDefaultAsync(p => p.LoteId == id);
+                if (lote == null)
+                {
+                    return NotFound();
+                }
+                // Validar la entrada
+                if (cantidad == null || cantidad <= 0)
+                {
+                    return BadRequest("Cantidad no válida.");
+                }
+                if (cantidad > lote.CantidadPorUnidad)
+                {
+                    return BadRequest("La cantidad a restar es mayor que la cantidad por unidad disponible en el  lote.");
+                }
+                // Obtener el producto y la presentación
+                var producto = await _context.Productos
+                    .Include(p => p.Presentacion)
+                    .FirstOrDefaultAsync(p => p.ProductoId == id);
+
+                if (producto == null)
+                {
+                    return NotFound();
+                }
+
+                var presentacion = producto.Presentacion;
+                if (presentacion == null)
+                {
+                    return NotFound("Presentación no encontrada para el producto.");
+                }
+
+                // Calcular la cantidad por presentación y el resto
+                var cantidadPorPresentacion = presentacion.CantidadPorPresentacion;
+                var nuevaCantidadTotalPorUnidad = lote.CantidadPorUnidad - cantidad;
+                int? loteCantidadTotal = 0;
+                var numeroPar = nuevaCantidadTotalPorUnidad % 2;
+                var restar = nuevaCantidadTotalPorUnidad % cantidadPorPresentacion;
+                if (numeroPar == 0)
+                {
+                    var cantidadLotes = nuevaCantidadTotalPorUnidad / cantidadPorPresentacion;
+                    lote.Cantidad = cantidadLotes;
+                }
+                else
+                {
+                    loteCantidadTotal = (nuevaCantidadTotalPorUnidad - restar) / cantidadPorPresentacion;
+                    lote.Cantidad = loteCantidadTotal;
+                }
+
+                lote.CantidadPorUnidad = nuevaCantidadTotalPorUnidad;
+
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Manejar errores inesperados
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
         }
 
         [HttpDelete("DeleteLote/{Id}")]
@@ -204,7 +378,6 @@ namespace ApiNewProject.Controllers
             return HttpStatusCode.OK;
         }
         [HttpPatch("UpdateEstadoLote/{id}")]
-
         public async Task<IActionResult> UpdateEstadoLote(int id)
         {
             try
