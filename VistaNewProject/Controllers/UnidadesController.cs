@@ -75,7 +75,6 @@ namespace VistaNewProject.Controllers
             return View(pageUnidad);
         }
 
-
         [HttpPost]
         public async Task<JsonResult> FindUnidad(int unidadId)
         {
@@ -106,7 +105,7 @@ namespace VistaNewProject.Controllers
             var unidad = await _client.FindUnidadAsync(id.Value); // Obtener la unidad directamente como int
 
             var categorias = await _client.GetCategoriaAsync();
-            var categoriasxunidades = await _client.GetCategoriaxUnidadesAsync();
+            var categoriasxunidades = await _client.GetCategoriasxUnidadByIdUnidadAsync(id.Value);
 
             // Filtrar categorías asociadas a la unidad específica
             var categoriasAsociadasIds = categoriasxunidades
@@ -160,10 +159,11 @@ namespace VistaNewProject.Controllers
 
             var categoriasAsociadas = categorias
                 .Select(c => new CategoriaxUnidad
-                {
+                {   
                     CategoriaId = c.CategoriaId,
                     NombreCategoria = c.NombreCategoria,
                     UnidadId = id.Value,
+                    EstaAsociada = categoriasxunidades.Any(cm => cm.CategoriaId == c.CategoriaId)
                 })
                 .ToList();
 

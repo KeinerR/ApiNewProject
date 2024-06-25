@@ -76,19 +76,18 @@ namespace VistaNewProject.Controllers
            
         }
 
-        [HttpPost]
-        public async Task<JsonResult> FindCategoria(int categoriaId)
+        [HttpGet]
+        public async Task<IActionResult> FindCategoria(int categoriaId)
         {
             var categoria = await _client.FindCategoriaAsync(categoriaId);
 
             if (categoria == null)
             {
-                return Json("null");
+                return NotFound(); // Devuelve un 404 Not Found si la categoría no existe
             }
 
-            return Json(categoria);
+            return Json(categoria); // Devuelve la categoría encontrada en formato JSON
         }
-
 
         [HttpPost]
         public async Task<JsonResult> FindCategorias()

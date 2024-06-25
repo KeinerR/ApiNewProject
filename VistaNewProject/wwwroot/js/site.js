@@ -102,29 +102,39 @@ function mostrarOcultarContrasena(idCampo) {
     }
 }
 // Función para manejar la selección de opciones en los datalist
-window.seleccionarOpcion = function (input, dataList, hiddenInput,Peticion) {
+window.seleccionarOpcion = function (input, dataList, hiddenInput, Peticion) {
     const selectedValue = input.value.trim();
     let selectedOptionByName = Array.from(dataList.options).find(option => option.value === selectedValue);
     let selectedOptionById = Array.from(dataList.options).find(option => option.getAttribute('data-id') === selectedValue);
+
     if (/^\d+[a-zA-Z]$/.test(selectedValue)) {
         selectedOptionByName = Array.from(dataList.options).find(option => option.value === selectedValue);
     }
+
     if (!selectedOptionByName && !selectedOptionById && /^\d+$/.test(selectedValue)) {
-        if (!selectedOptionByName) {
-            if (Peticion == "Categoria") {
-                manejarCategoria(selectedValue);
-                return;
-            }
+        if (Peticion == "Categoria") {
+            var response = manejarCategoria(selectedValue);
+            return;
         }
-        Swal.fire({
-            icon: 'warning',
-            title: 'No se encontró ningún resultado con este ID',
-            showConfirmButton: false,
-            timer: 1800
-        });
-        input.value = '';
-        input.dispatchEvent(new Event('input'));
-        return;
+        if (Peticion == "Presentacion") {
+            var response = manejarPresentacion(selectedValue);
+            return;
+        }
+        if (Peticion == "Marca") {
+            var response = manejarMarca(selectedValue);
+            return;
+        }
+        if (response == null) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No se encontró ningún resultado con este ID',
+                showConfirmButton: false,
+                timer: 1800
+            });
+            input.value = '';
+            input.dispatchEvent(new Event('input'));
+            return;
+        }
     }
 
     if (selectedOptionByName) {
@@ -134,25 +144,49 @@ window.seleccionarOpcion = function (input, dataList, hiddenInput,Peticion) {
         input.value = selectedOptionById.value;
         hiddenInput.value = selectedOptionById.getAttribute('data-id');
     }
-    if (Peticion.includes("Categoria")) {
-        checkboxFiltrar();
-    }
 }
 async function manejarCategoria(selectedValue) {
-        try {
-            var categoria = await buscarCategoria(selectedValue);
+    try {
+        var categoria = await buscarCategoria(selectedValue);
 
-            if (categoria && categoria.NombreCategoria) {
-                console.log(categoria.NombreCategoria);
-                input.value = categoria.NombreCategoria;
-                hiddenInput.value = categoria.NombreCategoria;
-            } else {
-                alert("Jer");
-                console.log("Categoría no encontrada");
-            }
-        } catch (error) {
-            console.error('Error al manejar la categoría:', error);
+        if (categoria != null && categoria !== "null") {
+            console.log(categoria);
+            $('#NombreCategoria').val(categoria.nombreCategoria);
+            $('#CategoriaId').val(categoria.categoriaId);
+        } else {
+            alert("Categoría no encontrada");
+            console.log("Categoría no encontrada");
         }
+    } catch (error) {
+        console.error('Error al manejar la categoría:', error);
+    }
+}
+async function manejarPresentacion(selectedValue) {
+    try {
+        var presentacion = await buscarPresentacion(selectedValue);
+        if (presentacion != null && presentacion !== "null") {
+            $('#NombrePresentacion').val(presentacion.nombreCompletoPresentacion);
+            $('#PresentacionId').val(presentacion.presentacionId);
+        } else {
+            alert("Presentacion no encontrada");
+        }
+    } catch (error) {
+        console.error('Error al manejar la Presentacion:', error);
+    }
+}
+async function manejarMarca(selectedValue) {
+    try {
+        var marca = await buscarMarca(selectedValue);
+
+        if (marca != null && marca !== "null") {
+            $('#NombreMarca').val(marca.nombreMarca);
+            $('#MarcaId').val(marca.marcaId);
+        } else {
+            alert("Categoría no encontrada");
+        }
+    } catch (error) {
+        console.error('Error al manejar la categoría:', error);
+    }
 }
 
 function obtenerValoresFormulario(ids) {
@@ -189,22 +223,45 @@ function formatoNumeroINT(input) {
 /*------------------------------------------------------------------------------------------------------------------------------ */
 function buscarCategoria(categoriaId) {
     return $.ajax({
-        url: `/Categorias/FindCategoria/${categoriaId}`,
-        type: 'POST',
-        contentType: 'application/json'
-    }).then(categoria => {
-        return categoria;
-    }).catch(xhr => {
-        console.error('Error al actualizar el estado de la categoría:', xhr.responseText);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Hubo un error al actualizar el estado de la categoría. Por favor, inténtalo de nuevo.'
-        });
-        return null;
+        url: `/Categorias/FindCategoria`,
+        type: 'GET',
+        data: { categoriaId: categoriaId },
+        success: function (data) {
+            return data;
+        },
+        error: function () {
+            mostrarAlertaAtencionPersonalizadaConBoton('No existe una categoria con este id');
+        }
     });
 }
 
+function buscarMarca(marcaId) {
+    return $.ajax({
+        url: `/Marcas/FindMarca`,
+        type: 'GET',
+        data: { marcaId: marcaId },
+        success: function (data) {
+            return data;
+        },
+        error: function () {
+            mostrarAlertaAtencionPersonalizadaConBoton('No existe una marca con este id.');
+        }
+    });
+}
+
+function buscarPresentacion(presentacionId) {
+    return $.ajax({
+        url: `/Presentaciones/FindPresentacion`,
+        type: 'GET',
+        data: { presentacionId: presentacionId },
+        success: function (data) {
+            return data;
+        },
+        error: function () {
+            mostrarAlertaAtencionPersonalizadaConBoton('Mo existe una presentacion con este id.');
+        }
+    });
+}
 
 
 /*------------------------------------------Funciones patra mostrar alertas--------------------------------------------*/
@@ -371,16 +428,14 @@ function iconoLimpiarCampo(idsCampos,id) {
     removerIconoparalimpiarElCampo(id);
 }
 
-
 /*---------------------------- Funciones para detalle de producto ---------------------------------------------- */
 
 // Función para limpiar y rellenar las listas
 function fillList(selector, data, nameKey, idKey, stateKey, emptyMessage) {
     const $list = $(selector).empty(); // Limpiar la lista antes de rellenarla
-    console.log(data);
     if (data && data.length > 0) {
         data.forEach(item => {
-            const option = `<option value="${item[idKey]}" data-estado="${item[stateKey]}">${item[nameKey]}</option>`;
+            const option = `<option value="${item[nameKey]}" data-estado="${item[stateKey]}"></option>`;
             $list.append(option);
         });
     } else {
@@ -401,7 +456,6 @@ async function checkboxFiltrar() {
         if (asociar === 1 && filtro !== "") {
             url += `/${filtro}`;
         }
-
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -409,17 +463,15 @@ async function checkboxFiltrar() {
             },
             body: JSON.stringify({ filtrar: filtrar })
         });
-
         if (!response.ok) {
             throw new Error('Error al cargar los productos');
         }
-
         const data = await response.json();
-        console.log(data);
+        console.log(data.marcas);
         // Fill and clear lists using the fillList function
-        fillList('#marcas', data.Marcas, 'nombreMarca', 'marcaId', 'estadoMarca', 'No hay marcas disponibles');
-        fillList('#presentaciones', data.Presentaciones, 'nombreCompletoPresentacion', 'presentacionId', 'estadoPresentacion', 'No hay presentaciones disponibles');
-        fillList('#categorias', data.Categorias, 'nombreCategoria', 'categoriaId', 'estadoCategoria', 'No hay categorías disponibles');
+        fillList('#marcas', data.marcas, 'nombreMarca', 'marcaId', 'estadoMarca', 'No hay marcas disponibles');
+        fillList('#presentaciones', data.presentaciones, 'nombreCompletoPresentacion', 'presentacionId', 'estadoPresentacion', 'No hay presentaciones disponibles');
+        fillList('#categorias', data.categorias, 'nombreCategoria', 'categoriaId', 'estadoCategoria', 'No hay categorías disponibles');
 
     } catch (error) {
         console.error(error); // Log error to console
