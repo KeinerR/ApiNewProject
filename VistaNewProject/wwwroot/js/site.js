@@ -376,19 +376,20 @@ function iconoLimpiarCampo(idsCampos,id) {
 
 // Función para limpiar y rellenar las listas
 function fillList(selector, data, nameKey, idKey, stateKey, emptyMessage) {
-    const $list = $(selector).empty(); // Limpia la lista
-
+    const $list = $(selector).empty(); // Limpiar la lista antes de rellenarla
+    console.log(data);
     if (data && data.length > 0) {
         data.forEach(item => {
-            const option = `<option value="${item[nameKey]}" data-id="${item[idKey]}" data-estado="${item[stateKey]}">${item[nameKey]}</option>`;
+            const option = `<option value="${item[idKey]}" data-estado="${item[stateKey]}">${item[nameKey]}</option>`;
             $list.append(option);
         });
     } else {
-        // Si no hay datos, muestra un mensaje
+        // Si no hay datos, mostrar un mensaje vacío
         const option = `<option>${emptyMessage}</option>`;
         $list.append(option);
     }
 }
+
 async function checkboxFiltrar() {
     try {
         const filtrar = document.getElementById('filtrarActivos').checked ? 1 : 0;
@@ -415,7 +416,6 @@ async function checkboxFiltrar() {
 
         const data = await response.json();
         console.log(data);
-
         // Fill and clear lists using the fillList function
         fillList('#marcas', data.Marcas, 'nombreMarca', 'marcaId', 'estadoMarca', 'No hay marcas disponibles');
         fillList('#presentaciones', data.Presentaciones, 'nombreCompletoPresentacion', 'presentacionId', 'estadoPresentacion', 'No hay presentaciones disponibles');
@@ -463,9 +463,6 @@ async function checkboxFiltrarAct() {
         console.error(error); // Muestra el error en la consola
     }
 }
-
-
-
 async function checkboxFiltrarActPasanddvariables(filtrar, asociar, filtro) {
     try {
         let url = `/Productos/filtrarDataList/${filtrar}/${asociar}`;
