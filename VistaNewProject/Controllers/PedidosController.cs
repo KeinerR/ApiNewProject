@@ -476,12 +476,12 @@ namespace VistaNewProject.Controllers
 
 
 
-       public async Task<IActionResult> UpdateEstadoPedido(int id, string estado)
-        {
+       //public async Task<IActionResult> UpdateEstadoPedido(int id, string estado)
+       // {
 
 
-            var pedido= await _client.
-        }
+       //     var pedido= await _client.
+       // }
 
     }
 }

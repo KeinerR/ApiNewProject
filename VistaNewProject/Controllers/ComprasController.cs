@@ -72,7 +72,7 @@ namespace VistaNewProject.Controllers
 
         public async Task<IActionResult> Details(int? id, int? page)
         {
-            int pageSize = 1; // Número máximo de elementos por página
+            int pageSize = 5; // Número máximo de elementos por página
             int pageNumber = page ?? 1;
             if (id == null)
             {
@@ -85,14 +85,11 @@ namespace VistaNewProject.Controllers
             {
                 return NotFound();
             }
-            var productos = await _client.GetProductoAsync();
-            var categorias = await _client.GetCategoriaAsync();
-            var marcas = await _client.GetMarcaAsync();
+            var productos = await _client.GetAllDatosProductosAsync(); 
             var detallescompra = await _client.GetDetallecompraAsync();
             var proveedores = await _client.GetProveedorAsync();
-            var unidades = await _client.GetUnidadAsync();
             var lotes = await _client.GetLoteAsync();
-            var presentaciones = await _client.GetPresentacionAsync();
+            var unidades = await _client.GetUnidadAsync();
 
             // Filtrar los productos para este detalle específico
             var detallesXCompra = detallescompra.Where(p => p.CompraId == id).ToList();
@@ -109,12 +106,8 @@ namespace VistaNewProject.Controllers
             ViewBag.Unidades = unidades;
             ViewBag.Productos = productos;
             ViewBag.Lotes = lotes;
-            ViewBag.Presentaciones = presentaciones;
-            ViewBag.Marcas = marcas;
-            ViewBag.Categorias = categorias;
             return View(pagedCompra);
         }
-
 
         [HttpPost("/Compras/InsertarCompra")]
         public async Task<IActionResult> InsertarCompra([FromBody] CrearCompra compra)
@@ -123,7 +116,6 @@ namespace VistaNewProject.Controllers
             {
                 return BadRequest("La compra no puede ser null");
             }
-
             var nuevaCompra = new CrearCompra
             {
                 CompraId = compra.CompraId,
@@ -150,6 +142,40 @@ namespace VistaNewProject.Controllers
 
                 foreach (var lote in detalle.Lotes)
                 {
+                    var producto = await _client.FindProductoAsync(lote.ProductoId.Value);
+                    var presentacion = await _client.FindPresentacionAsync(producto.PresentacionId.Value);
+                    var unidad = await _client.FindUnidadAsync(detalle.UnidadId.Value);
+                    if (unidad.UnidadId == 2)
+                    {
+                        // Calcular la cantidad por presentación y el resto
+                        var cantidadPorPresentacion = presentacion.CantidadPorPresentacion;
+                        var nuevaCantidadPorUnidad = lote.Cantidad;
+                        int? productoCantidadTotal = 0;
+                        var numeroPar = nuevaCantidadPorUnidad % 2;
+                        var restar = nuevaCantidadPorUnidad % cantidadPorPresentacion;
+                        if (numeroPar == 0)
+                        {
+                            var cantidadLotes = nuevaCantidadPorUnidad / cantidadPorPresentacion;
+                            lote.Cantidad = cantidadLotes;
+                            lote.CantidadCompra = cantidadLotes;
+                        }
+                        else
+                        {
+                            productoCantidadTotal = (nuevaCantidadPorUnidad - restar) / cantidadPorPresentacion;
+                            lote.Cantidad = productoCantidadTotal;
+                            lote.CantidadCompra = productoCantidadTotal;
+                        }
+
+                        lote.CantidadPorUnidad = nuevaCantidadPorUnidad;
+                        lote.CantidadPorUnidadCompra = nuevaCantidadPorUnidad;
+                    }
+                    else {
+                        if (presentacion.CantidadPorPresentacion > 2)
+                        {
+                            lote.CantidadPorUnidad = lote.Cantidad * presentacion.CantidadPorPresentacion;
+                            lote.CantidadPorUnidadCompra = lote.Cantidad * presentacion.CantidadPorPresentacion;
+                        }
+                    }
                     var nuevoLote = new LoteCrear
                     {
                         LoteId = 0,
@@ -165,12 +191,12 @@ namespace VistaNewProject.Controllers
                         PrecioPorUnidadCompra = lote.PrecioPorUnidadCompra,
                         FechaVencimiento = lote.FechaVencimiento,
                         Cantidad = lote.Cantidad,
-                        CantidadCompra = lote.CantidadCompra,
+                        CantidadCompra = lote.Cantidad,
                         CantidadPorUnidadCompra = lote.CantidadPorUnidadCompra,
                         CantidadPorUnidad = lote.CantidadPorUnidad,
                         EstadoLote = lote.EstadoLote
                     };
-
+                  
                     nuevoDetalleCompra.Lotes.Add(nuevoLote); // Agrega el lote al detalle
                 }
 
