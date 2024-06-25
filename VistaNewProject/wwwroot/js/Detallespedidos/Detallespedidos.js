@@ -270,7 +270,7 @@ $(document).ready(function () {
 
 
 
-            });
+
 
         const fetchProductos = fetch(`/DetallePedidos/GetProductos`)
             .then(response => {
@@ -279,7 +279,7 @@ $(document).ready(function () {
                 }
                 return response.json();
             })
-        
+
 
         // Esperar a que todas las solicitudes se completen
         Promise.all([fetchUnidades, fetchLotes, fetchProductos])
@@ -315,9 +315,9 @@ $(document).ready(function () {
 
 
                     const cantidadDisponibleunidad = cantidadunidadaplicar - cantidadReservadaPorunidad
-                    console.log("cahjkjhfgjklkjhghjkl",cantidadDisponibleunidad)
+                    console.log("cahjkjhfgjklkjhghjkl", cantidadDisponibleunidad)
                     habilitarUnidades(cantidadDisponibleunidad, cantidadDisponible);
-                   
+
 
                     if (cantidadDisponible > 0) {
                         $('#CantidadTxt').attr('placeholder', `Disponible: ${cantidadDisponible}`);
@@ -331,7 +331,7 @@ $(document).ready(function () {
 
                     // Obtener detalles de compras y unidades
                     // Obtener detalles de compras y unidades
-                    
+
 
                 }
 
@@ -366,7 +366,7 @@ $(document).ready(function () {
                         $('#LoteId').val(loteProximoVencimiento.loteId);
                         habilitarUnidades()
                     } else {
-                     
+
                         $('#PrecioEnviar').val('');
 
                         $('#PrecioUnitario').val('');
@@ -375,7 +375,7 @@ $(document).ready(function () {
 
                     }
                 } else {
-                    
+
                     $('#PrecioUnitario').val('');
                     $('#LoteId').val('');
                     $('#PrecioUnitariohiddenpormayor').val('');
@@ -388,7 +388,7 @@ $(document).ready(function () {
     }
 
 
-   
+
 
 
 
@@ -416,7 +416,7 @@ $(document).ready(function () {
     // Evento input para el campo "Cantidad"
 
 
-
+});
 
 $(document).ready(function () {
 
@@ -587,17 +587,12 @@ $(document).ready(function () {
     // Inicialmente deshabilitar el campo CantidadTxt
     $("#CantidadTxt").prop("disabled", true);
 });
-
 function habilitarUnidades(cantidadDisponibleunidad, cantidadDisponible) {
     var uni = cantidadDisponibleunidad;
     var dispo = cantidadDisponible;
 
-    console.log("unitariassssssss", uni);
-
     var precio = parseFloat($('#PrecioUnitario').val());
     var preciomayor = parseFloat($('#PrecioUnitariohiddenpormayor').val());
-    console.log("unitario", precio);
-    console.log("mayor", preciomayor);
 
     $("#UnidadId").on("change", function () {
         var inputValue = $(this).val();
@@ -617,14 +612,11 @@ function habilitarUnidades(cantidadDisponibleunidad, cantidadDisponible) {
             if (clienteIdSeleccionado == 2) {
                 // Obtener el precio por mayor y actualizar el campo PrecioUnitario
                 $('#PrecioUnitario').val(precio);
-                console.log("Precio por mayor:", precio);
-
                 $('#CantidadTxt').attr('placeholder', uni); // Cambiar el placeholder de la cantidad a 'uni'
                 $("#CantidadTxt").prop("disabled", false); // Habilitar el campo CantidadTxt
             } else if (clienteIdSeleccionado == 1) {
                 // Obtener el precio por mayor y actualizar el campo PrecioUnitario
                 $('#PrecioUnitario').val(preciomayor);
-                console.log("Precio por hgfghjkjhg:", preciomayor);
                 $('#CantidadTxt').attr('placeholder', dispo); // Cambiar el placeholder de la cantidad a 'uni'
                 $("#CantidadTxt").prop("disabled", false); // Habilitar el campo CantidadTxt
             }
@@ -638,7 +630,6 @@ function habilitarUnidades(cantidadDisponibleunidad, cantidadDisponible) {
 
                     // Capturar el ID del cliente seleccionado en una variable
                     var clienteIdSeleccionado = inputValue;
-                    console.log("Cliente seleccionado:", clienteIdSeleccionado);
                     $("#CantidadTxt").prop("disabled", false); // Habilitar el campo CantidadTxt
                 } else {
                     $("#unidadHidden").val("");
@@ -655,3 +646,4 @@ function habilitarUnidades(cantidadDisponibleunidad, cantidadDisponible) {
         }
     });
 }
+
