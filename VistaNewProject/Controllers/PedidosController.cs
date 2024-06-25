@@ -208,6 +208,11 @@ namespace VistaNewProject.Controllers
                                 var Id = productoId;
                                 var cantidad = detallePedido.Cantidad;
                                 var UniddadId = detallePedido.UnidadId;
+
+
+                                
+
+
                                 if (producto != null)
                                 {
                                  
@@ -232,48 +237,57 @@ namespace VistaNewProject.Controllers
                                    
                                 }
 
+                                var loteId = detallePedido.LoteId;
+                                var lote = await _client.FindLoteAsync(loteId.Value);
+
                                 if (UniddadId == 1)
                                 {
-                                    var lotes = await _client.GetLoteAsync();
-                                    var lotesFiltrados = lotes
-                                        .Where(l => l.ProductoId == productoId && l.Cantidad > 0 && l.EstadoLote != 0)
-                                        .OrderBy(l => l.FechaVencimiento)
-                                        .ThenByDescending(l => l.Cantidad);
 
-                                    if (lotesFiltrados.Any())
+
+                                    if (lote != null && lote.ProductoId == productoId && lote.Cantidad > 0 && lote.EstadoLote != 0)
                                     {
                                         int cantidadRestante = detallePedido.Cantidad.Value;
 
-                                        foreach (var lote in lotesFiltrados)
+                                        // Descontar la cantidad del lote específico
+                                        int cantidadDescontar = Math.Min(cantidadRestante, lote.Cantidad.Value);
+                                        cantidadRestante -= cantidadDescontar;
+
+                                        // Actualizar el lote en la base de datos
+                                        var updateLoteResponse = await _client.SustraerCantidadALoteAsync(lote.LoteId, cantidadDescontar);
+
+                                        if (!updateLoteResponse.IsSuccessStatusCode)
                                         {
-                                            if (cantidadRestante <= 0)
-                                                break;
-
-                                            int cantidadDescontar = Math.Min(cantidadRestante, lote.Cantidad.Value);
-
-                                            lote.Cantidad -= cantidadDescontar;
-
-
-                                            // Actualizar la cantidad restante
-                                            cantidadRestante -= cantidadDescontar;
-
-                                            // Actualizar el lote en la base de datos
-                                            var updateLoteResponse = await _client.UpdateLoteAsync(lote);
-
-
-                                            if (!updateLoteResponse.IsSuccessStatusCode)
-                                            {
-                                                TempData["ErrorMessage"] = $"Error al actualizar el lote: {updateLoteResponse.ReasonPhrase}";
-                                                return RedirectToAction("Index", "Pedidos");
-                                            }
+                                            TempData["ErrorMessage"] = $"Error al actualizar el lote: {updateLoteResponse.ReasonPhrase}";
+                                            return RedirectToAction("Index", "Pedidos");
                                         }
                                     }
-
                                 }
 
+                                if (UniddadId == 2)
+                                {
 
-                                    // Obtener los lotes disponibles para el producto actual
-                            
+
+                                    if (lote != null && lote.ProductoId == productoId && lote.Cantidad > 0 && lote.EstadoLote != 0)
+                                    {
+                                        int cantidadRestante = detallePedido.Cantidad.Value;
+
+                                        // Descontar la cantidad del lote específico
+                                        int cantidadDescontar = Math.Min(cantidadRestante, lote.Cantidad.Value);
+                                        cantidadRestante -= cantidadDescontar;
+
+                                        // Actualizar el lote en la base de datos
+                                        var updateLoteResponse = await _client.SustraerCantidadPorUnidadALoteAsync(lote.LoteId, cantidadDescontar);
+
+                                        if (!updateLoteResponse.IsSuccessStatusCode)
+                                        {
+                                            TempData["ErrorMessage"] = $"Error al actualizar el lote: {updateLoteResponse.ReasonPhrase}";
+                                            return RedirectToAction("Index", "Pedidos");
+                                        }
+                                    }
+                                }
+
+                                // Obtener los lotes disponibles para el producto actual
+
 
                             }
                            
@@ -351,47 +365,53 @@ namespace VistaNewProject.Controllers
                                 }
 
 
+                                var loteId = detalleCancelado.LoteId;
+                                var lote = await _client.FindLoteAsync(loteId.Value);
                                 if (unidadId == 1)
                                 {
 
-                                    var lotes = await _client.GetLoteAsync();
-                                    var lotesFiltrados = lotes
-                                        .Where(l => l.ProductoId == productoId && l.Cantidad > 0 && l.EstadoLote != 0)
-                                        .OrderBy(l => l.FechaVencimiento)
-                                        .ThenByDescending(l => l.Cantidad);
-
-                                    if (lotesFiltrados.Any())
+                                    if (lote != null && lote.ProductoId == productoId && lote.Cantidad > 0 && lote.EstadoLote != 0)
                                     {
                                         int cantidadRestante = detalleCancelado.Cantidad.Value;
 
-                                        foreach (var lote in lotesFiltrados)
+                                        // Descontar la cantidad del lote específico
+                                        int cantidadDescontar = Math.Min(cantidadRestante, lote.Cantidad.Value);
+                                        cantidadRestante += cantidadDescontar;
+
+                                        // Actualizar el lote en la base de datos
+                                        var updateLoteResponse = await _client.AddCantidadALoteAsync(lote.LoteId, cantidadDescontar);
+
+                                        if (!updateLoteResponse.IsSuccessStatusCode)
                                         {
-                                            if (cantidadRestante <= 0)
-                                                break;
-
-                                            int cantidadDescontar = Math.Min(cantidadRestante, lote.Cantidad.Value);
-
-                                            // Incrementar la cantidad del lote cancelado
-                                            lote.Cantidad += cantidadDescontar;
-
-
-
-                                            // Actualizar el lote en la base de datos
-                                            var updateLoteResponse = await _client.UpdateLoteAsync(lote);
-
-                                            if (!updateLoteResponse.IsSuccessStatusCode)
-                                            {
-                                                TempData["ErrorMessage"] = $"Error al actualizar el lote: {updateLoteResponse.ReasonPhrase}";
-                                                return RedirectToAction("Index", "Pedidos");
-                                            }
-
-                                            // Reducir la cantidad restante
-                                            cantidadRestante -= cantidadDescontar;
+                                            TempData["ErrorMessage"] = $"Error al actualizar el lote: {updateLoteResponse.ReasonPhrase}";
+                                            return RedirectToAction("Index", "Pedidos");
                                         }
                                     }
                                 }
-                                    // Obtener y actualizar los lotes asociados al producto cancelado
-                                  
+
+                                if (unidadId == 2)
+                                {
+
+                                    if (lote != null && lote.ProductoId == productoId && lote.Cantidad > 0 && lote.EstadoLote != 0)
+                                    {
+                                        int cantidadRestante = detalleCancelado.Cantidad.Value;
+
+                                        // Descontar la cantidad del lote específico
+                                        int cantidadDescontar = Math.Min(cantidadRestante, lote.Cantidad.Value);
+                                        cantidadRestante += cantidadDescontar;
+
+                                        // Actualizar el lote en la base de datos
+                                        var updateLoteResponse = await _client.AddCantidadPorUnidadALoteAsync(lote.LoteId, cantidadDescontar);
+
+                                        if (!updateLoteResponse.IsSuccessStatusCode)
+                                        {
+                                            TempData["ErrorMessage"] = $"Error al actualizar el lote: {updateLoteResponse.ReasonPhrase}";
+                                            return RedirectToAction("Index", "Pedidos");
+                                        }
+                                    }
+                                }
+                                // Obtener y actualizar los lotes asociados al producto cancelado
+
                             }
                         }
                     }
