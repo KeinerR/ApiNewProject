@@ -1,6 +1,5 @@
 function obtenerClienteId(DomicilioId) {
-
-    fetch(`https://localhost:7013/api/Domicilios/GetDomicilioById?Id=${DomicilioId}`)
+    fetch(`/Domicilios/GetDomicilioById?Id=${DomicilioId}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Error al obtener los datos');
@@ -10,21 +9,20 @@ function obtenerClienteId(DomicilioId) {
         .then(domicilio => {
             console.log(domicilio);
 
+            // Asignar valores a los campos de formulario o donde los necesites
             document.getElementById('DomicilioIdAct').value = domicilio.domicilioId;
             document.getElementById('PedidoIdAct').value = domicilio.pedidoId;
-            document.getElementById('UsuarioIdAct').value = domicilio.usuariId;
+            document.getElementById('UsuarioIdAct').value = domicilio.usuarioId; // Corregido usuarioId según la respuesta del servidor
             document.getElementById('EstadoDomicilioAct').value = domicilio.estadoDomicilio;
             document.getElementById('ObservacionAct').value = domicilio.observacion;
             document.getElementById('DireccionDomiciliarioAct').value = domicilio.direccionDomiciliario;
-            document.getElementById('FechaEntregaAct').value = domicilio.fechaEnntrega;
-           
-
-
+            document.getElementById('FechaEntregaAct').value = domicilio.fechaEntrega; // Corregido fechaEntrega según la respuesta del servidor
 
             console.log(domicilio);
         })
         .catch(error => {
-            console.error("Error :", error)
+            console.error("Error:", error);
+            // Aquí podrías mostrar un mensaje de error al usuario si lo deseas
         });
 }
 
@@ -409,11 +407,7 @@ function validarDomiciliarioAct(domiciliario) {
 
     domiciliario = domiciliario.trim();
 
-    if (!direccionRegex.test(domiciliario)) {
-        mostrarError(domiciliarioInput, domiciliarioError, "El campo no cumple con los requisitos.");
-        return false;
-    }
-
+    
     if (domiciliario.length < 4 || domiciliario.length > 60) {
         mostrarError(domiciliarioInput, domiciliarioError, "El campo no puede tener menos de 4 letras o más de 60.");
         return false;

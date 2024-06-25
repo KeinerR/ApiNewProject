@@ -80,6 +80,7 @@ namespace VistaNewProject.Controllers
 
 
 
+
         public async Task<IActionResult> DomiciliosRealizados(int? page)
         {
             int pageSize = 5; // Tamaño de página
@@ -188,9 +189,22 @@ namespace VistaNewProject.Controllers
             return Json(domicilio);
         }
 
+       
+
+        public async Task<IActionResult>Detail(int id)
+        {
+
+            var detalles=await _client.FindDomicilioAsync(id);
+
+             return View(detalles);
 
 
-        
+
+        }
+
+
+      
+
         public async Task<IActionResult> Update([FromBody] Domicilio domicilio)
         {
             Console.WriteLine(domicilio);
@@ -230,6 +244,27 @@ namespace VistaNewProject.Controllers
                 return Json(new { success = false, message = "No se pudo actualizar el domicilio." });
             }
 
+        }
+
+
+        public async Task<IActionResult> GetDomicilioById(int id)
+        {
+            try
+            {
+                var domicilio = await _client.FindDomicilioAsync(id);
+
+                if (domicilio == null)
+                {
+                    return NotFound(); // Devolver un resultado NotFound si no se encuentra el domicilio
+                }
+
+                return Ok(domicilio); // Devolver el domicilio encontrado como resultado JSON
+            }
+            catch (Exception ex)
+            {
+                // Manejar errores y devolver un resultado BadRequest con un mensaje de error si es necesario
+                return BadRequest(new { message = $"Error al obtener el domicilio: {ex.Message}" });
+            }
         }
 
     }

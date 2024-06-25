@@ -72,6 +72,23 @@ namespace VistaNewProject.Controllers
 
         }
 
+        public async Task<IActionResult> GetPedidosRealizado()
+        {
+            try
+            {
+                var pedidos = await _client.GetPedidoAsync();
+
+                // Filtrar los pedidos con estado "Realizado"
+                var pedidosRealizados = pedidos.Where(p => p.EstadoPedido == "Realizado").ToList();
+
+                return Json(pedidosRealizados);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = $"Error al obtener los pedidos realizados: {ex.Message}" });
+            }
+        }
+
 
         public async Task<ActionResult> PedidosCancelados(int? page)
         {
@@ -459,7 +476,12 @@ namespace VistaNewProject.Controllers
 
 
 
-     
+       public async Task<IActionResult> UpdateEstadoPedido(int id, string estado)
+        {
+
+
+            var pedido= await _client.
+        }
 
     }
 }

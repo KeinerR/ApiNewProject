@@ -4,6 +4,12 @@
     ViewData["Title"] = "Index";
 }
 
+@{
+    ViewBag.Title = "Domicilios";
+    var domiciliosRealizados = ViewData["DomiciliosRealizados"] as List<Domicilio>;
+}
+
+
 <br />
 
 <div class="d-flex justify-content-between">
@@ -15,6 +21,22 @@
                 <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputDomicilio();" type="button"><i class="fas fa-search"></i></button>
             </div>
         </form>
+
+        <div class="notification">
+            <i class="fas fa-bell"></i>
+            <span class="badge" id="domiciliosRealizadosBadge" style="display: none;">0</span>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+                var domiciliosRealizados = @Html.Raw(Json.Serialize(domiciliosRealizados));
+
+                if (domiciliosRealizados.length > 0) {
+                    $('#domiciliosRealizadosBadge').text(domiciliosRealizados.length);
+                    $('#domiciliosRealizadosBadge').show();
+                }
+            });
+        </script>
     </div>
 
  

@@ -243,7 +243,7 @@ $(document).ready(function () {
 
     function obtenerDetallesProducto(productId) {
         // Llamada para obtener los datos de la unidad y los lotes
-        const fetchUnidades = fetch(`https://localhost:7013/api/Unidades/GetUnidades`)
+        const fetchUnidades = fetch(`/DetallePedidos/GeUnidades`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al obtener las unidades');
@@ -255,27 +255,21 @@ $(document).ready(function () {
                 unidades = data;
                 console.log(unidades);// Guardar unidades en una variable global
             });
-
-        const fetchLotes = fetch(`https://localhost:7013/api/Lotes/GetLotes`)
+        const fetchLotes = fetch(`/DetallePedidos/GetLotes`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al obtener los lotes del producto');
                 }
-
                 return response.json();
+            })
 
-
-
-            });
-
-        const fetchProductos = fetch(`https://localhost:7013/api/Productos/GetProductos`)
+        const fetchProductos = fetch(`/DetallePedidos/GetProductos`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Error al obtener los productos');
+                    throw new Error('Error al obtener las compras');
                 }
                 return response.json();
-            });
-
+            })
         
 
         // Esperar a que todas las solicitudes se completen
@@ -573,144 +567,6 @@ function eliminarDetalle(index) {
 }
 
 
-
-
-let lotes = [];
-$(document).ready(function () {
-    // Inicialmente deshabilitar el campo "Unidad"
-    $("#UnidadId").prop("disabled", true);
-
-    // Manejar el cambio en el campo "Clientes"
-    $("#Clientes").on("change", function () {
-        var inputValue = $(this).val();
-        var selectedOption = $("#clientes option").filter(function () {
-            return $(this).val() === inputValue || $(this).data("id") == inputValue; // Asegurar la coerción de tipos para comparación numérica
-        });
-
-        if (selectedOption.length) {
-            var clienteIdSeleccionado = selectedOption.data("id");
-            $("#ClienteHidden").val(clienteIdSeleccionado);
-            $("#Clientes").val(selectedOption.val());
-            quitarError(this, document.getElementById("clienteerror"));
-
-            $("#UnidadId").prop("disabled", false);
-            obtenerDetallesProducto(clienteIdSeleccionado);
-        } else {
-            if (!isNaN(parseFloat(inputValue)) && isFinite(inputValue)) {
-                var option = $("#clientes option[data-id='" + inputValue + "']");
-                if (option.length) {
-                    var clienteIdSeleccionado = inputValue;
-                    $("#ClienteHidden").val(clienteIdSeleccionado);
-                    $("#Clientes").val(option.val());
-
-                    $("#UnidadId").prop("disabled", false);
-                    obtenerDetallesProducto(clienteIdSeleccionado);
-                } else {
-                    limpiarDetallesProducto();
-                }
-            } else {
-                limpiarDetallesProducto();
-            }
-        }
-    });
-
-
-    function obtenerDetallesProducto(productId) {
-        // Llamadas para obtener los datos de las unidades, lotes y productos
-        const fetchUnidades = fetch(`https://localhost:7013/api/Unidades/GetUnidades`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener las unidades');
-                }
-                return response.json();
-            })
-            .then(data => {
-                unidades = data;
-            });
-
-        const fetchLotes = fetch(`https://localhost:7013/api/Lotes/GetLotes`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener los lotes del producto');
-                }
-                return response.json();
-            });
-
-        const fetchProductos = fetch(`https://localhost:7013/api/Productos/GetProductos`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener los productos');
-                }
-                return response.json();
-            });
-
-        Promise.all([fetchUnidades, fetchLotes, fetchProductos])
-            .then(([unidadesData, lotesData, productosData]) => {
-                const productoSeleccionado = productosData.find(producto => producto.productoId == productId);
-                if (productoSeleccionado) {
-                    var nombre = productoSeleccionado.nombreCompletoProducto;
-                    mostrarDetallesPedido(nombre);
-                    var aplicarPormayor = productoSeleccionado.cantidadAplicarPorMayor;
-                    var descuento = productoSeleccionado.descuentoAplicarPorMayor;
-                    $('#Descuento').val(descuento);
-                    $('#CantidadAPlicada').val(aplicarPormayor);
-
-                    const cantidadTotal = productoSeleccionado.cantidadTotal;
-                    const cantidadReservada = productoSeleccionado.cantidadReservada;
-                    const cantidadDisponible = cantidadTotal - cantidadReservada;
-
-                    if (cantidadDisponible > 0) {
-                        $('#CantidadTxt').attr('placeholder', `Disponible: ${cantidadDisponible}`);
-                    } else {
-                        $('#btnEnviar').prop('disabled', true);
-                        $('#CantidadTxt').attr('placeholder', 'No hay productos disponibles');
-                    }
-
-                    const lotesProducto = lotesData.filter(lote => lote.productoId == productId);
-                    if (lotesProducto.length > 0) {
-                        let loteProximoVencimiento = null;
-                        for (const lote of lotesProducto) {
-                            if (lote.cantidad > 0 && lote.estadoLote != 0) {
-                                if (loteProximoVencimiento === null || new Date(lote.fechaVencimiento) < new Date(loteProximoVencimiento.fechaVencimiento)) {
-                                    loteProximoVencimiento = lote;
-                                }
-                            }
-                        }
-                        if (loteProximoVencimiento !== null) {
-                            const precio = loteProximoVencimiento.precioPorUnidadProducto;
-                            $('#PrecioUnitario').val(precio);
-                            $('#PrecioUnitariohiddenpormayordescuento').val(precio);
-                            $('#PrecioUnitariohiddenpormayor').val(precio);
-                            $('#LoteId').val(loteProximoVencimiento.loteId);
-                        } else {
-                            limpiarDetallesProducto();
-                        }
-                    } else {
-                        limpiarDetallesProducto();
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al obtener los datos');
-            });
-    }
-
-    function limpiarDetallesProducto() {
-        $('#PrecioUnitario').val('');
-        $('#Clientes').val('');
-        $('#ClienteHidden').val('');
-        $('#UnidadId').val('');
-        $('#CantidadTxt').attr('placeholder', '');
-        $('#LoteId').val('');
-        $('#PrecioUnitariohiddenpormayordescuento').val('');
-        $('#PrecioUnitariohiddenpormayor').val('');
-        $('#CantidadAPlicada').val('');
-        $('#Descuento').val('');
-        $('#btnEnviar').prop('disabled', true);
-    }
-
-});
 
 $(document).ready(function () {
     $('#CantidadTxt').on('input', function () {

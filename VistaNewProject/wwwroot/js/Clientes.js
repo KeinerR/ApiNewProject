@@ -1,5 +1,5 @@
 ﻿function obtenerDatosclientes() {
-    fetch('https://localhost:7013/api/Clientes/GetClientes')
+    fetch('/Clientes/GetClientes')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Error al obtener los Clientes.');
