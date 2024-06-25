@@ -24,7 +24,7 @@
 }
 <br />
 <br />
-@* <div class="contenedorChecboxDeAsociacion">
+<div class="contenedorChecboxDeAsociacion">
     @if (Model != null) // Comprobación de nulidad
     {
         @foreach (var categoria in Model)
@@ -43,7 +43,7 @@
     {
         <p>No se encontraron categorías.</p>
     }
-</div> *@
+</div>
 
 <div class="pagination-container mt-2">
     @if (Model != null && Model.PageCount > 1)

@@ -434,16 +434,16 @@ function limpiarDatosFormularioProductoAgregar() {
 }
 
 //Se llama al dar click en la x
-function limpiarFormularioProducto() {
-    limpiarDatosFormularioProductoAgregar();
+function limpiarFormularioProducto() {  
     // Limpiar campos y elementos específicos
     limpiarCampo('NombreMarca');
     limpiarCampo('MarcaId');
     limpiarCampo('NombreCategoria');
     limpiarCampo('CategoriaId');
-    limpiarCampo('NombrePresentacion');
+    limpiarCampo('NombrePresentacion'); 
     limpiarCampo('PresentacionId');
     limpiarCampo('NombreProducto');
+    limpiarDatosFormularioProductoAgregar();
 }
 function limpiarFormularioProductoAct() {
     limpiarDatosFormularioProductoAct();
@@ -482,6 +482,9 @@ function limpiarDatosFormularioProductoAct() {
     for (var i = Math.max(0, mensajesText.length - 3); i < mensajesText.length; i++) {
         mensajesText[i].textContent = '';
     }
+    agregarIconoparalimpiarElCampo('NombrePresentacionAct');
+    agregarIconoparalimpiarElCampo('NombreMarcaAct');
+    agregarIconoparalimpiarElCampo('NombreCategoriaAct');
     // Verificar si los elementos están marcados y desmarcarlos si es así
     if ($('#filtrarActivosAct').prop('checked')) {
         $('#filtrarActivosAct').trigger('click');
@@ -490,11 +493,6 @@ function limpiarDatosFormularioProductoAct() {
     if ($('#filtrarxCategoriaAct').prop('checked')) {
         $('#filtrarxCategoriaAct').trigger('click');
     }
-
-    agregarIconoparalimpiarElCampo('NombrePresentacionAct');
-    agregarIconoparalimpiarElCampo('NombreMarcaAct');
-    agregarIconoparalimpiarElCampo('NombreCategoriaAct');
-
 
 }
 function limpiarFiltroProductoAgregar() {

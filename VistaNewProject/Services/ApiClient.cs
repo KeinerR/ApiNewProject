@@ -27,7 +27,6 @@ namespace VistaNewProject.Services
             //_httpClient.BaseAddress = new Uri("http://optimusweb-001-site1.ctempurl.com/api/");
         }
 
-
         //cliente
         public async Task<IEnumerable<Cliente>> GetClientesAsync()
         {

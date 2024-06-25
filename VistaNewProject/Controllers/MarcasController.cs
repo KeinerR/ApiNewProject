@@ -71,12 +71,19 @@ namespace VistaNewProject.Controllers
             return View(pageMarca);
 
         }
-        [HttpPost]
-        public async Task<JsonResult> FindMarca(int marcaId)
+        [HttpGet]
+        public async Task<IActionResult> FindMarca(int marcaId)
         {
             var marca = await _client.FindMarcaAsync(marcaId);
-            return Json(marca);
+
+            if (marca == null)
+            {
+                return NotFound(); // Devuelve un 404 Not Found si la categoría no existe
+            }
+
+            return Json(marca); // Devuelve la categoría encontrada en formato JSON
         }
+
         [HttpPost]
         public async Task<JsonResult> FindMarcas()
         {
@@ -136,26 +143,20 @@ namespace VistaNewProject.Controllers
             {
                 return BadRequest();
             }
-            var marcas = await _client.GetMarcaAsync();
-
+            var marcas = await _client.GetMarcaAsync(); 
             var marcaExiste = marcas.FirstOrDefault(p => p.MarcaId == id);
             if (marcaExiste == null)
             {
                 return NotFound();
             }
-            var unidad = await _client.FindMarcaAsync(id.Value);
-            if (unidad == null)
+            var marca = await _client.FindMarcaAsync(id.Value);
+            if (marca == null)
             {
                 return NotFound();
             }
 
             var categorias = await _client.GetCategoriaAsync();
-            var categoriasxmarcas = await _client.GetCategoriaxMarcasAsync();
-
-            var categoriasAsociadasIds = categoriasxmarcas
-                .Where(cu => cu.MarcaId == id.Value)
-                .Select(cu => cu.CategoriaId)
-                .ToList();
+            var categoriasxmarcas = await _client.GetCategoriasxMarcaByIdMarcaAsync(id.Value);
 
             var categoriasAsociadas = categorias
                 .Select(c => new CategoriaxMarca
@@ -163,6 +164,7 @@ namespace VistaNewProject.Controllers
                     CategoriaId = c.CategoriaId,
                     NombreCategoria = c.NombreCategoria,
                     MarcaId = id.Value,
+                    EstaAsociada = categoriasxmarcas.Any(cm => cm.CategoriaId == c.CategoriaId)
                 })
                 .ToList();
 
@@ -190,7 +192,7 @@ namespace VistaNewProject.Controllers
             int pageSize = 6;
             var pagedCategorias = categoriasAsociadas.ToPagedList(pageNumber, pageSize);
 
-            ViewBag.Marca = unidad;
+            ViewBag.Marca =  marca;
             ViewBag.CurrentOrder = order;
 
             return View(pagedCategorias);
@@ -212,7 +214,7 @@ namespace VistaNewProject.Controllers
             var marca = await _client.FindMarcaAsync(id.Value); // Obtener la unidad directamente como int
 
             var categorias = await _client.GetCategoriaAsync();
-            var categoriasxmarcas = await _client.GetCategoriaxMarcasAsync();
+            var categoriasxmarcas = await _client.GetCategoriasxMarcaByIdMarcaAsync(id.Value);
 
             // Filtrar categorías asociadas a la unidad específica
             var categoriasAsociadasIds = categoriasxmarcas
