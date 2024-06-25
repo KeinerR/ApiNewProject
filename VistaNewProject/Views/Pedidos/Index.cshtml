@@ -134,36 +134,21 @@
 </style>
 
 <br />
+<!-- HTML (Razor View) -->
+
 <div class="d-flex justify-content-between" style="margin-bottom: 20px;">
     <!-- Formulario de búsqueda a la izquierda -->
     <div class="mr-auto">
-        <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
+        <form class="d-none d-md-inline-block form-inline my-2 my-md-0">
             <div class="input-group">
-                <input id="buscarPedidos" type="text" class="form-control" oninput="searchPedidos();" placeholder="Buscar Pedidos" aria-label="Search" aria-describedby="button-addon2">
+                <input id="buscarPedido" type="text" class="form-control" placeholder="Buscar Pedidos" aria-label="Search" aria-describedby="button-addon2">
                 <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputPedidos()" type="button"><i class="fas fa-search"></i></button>
             </div>
         </form>
     </div>
-   
-
-
-
-
-
 
     <a asp-action="Create" class="btn btn-primary">
         Agregar pedido <i class="fa-solid fa-cart-shopping"></i>
-    </a>
-
-
-</div>
-
-
-
-
-<div>
-    <a asp-action="PedidosCancelados" class="btn btn-primary-custom btn btn-primary">
-        Cancelados <i class="fa-solid fa-ban"></i>
     </a>
 </div>
 
@@ -188,21 +173,12 @@
 
         @foreach (var item in Model)
         {
-            <tr class="pedidosPaginado">
+            <tr class="pedidosPaginado Pedidos">
                 <td>@contador</td>
                 <td class="d-none">@Html.DisplayFor(modelItem => item.PedidoId)</td>
-
-                <td>
-                    @foreach (var clientes in ViewBag.Clientes)
-                    {
-                        @if (clientes.ClienteId == item.ClienteId)
-                        {
-                            <span>@clientes.Identificacion</span>
-                        }
-                    }
-                </td>
-                <td>@Html.DisplayFor(modelItem => item.TipoServicio)</td>
-                <td>@Html.DisplayFor(modelItem => item.FechaPedido)</td>
+                <td>@item.ClienteId</td>
+                <td>@item.TipoServicio</td>
+                <td>@item.FechaPedido</td>
                 <td class="text-center align-middle contenedorEstadoTabla">
                     @if (item.EstadoPedido == "Pendiente")
                     {
@@ -230,8 +206,8 @@
             contador++; // Incrementar el contador después de cada fila
         }
     </tbody>
-
 </table>
+
 <div class="pagination-container mt-2">
     @if (Model != null && Model.PageCount > 1)
     {
@@ -277,5 +253,62 @@
         </div>
     }
 </div>
+
+<script>
+    // JavaScript para búsqueda y filtrado de pedidos
+    document.getElementById('buscarPedido').addEventListener('input', function () {
+        var input = this.value.trim().toLowerCase();
+        var rows = document.querySelectorAll('.pedidosPaginado');
+
+        if (input === "") {
+            rows.forEach(function (row) {
+                row.style.display = 'table-row';
+            });
+            var icon = document.querySelector('#btnNavbarSearch i');
+            icon.className = 'fas fa-search';
+            icon.style.color = 'white';
+        } else {
+            rows.forEach(function (row) {
+                row.style.display = 'none';
+            });
+            var icon = document.querySelector('#btnNavbarSearch i');
+            icon.className = 'fas fa-times';
+            icon.style.color = 'white';
+        }
+
+        var rowsTodos = document.querySelectorAll('.Pedidos');
+
+        rowsTodos.forEach(function (row) {
+            var clienteId = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var tipoServicio = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+            var fechaPedido = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
+
+            if (input === "") {
+                row.style.display = 'table-row';
+            } else {
+                var matches = clienteId.includes(input) || tipoServicio.includes(input) || fechaPedido.includes(input);
+                row.style.display = matches ? 'table-row' : 'none';
+            }
+        });
+    });
+
+    function vaciarInputPedidos() {
+        document.getElementById('buscarPedido').value = "";
+        var icon = document.querySelector('#btnNavbarSearch i');
+        icon.className = 'fas fa-search';
+        icon.style.color = 'gray';
+
+        var rows = document.querySelectorAll('.pedidosPaginado');
+        rows.forEach(function (row) {
+            row.style.display = 'table-row';
+        });
+
+        var rowsTodos = document.querySelectorAll('.Pedidos');
+        rowsTodos.forEach(function (row) {
+            row.style.display = 'table-row';
+        });
+    }
+</script>
+
 
 <script src="~/js/pedidos.js"></script>
