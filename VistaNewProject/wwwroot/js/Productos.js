@@ -757,26 +757,6 @@ function Llamar() {
 
     }
 }
-
-function actualizarFormularioParaDescuentoCrear(activar) {
-    var mensajes = document.querySelectorAll('.Mensaje');
-    const elementos = document.getElementsByClassName('PorMayor');
-
-    for (let i = 4; i < mensajes.length - 6; i++) {
-        mensajes[i].textContent = activar ? '*' : ''; // Restaurar mensajes de error o limpiarlos
-    }
-
-    for (let i = 0; i < elementos.length; i++) {
-        if (activar) {
-            elementos[i].classList.remove("noBe");
-        } else {
-            elementos[i].classList.add("noBe");
-        }
-    }
-
-    document.getElementById('CantidadAplicarPorMayor').value = activar ? '' : '0';
-    document.getElementById('DescuentoAplicarPorMayor').value = activar ? '' : '0';
-}
 function Llamar2() {
     var checkbox = document.getElementById('checkboxDescuentoPorMayorAct');
     var mensajes = document.querySelectorAll('.Mensaje');
@@ -819,7 +799,25 @@ function Llamar2() {
         }
     }
 }
+function actualizarFormularioParaDescuentoCrear(activar) {
+    var mensajes = document.querySelectorAll('.Mensaje');
+    const elementos = document.getElementsByClassName('PorMayor');
 
+    for (let i = 4; i < mensajes.length - 6; i++) {
+        mensajes[i].textContent = activar ? '*' : ''; // Restaurar mensajes de error o limpiarlos
+    }
+
+    for (let i = 0; i < elementos.length; i++) {
+        if (activar) {
+            elementos[i].classList.remove("noBe");
+        } else {
+            elementos[i].classList.add("noBe");
+        }
+    }
+
+    document.getElementById('CantidadAplicarPorMayor').value = activar ? '' : '0';
+    document.getElementById('DescuentoAplicarPorMayor').value = activar ? '' : '0';
+}
 function actualizarFormularioParaDescuento(activar) {
     var mensajes = document.querySelectorAll('.Mensaje');
     const elementos = document.getElementsByClassName('PorMayorAct');

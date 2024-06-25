@@ -137,8 +137,6 @@ window.seleccionarOpcion = function (input, dataList, hiddenInput,Peticion) {
     if (Peticion.includes("Categoria")) {
         checkboxFiltrar();
     }
-   
-
 }
 async function manejarCategoria(selectedValue) {
         try {
@@ -395,11 +393,10 @@ async function checkboxFiltrar() {
     try {
         const filtrar = document.getElementById('filtrarActivos').checked ? 1 : 0;
         const asociar = document.getElementById('filtrarxCategoria').checked ? 1 : 0;
-        const filtro = $('#CategoriaId').val(); // Este es el filtro adicional para la categoría
+        const filtro = $('#CategoriaId').val(); // Additional filter for category
 
         let url = `/Productos/filtrarDataList/${filtrar}/${asociar}`;
 
-        // Si asociar es 1 y hay un filtro, añadir el filtro a la URL
         if (asociar === 1 && filtro !== "") {
             url += `/${filtro}`;
         }
@@ -419,15 +416,16 @@ async function checkboxFiltrar() {
         const data = await response.json();
         console.log(data);
 
-        // Limpia y rellena las listas utilizando la función fillList
-        fillList('#marcas', data.marcas, 'nombreMarca', 'marcaId', 'estadoMarca', 'No hay marcas disponibles');
-        fillList('#presentaciones', data.presentaciones, 'nombreCompletoPresentacion', 'presentacionId', 'estadoPresentacion', 'No hay presentaciones disponibles');
-        fillList('#categorias', data.categorias, 'nombreCategoria', 'categoriaId', 'estadoCategoria', 'No hay categorías disponibles');
+        // Fill and clear lists using the fillList function
+        fillList('#marcas', data.Marcas, 'nombreMarca', 'marcaId', 'estadoMarca', 'No hay marcas disponibles');
+        fillList('#presentaciones', data.Presentaciones, 'nombreCompletoPresentacion', 'presentacionId', 'estadoPresentacion', 'No hay presentaciones disponibles');
+        fillList('#categorias', data.Categorias, 'nombreCategoria', 'categoriaId', 'estadoCategoria', 'No hay categorías disponibles');
 
     } catch (error) {
-        console.error(error); // Muestra el error en la consola
+        console.error(error); // Log error to console
     }
 }
+
 async function checkboxFiltrarAct() {
     try {
         const filtrar = document.getElementById('filtrarActivosAct').checked ? 1 : 0;

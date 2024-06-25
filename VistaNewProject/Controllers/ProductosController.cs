@@ -79,47 +79,42 @@ namespace VistaNewProject.Controllers
             return View(pageProductos);
         }
 
-        [HttpPost("Productos/filtrarDataList/{filtrar}/{asociar}/{asociarcategoria?}")]
-        public async Task<ActionResult> filtrarDataList(int? filtrar, int? asociar, int? asociarcategoria = null)
+        [HttpPost("/Productos/filtrarDataList/{filtrar}/{asociar}/{asociarcategoria?}")]
+        public async Task<ActionResult> filtrarDataList(int filtrar, int asociar, int? asociarcategoria)
         {
             var categorias = await _client.GetCategoriaAsync();
             var marcas = await _client.GetMarcaAsync();
             var presentaciones = await _client.GetPresentacionAsync();
             var categoriasxpresentaciones = await _client.GetCategoriaxPresentacionesAsync();
             var categoriasxmarcas = await _client.GetCategoriaxMarcasAsync();
-            // Verificar si se debe filtrar por elementos activos
+
+            // Filter active elements if filtrar is 0
             if (filtrar == 0)
             {
-                // Filtrar por elementos activos
                 categorias = categorias.Where(c => c.EstadoCategoria == 1).ToList();
                 marcas = marcas.Where(m => m.EstadoMarca == 1).ToList();
                 presentaciones = presentaciones.Where(p => p.EstadoPresentacion == 1).ToList();
             }
-            if (asociarcategoria != null)
+
+            // Filter associated categories if asociar is 1 and asociarcategoria is provided
+            if (asociar == 1 && asociarcategoria.HasValue)
             {
-                if (asociar == 1)
-                {
-                    // Filtrar categorías asociadas a la unidad específica
-                    var marcasAsociadasIds = categoriasxmarcas
-                        .Where(cu => cu.CategoriaId == asociarcategoria.Value)
-                        .Select(cu => cu.MarcaId)
-                        .ToList();
+                var marcasAsociadasIds = categoriasxmarcas
+                    .Where(cu => cu.CategoriaId == asociarcategoria.Value)
+                    .Select(cu => cu.MarcaId)
+                    .ToList();
 
-                    marcas = marcas.Where(c => marcasAsociadasIds.Contains(c.MarcaId)).ToList();
+                marcas = marcas.Where(c => marcasAsociadasIds.Contains(c.MarcaId)).ToList();
 
-                    var presentacionesAsociadasIds = categoriasxpresentaciones
-                        .Where(cu => cu.CategoriaId == asociarcategoria.Value)
-                        .Select(cu => cu.PresentacionId)
-                        .ToList();
+                var presentacionesAsociadasIds = categoriasxpresentaciones
+                    .Where(cu => cu.CategoriaId == asociarcategoria.Value)
+                    .Select(cu => cu.PresentacionId)
+                    .ToList();
 
-                    presentaciones = presentaciones.Where(c => presentacionesAsociadasIds.Contains(c.PresentacionId)).ToList();
-                }
-
+                presentaciones = presentaciones.Where(c => presentacionesAsociadasIds.Contains(c.PresentacionId)).ToList();
             }
 
-
-
-            // Retornar los registros filtrados o todos los registros según corresponda
+            // Return filtered or all records as required
             return Json(new { Categorias = categorias, Marcas = marcas, Presentaciones = presentaciones });
         }
 
