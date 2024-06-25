@@ -268,15 +268,5 @@ namespace VistaNewProject.Controllers
         }
 
 
-        public async Task<IActionResult> GetDomicilioById(int id)
-        {
-
-            var domicilio=await _client.FindDomicilioAsync(id);
-
-            return Json(domicilio);
-
-
-        }
-
     }
 }
