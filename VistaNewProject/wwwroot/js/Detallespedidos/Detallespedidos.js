@@ -224,6 +224,8 @@ $(document).ready(function () {
 
                     // Disable "Unidad" and "Cantidad" fields
                     $("#UnidadId").prop("disabled", true);
+                    $("#CantidadTxt").prop("disabled", true);
+
 
                     // Clear the Clientes input if no entity is found
                 }
@@ -234,6 +236,8 @@ $(document).ready(function () {
 
                 // Disable "Unidad" and "Cantidad" fields
                 $("#UnidadId").prop("disabled", true);
+                $("#CantidadTxt").prop("disabled", true);
+
             }
         }
     });
@@ -243,7 +247,7 @@ $(document).ready(function () {
 
     function obtenerDetallesProducto(productId) {
         // Llamada para obtener los datos de la unidad y los lotes
-        const fetchUnidades = fetch(`https://localhost:7013/api/Unidades/GetUnidades`)
+        const fetchUnidades = fetch(`/DetallePedidos/GeUnidades`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al obtener las unidades');
@@ -256,7 +260,7 @@ $(document).ready(function () {
                 console.log(unidades);// Guardar unidades en una variable global
             });
 
-        const fetchLotes = fetch(`https://localhost:7013/api/Lotes/GetLotes`)
+        const fetchLotes = fetch(`/DetallePedidos/GetLotes`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al obtener los lotes del producto');
@@ -268,7 +272,7 @@ $(document).ready(function () {
 
             });
 
-        const fetchProductos = fetch(`https://localhost:7013/api/Productos/GetProductos`)
+        const fetchProductos = fetch(`/DetallePedidos/GetProductos`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al obtener los productos');
@@ -303,11 +307,15 @@ $(document).ready(function () {
                     console.log(AplicarPormayor);
                     console.log(descuento);;
                     const cantidadTotal = productoSeleccionado.cantidadTotal;
-                    const cantidadTotalunidad = productoSeleccionado.cantidadTotalPorUnidad;
                     const cantidadReservada = productoSeleccionado.cantidadReservada;
                     const cantidadReservadaPorunidad = productoSeleccionado.cantidadPorUnidadReservada;
                     const cantidadDisponible = cantidadTotal - cantidadReservada;
-                    const cantidadDisponibleunidad = cantidadTotalunidad - cantidadReservadaPorunidad
+
+                    const cantidadpresentacion = productoSeleccionado.cantidadPorPresentacion;
+                    const cantidadunidadaplicar = cantidadDisponible * cantidadpresentacion;
+
+
+                    const cantidadDisponibleunidad = cantidadunidadaplicar - cantidadReservadaPorunidad
                     console.log("cahjkjhfgjklkjhghjkl",cantidadDisponibleunidad)
                     habilitarUnidades(cantidadDisponibleunidad, cantidadDisponible);
                    
@@ -341,7 +349,7 @@ $(document).ready(function () {
                     }
                     if (loteProximoVencimiento !== null) {
                         const precio = loteProximoVencimiento.precioPorUnidadProducto;
-                        const preciopormayor = loteProximoVencimiento.precioPorUnidad;
+                        const preciopormayor = loteProximoVencimiento.precioPorPresentacion;
 
 
 
@@ -349,7 +357,7 @@ $(document).ready(function () {
 
                         $('#PrecioUnitario').val(precio);
 
-                        console.log("keienr precio mayor ", precio)
+                        console.log("keienr precio menor ", precio)
                         console.log("keienr precio mayor ", preciopormayor)
 
 
@@ -412,19 +420,19 @@ $(document).ready(function () {
 
 })
 $(document).ready(function () {
+
+    
     $('#CantidadTxt').on('input', function () {
         const cantidadIngresada = parseFloat($(this).val()); // Obtener la cantidad ingresada y convertirla a número
         const cantidadDisponible = parseFloat($('#CantidadTxt').attr('placeholder').trim()); // Obtener la cantidad disponible
 
-        var descuento = parseFloat($('#Descuento').val()); // Obtener el descuento y convertirlo a número
-        var precio = parseFloat($('#PrecioUnitario').val()); // Obtener el precio unitario y convertirlo a número
+
 
         // Verificar si hay valores válidos para las unidades y descuentos
        
 
-        var descuentoaplicar = descuento / 100;
-        var aplicar = precio * descuentoaplicar;
-        console.log(aplicar);
+
+       
      
 
       
@@ -458,40 +466,6 @@ $(document).ready(function () {
 });
 
 
-$(document).ready(function () {
-    // Call filtrarProductos with an empty string to load all products initially
-    filtrarProductos('');
-});
-
-function buscarProductos() {
-    var busqueda = $('#busqueda').val(); // Obtener el valor del campo de búsqueda
-    console.log(busqueda);
-    // Llamar a la función para filtrar productos por categoría
-    filtrarProductos(busqueda);
-}
-
-function filtrarProductos(busqueda) {
-    console.log("Buscando productos con:", busqueda);
-    $.ajax({
-        url: '/DetallePedidos/FiltrarProductos',
-        type: 'GET',
-        data: { busqueda: busqueda },
-        success: function (response) {
-            console.log("Productos filtrados:", response);
-
-            // Limpiar el datalist de productos
-            $('#clientes').empty();
-
-            // Añadir los productos filtrados al datalist
-            $.each(response, function (index, producto) {
-                $('#clientes').append('<option value="' + producto.nombreCompletoProducto + '" data-id="' + producto.productoId + '">' + producto.nombreCompletoProducto + '</option>');
-            });
-        },
-        error: function (xhr, status, error) {
-            console.error('Error al filtrar productos:', xhr.responseText);
-        }
-    });
-}
 
 
 
@@ -572,191 +546,6 @@ function eliminarDetalle(index) {
     });
 }
 
-
-
-
-let lotes = [];
-$(document).ready(function () {
-    // Inicialmente deshabilitar el campo "Unidad"
-    $("#UnidadId").prop("disabled", true);
-
-    // Manejar el cambio en el campo "Clientes"
-    $("#Clientes").on("change", function () {
-        var inputValue = $(this).val();
-        var selectedOption = $("#clientes option").filter(function () {
-            return $(this).val() === inputValue || $(this).data("id") == inputValue; // Asegurar la coerción de tipos para comparación numérica
-        });
-
-        if (selectedOption.length) {
-            var clienteIdSeleccionado = selectedOption.data("id");
-            $("#ClienteHidden").val(clienteIdSeleccionado);
-            $("#Clientes").val(selectedOption.val());
-            quitarError(this, document.getElementById("clienteerror"));
-
-            $("#UnidadId").prop("disabled", false);
-            obtenerDetallesProducto(clienteIdSeleccionado);
-        } else {
-            if (!isNaN(parseFloat(inputValue)) && isFinite(inputValue)) {
-                var option = $("#clientes option[data-id='" + inputValue + "']");
-                if (option.length) {
-                    var clienteIdSeleccionado = inputValue;
-                    $("#ClienteHidden").val(clienteIdSeleccionado);
-                    $("#Clientes").val(option.val());
-
-                    $("#UnidadId").prop("disabled", false);
-                    obtenerDetallesProducto(clienteIdSeleccionado);
-                } else {
-                    limpiarDetallesProducto();
-                }
-            } else {
-                limpiarDetallesProducto();
-            }
-        }
-    });
-
-
-    function obtenerDetallesProducto(productId) {
-        // Llamadas para obtener los datos de las unidades, lotes y productos
-        const fetchUnidades = fetch(`https://localhost:7013/api/Unidades/GetUnidades`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener las unidades');
-                }
-                return response.json();
-            })
-            .then(data => {
-                unidades = data;
-            });
-
-        const fetchLotes = fetch(`https://localhost:7013/api/Lotes/GetLotes`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener los lotes del producto');
-                }
-                return response.json();
-            });
-
-        const fetchProductos = fetch(`https://localhost:7013/api/Productos/GetProductos`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener los productos');
-                }
-                return response.json();
-            });
-
-        Promise.all([fetchUnidades, fetchLotes, fetchProductos])
-            .then(([unidadesData, lotesData, productosData]) => {
-                const productoSeleccionado = productosData.find(producto => producto.productoId == productId);
-                if (productoSeleccionado) {
-                    var nombre = productoSeleccionado.nombreCompletoProducto;
-                    mostrarDetallesPedido(nombre);
-                    var aplicarPormayor = productoSeleccionado.cantidadAplicarPorMayor;
-                    var descuento = productoSeleccionado.descuentoAplicarPorMayor;
-                    $('#Descuento').val(descuento);
-                    $('#CantidadAPlicada').val(aplicarPormayor);
-
-                    const cantidadTotal = productoSeleccionado.cantidadTotal;
-                    const cantidadReservada = productoSeleccionado.cantidadReservada;
-                    const cantidadDisponible = cantidadTotal - cantidadReservada;
-
-                    if (cantidadDisponible > 0) {
-                        $('#CantidadTxt').attr('placeholder', `Disponible: ${cantidadDisponible}`);
-                    } else {
-                        $('#btnEnviar').prop('disabled', true);
-                        $('#CantidadTxt').attr('placeholder', 'No hay productos disponibles');
-                    }
-
-                    const lotesProducto = lotesData.filter(lote => lote.productoId == productId);
-                    if (lotesProducto.length > 0) {
-                        let loteProximoVencimiento = null;
-                        for (const lote of lotesProducto) {
-                            if (lote.cantidad > 0 && lote.estadoLote != 0) {
-                                if (loteProximoVencimiento === null || new Date(lote.fechaVencimiento) < new Date(loteProximoVencimiento.fechaVencimiento)) {
-                                    loteProximoVencimiento = lote;
-                                }
-                            }
-                        }
-                        if (loteProximoVencimiento !== null) {
-                            const precio = loteProximoVencimiento.precioPorUnidadProducto;
-                            $('#PrecioUnitario').val(precio);
-                            $('#PrecioUnitariohiddenpormayordescuento').val(precio);
-                            $('#PrecioUnitariohiddenpormayor').val(precio);
-                            $('#LoteId').val(loteProximoVencimiento.loteId);
-                        } else {
-                            limpiarDetallesProducto();
-                        }
-                    } else {
-                        limpiarDetallesProducto();
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al obtener los datos');
-            });
-    }
-
-    function limpiarDetallesProducto() {
-        $('#PrecioUnitario').val('');
-        $('#Clientes').val('');
-        $('#ClienteHidden').val('');
-        $('#UnidadId').val('');
-        $('#CantidadTxt').attr('placeholder', '');
-        $('#LoteId').val('');
-        $('#PrecioUnitariohiddenpormayordescuento').val('');
-        $('#PrecioUnitariohiddenpormayor').val('');
-        $('#CantidadAPlicada').val('');
-        $('#Descuento').val('');
-        $('#btnEnviar').prop('disabled', true);
-    }
-
-});
-
-$(document).ready(function () {
-    $('#CantidadTxt').on('input', function () {
-        const cantidadIngresada = parseFloat($(this).val()); // Obtener la cantidad ingresada y convertirla a número
-        const cantidadDisponible = parseFloat($('#CantidadTxt').attr('placeholder').trim()); // Obtener la cantidad disponible
-
-        var descuento = parseFloat($('#Descuento').val()); // Obtener el descuento y convertirlo a número
-        var precio = parseFloat($('#PrecioUnitario').val()); // Obtener el precio unitario y convertirlo a número
-
-        // Verificar si hay valores válidos para las unidades y descuentos
-
-
-        var descuentoaplicar = descuento / 100;
-        var aplicar = precio * descuentoaplicar;
-        console.log(aplicar);
-
-
-
-        // Aplicar lógica según las condiciones especificadas
-        if (isNaN(cantidadIngresada)) {
-            mostrarError('Por favor, ingrese una cantidad válida');
-        } else if (cantidadIngresada > cantidadDisponible) {
-            mostrarError('La cantidad ingresada no puede ser mayor que la cantidad disponible');
-        } else if (cantidadIngresada <= 0) {
-            mostrarError('La cantidad ingresada no puede ser menor o igual a 0');
-        } else {
-            quitarError(); // Si la cantidad ingresada es válida, quitar mensaje de error
-        }
-    });
-
-    // Función para mostrar mensaje de error y deshabilitar el botón de enviar
-    function mostrarError(mensaje) {
-        $('#CantidadTxt').addClass('input-validation-error');
-        $('span[data-valmsg-for="CantidadTxt"]').text(mensaje);
-        $('#CantidadTxt').addClass('is-invalid');
-        $('#btnEnviar').prop('disabled', true);
-    }
-
-    // Función para quitar mensaje de error y habilitar el botón de enviar
-    function quitarError() {
-        $('#CantidadTxt').removeClass('input-validation-error');
-        $('span[data-valmsg-for="CantidadTxt"]').text('');
-        $('#CantidadTxt').removeClass('is-invalid');
-        $('#btnEnviar').prop('disabled', false);
-    }
-});
 
 
 

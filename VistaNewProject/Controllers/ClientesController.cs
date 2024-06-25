@@ -265,7 +265,23 @@ namespace VistaNewProject.Controllers
             return Json(cliente);
         }
 
-      
+
+        public async Task<IActionResult> GetClientes()
+        {
+            var cliente = await _client.GetClientesAsync();
+            return Json(cliente);
+        }
+
+        public async Task<IActionResult> GetClienetById( int id)
+        {
+            var cliente = await _client.FindClienteAsync(id);
+            return Json(cliente);
+        }
+
+        
+        
+
+
 
         public async Task<IActionResult> Details(int? id, int? page)
         {

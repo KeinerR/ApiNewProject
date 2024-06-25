@@ -1,5 +1,5 @@
 ﻿function obtenerDatosclientes() {
-    fetch('https://localhost:7013/api/Clientes/GetClientes')
+    fetch('/Clientes/GetClientes')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Error al obtener los Clientes.');
@@ -598,7 +598,7 @@ function vaciarInputCliente() {
 
 function obteneClienteid(ClienteId) {
 
-    fetch(`https://localhost:7013/api/Clientes/GetClienetById?Id=${ClienteId}`)
+    fetch(`/Clientes/GetClienetById?Id=${ClienteId}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Error al obtener los datos');
@@ -630,28 +630,6 @@ function obteneClienteid(ClienteId) {
 
 
 
-
-function actualizarEstadoCliente(clienteId, estadoCliente) {
-    fetch(`https://localhost:7013/api/Clientes/UpdateEstadoCliente/${clienteId}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ EstadoCliente: estadoCliente ? 1 : 0 })
-    })
-        .then(response => {
-            if (response.ok) {
-                setTimeout(() => {
-                    location.reload(); // Recargar la página
-                }, 500);
-            } else {
-                console.error('Error al actualizar el estado del cliente');
-            }
-        })
-        .catch(error => {
-            console.error('Error de red:', error);
-        });
-}
 
 
 /*---------------------------------------------------- Al dar click en el boton de agregar usuario  ---------------------------------------------------- */

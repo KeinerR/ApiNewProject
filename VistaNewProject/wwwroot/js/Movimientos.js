@@ -245,10 +245,8 @@ $(document).ready(function () {
         var url = '';
 
         if (tipo === "Pedido") {
-            url = 'https://localhost:7013/api/Pedidos/GetPedidosRealizado';
-        } else if (tipo === "Compra") {
-            url = 'https://localhost:7013/api/Compras/GetComprasRealizada';
-        }
+            url = '/Pedidos/GetPedidosRealizado';
+        } 
 
         fetch(url)
             .then(response => {
@@ -384,11 +382,11 @@ function ActualizarLotes(tipomovimineto) {
         detallePedidoId: detalleid,
         pedidoId: pedidoId,
         productoId: productoId,
-        loteId: loteId,
+        loteId: LoteId,
         unidadId: unidadId,
         precioUnitario: precio,
         subtotal: subtotal,
-        cantidad: cantidad,
+        cantidad: Cantidad,
         tipomovimineto: tipomovimineto // Añadir el tipo de movimiento
     };
 

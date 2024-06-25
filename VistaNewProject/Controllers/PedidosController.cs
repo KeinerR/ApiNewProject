@@ -104,6 +104,16 @@ namespace VistaNewProject.Controllers
 
 
 
+        public async Task<IActionResult> GetPedidosRealizado()
+        {
+
+            var pedidos = await _client.GetPedidoAsync();
+
+            var productosrealizados = pedidos.Where(p => p.EstadoPedido == "Realizado");
+
+            return Json(productosrealizados);
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> Create()
@@ -459,7 +469,18 @@ namespace VistaNewProject.Controllers
 
 
 
-     
+
+        public async Task<IActionResult> UpdateEstadoPedido(int id,string estado)
+        {
+            var updateestado=await _client.CambiarEstadoPedidoAsync(id, estado);
+
+
+
+            return Ok();
+
+        }
+
+
 
     }
 }

@@ -1,85 +1,88 @@
 ﻿// Function to update the order status
+
 function actualizarEstadoPedido(PedidoId, estado) {
     console.log(PedidoId);
-    let estadoPedido = ""; // By default, the order status is an empty string
+    console.log(estado); // Verificar que se esté recibiendo el estado correctamente
 
-    // Determine the order status based on the received value
+    let estadoPedido = ""; // Por defecto, el estado del pedido es una cadena vacía
+
+    // Determinar el estado del pedido basado en el valor recibido
     if (estado === "Pendiente" || estado === "Anulado" || estado === "Realizado" || estado === "Cancelado") {
         estadoPedido = estado;
     } else {
-        console.error("Invalid order status:", estado);
-        return; // Exit the function if the order status is invalid
+        console.error("Estado de pedido inválido:", estado);
+        return; // Salir de la función si el estado del pedido es inválido
     }
 
-    console.log("Current order status:", estadoPedido); // Print the current order status
+    console.log("Estado actual del pedido:", estadoPedido); // Imprimir el estado actual del pedido
 
-    fetch(`https://localhost:7013/api/Pedidos/UpdateEstadoPedido/${PedidoId}`, {
+    fetch(`/Pedidos/UpdateEstadoPedido/${PedidoId}?estado=${estadoPedido}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ EstadoPedido: estadoPedido })
+        }
     })
         .then(response => {
             if (response.ok) {
-                location.reload(); // Reload the page to reflect the changes
+                location.reload(); // Recargar la página para reflejar los cambios
 
-                console.log("Status updated successfully");
+                console.log("Estado actualizado correctamente");
 
-                // Call the DescontardeInventario method passing the PedidoId and type "Pedido"
+                // Llamar al método DescontardeInventario pasando PedidoId y tipo "Pedido"
                 return $.ajax({
                     url: '/Pedidos/DescontardeInventario',
                     type: 'GET',
                     data: { id: PedidoId, tipo: "Pedido" }
                 });
             } else {
-                throw new Error('Error updating the order status');
+                throw new Error('Error al actualizar el estado del pedido');
             }
         })
         .then(response => {
-            console.log("Inventory discounted successfully");
-            location.reload(); // Reload the page to reflect the changes
+            console.log("Inventario descontado correctamente");
+            location.reload(); // Recargar la página para reflejar los cambios
         })
         .catch(error => {
             console.error('Error:', error);
         });
 }
 
-// Function to update the order status options based on service type
-function updateEstadoPedido() {
-    var tipo = document.getElementById("TipoServicio").value;
-    var estado = document.getElementById("EstadoPedido");
 
-    if (tipo === "Caja") {
-        estado.value = "Realizado";
-        for (var i = 0; i < estado.options.length; i++) {
-            if (estado.options[i].value !== "Realizado") {
-                estado.options[i].style.display = 'none';
-            } else {
-                estado.options[i].style.display = 'block';
-            }
-        }
-    } else if (tipo === "Domicilio") {
-        estado.value = "Pendiente";
-        for (var i = 0; i < estado.options.length; i++) {
-            if (estado.options[i].value !== "Pendiente") {
-                estado.options[i].style.display = 'none';
-            } else {
-                estado.options[i].style.display = 'block';
-            }
-        }
-    } else {
-        for (var i = 0; i < estado.options.length; i++) {
-            estado.options[i].style.display = 'block';
-        }
-        estado.value = ""; // Reset to default or desired value if needed
-    }
-}
+//// Function to update the order status options based on service type
+//function updateEstadoPedido() {
+//    var tipo = document.getElementById("TipoServicio").value;
+//    var estado = document.getElementById("EstadoPedido");
 
-// Run the function on page load to ensure the correct state if the form is pre-filled
-document.addEventListener("DOMContentLoaded", function () {
-    updateEstadoPedido();
-});
+//    if (tipo === "Caja") {
+//        estado.value = "Realizado";
+//        for (var i = 0; i < estado.options.length; i++) {
+//            if (estado.options[i].value !== "Realizado") {
+//                estado.options[i].style.display = 'none';
+//            } else {
+//                estado.options[i].style.display = 'block';
+//            }
+//        }
+//    } else if (tipo === "Domicilio") {
+//        estado.value = "Pendiente";
+//        for (var i = 0; i < estado.options.length; i++) {
+//            if (estado.options[i].value !== "Pendiente") {
+//                estado.options[i].style.display = 'none';
+//            } else {
+//                estado.options[i].style.display = 'block';
+//            }
+//        }
+//    } else {
+//        for (var i = 0; i < estado.options.length; i++) {
+//            estado.options[i].style.display = 'block';
+//        }
+//        estado.value = ""; // Reset to default or desired value if needed
+//    }
+//}
+
+//// Run the function on page load to ensure the correct state if the form is pre-filled
+//document.addEventListener("DOMContentLoaded", function () {
+//    updateEstadoPedido();
+//});
 
 // Function to validate the order before submission
 function validarpedido() {
@@ -118,14 +121,14 @@ function quitarError(inputElement, errorElement) {
 }
 
 // Set the current date and time in the FechaPedido input
-document.addEventListener('DOMContentLoaded', function () {
-    var fechaPedido = document.getElementById("FechaPedido");
+//document.addEventListener('DOMContentLoaded', function () {
+//    var fechaPedido = document.getElementById("FechaPedido");
 
-    var fechaActual = new Date();
-    var formateada = fechaActual.toISOString().slice(0, 16);
+//    var fechaActual = new Date();
+//    var formateada = fechaActual.toISOString().slice(0, 16);
 
-    fechaPedido.value = formateada;
-});
+//    fechaPedido.value = formateada;
+//});
 
 $("#Clientes").on("change", function () {
     var inputValue = $(this).val();
