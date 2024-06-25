@@ -37,25 +37,7 @@ namespace VistaNewProject.Controllers
 
 
 
-        public async Task<IActionResult> GetProductos()
-        {
-            var productos = await _client.GetProductoAsync();
-            return Json(productos);
-        }
-
-        public async Task<IActionResult> GeUnidades()
-        {
-            var unidades = await _client.GetUnidadAsync();
-            return Json(unidades);
-        }
-
-
-        public async Task<IActionResult> GetLotes()
-        {
-            var lotes = await _client.GetLoteAsync();
-            return Json(lotes);
-        }
-
+       
 
         [HttpGet]
         public async Task<IActionResult> ObtenerLotesDisponibles(int productoId)

@@ -86,13 +86,7 @@ namespace VistaNewProject.Controllers
 
 
 
-        public async Task<IActionResult> GetClientes()
-        {
-            var clientes= await _client.GetClientesAsync();
-
-            return Json(clientes);
-
-        }
+        
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] Cliente cliente)
         {
