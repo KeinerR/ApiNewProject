@@ -246,7 +246,7 @@ $(document).ready(function () {
 
         if (tipo === "Pedido") {
             url = '/Pedidos/GetPedidosRealizado';
-        }
+        } 
 
         fetch(url)
             .then(response => {
@@ -380,11 +380,11 @@ function ActualizarLotes(tipomovimineto) {
         detallePedidoId: detalleid,
         pedidoId: pedidoId,
         productoId: productoId,
-        loteId: loteId,
+        loteId: LoteId,
         unidadId: unidadId,
         precioUnitario: precio,
         subtotal: subtotal,
-        cantidad: cantidad,
+        cantidad: Cantidad,
         tipomovimineto: tipomovimineto // Añadir el tipo de movimiento
     };
 

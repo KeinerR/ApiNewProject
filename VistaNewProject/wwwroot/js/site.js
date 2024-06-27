@@ -106,6 +106,7 @@ window.seleccionarOpcion = function (input, dataList, hiddenInput, Peticion) {
     const selectedValue = input.value.trim();
     let selectedOptionByName = Array.from(dataList.options).find(option => option.value === selectedValue);
     let selectedOptionById = Array.from(dataList.options).find(option => option.getAttribute('data-id') === selectedValue);
+
     if (/^\d+[a-zA-Z]$/.test(selectedValue)) {
         selectedOptionByName = Array.from(dataList.options).find(option => option.value === selectedValue);
     }
@@ -225,6 +226,17 @@ async function manejarMarca(selectedValue, Peticion) {
         console.error('Error al manejar la marca:', error);
     }
 }
+        if (marca != null && marca !== "null") {
+            $('#NombreMarca').val(marca.nombreMarca);
+            $('#MarcaId').val(marca.marcaId);
+        } else {
+            alert("Categoría no encontrada");
+        }
+    } catch (error) {
+        console.error('Error al manejar la categoría:', error);
+    }
+}
+
 function obtenerValoresFormulario(ids) {
     const valores = {};
     ids.forEach(id => {
@@ -299,6 +311,19 @@ function buscarPresentacion(presentacionId) {
     });
 }
 
+function buscarPresentacion(presentacionId) {
+    return $.ajax({
+        url: `/Presentaciones/FindPresentacion`,
+        type: 'GET',
+        data: { presentacionId: presentacionId },
+        success: function (data) {
+            return data;
+        },
+        error: function () {
+            mostrarAlertaAtencionPersonalizadaConBoton('Mo existe una presentacion con este id.');
+        }
+    });
+}
 
 
 /*------------------------------------------Funciones patra mostrar alertas--------------------------------------------*/
@@ -466,37 +491,34 @@ function iconoLimpiarCampo(idsCampos,id) {
     removerIconoparalimpiarElCampo(id);
 }
 
-
 /*---------------------------- Funciones para detalle de producto ---------------------------------------------- */
 
 // Función para limpiar y rellenar las listas
 function fillList(selector, data, nameKey, idKey, stateKey, emptyMessage) {
-    const $list = $(selector).empty(); // Limpia la lista
-
+    const $list = $(selector).empty(); // Limpiar la lista antes de rellenarla
     if (data && data.length > 0) {
         data.forEach(item => {
-            const option = `<option value="${item[nameKey]}" data-id="${item[idKey]}" data-estado="${item[stateKey]}">${item[nameKey]}</option>`;
+            const option = `<option value="${item[nameKey]}" data-estado="${item[stateKey]}"></option>`;
             $list.append(option);
         });
     } else {
-        // Si no hay datos, muestra un mensaje
+        // Si no hay datos, mostrar un mensaje vacío
         const option = `<option>${emptyMessage}</option>`;
         $list.append(option);
     }
 }
+
 async function checkboxFiltrar() {
     try {
         const filtrar = document.getElementById('filtrarActivos').checked ? 1 : 0;
         const asociar = document.getElementById('filtrarxCategoria').checked ? 1 : 0;
-        const filtro = $('#CategoriaId').val(); // Este es el filtro adicional para la categoría
+        const filtro = $('#CategoriaId').val(); // Additional filter for category
 
         let url = `/Productos/filtrarDataList/${filtrar}/${asociar}`;
 
-        // Si asociar es 1 y hay un filtro, añadir el filtro a la URL
         if (asociar === 1 && filtro !== "") {
             url += `/${filtro}`;
         }
-
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -504,23 +526,21 @@ async function checkboxFiltrar() {
             },
             body: JSON.stringify({ filtrar: filtrar })
         });
-
         if (!response.ok) {
             throw new Error('Error al cargar los productos');
         }
-
         const data = await response.json();
-        console.log(data);
-
-        // Limpia y rellena las listas utilizando la función fillList
+        console.log(data.marcas);
+        // Fill and clear lists using the fillList function
         fillList('#marcas', data.marcas, 'nombreMarca', 'marcaId', 'estadoMarca', 'No hay marcas disponibles');
         fillList('#presentaciones', data.presentaciones, 'nombreCompletoPresentacion', 'presentacionId', 'estadoPresentacion', 'No hay presentaciones disponibles');
         fillList('#categorias', data.categorias, 'nombreCategoria', 'categoriaId', 'estadoCategoria', 'No hay categorías disponibles');
 
     } catch (error) {
-        console.error(error); // Muestra el error en la consola
+        console.error(error); // Log error to console
     }
 }
+
 async function checkboxFiltrarAct() {
     try {
         const filtrar = document.getElementById('filtrarActivosAct').checked ? 1 : 0;

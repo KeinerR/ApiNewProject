@@ -224,6 +224,8 @@ $(document).ready(function () {
 
                     // Disable "Unidad" and "Cantidad" fields
                     $("#UnidadId").prop("disabled", true);
+                    $("#CantidadTxt").prop("disabled", true);
+
 
                     // Clear the Clientes input if no entity is found
                 }
@@ -234,6 +236,8 @@ $(document).ready(function () {
 
                 // Disable "Unidad" and "Cantidad" fields
                 $("#UnidadId").prop("disabled", true);
+                $("#CantidadTxt").prop("disabled", true);
+
             }
         }
     });
@@ -255,6 +259,7 @@ $(document).ready(function () {
                 unidades = data;
                 console.log(unidades);// Guardar unidades en una variable global
             });
+
         const fetchLotes = fetch(`/DetallePedidos/GetLotes`)
             .then(response => {
                 if (!response.ok) {
@@ -263,6 +268,10 @@ $(document).ready(function () {
                 return response.json();
             })
 
+
+
+
+
         const fetchProductos = fetch(`/DetallePedidos/GetProductos`)
             .then(response => {
                 if (!response.ok) {
@@ -270,7 +279,7 @@ $(document).ready(function () {
                 }
                 return response.json();
             })
-        
+
 
         // Esperar a que todas las solicitudes se completen
         Promise.all([fetchUnidades, fetchLotes, fetchProductos])
@@ -297,14 +306,18 @@ $(document).ready(function () {
                     console.log(AplicarPormayor);
                     console.log(descuento);;
                     const cantidadTotal = productoSeleccionado.cantidadTotal;
-                    const cantidadTotalunidad = productoSeleccionado.cantidadTotalPorUnidad;
                     const cantidadReservada = productoSeleccionado.cantidadReservada;
                     const cantidadReservadaPorunidad = productoSeleccionado.cantidadPorUnidadReservada;
                     const cantidadDisponible = cantidadTotal - cantidadReservada;
-                    const cantidadDisponibleunidad = cantidadTotalunidad - cantidadReservadaPorunidad
-                    console.log("cahjkjhfgjklkjhghjkl",cantidadDisponibleunidad)
+
+                    const cantidadpresentacion = productoSeleccionado.cantidadPorPresentacion;
+                    const cantidadunidadaplicar = cantidadDisponible * cantidadpresentacion;
+
+
+                    const cantidadDisponibleunidad = cantidadunidadaplicar - cantidadReservadaPorunidad
+                    console.log("cahjkjhfgjklkjhghjkl", cantidadDisponibleunidad)
                     habilitarUnidades(cantidadDisponibleunidad, cantidadDisponible);
-                   
+
 
                     if (cantidadDisponible > 0) {
                         $('#CantidadTxt').attr('placeholder', `Disponible: ${cantidadDisponible}`);
@@ -318,7 +331,7 @@ $(document).ready(function () {
 
                     // Obtener detalles de compras y unidades
                     // Obtener detalles de compras y unidades
-                    
+
 
                 }
 
@@ -335,7 +348,7 @@ $(document).ready(function () {
                     }
                     if (loteProximoVencimiento !== null) {
                         const precio = loteProximoVencimiento.precioPorUnidadProducto;
-                        const preciopormayor = loteProximoVencimiento.precioPorUnidad;
+                        const preciopormayor = loteProximoVencimiento.precioPorPresentacion;
 
 
 
@@ -343,7 +356,7 @@ $(document).ready(function () {
 
                         $('#PrecioUnitario').val(precio);
 
-                        console.log("keienr precio mayor ", precio)
+                        console.log("keienr precio menor ", precio)
                         console.log("keienr precio mayor ", preciopormayor)
 
 
@@ -353,7 +366,7 @@ $(document).ready(function () {
                         $('#LoteId').val(loteProximoVencimiento.loteId);
                         habilitarUnidades()
                     } else {
-                     
+
                         $('#PrecioEnviar').val('');
 
                         $('#PrecioUnitario').val('');
@@ -362,7 +375,7 @@ $(document).ready(function () {
 
                     }
                 } else {
-                    
+
                     $('#PrecioUnitario').val('');
                     $('#LoteId').val('');
                     $('#PrecioUnitariohiddenpormayor').val('');
@@ -375,7 +388,7 @@ $(document).ready(function () {
     }
 
 
-   
+
 
 
 
@@ -403,22 +416,22 @@ $(document).ready(function () {
     // Evento input para el campo "Cantidad"
 
 
+});
 
-})
 $(document).ready(function () {
+
+    
     $('#CantidadTxt').on('input', function () {
         const cantidadIngresada = parseFloat($(this).val()); // Obtener la cantidad ingresada y convertirla a número
         const cantidadDisponible = parseFloat($('#CantidadTxt').attr('placeholder').trim()); // Obtener la cantidad disponible
 
-        var descuento = parseFloat($('#Descuento').val()); // Obtener el descuento y convertirlo a número
-        var precio = parseFloat($('#PrecioUnitario').val()); // Obtener el precio unitario y convertirlo a número
+
 
         // Verificar si hay valores válidos para las unidades y descuentos
        
 
-        var descuentoaplicar = descuento / 100;
-        var aplicar = precio * descuentoaplicar;
-        console.log(aplicar);
+
+       
      
 
       
@@ -452,40 +465,6 @@ $(document).ready(function () {
 });
 
 
-$(document).ready(function () {
-    // Call filtrarProductos with an empty string to load all products initially
-    filtrarProductos('');
-});
-
-function buscarProductos() {
-    var busqueda = $('#busqueda').val(); // Obtener el valor del campo de búsqueda
-    console.log(busqueda);
-    // Llamar a la función para filtrar productos por categoría
-    filtrarProductos(busqueda);
-}
-
-function filtrarProductos(busqueda) {
-    console.log("Buscando productos con:", busqueda);
-    $.ajax({
-        url: '/DetallePedidos/FiltrarProductos',
-        type: 'GET',
-        data: { busqueda: busqueda },
-        success: function (response) {
-            console.log("Productos filtrados:", response);
-
-            // Limpiar el datalist de productos
-            $('#clientes').empty();
-
-            // Añadir los productos filtrados al datalist
-            $.each(response, function (index, producto) {
-                $('#clientes').append('<option value="' + producto.nombreCompletoProducto + '" data-id="' + producto.productoId + '">' + producto.nombreCompletoProducto + '</option>');
-            });
-        },
-        error: function (xhr, status, error) {
-            console.error('Error al filtrar productos:', xhr.responseText);
-        }
-    });
-}
 
 
 
@@ -568,53 +547,6 @@ function eliminarDetalle(index) {
 
 
 
-$(document).ready(function () {
-    $('#CantidadTxt').on('input', function () {
-        const cantidadIngresada = parseFloat($(this).val()); // Obtener la cantidad ingresada y convertirla a número
-        const cantidadDisponible = parseFloat($('#CantidadTxt').attr('placeholder').trim()); // Obtener la cantidad disponible
-
-        var descuento = parseFloat($('#Descuento').val()); // Obtener el descuento y convertirlo a número
-        var precio = parseFloat($('#PrecioUnitario').val()); // Obtener el precio unitario y convertirlo a número
-
-        // Verificar si hay valores válidos para las unidades y descuentos
-
-
-        var descuentoaplicar = descuento / 100;
-        var aplicar = precio * descuentoaplicar;
-        console.log(aplicar);
-
-
-
-        // Aplicar lógica según las condiciones especificadas
-        if (isNaN(cantidadIngresada)) {
-            mostrarError('Por favor, ingrese una cantidad válida');
-        } else if (cantidadIngresada > cantidadDisponible) {
-            mostrarError('La cantidad ingresada no puede ser mayor que la cantidad disponible');
-        } else if (cantidadIngresada <= 0) {
-            mostrarError('La cantidad ingresada no puede ser menor o igual a 0');
-        } else {
-            quitarError(); // Si la cantidad ingresada es válida, quitar mensaje de error
-        }
-    });
-
-    // Función para mostrar mensaje de error y deshabilitar el botón de enviar
-    function mostrarError(mensaje) {
-        $('#CantidadTxt').addClass('input-validation-error');
-        $('span[data-valmsg-for="CantidadTxt"]').text(mensaje);
-        $('#CantidadTxt').addClass('is-invalid');
-        $('#btnEnviar').prop('disabled', true);
-    }
-
-    // Función para quitar mensaje de error y habilitar el botón de enviar
-    function quitarError() {
-        $('#CantidadTxt').removeClass('input-validation-error');
-        $('span[data-valmsg-for="CantidadTxt"]').text('');
-        $('#CantidadTxt').removeClass('is-invalid');
-        $('#btnEnviar').prop('disabled', false);
-    }
-});
-
-
 
 $(document).ready(function () {
     // Call filtrarProductos with an empty string to load all products initially
@@ -655,17 +587,12 @@ $(document).ready(function () {
     // Inicialmente deshabilitar el campo CantidadTxt
     $("#CantidadTxt").prop("disabled", true);
 });
-
 function habilitarUnidades(cantidadDisponibleunidad, cantidadDisponible) {
     var uni = cantidadDisponibleunidad;
     var dispo = cantidadDisponible;
 
-    console.log("unitariassssssss", uni);
-
     var precio = parseFloat($('#PrecioUnitario').val());
     var preciomayor = parseFloat($('#PrecioUnitariohiddenpormayor').val());
-    console.log("unitario", precio);
-    console.log("mayor", preciomayor);
 
     $("#UnidadId").on("change", function () {
         var inputValue = $(this).val();
@@ -685,14 +612,11 @@ function habilitarUnidades(cantidadDisponibleunidad, cantidadDisponible) {
             if (clienteIdSeleccionado == 2) {
                 // Obtener el precio por mayor y actualizar el campo PrecioUnitario
                 $('#PrecioUnitario').val(precio);
-                console.log("Precio por mayor:", precio);
-
                 $('#CantidadTxt').attr('placeholder', uni); // Cambiar el placeholder de la cantidad a 'uni'
                 $("#CantidadTxt").prop("disabled", false); // Habilitar el campo CantidadTxt
             } else if (clienteIdSeleccionado == 1) {
                 // Obtener el precio por mayor y actualizar el campo PrecioUnitario
                 $('#PrecioUnitario').val(preciomayor);
-                console.log("Precio por hgfghjkjhg:", preciomayor);
                 $('#CantidadTxt').attr('placeholder', dispo); // Cambiar el placeholder de la cantidad a 'uni'
                 $("#CantidadTxt").prop("disabled", false); // Habilitar el campo CantidadTxt
             }
@@ -706,7 +630,6 @@ function habilitarUnidades(cantidadDisponibleunidad, cantidadDisponible) {
 
                     // Capturar el ID del cliente seleccionado en una variable
                     var clienteIdSeleccionado = inputValue;
-                    console.log("Cliente seleccionado:", clienteIdSeleccionado);
                     $("#CantidadTxt").prop("disabled", false); // Habilitar el campo CantidadTxt
                 } else {
                     $("#unidadHidden").val("");
@@ -723,3 +646,4 @@ function habilitarUnidades(cantidadDisponibleunidad, cantidadDisponible) {
         }
     });
 }
+

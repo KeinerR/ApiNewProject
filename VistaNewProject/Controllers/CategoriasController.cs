@@ -83,10 +83,10 @@ namespace VistaNewProject.Controllers
 
             if (categoria == null)
             {
-                return Json("null");
+                return NotFound(); // Devuelve un 404 Not Found si la categoría no existe
             }
 
-            return Json(categoria);
+            return Json(categoria); // Devuelve la categoría encontrada en formato JSON
         }
 
 

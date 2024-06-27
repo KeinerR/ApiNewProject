@@ -259,14 +259,7 @@ namespace ApiNewProject.Controllers
 
                 // Actualizar el estado del cliente con el nuevo valor
                 pedidos.EstadoPedido = EstadoPedido.EstadoPedido;
-                var domicilioAsociado = await _context.Domicilios.FirstOrDefaultAsync(d => d.PedidoId == pedidos.PedidoId);
-                if (domicilioAsociado != null)
-                {
-                    // Update the state of the associated domicile to match the state of the order
-                    domicilioAsociado.EstadoDomicilio = EstadoPedido.EstadoPedido;
-
-                }
-
+              
                 // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
 

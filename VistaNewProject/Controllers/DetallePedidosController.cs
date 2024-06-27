@@ -37,25 +37,7 @@ namespace VistaNewProject.Controllers
 
 
 
-        public async Task<IActionResult> GetProductos()
-        {
-            var productos = await _client.GetProductoAsync();
-            return Json(productos);
-        }
-
-        public async Task<IActionResult> GeUnidades()
-        {
-            var unidades = await _client.GetUnidadAsync();
-            return Json(unidades);
-        }
-
-
-        public async Task<IActionResult> GetLotes()
-        {
-            var lotes = await _client.GetLoteAsync();
-            return Json(lotes);
-        }
-
+       
 
         [HttpGet]
         public async Task<IActionResult> ObtenerLotesDisponibles(int productoId)
@@ -82,6 +64,26 @@ namespace VistaNewProject.Controllers
             {
                 return BadRequest($"Error al filtrar productos: {ex.Message}");
             }
+        }
+
+
+        public async Task<IActionResult> GetProductos()
+        {
+            var productos = await _client.GetAllDatosProductosAsync();
+            return Json(productos);
+        }
+
+        public async Task<IActionResult> GeUnidades()
+        {
+            var unidades = await _client.GetUnidadAsync();
+            return Json(unidades);
+        }
+
+
+        public async Task<IActionResult> GetLotes()
+        {
+            var lotes = await _client.GetLoteAsync();
+            return Json(lotes);
         }
 
 
@@ -259,6 +261,7 @@ namespace VistaNewProject.Controllers
                             var productoId = detalle.ProductoId.Value;
                             var producto = await _client.FindProductoAsync(productoId);
 
+                           
 
                             if (producto != null)
                             {
@@ -291,48 +294,54 @@ namespace VistaNewProject.Controllers
 
                             }
 
+                            var loteId = detalle.LoteId.Value;
 
-                            if(uniddaId == 1)
+                            // Obtener el lote específico por ID
+                            var lote = await _client.FindLoteAsync(loteId);
+
+                            if (uniddaId == 1)
                             {
-
-                                var lotes = await _client.GetLoteAsync();
-                                var lotesFiltrados = lotes
-                                    .Where(l => l.ProductoId == productoId && l.Cantidad > 0 && l.EstadoLote != 0)
-                                    .OrderBy(l => l.FechaVencimiento)
-                                    .ThenByDescending(l => l.Cantidad);
-
-                                if (lotesFiltrados.Any())
+                                // Verificar que el lote cumple con los criterios
+                                if (lote != null && lote.ProductoId == productoId && lote.Cantidad > 0 && lote.EstadoLote != 0)
                                 {
                                     int cantidadRestante = detalle.Cantidad.Value;
 
-                                    foreach (var lote in lotesFiltrados)
+                                    // Descontar la cantidad del lote específico
+                                    int cantidadDescontar = Math.Min(cantidadRestante, lote.Cantidad.Value);
+                                    cantidadRestante -= cantidadDescontar;
+
+                                    // Actualizar el lote en la base de datos
+                                    var updateLoteResponse = await _client.SustraerCantidadALoteAsync(lote.LoteId, cantidadDescontar);
+
+                                    if (!updateLoteResponse.IsSuccessStatusCode)
                                     {
-                                        if (cantidadRestante <= 0)
-                                            break;
-
-                                        int cantidadDescontar = Math.Min(cantidadRestante, lote.Cantidad.Value);
-
-
-                                        lote.Cantidad -= cantidadDescontar;
-
-
-
-                                        // Actualizar la cantidad del lote
-                                        cantidadRestante -= cantidadDescontar;
-
-                                        // Actualizar el lote en la base de datos
-                                        var updateLoteResponse = await _client.UpdateLoteAsync(lote);
-
-                                        if (!updateLoteResponse.IsSuccessStatusCode)
-                                        {
-                                            TempData["ErrorMessage"] = $"Error al actualizar el lote: {updateLoteResponse.ReasonPhrase}";
-                                            return RedirectToAction("Index", "Pedidos");
-                                        }
+                                        TempData["ErrorMessage"] = $"Error al actualizar el lote: {updateLoteResponse.ReasonPhrase}";
+                                        return RedirectToAction("Index", "Pedidos");
                                     }
                                 }
                             }
-                            // Obtener los lotes disponibles para el producto actual
-                           
+                            if (uniddaId == 2)
+                            {
+                                // Verificar que el lote cumple con los criterios
+                                if (lote != null && lote.ProductoId == productoId && lote.Cantidad > 0 && lote.EstadoLote != 0)
+                                {
+                                    int cantidadRestante = detalle.Cantidad.Value;
+
+                                    // Descontar la cantidad del lote específico
+                                    int cantidadDescontar = Math.Min(cantidadRestante, lote.Cantidad.Value);
+                                    cantidadRestante -= cantidadDescontar;
+
+                                    // Actualizar el lote en la base de datos
+                                    var updateLoteResponse = await _client.SustraerCantidadPorUnidadALoteAsync(lote.LoteId, cantidadDescontar);
+
+                                    if (!updateLoteResponse.IsSuccessStatusCode)
+                                    {
+                                        TempData["ErrorMessage"] = $"Error al actualizar el lote: {updateLoteResponse.ReasonPhrase}";
+                                        return RedirectToAction("Index", "Pedidos");
+                                    }
+                                }
+                            }
+
                         }
 
                         // Limpiar la lista de detalles globales después de descontar el inventario y los lotes

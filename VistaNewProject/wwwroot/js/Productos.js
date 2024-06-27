@@ -434,16 +434,16 @@ function limpiarDatosFormularioProductoAgregar() {
 }
 
 //Se llama al dar click en la x
-function limpiarFormularioProducto() {
-    limpiarDatosFormularioProductoAgregar();
+function limpiarFormularioProducto() {  
     // Limpiar campos y elementos específicos
     limpiarCampo('NombreMarca');
     limpiarCampo('MarcaId');
     limpiarCampo('NombreCategoria');
     limpiarCampo('CategoriaId');
-    limpiarCampo('NombrePresentacion');
+    limpiarCampo('NombrePresentacion'); 
     limpiarCampo('PresentacionId');
     limpiarCampo('NombreProducto');
+    limpiarDatosFormularioProductoAgregar();
 }
 function limpiarFormularioProductoAct() {
     // Limpiar la URL eliminando los parámetros de consulta
@@ -482,6 +482,9 @@ function limpiarDatosFormularioProductoAct() {
     for (var i = Math.max(0, mensajesText.length - 3); i < mensajesText.length; i++) {
         mensajesText[i].textContent = '';
     }
+    agregarIconoparalimpiarElCampo('NombrePresentacionAct');
+    agregarIconoparalimpiarElCampo('NombreMarcaAct');
+    agregarIconoparalimpiarElCampo('NombreCategoriaAct');
     // Verificar si los elementos están marcados y desmarcarlos si es así
     if ($('#filtrarActivosAct').prop('checked')) {
         $('#filtrarActivosAct').trigger('click');
@@ -490,6 +493,12 @@ function limpiarDatosFormularioProductoAct() {
     if ($('#filtrarxCategoriaAct').prop('checked')) {
         $('#filtrarxCategoriaAct').trigger('click');
     }
+
+    agregarIconoparalimpiarElCampo('NombrePresentacionAct');
+    agregarIconoparalimpiarElCampo('NombreMarcaAct');
+    agregarIconoparalimpiarElCampo('NombreCategoriaAct');
+
+
 }
 function limpiarFiltroProductoAgregar() {
     $('#CategoriaId').val("");
@@ -751,26 +760,6 @@ function Llamar() {
 
     }
 }
-
-function actualizarFormularioParaDescuentoCrear(activar) {
-    var mensajes = document.querySelectorAll('.Mensaje');
-    const elementos = document.getElementsByClassName('PorMayor');
-
-    for (let i = 4; i < mensajes.length - 6; i++) {
-        mensajes[i].textContent = activar ? '*' : ''; // Restaurar mensajes de error o limpiarlos
-    }
-
-    for (let i = 0; i < elementos.length; i++) {
-        if (activar) {
-            elementos[i].classList.remove("noBe");
-        } else {
-            elementos[i].classList.add("noBe");
-        }
-    }
-
-    document.getElementById('CantidadAplicarPorMayor').value = activar ? '' : '0';
-    document.getElementById('DescuentoAplicarPorMayor').value = activar ? '' : '0';
-}
 function Llamar2() {
     var checkbox = document.getElementById('checkboxDescuentoPorMayorAct');
     var mensajes = document.querySelectorAll('.Mensaje');
@@ -813,7 +802,25 @@ function Llamar2() {
         }
     }
 }
+function actualizarFormularioParaDescuentoCrear(activar) {
+    var mensajes = document.querySelectorAll('.Mensaje');
+    const elementos = document.getElementsByClassName('PorMayor');
 
+    for (let i = 4; i < mensajes.length - 6; i++) {
+        mensajes[i].textContent = activar ? '*' : ''; // Restaurar mensajes de error o limpiarlos
+    }
+
+    for (let i = 0; i < elementos.length; i++) {
+        if (activar) {
+            elementos[i].classList.remove("noBe");
+        } else {
+            elementos[i].classList.add("noBe");
+        }
+    }
+
+    document.getElementById('CantidadAplicarPorMayor').value = activar ? '' : '0';
+    document.getElementById('DescuentoAplicarPorMayor').value = activar ? '' : '0';
+}
 function actualizarFormularioParaDescuento(activar) {
     var mensajes = document.querySelectorAll('.Mensaje');
     const elementos = document.getElementsByClassName('PorMayorAct');

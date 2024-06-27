@@ -10,7 +10,7 @@ namespace VistaNewProject.Services
         Task<Cliente> FindClienteAsync(int id);
         Task<HttpResponseMessage> UpdateClienteAsync(Cliente cliente);
         Task<HttpResponseMessage> CambiarEstadoClienteAsync(int id);
-
+        
         Task<HttpResponseMessage> DeleteClienteAsync(int id);
 
 
@@ -19,6 +19,7 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Pedido>> GetPedidoAsync();
         Task<HttpResponseMessage> CreatePedidoAsync(Pedido pedido);
         Task<HttpResponseMessage> DeletePedidoAsync(int id);
+        Task<HttpResponseMessage> CambiarEstadoPedidoAsync(int id,string estado);
 
         Task<HttpResponseMessage> UpdatePedidoAsync(Pedido pedido);
         Task<Pedido> FindPedidosAsync(int id);

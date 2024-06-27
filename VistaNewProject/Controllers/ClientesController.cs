@@ -86,13 +86,7 @@ namespace VistaNewProject.Controllers
 
 
 
-        public async Task<IActionResult> GetClientes()
-        {
-            var clientes= await _client.GetClientesAsync();
-
-            return Json(clientes);
-
-        }
+        
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] Cliente cliente)
         {
@@ -276,7 +270,23 @@ namespace VistaNewProject.Controllers
             return Json(cliente);
         }
 
-      
+
+        public async Task<IActionResult> GetClientes()
+        {
+            var cliente = await _client.GetClientesAsync();
+            return Json(cliente);
+        }
+
+        public async Task<IActionResult> GetClienetById( int id)
+        {
+            var cliente = await _client.FindClienteAsync(id);
+            return Json(cliente);
+        }
+
+        
+        
+
+
 
         public async Task<IActionResult> Details(int? id, int? page)
         {

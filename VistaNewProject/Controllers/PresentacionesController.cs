@@ -77,7 +77,13 @@ namespace VistaNewProject.Controllers
         public async Task<JsonResult> FindPresentacion(int presentacionId)
         {
             var presentacion = await _client.FindPresentacionAsync(presentacionId);
-            return Json(presentacion);
+
+            if (presentacion == null)
+            {
+                return NotFound(); // Devuelve un 404 Not Found si no existe
+            }
+
+            return Json(presentacion); // Devuelve la presentacion encontrada en formato JSON
         }
 
         [HttpGet]
@@ -135,6 +141,7 @@ namespace VistaNewProject.Controllers
 
             return View(pagedProductosPagedList);
         }
+
         public async Task<IActionResult> PresentacionxCategoriasAsociadas(int? id, int? page, string order = "default")
         {
             if (id == null)
@@ -168,6 +175,7 @@ namespace VistaNewProject.Controllers
                     CategoriaId = c.CategoriaId,
                     NombreCategoria = c?.NombreCategoria,
                     PresentacionId = id.Value,
+                    EstaAsociada = categoriasxpresentaciones.Any(cm => cm.CategoriaId == c.CategoriaId)
                 })
                 .ToList();
 

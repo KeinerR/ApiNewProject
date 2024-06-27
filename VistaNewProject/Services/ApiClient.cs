@@ -26,7 +26,6 @@ namespace VistaNewProject.Services
             _httpClient.BaseAddress = new Uri("https://localhost:7013/api/");
         }
 
-
         //cliente
         public async Task<IEnumerable<Cliente>> GetClientesAsync()
         {
@@ -99,6 +98,44 @@ namespace VistaNewProject.Services
 
 
         }
+
+        public async Task<HttpResponseMessage> CambiarEstadoPedidoAsync(int id, string estado)
+        {
+            try
+            {
+                // Crear un objeto anónimo para enviar en el cuerpo de la solicitud
+                var content = new
+                {
+                    EstadoPedido = estado
+                };
+
+                // Serializar el objeto a JSON
+                var json = JsonConvert.SerializeObject(content);
+                var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+
+                // Realizar la solicitud PATCH a la API
+                var response = await _httpClient.PatchAsync($"Pedidos/UpdateEstadoPedido/{id}", httpContent);
+
+                // Verificar si la respuesta fue exitosa
+                response.EnsureSuccessStatusCode();
+
+                // Retornar la respuesta de la solicitud
+                return response;
+            }
+            catch (HttpRequestException ex)
+            {
+                // Manejar errores de solicitud HTTP
+                Console.WriteLine($"Error en la solicitud HTTP: {ex.Message}");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                // Manejar otros errores
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+        }
+
 
         public async Task<Pedido> FindPedidosAsync(int id)
         {
