@@ -488,7 +488,7 @@ function fillList(selector, data, nameKey, idKey, stateKey, emptyMessage) {
     const $list = $(selector).empty(); // Limpiar la lista antes de rellenarla
     if (data && data.length > 0) {
         data.forEach(item => {
-            const option = `<option value="${item[nameKey]}" data-estado="${item[stateKey]}"></option>`;
+            const option = `<option value="${item[nameKey]}" data-id="${item[idKey]}" data-estado="${item[stateKey]}"></option>`;
             $list.append(option);
         });
     } else {

@@ -71,7 +71,7 @@
                                                     <option value="@item.NombreCategoria" data-id="@item.CategoriaId">@item.NombreCategoria</option>
                                                 }
                                         </datalist>
-                                        <input id="CategoriaId" type="hidden" name="categoriaId">
+                                        <input id="CategoriaId"  name="categoriaId">
                                     </div>
                                 </div>
                             </div>
@@ -91,7 +91,7 @@
                                                 }
                                             }
                                         </datalist>
-                                        <input id="MarcaId" type="hidden" name="marcaId">
+                                        <input id="MarcaId"  name="marcaId">
                                     </div>
                                 </div>
                             </div>
@@ -113,7 +113,7 @@
                                                 }
                                             }
                                         </datalist>
-                                        <input id="PresentacionId" type="hidden" name="presentacionId">
+                                        <input id="PresentacionId"  name="presentacionId">
                                     </div>
 
                                 </div>
@@ -172,8 +172,8 @@
                 </div>
                 <div class="modal-cuerpo">
                     <form asp-controller="Productos" id="FormActualizarProducto" asp-action="Update" class="modal-formulario-actualizar-producto" method="post">
-                        <input type="hidden" name="productoId" id="ProductoIdAct" class="form-control" />
-                        <input id="CantidadTotalAct" type="hidden" name="cantidadTotal" class="form-control" />
+                        <input  name="productoId" id="ProductoIdAct" class="form-control" />
+                        <input id="CantidadTotalAct"  name="cantidadTotal" class="form-control" />
                         <div class="row">
                             <div class="form-check">
                                 <label class="switch">
@@ -206,7 +206,7 @@
                                                 }
                                             }
                                         </datalist>
-                                        <input type="hidden" id="CategoriaIdAct" name="categoriaId">
+                                        <input  id="CategoriaIdAct" name="categoriaId">
                                     </div>
                                 </div>
                             </div>
@@ -225,7 +225,7 @@
                                                 }
                                             }
                                         </datalist>
-                                        <input type="hidden" id="MarcaIdAct" name="marcaId">
+                                        <input  id="MarcaIdAct" name="marcaId">
                                     </div>
                                 </div>
                             </div>
@@ -246,7 +246,7 @@
                                                 }
                                             }
                                         </datalist>
-                                        <input type="hidden" id="PresentacionIdAct" name="presentacionId">
+                                        <input  id="PresentacionIdAct" name="presentacionId">
                                
                                     </div>
                                 </div>
@@ -395,7 +395,7 @@
                             <button class="btn btn-edit botonEditar" onclick="actualizarProducto(@item.ProductoId);"><i class="fas fa-edit"></i></button>
                             <a asp-action="Details" asp-controller="Productos" asp-route-id="@item.ProductoId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
                             <form asp-controller="Productos" class="eliminarProducto" asp-action="Delete" method="post">
-                                <input type="hidden" value="@item.ProductoId" name="productoId" />
+                                <input  value="@item.ProductoId" name="productoId" />
                                 <button type="submit" value="" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
                             </form>
                         </div>
@@ -432,7 +432,7 @@
                                     <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoProducto(@producto.ProductoId);"><i class="fas fa-edit"></i></button>
                                     <a asp-action="Details" asp-controller="Productos" asp-route-id="@producto.ProductoId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
                                     <form asp-controller="Productos" class="eliminarProducto" asp-action="Delete" method="post">
-                                        <input type="hidden" value="@producto.ProductoId" name="productoId" />
+                                        <input  value="@producto.ProductoId" name="productoId" />
                                         <button type="submit" value="" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
                                     </form>
                                 </div>
