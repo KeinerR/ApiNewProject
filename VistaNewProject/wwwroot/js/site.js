@@ -226,16 +226,6 @@ async function manejarMarca(selectedValue, Peticion) {
         console.error('Error al manejar la marca:', error);
     }
 }
-        if (marca != null && marca !== "null") {
-            $('#NombreMarca').val(marca.nombreMarca);
-            $('#MarcaId').val(marca.marcaId);
-        } else {
-            alert("Categoría no encontrada");
-        }
-    } catch (error) {
-        console.error('Error al manejar la categoría:', error);
-    }
-}
 
 function obtenerValoresFormulario(ids) {
     const valores = {};
