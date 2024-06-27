@@ -81,10 +81,6 @@ namespace VistaNewProject.Controllers
         {
             var categoria = await _client.FindCategoriaAsync(categoriaId);
 
-            if (categoria == null)
-            {
-                return NotFound(); // Devuelve un 404 Not Found si la categoría no existe
-            }
 
             return Json(categoria); // Devuelve la categoría encontrada en formato JSON
         }

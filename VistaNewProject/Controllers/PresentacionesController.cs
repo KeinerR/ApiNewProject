@@ -78,10 +78,6 @@ namespace VistaNewProject.Controllers
         {
             var presentacion = await _client.FindPresentacionAsync(presentacionId);
 
-            if (presentacion == null)
-            {
-                return NotFound(); // Devuelve un 404 Not Found si no existe
-            }
 
             return Json(presentacion); // Devuelve la presentacion encontrada en formato JSON
         }
