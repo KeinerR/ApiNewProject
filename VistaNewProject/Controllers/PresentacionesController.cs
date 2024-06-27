@@ -73,14 +73,14 @@ namespace VistaNewProject.Controllers
             return View(pagePresentacion);
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<JsonResult> FindPresentacion(int presentacionId)
         {
             var presentacion = await _client.FindPresentacionAsync(presentacionId);
             return Json(presentacion);
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<JsonResult> FindPresentaciones()
         {
             var presentaciones = await _client.GetPresentacionAsync();

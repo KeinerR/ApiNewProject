@@ -259,11 +259,11 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#NombreMarcaAct').on('input', function () {
         if (this.value.length > 4) {
             clearTimeout(timeout);
-            seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaIdAct'),"Marca");
+            seleccionarOpcion(this, document.getElementById('marcasAct'), document.getElementById('MarcaIdAct'),"MarcaAct");
         } else {
             clearTimeout(timeout);  
             timeout = setTimeout(() => {
-                seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaIdAct'), "Marca");
+                seleccionarOpcion(this, document.getElementById('marcasAct'), document.getElementById('MarcaIdAct'), "MarcaAct");
             }, 590);
         }
     });
@@ -272,23 +272,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (this.value.length > 4) {
             clearTimeout(timeout);
-            seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaIdAct'),"Categoria");
+            seleccionarOpcion(this, document.getElementById('categoriasAct'), document.getElementById('CategoriaIdAct'),"CategoriaAct");
         } else {
             clearTimeout(timeout);
             timeout = setTimeout(() => {
-                seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaIdAct'), "Categoria");
+                seleccionarOpcion(this, document.getElementById('categoriasAct'), document.getElementById('CategoriaIdAct'), "CategoriaAct");
             }, 590);
         }
     });
-
+        
     $('#NombrePresentacionAct').on('input', function () {
         if (this.value.length > 4) {
             clearTimeout(timeout);
-            seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'),"Presentacion");
+            seleccionarOpcion(this, document.getElementById('presentacionesAct'), document.getElementById('PresentacionIdAct'),"PresentacionAct");
         } else {
             clearTimeout(timeout);
             timeout = setTimeout(() => {
-                seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'),"Presentacion");
+                seleccionarOpcion(this, document.getElementById('presentacionesAct'), document.getElementById('PresentacionIdAct'),"PresentacionAct");
             }, 590);
         }
     });
@@ -446,7 +446,6 @@ function limpiarFormularioProducto() {
     limpiarCampo('NombreProducto');
 }
 function limpiarFormularioProductoAct() {
-    limpiarDatosFormularioProductoAct();
     // Limpiar la URL eliminando los parámetros de consulta
     history.replaceState(null, '', location.pathname);
 
@@ -460,6 +459,7 @@ function limpiarFormularioProductoAct() {
     limpiarCampo('NombreProductoAct');
     limpiarCampo('CantidadAplicarPorMayorAct');
     limpiarCampo('DescuentoAplicarPorMayorAct');
+    limpiarDatosFormularioProductoAct();
 
 }
 function limpiarDatosFormularioProductoAct() {
@@ -490,12 +490,6 @@ function limpiarDatosFormularioProductoAct() {
     if ($('#filtrarxCategoriaAct').prop('checked')) {
         $('#filtrarxCategoriaAct').trigger('click');
     }
-
-    agregarIconoparalimpiarElCampo('NombrePresentacionAct');
-    agregarIconoparalimpiarElCampo('NombreMarcaAct');
-    agregarIconoparalimpiarElCampo('NombreCategoriaAct');
-
-
 }
 function limpiarFiltroProductoAgregar() {
     $('#CategoriaId').val("");
@@ -549,9 +543,9 @@ function actualizarProducto(campo) {
                 formActualizar.find('#NombreProductoAct').val(data.nombreProducto);
                 formActualizar.find('#NombrePresentacionAct').val(data.presentacionId);
                 formActualizar.find('#NombreCategoriaAct').val(data.categoriaId);
-                seleccionarOpcion(document.getElementById('NombreMarcaAct'), document.getElementById('marcas'), document.getElementById('MarcaIdAct'),"Marca");
-                seleccionarOpcion(document.getElementById('NombreCategoriaAct'), document.getElementById('categorias'), document.getElementById('CategoriaIdAct'),"Categoria");
-                seleccionarOpcion(document.getElementById('NombrePresentacionAct'), document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'),"Presentacion");
+                seleccionarOpcion(document.getElementById('NombreMarcaAct'), document.getElementById('marcas'), document.getElementById('MarcaIdAct'),"MarcaAct");
+                seleccionarOpcion(document.getElementById('NombreCategoriaAct'), document.getElementById('categorias'), document.getElementById('CategoriaIdAct'),"CategoriaAct");
+                seleccionarOpcion(document.getElementById('NombrePresentacionAct'), document.getElementById('presentaciones'), document.getElementById('PresentacionIdAct'),"PresentacionAct");
                 if (data.cantidadAplicarPorMayor > 0) {
                     // Marcar el checkbox DescuentoPorMayorAct como seleccionado
                     $('#checkboxDescuentoPorMayorAct').prop('checked', true);

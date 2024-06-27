@@ -102,29 +102,38 @@ function mostrarOcultarContrasena(idCampo) {
     }
 }
 // Función para manejar la selección de opciones en los datalist
-window.seleccionarOpcion = function (input, dataList, hiddenInput,Peticion) {
+window.seleccionarOpcion = function (input, dataList, hiddenInput, Peticion) {
     const selectedValue = input.value.trim();
     let selectedOptionByName = Array.from(dataList.options).find(option => option.value === selectedValue);
     let selectedOptionById = Array.from(dataList.options).find(option => option.getAttribute('data-id') === selectedValue);
     if (/^\d+[a-zA-Z]$/.test(selectedValue)) {
         selectedOptionByName = Array.from(dataList.options).find(option => option.value === selectedValue);
     }
+
     if (!selectedOptionByName && !selectedOptionById && /^\d+$/.test(selectedValue)) {
-        if (!selectedOptionByName) {
-            if (Peticion == "Categoria") {
-                manejarCategoria(selectedValue);
-                return;
-            }
+        if (Peticion == "Categoria" || Peticion == "CategoriaAct") {
+            var response = manejarCategoria(selectedValue,Peticion);
+            return;
         }
-        Swal.fire({
-            icon: 'warning',
-            title: 'No se encontró ningún resultado con este ID',
-            showConfirmButton: false,
-            timer: 1800
-        });
-        input.value = '';
-        input.dispatchEvent(new Event('input'));
-        return;
+        if (Peticion == "Presentacion" || Peticion == "PresentacionAct") {
+            var response = manejarPresentacion(selectedValue, Peticion);
+            return;
+        }
+        if (Peticion == "Marca" || Peticion == "MarcaAct") {
+            var response = manejarMarca(selectedValue,Peticion);
+            return;
+        }
+        if (response == null) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No se encontró ningún resultado con este ID',
+                showConfirmButton: false,
+                timer: 1800
+            });
+            input.value = '';
+            input.dispatchEvent(new Event('input'));
+            return;
+        }
     }
 
     if (selectedOptionByName) {
@@ -134,29 +143,88 @@ window.seleccionarOpcion = function (input, dataList, hiddenInput,Peticion) {
         input.value = selectedOptionById.value;
         hiddenInput.value = selectedOptionById.getAttribute('data-id');
     }
-    if (Peticion.includes("Categoria")) {
-        checkboxFiltrar();
-    }
-   
-
-}
-async function manejarCategoria(selectedValue) {
-        try {
-            var categoria = await buscarCategoria(selectedValue);
-
-            if (categoria && categoria.NombreCategoria) {
-                console.log(categoria.NombreCategoria);
-                input.value = categoria.NombreCategoria;
-                hiddenInput.value = categoria.NombreCategoria;
-            } else {
-                alert("Jer");
-                console.log("Categoría no encontrada");
-            }
-        } catch (error) {
-            console.error('Error al manejar la categoría:', error);
+    if (Peticion == "Categoria") {
+        if ($('#filtrarxCategoria').prop('checked')) { 
+            checkboxFiltrar();
         }
-}
+    }
+    if (Peticion == "CategoriaAct") {
+        if ($('#filtrarxCategoriaAct').prop('checked')) { 
+            checkboxFiltrarAct();
+        }
+    }
 
+
+}
+async function manejarCategoria(selectedValue,Peticion) {
+    try {
+        var categoria = await buscarCategoria(selectedValue);
+
+        if (categoria != null && categoria !== "null") {
+            if (Peticion == "Categoria") {
+                console.log(categoria);
+                $('#NombreCategoria').val(categoria.nombreCategoria);
+                $('#CategoriaId').val(categoria.categoriaId);
+            }
+            if (Peticion == "CategoriaAct") {
+                console.log(categoria);
+                $('#NombreCategoriaAct').val(categoria.nombreCategoria);
+                $('#CategoriaIdAct').val(categoria.categoriaId);
+            }
+            
+        } else {
+            alert("Categoría no encontrada");
+            console.log("Categoría no encontrada");
+        }
+    } catch (error) {
+        console.error('Error al manejar la categoría:', error);
+    }
+}
+async function manejarPresentacion(selectedValue, Peticion) {
+    try {
+        var presentacion = await buscarPresentacion(selectedValue);
+        if (presentacion != null && presentacion !== "null") {
+            if (Peticion == "Presentacion") {
+                console.log(presentacion);
+                $('#NombrePresentacion').val(presentacion.nombreCompletoPresentacion);
+                $('#PresentacionId').val(presentacion.presentacionId);
+            }
+            if (Peticion == "PresentacionAct") {
+                console.log(presentacion);
+                $('#NombrePresentacionAct').val(presentacion.nombreCompletoPresentacion);
+                $('#PresentacionIdAct').val(presentacion.presentacionId);
+            }
+            
+        } else {
+            alert("Presentacion no encontrada");
+        }
+    } catch (error) {
+        console.error('Error al manejar la Presentacion:', error);
+    }
+}
+async function manejarMarca(selectedValue, Peticion) {
+    try {
+        var marca = await buscarMarca(selectedValue);
+
+        if (marca != null && marca !== "null") {
+            if (Peticion == "Marca") {
+                console.log(marca);
+                $('#NombreMarca').val(marca.nombreMarca);
+                $('#MarcaId').val(marca.marcaId);
+            }
+            if (Peticion == "MarcaAct") {
+                console.log(marca);
+                $('#NombreMarcaAct').val(marca.nombreMarca);
+                $('#MarcaIdAct').val(marca.marcaId);
+            } 
+            
+        } else {
+            alert("Marca no encontrada");
+        }
+    } catch (error) {
+        console.error('Error al manejar la marca:', error);
+    }
+}
 function obtenerValoresFormulario(ids) {
     const valores = {};
     ids.forEach(id => {
@@ -191,19 +259,43 @@ function formatoNumeroINT(input) {
 /*------------------------------------------------------------------------------------------------------------------------------ */
 function buscarCategoria(categoriaId) {
     return $.ajax({
-        url: `/Categorias/FindCategoria/${categoriaId}`,
-        type: 'POST',
-        contentType: 'application/json'
-    }).then(categoria => {
-        return categoria;
-    }).catch(xhr => {
-        console.error('Error al actualizar el estado de la categoría:', xhr.responseText);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Hubo un error al actualizar el estado de la categoría. Por favor, inténtalo de nuevo.'
-        });
-        return null;
+        url: `/Categorias/FindCategoria`,
+        type: 'GET',
+        data: { categoriaId: categoriaId },
+        success: function (data) {
+            return data;
+        },
+        error: function () {
+            mostrarAlertaAtencionPersonalizadaConBoton('No existe una categoria con este id');
+        }
+    });
+}
+
+function buscarMarca(marcaId) {
+    return $.ajax({
+        url: `/Marcas/FindMarca`,
+        type: 'GET',
+        data: { marcaId: marcaId },
+        success: function (data) {
+            return data;
+        },
+        error: function () {
+            mostrarAlertaAtencionPersonalizadaConBoton('No existe una marca con este id.');
+        }
+    });
+}
+
+function buscarPresentacion(presentacionId) {
+    return $.ajax({
+        url: `/Presentaciones/FindPresentacion`,
+        type: 'GET',
+        data: { presentacionId: presentacionId },
+        success: function (data) {
+            return data;
+        },
+        error: function () {
+            mostrarAlertaAtencionPersonalizadaConBoton('Mo existe una presentacion con este id.');
+        }
     });
 }
 
@@ -354,6 +446,7 @@ function removerIconoparalimpiarElCampo(inputs) {
     }
     // Verifica si el array de inputs contiene "NombreCategoria"
     if (inputs.includes("NombreCategoria")) {
+        if($('checkboxFiltrar'))
         checkboxFiltrar();
     }
     inputs.forEach(function (input) {
@@ -457,9 +550,9 @@ async function checkboxFiltrarAct() {
         console.log(data);
 
         // Limpia y rellena las listas utilizando la función fillList
-        fillList('#marcas', data.marcas, 'nombreMarca', 'marcaId', 'estadoMarca', 'No hay marcas disponibles');
-        fillList('#presentaciones', data.presentaciones, 'nombrePresentacion', 'presentacionId', 'estadoPresentacion', 'No hay presentaciones disponibles');
-        fillList('#categorias', data.categorias, 'nombreCategoria', 'categoriaId', 'estadoCategoria', 'No hay categorías disponibles');
+        fillList('#marcasAct', data.marcas, 'nombreMarca', 'marcaId', 'estadoMarca', 'No hay marcas disponibles');
+        fillList('#presentacionesAct', data.presentaciones, 'nombreCompletoPresentacion', 'presentacionId', 'estadoPresentacion', 'No hay presentaciones disponibles');
+        fillList('#categoriasAct', data.categorias, 'nombreCategoria', 'categoriaId', 'estadoCategoria', 'No hay categorías disponibles');
 
     } catch (error) {
         console.error(error); // Muestra el error en la consola
@@ -467,40 +560,6 @@ async function checkboxFiltrarAct() {
 }
 
 
-
-async function checkboxFiltrarActPasanddvariables(filtrar, asociar, filtro) {
-    try {
-        let url = `/Productos/filtrarDataList/${filtrar}/${asociar}`;
-
-        // Si asociar es 1 y hay un filtro, añadir el filtro a la URL
-        if (asociar === 1 && filtro !== "") {
-            url += `/${filtro}`;
-        }
-
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ filtrar: filtrar })
-        });
-
-        if (!response.ok) {
-            throw new Error('Error al cargar los productos');
-        }
-
-        const data = await response.json();
-        console.log(data);
-
-        // Limpia y rellena las listas utilizando la función fillList
-        fillList('#marcas', data.marcas, 'nombreMarca', 'marcaId', 'estadoMarca', 'No hay marcas disponibles');
-        fillList('#presentaciones', data.presentaciones, 'nombrePresentacion', 'presentacionId', 'estadoPresentacion', 'No hay presentaciones disponibles');
-        fillList('#categorias', data.categorias, 'nombreCategoria', 'categoriaId', 'estadoCategoria', 'No hay categorías disponibles');
-
-    } catch (error) {
-        console.error(error); // Muestra el error en la consola
-    }
-}
 function actualizarLotes(id) {
     fetch('/Productos/RedondearPrecios/' + id, {
         method: 'POST',

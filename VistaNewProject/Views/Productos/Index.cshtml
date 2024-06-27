@@ -196,8 +196,8 @@
                                     <div class="icono-input">
                                         <i class="fas fa-times" onclick="iconoLimpiarCampo(['NombreCategoriaAct','CategoriaIdAct'],'NombreCategoriaAct');"></i>
                                         <label for="NombreCategoriaAct" class="control-label">Categoría<span class="Mensaje"></span></label>
-                                        <input list="categorias" oninput="validarCampoProducto(this); agregarIconoparalimpiarElCampo(this);" id="NombreCategoriaAct" name="nombreCategoria" class="form-control" placeholder="Selecciona una categoría..." onclick="showCategorias()" autocomplete="off">
-                                        <datalist id="categorias">
+                                        <input list="categoriasAct" oninput="validarCampoProducto(this); agregarIconoparalimpiarElCampo(this);" id="NombreCategoriaAct" name="nombreCategoria" class="form-control" placeholder="Selecciona una categoría..." onclick="showNoCategoriasAlert(this )" autocomplete="off">
+                                        <datalist id="categoriasAct">
                                             @foreach (var item in ViewBag.Categorias)
                                             {
                                                 if (item.EstadoCategoria != 0)
@@ -215,8 +215,8 @@
                                     <div class="icono-input">
                                         <i class="fas fa-times" onclick="iconoLimpiarCampo(['NombreMarcaAct','MarcaIdAct'],'NombreMarcaAct');"></i>
                                         <label for="NombreMarcaAct" class="control-label">Marca<span class="Mensaje"></span></label>
-                                        <input list="marcas" oninput="validarCampoProducto(this); agregarIconoparalimpiarElCampo(this);" id="NombreMarcaAct" name="nombreMarca" class="form-control" placeholder="Escribe y/o selecciona una marca..." onclick="showNoMarcasAlert(this)" autocomplete="off">
-                                        <datalist id="marcas">
+                                        <input list="marcasAct" oninput="validarCampoProducto(this); agregarIconoparalimpiarElCampo(this);" id="NombreMarcaAct" name="nombreMarca" class="form-control" placeholder="Escribe y/o selecciona una marca..." onclick="showNoMarcasAlert(this)" autocomplete="off">
+                                        <datalist id="marcasAct">
                                             @foreach (var item in ViewBag.Marcas)
                                             {
                                                 if (item.EstadoMarca != 0)
@@ -236,8 +236,8 @@
                                     <div class="icono-input">
                                         <i class="fas fa-times" onclick="iconoLimpiarCampo(['NombrePresentacionAct','PresentacionIdAct'],'NombrePresentacionAct');"></i>
                                         <label for="NombrePresentacionAct" class="control-label">Presentación<span class="Mensaje"></span></label>
-                                        <input list="presentaciones" oninput="validarCampoProducto(this); agregarIconoparalimpiarElCampo(this);" id="NombrePresentacionAct" name="nombrePresentacion" class="form-control" placeholder="Escribe y/o selecciona una presentación..." onclick="showNoPresentacionesAlert(this)" autocomplete="off">
-                                        <datalist id="presentaciones">
+                                        <input list="presentacionesAct" oninput="validarCampoProducto(this); agregarIconoparalimpiarElCampo(this);" id="NombrePresentacionAct" name="nombrePresentacion" class="form-control" placeholder="Escribe y/o selecciona una presentación..." onclick="showNoPresentacionesAlert(this)" autocomplete="off">
+                                        <datalist id="presentacionesAct">
                                             @foreach (var item in ViewBag.Presentaciones)
                                             {
                                                 if (item.EstadoPresentacion != 0)

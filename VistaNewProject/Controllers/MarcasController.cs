@@ -71,13 +71,13 @@ namespace VistaNewProject.Controllers
             return View(pageMarca);
 
         }
-        [HttpPost]
+        [HttpGet]
         public async Task<JsonResult> FindMarca(int marcaId)
         {
             var marca = await _client.FindMarcaAsync(marcaId);
             return Json(marca);
         }
-        [HttpPost]
+        [HttpGet]
         public async Task<JsonResult> FindMarcas()
         {
             var marcas = await _client.GetMarcaAsync();
