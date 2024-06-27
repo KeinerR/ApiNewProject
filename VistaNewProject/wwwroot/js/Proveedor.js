@@ -399,18 +399,26 @@ function limpiarFormularioProveedorAgregar() {
     // Limpiar mensajes de alerta y *
   
     var mensajesText = document.querySelectorAll('.text-danger');
-
+    var mensajes = document.querySelectorAll('.Mensaje');
     for (var i = 0; i < mensajesText.length - 5; i++) {
         mensajesText[i].textContent = '';
+    } 
+
+    for (var i = 0; i < mensajes.length - 5; i++) {
+        mensajes[i].textContent = '*';
     }
 }
 function limpiarFormularioProveedorAct() {
     history.replaceState(null, '', location.pathname);
    
     var mensajesText = document.querySelectorAll('.text-danger');
-
+    var mensajes = document.querySelectorAll('.Mensaje');
     for (var i = Math.max(0, mensajesText.length - 5); i < mensajesText.length; i++) {
         mensajesText[i].textContent = '';
+    }
+
+    for (var i = Math.max(0, mensajes.length - 5); i < mensajes.length; i++) {
+        mensajes[i].textContent = '';
     }
 
 }
@@ -609,8 +617,6 @@ function validarCampoProveedor(input) {
     const spanError = inputElement.next('.text-danger'); // Obtener el elemento span de error asociado al input
     const labelForCampo = $('label[for="' + campo + '"]');
     const spanVacio = labelForCampo.find('.Mensaje');
-
-    console.log('Oaku');
     // Limpiar el mensaje de error previo
     spanError.text('');
     spanVacio.text('');

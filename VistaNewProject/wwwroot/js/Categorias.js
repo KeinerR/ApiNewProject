@@ -4,7 +4,7 @@
 var categorias = []; 
 function obtenerDatosCategorias() {
     fetch('/Categorias/FindCategorias', {
-        method: 'POST',
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json'
         }
@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     //Evitar el envio de los formularios hasta que todo este validados
     $('.modal-formulario-crear-categoria').on('submit', function (event) {
+        obtenerDatosCategorias();
         const categoriaFinal = mostrarValoresFormularioInicialCategoria();
         const categoriasAll = categorias;
         const categoriaRepetida = compararCategorias(categoriaFinal, categoriasAll);
@@ -321,7 +322,7 @@ function actualizarCategoria(campo) {
     actualizarCategoria
     $.ajax({
         url: '/Categorias/FindCategoria', // Ruta relativa al controlador y la acción
-        type: 'POST',
+        type: 'GET',
         data: { categoriaId: categoriaId },
         success: function (data) {
             var formActualizar = $('#FormActualizarCategoria');

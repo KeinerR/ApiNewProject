@@ -63,7 +63,7 @@
                                     <div class="icono-input">
                                         <i class="fas fa-times noBe" onclick="iconoLimpiarCampo(['NombreCategoria', 'CategoriaId'],'NombreCategoria');"></i>
                                         <label for="NombreCategoria" class="control-label">Categoría<span class="Mensaje">*</span></label>
-                                        <input list="categorias" oninput="validarCampoProducto(this); agregarIconoparalimpiarElCampo(this);" id="NombreCategoria" name="nombreCategoria" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoCategoriasAlert(this);" autocomplete="off" />
+                                        <input list="categorias" oninput="validarCampoProducto(this); agregarIconoParalimpiarElCampo(this);" id="NombreCategoria" name="nombreCategoria" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoCategoriasAlert(this);" autocomplete="off" />
                                         <datalist id="categorias">
                                             @foreach (var item in ViewBag.Categorias)
                                                 if (item.EstadoCategoria != 0)
@@ -71,7 +71,7 @@
                                                     <option value="@item.NombreCategoria" data-id="@item.CategoriaId">@item.NombreCategoria</option>
                                                 }
                                         </datalist>
-                                        <input id="CategoriaId"  name="categoriaId">
+                                        <input id="CategoriaId" type="hidden" name="categoriaId">
                                     </div>
                                 </div>
                             </div>
@@ -80,7 +80,7 @@
                                     <div class="icono-input">
                                         <i class="fas fa-times noBe" onclick="iconoLimpiarCampo(['NombreMarca','MarcaId'],'NombreMarca');"></i>
                                         <label for="NombreMarca" class="control-label">Marca<span class="Mensaje">*</span></label>
-                                        <input list="marcas" oninput="validarCampoProducto(this); agregarIconoparalimpiarElCampo(this);" id="NombreMarca" name="nombreMarca" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoMarcasAlert(this)" autocomplete="off" />
+                                        <input list="marcas" oninput="validarCampoProducto(this); agregarIconoParalimpiarElCampo(this);" id="NombreMarca" name="nombreMarca" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoMarcasAlert(this)" autocomplete="off" />
                                         <datalist id="marcas">
                                             @foreach (var item in ViewBag.Marcas)
                                             {
@@ -91,7 +91,7 @@
                                                 }
                                             }
                                         </datalist>
-                                        <input id="MarcaId"  name="marcaId">
+                                        <input id="MarcaId" type="hidden" name="marcaId">
                                     </div>
                                 </div>
                             </div>
@@ -103,7 +103,7 @@
                                     <div class="icono-input">
                                         <i class="fas fa-times noBe" onclick="iconoLimpiarCampo(['NombrePresentacion','PresentacionId'],'NombrePresentacion');"></i>
                                         <label for="NombrePresentacion" class="control-label">Presentación<span class="Mensaje">*</span></label>
-                                        <input list="presentaciones" oninput="validarCampoProducto(this); agregarIconoparalimpiarElCampo(this);" id="NombrePresentacion" name="nombrePresentacion" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoPresentacionesAlert(this)" autocomplete="off" />
+                                        <input list="presentaciones" oninput="validarCampoProducto(this); agregarIconoParalimpiarElCampo(this);" id="NombrePresentacion" name="nombrePresentacion" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoPresentacionesAlert(this)" autocomplete="off" />
                                         <datalist id="presentaciones">
                                             @foreach (var item in ViewBag.Presentaciones)
                                             {
@@ -113,7 +113,7 @@
                                                 }
                                             }
                                         </datalist>
-                                        <input id="PresentacionId"  name="presentacionId">
+                                        <input id="PresentacionId" type="hidden" name="presentacionId">
                                     </div>
 
                                 </div>
@@ -172,8 +172,7 @@
                 </div>
                 <div class="modal-cuerpo">
                     <form asp-controller="Productos" id="FormActualizarProducto" asp-action="Update" class="modal-formulario-actualizar-producto" method="post">
-                        <input  name="productoId" id="ProductoIdAct" class="form-control" />
-                        <input id="CantidadTotalAct"  name="cantidadTotal" class="form-control" />
+                        <input name="productoId" type="hidden" id="ProductoIdAct" class="form-control" />
                         <div class="row">
                             <div class="form-check">
                                 <label class="switch">
@@ -196,7 +195,7 @@
                                     <div class="icono-input">
                                         <i class="fas fa-times" onclick="iconoLimpiarCampo(['NombreCategoriaAct','CategoriaIdAct'],'NombreCategoriaAct');"></i>
                                         <label for="NombreCategoriaAct" class="control-label">Categoría<span class="Mensaje"></span></label>
-                                        <input list="categoriasAct" oninput="validarCampoProducto(this); agregarIconoparalimpiarElCampo(this);" id="NombreCategoriaAct" name="nombreCategoria" class="form-control" placeholder="Selecciona una categoría..." onclick="showNoCategoriasAlert(this )" autocomplete="off">
+                                        <input list="categoriasAct" oninput="validarCampoProducto(this); agregarIconoParalimpiarElCampo(this);" id="NombreCategoriaAct" name="nombreCategoria" class="form-control" placeholder="Selecciona una categoría..." onclick="showNoCategoriasAlert(this )" autocomplete="off">
                                         <datalist id="categoriasAct">
                                             @foreach (var item in ViewBag.Categorias)
                                             {
@@ -206,7 +205,7 @@
                                                 }
                                             }
                                         </datalist>
-                                        <input  id="CategoriaIdAct" name="categoriaId">
+                                        <input id="CategoriaIdAct" type="hidden" name="categoriaId">
                                     </div>
                                 </div>
                             </div>
@@ -215,7 +214,7 @@
                                     <div class="icono-input">
                                         <i class="fas fa-times" onclick="iconoLimpiarCampo(['NombreMarcaAct','MarcaIdAct'],'NombreMarcaAct');"></i>
                                         <label for="NombreMarcaAct" class="control-label">Marca<span class="Mensaje"></span></label>
-                                        <input list="marcasAct" oninput="validarCampoProducto(this); agregarIconoparalimpiarElCampo(this);" id="NombreMarcaAct" name="nombreMarca" class="form-control" placeholder="Escribe y/o selecciona una marca..." onclick="showNoMarcasAlert(this)" autocomplete="off">
+                                        <input list="marcasAct" oninput="validarCampoProducto(this); agregarIconoParalimpiarElCampo(this);" id="NombreMarcaAct" name="nombreMarca" class="form-control" placeholder="Escribe y/o selecciona una marca..." onclick="showNoMarcasAlert(this)" autocomplete="off">
                                         <datalist id="marcasAct">
                                             @foreach (var item in ViewBag.Marcas)
                                             {
@@ -225,7 +224,7 @@
                                                 }
                                             }
                                         </datalist>
-                                        <input  id="MarcaIdAct" name="marcaId">
+                                        <input id="MarcaIdAct" type="hidden" name="marcaId">
                                     </div>
                                 </div>
                             </div>
@@ -236,7 +235,7 @@
                                     <div class="icono-input">
                                         <i class="fas fa-times" onclick="iconoLimpiarCampo(['NombrePresentacionAct','PresentacionIdAct'],'NombrePresentacionAct');"></i>
                                         <label for="NombrePresentacionAct" class="control-label">Presentación<span class="Mensaje"></span></label>
-                                        <input list="presentacionesAct" oninput="validarCampoProducto(this); agregarIconoparalimpiarElCampo(this);" id="NombrePresentacionAct" name="nombrePresentacion" class="form-control" placeholder="Escribe y/o selecciona una presentación..." onclick="showNoPresentacionesAlert(this)" autocomplete="off">
+                                        <input list="presentacionesAct" oninput="validarCampoProducto(this); agregarIconoParalimpiarElCampo(this);" id="NombrePresentacionAct" name="nombrePresentacion" class="form-control" placeholder="Escribe y/o selecciona una presentación..." onclick="showNoPresentacionesAlert(this)" autocomplete="off">
                                         <datalist id="presentacionesAct">
                                             @foreach (var item in ViewBag.Presentaciones)
                                             {
@@ -246,7 +245,7 @@
                                                 }
                                             }
                                         </datalist>
-                                        <input  id="PresentacionIdAct" name="presentacionId">
+                                        <input id="PresentacionIdAct" type="hidden" name="presentacionId">
                                
                                     </div>
                                 </div>
@@ -395,8 +394,8 @@
                             <button class="btn btn-edit botonEditar" onclick="actualizarProducto(@item.ProductoId);"><i class="fas fa-edit"></i></button>
                             <a asp-action="Details" asp-controller="Productos" asp-route-id="@item.ProductoId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
                             <form asp-controller="Productos" class="eliminarProducto" asp-action="Delete" method="post">
-                                <input  value="@item.ProductoId" name="productoId" />
-                                <button type="submit" value="" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                <input  value="@item.ProductoId" type="hidden" name="productoId" />
+                                <button type="submit" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
                             </form>
                         </div>
                     </td>
@@ -432,7 +431,7 @@
                                     <button class="btn btn-edit botonEditar" onclick="mostrarModalConRetrasoProducto(@producto.ProductoId);"><i class="fas fa-edit"></i></button>
                                     <a asp-action="Details" asp-controller="Productos" asp-route-id="@producto.ProductoId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
                                     <form asp-controller="Productos" class="eliminarProducto" asp-action="Delete" method="post">
-                                        <input  value="@producto.ProductoId" name="productoId" />
+                                        <input  value="@producto.ProductoId" type="hidden" name="productoId" />
                                         <button type="submit" value="" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
                                     </form>
                                 </div>

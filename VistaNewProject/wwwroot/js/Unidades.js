@@ -302,9 +302,13 @@ function limpiarFormularioUnidadAgregar() {
     // Limpiar mensajes de alerta y *
 
     var mensajesText = document.querySelectorAll('.text-danger');
-
+    var mensajes = document.querySelectorAll('.Mensaje');
     for (var i = 0; i < mensajesText.length - 3; i++) {
         mensajesText[i].textContent = '';
+    }
+
+    for (var i = 0; i < mensajes.length - 2; i++) {
+        mensajes[i].textContent = '*';
     }
 
 

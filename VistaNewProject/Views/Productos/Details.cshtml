@@ -192,7 +192,7 @@
                                 <div class="icono-input">
                                     <i class="fas fa-times" onclick="iconoLimpiarCampo(['precioProducto'],'precioProducto');"></i>
                                     <label class="control-label" for="precioProducto">Por producto</label>
-                                    <input oninput="agregarIconoparalimpiarElCampo(this); formatoNumeroINT(this);" type="text" value="@TempData["PrecioPorPresentacionRedondeado"]" id="precioProducto" name="precioProducto" class="detalle-input form-control">
+                                    <input oninput="agregarIconoParalimpiarElCampo(this); formatoNumeroINT(this);" type="text" value="@TempData["PrecioPorPresentacionRedondeado"]" id="precioProducto" name="precioProducto" class="detalle-input form-control">
                                 </div>
                             </div>
                         </div>
@@ -201,7 +201,7 @@
                                     <div class="icono-input">
                                         <i class="fas fa-times" onclick="iconoLimpiarCampo(['precioUnidad'],'precioUnidad');"></i>
                                         <label class="control-label" for="precioUnidad">Por unidad de producto</label>
-                                        <input oninput="agregarIconoparalimpiarElCampo(this); formatoNumeroINT(this);" type="text" value="@TempData["PrecioPorUnidadDeProductoRedondeado"]" id="precioUnidad" name="precioUnidad" class="detalle-input form-control">
+                                        <input oninput="agregarIconoParalimpiarElCampo(this); formatoNumeroINT(this);" type="text" value="@TempData["PrecioPorUnidadDeProductoRedondeado"]" id="precioUnidad" name="precioUnidad" class="detalle-input form-control">
                                     </div>
                                 </div>
                             </div>                   
@@ -244,7 +244,7 @@
                                     <div class="icono-input">
                                         <i class="fas fa-times" onclick="limpiarCampo('precioProductoAct');"></i>
                                         <label class="control-label" for="precioProductoAct">Por producto</label>
-                                        <input type="text" oninput="agregarIconoparalimpiarElCampo(this);" id="precioProductoAct" name="precioProducto" class="form-control">
+                                        <input type="text" oninput="agregarIconoParalimpiarElCampo(this);" id="precioProductoAct" name="precioProducto" class="form-control">
                                     </div>
                                 </div>
                             </div>
@@ -253,7 +253,7 @@
                                     <div class="icono-input">
                                         <i class="fas fa-times" onclick="limpiarCampo('precioUnidadAct');"></i>
                                         <label class="control-label" for="precioUnidadAct">Por unidad de producto</label>
-                                        <input type="text" oninput="agregarIconoparalimpiarElCampo(this);" id="precioUnidadAct" name="precioUnidad" class="form-control">
+                                        <input type="text" oninput="agregarIconoParalimpiarElCampo(this);" id="precioUnidadAct" name="precioUnidad" class="form-control">
                                     </div>
                                 </div>
                             </div>

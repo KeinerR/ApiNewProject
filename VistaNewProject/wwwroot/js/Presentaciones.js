@@ -4,7 +4,7 @@
 var presentaciones = []; 
 function obtenerDatosPresentaciones() {
     fetch('/Presentaciones/FindPresentaciones', {
-        method: 'POST',
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json'
         }
@@ -380,7 +380,7 @@ function actualizarPresentacion(campo) {
     var presentacionId = campo;
     $.ajax({
         url: '/Presentaciones/FindPresentacion', // Ruta relativa al controlador y la acción
-        type: 'POST',
+        type: 'GET',
         data: { presentacionId: presentacionId },
         success: function (data) {
             var formActualizar = $('#FormActualizarPresentacion');

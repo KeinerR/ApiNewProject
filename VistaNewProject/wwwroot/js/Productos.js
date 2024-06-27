@@ -355,7 +355,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         return true;
     }
-
     function NoCamposConErroresProductoAct() {
         const textDangerElements = $('.text-danger');
         const textDangerSlice = textDangerElements.slice(-3);
@@ -448,18 +447,18 @@ function limpiarFormularioProducto() {
 function limpiarFormularioProductoAct() {
     // Limpiar la URL eliminando los parámetros de consulta
     history.replaceState(null, '', location.pathname);
-
+    limpiarDatosFormularioProductoAct();
     // Limpiar campos y elementos específicos de la versión actualizada
-    limpiarCampo('NombreMarcaAct');
+    agregarIconoParalimpiarElCampo('NombrePresentacionAct');
+    agregarIconoParalimpiarElCampo('NombreMarcaAct');
+    agregarIconoParalimpiarElCampo('NombreCategoriaAct');
+  
     limpiarCampo('MarcaIdAct');
-    limpiarCampo('NombreCategoriaAct');
     limpiarCampo('CategoriaIdAct');
-    limpiarCampo('NombrePresentacionAct');
     limpiarCampo('PresentacionIdAct');
     limpiarCampo('NombreProductoAct');
     limpiarCampo('CantidadAplicarPorMayorAct');
     limpiarCampo('DescuentoAplicarPorMayorAct');
-    limpiarDatosFormularioProductoAct();
 
 }
 function limpiarDatosFormularioProductoAct() {
@@ -482,9 +481,6 @@ function limpiarDatosFormularioProductoAct() {
     for (var i = Math.max(0, mensajesText.length - 3); i < mensajesText.length; i++) {
         mensajesText[i].textContent = '';
     }
-    agregarIconoparalimpiarElCampo('NombrePresentacionAct');
-    agregarIconoparalimpiarElCampo('NombreMarcaAct');
-    agregarIconoparalimpiarElCampo('NombreCategoriaAct');
     // Verificar si los elementos están marcados y desmarcarlos si es así
     if ($('#filtrarActivosAct').prop('checked')) {
         $('#filtrarActivosAct').trigger('click');
@@ -493,12 +489,6 @@ function limpiarDatosFormularioProductoAct() {
     if ($('#filtrarxCategoriaAct').prop('checked')) {
         $('#filtrarxCategoriaAct').trigger('click');
     }
-
-    agregarIconoparalimpiarElCampo('NombrePresentacionAct');
-    agregarIconoparalimpiarElCampo('NombreMarcaAct');
-    agregarIconoparalimpiarElCampo('NombreCategoriaAct');
-
-
 }
 function limpiarFiltroProductoAgregar() {
     $('#CategoriaId').val("");
@@ -541,7 +531,6 @@ function actualizarProducto(campo) {
             type: 'POST',
             data: { productoId: productoId },
             success: function (data) {
-                console.log(data);
                 limpiarCampoIcono('NombrePresentacionAct');
                 limpiarCampoIcono('NombreMarcaAct');
                 limpiarCampoIcono('NombreCategoriaAct');
@@ -769,6 +758,10 @@ function Llamar2() {
     if (checkbox.checked) {
         for (let i = mensajes.length - 2; i < mensajes.length; i++) {
             mensajes[i].textContent = '*'; // Restaurar mensajes de error
+        }
+
+        for (let i = mensajesError.length - 2; i < mensajesError.length; i++) {
+            mensajesError[i].textContent = '*'; // Restaurar mensajes de error
         }
 
         for (let i = 0; i < elementos.length; i++) {

@@ -1822,7 +1822,7 @@ namespace VistaNewProject.Services
             return response;
         }
         public async Task<IEnumerable<CategoriaxPresentacion>> GetCategoriasxPresentacionByIdPresentacionAsync(int presentacionId){
-            var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxPresentacion>>($"CategoriaxPresentacion/GetCategoriasxPresentacionById?id={presentacionId}");
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxPresentacion>>($"CategoriaxPresentacion/GetCategoriasxPresentacionByIdPresentacion/{presentacionId}");
             if (response == null)
             {
                 // Manejar el caso en el que response sea nulo
@@ -1870,7 +1870,7 @@ namespace VistaNewProject.Services
         }
         public async Task<IEnumerable<CategoriaxMarca>> GetCategoriaxMarcasByIdAsync(int categoriaId)
         {    
-           var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxMarca>>("CategoriaxMarca/GetCategoriasxMarcas");
+           var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxMarca>>($"CategoriaxMarca/GetCategoriasxMarcaById/{categoriaId}");
 
             if (response == null)
             {
@@ -1882,7 +1882,7 @@ namespace VistaNewProject.Services
         }
         public async Task<IEnumerable<CategoriaxMarca>> GetCategoriasxMarcaByIdMarcaAsync(int marcaId)
         {    
-           var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxMarca>>("CategoriaxMarca/GetCategoriasxMarcas");
+           var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxMarca>>($"CategoriaxMarca/GetCategoriasxMarcaByIdMarca?id={marcaId}");
 
             if (response == null)
             {
