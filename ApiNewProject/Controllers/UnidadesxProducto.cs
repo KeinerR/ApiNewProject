@@ -21,12 +21,11 @@ namespace ApiNewProject.Controllers
 
 
         [HttpGet("GetUnidadesxProducto")]
-        public async Task<ActionResult<List<UnidadxProducto>>> GetUnidadesxProducto(int unidadId)
+        public async Task<ActionResult<List<UnidadxProducto>>> GetUnidadesxProducto()
         {
             try
             {
                 var list = await _context.UnidadesxProducto
-                    .Where(up => up.UnidadId == unidadId)
                     .ToListAsync();
 
                 return list;

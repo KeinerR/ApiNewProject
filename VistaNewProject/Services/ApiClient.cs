@@ -873,17 +873,7 @@ namespace VistaNewProject.Services
             return response;
 
         }
-        public async Task<Producto> FindNombreProductoAsync(int Id)
-        {
-            var response = await _httpClient.GetFromJsonAsync<Producto>($"Productos/GetNombreProductoPorId/{Id}");
-            if (response == null)
-            {
-                // Manejar el caso en el que response sea nulo
-                throw new Exception("No se encontró la unidad con el ID especificado.");
-            }
-            return response;
-        }
-
+   
         public async Task<HttpResponseMessage> UpdateProductoAsync(ProductoCrearYActualizar producto)
         {
             try
@@ -1665,7 +1655,7 @@ namespace VistaNewProject.Services
         public async Task<IEnumerable<CategoriaxUnidad>> GetCategoriaxUnidadesByIdAsync(int categoriaId)
         {
 
-            var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxUnidad>>("CategoriaxUnidad/GetCategoriasxUnidades");
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxUnidad>>($"CategoriaxUnidad/GetCategoriasxUnidadById?id={categoriaId}");
             if (response == null)
             {
                 // Manejar el caso en el que response sea nulo
@@ -1677,7 +1667,7 @@ namespace VistaNewProject.Services
         public async Task<IEnumerable<CategoriaxUnidad>> GetCategoriasxUnidadByIdUnidadAsync(int unidadId)
         {
 
-            var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxUnidad>>("CategoriaxUnidad/GetCategoriasxUnidades");
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxUnidad>>($"CategoriaxUnidad/GetCategoriasxUnidadByIdUnidad/{unidadId}");
             if (response == null)
             {
                 // Manejar el caso en el que response sea nulo
@@ -1868,9 +1858,9 @@ namespace VistaNewProject.Services
             return response;
 
         }
-        public async Task<IEnumerable<UnidadxProducto>> GetUnidadxProductosByIdAsync(int categoriaId)
+        public async Task<IEnumerable<UnidadxProducto>> GetUnidadxProductosByIdAsync(int unidadId)
         {
-            var response = await _httpClient.GetFromJsonAsync<IEnumerable<UnidadxProducto>>("UnidadesxProducto/GetUnidadesxProducto");
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<UnidadxProducto>>($"UnidadesxProducto/GetUnidadesxProductoById?Id={unidadId}");
 
             if (response == null)
             {
@@ -1882,7 +1872,7 @@ namespace VistaNewProject.Services
         }
         public async Task<IEnumerable<UnidadxProducto>> GetUnidadesxProductosByIdProductoAsync(int productoId)
         {
-            var response = await _httpClient.GetFromJsonAsync<IEnumerable<UnidadxProducto>>("UnidadesxProducto/GetUnidadesxProductoByProductoId");
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<UnidadxProducto>>($"UnidadesxProducto/GetUnidadesxProductoByProductoId?productoId={productoId}");
 
             if (response == null)
             {
@@ -1901,7 +1891,7 @@ namespace VistaNewProject.Services
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"UnidadesxProducto/DeleteUnidadesxProducto/{unidadId}/{productoId}");
+                var response = await _httpClient.DeleteAsync($"UnidadesxProducto/DeleteUnidadxProducto/{unidadId}/{productoId}");
 
                 if (!response.IsSuccessStatusCode)
                 {

@@ -78,6 +78,88 @@ namespace VistaNewProject.Controllers
             ViewData["Productos"] = productos;
             return View(pageProductos);
         }
+        public async Task<IActionResult> ProductoxUnidadesAsociadas(int? id, int? page, string order = "default")
+        {
+            if (id == null)
+            {
+                return BadRequest();
+            }
+            var productoExiste = await _client.FindDatosProductoAsync(id.Value);
+            if (productoExiste == null)
+            {
+                return NotFound();
+            }
+            
+            var unidades = await _client.GetUnidadAsync();
+            var unidadesAsociadasIds  = await _client.GetUnidadesxProductosByIdProductoAsync(id.Value);
+
+           
+            var UnidadesAsociadas = unidades
+                .Select(c => new UnidadxProducto
+                {
+                    UnidadId = c.UnidadId,
+                    NombreCompletoUnidad = c?.NombreCompletoUnidad,
+                    ProductoId = id.Value,
+                    EstaAsociada = unidadesAsociadasIds.Any(cm => cm.UnidadId == c?.UnidadId)
+                })
+                .ToList();
+
+            order = order?.ToLower() ?? "default";
+
+            switch (order)
+            {
+                case "alfabetico":
+                    UnidadesAsociadas = UnidadesAsociadas.OrderBy(c => c.NombreCompletoUnidad).ToList();
+                    break;
+                case "name_desc":
+                    UnidadesAsociadas = UnidadesAsociadas.OrderByDescending(c => c.NombreCompletoUnidad).ToList();
+                    break;
+                case "first":
+                    UnidadesAsociadas = UnidadesAsociadas.OrderBy(c => c.UnidadId).ToList(); // assuming CategoriaId represents the order of creation
+                    break;
+                case "reverse":
+                    UnidadesAsociadas = UnidadesAsociadas.OrderByDescending(c => c.UnidadId).ToList(); // assuming CategoriaId represents the order of creation
+                    break;
+                default:
+                    break;
+            }
+
+            int pageNumber = page ?? 1;
+            int pageSize = 6;
+            var pagedUnidades = UnidadesAsociadas.ToPagedList(pageNumber, pageSize);
+
+            ViewBag.Producto = productoExiste;
+            ViewBag.CurrentOrder = order;
+
+            return View(pagedUnidades);
+        }
+        public async Task<IActionResult> UnidadesAsociadasxProducto(int? id, int? page)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var producto = await _client.FindProductoAsync(id.Value);
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            // Obtener las categorías asociadas a la presentación específica
+            var unidadesAsociadas = await _client.GetUnidadesxProductosByIdProductoAsync(id.Value);
+            ViewBag.Producto = producto;
+            if (!unidadesAsociadas.Any())
+            {
+                return View(unidadesAsociadas.ToPagedList(1, 1)); // Devuelve un modelo paginado vacío
+            }
+
+            int pageSize = 4; // Número máximo de elementos por página
+            int pageNumber = page ?? 1;
+
+            var pagedUnidades = unidadesAsociadas.ToPagedList(pageNumber, pageSize);
+
+            return View(pagedUnidades);
+        }
 
         [HttpPost("/Productos/filtrarDataList/{filtrar}/{asociar}/{asociarcategoria?}")]
         public async Task<ActionResult> filtrarDataList(int filtrar, int asociar, int? asociarcategoria)

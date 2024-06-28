@@ -1,17 +1,15 @@
 ﻿@using X.PagedList
 @using X.PagedList.Mvc.Core
-@model IPagedList<VistaNewProject.Models.CategoriaxUnidad>
+@model IPagedList<VistaNewProject.Models.CategoriaxPresentacion>
 @{
-    ViewData["Title"] = "Asociar categorías";
+    ViewData["Title"] = "Asociar presentaciones";
 }
 <br />
 <div class="contenedor-botones-detalle">
-    <a asp-action="CategoriasAsociadasxUnidad" asp-route-id="@ViewBag.Unidad.UnidadId" class="btn botonVolver">
-        <i class="fas fa-arrow-left"></i> Volver
-    </a>
+    <a asp-action="PresentacionesAsociadasxCategoria" asp-controller="Categorias" asp-route-id="@ViewBag.Categoria.CategoriaId" class="btn botonVolver"><i class="fas fa-arrow-left"></i> Volver</a>
 </div>
-<h2 class="TituloSobreTabladetalle">Asociar categorías</h2>
-@if (Model.Count() > 4)
+<h2 class="TituloSobreTabladetalle">Asociar presentaciónes</h2>
+@if (Model != null && Model.PageCount > 1)
 {
     <div class="contenedor-filtro col-2">
         <select id="order" name="order" class="input-sm empSelect" onchange="redirectToOrder(this)">
@@ -30,22 +28,24 @@
 <div class="contenedorChecboxDeAsociacion">
     @if (Model != null) // Comprobación de nulidad
     {
-        @foreach (var categoria in Model)
+        @foreach (var presentacion in Model)
         {
             <div class="contenedorChecboxDeAsociacionUnico">
-                <p>@categoria.NombreCategoria</p>
+                <p>@presentacion.NombreCompletoPresentacion</p>
                 <label class="switch">
-                    <input type="checkbox" @(categoria.EstaAsociada ? "checked" : "") onchange="actualizarEstadoCategoriaxUnidad(@ViewBag.Unidad.UnidadId, @categoria.CategoriaId, this.checked)">
+                    <input type="checkbox" @(presentacion.EstaAsociada ? "checked" : "") onchange="actualizarEstadoCategoriaxPresentacion( @presentacion.PresentacionId,@ViewBag.Categoria.CategoriaId, this.checked)">
                     <span class="slider"></span>
                 </label>
             </div>
         }
+
     }
     else
     {
-        <p>No se encontraron categorías.</p>
+        <p>No se encontraron presentaciónes.</p>
     }
 </div>
+
 <div class="pagination-container mt-2">
     @if (Model != null && Model.PageCount > 1)
     {
@@ -56,14 +56,14 @@
                     @if (Model.PageNumber > 1)
                     {
                         <li class="page-item">
-                            <a class="page-link" href="@Url.Action("UnidadxCategoriasAsociadas", new { id = ViewBag.Unidad.UnidadId, page = 1, order = ViewBag.CurrentOrder })" aria-label="First">
+                            <a class="page-link" href="@Url.Action("CategoriaxPresentacionesAsociadas", new { id = ViewBag.Categoria.CategoriaId, page = 1, order = ViewBag.CurrentOrder })" aria-label="First">
                                 <span aria-hidden="true">Primero</span>
                             </a>
                         </li>
                     }
                     <!-- Botón para la página anterior (oculto en la página 1) -->
                     <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                        <a class="page-link" href="@Url.Action("UnidadxCategoriasAsociadas", new { id = ViewBag.Unidad.UnidadId, page = Model.PageNumber - 1, order = ViewBag.CurrentOrder })" aria-label="Previous">
+                        <a class="page-link" href="@Url.Action("CategoriaxPresentacionesAsociadas", new { id = ViewBag.Categoria.CategoriaId, page = Model.PageNumber - 1, order = ViewBag.CurrentOrder })" aria-label="Previous">
                             <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
                         </a>
                     </li>
@@ -71,12 +71,12 @@
                     @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
                     {
                         <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                            <a class="page-link" href="@Url.Action("UnidadxCategoriasAsociadas", new { id = ViewBag.Unidad.UnidadId, page = i, order = ViewBag.CurrentOrder })">@i</a>
+                            <a class="page-link" href="@Url.Action("CategoriaxPresentacionesAsociadas", new { id = ViewBag.Categoria.CategoriaId, page = i, order = ViewBag.CurrentOrder })">@i</a>
                         </li>
                     }
                     <!-- Botón para la página siguiente (oculto en la última página) -->
                     <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                        <a class="page-link" href="@Url.Action("UnidadxCategoriasAsociadas", new { id = ViewBag.Unidad.UnidadId, page = Model.PageNumber + 1, order = ViewBag.CurrentOrder })" aria-label="Next">
+                        <a class="page-link" href="@Url.Action("CategoriaxPresentacionesAsociadas", new { id = ViewBag.Categoria.CategoriaId, page = Model.PageNumber + 1, order = ViewBag.CurrentOrder })" aria-label="Next">
                             <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
                         </a>
                     </li>
@@ -84,7 +84,7 @@
                     @if (Model.PageNumber < Model.PageCount)
                     {
                         <li class="page-item">
-                            <a class="page-link" href="@Url.Action("UnidadxCategoriasAsociadas", new { id = ViewBag.Unidad.UnidadId, page = Model.PageCount, order = ViewBag.CurrentOrder })" aria-label="Last">
+                            <a class="page-link" href="@Url.Action("CategoriaxPresentacionesAsociadas", new { id = ViewBag.Categoria.CategoriaId, page = Model.PageCount, order = ViewBag.CurrentOrder })" aria-label="Last">
                                 <span aria-hidden="true">Último</span>
                             </a>
                         </li>

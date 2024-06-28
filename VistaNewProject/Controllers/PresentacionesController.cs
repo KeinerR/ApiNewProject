@@ -102,14 +102,6 @@ namespace VistaNewProject.Controllers
             if (presentacion == null) {
                 return NotFound();
             }
-            if (presentacion != null)
-            {
-                // Concatenación del nombre de la presentación
-                string nombreCompleto = presentacion.CantidadPorPresentacion > 1 ?
-                 $"{presentacion.NombrePresentacion} x {presentacion.CantidadPorPresentacion} presentaciones de {presentacion.Contenido}" : $"{presentacion.NombrePresentacion} de {presentacion.Contenido}";
-                // Pasar el nombre completo a la vista
-                ViewBag.NombreCompletoPresentacion = nombreCompleto;
-            }
             ViewBag.Presentacion = presentacion;
             var productos = await _client.GetProductoAsync();
             var productosDePresentacion = productos.Where(p => p.PresentacionId == id).ToList();
@@ -159,11 +151,6 @@ namespace VistaNewProject.Controllers
 
             var categorias = await _client.GetCategoriaAsync();
             var categoriasxpresentaciones = await _client.GetCategoriasxPresentacionByIdPresentacionAsync(id.Value);
-
-            var categoriasAsociadasIds = categoriasxpresentaciones
-                .Where(cu => cu.PresentacionId == id.Value)
-                .Select(cu => cu.CategoriaId)
-                .ToList();
 
             var categoriasAsociadas = categorias
                 .Select(c => new CategoriaxPresentacion

@@ -1,5 +1,5 @@
 ﻿@using X.PagedList.Mvc.Core
-@model X.PagedList.IPagedList<VistaNewProject.Models.Categoria>
+@model X.PagedList.IPagedList<VistaNewProject.Models.Producto>
 
 @{
     ViewData["Title"] = "Detalle de unidad";
@@ -7,14 +7,17 @@
 
 <br />
 <div class="contenedor-botones-detalle">
-    <a asp-action="Index" class="btn botonVolver">
+    <a asp-action="Index" asp-controller="Unidades" class="btn botonVolver">
         <i class="fas fa-arrow-left"></i> Volver
     </a>
     <a href="#" onclick="redireccionarYEditar('@ViewBag.Unidad.UnidadId', 'Unidades', 'unidad')" class="btn botonEnviarDetalle">
         <i class="fa-solid fa-pen"></i> Editar
     </a>
-    <a asp-action="UnidadxCategoriasAsociadas" asp-controller="Unidades" asp-route-id="@ViewBag.Unidad.UnidadId" class="btn botonAsociar">
-        Asociar categorías<i class="fa-solid fa-handshake-simple manoAsociasion"></i>
+    <a asp-action="CategoriasAsociadasxUnidad" asp-controller="Unidades" asp-route-id="@ViewBag.Unidad.UnidadId" class="btn botonAsociar">
+        Categorias asociadas<i class="fa-solid fa-handshake-simple manoAsociasion"></i>
+    </a>
+    <a asp-action="UnidadxProductosAsociados" asp-controller="Unidades" asp-route-id="@ViewBag.Unidad.UnidadId" class="btn botonAsociar">
+        Asociar productos<i class="fa-solid fa-handshake-simple manoAsociasion"></i>
     </a>
 </div>
 <br />
@@ -47,20 +50,24 @@
 @if (Model != null && Model.Any())
 {
     <div class="pedido-info">
-        <h4 class="TituloSobreTabladetalle">Categorías asociadas</h4>
+        <h4 class="TituloSobreTabladetalle">Productos asociados</h4>
         <table class="table tablaDetalle">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Nombre Categoría</th>
+                    <th>Producto ID</th>
+                    <th>Nombre Completo</th>
+                    <th>Cantidad</th>
+                    <th>Estado</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var categoria in Model)
+                @foreach (var producto in Model)
                 {
                     <tr>
-                        <td>@categoria.CategoriaId</td>
-                        <td>@categoria.NombreCategoria</td>
+                        <td>@producto.ProductoId</td>
+                        <td>@producto.NombreCompletoProducto</td>
+                        <td>@producto.CantidadTotal</td>
+                        <td>@(producto.Estado == 1 ? "Activo" : "Inactivo")</td>
                     </tr>
                 }
             </tbody>

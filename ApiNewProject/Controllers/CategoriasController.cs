@@ -148,21 +148,7 @@ namespace ApiNewProject.Controllers
             }
         }
 
-        [HttpGet("GetNombreCategoriaById")]
-        public async Task<ActionResult<string>> GetNombreCategoriaById(int id)
-        {
-
-            var categoria = await _context.Categorias.FindAsync(id);
-            if (categoria == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(categoria.NombreCategoria);
-            }
-        }
-
+        
 
     }
 

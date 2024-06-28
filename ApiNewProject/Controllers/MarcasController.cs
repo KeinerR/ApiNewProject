@@ -60,21 +60,6 @@ namespace ApiNewProject.Controllers
             }
         }
 
-        [HttpGet("GetNombreMarcaById")]
-        public async Task<ActionResult<string>> GetNombreMarcaById(int id)
-        {
-
-            var marca = await _context.Marcas.FindAsync(id);
-            if (marca == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(marca.NombreMarca);
-            }
-        }
-
         [HttpPost("InsertarMarca")]
         public async Task<ActionResult<Marca>> InsertarMarca(Marca marca)
         {

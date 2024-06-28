@@ -35,6 +35,25 @@ namespace VistaNewProject.Controllers
                 return StatusCode((int)response.StatusCode, new { message = await response.Content.ReadAsStringAsync() });
             }
         }
+        [HttpPost("CrearUnidadxProducto")]
+        public async Task<IActionResult> CrearUnidadxProducto([FromBody] UnidadxProductoAsosiacion unidadxProducto)
+        {
+            if (unidadxProducto == null || unidadxProducto.UnidadId <= 0 || unidadxProducto.ProductoId <= 0)
+            {
+                return BadRequest(new { message = "Datos inválidos." });
+            }
+
+            var response = await _client.CreateUnidadxProductoAsync(unidadxProducto);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok(new { message = "Asociación creada correctamente." });
+            }
+            else
+            {
+                return StatusCode((int)response.StatusCode, new { message = await response.Content.ReadAsStringAsync() });
+            }
+        }
 
         [HttpPost("CrearCategoriaxPresentacion")]
         public async Task<IActionResult> CrearCategoriaxPresentacion([FromBody] CategoriaxPresentacionAsosiacion categoriaxunidad)
@@ -96,8 +115,6 @@ namespace VistaNewProject.Controllers
             }
         }
 
-
-
         [HttpDelete("DeleteCategoriaxPresentacion")]
         public async Task<IActionResult> DeleteCategoriaxPresentacion([FromBody] CategoriaxPresentacion categoriaxpresentacion)
         {
@@ -118,9 +135,8 @@ namespace VistaNewProject.Controllers
             }
         }
 
-
-        [HttpDelete("DeleteUnidadxProducto")]
-        public async Task<IActionResult> DeleteUnidadxProducto([FromBody] CategoriaxMarca categoriaxmarca)
+        [HttpDelete("DeleteCategoriaxMarca")]
+        public async Task<IActionResult> DeleteCategoriaxMarca([FromBody] CategoriaxMarca categoriaxmarca)
         {
             if (categoriaxmarca == null || categoriaxmarca.CategoriaId <= 0 || categoriaxmarca.MarcaId <= 0)
             {
@@ -128,6 +144,25 @@ namespace VistaNewProject.Controllers
             }
 
             var response = await _client.DeleteCategoriaxMarcaAsync(categoriaxmarca.CategoriaId, categoriaxmarca.MarcaId);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok(new { message = "Asociación eliminada correctamente." });
+            }
+            else
+            {
+                return StatusCode((int)response.StatusCode, new { message = await response.Content.ReadAsStringAsync() });
+            }
+        }
+        [HttpDelete("DeleteUnidadxProducto")]
+        public async Task<IActionResult> DeleteUnidadxProducto([FromBody] UnidadxProducto unidadxProducto)
+        {
+            if (unidadxProducto == null || unidadxProducto.ProductoId <= 0 || unidadxProducto.UnidadId <= 0)
+            {
+                return BadRequest(new { message = "Datos inválidos." });
+            }
+
+            var response = await _client.DeleteUnidadxProductoAsync(unidadxProducto.UnidadId, unidadxProducto.ProductoId);
 
             if (response.IsSuccessStatusCode)
             {

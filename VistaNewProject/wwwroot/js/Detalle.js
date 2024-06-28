@@ -13,8 +13,10 @@ function redirectToOrder(selectElement) {
         window.location.href = url;
     }
 }
+
 async function actualizarEstadoCategoriaxUnidad(unidadId, categoriaId, isChecked) {
     // Validación básica
+    alert(categoriaId+"..."+unidadId);
     if (!unidadId || !categoriaId) {
         Swal.fire({
             icon: 'error',
@@ -123,9 +125,57 @@ async function actualizarEstadoCategoriaxMarca(marcaId, categoriaId, isChecked) 
         return;
     }
 
-    const url = isChecked ? '/CategoriasxTabla/CrearCategoriaxMarca' : '/CategoriasxTabla/DeleteUnidadxProducto';
+    const url = isChecked ? '/CategoriasxTabla/CrearCategoriaxMarca' : '/CategoriasxTabla/DeleteCategoriaxMarca';
     const method = isChecked ? 'POST' : 'DELETE';
     const data = isChecked ? JSON.stringify({ categoriaId: categoriaId, marcaId: marcaId }) : JSON.stringify({ categoriaId: categoriaId, marcaId: marcaId });
+
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: data
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            //Swal.fire({
+            //    icon: 'success',
+            //    title: 'Éxito',
+            //    text: result.message,
+            //});
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: result.message || 'Ocurrió un error al procesar la solicitud.',
+            });
+        }
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error inesperado.',
+        });
+        console.error('Error:', error);
+    }
+}
+
+async function actualizarEstadoUnidadxProducto(unidadId, productoId, isChecked) {
+    if (!unidadId || !productoId) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'ID de Unidad y ID de producto son requeridos.',
+        });
+        return;
+    }
+
+    const url = isChecked ? '/CategoriasxTabla/CrearUnidadxProducto' : '/CategoriasxTabla/DeleteUnidadxProducto';
+    const method = isChecked ? 'POST' : 'DELETE';
+    const data = isChecked ? JSON.stringify({ unidadId: unidadId, productoId: productoId }) : JSON.stringify({ unidadId: unidadId, productoId: productoId });
 
     try {
         const response = await fetch(url, {

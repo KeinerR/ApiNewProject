@@ -139,22 +139,6 @@ namespace ApiNewProject.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el estado del categoria: " + ex.Message);
             }
         }
-
-        [HttpPost("NombrePresentacionById")]
-        public async Task<ActionResult<string>> GetNombreProductoById(int id)
-        {
-            var presentacion = await _context.Presentaciones.FindAsync(id);
-
-            if (presentacion == null)
-            {
-                return NotFound(); // 404 Not Found si no se encuentra la presentación
-            }
-            else
-            {
-                return Ok(presentacion.NombreCompletoPresentacion); // 200 OK con el nombre completo de la presentación si se encuentra
-            }
-        }
-
     }
 }
 

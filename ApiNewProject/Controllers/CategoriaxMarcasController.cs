@@ -119,9 +119,9 @@ namespace ApiNewProject.Controllers
             }
         }
 
-        // DELETE: api/CategoriaxMarca/DeleteUnidadxProducto/5
+        // DELETE: api/CategoriaxMarca/DeleteCategoriaxMarca/5
         [HttpDelete("DeleteCategoriaxMarca/{categoriaId}/{marcaId}")]
-        public async Task<IActionResult> DeleteUnidadxProducto(int categoriaId, int marcaId)
+        public async Task<IActionResult> DeleteCategoriaxMarca(int categoriaId, int marcaId)
         {
             var categoriaxMarca = await _context.CategoriaxMarcas.FindAsync(categoriaId, marcaId);
             if (categoriaxMarca == null)

@@ -2,15 +2,18 @@
 @model X.PagedList.IPagedList<VistaNewProject.Models.Categoria>
 
 @{
-    ViewData["Title"] = "Asociar categorías";
+    ViewData["Title"] = "Categorias asociadas";
 }
 
 <br />
 <div class="contenedor-botones-detalle">
-    <a asp-action="Index" class="btn botonVolver">
+    <a asp-action="Details" asp-route-id="@ViewBag.Unidad.UnidadId" class="btn botonVolver">
         <i class="fas fa-arrow-left"></i> Volver
     </a>
-    <a asp-action="MarcaxCategoriasAsociadas" asp-controller="Marcas" asp-route-id="@ViewBag.Marca.MarcaId" class="btn botonAsociar">
+    <a href="#" onclick="redireccionarYEditar('@ViewBag.Unidad.UnidadId', 'Unidades', 'unidad')" class="btn botonEnviarDetalle">
+        <i class="fa-solid fa-pen"></i> Editar
+    </a>
+    <a asp-action="UnidadxCategoriasAsociadas" asp-controller="Unidades" asp-route-id="@ViewBag.Unidad.UnidadId" class="btn botonAsociar">
         Asociar categorías<i class="fa-solid fa-handshake-simple manoAsociasion"></i>
     </a>
 </div>
@@ -47,14 +50,14 @@
                         @if (Model.PageNumber > 1)
                         {
                             <li class="page-item">
-                                <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Marca.MarcaId, page = 1, order = ViewBag.CurrentOrder })" aria-label="First">
+                                <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Unidad.UnidadId, page = 1, order = ViewBag.CurrentOrder })" aria-label="First">
                                     <span aria-hidden="true">Primero</span>
                                 </a>
                             </li>
                         }
                         <!-- Botón para la página anterior (oculto en la página 1) -->
                         <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                            <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Marca.MarcaId, page = Model.PageNumber - 1, order = ViewBag.CurrentOrder })" aria-label="Previous">
+                            <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Unidad.UnidadId, page = Model.PageNumber - 1, order = ViewBag.CurrentOrder })" aria-label="Previous">
                                 <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
                             </a>
                         </li>
@@ -62,12 +65,12 @@
                         @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
                         {
                             <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                                <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Marca.MarcaId, page = i, order = ViewBag.CurrentOrder })">@i</a>
+                                <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Unidad.UnidadId, page = i, order = ViewBag.CurrentOrder })">@i</a>
                             </li>
                         }
                         <!-- Botón para la página siguiente (oculto en la última página) -->
                         <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                            <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Marca.MarcaId, page = Model.PageNumber + 1, order = ViewBag.CurrentOrder })" aria-label="Next">
+                            <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Unidad.UnidadId, page = Model.PageNumber + 1, order = ViewBag.CurrentOrder })" aria-label="Next">
                                 <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
                             </a>
                         </li>
@@ -75,7 +78,7 @@
                         @if (Model.PageNumber < Model.PageCount)
                         {
                             <li class="page-item">
-                                <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Marca.MarcaId, page = Model.PageCount, order = ViewBag.CurrentOrder })" aria-label="Last">
+                                <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Unidad.UnidadId, page = Model.PageCount, order = ViewBag.CurrentOrder })" aria-label="Last">
                                     <span aria-hidden="true">Último</span>
                                 </a>
                             </li>
@@ -86,7 +89,7 @@
         }
     </div>
 
-
+ 
 }
 else
 {
@@ -96,3 +99,4 @@ else
 }
 
 
+    
