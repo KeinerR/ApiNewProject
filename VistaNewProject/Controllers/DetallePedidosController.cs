@@ -394,12 +394,12 @@ namespace VistaNewProject.Controllers
 
 
                         
-                            await _client.AddCantidadTotalAsync(Id, cantidad);
+                            await _client.QuitarCantidadReservada(Id, cantidad);
                         }
                         if (unidadId == 2)
                         {
 
-                            await _client.AddCantidadPorUnidadReservadaAsync(Id, cantidad);
+                            await _client.QuitarCantidadReservadaUnidad(Id, cantidad);
                         }
 
 
@@ -454,11 +454,11 @@ namespace VistaNewProject.Controllers
                 var unidadId = detalleAEliminar.UnidadId;
                 if (unidadId == 1)
                 {
-                    await _client.SustraerCantidadReservadaAsync(id, cantidad);
+                    await _client.QuitarCantidadReservada(id, cantidad);
                 }
                 else if (unidadId == 2)
                 {
-                    await _client.SustraerCantidadPorUnidadReservadaAsync(id, cantidad);
+                    await _client.QuitarCantidadReservadaUnidad(id, cantidad);
                 }
 
                 // Eliminar el detalle de la lista
@@ -502,7 +502,7 @@ namespace VistaNewProject.Controllers
             ViewBag.UltimoPedidoId = ultimoPedido?.PedidoId ?? 0;
 
             ViewBag.Producto = producto;
-            ViewBag.Unidad = unidad;
+            ViewBag.Unidades = unidad;
 
             return View();
         }
@@ -865,6 +865,23 @@ namespace VistaNewProject.Controllers
             return Ok();
         }
 
+
+
+        public async Task<IActionResult> Validar()
+        {
+
+            var lista = listaGlobalDetalles;
+
+            if (lista != null)
+            {
+
+                TempData["MensajeError"] = "Desea Cancelar el Pedido.";
+
+            }
+
+            return Ok();
+
+        }
 
     }
 }

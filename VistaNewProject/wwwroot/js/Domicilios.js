@@ -555,3 +555,31 @@ function quitarError(inputElement, errorElement) {
     inputElement.classList.remove("is-invalid");
     errorElement.textContent = "";
 }
+
+$("#Clientes").on("change", function () {
+    var inputValue = $(this).val();
+    var selectedOption = $("#clientes option").filter(function () {
+        return $(this).val() === inputValue || $(this).data("id") == inputValue; // Ensure type coercion for numeric comparison
+    });
+
+    if (selectedOption.length) {
+        $("#ClinteHiden").val(selectedOption.data("id"));
+        $("#Clientes").val(selectedOption.val()); // Set the Clientes input to the name of the entity
+        quitarError(this, document.getElementById("clienteerror"));
+    } else {
+        // Check if the entered value is a number
+        if (!isNaN(parseFloat(inputValue)) && isFinite(inputValue)) {
+            var option = $("#clientes option[data-id='" + inputValue + "']");
+            if (option.length) {
+                $("#ClinteHiden").val(inputValue);
+                $("#Clientes").val(option.val()); // Set the Clientes input to the name of the entity
+            } else {
+                $("#ClinteHiden").val("");
+                $("#Clientes").val(""); // Clear the Clientes input if no entity is found
+            }
+        } else {
+            $("#ClinteHiden").val("");
+            $("#Clientes").val(""); // Clear the Clientes input if the value is not a valid number
+        }
+    }
+});

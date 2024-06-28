@@ -4,12 +4,6 @@
     ViewData["Title"] = "Index";
 }
 
-@{
-    ViewBag.Title = "Domicilios";
-
-    var domiciliosRealizados = ViewData["DomiciliosRealizados"] as List<Domicilio>;
-    var domiciliosPendientes = ViewData["Domicilios"] as List<Domicilio>;
-}
 
 <style>
 
@@ -26,7 +20,7 @@
 
 <br />
 
-<div class="d-flex justify-content-between">
+<div style="display: flex; justify-content: space-between;">
     <!-- Formulario de búsqueda a la izquierda -->
     <div class="mr-auto">
         <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
@@ -36,141 +30,18 @@
             </div>
         </form>
 
-        <div>
-            <i id="campanaIcon" class="campana fa fa-bell"></i>
-            <span id="domiciliosRealizadosBadge" class="badge badge-primary" style="display:none;"></span>
-        </div>
 
 
 
-
-        <!-- Modal -->
-        <div class="modal fade" id="detalleModal" tabindex="-1" role="dialog" aria-labelledby="detalleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="detalleModalLabel"> Domicilios recibidos</h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="table-responsive">
-                            <table class="table table-custom text-center">
-                                <thead>
-                                    <tr>
-                                        <th> Domicilio</th>
-                                        <th> Pedido</th>
-                                        <th>Observación</th>
-                                        <th>Fecha de Entrega</th>
-                                        <th> Domiciliario</th>
-                                        <th>Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="modalTableBody">
-                                    <!-- Aquí se agregarán los datos de los domicilios -->
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- Paginación -->
-                        <div id="modalPagination" class="mt-3 text-center">
-                            <!-- Aquí se generarán los botones de paginación -->
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <script>
-                // Función para cerrar la modal
-               
-
-                // Aquí puedes colocar más lógica relacionada con la modal y sus eventos
-          
-
-            $(document).ready(function () {
-                var domiciliosRealizados = @Html.Raw(Json.Serialize(domiciliosRealizados));
-
-                console.log("Domicilios realizados:", domiciliosRealizados);
-
-                // Cantidad de domicilios por página
-                var domiciliosPorPagina = 5; // Puedes ajustar el número según tus necesidades
-
-                function cerrarModal() {
-                    $('#detalleModal').modal('hide');
-                }
-
-                // Ejemplo de uso para cerrar la modal desde otro evento, por ejemplo un botón
-                $('#cerrarModalBtn').click(function () {
-                    cerrarModal();
-                });
-
-                if (domiciliosRealizados.length > 0) {
-                    $('#campanaIcon').removeClass('campana').addClass('campana-realizado');
-                }
-
-
-                // Función para mostrar los domicilios en el modal
-                function mostrarDomiciliosEnModal(page) {
-                    // Limpiar el contenido del modal antes de cargar nuevos datos
-                    $('#modalTableBody').empty();
-
-                    // Calcular el índice de inicio y fin de los domicilios a mostrar
-                    var startIndex = (page - 1) * domiciliosPorPagina;
-                    var endIndex = Math.min(startIndex + domiciliosPorPagina, domiciliosRealizados.length);
-
-                    // Iterar sobre los domicilios de la página actual
-                    for (var i = startIndex; i < endIndex; i++) {
-                        var domicilio = domiciliosRealizados[i];
-
-                        // Construir la fila de la tabla para cada domicilio
-                        var filaDomicilio = `
-                                <tr>
-                                    <td>${domicilio.domicilioId}</td>
-                                    <td>${domicilio.pedidoId}</td>
-                                    <td>${domicilio.observacion}</td>
-                                    <td>${domicilio.fechaEntrega}</td>
-                                    <td>${domicilio.direccionDomiciliario}</td>
-                                    <td>${domicilio.estadoDomicilio}</td>
-                                </tr>
-                            `;
-
-                        // Agregar la fila a la tabla en el modal
-                        $('#modalTableBody').append(filaDomicilio);
-                    }
-
-                    // Mostrar el modal después de cargar los datos
-                    $('#detalleModal').modal('show');
-                }
-
-                // Manejar clic en el ícono de la campana
-                $('#campanaIcon').click(function () {
-                    // Mostrar la primera página de domicilios al abrir el modal
-                    mostrarDomiciliosEnModal(1);
-
-                    // Generar botones de paginación
-                    var totalPages = Math.ceil(domiciliosRealizados.length / domiciliosPorPagina);
-                    var paginationHtml = '';
-                    for (var i = 1; i <= totalPages; i++) {
-                        paginationHtml += `<button class="btn btn-sm btn-outline-secondary mx-1" onclick="mostrarDomiciliosEnModal(${i})">${i}</button>`;
-                    }
-                    $('#modalPagination').html(paginationHtml);
-                });
-
-
-
-            });
-           
-           
-        </script>
 
     </div>
 
- 
+
+    <a asp-action="DomiciliosRealizados" class="btn btn-primary">
+        Realizados   <i class="fa-solid fa-flag-checkered"></i>
+    </a>
 </div>
+
 
 <br />
 <hr>
@@ -282,63 +153,4 @@
     }
 </div>
 
-<!-- Modal para mostrar detalles de domicilio -->
-<div class="modal fade" id="DomicilioModal" tabindex="-1" role="dialog" aria-labelledby="DomicilioModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="DomicilioModalLabel">Detalles del Domicilio</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Contenido del modal -->
-                <div id="modalContent">
-                    <p>Detalle del domicilio aquí</p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    // Función para obtener los datos del domicilio y mostrarlos en el modal
-    function obtenerDatosDomicilio(domicilioId) {
-        // Aquí deberías hacer una llamada AJAX para obtener los detalles del domicilio según domicilioId
-        // Por simplicidad, supongamos que ya tienes los datos y los pones en el modal
-
-        // Ejemplo de datos de domicilio (simulado)
-        var datosDomicilio = {
-            DomicilioId: domicilioId,
-            PedidoId: "12345",
-            UsuarioId: "Usuario123",
-            Observacion: "Lorem ipsum dolor sit amet.",
-            FechaEntrega: "2024-06-24 10:00 AM",
-            DireccionDomiciliario: "Calle Principal #123",
-            EstadoDomicilio: "Realizado"
-        };
-
-        // Construir el contenido del modal con los datos del domicilio
-        var contenidoModal = `
-                <p><strong>Pedido ID:</strong> ${datosDomicilio.PedidoId}</p>
-                <p><strong>Usuario ID:</strong> ${datosDomicilio.UsuarioId}</p>
-                <p><strong>Observación:</strong> ${datosDomicilio.Observacion}</p>
-                <p><strong>Fecha de Entrega:</strong> ${datosDomicilio.FechaEntrega}</p>
-                <p><strong>Dirección:</strong> ${datosDomicilio.DireccionDomiciliario}</p>
-                <p><strong>Estado del Domicilio:</strong> ${datosDomicilio.EstadoDomicilio}</p>
-            `;
-
-        // Mostrar el contenido en el modal
-        $("#modalContent").html(contenidoModal);
-
-        // Mostrar el modal
-        $("#DomicilioModal").modal("show");
-    }
-</script>
-
-<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="~/js/domicilios.js"></script>

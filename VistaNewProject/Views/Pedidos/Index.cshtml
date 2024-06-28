@@ -7,6 +7,7 @@
     var successMessage = TempData["SuccessMessage"] as string;
     var errorMessage = TempData["ErrorMessage"] as string;
     var validationMessage = TempData["ValidarPedido"] as string;
+    var mensajeentardapedido = TempData["Mensajeentrada"] as string;
 }
 
 @if (!string.IsNullOrEmpty(validationMessage))
@@ -23,6 +24,27 @@
             });
         });
     </script>
+}
+
+
+
+@if (!string.IsNullOrEmpty(mensajeentardapedido))
+{
+  
+<script>
+   
+    
+          $(document).ready(function () {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Mensaje',
+                    text: '@TempData["Mensaje"]',
+                showConfirmButton: false,
+                timer: 3000
+            });
+          });
+    
+</script>
 }
 
 @if (!string.IsNullOrEmpty(successMessage))
@@ -135,21 +157,57 @@
 
 <br />
 <!-- HTML (Razor View) -->
+<div class="d-flex justify-content-between">
+    <!-- Formulario de búsqueda de pedidos -->
+    <form class="d-none d-md-inline-block ">
+        <div class="input-group">
+            <input id="buscarPedido" type="text" class="form-control" placeholder="Buscar Pedidos" aria-label="Search" aria-describedby="button-addon2">
+            <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputPedidos()" type="button"><i class="fas fa-search"></i></button>
+        </div>
+    </form>
 
-<div class="d-flex justify-content-between" style="margin-bottom: 20px;">
-    <!-- Formulario de búsqueda a la izquierda -->
-    <div class="mr-auto">
-        <form class="d-none d-md-inline-block form-inline my-2 my-md-0">
-            <div class="input-group">
-                <input id="buscarPedido" type="text" class="form-control" placeholder="Buscar Pedidos" aria-label="Search" aria-describedby="button-addon2">
-                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputPedidos()" type="button"><i class="fas fa-search"></i></button>
-            </div>
-        </form>
-    </div>
+    <!-- Espacio en blanco para separar los elementos -->
+
+    <!-- Formulario para generar PDF por fecha -->
+    <form asp-action="GenerarPDFFecha" method="post" class="d-flex align-items-center">
+        <div class="m-2">
+            <label for="fechaInicio">Fecha de Inicio:</label>
+            <input type="date" id="fechaInicio" name="fechaInicio" class="form-control" required>
+        </div>
+        <div class="m-2">
+            <label for="fechaFin">Fecha de Fin:</label>
+            <input type="date" id="fechaFin" name="fechaFin" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Generar PDF</button>
+    </form>
+
+    <!-- Botón para agregar pedido -->
+
+</div>
+
+
+
+<!-- Formulario para generar PDF por fecha -->
+
+<div style="display: flex; justify-content: space-between;">
+    <a asp-action="PedidosCancelados" class="btn btn-primary">
+        Cancelados <i class="fa-solid fa-ban"></i>
+    </a>
 
     <a asp-action="Create" class="btn btn-primary">
         Agregar pedido <i class="fa-solid fa-cart-shopping"></i>
     </a>
+</div>
+
+
+<div class="contenedor-filtro">
+    <select name="order" class="input-sm empSelect" onchange="redirectToOrder(this)">
+        <option selected disabled>Ordenar por</option>
+        <option data-url="?order=alfabetico">Ordenar por nombre (A-Z)</option>
+        <option data-url="?order=name_desc">Ordenar por nombre (Z-A)</option>
+        <option data-url="?order=first">Ordenar por más antiguo</option>
+        <option data-url="?order=reverse">Ordenar por más reciente</option>
+    </select>
 </div>
 
 <table class="table table-custom text-center mt-4">
@@ -308,7 +366,30 @@
             row.style.display = 'table-row';
         });
     }
-</script>
 
+    document.addEventListener('DOMContentLoaded', function () {
+        // Obtener el elemento de fecha de inicio y fecha de fin
+        var fechaInicio = document.getElementById("fechaInicio");
+        var fechaFin = document.getElementById("fechaFin");
+
+        // Crear una nueva fecha para hoy y ajustar a la zona horaria de Colombia (GMT-5)
+        var fechaActual = new Date();
+        fechaActual.setMinutes(fechaActual.getMinutes() - fechaActual.getTimezoneOffset()); // Ajuste de la zona horaria local
+
+        // Obtener la fecha de hace 8 días
+        var fechaInicioValor = new Date(fechaActual);
+        fechaInicioValor.setDate(fechaInicioValor.getDate() - 8);
+
+        // Formatear las fechas como se requiere (yyyy-mm-dd)
+        var fechaInicioFormateada = fechaInicioValor.toISOString().slice(0, 10);
+        var fechaFinFormateada = fechaActual.toISOString().slice(0, 10);
+
+        // Establecer los valores en los campos de fecha de inicio y fecha de fin
+        fechaInicio.value = fechaInicioFormateada;
+        fechaFin.value = fechaFinFormateada;
+    });
+
+
+</script>
 
 <script src="~/js/pedidos.js"></script>
