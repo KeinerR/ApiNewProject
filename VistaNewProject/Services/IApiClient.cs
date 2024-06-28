@@ -31,7 +31,6 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Presentacion>> GetPresentacionAsync();
         Task<HttpResponseMessage> CreatePresentacionAsync(PresentacionCrearYActualizar presentacion);
         Task<Presentacion> FindPresentacionAsync(int id);
-        Task<Presentacion> FindnombrePresentacionAsync(int id);
         Task<HttpResponseMessage> UpdatePresentacionAsync(PresentacionCrearYActualizar presentacion);
         Task<HttpResponseMessage> CambiarEstadoPresentacionAsync(int id);
         Task<HttpResponseMessage> DeletePresentacionAsync(int id);
@@ -53,7 +52,6 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Marca>> GetMarcaAsync();
         Task<HttpResponseMessage> CreateMarcaAsync( Marca marca);
         Task<Marca> FindMarcaAsync(int? id);
-        Task<Marca> FindNombreMarcasAsync(string nombreMarca);
         Task<HttpResponseMessage> UpdateMarcaAsync(MarcaUpdate marca);
         Task<HttpResponseMessage> CambiarEstadoMarcaAsync(int id);
         Task<HttpResponseMessage> DeleteMarcaAsync(int id);
@@ -64,7 +62,6 @@ namespace VistaNewProject.Services
 
         Task<HttpResponseMessage> CreateCategoriaAsync(Categoria categoria);
         Task<Categoria> FindCategoriaAsync(int id);
-        Task<Categoria> FindnombreCategoriaAsync(string nombreCategoria);
         Task<HttpResponseMessage> UpdateCategoriaAsync(CategoriaUpdate categoria);
         Task<HttpResponseMessage> CambiarEstadoCategoriaAsync(int id);
         Task<HttpResponseMessage> DeleteCategoriaAsync(int id);
@@ -76,7 +73,6 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Unidad>> GetUnidadAsync();
         Task<HttpResponseMessage> CreateUnidadAsync(Unidad unidad);
         Task<Unidad> FindUnidadAsync(int id);
-        Task<Unidad> FindNombreUnidadAsync(int id);
         Task<HttpResponseMessage> UpdateUnidadAsync(Unidad unidad);
         Task<HttpResponseMessage> DeleteUnidadAsync(int id);
 
@@ -89,7 +85,7 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Producto>> GetAllDatosProductosAsync(string busqueda = null);
         Task<HttpResponseMessage> CreateProductoAsync(ProductoCrearYActualizar producto);
         Task<Producto> FindProductoAsync(int id);
-        Task<Producto> FindnombreProductoAsync(int productoId);
+        Task<Producto> FindNombreProductoAsync(int id);
         Task<Producto> FindDatosProductoAsync(int id); 
         Task<HttpResponseMessage> UpdateProductoAsync(ProductoCrearYActualizar producto);
         Task<HttpResponseMessage> AddCantidadReservadaAsync(int productoId, int? cantidad);
@@ -117,7 +113,6 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Proveedor>> GetProveedorAsync();
         Task<HttpResponseMessage> CreateProveedorAsync(Proveedor proveedor);
         Task<Proveedor> FindProveedorAsync(int? id);
-        Task<Proveedor> FindnombreProveedorAsync(int proveedorId);
         Task<HttpResponseMessage> UpdateProveedorAsync(ProveedorUpdate proveedor);
         Task<HttpResponseMessage> CambiarEstadoProveedorAsync(int id);
         Task<HttpResponseMessage> DeleteProveedorAsync(int id);
