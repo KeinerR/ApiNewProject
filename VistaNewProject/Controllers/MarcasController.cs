@@ -240,10 +240,10 @@ namespace VistaNewProject.Controllers
                 var marcas = await _client.GetMarcaAsync();
                 var marcaExistente = marcas.FirstOrDefault(c => string.Equals(c.NombreMarca, marca.NombreMarca, StringComparison.OrdinalIgnoreCase));
 
-                // Si ya existe una categoría con el mismo nombre, mostrar un mensaje de error
+                // Si ya existe una marcacon el mismo nombre, mostrar un mensaje de error
                 if (marcaExistente != null)
                 {
-                    MensajeSweetAlert("error", "Error", "Ya hay una categoría registrada con ese nombre.", "true", null);
+                    MensajeSweetAlert("error", "Error", "Ya hay una marca registrada con ese nombre.", "true", null);
                     return RedirectToAction("Index");
                 }
 
@@ -256,7 +256,7 @@ namespace VistaNewProject.Controllers
                 }
                 else
                 {
-                    MensajeSweetAlert("error", "Error", "¡Problemas al registrar la categoría!", "true", null);
+                    MensajeSweetAlert("error", "Error", "¡Problemas al registrar la marca!", "true", null);
                     return RedirectToAction("Index");
                 }
             }
@@ -292,7 +292,7 @@ namespace VistaNewProject.Controllers
 
                 if (contadorMarcasIguales > 0)
                 {
-                    MensajeSweetAlert("error", "Error", $"Ya hay {contadorMarcasIguales} categorías registradas con ese nombre.", "true", null);
+                    MensajeSweetAlert("error", "Error", $"Ya hay {contadorMarcasIguales} marcas registradas con ese nombre.", "true", null);
                     return RedirectToAction("Index");
                 }
                 var response = await _client.UpdateMarcaAsync(marca);
@@ -306,17 +306,17 @@ namespace VistaNewProject.Controllers
                     }
                     else if (response.StatusCode == HttpStatusCode.NotFound)
                     {
-                        MensajeSweetAlert("error", "Error", "La categoría no se encontró en el servidor.", "true", null);
+                        MensajeSweetAlert("error", "Error", "La marca no se encontró en el servidor.", "true", null);
                         return RedirectToAction("Index");
                     }
                     else if (response.StatusCode == HttpStatusCode.BadRequest)
                     {
-                        MensajeSweetAlert("error", "Error", "Nombre de categoría duplicado.", "true", null);
+                        MensajeSweetAlert("error", "Error", "Nombre de marcaduplicado.", "true", null);
                         return RedirectToAction("Index");
                     }
                     else
                     {
-                        MensajeSweetAlert("error", "Error", "Error al actualizar la categoría.", "true", null);
+                        MensajeSweetAlert("error", "Error", "Error al actualizar la marca.", "true", null);
                         return RedirectToAction("Index");
                     }
                 }

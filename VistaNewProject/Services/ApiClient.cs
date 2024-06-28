@@ -236,16 +236,6 @@ namespace VistaNewProject.Services
             // Retorna la respuesta de la solicitud
             return response;
         }
-        public async Task<Presentacion> FindnombrePresentacionAsync(int presentacionId)
-        {
-            var response = await _httpClient.GetFromJsonAsync<Presentacion>($"Presentaciones/NombrePresentacionById?Id={presentacionId}");
-            if (response == null)
-            {
-                // Manejar el caso en el que response sea nulo
-                throw new Exception("No se encontró la Presentacion con el ID especificado.");
-            }
-            return response;
-        }
 
     /// COMPRA
 
@@ -524,27 +514,6 @@ namespace VistaNewProject.Services
             return response;
         }
 
-        public async Task<Marca> FindNombreMarcasAsync(string nombreMarca)
-        {
-            try
-            {
-                var response = await _httpClient.GetFromJsonAsync<Marca>($"Marcas/GetNombreMarcaById?nombreMarca={nombreMarca}");
-
-                // Verificar si la respuesta es null
-                if (response == null)
-                {
-                    throw new InvalidOperationException($"No se encontró la marca con nombre {nombreMarca}");
-                }
-
-                return response;
-            }
-            catch (HttpRequestException ex)
-            {
-                // Error al hacer la solicitud HTTP
-                throw new InvalidOperationException("Error al hacer la solicitud HTTP", ex);
-            }
-        }
-
         public async Task<HttpResponseMessage> UpdateMarcaAsync(MarcaUpdate marca)
         {
             try
@@ -664,19 +633,6 @@ namespace VistaNewProject.Services
             }
             return response;
         }
-
-        public async Task<Categoria> FindnombreCategoriaAsync(string nombreCategoria)
-        {
-            var response = await _httpClient.GetFromJsonAsync<Categoria>($"Categorias/GetNombreCategoriaById?nombreCategoria={nombreCategoria}");
-            if (response == null)
-            {
-                // Manejar el caso en el que response sea nulo
-                throw new Exception("No se encontró la categoria con el ID especificado.");
-            }
-            return response;
-
-        }
-
         public async Task<HttpResponseMessage> UpdateCategoriaAsync(CategoriaUpdate categoria)
         {
             var response = await _httpClient.PutAsJsonAsync("Categorias/UpdateCategorias/", categoria);
@@ -784,19 +740,6 @@ namespace VistaNewProject.Services
             }
             return response;
         }
-
-        public async Task<Unidad> FindNombreUnidadAsync(int id)
-        {
-            var response = await _httpClient.GetFromJsonAsync<Unidad>($"Unidades/GetNombreUnidadPorId?id={id}");
-            if (response == null)
-            {
-                // Manejar el caso en el que response sea nulo
-                throw new Exception("No se encontró la unidad con el ID especificado.");
-            }
-            return response;
-        }
-
-
         public async Task<HttpResponseMessage> UpdateUnidadAsync(Unidad unidad)
         {
             var response = await _httpClient.PutAsJsonAsync($"Unidades/UpdateUnidades/", unidad);
@@ -928,8 +871,9 @@ namespace VistaNewProject.Services
                 throw new Exception("No se encontro el producto con el ID especificado.");
             }
             return response;
+
         }
-        public async Task<Producto> FindnombreProductoAsync(int Id)
+        public async Task<Producto> FindNombreProductoAsync(int Id)
         {
             var response = await _httpClient.GetFromJsonAsync<Producto>($"Productos/GetNombreProductoPorId/{Id}");
             if (response == null)
@@ -1212,17 +1156,6 @@ namespace VistaNewProject.Services
         public async Task<Proveedor> FindProveedorAsync(int? id)
         {
             var response = await _httpClient.GetFromJsonAsync<Proveedor>($"Proveedores/GetProveedorById?id={id}");
-            return response;
-        }
-
-        public async Task<Proveedor> FindnombreProveedorAsync(int proveedorId)
-        {
-            var response = await _httpClient.GetFromJsonAsync<Proveedor>($"Proveedores/GetNombreProveedorById?nombreEmpresa={proveedorId}");
-            if (response == null)
-            {
-                // Manejar el caso en el que response sea nulo
-                throw new Exception("No se encontró la unidad con el ID especificado.");
-            }
             return response;
         }
 
@@ -1822,7 +1755,7 @@ namespace VistaNewProject.Services
             return response;
         }
         public async Task<IEnumerable<CategoriaxPresentacion>> GetCategoriasxPresentacionByIdPresentacionAsync(int presentacionId){
-            var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxPresentacion>>($"CategoriaxPresentacion/GetCategoriasxPresentacionById?id={presentacionId}");
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxPresentacion>>($"CategoriaxPresentacion/GetCategoriasxPresentacionByIdPresentacion/{presentacionId}");
             if (response == null)
             {
                 // Manejar el caso en el que response sea nulo
@@ -1870,7 +1803,7 @@ namespace VistaNewProject.Services
         }
         public async Task<IEnumerable<CategoriaxMarca>> GetCategoriaxMarcasByIdAsync(int categoriaId)
         {    
-           var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxMarca>>("CategoriaxMarca/GetCategoriasxMarcas");
+           var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxMarca>>($"CategoriaxMarca/GetCategoriasxMarcaById/{categoriaId}");
 
             if (response == null)
             {
@@ -1882,7 +1815,7 @@ namespace VistaNewProject.Services
         }
         public async Task<IEnumerable<CategoriaxMarca>> GetCategoriasxMarcaByIdMarcaAsync(int marcaId)
         {    
-           var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxMarca>>("CategoriaxMarca/GetCategoriasxMarcas");
+           var response = await _httpClient.GetFromJsonAsync<IEnumerable<CategoriaxMarca>>($"CategoriaxMarca/GetCategoriasxMarcaByIdMarca?id={marcaId}");
 
             if (response == null)
             {

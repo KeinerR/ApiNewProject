@@ -5,7 +5,7 @@ var marcas = [];
 
 function obtenerDatosMarcas() {
     fetch('/Marcas/FindMarcas', {
-        method: 'POST',
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json'
         }
@@ -94,6 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     //Evitar el envio de los formularios hasta que todo este validados
     $('.modal-formulario-crear-marca').on('submit', function (event) {
+        obtenerDatosMarcas();
         const marcaFinal = mostrarValoresFormularioInicialMarca();
         const marcasAll = marcas;
         const marcaRepetida = compararMarcas(marcaFinal, marcasAll);
@@ -119,6 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
        
     });
     $('.modal-formulario-actualizar-marca').on('submit', function (event) {
+        obtenerDatosMarcas();
         const marcaFinal = mostrarValoresFormularioMarcaAct();
         const marcasAll = marcas;
         const marcaRepetida = compararMarcasAct(marcaFinal, marcasAll);
@@ -273,12 +275,12 @@ function limpiarFormularioMarcaAgregar() {
     // Limpiar la URL eliminando los parámetros de consulta
     history.replaceState(null, '', location.pathname);
     var mensajesText = document.querySelectorAll('.text-danger');
-    var mensaje = document.querySelectorAll('.Mensaje');
+    var mensajes = document.querySelectorAll('.Mensaje');
     for (var i = 0; i < mensajesText.length - 1; i++) {
         mensajesText[i].textContent = '';
     }
     for (var i = 0; i < mensajes.length - 1; i++) {
-        mensaje[i].textContent = '';
+        mensajes[i].textContent = '';
     }
 
 }
@@ -309,7 +311,7 @@ $('.modal').on('click', function (e) {
 
 function AlPerderFocoMarca() {
     var displayModal = $('#ModalActualizarMarca').css('display');
-    if (displayFormActualizar == "block" && displayModal == "none") {
+    if (displayModal == "none") {
         limpiarFormularioMarcaAct();
     }
 }
@@ -333,7 +335,7 @@ function actualizarMarca(campo) {
     var marcaId = campo;
     $.ajax({
         url: '/Marcas/FindMarca', // Ruta relativa al controlador y la acción
-        type: 'POST',
+        type: 'GET',
         data: { marcaId: marcaId },
         success: function (data) {
             var formActualizar = $('#FormActualizarMarca');

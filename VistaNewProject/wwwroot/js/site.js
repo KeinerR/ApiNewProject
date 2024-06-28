@@ -163,12 +163,10 @@ async function manejarCategoria(selectedValue,Peticion) {
 
         if (categoria != null && categoria !== "null") {
             if (Peticion == "Categoria") {
-                console.log(categoria);
                 $('#NombreCategoria').val(categoria.nombreCategoria);
                 $('#CategoriaId').val(categoria.categoriaId);
             }
             if (Peticion == "CategoriaAct") {
-                console.log(categoria);
                 $('#NombreCategoriaAct').val(categoria.nombreCategoria);
                 $('#CategoriaIdAct').val(categoria.categoriaId);
             }
@@ -186,12 +184,10 @@ async function manejarPresentacion(selectedValue, Peticion) {
         var presentacion = await buscarPresentacion(selectedValue);
         if (presentacion != null && presentacion !== "null") {
             if (Peticion == "Presentacion") {
-                console.log(presentacion);
                 $('#NombrePresentacion').val(presentacion.nombreCompletoPresentacion);
                 $('#PresentacionId').val(presentacion.presentacionId);
             }
             if (Peticion == "PresentacionAct") {
-                console.log(presentacion);
                 $('#NombrePresentacionAct').val(presentacion.nombreCompletoPresentacion);
                 $('#PresentacionIdAct').val(presentacion.presentacionId);
             }
@@ -209,12 +205,10 @@ async function manejarMarca(selectedValue, Peticion) {
 
         if (marca != null && marca !== "null") {
             if (Peticion == "Marca") {
-                console.log(marca);
                 $('#NombreMarca').val(marca.nombreMarca);
                 $('#MarcaId').val(marca.marcaId);
             }
             if (Peticion == "MarcaAct") {
-                console.log(marca);
                 $('#NombreMarcaAct').val(marca.nombreMarca);
                 $('#MarcaIdAct').val(marca.marcaId);
             } 
@@ -432,28 +426,23 @@ window.esURLValida = function (parametro) {
 function limpiarCampo(idCampo) {
     document.getElementById(idCampo).value = '';
 }
-function agregarIconoparalimpiarElCampo(input) {
-    var $input = $(input); // Get the input element using 'input'
-    var $icono = $input.closest('.icono-input').find('i'); // Find the icon within the 'icono-input' container
-    var campo = $input.val().trim(); // Get the trimmed value of the input field
-
-    // Check if the field is not empty
-    if (campo.length !== 0) {
-        $icono.removeClass('noBe'); // Remove the 'noBe' class from the icon
-    } else {
-        $icono.addClass('noBe'); // Add the 'noBe' class to the icon
-    }
+function limpiarCampoIcono(inputId) {
+    var $input = $('#' + inputId); // Get the input element by ID
+    $input.val(''); // Clear the value of the input field
+    agregarIconoParalimpiarElCampo($input); // Call your existing function to handle the icon class
 }
-function agregarIconoParalimpiarElCampoActinput(input) {
+function agregarIconoParalimpiarElCampo(input) {
     var $input = $(input); // Get the input element using 'input'
     var $icono = $input.closest('.icono-input').find('i'); // Find the icon within the 'icono-input' container
     $icono.removeClass('noBe'); // Add the 'noBe' class to the icon
 
 }
-function limpiarCampoIcono(inputId) {
-    var $input = $('#' + inputId); // Get the input element by ID
-    $input.val(''); // Clear the value of the input field
-    agregarIconoParalimpiarElCampoActinput($input); // Call your existing function to handle the icon class
+function iconoLimpiarCampo(idsCampos, id) {
+    // Iterar sobre cada ID de campo
+    idsCampos.forEach(function (idCampo) {
+        limpiarCampo(idCampo); // Limpiar el campo
+    });
+    removerIconoparalimpiarElCampo(id);
 }
 function removerIconoparalimpiarElCampo(inputs) {
     if (!Array.isArray(inputs)) {
@@ -461,8 +450,8 @@ function removerIconoparalimpiarElCampo(inputs) {
     }
     // Verifica si el array de inputs contiene "NombreCategoria"
     if (inputs.includes("NombreCategoria")) {
-        if($('checkboxFiltrar'))
-        checkboxFiltrar();
+        if ($('checkboxFiltrar'))
+            checkboxFiltrar();
     }
     inputs.forEach(function (input) {
         var $input = $('#' + input); // Obtener el elemento input usando 'input'
@@ -473,14 +462,6 @@ function removerIconoparalimpiarElCampo(inputs) {
         spanVacio.text('*');
     });
 }
-function iconoLimpiarCampo(idsCampos,id) {
-    // Iterar sobre cada ID de campo
-    idsCampos.forEach(function (idCampo) {
-        limpiarCampo(idCampo); // Limpiar el campo
-    });
-    removerIconoparalimpiarElCampo(id);
-}
-
 /*---------------------------- Funciones para detalle de producto ---------------------------------------------- */
 
 // Función para limpiar y rellenar las listas
@@ -520,7 +501,6 @@ async function checkboxFiltrar() {
             throw new Error('Error al cargar los productos');
         }
         const data = await response.json();
-        console.log(data.marcas);
         // Fill and clear lists using the fillList function
         fillList('#marcas', data.marcas, 'nombreMarca', 'marcaId', 'estadoMarca', 'No hay marcas disponibles');
         fillList('#presentaciones', data.presentaciones, 'nombreCompletoPresentacion', 'presentacionId', 'estadoPresentacion', 'No hay presentaciones disponibles');
@@ -557,8 +537,6 @@ async function checkboxFiltrarAct() {
         }
 
         const data = await response.json();
-        console.log(data);
-
         // Limpia y rellena las listas utilizando la función fillList
         fillList('#marcasAct', data.marcas, 'nombreMarca', 'marcaId', 'estadoMarca', 'No hay marcas disponibles');
         fillList('#presentacionesAct', data.presentaciones, 'nombreCompletoPresentacion', 'presentacionId', 'estadoPresentacion', 'No hay presentaciones disponibles');
