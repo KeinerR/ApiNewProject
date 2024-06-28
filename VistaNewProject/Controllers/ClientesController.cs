@@ -36,20 +36,22 @@ namespace VistaNewProject.Controllers
             switch (order)
             {
                 case "alfabetico":
-                    clientes = clientes.OrderBy(c => c.NombreEntidad);
+                    clientes = clientes.OrderBy(c => c.NombreEntidad).ToList();
                     break;
                 case "name_desc":
-                    clientes = clientes.OrderByDescending(c => c.NombreEntidad);
+                    clientes = clientes.OrderByDescending(c => c.NombreEntidad).ToList();
                     break;
                 case "first":
-                    clientes = clientes.OrderBy(c => c.EstadoCliente != 0).ThenBy(c => c.NombreEntidad);
+                    clientes = clientes.OrderBy(c => c.EstadoCliente != 0).ThenBy(c => c.NombreEntidad).ToList();
                     break;
                 case "reverse":
-                    clientes = clientes.OrderByDescending(c => c.EstadoCliente != 0).ThenBy(c => c.NombreEntidad);
+                    clientes = clientes.OrderByDescending(c => c.EstadoCliente != 0).ThenBy(c => c.NombreEntidad).ToList();
                     break;
                 default:
+                    clientes = clientes.ToList(); // Default sorting
                     break;
             }
+
 
             var pageCliente = await clientes.ToPagedListAsync(pageNumber, pageSize);
             if (!pageCliente.Any() && pageCliente.PageNumber > 1)

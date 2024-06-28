@@ -17,13 +17,14 @@
         </form>
     </div>
 
-    <!-- Botón para abrir el modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#DomicilioModal">
-        <i class="fas fa-plus-circle"></i>  Agregar Domicilio
-    </button>
+    
 </div>
 
+<br />
+<a asp-action="Index"  class="btn btn-primary">
+    Regresar <i class="fas fa-arrow-left"></i>
 
+</a>
 
 
 <br />
@@ -55,9 +56,7 @@
             <th>
                 Estado domicilio
             </th>
-            <th>
-                ACCIONES
-            </th>
+          
         </tr>
     </thead>
     <tbody class="text-center">
@@ -84,11 +83,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.EstadoDomicilio)
                 </td>
-                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
-                <td>
-                    <button class="btn btn-warning" onclick="obtenerDatosDomicilio('@item.DomicilioId')" data-cliente-id="@item.DomicilioId" data-bs-toggle="modal" data-bs-target="#DomicilioModal">Editar</button>
-                    <button class="btn btn-danger" onclick="eliminarDomicilio('@item.DomicilioId')">Eliminar</button>
-                </td>
+               
             </tr>
         }
         @{
@@ -114,11 +109,7 @@
                             @Html.DisplayFor(modelItem => domicilio.EstadoDomicilio)
                         </td>
                         <!-- Agrega esto a tu tabla dentro de la sección tbody -->
-                        <td>
-                            <button class="btn btn-warning" onclick="obtenerDatosDomicilio('@domicilio.DomicilioId')" data-cliente-id="@domicilio.DomicilioId" data-bs-toggle="modal" data-bs-target="#DomicilioModal">Editar</button>
-                            <button class="btn btn-danger" onclick="eliminarDomicilio('@domicilio.DomicilioId')">Eliminar</button>
-                        </td>
-
+                       
 
 
                     </tr>

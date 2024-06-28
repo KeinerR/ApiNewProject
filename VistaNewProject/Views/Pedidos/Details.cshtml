@@ -47,6 +47,8 @@
             <i class="fas fa-arrow-left"></i> Regresar
         </a>
 
+      
+
         <div class="d-flex">
             <button type="button" class="reporte-crear rounded-pill d-flex ov-btn-grow-ellipse justify-content-center align-items-center ml-auto">
                 <a asp-action="GenerarPDF" asp-route-pedidoId="@(ViewBag.Pedidos.PedidoId)" class="btn btn-primary">Generar PDF <i class="fa-solid fa-download"></i> </a>
@@ -250,8 +252,8 @@
                     @foreach (var detallepedido in Model)
                     {
                         <tr style="text-align: center; background-color: white;">
-                            <td>@detallepedido.Productos?.NombreProducto </td>
-                            <td>@detallepedido.Unidades?.NombreUnidad </td>
+                            <td>@detallepedido.Productos?.NombreCompletoProducto </td>
+                            <td>@detallepedido.Unidades?.NombreCompletoUnidad </td>
                             <td>@String.Format("{0:N0}", detallepedido.Cantidad)</td>
                             <td>@String.Format("{0:N0}", detallepedido.PrecioUnitario)</td>
                             <td>@String.Format("{0:N0}", detallepedido.Subtotal)</td>

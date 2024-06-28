@@ -4,6 +4,11 @@
     ViewData["Title"] = "Create";
 }
 
+
+<div id="containerpedidos">
+
+
+
 @if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
 {
     <script>
@@ -186,6 +191,8 @@
     </table>
   </div>
 </div>
+</div>
+
 <script>
     // Función para mostrar SweetAlert de cancelación
     function mostrarSweetAlert() {
@@ -199,17 +206,17 @@
             confirmButtonText: 'Sí, cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Si el usuario confirma, enviar el formulario de cancelación
-                document.getElementById('cancelForm').submit();
+                // Si el usuario confirma, llamar a la función para cancelar el pedido
+                cancelarPedido();
             }
         });
     }
 
+ 
 
-
+   
 
 </script>
-
 
 
 <script src="~/js/detallespedidos/detallespedidos.js"></script>

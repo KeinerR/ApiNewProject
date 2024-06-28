@@ -77,21 +77,23 @@
    
 
     // Escuchar cambios en el campo oculto ClienteIdHidden para actualizar el nombre de entidad
-  
+
 
     document.addEventListener('DOMContentLoaded', function () {
-
+        // Obtener el elemento de fecha del pedido
         var fechaPedido = document.getElementById("FechaPedido");
 
+        // Crear una nueva fecha ajustada a la zona horaria de Colombia (GMT-5)
         var fechaActual = new Date();
+        fechaActual.setMinutes(fechaActual.getMinutes() - fechaActual.getTimezoneOffset()); // Ajuste de la zona horaria local
+
+        // Formatear la fecha como se requiere (yyyy-mm-ddTHH:MM)
         var formateada = fechaActual.toISOString().slice(0, 16);
 
-
+        // Establecer el valor formateado en el campo de fecha del pedido
         fechaPedido.value = formateada;
-
-
-
     });
+
 
 
     function updateEstadoPedido() {

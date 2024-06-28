@@ -8,6 +8,7 @@ using VistaNewProject.Services;
 using X.PagedList;
 using QuestPDF.Infrastructure;
 using QuestPDF.Helpers;
+using System.Linq;
 
 namespace VistaNewProject.Controllers
 {
@@ -21,56 +22,55 @@ namespace VistaNewProject.Controllers
             _client = client;
         }
 
-        public async Task<ActionResult> Index(int? page)
+        public async Task<ActionResult> Index(int? page, string order)
         {
-            int pageSize = 5; // Cambiado a 5 para que la paginación se haga cada 5 registros
-            int pageNumber = page ?? 1; // Número de página actual (si no se especifica, es 1)
+            int pageSize = 5;
+            int pageNumber = page ?? 1;
 
             var pedidos = await _client.GetPedidoAsync();
             var pedidosFiltrados = pedidos.Where(p => p.EstadoPedido == "Realizado" || p.EstadoPedido == "Pendiente");
 
-            if (pedidosFiltrados == null)
+            // Orden por más reciente primero
+            pedidosFiltrados = pedidosFiltrados.OrderByDescending(p => p.FechaPedido);
+
+            // Aplicar orden personalizado si se selecciona desde el filtro
+            if (!string.IsNullOrEmpty(order))
             {
-                return View("Error");
+                switch (order)
+                {
+                    case "alfabetico":
+                        pedidosFiltrados = pedidosFiltrados.OrderBy(p => p.clientes.NombreEntidad);
+                        break;
+                    case "name_desc":
+                        pedidosFiltrados = pedidosFiltrados.OrderByDescending(p => p.EstadoPedido);
+                        break;
+                    case "first":
+                        pedidosFiltrados = pedidosFiltrados.OrderBy(p => p.FechaPedido);
+                        break;
+                    case "reverse":
+                        pedidosFiltrados = pedidosFiltrados.OrderByDescending(p => p.TipoServicio);
+                        break;
+                    default:
+                        break;
+                }
             }
 
+            // Paginación
             var pagePedido = await pedidosFiltrados.ToPagedListAsync(pageNumber, pageSize);
             if (!pagePedido.Any() && pagePedido.PageNumber > 1)
             {
                 pagePedido = await pedidosFiltrados.ToPagedListAsync(pagePedido.PageCount, pageSize);
             }
 
-            int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
-
+            int contador = (pageNumber - 1) * pageSize + 1;
             var clientes = await _client.GetClientesAsync();
-
-
             ViewBag.Clientes = clientes;
 
+            ViewData["Pedidos"] = pedidos;
 
-            // Código del método Index que querías integrar
-            string mensaje = HttpContext.Session.GetString("Message");
-            TempData["Message"] = mensaje;
-
-            try
-            {
-                ViewData["Pedidos"] = pedidos;
-
-            }
-
-            catch (HttpRequestException ex) when ((int)ex.StatusCode == 404)
-            {
-                HttpContext.Session.SetString("Message", "No se encontró la página solicitada");
-                return RedirectToAction("Index", "Home");
-            }
-            catch
-            {
-                HttpContext.Session.SetString("Message", "Error en el aplicativo");
-                return RedirectToAction("LogOut", "Accesos");
-            }
             return View(pagePedido);
-
         }
+
 
         public async Task<IActionResult> GetPedidosRealizado()
         {
@@ -159,6 +159,24 @@ namespace VistaNewProject.Controllers
 
 
             };
+
+
+
+            var tiposervicio = TipoServicio;
+
+            if (TipoServicio == "Domicilio")
+            {
+                var usuarios = await _client.GetUsuarioAsync();
+                var usuariosDomi = usuarios.Where(u => u.RolId == 3);
+
+                if (usuariosDomi == null || !usuariosDomi.Any())
+                {
+                    TempData["Mensajeentrada"] = "No tines Domiciliarios Registados Por Favor Registre Uno.";
+
+                    return RedirectToAction("Index","Pedidos");
+                }
+            }
+
 
             var response = await _client.CreatePedidoAsync(pedidosnuevos);
             if (response.IsSuccessStatusCode)
@@ -410,8 +428,6 @@ namespace VistaNewProject.Controllers
                                         }
                                     }
                                 }
-                                // Obtener y actualizar los lotes asociados al producto cancelado
-
                             }
                         }
                     }
@@ -501,12 +517,245 @@ namespace VistaNewProject.Controllers
 
         public async Task<IActionResult> UpdateEstadoPedido(int id,string estado)
         {
+
+            
             var updateestado=await _client.CambiarEstadoPedidoAsync(id, estado);
-
-
 
             return Ok();
 
+        }
+
+
+        public async Task<IActionResult> GenerarPDF(int pedidoId)
+        {
+            try
+            {
+                // Obtener detalles del pedido filtrados por pedidoId
+                var detallepedidos = await _client.GetDetallepedidoAsync();
+                var filteredDetallepedidos = detallepedidos.Where(dp => dp.PedidoId == pedidoId).ToList();
+
+                // Obtener información general del pedido
+                var pedido = await _client.FindPedidosAsync(pedidoId);
+                var cliente = await _client.FindClienteAsync(pedido.ClienteId.Value);
+
+
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    Document document = new Document();
+                    PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+                    document.Open();
+
+                    // Título del documento
+                    Paragraph title = new Paragraph("Reporte De Ventas", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.BLACK));
+                    title.Alignment = Element.ALIGN_CENTER;
+                    document.Add(title);
+
+                    // Espacio entre título y tablas
+                    document.Add(new Paragraph("\n"));
+
+                    // Tabla para la información general del pedido
+                    PdfPTable pedidoTable = new PdfPTable(2)
+                    {
+                        WidthPercentage = 100,
+                        SpacingBefore = 10f,
+                        SpacingAfter = 10f
+                    };
+                    pedidoTable.SetWidths(new float[] { 30f, 70f });
+
+                    // Encabezado de la tabla de pedido
+                    AddCellToHeader(pedidoTable, "Campo");
+                    AddCellToHeader(pedidoTable, "Valor");
+
+                    // Agregar filas con datos del pedido
+                    AddRow(pedidoTable, "PedidoId", pedido.PedidoId.ToString());
+                    AddRow(pedidoTable, "Cliente", cliente.NombreEntidad);
+                    AddRow(pedidoTable, "Tipo de Servicio", pedido.TipoServicio ?? "No disponible");
+                    AddRow(pedidoTable, "Fecha del Pedido", pedido.FechaPedido.HasValue ? pedido.FechaPedido.Value.ToShortDateString() : "No disponible");
+                    AddRow(pedidoTable, "Valor Total", pedido.ValorTotalPedido?.ToString("C") ?? "No disponible");
+                    AddRow(pedidoTable, "Estado", pedido.EstadoPedido ?? "No disponible");
+
+
+
+                    // Agregar tabla de pedido al documento
+                    document.Add(pedidoTable);
+
+                    // Espacio entre tablas
+                    document.Add(new Paragraph("\n"));
+
+                    // Tabla para los detalles del pedido
+                    PdfPTable detalleTable = new PdfPTable(5)
+                    {
+                        WidthPercentage = 100,
+                        SpacingBefore = 10f,
+                        SpacingAfter = 10f
+                    };
+                    detalleTable.SetWidths(new float[] { 10f, 30f, 10f, 10f, 10f });
+
+                    // Encabezados de la tabla de detalles
+                    AddCellToHeader(detalleTable, "Pedido");
+                    AddCellToHeader(detalleTable, "Nombre Producto");
+                    AddCellToHeader(detalleTable, "Cantidad");
+                    AddCellToHeader(detalleTable, "Precio");
+                    AddCellToHeader(detalleTable, "Unidad");
+
+                    // Agregar datos de los detalles del pedido a la tabla
+                    foreach (var detalle in filteredDetallepedidos)
+                    {
+                        // Obtener producto y unidad asociada para cada detalle de pedido
+                        var producto = await _client.FindProductoAsync(detalle.ProductoId.Value);
+                        var unidad = await _client.FindUnidadAsync(detalle.UnidadId.Value);
+
+                        AddRow(detalleTable, detalle.PedidoId.ToString(),
+                            producto?.NombreCompletoProducto ?? "No disponible", detalle.Cantidad.ToString(),
+                            detalle.PrecioUnitario?.ToString("C") ?? "No disponible", unidad?.NombreCompletoUnidad ?? "No disponible");
+                    }
+
+                    // Agregar tabla de detalles al documento
+                    document.Add(detalleTable);
+
+                    // Cerrar el documento
+                    document.Close();
+
+                    // Devolver el archivo PDF como FileResult
+                    return File(memoryStream.ToArray(), "application/pdf", "ReporteProductos.pdf");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // Manejar el error y mostrar un mensaje adecuado
+                return BadRequest($"Error al obtener datos: {ex.Message}");
+            }
+        }
+
+        private void AddCellToHeader(PdfPTable table, string cellText)
+        {
+            PdfPCell cell = new PdfPCell(new Phrase(cellText, FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE)))
+            {
+                BackgroundColor = BaseColor.GRAY,
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                VerticalAlignment = Element.ALIGN_MIDDLE
+            };
+            table.AddCell(cell);
+        }
+
+        private void AddRow(PdfPTable table, params string[] cellTexts)
+        {
+            foreach (var text in cellTexts)
+            {
+                table.AddCell(new Phrase(text, FontFactory.GetFont(FontFactory.HELVETICA, 10, BaseColor.BLACK)));
+            }
+        }
+
+        public async Task<IActionResult> GenerarPDFFecha(DateTime? fechaInicio, DateTime? fechaFin)
+        {
+            try
+            {
+                // Validar que las fechas no sean nulas
+                if (!fechaInicio.HasValue || !fechaFin.HasValue)
+                {
+                    return BadRequest("Debe proporcionar fechas válidas.");
+                }
+
+                // Obtener pedidos dentro del rango de fechas
+                var pedidos = await _client.GetPedidoAsync();
+                var pedidosFiltrados = pedidos
+                    .Where(p => p.FechaPedido.HasValue && p.FechaPedido.Value.Date >= fechaInicio.Value.Date && p.FechaPedido.Value.Date <= fechaFin.Value.Date)
+                    .ToList();
+
+                // Obtener detalles de pedidos asociados a los pedidos filtrados
+                var pedidoIds = pedidosFiltrados.Select(p => p.PedidoId).ToList();
+                var detallepedidos = await _client.GetDetallepedidoAsync();
+                var filteredDetallepedidos = detallepedidos
+                    .Where(dp => pedidoIds.Contains(dp.PedidoId.Value))
+                    .ToList();
+
+                // Crear el documento PDF
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    Document document = new Document();
+                    PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+                    document.Open();
+
+                    // Título del documento
+                    Paragraph title = new Paragraph("Reporte De Ventas", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.BLACK));
+                    title.Alignment = Element.ALIGN_CENTER;
+                    document.Add(title);
+
+                    // Rango de fechas
+                    Paragraph dateRange = new Paragraph($"Del {fechaInicio.Value.ToShortDateString()} al {fechaFin.Value.ToShortDateString()}", FontFactory.GetFont(FontFactory.HELVETICA, 12, BaseColor.BLACK));
+                    dateRange.Alignment = Element.ALIGN_CENTER;
+                    document.Add(dateRange);
+
+                    // Espacio entre título y tablas
+                    document.Add(new Paragraph("\n"));
+
+                    // Tabla para la información general de los pedidos
+                    PdfPTable pedidoTable = new PdfPTable(2)
+                    {
+                        WidthPercentage = 100,
+                        SpacingBefore = 10f,
+                        SpacingAfter = 10f
+                    };
+                    pedidoTable.SetWidths(new float[] { 30f, 70f });
+
+                    // Encabezado de la tabla de pedido
+                    AddCellToHeader(pedidoTable, "Campo");
+                    AddCellToHeader(pedidoTable, "Valor");
+
+                    // Agregar filas con datos del pedido
+                    AddRow(pedidoTable, "Total Pedidos", pedidosFiltrados.Count().ToString());
+                    AddRow(pedidoTable, "Fecha de inicio", fechaInicio.Value.ToShortDateString());
+                    AddRow(pedidoTable, "Fecha final", fechaFin.Value.ToShortDateString());
+
+                    // Agregar tabla de pedido al documento
+                    document.Add(pedidoTable);
+
+                    // Espacio entre tablas
+                    document.Add(new Paragraph("\n"));
+
+                    // Tabla para los detalles de los pedidos
+                    PdfPTable detalleTable = new PdfPTable(5)
+                    {
+                        WidthPercentage = 100,
+                        SpacingBefore = 10f,
+                        SpacingAfter = 10f
+                    };
+                    detalleTable.SetWidths(new float[] { 10f, 30f, 10f, 10f, 10f });
+
+                    // Encabezados de la tabla de detalles
+                    AddCellToHeader(detalleTable, "Pedido");
+                    AddCellToHeader(detalleTable, "Nombre Producto");
+                    AddCellToHeader(detalleTable, "Cantidad");
+                    AddCellToHeader(detalleTable, "Precio");
+                    AddCellToHeader(detalleTable, "Unidad");
+
+                    // Agregar datos de los detalles del pedido a la tabla
+                    foreach (var detalle in filteredDetallepedidos)
+                    {
+                        // Obtener producto y unidad asociada para cada detalle de pedido
+                        var producto = await _client.FindProductoAsync(detalle.ProductoId.Value);
+                        var unidad = await _client.FindUnidadAsync(detalle.UnidadId.Value);
+
+                        AddRow(detalleTable, detalle.PedidoId.ToString(),
+                            producto?.NombreCompletoProducto ?? "No disponible", detalle.Cantidad.ToString(),
+                            detalle.PrecioUnitario?.ToString("C") ?? "No disponible", unidad?.NombreCompletoUnidad ?? "No disponible");
+                    }
+
+                    // Agregar tabla de detalles al documento
+                    document.Add(detalleTable);
+
+                    // Cerrar el documento
+                    document.Close();
+
+                    // Devolver el archivo PDF como FileResult
+                    return File(memoryStream.ToArray(), "application/pdf", "ReportePedidos.pdf");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Manejar el error y mostrar un mensaje adecuado
+                return BadRequest($"Error al generar el reporte: {ex.Message}");
+            }
         }
 
 
