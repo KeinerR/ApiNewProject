@@ -29,13 +29,7 @@
                 <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputDomicilio();" type="button"><i class="fas fa-search"></i></button>
             </div>
         </form>
-
-
-
-
-
     </div>
-
 
     <a asp-action="DomiciliosRealizados" class="btn btn-primary">
         Realizados   <i class="fa-solid fa-flag-checkered"></i>
@@ -52,25 +46,25 @@
             <th class="contadorB consecutivo noIs">#</th>
             <th class="contador consecutivo">#</th>
             <th class="d-none">
-                DOMICILIO ID
+                ID
             </th>
             <th>
-                PEDIDO ID
+                pedido ID
             </th>
             <th>
-                USUARIO ID
+                usuario ID
             </th>
             <th>
-                OBSERVACION
+                Observacion
             </th>
             <th>
-                FECHA ENTREGA
+                Fecha entrega
             </th>
             <th>
-                DIRECCION
+                Dirección
             </th>
             <th>
-                Estado domicilio
+                Estado 
             </th>
         
         </tr>
@@ -78,7 +72,6 @@
     <tbody class="text-center" >
         @{
             int contador = ViewBag.Contador ?? 1;
-            int contadorNew = ViewBag.Contador ?? 1;
         }
         @foreach (var item in Model)
         {
@@ -101,10 +94,34 @@
                
             </tr>
         }
+        @{
+            var domicilios = ViewData["Domicilios"] as List<Domicilio>;
+            if (domicilios != null)
+            {
+                int contadorB = 1;
+                foreach (var domicilio in domicilios)
+                {
+                    <tr class="Domicilios noIs">
+                        <td class="contadorB noIs">
+                            @contadorB <!-- Muestra el valor del contador -->
+                        </td>
+                        <td>@domicilio.DomicilioId</td>
+                        <td>@domicilio.PedidoId</td>
+                        <td>@domicilio.UsuarioId</td>
+                        <td>@domicilio.Observacion</td>
+                        <td>@domicilio.FechaEntrega</td> 
+                        <td>@domicilio.DireccionDomiciliario</td>
+                        <td>@domicilio.EstadoDomicilio</td>
+                    </tr>
+                    contadorB++;
+                }
+            }
+        }
     </tbody>
+
 </table>
 
-<div class="pagination-container mt-2">
+<div class="pagination-container mt-2" id="paginationContainer">
     @if (Model != null && Model.PageCount > 1)
     {
         <div class="d-flex justify-content-center mb-5">

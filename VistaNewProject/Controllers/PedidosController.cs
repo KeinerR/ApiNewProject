@@ -62,7 +62,9 @@ namespace VistaNewProject.Controllers
                 pagePedido = await pedidosFiltrados.ToPagedListAsync(pagePedido.PageCount, pageSize);
             }
 
-            int contador = (pageNumber - 1) * pageSize + 1;
+            int contador = (pageNumber - 1) * pageSize + 1; // Calcular el valor inicial del contador
+
+            ViewBag.Contador = contador;
             var clientes = await _client.GetClientesAsync();
             ViewBag.Clientes = clientes;
 

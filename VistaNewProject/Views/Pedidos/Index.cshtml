@@ -159,12 +159,15 @@
 <!-- HTML (Razor View) -->
 <div class="d-flex justify-content-between">
     <!-- Formulario de búsqueda de pedidos -->
-    <form class="d-none d-md-inline-block ">
-        <div class="input-group">
-            <input id="buscarPedido" type="text" class="form-control" placeholder="Buscar Pedidos" aria-label="Search" aria-describedby="button-addon2">
-            <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputPedidos()" type="button"><i class="fas fa-search"></i></button>
-        </div>
-    </form>
+    <div class="mr-auto">
+        <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
+            <div class="input-group">
+                <input id="buscarPedido" type="text" class="form-control" oninput="searchPedido();" placeholder="Buscar pedido" aria-label="Search" aria-describedby="button-addon2">
+                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputPedido();" type="button"><i class="fas fa-search"></i></button>
+            </div>
+        </form>
+    </div>
+
 
     <!-- Espacio en blanco para separar los elementos -->
 
@@ -214,30 +217,38 @@
     <!-- Cabecera de la tabla -->
     <thead>
         <tr>
-            <th>#</th>
+            <th class="contadorB consecutivo noIs">#</th>
+            <th class="consecutivo contador">
+                #
+            </th>
             <th class="d-none">PedidoId</th>
             <th>Cliente</th>
             <th>Tipo servicio</th>
             <th>Fecha pedido</th>
             <th>Estado pedido</th>
-            <th>Acciones</th>
+            <th class="contenedorAcciones">Acciones</th>
         </tr>
     </thead>
     <tbody class="text-center">
         <!-- Iteración sobre los pedidos -->
         @{
-            var contador = 1; // Inicialización de la variable contador
+            var contador = ViewBag.Contador;// Inicialización de la variable contador
         }
 
         @foreach (var item in Model)
         {
-            <tr class="pedidosPaginado Pedidos">
-                <td>@contador</td>
+            <tr class="pedidosPaginado">
+                <td>
+                    @contador 
+                    @{
+                        contador++;
+                    }
+                </td>
                 <td class="d-none">@Html.DisplayFor(modelItem => item.PedidoId)</td>
                 <td>@item.ClienteId</td>
                 <td>@item.TipoServicio</td>
                 <td>@item.FechaPedido</td>
-                <td class="text-center align-middle contenedorEstadoTabla">
+                <td>
                     @if (item.EstadoPedido == "Pendiente")
                     {
                         <label class="switch">
@@ -253,20 +264,67 @@
                         </label>
                     }
                 </td>
-                <td class="d-flex align-items-center justify-content-between">
-                    <a asp-action="Details" asp-route-id="@item.PedidoId" class="btn botonDetalle"><i class="fa-solid fa-file"></i></a>
-                    @if (item.EstadoPedido == "Pendiente")
-                    {
-                        <input type="checkbox" style="margin-right:20px" name="estado_@item.PedidoId" value="Anulado" onclick="actualizarEstadoPedido('@item.PedidoId', this.value)" />
-                    }
+                <td>
+                    <div class="botonesTablaContenedor">
+                        <a asp-action="Details" asp-route-id="@item.PedidoId" class="btn botonDetalle"><i class="fa-solid fa-file"></i></a>
+                        @if (item.EstadoPedido == "Pendiente")
+                        {
+                            <input type="checkbox" style="margin-right:20px" name="estado_@item.PedidoId" value="Anulado" onclick="actualizarEstadoPedido('@item.PedidoId', this.value)" />
+                        }
+                    </div>
                 </td>
             </tr>
-            contador++; // Incrementar el contador después de cada fila
+        }
+        @{
+            var pedidos = ViewData["Pedidos"] as List<Pedido>;
+            if (pedidos != null)
+            {
+                int contadorB = 1;
+                foreach (var pedido in pedidos)
+                {
+                    <tr class="Pedidos noIs">
+                        <td class="contadorB noIs">
+                            @contadorB <!-- Muestra el valor del contador -->
+                        </td>
+                        <td>@pedido.PedidoId</td>
+                        <td>@pedido.ClienteId</td>
+                        <td>@pedido.TipoServicio</td>
+                        <td>@pedido.FechaPedido</td>
+                        <td class="text-center align-middle contenedorEstadoTabla">
+                            @if (pedido.EstadoPedido == "Pendiente")
+                            {
+                                <label class="switch">
+                                    <input type="radio" name="estado_@pedido.PedidoId" value="Realizado" onchange="actualizarEstadoPedido('@pedido.PedidoId', this.value)">
+                                    <span class="slider" style="background-color: #00215E;"></span>
+                                </label>
+                            }
+                            else if (pedido.EstadoPedido == "Realizado")
+                            {
+                                <label class="switch">
+                                    <input type="radio" name="estado_@pedido.PedidoId" value="Cancelado" onchange="actualizarEstadoPedido('@pedido.PedidoId', this.value)">
+                                    <span class="slider" style="background-color: #16DB25;"></span>
+                                </label>
+                            }
+                        </td>
+                        <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                        <td>
+                            <div class="botonesTablaContenedor">
+                                <a asp-action="Details" asp-route-id="@pedido.PedidoId" class="btn botonDetalle"><i class="fa-solid fa-file"></i></a>
+                                @if (pedido.EstadoPedido == "Pendiente")
+                                {
+                                    <input type="checkbox" style="margin-right:20px" name="estado_@pedido.PedidoId" value="Anulado" onclick="actualizarEstadoPedido('@pedido.PedidoId', this.value)" />
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                    contadorB++;
+                }
+            }
         }
     </tbody>
 </table>
 
-<div class="pagination-container mt-2">
+<div class="pagination-container mt-2" id="paginationContainer">
     @if (Model != null && Model.PageCount > 1)
     {
         <div class="d-flex justify-content-center mb-5">
@@ -313,60 +371,6 @@
 </div>
 
 <script>
-    // JavaScript para búsqueda y filtrado de pedidos
-    document.getElementById('buscarPedido').addEventListener('input', function () {
-        var input = this.value.trim().toLowerCase();
-        var rows = document.querySelectorAll('.pedidosPaginado');
-
-        if (input === "") {
-            rows.forEach(function (row) {
-                row.style.display = 'table-row';
-            });
-            var icon = document.querySelector('#btnNavbarSearch i');
-            icon.className = 'fas fa-search';
-            icon.style.color = 'white';
-        } else {
-            rows.forEach(function (row) {
-                row.style.display = 'none';
-            });
-            var icon = document.querySelector('#btnNavbarSearch i');
-            icon.className = 'fas fa-times';
-            icon.style.color = 'white';
-        }
-
-        var rowsTodos = document.querySelectorAll('.Pedidos');
-
-        rowsTodos.forEach(function (row) {
-            var clienteId = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-            var tipoServicio = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
-            var fechaPedido = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
-
-            if (input === "") {
-                row.style.display = 'table-row';
-            } else {
-                var matches = clienteId.includes(input) || tipoServicio.includes(input) || fechaPedido.includes(input);
-                row.style.display = matches ? 'table-row' : 'none';
-            }
-        });
-    });
-
-    function vaciarInputPedidos() {
-        document.getElementById('buscarPedido').value = "";
-        var icon = document.querySelector('#btnNavbarSearch i');
-        icon.className = 'fas fa-search';
-        icon.style.color = 'gray';
-
-        var rows = document.querySelectorAll('.pedidosPaginado');
-        rows.forEach(function (row) {
-            row.style.display = 'table-row';
-        });
-
-        var rowsTodos = document.querySelectorAll('.Pedidos');
-        rowsTodos.forEach(function (row) {
-            row.style.display = 'table-row';
-        });
-    }
-
     document.addEventListener('DOMContentLoaded', function () {
         // Obtener el elemento de fecha de inicio y fecha de fin
         var fechaInicio = document.getElementById("fechaInicio");

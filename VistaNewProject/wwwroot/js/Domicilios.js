@@ -152,11 +152,12 @@ function searchDomicilio() {
             var domicilioId = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
             var pedidoId = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
             var usuarioId = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
-            var observacion = row.querySelector('td:nth-child(5').textContent.trim().toLowerCase();
-            var fechaE = row.querySelector('td:nth-child(6').textContent.trim().toLowerCase();
-            var direccionD = row.querySelector('td:nth-child(7').textContent.trim().toLowerCase();
+            var observacion = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
+            var fechaE = row.querySelector('td:nth-child(6)').textContent.trim().toLowerCase();
+            var direccionD = row.querySelector('td:nth-child(7)').textContent.trim().toLowerCase();
+            var Estado = row.querySelector('td:nth-child(8)').textContent.trim().toLowerCase();
 
-            row.style.display = (input === "" || domicilioId.includes(input) || pedidoId.includes(input) || usuarioId.includes(input) || observacion.includes(input) || fechaE.includes(input) || direccionD.includes(input)) ? 'table-row' : 'none';
+            row.style.display = (input === "" || domicilioId.includes(input) || pedidoId.includes(input) || Estado.includes(input) || usuarioId.includes(input) || observacion.includes(input) || fechaE.includes(input) || direccionD.includes(input)) ? 'table-row' : 'none';
         }
     });
 }

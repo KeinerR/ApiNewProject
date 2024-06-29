@@ -164,3 +164,78 @@ document.querySelector('form').addEventListener('submit', function (event) {
         event.preventDefault(); // Prevent form submission if validation fails
     }
 });// Función para vaciar el input de búsqueda
+
+function searchPedido() {
+    var input = $('#buscarPedido').val().trim().toLowerCase();       //Obtiene el valor del buscadpor
+    var rows = document.querySelectorAll('.pedidosPaginado');       //Obtiene el tr de Usuario Paginado.
+    var rowsTodos = document.querySelectorAll('.Pedidos');      //Obtiene el tr de Usuario que esta en none
+    var icon = document.querySelector('#btnNavbarSearch i');    //Obtiene el icino de buscar
+    var contador = document.querySelector('.contador');        //Obtiene la columna que tiene el # 
+    var contadores = document.querySelectorAll('.contadorB'); //Obtiene el contadorB que esta en none y lo hace visible para mostrar el consecutivo y el ID
+    var paginationContainer = document.getElementById('paginationContainer');
+    if (input === "") {
+        rows.forEach(function (row) { //Esconde los usuarios paginado
+            row.style.display = '';
+        });
+        contadores.forEach(function (contador) {
+            contador.classList.add('noIs'); // Removemos la clase 'noIs' para mostrar la columna
+        });
+        icon.className = 'fas fa-search';
+        icon.style.color = 'white';
+        contador.innerText = '#';
+        paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
+
+    } else {
+        rows.forEach(function (row) {
+            row.style.display = 'none';
+        });
+        contadores.forEach(function (contador) {
+            contador.classList.remove('noIs'); // Removemos la clase 'noIs'
+        });
+        icon.className = 'fas fa-times';
+        icon.style.color = 'white';
+        contador.innerText = 'ID';
+        paginationContainer.classList.add('noBe'); // Oculta el contenedor de paginación
+
+    }
+
+    rowsTodos.forEach(function (row) {
+        if (input === "") {
+            row.style.display = 'none';
+        } else {
+            var pedidoId = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var cliente = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+            var tipoServicio = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
+            var fechaPedido = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
+            row.style.display = (input === "" || pedidoId.includes(input) || fechaPedido.includes(input) || tipoServicio.includes(input) || cliente.includes(input)) ? 'table-row' : 'none';
+        }
+    });
+}
+
+function vaciarInputPedido() {
+    var paginationContainer = document.getElementById('paginationContainer');
+    document.getElementById('buscarPedido').value = "";
+    var icon = document.querySelector('#btnNavbarSearch i');
+    icon.className = 'fas fa-search';
+    icon.style.color = 'white';
+
+    var contador = document.querySelector('.contador');
+    contador.innerText = '#';
+    var contadores = document.querySelectorAll('.contadorB');
+    contadores.forEach(function (contador) {
+        contador.classList.add('noIs'); // Removemos la clase 'noIs'
+    });
+
+    var rows = document.querySelectorAll('.pedidosPaginado');
+    rows.forEach(function (row) {
+        row.style.display = 'table-row';
+    });
+
+    var rowsTodos = document.querySelectorAll('.Pedidos');
+
+    rowsTodos.forEach(function (row) {
+        row.style.display = 'none';
+    });
+    paginationContainer.classList.remove('noBe'); // Oculta el contenedor de paginación
+
+}
