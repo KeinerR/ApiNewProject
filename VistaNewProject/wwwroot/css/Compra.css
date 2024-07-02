@@ -323,4 +323,11 @@
     }
 
 
-
+.campoBad {
+    border: solid red 1px;
+    background: #FADBD8;
+}
+.campoGood {
+    border: solid green 1px;
+    background: #cfc;
+}

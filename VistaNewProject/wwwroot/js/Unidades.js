@@ -2,7 +2,7 @@ var unidades = [];
 
 function obtenerDatosUnidades() {
     fetch('/Unidades/FindUnidades', {
-        method: 'POST',
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json'
         }
@@ -359,7 +359,7 @@ function actualizarUnidad(campo) {
     var unidadId = campo;
     $.ajax({
         url: '/Unidades/FindUnidad', // Ruta relativa al controlador y la acción
-        type: 'POST',
+        type: 'GET',
         data: { unidadId: unidadId },
         success: function (data) {
             var formActualizar = $('#FormActualizarUnidad');

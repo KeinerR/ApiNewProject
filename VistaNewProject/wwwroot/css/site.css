@@ -375,10 +375,13 @@ input[type="checkbox"]:checked + .sub-menu {
         width: 50px; /* Establece el ancho deseado */
     }
     .table-custom .contenedorCantidad {
-        width: 50px; /* Establece el ancho deseado */
+        width: 150px; /* Establece el ancho deseado */
     }
     .table-custom .contenedorEstado{
         width: 50px; /* Establece el ancho deseado */
+    }
+    .table-custom .nombreLong{
+        width: 450px; /* Establece el ancho deseado */
     }
 
     .table-custom .botonesTablaContenedor {

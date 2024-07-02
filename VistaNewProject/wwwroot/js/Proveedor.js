@@ -1,7 +1,7 @@
 var proveedores = [];
 function obtenerDatosProveedores() {
     fetch('/Proveedores/FindProveedores', {
-        method: 'POST',
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json'
         }
@@ -477,7 +477,7 @@ function actualizarProveedor(campo) {
     var proveedorId = campo;
     $.ajax({
         url: '/Proveedores/FindProveedor', // Ruta relativa al controlador y la acción
-        type: 'POST',
+        type: 'GET',
         data: { proveedorId: proveedorId },
         success: function (data) {
             var formActualizar = $('#FormActualizarProveedor');

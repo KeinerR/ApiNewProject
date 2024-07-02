@@ -1,4 +1,6 @@
-﻿namespace VistaNewProject.Models
+﻿using System.Text.Json.Serialization;
+
+namespace VistaNewProject.Models
 {
     public class Compra
     {
@@ -13,16 +15,23 @@
         public virtual Lote? Lotes { get; set; } = null;
 
     }
-    public class Detallecompra
+    public partial class Detallecompra
     {
+        public Detallecompra()
+        {
+            Lotes = new HashSet<Lote>();
+        }
+
         public int DetalleCompraId { get; set; }
         public int? CompraId { get; set; }
         public int? ProductoId { get; set; }
         public int? UnidadId { get; set; }
         public int? Cantidad { get; set; }
-
+        [JsonIgnore]
         public virtual Compra? Compra { get; set; }
+        [JsonIgnore]
         public virtual Producto? Producto { get; set; }
+        [JsonIgnore]
         public virtual Unidad? Unidad { get; set; }
         public virtual Lote? lote { get; set; }
         public virtual ICollection<Lote> Lotes { get; set; }

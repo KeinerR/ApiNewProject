@@ -21,9 +21,9 @@ namespace VistaNewProject.Controllers
             var compras = await _client.GetCompraAsync();
             var proveedores = await _client.GetProveedorAsync();
             var unidades = await _client.GetUnidadAsync();
-            var marcas = await _client.GetMarcaAsync();
+            var categorias = await _client.GetCategoriaAsync();
             var productos = await _client.GetAllDatosProductosAsync();
-            var presentaciones = await _client.GetPresentacionAsync();
+
 
             compras = compras.Reverse();
             compras = compras.OrderByDescending(c => c.EstadoCompra == 1).ToList();
@@ -62,10 +62,9 @@ namespace VistaNewProject.Controllers
             ViewData["Compras"] = compras;
             ViewBag.Order = order; // Pasar el criterio de orden a la vista
             ViewBag.Proveedores = proveedores;
-            ViewBag.Marcas = marcas;
             ViewBag.Unidades = unidades;
             ViewBag.Productos = productos;
-            ViewBag.Presentaciones = presentaciones;
+            ViewBag.Categorias = categorias;
 
             return View(pageCompra);
         }
@@ -217,9 +216,70 @@ namespace VistaNewProject.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<ActionResult> CompararNumerosDeFactura(string NumeroFactura)
+        {
+            // Llama al método VerificarDuplicadosFacturas del cliente _client
+            var response = await _client.VerificarDuplicadosFacturas(NumeroFactura);
+            // Retorna la respuesta obtenida
+            return Ok(response); // Puedes ajustar el tipo de ActionResult según lo que devuelva VerificarDuplicadosFacturas
+        }
+        [HttpGet]
+        public async Task<ActionResult> CompararNumerosDeLote(string NumeroLote)
+        {
+            // Llama al método VerificarDuplicadosFacturas del cliente _client
+            var response = await _client.VerificarDuplicadosLotes(NumeroLote);
+            // Retorna la respuesta obtenida
+            return Ok(response); // Puedes ajustar el tipo de ActionResult según lo que devuelva VerificarDuplicadosFacturas
+        }
 
 
+        [HttpGet("/Compras/filtrarxCategoria/{filtrar}")]
+        public async Task<ActionResult> filtrarxCategoria(int filtrar)
+        {
+            var productos = await _client.GetAllDatosProductosAsync();
+            var unidades = await _client.GetUnidadAsync();
+            // Filter associated categories if asociar is 1 and asociarcategoria is provided
+            if (filtrar != 0)
+            {
+                var categoriasxUnidades = await _client.GetCategoriaxUnidadesByIdAsync(filtrar);
+                productos = productos.Where(c => c.CategoriaId == filtrar).ToList();
+                var unidadesAsociadasIds = categoriasxUnidades
+                   .Select(cu => cu.UnidadId)
+                   .ToList();
+                unidades = unidades.Where(c => unidadesAsociadasIds.Contains(c.UnidadId)).ToList();
 
+            }
+            else
+            {
+                unidades = unidades.Where(c => c.EstadoUnidad == 1).ToList();
+            }
+
+            // Return filtered or all records as required
+            return Json(new { Producto = productos, Unidad = unidades });
+        }
+
+        [HttpGet("/Compras/filtrarUnidadesxProductoDatalist/{filtro}")]
+        public async Task<ActionResult> filtrarUnidadesxProductoDatalist(int filtro)
+        {
+            var unidades = await _client.GetUnidadAsync();
+            // Filtrar unidades asociadas si el filtro no es 0
+            if (filtro != 0)
+            {
+                var unidadesxProducto = await _client.GetUnidadesxProductosByIdProductoAsync(filtro);
+                var unidadesAsociadasIds = unidadesxProducto
+                    .Select(cu => cu.UnidadId)
+                    .ToList();
+                unidades = unidades.Where(c => unidadesAsociadasIds.Contains(c.UnidadId)).ToList();
+            }
+            else
+            {
+                unidades = unidades.Where(c => c.EstadoUnidad == 1).ToList();
+            }
+
+            // Retornar las unidades filtradas o todas según corresponda
+            return Json(new { Unidad = unidades });
+        }
 
     }
 }

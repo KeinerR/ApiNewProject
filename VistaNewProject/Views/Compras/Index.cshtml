@@ -22,116 +22,141 @@
         </button>
     </div>
     <!-- Modal -->
-    <div class="modal fade GeneralModal" id="ModalCompra" tabindex="-1" aria-labelledby="titulomodal" aria-hidden="true">   
+    <div class="modal fade GeneralModal" id="ModalCompra" tabindex="-1" aria-labelledby="titulomodal" aria-hidden="true">
         <div class="modal-dialog modal-content" id="CompraVista">
-                <div class="modal-cabecera">
-                    <div id="pibo">
-                        <span></span>
-                    </div>
-                    <div class="modal-header-view TituloModal" id="tituloCompra">
-                        <h3>Agregar Compra</h3>
-                    </div>
-                    <div class="moda-header-view" id="modal-cabecera-equis">
-                        <button type="button" onclick="reiniciarCompra()" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
+            <div class="modal-cabecera">
+                <div id="pibo">
+                    <span></span>
                 </div>
-                <div id="PrincipalCompra" class="modal-cuerpo">
-                    <div class="form-group">
-                        <input type="hidden" id="CompraId" name="compraId" class="form-control" />
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="form-group">
+                <div class="modal-header-view TituloModal" id="tituloCompra">
+                    <h3>Agregar Compra</h3>
+                </div>
+                <div class="moda-header-view" id="modal-cabecera-equis">
+                    <button type="button" onclick="reiniciarCompra()" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+            <div id="PrincipalCompra" class="modal-cuerpo">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <div class="icono-input">
+                                    <i class="fas fa-times noBe" onclick="iconoLimpiarCampo(['NombreProveedor', 'ProveedorIdHidden'],'NombreProveedor');"></i>
                                     <label for="NombreProveedor" class="control-label">Proveedor<span class="Mensaje">*</span></label>
-                                    <input list="proveedores" id="NombreProveedor" name="nombreProveedor" class="form-control inputs" placeholder="Escribe y/o Selecciona" autocomplete="off">
+                                    <input list="proveedores" id="NombreProveedor" oninput="agregarIconoParalimpiarElCampo(this); seleccionarOpcionesHidden(this,'Proveedor');" name="nombreProveedor" class="form-control inputs" placeholder="Escribe y/o Selecciona" autocomplete="off">
                                     <span class="text-danger"></span>
                                     <datalist id="proveedores">
                                         @foreach (var proveedor in ViewBag.Proveedores)
                                         {
-                                            <option value="@proveedor.NombreEmpresa" data-id="@proveedor.ProveedorId">@proveedor.NombreEmpresa</option>
+                                            if (proveedor.EstadoProveedor == 1)
+                                            {
+                                                <option value="@proveedor.NombreEmpresa" data-id="@proveedor.ProveedorId">@proveedor.NombreEmpresa</option>
+                                            }
                                         }
                                     </datalist>
                                     <input type="hidden" id="ProveedorIdHidden" name="proveedorIdHidden">
                                 </div>
                             </div>
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="FechaCompra" class="control-label">Fecha Compra<span class="Mensaje"></span></label>
-                                    <input type="datetime-local" id="FechaCompra" name="fechaCompra" class="form-control inputs" />
-                                    <span class="text-danger"></span>
-                                </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="FechaCompra" class="control-label">Fecha Compra<span class="Mensaje"></span></label>
+                                <input type="date" id="FechaCompra" name="fechaCompra" class="form-control inputs" />
+                                <span class="text-danger"></span>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="NumeroFactura" class="control-label"># de Factura<span class="Mensaje">*</span></label>
-                                    <input type="text" id="NumeroFactura" name="numeroFactura" class="form-control inputs" />
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="text-align:center;" class="noVisualizar" id="MensajeInicial">Completa los campos con *</div>
-                        <div class="text-center" id="agregarDetalle">
-                            <button class="btn btn-primary" id="btnAbrirDetalle" onclick="agregarProductos()">Agregar productos</button>
-                        </div>
-                        <div class="modal-contenedor-footer noSee" id="opcinesCambiarDatosCompra"> 
-                            <button class="btn btn-secondary" id="reducir" onclick="noVerDatosCompra()" title="Reducir">
-                                <span class="d-flex align-items-center">
-                                    <i class="fas fa-plus"></i>
-                                </span>
-                            </button>
-                            <button class="btn btn-primary" id="btnActualizarCompra" onclick="actualizarCompra()">
-                                <span class="d-flex align-items-center">
-                                    Actualizar datos de compra
-                                </span>
-                            </button>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="NumeroFactura" class="control-label"># de Factura<span class="Mensaje">*</span></label>
+                                <input type="text" id="NumeroFactura" name="numeroFactura" class="form-control inputs" />
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align:center;" class="noVisualizar" id="MensajeInicial">Completa los campos con *</div>
+                    <div class="text-center" id="agregarDetalle">
+                        <button class="btn btn-primary" id="btnAbrirDetalle" onclick="agregarProductos();">Agregar productos</button>
+                    </div>
+                    <div class="modal-contenedor-footer noSee" id="opcinesCambiarDatosCompra">
+                        <button class="btn btn-secondary" id="reducir" onclick="noVerDatosCompra()" title="Reducir">
+                            <span class="d-flex align-items-center">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                        </button>
+                        <button class="btn btn-primary" id="btnActualizarCompra" onclick="actualizarCompra()">
+                            <span class="d-flex align-items-center">
+                                Actualizar datos de compra
+                            </span>
+                        </button>
+                    </div>
                 </div>
-               
             </div>
+
+        </div>
     </div>
-   
+
     <div class="modal fade DealleProductoCModal" id="ModalDetallesCompra" tabindex="-1" aria-labelledby="titulomodal" aria-hidden="true">
         <div class="modal-dialog modal-content" id="CompraVista">
 
             <div class="modal-cabecera">
-            <div id="pibo">
-                <span></span>
+                <div id="pibo">
+                    <span></span>
+                </div>
+                <div class="modal-header-view TituloModal" id="subtituloCompra">
+                    <h3>Agregar productos a la compra</h3>
+                </div>
+                <div class="moda-header-view" id="modal-cabecera-equis">
+                    <button type="button" onclick="reiniciarCompra()" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
             </div>
-            <div class="modal-header-view TituloModal" id="subtituloCompra">
-                <h3>Agregar productos a la compra</h3>
-            </div>
-            <div class="moda-header-view" id="modal-cabecera-equis">
-                <button type="button" onclick="reiniciarCompra()" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-        </div>
             <div id="DetallesCompra" class="modal-body">
                 <div id="detallecontainer" class="form-group">
+                    <div class="contenedor-filtro opcionesAgregadas">
+                        <input list="categorias" name="order" class="input-sm empSelect" id="filtroPxC" oninput="filtrarxCategoria(this);" placeholder="Filtrar por categoría">
+                        <datalist id="categorias">
+                            @foreach (var categoria in ViewBag.Categorias)
+                            {
+                                if (categoria.EstadoCategoria == 1)
+                                {
+                                    <option data-id="@categoria.CategoriaId" value="@categoria.NombreCategoria"></option>
+                                }
+                            }
+                        </datalist>
+                        <i class="fas fa-times noBe" id="compraFiltrarPorCategoria" onclick="limpiarFiltroCategoriaCompra();"></i>
+                    </div>
                     <div class="row" id="DatosProducto">
                         <div class="col-6">
                             <div class="form-group">
-                                <label for="NombreProducto" class="control-label">Producto<span class="Mensaje">*</span></label>
-                                <input list="productos" id="NombreProducto" name="NombreProducto" class="form-control" placeholder="Escribe y/o selecciona el producto ..." autocomplete="off" />
-                                <datalist id="productos">
-                                    @foreach (var producto in ViewBag.Productos)
-                                    {
-                                        <option value="@producto.NombreCompletoProducto" data-id="@producto.ProductoId" data-cantidad="@producto.CantidadPorPresentacion"></option>
-                                    }
-                                </datalist>
-                                <input type="hidden" id="ProductoIdHidden" name="productoIdHidden" />
-                                <input type="hidden" id="CantidadPorPresentacionHidden" name="cantidadPorPresentacionHidden" />
+                                <div class="icono-input">
+                                    <i class="fas fa-times noBe" onclick="iconoLimpiarCampo(['NombreProducto', 'ProductoIdHidden','CantidadPorPresentacionHidden'],'NombreProducto');"></i>
+                                    <label for="NombreProducto" class="control-label">Producto<span class="Mensaje">*</span></label>
+                                    <input list="productos" id="NombreProducto" name="NombreProducto" oninput="agregarIconoParalimpiarElCampo(this); seleccionarOpcionesHidden(this,'Producto')" class="form-control" placeholder="Escribe y/o selecciona el producto ..." autocomplete="off" />
+                                    <datalist id="productos">
+                                        @foreach (var producto in ViewBag.Productos)
+                                        {
+                                            if (producto.Estado == 1)
+                                            {
+                                                <option value="@producto.NombreCompletoProducto" data-id="@producto.ProductoId" data-cantidad="@producto.CantidadPorPresentacion"></option>
+                                            }
+
+                                        }
+                                    </datalist>
+                                    <input type="hidden" id="ProductoIdHidden" name="productoIdHidden" />
+                                    <input type="hidden" id="CantidadPorPresentacionHidden" name="cantidadPorPresentacionHidden" />
+                                </div>
                             </div>
                         </div>
                         <div class="col-3">
                             <div class="form-group">
                                 <label for="FechaVencimiento" class="control-label mb-0 me-2">Fecha Vencimiento<span class="Mensaje">*</span></label>
                                 <span class="text-danger" id="spanFechaVencimiento"></span>
-                                <input type="datetime-local" id="FechaVencimiento" name="fechaVencimiento" class="form-control" />
+                                <input type="date" id="FechaVencimiento" name="fechaVencimiento" class="form-control" />
                                 <input type="text" class="noVisualizar form-control" id="FechaVencimientoNunca" name="fechaVencimientoNunca" value="No aplica" readonly />
                                 <div class="form-check">
                                     <!-- Utilizamos una form-check para el checkbox y su label -->
-                                    <input type="checkbox" class="form-check-input" id="checkboxNoVencimiento">
+                                    <input type="checkbox" class="form-check-input" onclick="cambioFechaVencimiento();" id="checkboxNoVencimiento">
                                     <label class="form-check-label labelFechaVencimiento" for="checkboxNoVencimiento" id="Vencimiento">No aplica clic</label>
 
                                 </div>
@@ -150,51 +175,81 @@
                     <div class="row">
                         <div class="col-3">
                             <div class="form-group">
-                                <label for="NombreUnidad" class="control-label"> Unidad<span class="Mensaje">*</span></label>
-                                <input list="unidades" id="NombreUnidad" name="nombreUnidad" class="form-control" placeholder="Escribe y / o selecciona la unidad ..." autocomplete="off">
-                                <span class="text-danger"></span>
-                                <datalist id="unidades">
-                                    @foreach (var unidad in ViewBag.Unidades)
-                                    {
-                                        <option value="@unidad.NombreCompletoUnidad" data-id="@unidad.UnidadId" data-cantidad="@unidad.CantidadPorUnidad"></option>
-                                    }
-                                </datalist>
-                                <input type="hidden" id="UnidadIdHidden" name="unidadIdHidden">
-                                <input type="hidden" id="CantidadPorUnidad" name="CantidadPorUnidad">
+                                <div class="icono-input">
+                                    <i class="fas fa-times noBe" onclick="iconoLimpiarCampo(['NombreUnidad', 'UnidadIdHidden','CantidadPorUnidad'],'NombreUnidad');"></i>
+                                    <label for="NombreUnidad" class="control-label"> Unidad<span class="Mensaje">*</span></label>
+                                    <input list="unidades" id="NombreUnidad" name="nombreUnidad" oninput="agregarIconoParalimpiarElCampo(this); seleccionarOpcionesHidden(this,'Unidad')" class="form-control" placeholder="Escribe y / o selecciona la unidad ..." autocomplete="off">
+                                    <span class="text-danger"></span>
+                                    <datalist id="unidades">
+                                        @foreach (var unidad in ViewBag.Unidades)
+                                        {
+                                            if (unidad.EstadoUnidad == 1)
+                                            {
+                                                <option value="@unidad.NombreCompletoUnidad" data-id="@unidad.UnidadId" data-cantidad="@unidad.CantidadPorUnidad"></option>
+                                            }
+                                        }
+                                    </datalist>
+                                    <input type="hidden" id="UnidadIdHidden" name="unidadIdHidden">
+                                    <input type="hidden" id="CantidadPorUnidad" name="cantidadPorUnidad">
+                                </div>
                             </div>
                         </div>
                         <div class="col-3">
                             <div class="form-group">
                                 <label for="Cantidad" class="control-label">Cantidad</label>
                                 <div class="input-group" id="CampoCantidad">
-                                    <input type="number" id="Cantidad" name="cantidad" class="form-control" value="1" min="1">
+                                    <input type="number" id="Cantidad" oninput="formatoNumeroINT(this);" onclick="formatoNumeroINT(this);" name="cantidad" class="form-control" value="1" min="1">
                                     <span class="text-danger"></span>
-                                    <button type="button" class="btn btn-default btn-number input-group-prepend" id="btnMenos">
+                                    <!-- Botones con eventos de mousedown, mouseup y mouseleave definidos en HTML -->
+                                    <button type="button" class="btn btn-default btn-number input-group-prepend"
+                                            id="btnMenos"
+                                            onmousedown="iniciarIntervalo(decrementarCantidad)"
+                                            onclick="decrementarCantidad();"
+                                            onmouseup="detenerIntervalo()"
+                                            onmouseleave="detenerIntervalo()">
                                         <i class="fas fa-minus"></i>
                                     </button>
-                                    <button type="button" class="btn btn-default btn-number input-group-append" id="btnMas">
+
+                                    <button type="button" class="btn btn-default btn-number input-group-append"
+                                            id="btnMas"
+                                            onclick="incrementarCantidad();"
+                                            onmousedown="iniciarIntervalo(incrementarCantidad)"
+                                            onmouseup="detenerIntervalo()"
+                                            onmouseleave="detenerIntervalo()">
                                         <i class="fas fa-plus"></i>
                                     </button>
+
                                 </div>
                             </div>
                         </div>
                         <div class="col-3">
                             <div class="form-group">
                                 <label for="PrecioDeCompra" class="control-label" id="PC">Precio de Compra<span class="Mensaje">*</span></label>
-                                <input type="text" id="PrecioDeCompra" name="precioDeCompra" class="form-control" />
+                                <input type="text" id="PrecioDeCompra" oninput="formatoNumeroINT(this);" name="precioDeCompra" class="form-control" />
                                 <span class="text-danger"></span>
                             </div>
 
                         </div>
                         <div class="col-3">
                             <div class="form-group">
+
                                 <label for="PorcentajeGanancia" class="control-label">% A Ganar<span class="Mensaje">*</span></label>
                                 <div class="contenedorCalculo">
-                                    <input type="text" id="PorcentajeGanancia" name="porcentajeGanancia" class="form-control" />
-                                    <button class="btn-calculo" id="btnCalcular" title="Calcular"><i class="fas fa-calculator"></i></button>
+                                    <input type="text" id="PorcentajeGanancia" oninput="formatoNumeroINT(this);" name="porcentajeGanancia" class="form-control" />
+                                    <button class="btn-calculo" id="btnCalcular" onclick="calcularPreciosCompra();" title="Calcular"><i class="fas fa-calculator"></i></button>
                                 </div>
                             </div>
+
                         </div>
+                    </div>
+                    <div class="row opcionesAgregadas">
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" onclick="filtrarxUnidadesxProducto();" id="checkboxUnidadesxProducto">
+                                <label class="form-check-label labelUnidadesxProducto" for="checkboxUnidadesxProducto" id="labelUxP">Solo unidades asociadas a producto</label>
+                            </div>
+                        </div>
+
                     </div>
                     <button id="modal-header-botonAgregarDetalle" class="btn btn-primary" onclick="agregarDetalleCompra()"><i id="agregarDetalleIcono" class="fas fa-plus-circle"></i>Agregar Producto</button>
                     <div class="EspacioForm"></div>
@@ -219,22 +274,22 @@
                             <div class="form-group">
                             </div>
                             <label for="PrecioDeVentaPorUnidad" class="control-label">x Unidad<span class="Mensaje">*</span></label>
-                            <input type="text" id="PrecioDeVentaPorUnidad" name="precioDeVentaPorUnidad" class="form-control" />
+                            <input type="text" id="PrecioDeVentaPorUnidad" oninput="formatoNumeroINT(this);" name="precioDeVentaPorUnidad" class="form-control" />
                             <span class="text-danger"></span>
                         </div>
                         <div class="col-4">
                             <div class="form-group">
                                 <label for="PrecioDeVentaUnitario" class="control-label">x Producto<span class="Mensaje">*</span></label>
                                 <div class="contenedorCalculo">
-                                    <input type="text" id="PrecioDeVentaUnitario" name="precioDeVentaUnitario" class="form-control" />
-                                    <button class="btn-calculo" id="btnCalcularVenta" title="Calcular precio por unidad"><i class="fas fa-calculator"></i></button>
+                                    <input type="text" id="PrecioDeVentaUnitario" oninput="formatoNumeroINT(this);" name="precioDeVentaUnitario" class="form-control" />
+                                    <button class="btn-calculo" id="btnCalcularVenta" onclick="calcularPrecioPorUnidad();" title="Calcular precio por unidad"><i class="fas fa-calculator"></i></button>
                                 </div>
                                 <span id="spanErmitanio" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="form-group">
-                                <label for="PrecioDeVentaxUnidadPresentacion" class="control-label">x Unidad de producto<span class="Mensaje">*</span></label>
+                                <label for="PrecioDeVentaxUnidadPresentacion" oninput="formatoNumeroINT(this);" class="control-label">x Unidad de producto<span class="Mensaje">*</span></label>
                                 <input type="text" id="PrecioDeVentaxUnidadPresentacion" name="precioDeVentaxUnidadPresentacion" class="form-control" />
                                 <span class="text-danger"></span>
                             </div>
@@ -245,8 +300,9 @@
                     <div class="modal-footer-inicial">
                         <button class="btn btn-secondary" onclick="verProductos();" title="Ver tabla de productos"><i class="fas fa-expand-alt"></i></button>
                         <button class="btn btn-secondary" id="expandir" onclick="verCompra()" title="Actualizar compra"><i class="fas fa-expand-alt"></i></button>
-@*                         <button id="volverRegistrarCompra" class="btn btn-secondary" onclick="limpiarFormularioTotalmente()" title="Limpiar Compra"><i class="fas fa-broom"></i></button>
- *@                        <div class="modal-header-view noVer" id="modal-header-ValorTotal">
+                        <button class="btn btn-secondary" id="noOpcionesAgregadas" onclick="noVerOpcionesAgregadas()" title="Ver menos elementos"><i class="fas fa-minus"></i></button>
+                        @*                         <button id="volverRegistrarCompra" class="btn btn-secondary" onclick="limpiarFormularioTotalmente()" title="Limpiar Compra"><i class="fas fa-broom"></i></button>
+                        *@                        <div class="modal-header-view noVer" id="modal-header-ValorTotal">
                             <div id="modal-header-ValorTotal-contenedor">
                                 <h5 class="ValorTotal">Valor Total:</h5>
                                 <input type="text" id="ValorTotal" readonly />
@@ -290,7 +346,7 @@
                                 <th>Precio por producto</th>
                                 <th>Subtotal</th>
                                 <th>Acciones</th>
-                            </tr>   
+                            </tr>
                         </thead>
                         <tbody id="detalleTableBody">
                             <!-- Filas de la tabla se agregarán dinámicamente aquí -->
@@ -308,7 +364,7 @@
             <option selected disabled>
                 Ordenar por
             </option>
-@*             <option data-url="?order=alfabetico">Ordenar por nombre (A-Z)</option>
+            @*             <option data-url="?order=alfabetico">Ordenar por nombre (A-Z)</option>
             <option data-url="?order=name_desc">Ordenar por nombre (Z-A)</option> *@
             <option data-url="?order=first">Ordenar por más antiguo</option>
             <option data-url="?order=reverse">Ordenar por más reciente</option>
@@ -373,7 +429,7 @@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.FechaCompra)
-                    </td> 
+                    </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ValorTotalCompra)
                     </td>
@@ -387,7 +443,7 @@
                         <div class="botonesTablaContenedor">
                             <a asp-action="Details" asp-controller="Compras" asp-route-id="@item.CompraId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
                             <form asp-controller="Categorias" class="eliminarCategoria" asp-action="Delete" method="post">
-                                <input type="hidden" name="compraId" id="campoId" value="@item.CompraId" />
+                                <input name="compraId" id="campoId" value="@item.CompraId" />
                                 <button type="submit" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-ban"></i></button>
                             </form>
                         </div>
@@ -397,26 +453,26 @@
                 var compras = ViewData["Compras"] as List<Compra>;
                 if (compras != null)
                 {
-                     int contadorB = 1;
+                    int contadorB = 1;
                     foreach (var compra in compras)
                     {
-                        <tr class="Compras noIs" >
-                             <td class="contadorB noIs">
+                        <tr class="Compras noIs">
+                            <td class="contadorB noIs">
                                 @contadorB <!-- Muestra el valor del contador -->
                             </td>
                             <td>@compra.CompraId</td>
                             <td>
-                            @foreach (var proveedor in ViewBag.Proveedores)
-                            {
-                                @if (proveedor.ProveedorId == compra.ProveedorId)
+                                @foreach (var proveedor in ViewBag.Proveedores)
                                 {
-                                    <span>@proveedor.NombreEmpresa</span>
+                                    @if (proveedor.ProveedorId == compra.ProveedorId)
+                                    {
+                                        <span>@proveedor.NombreEmpresa</span>
+                                    }
                                 }
-                            }
                             </td>
-                             <td>@compra.NumeroFactura</td>
-                             <td>@compra.FechaCompra</td>
-                             <td>@compra.ValorTotalCompra</td>
+                            <td>@compra.NumeroFactura</td>
+                            <td>@compra.FechaCompra</td>
+                            <td>@compra.ValorTotalCompra</td>
                             <td>
                                 <label class="switch">
                                     <input type="checkbox" @(compra.EstadoCompra != 0 ? "checked" : "") onchange="mostraralerta('@compra.CompraId')">
@@ -428,7 +484,7 @@
                                 <div class="botonesTablaContenedor">
                                     <a asp-action="Details" asp-controller="Compras" asp-route-id="@compra.CompraId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
                                     <form asp-controller="Categorias" class="eliminarCategoria" asp-action="Delete" method="post">
-                                        <input type="hidden" name="compraId" id="campoId" value="@compra.CompraId" />
+                                        <input name="compraId" id="campoId" value="@compra.CompraId" />
                                         <button type="submit" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-ban"></i></button>
                                     </form>
                                 </div>

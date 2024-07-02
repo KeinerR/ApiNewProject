@@ -79,10 +79,29 @@ namespace VistaNewProject.Controllers
         [HttpGet]
         public async Task<JsonResult> FindCategoria(int categoriaId)
         {
-            var categoria = await _client.FindCategoriaAsync(categoriaId);
-
-
-            return Json(categoria); // Devuelve la categoría encontrada en formato JSON
+            try
+            {
+                var categoria = await _client.FindCategoriaAsync(categoriaId);
+                return Json(categoria); // Devuelve la categoría encontrada en formato JSON
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    // Devuelve un objeto vacío si se recibe un 404
+                    return Json(new { });
+                }
+                else
+                {
+                    // Maneja otras excepciones HTTP
+                    throw;
+                }
+            }
+            catch (Exception)
+            {
+                // Maneja otras excepciones no HTTP
+                throw;
+            }
         }
         [HttpGet]
         public async Task<JsonResult> FindCategorias()

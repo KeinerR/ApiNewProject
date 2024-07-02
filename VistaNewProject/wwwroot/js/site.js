@@ -73,10 +73,9 @@ function setHoraActual(campo) {
     var anio = fechaHoraActual.getFullYear();
     var mes = String(fechaHoraActual.getMonth() + 1).padStart(2, '0');
     var dia = String(fechaHoraActual.getDate()).padStart(2, '0');
-    var hora = String(fechaHoraActual.getHours()).padStart(2, '0');
-    var minutos = String(fechaHoraActual.getMinutes()).padStart(2, '0');
+  
 
-    var fechaHoraFormateada = `${anio}-${mes}-${dia}T${hora}:${minutos}`;
+    var fechaHoraFormateada = `${anio}-${mes}-${dia}`;
     var x = campo; 
     // Asignar la fecha y hora formateada al campo datetime-local
     document.getElementById(x).value = fechaHoraFormateada;
@@ -102,7 +101,7 @@ function mostrarOcultarContrasena(idCampo) {
     }
 }
 // Función para manejar la selección de opciones en los datalist
-window.seleccionarOpcion = function (input, dataList, hiddenInput, Peticion) {
+window.seleccionarOpcion = function (input, dataList, hiddenInput, Peticion,campo) {
     const selectedValue = input.value.trim();
     let selectedOptionByName = Array.from(dataList.options).find(option => option.value === selectedValue);
     let selectedOptionById = Array.from(dataList.options).find(option => option.getAttribute('data-id') === selectedValue);
@@ -113,37 +112,55 @@ window.seleccionarOpcion = function (input, dataList, hiddenInput, Peticion) {
 
     if (!selectedOptionByName && !selectedOptionById && /^\d+$/.test(selectedValue)) {
         if (Peticion == "Categoria" || Peticion == "CategoriaAct") {
-            var response = manejarCategoria(selectedValue,Peticion);
-            return;
+            manejarCategoria(selectedValue,Peticion,campo);
         }
         if (Peticion == "Presentacion" || Peticion == "PresentacionAct") {
-            var response = manejarPresentacion(selectedValue, Peticion);
-            return;
+            manejarPresentacion(selectedValue, Peticion,campo);
         }
         if (Peticion == "Marca" || Peticion == "MarcaAct") {
-            var response = manejarMarca(selectedValue,Peticion);
-            return;
+            manejarMarca(selectedValue, Peticion, campo);
         }
-        if (response == null) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'No se encontró ningún resultado con este ID',
-                showConfirmButton: false,
-                timer: 1800
-            });
-            input.value = '';
-            input.dispatchEvent(new Event('input'));
-            return;
+        if (Peticion == "ProductoCompra") {
+           manejarProducto(selectedValue,Peticion,campo);
         }
+        if (Peticion == "ProveedorCompra") {
+            manejarProveedor(selectedValue,Peticion,campo);
+        }
+        if (Peticion == "UnidadCompra") {
+            manejarUnidad(selectedValue,Peticion,campo);
+        }
+       
     }
 
     if (selectedOptionByName) {
         input.value = selectedOptionByName.value;
         hiddenInput.value = selectedOptionByName.getAttribute('data-id');
-    } else if (selectedOptionById) {
+        // Verificar si es el campo NombreProducto
+        if (input.id === 'NombreProducto') {
+            document.getElementById('NombreProducto').value = selectedOptionByName.value;
+            document.getElementById('CantidadPorPresentacionHidden').value = selectedOptionByName.getAttribute('data-cantidad') || '';
+            filtrarxUnidadesxProducto();
+        }
+        // Verificar si es el campo NombreUnidad
+        if (input.id === 'NombreUnidad') {
+            document.getElementById('CantidadPorUnidad').value = selectedOptionByName.getAttribute('data-cantidad') || '';
+        }
+    }
+    if (selectedOptionById) {
         input.value = selectedOptionById.value;
         hiddenInput.value = selectedOptionById.getAttribute('data-id');
+        // Verificar si es el campo NombreProducto
+        if (input.id === 'NombreProducto') {
+            document.getElementById('CantidadPorPresentacionHidden').value = selectedOptionById.getAttribute('data-cantidad') || '';
+            filtrarxUnidadesxProducto();
+        }
+        // Verificar si es el campo NombreUnidad
+        if (input.id === 'NombreUnidad') {
+            document.getElementById('CantidadPorUnidad').value = selectedOptionById.getAttribute('data-cantidad') || '';
+
+        }
     }
+
     if (Peticion == "Categoria") {
         if ($('#filtrarxCategoria').prop('checked')) { 
             checkboxFiltrar();
@@ -156,12 +173,12 @@ window.seleccionarOpcion = function (input, dataList, hiddenInput, Peticion) {
     }
 
 
+
 }
-async function manejarCategoria(selectedValue,Peticion) {
+async function manejarCategoria(selectedValue,Peticion,campo) {
     try {
         var categoria = await buscarCategoria(selectedValue);
-
-        if (categoria != null && categoria !== "null") {
+        if (categoria != null && categoria !== "null" && Object.keys(categoria).length !== 0) {
             if (Peticion == "Categoria") {
                 $('#NombreCategoria').val(categoria.nombreCategoria);
                 $('#CategoriaId').val(categoria.categoriaId);
@@ -172,17 +189,17 @@ async function manejarCategoria(selectedValue,Peticion) {
             }
             
         } else {
-            alert("Categoría no encontrada");
-            console.log("Categoría no encontrada");
+            mostrarAlertaAtencionPersonalizadaConBoton(`No se encontró ningún resultado con este ID de ${campo}`);
+           return;
         }
     } catch (error) {
         console.error('Error al manejar la categoría:', error);
     }
 }
-async function manejarPresentacion(selectedValue, Peticion) {
+async function manejarPresentacion(selectedValue, Peticion,campo) {
     try {
         var presentacion = await buscarPresentacion(selectedValue);
-        if (presentacion != null && presentacion !== "null") {
+        if (presentacion != null && presentacion !== "null" && Object.keys(presentacion).length !== 0) {
             if (Peticion == "Presentacion") {
                 $('#NombrePresentacion').val(presentacion.nombreCompletoPresentacion);
                 $('#PresentacionId').val(presentacion.presentacionId);
@@ -193,17 +210,17 @@ async function manejarPresentacion(selectedValue, Peticion) {
             }
             
         } else {
-            alert("Presentacion no encontrada");
+            mostrarAlertaAtencionPersonalizadaConBoton(`No se encontró ningún resultado con este ID de ${campo}`);
         }
     } catch (error) {
         console.error('Error al manejar la Presentacion:', error);
     }
 }
-async function manejarMarca(selectedValue, Peticion) {
+async function manejarMarca(selectedValue, Peticion,campo) {
     try {
         var marca = await buscarMarca(selectedValue);
 
-        if (marca != null && marca !== "null") {
+        if (marca != null && marca !== "null" && Object.keys(marca).length !== 0) {
             if (Peticion == "Marca") {
                 $('#NombreMarca').val(marca.nombreMarca);
                 $('#MarcaId').val(marca.marcaId);
@@ -214,10 +231,64 @@ async function manejarMarca(selectedValue, Peticion) {
             } 
             
         } else {
-            alert("Marca no encontrada");
+            mostrarAlertaAtencionPersonalizadaConBoton(`No se encontró ningún resultado con este ID de ${campo}`);
         }
     } catch (error) {
         console.error('Error al manejar la marca:', error);
+    }
+}
+async function manejarUnidad(selectedValue, Peticion, campo) {
+    try {
+        var unidad = await buscarUnidad(selectedValue);
+
+        if (unidad != null && unidad !== "null" && Object.keys(unidad).length !== 0) {
+            if (Peticion == "UnidadCompra") {
+                $('#NombreUnidad').val(unidad.nombreUnidad);
+                $('#UnidadIdHidden').val(unidad.unidadId);
+                $('#CantidadPorUnidad').val(unidad.cantidadPorUnidad);
+            }
+        } else {
+            mostrarAlertaAtencionPersonalizadaConBoton(`No se encontró ningún resultado con este ID de ${campo}`);
+        }
+    } catch (error) {
+        console.error('Error al manejar la unidad:', error);
+    }
+}
+async function manejarProveedor(selectedValue, Peticion, campo) {
+    try {
+        var proveedor = await buscarProveedor(selectedValue);
+
+        if (proveedor != null && proveedor !== "null" && Object.keys(proveedor).length !== 0) {
+            if (Peticion == "ProveedorCompra") {
+                $('#NombreProveedor').val(proveedor.nombreEmpresa);
+                $('#ProveedorIdHidden').val(proveedor.proveedorId);
+            }
+
+        } else {
+            mostrarAlertaAtencionPersonalizadaConBoton(`No se encontró ningún resultado con este ID de ${campo}`);
+
+        }
+    } catch (error) {
+        console.error('Error al manejar la proveedor:', error);
+    }
+}
+async function manejarProducto(selectedValue, Peticion, campo) {
+    try {
+        var producto = await buscarProducto(selectedValue);
+
+        if (producto != null && producto !== "null" && Object.keys(producto).length !== 0) {
+            if (Peticion == "ProductoCompra") {
+                $('#NombreProducto').val(producto.nombreCompletoProducto);
+                $('#ProductoIdHidden').val(producto.productoId);
+                $('#CantidadPorPresentacionHidden').val(producto.cantidadPorPresentacion);
+                filtrarxUnidadesxProducto();
+            }
+
+        } else {
+            mostrarAlertaAtencionPersonalizadaConBoton(`No se encontró ningún resultado con este ID de ${campo}`);
+        }
+    } catch (error) {
+        console.error('Error al manejar la producto:', error);
     }
 }
 
@@ -262,7 +333,7 @@ function buscarCategoria(categoriaId) {
             return data;
         },
         error: function () {
-            mostrarAlertaAtencionPersonalizadaConBoton('No existe una categoria con este id');
+            mostrarAlertaAtencionPersonalizadaConBoton('Error inesperado revisa tu conexion e intentalo de nuevo.');
         }
     });
 }
@@ -276,7 +347,7 @@ function buscarMarca(marcaId) {
             return data;
         },
         error: function () {
-            mostrarAlertaAtencionPersonalizadaConBoton('No existe una marca con este id.');
+            mostrarAlertaAtencionPersonalizadaConBoton('Error inesperado revisa tu conexion e intentalo de nuevo.');
         }
     });
 }
@@ -290,21 +361,48 @@ function buscarPresentacion(presentacionId) {
             return data;
         },
         error: function () {
-            mostrarAlertaAtencionPersonalizadaConBoton('Mo existe una presentacion con este id.');
+            mostrarAlertaAtencionPersonalizadaConBoton('Error inesperado revisa tu conexion e intentalo de nuevo.');
         }
     });
 }
 
-function buscarPresentacion(presentacionId) {
+function buscarProducto(productoId) {
     return $.ajax({
-        url: `/Presentaciones/FindPresentacion`,
+        url: `/Productos/FindProducto`,
         type: 'GET',
-        data: { presentacionId: presentacionId },
+        data: { productoId: productoId },
         success: function (data) {
             return data;
         },
         error: function () {
-            mostrarAlertaAtencionPersonalizadaConBoton('Mo existe una presentacion con este id.');
+            mostrarAlertaAtencionPersonalizadaConBoton('Error inesperado revisa tu conexion e intentalo de nuevo.');
+        }
+    });
+}
+
+function buscarUnidad(unidadId) {
+    return $.ajax({
+        url: `/Unidades/FindUnidad`,
+        type: 'GET',
+        data: { unidadId: unidadId },
+        success: function (data) {
+            return data;
+        },
+        error: function () {
+            mostrarAlertaAtencionPersonalizadaConBoton('Error inesperado revisa tu conexion e intentalo de nuevo.');
+        }
+    });
+}
+function buscarProveedor(proveedorId) {
+    return $.ajax({
+        url: `/Proveedores/FindProveedor`,
+        type: 'GET',
+        data: { proveedorId: proveedorId },
+        success: function (data) {
+            return data;
+        },
+        error: function () {
+            mostrarAlertaAtencionPersonalizadaConBoton('Error inesperado revisa tu conexion e intentalo de nuevo.');
         }
     });
 }
@@ -370,7 +468,6 @@ function mostrarAlertaAtencionPersonalizadaConBoton(mensaje) {
         showConfirmButton: true
     });
 }
-
 function mostrarAlertaDataList(campo) {
     Swal.fire({
         position: "center",
@@ -430,7 +527,7 @@ function limpiarCampoIcono(inputId) {
     var $input = $('#' + inputId); // Get the input element by ID
     $input.val(''); // Clear the value of the input field
     agregarIconoParalimpiarElCampo($input); // Call your existing function to handle the icon class
-}
+} //se usa para agregar permitir ver el icono x 
 function agregarIconoParalimpiarElCampo(input) {
     var $input = $(input); // Get the input element using 'input'
     var $icono = $input.closest('.icono-input').find('i'); // Find the icon within the 'icono-input' container
@@ -452,6 +549,11 @@ function removerIconoparalimpiarElCampo(inputs) {
     if (inputs.includes("NombreCategoria")) {
         if ($('checkboxFiltrar'))
             checkboxFiltrar();
+    } // Verifica si el array de inputs contiene "NombreCategoria"
+    if (inputs.includes("NombreProducto")) {
+        filtrarDatalistxUnidadesxProducto();
+        filtrarxUnidadesxProducto();
+        localStorage.removeItem('filtrocompraUnidadesxProducto');
     }
     inputs.forEach(function (input) {
         var $input = $('#' + input); // Obtener el elemento input usando 'input'
@@ -465,17 +567,37 @@ function removerIconoparalimpiarElCampo(inputs) {
 /*---------------------------- Funciones para detalle de producto ---------------------------------------------- */
 
 // Función para limpiar y rellenar las listas
-function fillList(selector, data, nameKey, idKey, stateKey, emptyMessage) {
+function fillList(selector, data, campos, emptyMessage, Peticion) {
     const $list = $(selector).empty(); // Limpiar la lista antes de rellenarla
     if (data && data.length > 0) {
-        data.forEach(item => {
-            const option = `<option value="${item[nameKey]}" data-id="${item[idKey]}" data-estado="${item[stateKey]}"></option>`;
-            $list.append(option);
-        });
+        if (Peticion == "normal") {
+            alert('here');
+            data.forEach(item => {
+                const option = `<option value="${item[campos.Nombre]}" data-id="${item[campos.ID]}"></option>`;
+                $list.append(option);
+            });
+            return;
+        }
+        if (Peticion == "productosCompra") {
+            data.forEach(item => {
+                alert('here');
+                const option = `<option value="${item[campos.Nombre]}" data-id="${item[campos.ID]}" data-cantidad="${item[campos.Cantidad]}"></option>`;
+                $list.append(option);
+            });
+            return;
+        }
+        if (Peticion == "unidadesCompra") {
+            data.forEach(item => {
+                const option = `<option value="${item[campos.Nombre]}" data-id="${item[campos.ID]}" data-cantidad="${item[campos.Cantidad]}"></option>`;
+                $list.append(option);
+             });
+            return;
+        }
     } else {
         // Si no hay datos, mostrar un mensaje vacío
         const option = `<option>${emptyMessage}</option>`;
         $list.append(option);
+        return;
     }
 }
 
@@ -486,25 +608,24 @@ async function checkboxFiltrar() {
         const filtro = $('#CategoriaId').val(); // Additional filter for category
 
         let url = `/Productos/filtrarDataList/${filtrar}/${asociar}`;
-
+          
         if (asociar === 1 && filtro !== "") {
             url += `/${filtro}`;
         }
         const response = await fetch(url, {
-            method: 'POST',
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ filtrar: filtrar })
+            }
         });
         if (!response.ok) {
             throw new Error('Error al cargar los productos');
         }
         const data = await response.json();
         // Fill and clear lists using the fillList function
-        fillList('#marcas', data.marcas, 'nombreMarca', 'marcaId', 'estadoMarca', 'No hay marcas disponibles');
-        fillList('#presentaciones', data.presentaciones, 'nombreCompletoPresentacion', 'presentacionId', 'estadoPresentacion', 'No hay presentaciones disponibles');
-        fillList('#categorias', data.categorias, 'nombreCategoria', 'categoriaId', 'estadoCategoria', 'No hay categorías disponibles');
+        fillList('#marcas', data.marcas, { ID: 'marcaId', Nombre: 'nombreMarca' },'No hay marcas disponibles','normal');
+        fillList('#presentaciones', data.presentaciones, { ID: 'presentacionId', Nombre: 'nombreCompletoPresentacion' } ,'No hay presentaciones disponibles', 'normal');
+        fillList('#categorias', data.categorias, { ID: 'categoriaId', Nombre: 'nombreCategoria' },'No hay categorías disponibles', 'normal');
 
     } catch (error) {
         console.error(error); // Log error to console
@@ -525,7 +646,7 @@ async function checkboxFiltrarAct() {
         }
 
         const response = await fetch(url, {
-            method: 'POST',
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -538,10 +659,9 @@ async function checkboxFiltrarAct() {
 
         const data = await response.json();
         // Limpia y rellena las listas utilizando la función fillList
-        fillList('#marcasAct', data.marcas, 'nombreMarca', 'marcaId', 'estadoMarca', 'No hay marcas disponibles');
-        fillList('#presentacionesAct', data.presentaciones, 'nombreCompletoPresentacion', 'presentacionId', 'estadoPresentacion', 'No hay presentaciones disponibles');
-        fillList('#categoriasAct', data.categorias, 'nombreCategoria', 'categoriaId', 'estadoCategoria', 'No hay categorías disponibles');
-
+        fillList('#marcasAct', data.marcas,{ID:'marcaId',Nombre:'nombreMarca'}, 'No hay marcas disponibles','normal');
+        fillList('#presentacionesAct', data.presentaciones,{ ID: 'presentacionId', Nombre: 'nombreCompletoPresentacion' }, 'No hay presentaciones disponibles','normal');
+        fillList('#categoriasAct', data.categorias, { ID: 'categoriaId', Nombre: 'nombreCategoria' },'No hay categorías disponibles','normal');
     } catch (error) {
         console.error(error); // Muestra el error en la consola
     }
@@ -550,7 +670,7 @@ async function checkboxFiltrarAct() {
 
 function actualizarLotes(id) {
     fetch('/Productos/RedondearPrecios/' + id, {
-        method: 'POST',
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json'
         }

@@ -75,14 +75,37 @@ namespace VistaNewProject.Controllers
             return View(pageUnidad);
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<JsonResult> FindUnidad(int unidadId)
         {
-            var unidad = await _client.FindUnidadAsync(unidadId);
-            return Json(unidad);
+            try
+            {
+                var unidad = await _client.FindUnidadAsync(unidadId);
+                return Json(unidad);
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    // Devuelve un objeto vacío si se recibe un 404
+                    return Json(new { });
+                }
+                else
+                {
+                    // Maneja otras excepciones HTTP
+                    throw;
+                }
+            }
+            catch (Exception)
+            {
+                // Maneja otras excepciones no HTTP
+                throw;
+            }
+
         }
 
-        [HttpPost]
+
+        [HttpGet]
         public async Task<JsonResult> FindUnidades()
         {
             var unidades = await _client.GetUnidadAsync();

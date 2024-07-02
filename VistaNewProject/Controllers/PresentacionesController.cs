@@ -76,11 +76,31 @@ namespace VistaNewProject.Controllers
         [HttpGet]
         public async Task<JsonResult> FindPresentacion(int presentacionId)
         {
-            var presentacion = await _client.FindPresentacionAsync(presentacionId);
-
-
-            return Json(presentacion); // Devuelve la presentacion encontrada en formato JSON
+            try
+            {
+                var presentacion = await _client.FindPresentacionAsync(presentacionId);
+                return Json(presentacion); // Devuelve la presentacion encontrada en formato JSON
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    // Devuelve un objeto vacío si se recibe un 404
+                    return Json(new { });
+                }
+                else
+                {
+                    // Maneja otras excepciones HTTP
+                    throw;
+                }
+            }
+            catch (Exception)
+            {
+                // Maneja otras excepciones no HTTP
+                throw;
+            }
         }
+
 
         [HttpGet]
         public async Task<JsonResult> FindPresentaciones()

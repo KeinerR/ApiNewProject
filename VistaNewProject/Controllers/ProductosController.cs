@@ -278,11 +278,32 @@ namespace VistaNewProject.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<JsonResult> FindProducto(int productoId)
         {
-            var producto = await _client.FindProductoAsync(productoId);
-            return Json(producto);
+            try
+            {
+                var producto = await _client.FindDatosProductoAsync(productoId);
+                return Json(producto);
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    // Devuelve un objeto vacío si se recibe un 404
+                    return Json(new { });
+                }
+                else
+                {
+                    // Maneja otras excepciones HTTP
+                    throw;
+                }
+            }
+            catch (Exception)
+            {
+                // Maneja otras excepciones no HTTP
+                throw;
+            }
         }
         public async Task<IActionResult> Details(int? id, int? page)
         {
@@ -340,7 +361,7 @@ namespace VistaNewProject.Controllers
             return View(pagedLote); // Se pasa pagedLote a la vista en lugar de listaLotesVista
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<JsonResult> FindProductos()
         {
             var productos = await _client.GetProductoAsync();

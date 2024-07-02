@@ -67,6 +67,37 @@ namespace ApiNewProject.Controllers
                 return Ok(compra);
             }
         }
+        [HttpGet("VerificarDuplicadosFacturas")]
+        public async Task<ActionResult<string>> VerificarDuplicadosFacturas(string numeroF)
+        {
+            // Obtener los lotes basados en el número de factura
+            var lotes = await _context.Compras
+                .Where(l => l.NumeroFactura == numeroF)
+                .ToListAsync();
+
+            // Verificar si hay más de un lote encontrado
+            bool duplicados = lotes.Count > 1;
+
+            // Retornar "error" si hay duplicados, de lo contrario "ok"
+            return duplicados ? "error" : "ok";
+        }
+
+        [HttpGet("VerificarDuplicadosLotes")]
+        public async Task<ActionResult<string>> VerificarDuplicadosLotes(string numeroLote)
+        {
+            // Obtener los lotes basados en el número de lote
+            var lotes = await _context.Lotes
+                .Where(l => l.NumeroLote == numeroLote)
+                .ToListAsync();
+
+            // Verificar si hay duplicados basados en el número de lote
+            var duplicados = lotes.GroupBy(l => l.NumeroLote)
+                                   .Any(g => g.Count() > 1);
+
+            // Retornar "error" si hay duplicados, de lo contrario "ok"
+            return duplicados ? "error" : "ok";
+        }
+
         [HttpGet("FacturasYLotes")]
         public async Task<ActionResult<IEnumerable<object>>> GetFacturasYLotes()
         {
@@ -109,11 +140,6 @@ namespace ApiNewProject.Controllers
 
                 foreach (var detalleCompra in compra.Detallecompras)
                 {
-                    if (!detalleCompra.Cantidad.HasValue)
-                    {
-                        return BadRequest("La cantidad es requerida para el detalle de la compra.");
-                    }
-
                     // Creación de un nuevo detalle de compra
                     var newDetalleCompra = new Detallecompra
                     {

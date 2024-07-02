@@ -2,7 +2,7 @@
 var llamadasFuncion = 0;
 function obtenerDatosProductos() {
     fetch('/Productos/FindProductos', {
-        method: 'POST',
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json'
         }
@@ -223,11 +223,11 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#NombreMarca').on('input', function () {
         if (this.value.length > 4) {
             clearTimeout(timeout);
-            seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaId'),"Marca");
+            seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaId'),"Marca", "Marca");
         } else {
             clearTimeout(timeout);
             timeout = setTimeout(() => {
-                seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaId'),"Marca");
+                seleccionarOpcion(this, document.getElementById('marcas'), document.getElementById('MarcaId'),"Marca", "Marca");
             }, 590);
         }
     });
@@ -235,11 +235,11 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#NombreCategoria').on('input', function () {
         if (this.value.length > 4) {
             clearTimeout(timeout);
-            seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaId'), "Categoria"); 
+            seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaId'), "Categoria", "Categoria"); 
         } else {
             clearTimeout(timeout);
             timeout = setTimeout(() => {
-                seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaId'),"Categoria"); 
+                seleccionarOpcion(this, document.getElementById('categorias'), document.getElementById('CategoriaId'), "Categoria","Categoria"); 
             }, 590);
         }
     });
@@ -247,11 +247,11 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#NombrePresentacion').on('input', function () {
         if (this.value.length > 4) {
             clearTimeout(timeout);
-            seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionId'),"Presentacion");
+            seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionId'),"Presentacion","Presentacion");
         } else {
             clearTimeout(timeout);
             timeout = setTimeout(() => {
-                seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionId'),"Presentacion");
+                seleccionarOpcion(this, document.getElementById('presentaciones'), document.getElementById('PresentacionId'), "Presentacion","Presentacion");
             }, 590);
         }
     });
@@ -259,11 +259,11 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#NombreMarcaAct').on('input', function () {
         if (this.value.length > 4) {
             clearTimeout(timeout);
-            seleccionarOpcion(this, document.getElementById('marcasAct'), document.getElementById('MarcaIdAct'),"MarcaAct");
+            seleccionarOpcion(this, document.getElementById('marcasAct'), document.getElementById('MarcaIdAct'), "MarcaAct", "MarcaAct");
         } else {
             clearTimeout(timeout);  
             timeout = setTimeout(() => {
-                seleccionarOpcion(this, document.getElementById('marcasAct'), document.getElementById('MarcaIdAct'), "MarcaAct");
+                seleccionarOpcion(this, document.getElementById('marcasAct'), document.getElementById('MarcaIdAct'), "MarcaAct", "MarcaAct");
             }, 590);
         }
     });
@@ -272,11 +272,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (this.value.length > 4) {
             clearTimeout(timeout);
-            seleccionarOpcion(this, document.getElementById('categoriasAct'), document.getElementById('CategoriaIdAct'),"CategoriaAct");
+            seleccionarOpcion(this, document.getElementById('categoriasAct'), document.getElementById('CategoriaIdAct'), "CategoriaAct", "CategoriaAct" );
         } else {
             clearTimeout(timeout);
             timeout = setTimeout(() => {
-                seleccionarOpcion(this, document.getElementById('categoriasAct'), document.getElementById('CategoriaIdAct'), "CategoriaAct");
+                seleccionarOpcion(this, document.getElementById('categoriasAct'), document.getElementById('CategoriaIdAct'), "CategoriaAct", "CategoriaAct");
             }, 590);
         }
     });
@@ -284,11 +284,11 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#NombrePresentacionAct').on('input', function () {
         if (this.value.length > 4) {
             clearTimeout(timeout);
-            seleccionarOpcion(this, document.getElementById('presentacionesAct'), document.getElementById('PresentacionIdAct'),"PresentacionAct");
+            seleccionarOpcion(this, document.getElementById('presentacionesAct'), document.getElementById('PresentacionIdAct'), "PresentacionAct","PresentacionAct");
         } else {
             clearTimeout(timeout);
             timeout = setTimeout(() => {
-                seleccionarOpcion(this, document.getElementById('presentacionesAct'), document.getElementById('PresentacionIdAct'),"PresentacionAct");
+                seleccionarOpcion(this, document.getElementById('presentacionesAct'), document.getElementById('PresentacionIdAct'), "PresentacionAct","PresentacionAct");
             }, 590);
         }
     });
@@ -528,7 +528,7 @@ function actualizarProducto(campo) {
     try {
         $.ajax({
             url: '/Productos/FindProducto', // Ruta relativa al controlador y la acción
-            type: 'POST',
+            type: 'GET',
             data: { productoId: productoId },
             success: function (data) {
                 limpiarCampoIcono('NombrePresentacionAct');

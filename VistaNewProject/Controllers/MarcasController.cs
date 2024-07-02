@@ -74,8 +74,30 @@ namespace VistaNewProject.Controllers
         [HttpGet]
         public async Task<JsonResult> FindMarca(int marcaId)
         {
-            var marca = await _client.FindMarcaAsync(marcaId);
-            return Json(marca);
+            try
+            {
+                var marca = await _client.FindMarcaAsync(marcaId);
+                return Json(marca);
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    // Devuelve un objeto vacío si se recibe un 404
+                    return Json(new { });
+                }
+                else
+                {
+                    // Maneja otras excepciones HTTP
+                    throw;
+                }
+            }
+            catch (Exception)
+            {
+                // Maneja otras excepciones no HTTP
+                throw;
+            }
+
         }
         [HttpGet]
         public async Task<JsonResult> FindMarcas()

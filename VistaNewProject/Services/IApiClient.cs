@@ -10,7 +10,7 @@ namespace VistaNewProject.Services
         Task<Cliente> FindClienteAsync(int id);
         Task<HttpResponseMessage> UpdateClienteAsync(Cliente cliente);
         Task<HttpResponseMessage> CambiarEstadoClienteAsync(int id);
-        
+
         Task<HttpResponseMessage> DeleteClienteAsync(int id);
 
 
@@ -19,7 +19,7 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Pedido>> GetPedidoAsync();
         Task<HttpResponseMessage> CreatePedidoAsync(Pedido pedido);
         Task<HttpResponseMessage> DeletePedidoAsync(int id);
-        Task<HttpResponseMessage> CambiarEstadoPedidoAsync(int id,string estado);
+        Task<HttpResponseMessage> CambiarEstadoPedidoAsync(int id, string estado);
 
         Task<HttpResponseMessage> UpdatePedidoAsync(Pedido pedido);
         Task<Pedido> FindPedidosAsync(int id);
@@ -46,11 +46,14 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> DeleteComprasAsync(int id);
         Task<(IEnumerable<FacturaDTO>, IEnumerable<LoteDTO>)> GetFacturasYLotesAsync();
 
+        Task<string> VerificarDuplicadosFacturas(string numeroF);
+        Task<string> VerificarDuplicadosLotes(string numeroLote);
+
 
 
         // marca
         Task<IEnumerable<Marca>> GetMarcaAsync();
-        Task<HttpResponseMessage> CreateMarcaAsync( Marca marca);
+        Task<HttpResponseMessage> CreateMarcaAsync(Marca marca);
         Task<Marca> FindMarcaAsync(int? id);
         Task<HttpResponseMessage> UpdateMarcaAsync(MarcaUpdate marca);
         Task<HttpResponseMessage> CambiarEstadoMarcaAsync(int id);
@@ -85,7 +88,7 @@ namespace VistaNewProject.Services
         Task<IEnumerable<Producto>> GetAllDatosProductosAsync(string busqueda = null);
         Task<HttpResponseMessage> CreateProductoAsync(ProductoCrearYActualizar producto);
         Task<Producto> FindProductoAsync(int id);
-        Task<Producto> FindDatosProductoAsync(int id); 
+        Task<Producto> FindDatosProductoAsync(int id);
         Task<HttpResponseMessage> UpdateProductoAsync(ProductoCrearYActualizar producto);
         Task<HttpResponseMessage> AddCantidadReservadaAsync(int productoId, int? cantidad);
         Task<HttpResponseMessage> SustraerCantidadReservadaAsync(int productoId, int? cantidad);
@@ -95,11 +98,11 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> QuitarCantidadReservada(int productoId, int? cantidad);
         Task<HttpResponseMessage> QuitarCantidadReservadaUnidad(int productoId, int? cantidad);
 
-        
+
         Task<HttpResponseMessage> PedidosCancelados(int productoId, int? cantidad);
         Task<HttpResponseMessage> PedidosCanceladosUnidad(int productoId, int? cantidad);
 
-        
+
         Task<HttpResponseMessage> AddCantidadTotalAsync(int productoId, int? cantidad);
         Task<HttpResponseMessage> SustraerCantidadTotalAsync(int productoId, int? cantidad);
         Task<HttpResponseMessage> AddCantidadTotalPorUnidadAsync(int productoId, int? cantidad);
@@ -138,10 +141,11 @@ namespace VistaNewProject.Services
         Task<HttpResponseMessage> CreateLoteAsync(Lote lote);
         Task<Lote> FindLoteAsync(int id);
         Task<IEnumerable<Lote>> GetLotesByProductIdAsync(int productId);
+        Task<IEnumerable<Lote>> GetLotesByDetalleCompraIdAsync(int id);
         Task<HttpResponseMessage> UpdateLoteAsync(Lote lote);
         Task<HttpResponseMessage> DeleteLoteAsync(int id);
-        Task<HttpResponseMessage> UpdatePrecioLotesAsync(int productoId, decimal precioxunidad, decimal precioxproducto );
-        Task<HttpResponseMessage> UpdatePrecioLoteAsync(int productoId, string numeroLote, decimal precioxunidad, decimal precioxproducto );
+        Task<HttpResponseMessage> UpdatePrecioLotesAsync(int productoId, decimal precioxunidad, decimal precioxproducto);
+        Task<HttpResponseMessage> UpdatePrecioLoteAsync(int productoId, string numeroLote, decimal precioxunidad, decimal precioxproducto);
         Task<HttpResponseMessage> AddCantidadALoteAsync(int loteId, int? cantidad);
         Task<HttpResponseMessage> SustraerCantidadALoteAsync(int loteId, int? cantidad);
         Task<HttpResponseMessage> AddCantidadPorUnidadALoteAsync(int loteId, int? cantidad);
@@ -233,11 +237,11 @@ namespace VistaNewProject.Services
 
         // producto  x unidad
         Task<IEnumerable<UnidadxProducto>> GetUnidadesxProductosAsync();
-        Task<IEnumerable<UnidadxProducto>> GetUnidadxProductosByIdAsync(int unidadId );
+        Task<IEnumerable<UnidadxProducto>> GetUnidadxProductosByIdAsync(int unidadId);
         Task<IEnumerable<UnidadxProducto>> GetUnidadesxProductosByIdProductoAsync(int productoId);
         Task<HttpResponseMessage> CreateUnidadxProductoAsync(UnidadxProductoAsosiacion productoxunidad);
         Task<HttpResponseMessage> DeleteUnidadxProductoAsync(int unidadId, int productoId);
-  
+
 
     }
 }

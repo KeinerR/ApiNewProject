@@ -74,14 +74,35 @@ namespace VistaNewProject.Controllers
 
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<JsonResult> FindProveedor(int proveedorId)
         {
-            var proveedor = await _client.FindProveedorAsync(proveedorId);
-            return Json(proveedor);
+            try
+            {
+                var proveedor = await _client.FindProveedorAsync(proveedorId);
+                return Json(proveedor);
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    // Devuelve un objeto vacío si se recibe un 404
+                    return Json(new { });
+                }
+                else
+                {
+                    // Maneja otras excepciones HTTP
+                    throw;
+                }
+            }
+            catch (Exception)
+            {
+                // Maneja otras excepciones no HTTP
+                throw;
+            }
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<JsonResult> FindProveedores()
         {
             var proveedores = await _client.GetProveedorAsync();

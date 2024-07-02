@@ -1,5 +1,4 @@
-﻿
-    // Objeto de compra
+﻿// Crear el Objeto de compra vacio
 var compra = {
         CompraId:0,
         proveedorId: 0,
@@ -11,21 +10,25 @@ var compra = {
     };
 
 
-    //Se Usa Para verificar que el cliente no cambie los campos antes de agregar el detalle  
+ //Se Usa Para verificar que el cliente no cambie los campos antes de agregar el detalle  
 var verificarProducto = "";
 var ganancia = ""; 
-var cantidadPorUnidad = "";
+var verificarUnidad = "";
 
 //Se usa para dar un tiempo antes de la signacion del id al nombre especifico en los datalist
-let timeout = null;
+let timeout ;
+//Se usa para la funcionalidad del input de tipo cantidad con  sus signos aritmeticos + -  
+var intervalo;
+var contador = 0;
+
 
 //Capturar el nombre del producto para agregar al detalle de tabla ;)
 var nombreProducto = "";
 
-// Función para registrar la compra
-// Función para registrar la compra
+// Función para envia la compra al controlador para ser procesada y registrada
 function RegistrarBuy() {
     console.log(compra);
+    alert('Mirala');
     // Verifica si hay al menos un detalle de compra
     if (compra.detallecompras.length === 0) {
         Swal.fire({
@@ -51,9 +54,6 @@ function RegistrarBuy() {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Imprimir la compra por consola antes de enviarla al servidor
-            console.log("Compra a enviar al servidor:", compra);
-
             // Si el usuario confirma, enviar la solicitud POST al servidor utilizando AJAX
             $.ajax({
                 url: '/Compras/InsertarCompra',
@@ -80,7 +80,7 @@ function RegistrarBuy() {
                         position: "center",
                         icon: 'error',
                         title: 'Error',
-                        text: 'Error en la actualización. Por favor, inténtalo de nuevo más tarde.',
+                        text: 'Error en al registrar la compra. Por favor, inténtalo de nuevo más tarde.',
                         showConfirmButton: false,
                         timer: 3000
                     });
@@ -91,80 +91,112 @@ function RegistrarBuy() {
 }
 
 
-// Función para llenar correcgtamente la compra antes agregar productos a la compra
-    function agregarProductos() {
-        // Obtener los valores de los campos del formulario
-        var proveedorId = document.getElementById('ProveedorIdHidden').value;
-        var numeroFactura = document.getElementById('NumeroFactura').value;
-        var fechaCompra = document.getElementById('FechaCompra').value;
-        var MensajaInicial = document.getElementById('MensajeInicial');
-        var botonAgregar = document.getElementById('agregarDetalle');
-        var mensajes = document.querySelectorAll('.Mensaje');
-        var inputs = document.querySelectorAll('.inputs');
-        
+// Función para llenar la compra correctamnete antes y abrir la modal para agregar productos a la compra
+function agregarProductos() {
+    // Obtener los valores de los campos del formulario
+    var proveedorId = document.getElementById('ProveedorIdHidden').value;
+    var numeroFactura = document.getElementById('NumeroFactura').value;
+    var fechaCompra = document.getElementById('FechaCompra').value;
+    var MensajaInicial = document.getElementById('MensajeInicial');
+    var botonAgregar = document.getElementById('agregarDetalle');
+    var mensajes = document.querySelectorAll('.Mensaje');
+    var inputs = document.querySelectorAll('.inputs');
 
-        
-        for (var i = 0; i < 3; i++) {
-            var mensaje = mensajes[i];
-            if (mensaje.textContent.trim().length > 0) {
-                MensajaInicial.innerText = 'Completa correctamente todos los campos con *.';
-                return; // Terminar la función si hay mensajes con contenido
-            } 
+
+
+    for (var i = 0; i < 3; i++) {
+        var mensaje = mensajes[i];
+        if (mensaje.textContent.trim().length > 0) {
+            MensajaInicial.innerText = 'Completa correctamente todos los campos con *.';
+            return; // Terminar la función si hay mensajes con contenido
         }
-        for (var i = 0; i < inputs.length; i++) {
-            var campo = inputs[i];
-            if (campo.classList.contains('is-invalid')) {
-                MensajaInicial.innerText = 'Completa correctamente todos los campos.';
-                return; // Terminar la función si hay algún campo inválido
-            } else if (proveedorId === '') {
-                $('#ProveedorIdHidden').val(''); // Limpiar el valor del campo ProveedorIdHidden
-                mostrarAlertaDataList('Proveedor');
-                return;
+    }
+    for (var i = 0; i < inputs.length; i++) {
+        var campo = inputs[i];
+        if (campo.classList.contains('is-invalid')) {
+            MensajaInicial.innerText = 'Completa correctamente todos los campos.';
+            return; // Terminar la función si hay algún campo inválido
+        } else if (proveedorId === '') {
+            $('#ProveedorIdHidden').val(''); // Limpiar el valor del campo ProveedorIdHidden
+            mostrarAlertaDataList('Proveedor');
+            return;
 
-            } 
         }
-
-        // Actualizar los valores del objeto compra
-        compra.proveedorId = proveedorId;
-        compra.numeroFactura = numeroFactura;
-        compra.fechaCompra = fechaCompra;
-        botonAgregar.classList.add('noBe'); // Remover clase is-invalid
-        $('#ModalDetallesCompra').modal('show');
-        $('#ModalCompra').modal('hide');
-        var opcionesCambiarDatosCompra = document.getElementById('opcinesCambiarDatosCompra');
-        opcionesCambiarDatosCompra.classList.remove('noSee'); // Remover clase is-invalid
-       
     }
 
+    // Actualizar los valores del objeto compra
+    compra.proveedorId = proveedorId;
+    compra.numeroFactura = numeroFactura;
+    compra.fechaCompra = fechaCompra;
+    botonAgregar.classList.add('noBe'); // Remover clase is-invalid
+    $('#ModalDetallesCompra').modal('show');
+    $('#ModalCompra').modal('hide');
+    var opcionesCambiarDatosCompra = document.getElementById('opcinesCambiarDatosCompra');
+    opcionesCambiarDatosCompra.classList.remove('noSee'); // Remover clase is-invalid
 
+}
+
+//Funcion para actualizar la compra
+async function actualizarCompra() {
+    var proveedorId = document.getElementById('ProveedorIdHidden').value;
+    var numeroFactura = document.getElementById('NumeroFactura').value;
+    var fechaCompra = document.getElementById('FechaCompra').value;
+    if (numeroFactura === '' || fechaCompra === '') {
+        mostrarAlertaCampoVacio(numeroFactura === '' ? 'numeroFactura' : 'fechaCompra');
+        return;
+    } else if (proveedorId === '') { // Corregido a "!=="
+        mostrarAlertaDataList('Proveedor');
+        return;
+    } else {
+        // Actualizar los valores de la compra
+        var respuesta = await verificarNumeroFactura(numeroFactura);
+        if (respuesta !== null) {
+            if (respuesta == "ok") {
+                compra.proveedorId = proveedorId;
+                compra.numeroFactura = numeroFactura;
+                compra.fechaCompra = fechaCompra;
+                alert('Compra actualizada');
+                $('#ModalCompra').modal('hide');
+                $('#ModalDetallesCompra').modal('show');
+            } else {
+                alert("Este numero de factura ya esta registrado usa otro");
+            }
+        }
+    }
+}
+
+
+
+/*-------------------------------------------------------------------------------------------------------------------------------------*/
+// Función para agregar un detalle de compra al objeto principal
 // Función para agregar un detalle de compra al objeto principal
 function agregarDetalleCompraend(objeto) {
     nombreProducto = document.getElementById('NombreProducto').value;
     var detalleCompra = {
         productoId: objeto.productoId,
-        compraId:0,
+        compraId: 0,
         unidadId: objeto.unidadId,
-        cantidad: objeto.cantidadLote,
+        cantidad: objeto.cantidadUnidad,
         lotes: [] // Inicialmente sin lotes
     };
 
     // Aquí es donde se crea el detalle de compra después de la validación del cliente
     var nuevoLote = {
-        productoId: detalleCompra.productoId,
+        productoId: objeto.productoId,
         detalleCompraId: 0,
         numeroLote: objeto.numeroLote,
         precioCompra: objeto.precioCompra,
         precioPorUnidad: objeto.precioVentaxUnidad,
         precioPorPresentacion: objeto.precioVentaxPresentacion,
         precioPorUnidadProducto: objeto.precioVentaxUnidadPresentacion,
-        precioPorUnidadCompra: objeto.precioxUnidadCompra,
-        precioPorPresentacionCompra: objeto.precioxPresentacionCompra,
-        precioPorUnidadProductoCompra: objeto.precioxUnidadPresentacionCompra,
+        precioPorUnidadCompra: objeto.precioCompraxUnidad,
+        precioPorPresentacionCompra: objeto.precioCompraxPresentacion,
+        precioPorUnidadProductoCompra: objeto.precioCompraxUnidadPresentacion,
         fechaVencimiento: objeto.fechaVencimiento,
-        cantidad: objeto.cantidadLote,
+        cantidad: objeto.cantidad,
+        cantidadCompra: objeto.cantidadCompra,
         cantidadPorUnidad: objeto.cantidadPorUnidad,
-        cantidadCompra: objeto.cantidadLote,
-        cantidadPorUnidadCompra: objeto.cantidadPorUnidad,
+        cantidadPorUnidadCompra: objeto.cantidadPorUnidadCompra,
         estadoLote: 1 // Estado por defecto
     };
     console.log(nuevoLote);
@@ -175,23 +207,15 @@ function agregarDetalleCompraend(objeto) {
     agregarFilaDetalle(detalleCompra); // Llama a la función para agregar la fila de detalle a la tabla
 }
 
-// Función para agregar un detalle de compra al objeto principal
+// Función para procesar y pasar el objeto detalle para ser añadido al objeto compra principal
 function agregarDetalleCompra() {
-    // Obtener valores de los campos
+    // Obtener valores de los campos para crear el objeto
     var unidad = document.getElementById('UnidadIdHidden').value;
     var productoId = document.getElementById('ProductoIdHidden').value;
-    var cantidad = document.getElementById('Cantidad').value;
     var porcentajeAGanar = document.getElementById('PorcentajeGanancia').value;
-    cantidadPorUnidad = document.getElementById('CantidadPorUnidad').value;
+    verificarUnidad = unidad;
 
-
-    // Validar los campos obligatorios y las condiciones necesarias antes de agregar el detalle de compra
-    if (productoId != verificarProducto) {
-        mostrarAlertaAtencionPersonalizadaConBoton('¡Atención! Parece que has modificado el campo de producto. Por favor, asegúrate de realizar de nuevo el cálculo.');
-        noVerCalculo();
-        return;
-    }
-    // Validar campos obligatorios y condiciones
+    // Obtener valores necesarios para realizar los calculos
     var numeroLote = document.getElementById('NumeroLote').value;
     var precioCompra = parseFloat(document.getElementById('PrecioDeCompra').value.replace(/[\.,]/g, ''));
     var precioCompraUnidad = parseFloat(document.getElementById('PrecioDeCompraPorUnidad').value.replace(/[\.,]/g, ''));
@@ -204,21 +228,37 @@ function agregarDetalleCompra() {
 
     var cantidadPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
     var cantidadUnidad = document.getElementById('CantidadPorUnidad').value;
+    var cantidad = document.getElementById('Cantidad').value;
 
-    var cantidadLote = cantidad * cantidadUnidad;
+    var cantidadTotalPorPresentacion = cantidad * cantidadUnidad;
+    var cantidadTotalPorUnidad = (cantidad * cantidadUnidad) * cantidadPresentacion;
     var fechaVencimiento = document.getElementById('FechaVencimiento').value;
-    var cantidadPorUnidadLote = cantidadLote * cantidadPresentacion;
+
     var todolleno = $('.Mensaje').filter(function () {
         return $(this).text() !== '';
     }).length === 0;
 
-    // Validar si los campos están llenos
-
-
     // Validar la fecha de vencimiento
     if (!fechaVencimiento || isNaN(new Date(fechaVencimiento))) {
-        // Si la fecha no es de tipo date time o es nula, establecerla en '2000-01-01T00:00'
-        fechaVencimiento = '2000-01-01T00:00';
+        // Si la fecha no es de tipo date time o es nula, establecerla en '2000-01-01'
+        fechaVencimiento = '2000-01-01';
+    }
+    // Validar los campos obligatorios y las condiciones necesarias antes de agregar el detalle de compra
+    if (productoId != verificarProducto) {
+        mostrarAlertaAtencionPersonalizadaConBoton('¡Atención! Parece que has modificado el campo de producto. Por favor, asegúrate de realizar de nuevo el cálculo.');
+        noVerCalculo();
+        return;
+    }
+    if (unidad != verificarUnidad) {
+        mostrarAlertaAtencionPersonalizadaConBoton('¡Atención! Parece que has modificado el campo de unidad. Por favor, asegúrate de realizar de nuevo el cálculo.');
+        noVerCalculo();
+        return;
+    }
+    // Validar los campos obligatorios y las condiciones necesarias antes de agregar el detalle de compra
+    if (productoId != verificarProducto) {
+        mostrarAlertaAtencionPersonalizadaConBoton('¡Atención! Parece que has modificado el campo de producto. Por favor, asegúrate de realizar de nuevo el cálculo.');
+        noVerCalculo();
+        return;
     }
     var diferencia = Math.abs(precioCompra - (precioCompraUnidad * cantidad));
     if (diferencia > 10) {
@@ -234,11 +274,10 @@ function agregarDetalleCompra() {
     }
 
     let mensajeAlerta = ``; // Inicializar la variable mensajeAlerta fuera del bloque if
+    let confirmaMensajeAlerta = ``;
     // Validar si se están vendiendo a un valor menor que al comprado
     if (precioVentaxUnidad < precioCompraUnidad || precioVentaxPresentacion < precioCompraPorProducto || precioVentaxUnidadPresentacion < PrecioDeCompraUnitario) {
         let cantidadMenores = 0; // Variable para contar cuántos son menores
-        let confirmaMensajeAlerta = ``;
-
         if (precioVentaxUnidad < precioCompraUnidad) {
             cantidadMenores++;
         }
@@ -251,13 +290,12 @@ function agregarDetalleCompra() {
 
         if (cantidadMenores >= 0) {
             if (cantidadMenores > 1) {
-                confirmaMensajeAlerta = `<div id="divAlertaConfirmar"><ul>`;
+                confirmaMensajeAlerta = `<div id="divAlerta"><strong>¿Seguro que deseas continuar?:</strong><ul>`;
                 mensajeAlerta = `<div id="divAlerta"><strong>Estás vendiendo a un valor menor al que compraste en los siguientes campos:</strong><ul>`;
-            } else {
-                confirmaMensajeAlerta = `<div id="divAlertaConfirmar"><ul>`;
-                mensajeAlerta = `<div id="divAlerta"><strong>Estás vendiendo a un valor menor al que compraste en los siguientes campos:</strong><ul>`;
-                //confirmaMensajeAlerta = `<div id="divAlertaConfirmar">`;
-                //mensajeAlerta = `<div id="divAlerta"><strong>Estás vendiendo a un valor menor al que compraste en el siguiente campo:</strong><ul>`;
+            }
+            else {
+                confirmaMensajeAlerta = `<div id="divAlerta"><strong>¿Seguro que deseas continuar?:</strong><ul>`;
+                mensajeAlerta = `<div id="divAlerta"><strong>Estás vendiendo a un valor menor al que compraste en el siguiente campo:</strong><ul>`;
             }
 
             if (precioVentaxUnidad < precioCompraUnidad) {
@@ -266,8 +304,7 @@ function agregarDetalleCompra() {
                 // Calcular el porcentaje de pérdida
                 var porcentajePerdida = Math.round((perdida / precioCompraUnidad) * 100);
                 perdida = Math.abs(perdida).toLocaleString();
-                confirmaMensajeAlerta += `<li class="textoAlerta">Precio de venta x Unidad:<br/><span class="textoAlerta">Estás perdiendo ${perdida}</span></li>`;
-                /*<p class="textoAlerta">Precio de venta x Unidad:<br /><span class="textoAlerta">Estás perdiendo ${porcentajePerdida}% de lo invertido.</span></p>*/
+                confirmaMensajeAlerta += `<li class="textoAlerta">Precio de venta x Unidad:<br/><span class="textoAlerta">Estás perdiendo ${porcentajePerdida}% de lo invertido.</span></li>`;
                 mensajeAlerta += `<li class="textoAlerta">Precio de venta x Unidad:<br/><span class="textoAlerta">Estás perdiendo ${perdida}</span></li>`;
             }
             if (precioVentaxPresentacion < precioCompraPorProducto) {
@@ -306,7 +343,6 @@ function agregarDetalleCompra() {
                 } else {
                     // Mostrar la alerta de confirmación final
                     Swal.fire({
-                        title: "¿Seguro que deseas continuar?",
                         html: confirmaMensajeAlerta + "\n<strong>¿Continuar?</strong> ",
                         icon: "warning",
                         showCancelButton: true,
@@ -320,19 +356,20 @@ function agregarDetalleCompra() {
                             var objeto = {
                                 productoId: productoId,
                                 unidadId: unidad,
-                                cantidad: cantidad,
+                                cantidadUnidad: cantidad,
+                                cantidad: cantidadTotalPorPresentacion,
+                                cantidadPorUnidad: cantidadTotalPorUnidad,
+                                cantidadCompra: cantidadTotalPorPresentacion,
+                                cantidadPorUnidadCompra: cantidadTotalPorUnidad,
                                 numeroLote: numeroLote,
                                 precioCompra: precioCompra,
-                                precioxUnidadCompra: precioCompraUnidad,
-                                precioxPresentacionCompra: precioCompraPorProducto,
-                                precioxUnidadPresentacionCompra: PrecioDeCompraUnitario,
+                                precioCompraxUnidad: precioCompraUnidad,
+                                precioCompraxPresentacion: precioCompraPorProducto,
+                                precioCompraxUnidadPresentacion: PrecioDeCompraUnitario,
                                 precioVentaxUnidad: precioVentaxUnidad,
                                 precioVentaxPresentacion: precioVentaxPresentacion,
                                 precioVentaxUnidadPresentacion: precioVentaxUnidadPresentacion,
-                                cantidadLote: cantidadLote,
-                                cantidadPorUnidad: cantidadPorUnidadLote,
-                                fechaVencimiento: fechaVencimiento,
-                                cantidadPorUnidad: cantidadPorUnidad
+                                fechaVencimiento: fechaVencimiento
                             };
 
                             agregarDetalleCompraend(objeto); // Llamar a la función optimizada con el objeto
@@ -437,19 +474,20 @@ function agregarDetalleCompra() {
                                         var objeto = {
                                             productoId: productoId,
                                             unidadId: unidad,
-                                            cantidad: cantidad,
+                                            cantidadUnidad: cantidad,
+                                            cantidad: cantidadTotalPorPresentacion,
+                                            cantidadPorUnidad: cantidadTotalPorUnidad,
+                                            cantidadCompra: cantidadTotalPorPresentacion,
+                                            cantidadPorUnidadCompra: cantidadTotalPorUnidad,
                                             numeroLote: numeroLote,
                                             precioCompra: precioCompra,
-                                            precioxUnidadCompra: precioCompraUnidad,
-                                            precioxPresentacionCompra: precioCompraPorProducto,
-                                            precioxUnidadPresentacionCompra: PrecioDeCompraUnitario,
+                                            precioCompraxUnidad: precioCompraUnidad,
+                                            precioCompraxPresentacion: precioCompraPorProducto,
+                                            precioCompraxUnidadPresentacion: PrecioDeCompraUnitario,
                                             precioVentaxUnidad: precioVentaxUnidad,
                                             precioVentaxPresentacion: precioVentaxPresentacion,
                                             precioVentaxUnidadPresentacion: precioVentaxUnidadPresentacion,
-                                            cantidadLote: cantidadLote,
-                                            cantidadPorUnidad: cantidadPorUnidadLote,
-                                            fechaVencimiento: fechaVencimiento,
-                                            cantidadPorUnidad: cantidadPorUnidad
+                                            fechaVencimiento: fechaVencimiento
                                         };
 
                                         agregarDetalleCompraend(objeto); // Llamar a la función optimizada con el objeto
@@ -462,7 +500,8 @@ function agregarDetalleCompra() {
                 }
             });
         }
-    } else if (todolleno) {
+    }
+    else if (todolleno) {
         // Mostrar la alerta con SweetAlert para confirmar la acción del usuario
         let mensajeAlerta = `<div id="divAlerta"><strong>Estás esperando ganancias por:</strong><ul>`;
         if (precioVentaxUnidad >= precioCompraUnidad) {
@@ -491,13 +530,14 @@ function agregarDetalleCompra() {
                     mensajeAlerta += `<li>x Unidad de Producto: <br/> ${gananciaUnidadProductoConPuntos} o ${porcentajeGananciaProducto}%</li>`;
                 }
             }
-        } else {
+        }
+        else {
             let diferenciaProducto = precioVentaxPresentacion - precioCompraPorProducto;
             let gananciaProducto = Math.abs(diferenciaProducto);
             let gananciaProductoConPuntos = gananciaProducto.toLocaleString('es-ES');
             let porcentajeGanancia = Math.round((gananciaProducto / precioCompraPorProducto) * 100);
             mensajeAlerta += `<li>x Producto: <br/> ${gananciaProductoConPuntos} o ${porcentajeGanancia}%  </li>`;
-           
+
         }
         mensajeAlerta += "</ul></div>";
         // Mostrar la alerta con SweetAlert
@@ -515,24 +555,24 @@ function agregarDetalleCompra() {
                 var objeto = {
                     productoId: productoId,
                     unidadId: unidad,
-                    cantidad: cantidad,
+                    cantidadUnidad: cantidad,
+                    cantidad: cantidadTotalPorPresentacion,
+                    cantidadPorUnidad: cantidadTotalPorUnidad,
+                    cantidadCompra: cantidadTotalPorPresentacion,
+                    cantidadPorUnidadCompra: cantidadTotalPorUnidad,
                     numeroLote: numeroLote,
                     precioCompra: precioCompra,
-                    precioxUnidadCompra: precioCompraUnidad,
-                    precioxPresentacionCompra: precioCompraPorProducto,
-                    precioxUnidadPresentacionCompra: PrecioDeCompraUnitario,
+                    precioCompraxUnidad: precioCompraUnidad,
+                    precioCompraxPresentacion: precioCompraPorProducto,
+                    precioCompraxUnidadPresentacion: PrecioDeCompraUnitario,
                     precioVentaxUnidad: precioVentaxUnidad,
                     precioVentaxPresentacion: precioVentaxPresentacion,
                     precioVentaxUnidadPresentacion: precioVentaxUnidadPresentacion,
-                    cantidadLote: cantidadLote,
-                    cantidadPorUnidad: cantidadPorUnidadLote,
-                    fechaVencimiento: fechaVencimiento,
-                    cantidadPorUnidad: cantidadPorUnidad
+                    fechaVencimiento: fechaVencimiento
                 };
 
                 agregarDetalleCompraend(objeto); // Llamar a la función optimizada con el objeto
             }
-            
         });
         if (porcentajeAGanar !== ganancia && porcentajeAGanar != "") {
             // Mostrar la alerta con SweetAlert para confirmar la acción del usuario
@@ -588,7 +628,6 @@ function agregarDetalleCompra() {
                     Swal.fire({
                         html: mensajeAlerta + "\n¿Deseas Continuar?",
                         icon: "question",
-                        icon: "question",
                         showCancelButton: true,
                         confirmButtonText: "Continuar",
                         cancelButtonText: "Actualizar",
@@ -600,19 +639,20 @@ function agregarDetalleCompra() {
                             var objeto = {
                                 productoId: productoId,
                                 unidadId: unidad,
-                                cantidad: cantidad,
+                                cantidadUnidad: cantidad,
+                                cantidad: cantidadTotalPorPresentacion,
+                                cantidadPorUnidad: cantidadTotalPorUnidad,
+                                cantidadCompra: cantidadTotalPorPresentacion,
+                                cantidadPorUnidadCompra: cantidadTotalPorUnidad,
                                 numeroLote: numeroLote,
                                 precioCompra: precioCompra,
-                                precioxUnidadCompra: precioCompraUnidad,
-                                precioxPresentacionCompra: precioCompraPorProducto,
-                                precioxUnidadPresentacionCompra: PrecioDeCompraUnitario,
+                                precioCompraxUnidad: precioCompraUnidad,
+                                precioCompraxPresentacion: precioCompraPorProducto,
+                                precioCompraxUnidadPresentacion: PrecioDeCompraUnitario,
                                 precioVentaxUnidad: precioVentaxUnidad,
                                 precioVentaxPresentacion: precioVentaxPresentacion,
                                 precioVentaxUnidadPresentacion: precioVentaxUnidadPresentacion,
-                                cantidadLote: cantidadLote,
-                                cantidadPorUnidad: cantidadPorUnidadLote,
-                                fechaVencimiento: fechaVencimiento,
-                                cantidadPorUnidad: cantidadPorUnidad
+                                fechaVencimiento: fechaVencimiento
                             };
 
                             agregarDetalleCompraend(objeto); // Llamar a la función optimizada con el objeto
@@ -624,19 +664,20 @@ function agregarDetalleCompra() {
                     var objeto = {
                         productoId: productoId,
                         unidadId: unidad,
-                        cantidad: cantidad,
+                        cantidadUnidad: cantidad,
+                        cantidad: cantidadTotalPorPresentacion,
+                        cantidadPorUnidad: cantidadTotalPorUnidad,
+                        cantidadCompra: cantidadTotalPorPresentacion,
+                        cantidadPorUnidadCompra: cantidadTotalPorUnidad,
                         numeroLote: numeroLote,
                         precioCompra: precioCompra,
-                        precioxUnidadCompra: precioCompraUnidad,
-                        precioxPresentacionCompra: precioCompraPorProducto,
-                        precioxUnidadPresentacionCompra: PrecioDeCompraUnitario,
+                        precioCompraxUnidad: precioCompraUnidad,
+                        precioCompraxPresentacion: precioCompraPorProducto,
+                        precioCompraxUnidadPresentacion: PrecioDeCompraUnitario,
                         precioVentaxUnidad: precioVentaxUnidad,
                         precioVentaxPresentacion: precioVentaxPresentacion,
                         precioVentaxUnidadPresentacion: precioVentaxUnidadPresentacion,
-                        cantidadLote: cantidadLote,
-                        cantidadPorUnidad: cantidadPorUnidadLote,
-                        fechaVencimiento: fechaVencimiento,
-                        cantidadPorUnidad: cantidadPorUnidad
+                        fechaVencimiento: fechaVencimiento
                     };
 
                     agregarDetalleCompraend(objeto); // Llamar a la función optimizada con el objeto
@@ -648,20 +689,6 @@ function agregarDetalleCompra() {
 }
 
 /*-------------------------------------------------------------------------------------------------------------------------------------*/
-// Función para calcular y actualizar el valor total
-function actualizarValorTotal() {
-    var total = 0;
-    // Obtener todas las filas de la tabla
-    var filas = document.querySelectorAll('#detalleTableBody tr');
-    // Iterar sobre las filas y sumar los subtotales
-    filas.forEach(function (fila) {
-        var subtotal = parseFloat(fila.cells[3].innerHTML);
-        total += subtotal;
-    });
-    // Asignar el total al elemento con el id 'ValorTotal'
-    document.getElementById('ValorTotal').value = total;
-}
-
 //Paginado
 function cambiarPagina(direccion) {
     const filasPorPagina = 10; // Cambia el número de filas por página según tus necesidades
@@ -713,7 +740,7 @@ function verificarPaginado() {
         document.getElementById('contenedorTablaDetallesBotones').style.visibility = 'hidden'; 
     }
 }
-
+/*-------------------------------------------------------------------------------------------------------------------------------------*/
 function agregarFilaDetalle(detalleCompra) {
     // Obtener el cuerpo de la tabla
     var detalleTableBody = document.getElementById('detalleTableBody');
@@ -803,42 +830,22 @@ function actualizarFilaDetalle(detalleCompra, indice) {
     row.cells[3].innerHTML = detalleCompra.cantidad * ultimoLote.precioCompraPorProducto;
 }
 
-
-// Función para agregar un lote al detalle de compra
-function agregarLoteAlDetalle(detalleIndex, lote) {
-    if (detalleIndex >= 0 && detalleIndex < compra.detallecompras.length) {
-        compra.detallecompras[detalleIndex].lotes.push(lote);
-    } else {
-        console.error('Índice de detalle inválido.');
-    }
+// Función para calcular y actualizar el valor total
+function actualizarValorTotal() {
+    var total = 0;
+    // Obtener todas las filas de la tabla
+    var filas = document.querySelectorAll('#detalleTableBody tr');
+    // Iterar sobre las filas y sumar los subtotales
+    filas.forEach(function (fila) {
+        var subtotal = parseFloat(fila.cells[3].innerHTML);
+        total += subtotal;
+    });
+    // Asignar el total al elemento con el id 'ValorTotal'
+    document.getElementById('ValorTotal').value = total;
 }
 
-
-function actualizarCompra() {
-    var proveedorId = document.getElementById('ProveedorIdHidden').value;
-    var numeroFactura = document.getElementById('NumeroFactura').value;
-    var fechaCompra = document.getElementById('FechaCompra').value;
-   
-
-    if (numeroFactura === '' || fechaCompra === '') {
-        mostrarAlertaCampoVacio(numeroFactura === '' ? 'numeroFactura' : 'fechaCompra');
-        return;
-    } else if (proveedorId === '') { // Corregido a "!=="
-        mostrarAlertaDataList('Proveedor');
-        return; 
-    } else {
-        // Actualizar los valores de la compra
-        compra.proveedorId = proveedorId;
-        compra.numeroFactura = numeroFactura;
-        compra.fechaCompra = fechaCompra;
-
-        alert('Compra actualizada');
-        $('#ModalCompra').modal('hide');
-        $('#ModalDetallesCompra').modal('show');
-    }
-}
-
-function volverARegistrarCompra()    {
+/*-------------------------------------------------------------------------------------------------------------------------------------*/
+function volverARegistrarCompra() {
     document.getElementById('tituloModal').style.display = 'block';
     document.getElementById('subTituloModal').style.display = 'none';
     document.getElementById('PrincipalCompra').style.display = 'block';
@@ -886,15 +893,18 @@ function volverARegistrarCompra()    {
 }
 
 function reiniciarCompra() {
-    document.getElementById('NumeroFactura').value = '';
     location.reload();
 }
+
+/*-----------------------------------------Mago--------------------------------------------------------------------------------------------*/
 function verCompra() {
-    var opcionesCambiarDatosCompra = document.getElementById('opcinesCambiarDatosCompra');
-    opcionesCambiarDatosCompra.classList.remove('noSee'); // Remover clase is-invalid
     $('#ModalCompra').modal('show');
     $('#ModalDetallesCompra').modal('hide');
   
+}
+function noVerDatosCompra() {
+    $('#ModalCompra').modal('hide');
+    $('#ModalDetallesCompra').modal('show');
 }
 function verFormularioDetalle() {
 
@@ -902,13 +912,47 @@ function verFormularioDetalle() {
     $('#ModalProductosCompra').modal('hide');
   
 }
+function verOpcionesAgregadas() {
+    const button = document.getElementById('noOpcionesAgregadas');
+    button.onclick = noVerOpcionesAgregadas;
+    button.innerHTML = '<i class="fas fa-minus"></i>';
+    button.title = "Ver menos elementos";
+    $('.opcionesAgregadas').each(function () {
+        $(this).removeClass('noBe');
+    });
+}
+function noVerOpcionesAgregadas() {
+    // Asegúrate de que el elemento con el ID 'filtroPxC' existe antes de modificar su valor
+    if ($('#filtroPxC').length) {
+        $('#filtroPxC').val('');
+    }
+    // Llamar a la función filtrarxCategoria
+    filtrarxCategoria();
+    // Asegúrate de que el elemento con el ID 'checkboxUnidadesxProducto' existe antes de operar sobre él
+    if ($('#checkboxUnidadesxProducto').length) {
+        // Verifica si el checkbox está marcado y, si es así, simula un clic en él
+        if ($('#checkboxUnidadesxProducto').prop('checked')) {
+            $('#checkboxUnidadesxProducto').trigger('click');
+        } else {
+            filtrarxUnidadesxProducto();
+        }
+    }
+    const button = document.getElementById('noOpcionesAgregadas');
+    button.onclick = verOpcionesAgregadas;
+    button.innerHTML = '<i class="fas fa-plus"></i>';
+    button.title = "Ver más elementos";
+    // Aquí puedes agregar el código para ocultar las opciones agregadas.
+    let opciones = document.querySelectorAll('.opcionesAgregadas');
+    opciones.forEach(opcion => {
+        opcion.classList.add('noBe');
+    });
+
+}
 function verProductos() {
     $('#ModalDetallesCompra').modal('show');
     $('#ModalProductosCompra').modal('show');
   
 }
-
-
 function verCalculo() {
     document.getElementById('PrecioBougth').style.display = 'flex';
     document.getElementById('PrecioBuy').style.display = 'flex';
@@ -921,11 +965,6 @@ function noVerCalculo() {
     document.getElementById('modal-header-botonAgregarDetalle').style.display = "none"
     document.getElementById('PrecioBougth').style.display = 'none';
     document.getElementById('PrecioBuy').style.display = 'none';
-}
-
-function noVerDatosCompra() {
-    $('#ModalCompra').modal('hide');
-    $('#ModalDetallesCompra').modal('show');
 }
 function cambioFechaVencimiento() {
     const checkboxNoVencimiento = document.getElementById('checkboxNoVencimiento');
@@ -959,350 +998,206 @@ function cambioFechaVencimiento() {
     });
 }
 
+/*-----------------------------------------Cantidad y datalist--------------------------------------------------------------------------------------------*/
 
-/*Cantidad y datalist*/
-document.addEventListener   ("DOMContentLoaded", function () {
-    var inputCantidad = document.getElementById('Cantidad');
-    var inputprecioCompra = document.getElementById('PrecioDeCompra');
+function seleccionarOpcionesHidden(input,Peticion){
+    let soloNumerosRegex = /^[0-9]+$/;
+    // Limpia el temporizador existente
+    clearTimeout(timeout);
 
-    var inputprecioVentaxPresentacion = document.getElementById('PrecioDeVentaUnitario');
-    var inputprecioVentaxUnidad = document.getElementById('PrecioDeVentaxUnidadPresentacion');
-    var inputprecioVentaxUnidadPresentacion = document.getElementById('PrecioDeVentaPorUnidad');
-    var inputPorcentaje = document.getElementById('PorcentajeGanancia');
-
-    var btnMas = document.getElementById('btnMas');
-    var btnMenos = document.getElementById('btnMenos');
-
-    // Variables para almacenar el intervalo y el contador de incremento
-    var intervalo;
-    var contador = 0;
-
-    // Función para incrementar la cantidad
-    function incrementarCantidad() {
-        var valorActual = parseInt(inputCantidad.value);
-        if (valorActual < 99) { // Establecer el límite máximo
-            inputCantidad.value = valorActual + 1;
-        }
-    }
-
-    // Función para decrementar la cantidad
-    function decrementarCantidad() {
-        var valorActual = parseInt(inputCantidad.value);
-        if (valorActual > 1) { // Establecer el límite mínimo
-            inputCantidad.value = valorActual - 1;
-        }
-    }
-
-    // Función para iniciar el intervalo al mantener presionado el botón
-    function iniciarIntervalo(funcion) {
-        intervalo = setInterval(function () {
-            contador++;
-            if (contador > 5) { // Incremento más rápido después de cierto tiempo
-                funcion();
-            }
-        }, 100); // Intervalo inicial de 100ms
-    }
-
-    // Función para detener el intervalo al soltar el botón
-    function detenerIntervalo() {
-        clearInterval(intervalo);
-        contador = 0; // Reiniciar el contador al soltar el botón
-    }
-
-    // Asignar eventos de clic y mouse a los botones
-    btnMas.addEventListener('mousedown', function () {
-        iniciarIntervalo(incrementarCantidad);
-    });
-
-    btnMas.addEventListener('mouseup', detenerIntervalo);
-    btnMas.addEventListener('mouseleave', detenerIntervalo);
-
-    btnMenos.addEventListener('mousedown', function () {
-        iniciarIntervalo(decrementarCantidad);
-    });
-
-    btnMenos.addEventListener('mouseup', detenerIntervalo);
-    btnMenos.addEventListener('mouseleave', detenerIntervalo);
-
-    // Asignar eventos de clic a los botones
-    btnMas.addEventListener('click', incrementarCantidad);
-    btnMenos.addEventListener('click', decrementarCantidad);
-
-    
-    inputCantidad.addEventListener('input', function () {
-        formatoNumeroINT(this);
-    });
-
-    // Agregar eventos de entrada a los inputs que necesitas formatear
-    inputprecioCompra.addEventListener('input', function () {
-        formatoNumeroINT(this);
-    });
-    inputPorcentaje.addEventListener('input', function () {
-        formatoNumeroINT(this);
-    });
-    inputprecioVentaxPresentacion.addEventListener('input', function () {
-        formatoNumeroINT(this);
-    });
-    inputprecioVentaxUnidad.addEventListener('input', function () {
-        formatoNumeroINT(this);
-    });
-    inputprecioVentaxUnidadPresentacion.addEventListener('input', function () {
-        formatoNumeroINT(this);
-    });
-    function seleccionarOpcionCompra(input, dataList, hiddenInput, campo) {
-        var selectedValue = input.value.trim();
-
-
-        if (/^\d+[a-zA-Z]$/.test(selectedValue)) {
-            // Si selectedValue es un número seguido de una letra, realizar la acción correspondiente
-            console.log('Número seguido de letra encontrado:', selectedValue);
-            var selectedOptionByName = Array.from(dataList.options).find(function (option) {
-                return option.value === selectedValue;
-            });
-
-        } else {
-            var selectedOptionByName = Array.from(dataList.options).find(function (option) {
-                return option.value === selectedValue;
-            });
-        } if (/^\d+$/.test(selectedValue)) {
-            var selectedOptionById = Array.from(dataList.options).find(function (option) {
-                return option.getAttribute('data-id') === selectedValue;
-            });
-            if (!selectedOptionById) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: `No se encontró ningún resultado con este ID de ${campo}`,
-                    showConfirmButton: false,
-                    timer: 1800 // Duración rápida en milisegundos (1.5 segundos)
-                });
-                input.value = '';
-                input.dispatchEvent(new Event('input'));
-            }
-        }
-
-        if (selectedOptionByName) {
-            // Si se seleccionó un nombre del datalist, mostrar el nombre y enviar el data-id al input hidden
-            input.value = selectedOptionByName.value;
-            hiddenInput.value = selectedOptionByName.getAttribute('data-id');
-
-            // Verificar si es el campo NombreProducto y el resto del código...
-        } else if (selectedOptionById) {
-            // Si se ingresó un ID en el campo de entrada, mostrar el nombre correspondiente y enviar el ID al input hidden
-            input.value = selectedOptionById.value;
-            hiddenInput.value = selectedOptionById.getAttribute('data-id');
-
-            // Verificar si es el campo NombreProducto y el resto del código...
-        }
-        if (selectedOptionByName) {
-            // Si se seleccionó un nombre del datalist, mostrar el nombre y enviar el data-id al input hidden
-            input.value = selectedOptionByName.value;
-            hiddenInput.value = selectedOptionByName.getAttribute('data-id');
-
-            // Verificar si es el campo NombreProducto
-            if (input.id === 'NombreProducto') {
-                document.getElementById('NombreProducto').value = selectedOptionByName.value;
-                document.getElementById('CantidadPorPresentacionHidden').value = selectedOptionByName.getAttribute('data-cantidad') || '';
-            }
-            // Verificar si es el campo NombreUnidad
-            if (input.id === 'NombreUnidad') {
-                document.getElementById('CantidadPorUnidad').value = selectedOptionByName.getAttribute('data-cantidad') || '';
-            }
-        } else if (selectedOptionById) {
-            // Si se ingresó un ID en el campo de entrada, mostrar el nombre correspondiente y enviar el ID al input hidden
-            input.value = selectedOptionById.value;
-            hiddenInput.value = selectedOptionById.getAttribute('data-id');
-
-            // Verificar si es el campo NombreProducto
-            if (input.id === 'NombreProducto') {
-                document.getElementById('NombreProducto').value = selectedOptionById.value;
-                document.getElementById('CantidadPorPresentacionHidden').value = selectedOptionById.getAttribute('data-cantidad') || '';
-            }
-            // Verificar si es el campo NombreUnidad
-            if (input.id === 'NombreUnidad') {
-                document.getElementById('CantidadPorUnidad').value = selectedOptionById.getAttribute('data-cantidad') || '';
-            }
-        }
-    }
-
-
-
-
-    // Asignar función de selección a los campos NombreProveedor, NombreProducto y NombreUnidad
-    document.getElementById('NombreProveedor').addEventListener('input', function () {
-        if (this.value.length > 5) {
-            clearTimeout(timeout);
-            seleccionarOpcionCompra(this, document.getElementById('proveedores'), document.getElementById('ProveedorIdHidden'), 'proveedor');
-        }else {
+    if (soloNumerosRegex.test(input.value)) {
         timeout = setTimeout(() => {
-            seleccionarOpcionCompra(this, document.getElementById('proveedores'), document.getElementById('ProveedorIdHidden'), 'proveedor');
-        }, 700); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
-        }
-        
-    });
-   
-    document.getElementById('NombreProducto').addEventListener('input', function () {
-        if (this.value.length > 5) {
-            clearTimeout(timeout);
-            seleccionarOpcionCompra(this, document.getElementById('productos'), document.getElementById('ProductoIdHidden'), 'Producto');
-        } else {
-            timeout = setTimeout(() => {
-                seleccionarOpcionCompra(this, document.getElementById('productos'), document.getElementById('ProductoIdHidden'), 'Producto');
-            }, 700); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
-        }
-    });
+            if (Peticion == "Proveedor") {
+                seleccionarOpcion(input, document.getElementById('proveedores'), document.getElementById('ProveedorIdHidden'), 'ProveedorCompra', 'proveedor');
+            } 
+            if (Peticion == "Producto") {
+                seleccionarOpcion(input, document.getElementById('productos'), document.getElementById('ProductoIdHidden'), 'ProductoCompra', 'producto');
 
-    document.getElementById('NombreUnidad').addEventListener('input', function () {
-        if (this.value.length > 5) {
-            clearTimeout(timeout);
-            seleccionarOpcionCompra(this, document.getElementById('unidades'), document.getElementById('UnidadIdHidden'), 'Unidad');
-        } else {
-            timeout = setTimeout(() => {
-                seleccionarOpcionCompra(this, document.getElementById('unidades'), document.getElementById('UnidadIdHidden'), 'Unidad');
-            }, 700); // Esperar 500 milisegundos (0.5 segundos) antes de ejecutar la función
-        }
-    });
-
-
-
-    // Agregar un evento de clic al botón "Calcular"
-    document.getElementById('btnCalcular').addEventListener('click', () => {
-      
-        const productoId = document.getElementById('ProductoIdHidden').value;
-        const porcentajeAGanarConPuntos = document.getElementById('PorcentajeGanancia').value;
-        ganancia = porcentajeAGanarConPuntos; 
-        verificarProducto = productoId;
-        const cantidad = document.getElementById('Cantidad').value;
-        const precioCompraConPuntos = document.getElementById('PrecioDeCompra').value;
-        const unidad = document.getElementById('CantidadPorUnidad').value;
-        const cantidadPorPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
-
-        const producto = document.getElementById('NombreProducto').value;
-        const unidadId = document.getElementById('UnidadIdHidden').value;
-        const datalist = [
-            { id: 'UnidadIdHidden', nombre: 'Unidad' },
-            { id: 'ProductoIdHidden', nombre: 'Producto' },
-        ];
-        // Verificar si los campos requeridos están completos
-        if (
-            precioCompraConPuntos === '' ||
-            producto === '' ||
-            unidadId === '' ||
-            porcentajeAGanarConPuntos === '' ||
-            unidadId === '' ||  
-            cantidad === ''   
-        ) {
-            mostrarAlertaCampoVacio(
-                producto === ''
-                    ? 'Producto'
-                    : unidadId === '' 
-                        ? 'Unidad'
-                        : precioCompraConPuntos === ''
-                            ? 'Precio de Compra'
-                            : porcentajeAGanarConPuntos === ''
-                                ? '% A Ganar'
-                                : cantidad === ''
-                                    ? 'Cantidad'
-                                    : ''
-            );
-            return;
+            } 
+            if (Peticion == "Unidad") {
+                seleccionarOpcion(input, document.getElementById('unidades'), document.getElementById('UnidadIdHidden'), 'UnidadCompra', 'unidad');
+            } 
+        }, 500); // Esperar 500 milisegundos antes de ejecutar la función
+    } else {
+        if (Peticion == "Proveedor") {
+            seleccionarOpcion(input, document.getElementById('proveedores'), document.getElementById('ProveedorIdHidden'), 'ProveedorCompra', 'proveedor');
         } 
-        if (!verificarCamposDataList(datalist)) {
-            event.preventDefault();
-            return;
+        if (Peticion == "Producto") {
+            seleccionarOpcion(input, document.getElementById('productos'), document.getElementById('ProductoIdHidden'), 'ProductoCompra', 'producto');
+
         }
-        const precioCompra = parseFloat(precioCompraConPuntos.replace(/\./g, ''));
-        const porcentajeAGanar = parseFloat(porcentajeAGanarConPuntos.replace(/\./g, ''));
-
-        if (isNaN(precioCompra) || isNaN(porcentajeAGanar)) {
-            mostrarAlertaAtencionPersonalizadaConBoton('El precio de compra y el porcentaje a ganar deben ser números válidos.');
-            noVerCalculo();
-            return;
+        if (Peticion == "Unidad") {
+            seleccionarOpcion(input, document.getElementById('unidades'), document.getElementById('UnidadIdHidden'), 'UnidadCompra', 'unidad');
         }
+    }
+    
+}
+// Función para incrementar la cantidad
+function incrementarCantidad() {
+    var inputCantidad = document.getElementById('Cantidad');
+    var valorActual = parseInt(inputCantidad.value);
+    if (valorActual < 99) { // Establecer el límite máximo
+        inputCantidad.value = valorActual + 1;
+    }
+}
 
-        /* Precio por unidad*/
-        const precioPorUnidadIndividualSinPuntos = precioCompra / cantidad;
+// Función para decrementar la cantidad
+function decrementarCantidad() {
+    var inputCantidad = document.getElementById('Cantidad');
+    var valorActual = parseInt(inputCantidad.value);
+    if (valorActual > 1) { // Establecer el límite mínimo
+        inputCantidad.value = valorActual - 1;
+    }
+}
 
-        /* Precio por producto*/
-        const cantidadUnitariaPorPresentacionSinPuntos = precioCompra / (unidad * cantidad);
-        // Precio por unidad de producto
-        const precioIndividualUnitarioSinPuntos = (precioCompra / unidad) / (cantidadPorPresentacion * cantidad);
-
-        /* Precio venta por unidad*/
-        const precioVentaIndividualUnitarioSinPuntos = precioPorUnidadIndividualSinPuntos + (precioPorUnidadIndividualSinPuntos * porcentajeAGanar / 100);
-        /* Precio venta por producto*/
-        const precioVentaPorPresentacionSinPuntos = cantidadUnitariaPorPresentacionSinPuntos + (cantidadUnitariaPorPresentacionSinPuntos * porcentajeAGanar / 100);
-        // Precio venta por unidad de producto
-        const precioVentaPorUnidadDeProducto = precioIndividualUnitarioSinPuntos + (precioIndividualUnitarioSinPuntos * porcentajeAGanar / 100);
-
-        const precioIndividualUnitario = formatNumber(Math.round(precioIndividualUnitarioSinPuntos));
-        const cantidadUnitariaPorPresentacion = formatNumber(Math.round(cantidadUnitariaPorPresentacionSinPuntos));
-        const precioPorUnidad = formatNumber(Math.round(precioPorUnidadIndividualSinPuntos));
-
-        const precioVentaPorUnidad = formatNumber(Math.round(precioVentaIndividualUnitarioSinPuntos));
-        const precioVentaPorProducto = formatNumber(Math.round(precioVentaPorPresentacionSinPuntos));
-        const precioVentaIndividualUnitario = formatNumber(Math.round(precioVentaPorUnidadDeProducto));
-
-        // Mostrar los resultados en los campos correspondientes
-        if (precioPorUnidadIndividualSinPuntos < 100) {
-            mostrarAlertaAtencionPersonalizadaConBoton('El precio de compra es demasiado bajo');
-            noVerCalculo();
-            return;
+// Función para iniciar el intervalo al mantener presionado el botón
+function iniciarIntervalo(funcion) {
+    clearInterval(intervalo); // Limpiar cualquier intervalo existente
+    contador = 0; // Reiniciar el contador
+    intervalo = setInterval(function () {
+        contador++;
+        if (contador > 5) { // Incremento más rápido después de cierto tiempo
+            funcion();
         }
+    }, 100); // Intervalo inicial de 100ms
+}
 
-        document.getElementById('PrecioDeCompraPorPresentacion').value = cantidadUnitariaPorPresentacion;
-        document.getElementById('PrecioDeCompraUnitario').value = precioIndividualUnitario;
-        document.getElementById('PrecioDeCompraPorUnidad').value = precioPorUnidad;
+// Función para detener el intervalo al soltar el botón
+function detenerIntervalo() {
+    clearInterval(intervalo); // Detener el intervalo
+    contador = 0; // Reiniciar el contador al soltar el botón
+}
 
-        document.getElementById('PrecioDeVentaPorUnidad').value = precioVentaPorUnidad;
-        document.getElementById('PrecioDeVentaUnitario').value = precioVentaPorProducto;
-        document.getElementById('PrecioDeVentaxUnidadPresentacion').value = precioVentaIndividualUnitario;
+/*-----------------------------------------Calculos--------------------------------------------------------------------------------------------*/
 
-        var mensajes = document.querySelectorAll('.Mensaje');
+function calcularPreciosCompra() {
+    const productoId = document.getElementById('ProductoIdHidden').value;
+    const porcentajeAGanarConPuntos = document.getElementById('PorcentajeGanancia').value;
+    ganancia = porcentajeAGanarConPuntos;
+    verificarProducto = productoId;
+    const cantidad = document.getElementById('Cantidad').value;
+    const precioCompraConPuntos = document.getElementById('PrecioDeCompra').value;
+    const unidad = document.getElementById('CantidadPorUnidad').value;
+    const cantidadPorPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
 
-        // Iterar sobre los últimos tres mensajes de error
-        for (var i = mensajes.length - 3; i < mensajes.length; i++) {
-            var mensaje = mensajes[i];
-            mensaje.textContent = ''; // Restaurar mensajes de error
-        }
-        verCalculo();
+    const producto = document.getElementById('NombreProducto').value;
+    const unidadId = document.getElementById('UnidadIdHidden').value;
+    const datalist = [
+        { id: 'UnidadIdHidden', nombre: 'Unidad' },
+        { id: 'ProductoIdHidden', nombre: 'Producto' },
+    ];
+    // Verificar si los campos requeridos están completos
+    if (
+        precioCompraConPuntos === '' ||
+        producto === '' ||
+        unidadId === '' ||
+        porcentajeAGanarConPuntos === '' ||
+        unidadId === '' ||
+        cantidad === ''
+    ) {
+        mostrarAlertaCampoVacio(
+            producto === ''
+                ? 'Producto'
+                : unidadId === ''
+                    ? 'Unidad'
+                    : precioCompraConPuntos === ''
+                        ? 'Precio de Compra'
+                        : porcentajeAGanarConPuntos === ''
+                            ? '% A Ganar'
+                            : cantidad === ''
+                                ? 'Cantidad'
+                                : ''
+        );
+        return;
+    }
+    if (!verificarCamposDataList(datalist)) {
+        preventDefault();
+        return;
+    }
+
+    const precioCompra = parseFloat(precioCompraConPuntos.replace(/\./g, ''));
+    const porcentajeAGanar = parseFloat(porcentajeAGanarConPuntos.replace(/\./g, ''));
+
+    if (isNaN(precioCompra) || isNaN(porcentajeAGanar)) {
+        mostrarAlertaAtencionPersonalizadaConBoton('El precio de compra y el porcentaje a ganar deben ser números válidos.');
+        noVerCalculo();
+        return;
+    }
+
+    /* Precio por unidad*/
+    const precioPorUnidadIndividualSinPuntos = precioCompra / cantidad;
+
+    /* Precio por producto*/
+    const cantidadUnitariaPorPresentacionSinPuntos = precioCompra / (unidad * cantidad);
+    // Precio por unidad de producto
+    const precioIndividualUnitarioSinPuntos = (precioCompra / unidad) / (cantidadPorPresentacion * cantidad);
+
+    /* Precio venta por unidad*/
+    const precioVentaIndividualUnitarioSinPuntos = precioPorUnidadIndividualSinPuntos + (precioPorUnidadIndividualSinPuntos * porcentajeAGanar / 100);
+    /* Precio venta por producto*/
+    const precioVentaPorPresentacionSinPuntos = cantidadUnitariaPorPresentacionSinPuntos + (cantidadUnitariaPorPresentacionSinPuntos * porcentajeAGanar / 100);
+    // Precio venta por unidad de producto
+    const precioVentaPorUnidadDeProducto = precioIndividualUnitarioSinPuntos + (precioIndividualUnitarioSinPuntos * porcentajeAGanar / 100);
+
+    const precioIndividualUnitario = formatNumber(Math.round(precioIndividualUnitarioSinPuntos));
+    const cantidadUnitariaPorPresentacion = formatNumber(Math.round(cantidadUnitariaPorPresentacionSinPuntos));
+    const precioPorUnidad = formatNumber(Math.round(precioPorUnidadIndividualSinPuntos));
+
+    const precioVentaPorUnidad = formatNumber(Math.round(precioVentaIndividualUnitarioSinPuntos));
+    const precioVentaPorProducto = formatNumber(Math.round(precioVentaPorPresentacionSinPuntos));
+    const precioVentaIndividualUnitario = formatNumber(Math.round(precioVentaPorUnidadDeProducto));
+
+    // Mostrar los resultados en los campos correspondientes
+    if (precioPorUnidadIndividualSinPuntos < 100) {
+        mostrarAlertaAtencionPersonalizadaConBoton('El precio de compra es demasiado bajo');
+        noVerCalculo();
+        return;
+    }
+
+    document.getElementById('PrecioDeCompraPorPresentacion').value = cantidadUnitariaPorPresentacion;
+    document.getElementById('PrecioDeCompraUnitario').value = precioIndividualUnitario;
+    document.getElementById('PrecioDeCompraPorUnidad').value = precioPorUnidad;
+
+    document.getElementById('PrecioDeVentaPorUnidad').value = precioVentaPorUnidad;
+    document.getElementById('PrecioDeVentaUnitario').value = precioVentaPorProducto;
+    document.getElementById('PrecioDeVentaxUnidadPresentacion').value = precioVentaIndividualUnitario;
+
+    var mensajes = document.querySelectorAll('.Mensaje');
+
+    // Iterar sobre los últimos tres mensajes de error
+    for (var i = mensajes.length - 3; i < mensajes.length; i++) {
+        var mensaje = mensajes[i];
+        mensaje.textContent = ''; // Restaurar mensajes de error
+    }
+    verCalculo();
 
 
-        // Aquí puedes realizar cualquier operación adicional con los valores calculados
-    });
+    // Aquí puedes realizar cualquier operación adicional con los valores calculados
 
-    document.getElementById('btnCalcularVenta').addEventListener('click', () => {
-        // Obtener los valores de los campos
-        const precioVentaxProductoConPuntos = document.getElementById('PrecioDeVentaUnitario').value;
+}
+function calcularPrecioPorUnidad(){
+    // Obtener los valores de los campos
+    const precioVentaxProductoConPuntos = document.getElementById('PrecioDeVentaUnitario').value;
 
-        const precioVentaxProducto = precioVentaxProductoConPuntos.replace(/\./g, '');
+    const precioVentaxProducto = precioVentaxProductoConPuntos.replace(/\./g, '');
 
-        // Verificar si los campos requeridos están completos
-        if (precioVentaxProducto === '') {
-            MostrarAlerta2('Ingresa un valor antes para poder hacer el calculo');
-            return;
-        }
-        const cantidadPorPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
-        const precioUnitarioPorPresentacion = formatNumber(Math.ceil(precioVentaxProducto / cantidadPorPresentacion));
-
-
-        document.getElementById('PrecioDeVentaxUnidadPresentacion').value = precioUnitarioPorPresentacion;
-    });
-
-    document.getElementById('checkboxNoVencimiento').addEventListener('click', cambioFechaVencimiento);
-
-        
-});
+    // Verificar si los campos requeridos están completos
+    if (precioVentaxProducto === '') {
+        mostrarAlertaAtencionPersonalizadaConBoton('Ingresa un valor antes para poder hacer el calculo');
+        return;
+    }
+    const cantidadPorPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
+    const precioUnitarioPorPresentacion = formatNumber(Math.ceil(precioVentaxProducto / cantidadPorPresentacion));
 
 
+    document.getElementById('PrecioDeVentaxUnidadPresentacion').value = precioUnitarioPorPresentacion;
+}
 
+/*-----------------------------------------LIMPIADORES--------------------------------------------------------------------------------------------*/
 
-
-
-/*LIMPIADORES */
-// Se uas para eliminar todos los detalles de la tabla en la venta modal
+// Se usa para eliminar todos los detalles de la tabla en la venta modal
 function eliminarTodosLosDetalles() {
     var filasDetalles = document.querySelectorAll('#tablaDetalles tbody tr');
-
     // Iterar sobre todas las filas de detalles y eliminarlas una por una
     filasDetalles.forEach(function (fila) {
         var botonEliminar = fila.querySelector('.btnEliminar');
@@ -1312,13 +1207,9 @@ function eliminarTodosLosDetalles() {
 // Función para limpiar el formulario
 function LimpiarFormulario() {
     // Limpiar los valores de los campos del formulario
-    document.getElementById('NombreProducto').value = '';
-    document.getElementById('NombreUnidad').value = '';
-    document.getElementById('CantidadPorPresentacionHidden').value = '';
-    document.getElementById('ProductoIdHidden').value = '';
-    document.getElementById('UnidadIdHidden').value = '';
-    document.getElementById('CantidadPorUnidad').value = '';
-    document.getElementById('CantidadPorPresentacionHidden').value = 1;
+    iconoLimpiarCampo(['NombreProducto', 'ProductoIdHidden', 'CantidadPorPresentacionHidden'], 'NombreProducto');
+    iconoLimpiarCampo(['NombreUnidad', 'UnidadIdHidden', 'CantidadPorUnidad'], 'NombreUnidad');
+    document.getElementById('Cantidad').value = 1;
     document.getElementById('PrecioDeCompra').value = '';
     document.getElementById('PrecioDeCompraPorPresentacion').value = '';
     document.getElementById('PrecioDeCompraUnitario').value = '';
@@ -1427,6 +1318,8 @@ function limpiarFormularioTotalmente() {
 
 
 
+/*-----------------------------------------Validaciones--------------------------------------------------------------------------------------------*/
+
 
 /*Validaciones */
 function validarCampoCompras(input, campo) {
@@ -1447,6 +1340,7 @@ function validarCampoCompras(input, campo) {
     if (input.is('#NombreProveedor')) {
         if (valor === "") {
             $('#ProveedorIdHidden').val(''); // Vacía el valor del campo oculto
+            iconoLimpiarCampo(['NombreProveedor', 'ProveedorIdHidden'], 'NombreProveedor');
         }
     }
     if (input.is('#FechaCompra')) {
@@ -1484,6 +1378,8 @@ function validarCampoCompras(input, campo) {
         if (valor === "") {
             $('#ProductoIdHidden').val('');
             $('#CantidadPorPresentacionHidden').val('');
+            iconoLimpiarCampo(['NombreProducto', 'ProductoIdHidden', 'CantidadPorPresentacionHidden'], 'NombreProducto');
+            localStorage.removeItem('filtrocompraUnidadesxProducto');
         }
     }
     if (input.is('#FechaVencimiento')) {
@@ -1513,6 +1409,7 @@ function validarCampoCompras(input, campo) {
         if (valor === "") {
             $('#UnidadIdHidden').val('');
             $('#CantidadPorUnidad').val('');
+            iconoLimpiarCampo(['NombreUnidad', 'UnidadIdHidden', 'CantidadPorUnidad'], 'NombreUnidad');
         }
     }
 
@@ -1528,10 +1425,251 @@ function validarCampoCompras(input, campo) {
 }
 
 // Controlador de eventos para campos de entrada al hacer input en ellos 
-$('#NumeroFactura, #NombreProveedor, #FechaCompra, #NombreProducto, #FechaVencimiento, #NumeroLote, #NombreUnidad, #PrecioDeCompra, #PorcentajeGanancia, #PrecioDeVentaPorUnidad, #PrecioDeVentaxUnidadPresentacion, #PrecioDeVentaUnitario').on('input', function () {
+$('#NumeroFactura,#NombreProveedor,#NombreUnidad,#NombreProducto, #FechaCompra, #FechaVencimiento, #NumeroLote, #PrecioDeCompra, #PorcentajeGanancia, #PrecioDeVentaPorUnidad, #PrecioDeVentaxUnidadPresentacion, #PrecioDeVentaUnitario').on('input', function () {
     var input = $(this);
     var campo = input.attr('id'); // Obtener el id del input actual como nombre de campo
     validarCampoCompras(input, campo);
 });
 
 
+
+
+/*----------------------------------------- No #ros de factura u lote iguales -----------------------------------------------------------------------*/
+
+async function verificarNumeroFactura(numeroFactura) {
+    try {
+        var numeroF = numeroFactura;
+        const data = await new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/Compras/CompararNumerosDeFactura', // Ruta relativa al controlador y la acción
+                type: 'GET',
+                data: { NumeroFactura: numeroF }, // Asegúrate de que el nombre del parámetro coincida
+                success: function (data) {
+                    resolve(data);
+                },
+                error: function () {
+                    alert('Error al verificar el número de factura.');
+                    reject(null);
+                }
+            });
+        });
+        return data;
+    } catch (error) {
+        alert(error.message);
+        return null;
+    }
+}
+async function verificarNumeroLote(numeroL) {
+    try {
+        var numeroLote = numeroL;
+        const data = await new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/Compras/CompararNumerosDeLote', // Ruta relativa al controlador y la acción
+                type: 'GET',
+                data: { NumeroLote: numeroLote}, // Asegúrate de que el nombre del parámetro coincida
+                success: function (data) {
+                    resolve(data);
+                },
+                error: function () {
+                    alert('Error al verificar el número de lote.');
+                    reject(null);
+                }
+            });
+        });
+        return data;
+    } catch (error) {
+        alert(error.message);
+        return null;
+    }
+}
+
+/*----------------------------------------- Filtros --------------------------------------------------------------------------------------------*/
+
+async function filtrarxCategoria() {
+    try {
+        // Obtener el valor del input y el ícono de limpieza
+        const inputElement = document.getElementById('filtroPxC');
+        const iconoequis = document.getElementById('compraFiltrarPorCategoria');
+
+        await procesarSeleccion(inputElement, iconoequis);
+        
+    } catch (error) {
+        console.error('Error en filtrarxCategoria:', error);
+    }
+}
+async function procesarSeleccion(inputElement, iconoequis) {
+    try {
+        if (inputElement.value.length == 0) {
+            limpiarFiltroCategoriaCompra();
+            return;
+        }
+        // Obtener todas las opciones del datalist
+        const options = document.querySelectorAll('#categorias option');
+
+        // Buscar la opción que coincide con el valor del input
+        let selectedOption = null;
+        options.forEach(option => {
+            if (option.value === inputElement.value) {
+                selectedOption = option;
+            }
+        });
+        // Si se encuentra la opción seleccionada, obtener el data-id y realizar la llamada fetch
+        if (selectedOption) {
+            var filtrocompraxCategoriaActivo = true;
+            localStorage.setItem('filtrocompraxCategoriaActivo', filtrocompraxCategoriaActivo); // Guardar la variable en el Local Storage
+            inputElement.classList.remove('campoBad'); // Remueve la clase 'campoBad' si se encuentra la opción
+            inputElement.classList.add('campoGood'); // Remueve la clase 'campoBad' si se encuentra la opción
+            iconoequis.classList.remove('noBe'); // Muestra el ícono de limpieza si se encuentra la opción
+            const filtrar = selectedOption.getAttribute('data-id');
+            let url = `/Compras/filtrarxCategoria/${filtrar}`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Error al cargar los productos');
+            }
+            const data = await response.json();
+
+            fillList('#productos', data.producto, { ID: 'productoId', Nombre: 'nombreCompletoProducto', Cantidad: 'cantidadPorPresentacion' }, 'No hay productos disponibles','productosCompra');
+            fillList('#unidades', data.unidad, { ID: 'unidadId', Nombre: 'nombreCompletoUnidad', Cantidad: 'cantidadPorUnidad' }, 'No hay unidades disponibles','unidadesCompra');
+        } else {
+            let miVariableRecuperada = localStorage.getItem('filtrocompraxCategoriaActivo');
+            if (miVariableRecuperada == null) {
+                inputElement.classList.add('campoBad'); // Remueve la clase 'campoBad' si se encuentra la opción
+                iconoequis.classList.remove('noBe'); // Muestra el ícono de limpieza si se encuentra la opción
+            }
+        }
+    } catch (error) {
+        console.error('Error en procesarSeleccion:', error);
+    }
+}
+
+async function limpiarFiltroCategoriaCompra() {
+    try {
+        // Obtiene el elemento input por su ID
+        var inputElement = document.getElementById('filtroPxC');
+        if (inputElement) {
+            // Restablece el valor del input a vacío
+            inputElement.value = '';
+            inputElement.classList.remove('campoBad'); // Remueve la clase 'campoBad' si se encuentra la opción
+            inputElement.classList.remove('campoGood'); // Remueve la clase 'campoBad' si se encuentra la opción
+
+        }
+
+        await limpiarDatalist();
+
+
+        // Obtiene el ícono de limpieza y lo oculta
+        var iconoLimpiar = document.getElementById('compraFiltrarPorCategoria');
+        if (iconoLimpiar) {
+            iconoLimpiar.classList.add('noBe');
+        }
+
+    } catch (error) {
+        console.error('Error en limpiarFiltroCategoriaCompra:', error);
+    }
+}
+async function limpiarDatalist() {
+    try {
+
+        let miVariableRecuperada = localStorage.getItem('filtrocompraxCategoriaActivo');
+        // Compara la variable recuperada con la cadena 'true'
+        if (miVariableRecuperada === 'true') {
+            // Eliminar la variable del Local Storage
+            localStorage.removeItem('filtrocompraxCategoriaActivo');
+            // Realiza la llamada fetch para limpiar el filtro
+            let url = `/Compras/filtrarxCategoria/0`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Error al cargar los productos');
+            }
+            const data = await response.json();
+            fillList('#productos', data.producto, { ID: 'productoId', Nombre: 'nombreCompletoProducto', Cantidad: 'cantidadPorPresentacion' }, 'No hay productos disponibles', 'productosCompra');
+            fillList('#unidades', data.unidad, { ID: 'unidadId', Nombre: 'nombreCompletoUnidad', Cantidad: 'cantidadPorUnidad' }, 'No hay unidades disponibles', 'unidadesCompra');
+        }
+       
+    } catch (error) {
+        console.error('Error en limpiarDatalist:', error);
+    }
+}
+
+async function filtrarxUnidadesxProducto() {
+    try {
+        var productoId = $('#ProductoIdHidden').val();
+        if ($('#checkboxUnidadesxProducto').prop('checked')) {
+            if (productoId.length > 0) {
+                var miVariable = true;
+                localStorage.setItem('filtrocompraUnidadesxProducto', miVariable);
+                filtrarDatalistxUnidadesxProducto();
+            } else {
+                var miVariable = false;
+                localStorage.setItem('filtrocompraUnidadesxProducto', miVariable);
+                filtrarDatalistxUnidadesxProducto();
+            }
+        } else {
+            var miVariable = false;
+            localStorage.setItem('filtrocompraUnidadesxProducto', miVariable);
+            filtrarDatalistxUnidadesxProducto();
+        }
+    } catch (error) {
+        console.error('Error en filtrarxUnidadesxProducto:', error);
+    }
+}
+async function filtrarDatalistxUnidadesxProducto() {    
+    let miVariableRecuperada = localStorage.getItem('filtrocompraUnidadesxProducto');
+    var productoId = $('#ProductoIdHidden').val();
+
+    // Compara la variable recuperada con la cadena 'true'
+    if (miVariableRecuperada === 'true' && productoId.length >= 1) {
+        let url = `/Compras/filtrarUnidadesxProductoDatalist/${productoId}`;
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al cargar los productos');
+            }
+
+            const data = await response.json();
+            fillList('#unidades', data.unidad, { ID: 'unidadId', Nombre: 'nombreCompletoUnidad', Cantidad: 'cantidadPorUnidad' }, 'No hay unidades disponibles', 'unidadesCompra');
+
+        } catch (error) {
+            console.error('Error en filtrarDatalistxUnidadesxProducto:', error);
+        }
+    }
+    else {
+        let url = `/Compras/filtrarUnidadesxProductoDatalist/0`;
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al cargar los productos');
+            }
+
+            const data = await response.json();
+            fillList('#unidades', data.unidad, { ID: 'unidadId', Nombre: 'nombreCompletoUnidad', Cantidad: 'cantidadPorUnidad' }, 'No hay unidades disponibles', 'unidadesCompra');
+
+        } catch (error) {
+            console.error('Error en filtrarDatalistxUnidadesxProducto:', error);
+        }
+    }
+    
+
+}
