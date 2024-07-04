@@ -1,6 +1,6 @@
 ﻿// Crear el Objeto de compra vacio
 var compra = {
-        CompraId:0,
+        compraId:0,
         proveedorId: 0,
         numeroFactura: 0,
         fechaCompra: new Date().toISOString(), // Obtener la fecha actual en formato ISO
@@ -11,9 +11,11 @@ var compra = {
 
 
  //Se Usa Para verificar que el cliente no cambie los campos antes de agregar el detalle  
-var verificarProducto = "";
+var verificarProducto = 0;
+var verificarUnidad = 0;
+var verificarCantidad = 0;
+var verificarPrecioCompra= 0;
 var ganancia = ""; 
-var verificarUnidad = "";
 
 //Se usa para dar un tiempo antes de la signacion del id al nombre especifico en los datalist
 let timeout ;
@@ -24,11 +26,13 @@ var contador = 0;
 
 //Capturar el nombre del producto para agregar al detalle de tabla ;)
 var nombreProducto = "";
-
+let idContador = 1;
 // Función para envia la compra al controlador para ser procesada y registrada
 function RegistrarBuy() {
+    var valorTotalCompra = document.getElementById('ValorTotal').value;
+    valorTotalCompra = valorTotalCompra.replace(/\./g, ''); // Elimina todos los puntos
+    compra.valorTotalCompra = valorTotalCompra;
     console.log(compra);
-    alert('Mirala');
     // Verifica si hay al menos un detalle de compra
     if (compra.detallecompras.length === 0) {
         Swal.fire({
@@ -55,6 +59,7 @@ function RegistrarBuy() {
     }).then((result) => {
         if (result.isConfirmed) {
             // Si el usuario confirma, enviar la solicitud POST al servidor utilizando AJAX
+            localStorage.removeItem('numerosLote');
             $.ajax({
                 url: '/Compras/InsertarCompra',
                 type: 'POST',
@@ -80,19 +85,22 @@ function RegistrarBuy() {
                         position: "center",
                         icon: 'error',
                         title: 'Error',
-                        text: 'Error en al registrar la compra. Por favor, inténtalo de nuevo más tarde.',
+                        text: 'Error al registrar la compra. Por favor, inténtalo de nuevo más tarde.',
                         showConfirmButton: false,
                         timer: 3000
                     });
+                    // Devolver el objeto compra a la vista
+                    console.log(compra);
                 }
             });
         }
+
     });
 }
 
 
 // Función para llenar la compra correctamnete antes y abrir la modal para agregar productos a la compra
-function agregarProductos() {
+async function agregarProductos() {
     // Obtener los valores de los campos del formulario
     var proveedorId = document.getElementById('ProveedorIdHidden').value;
     var numeroFactura = document.getElementById('NumeroFactura').value;
@@ -123,16 +131,23 @@ function agregarProductos() {
 
         }
     }
+    var respuesta = await verificarNumeroFactura(numeroFactura);
+    if (respuesta !== null) {
+        if (respuesta == "ok") {
+            // Actualizar los valores del objeto compra
+            compra.proveedorId = proveedorId;
+            compra.numeroFactura = numeroFactura;
+            compra.fechaCompra = fechaCompra;
+            botonAgregar.classList.add('noBe'); // Remover clase is-invalid
+            $('#ModalDetallesCompra').modal('show');
+            $('#ModalCompra').modal('hide');
+            var opcionesCambiarDatosCompra = document.getElementById('opcinesCambiarDatosCompra');
+            opcionesCambiarDatosCompra.classList.remove('noSee'); // Remover clase is-invalid
+        } else {
+            mostrarAlertaAtencionPersonalizadaConBoton("Este numero de factura ya esta registrado usa otro");
+        }
+    }
 
-    // Actualizar los valores del objeto compra
-    compra.proveedorId = proveedorId;
-    compra.numeroFactura = numeroFactura;
-    compra.fechaCompra = fechaCompra;
-    botonAgregar.classList.add('noBe'); // Remover clase is-invalid
-    $('#ModalDetallesCompra').modal('show');
-    $('#ModalCompra').modal('hide');
-    var opcionesCambiarDatosCompra = document.getElementById('opcinesCambiarDatosCompra');
-    opcionesCambiarDatosCompra.classList.remove('noSee'); // Remover clase is-invalid
 
 }
 
@@ -155,11 +170,11 @@ async function actualizarCompra() {
                 compra.proveedorId = proveedorId;
                 compra.numeroFactura = numeroFactura;
                 compra.fechaCompra = fechaCompra;
-                alert('Compra actualizada');
+                mostrarAlertaAllGood('Datos de compra actualizados.');
                 $('#ModalCompra').modal('hide');
                 $('#ModalDetallesCompra').modal('show');
             } else {
-                alert("Este numero de factura ya esta registrado usa otro");
+                mostrarAlertaAtencionPersonalizadaConBoton("Este número de factura ya esta registrado usa otro");
             }
         }
     }
@@ -169,42 +184,52 @@ async function actualizarCompra() {
 
 /*-------------------------------------------------------------------------------------------------------------------------------------*/
 // Función para agregar un detalle de compra al objeto principal
-// Función para agregar un detalle de compra al objeto principal
-function agregarDetalleCompraend(objeto) {
-    nombreProducto = document.getElementById('NombreProducto').value;
-    var detalleCompra = {
-        productoId: objeto.productoId,
-        compraId: 0,
-        unidadId: objeto.unidadId,
-        cantidad: objeto.cantidadUnidad,
-        lotes: [] // Inicialmente sin lotes
-    };
+async function agregarDetalleCompraend(objeto) {
+    if (isNaN(objeto.precioVentaxPresentacion) || isNaN(objeto.precioCompraxPresentacion)) {
+        objeto.precioVentaxPresentacion = 0;
+        objeto.precioCompraxPresentacion = 0;
+    }
+    nombreProducto = document.getElementById('NombreProducto').value; 
 
-    // Aquí es donde se crea el detalle de compra después de la validación del cliente
-    var nuevoLote = {
-        productoId: objeto.productoId,
-        detalleCompraId: 0,
-        numeroLote: objeto.numeroLote,
-        precioCompra: objeto.precioCompra,
-        precioPorUnidad: objeto.precioVentaxUnidad,
-        precioPorPresentacion: objeto.precioVentaxPresentacion,
-        precioPorUnidadProducto: objeto.precioVentaxUnidadPresentacion,
-        precioPorUnidadCompra: objeto.precioCompraxUnidad,
-        precioPorPresentacionCompra: objeto.precioCompraxPresentacion,
-        precioPorUnidadProductoCompra: objeto.precioCompraxUnidadPresentacion,
-        fechaVencimiento: objeto.fechaVencimiento,
-        cantidad: objeto.cantidad,
-        cantidadCompra: objeto.cantidadCompra,
-        cantidadPorUnidad: objeto.cantidadPorUnidad,
-        cantidadPorUnidadCompra: objeto.cantidadPorUnidadCompra,
-        estadoLote: 1 // Estado por defecto
-    };
-    console.log(nuevoLote);
+    var loteValido = await agregarNumeroLote(objeto.numeroLote);
+  
+    if (loteValido === true) {
+        var detalleCompra = {
+            productoId: objeto.productoId,
+            compraId: 0,
+            unidadId: objeto.unidadId,
+            cantidad: objeto.cantidadUnidad,
+            lotes: [] // Inicialmente sin lotes
+        };
 
-    detalleCompra.lotes.push(nuevoLote);
-    compra.detallecompras.push(detalleCompra);
-    LimpiarFormulario();
-    agregarFilaDetalle(detalleCompra); // Llama a la función para agregar la fila de detalle a la tabla
+        // Aquí es donde se crea el detalle de compra después de la validación del cliente
+        var nuevoLote = {
+            productoId: objeto.productoId,
+            detalleCompraId: 0,
+            numeroLote: objeto.numeroLote,
+            precioCompra: objeto.precioCompra,
+            precioPorUnidad: objeto.precioVentaxUnidad,
+            precioPorPresentacion: objeto.precioVentaxPresentacion,
+            precioPorUnidadProducto: objeto.precioVentaxUnidadPresentacion,
+            precioPorUnidadCompra: objeto.precioCompraxUnidad,
+            precioPorPresentacionCompra: objeto.precioCompraxPresentacion,
+            precioPorUnidadProductoCompra: objeto.precioCompraxUnidadPresentacion,
+            fechaVencimiento: objeto.fechaVencimiento,
+            cantidad: objeto.cantidad,
+            cantidadCompra: objeto.cantidadCompra,
+            cantidadPorUnidad: objeto.cantidadPorUnidad,
+            cantidadPorUnidadCompra: objeto.cantidadPorUnidadCompra,
+            estadoLote: 1 // Estado por defecto
+        };
+
+        detalleCompra.lotes.push(nuevoLote);
+        compra.detallecompras.push(detalleCompra);
+        LimpiarFormulario();
+        agregarFilaDetalle(detalleCompra); // Llama a la función para agregar la fila de detalle a la tabla
+    } else {
+        mostrarAlertaAtencionPersonalizadaConBoton('Este número de lote ya existe. Por favor, ingresa uno diferente.');
+    }
+    
 }
 
 // Función para procesar y pasar el objeto detalle para ser añadido al objeto compra principal
@@ -212,9 +237,34 @@ function agregarDetalleCompra() {
     // Obtener valores de los campos para crear el objeto
     var unidad = document.getElementById('UnidadIdHidden').value;
     var productoId = document.getElementById('ProductoIdHidden').value;
-    var porcentajeAGanar = document.getElementById('PorcentajeGanancia').value;
-    verificarUnidad = unidad;
+    var cantidad = document.getElementById('Cantidad').value;
+    var precioCompraEnd = document.getElementById('PrecioDeCompra').value;
 
+
+    // Validar los campos obligatorios y las condiciones necesarias antes de empezar a hacer calculos para agregar el detalle de compra
+    if (productoId != verificarProducto) {
+        mostrarAlertaAtencionPersonalizadaConBoton('¡Atención! Parece que has modificado el campo de producto. Por favor, asegúrate de realizar de nuevo el cálculo.');
+        noVerCalculo();
+        return;
+    }
+    
+    if (unidad != verificarUnidad) {
+        mostrarAlertaAtencionPersonalizadaConBoton('¡Atención! Parece que has modificado el campo de unidad. Por favor, asegúrate de realizar de nuevo el cálculo.');
+        noVerCalculo();
+        return;
+    }
+
+    if (cantidad != verificarCantidad) {
+        mostrarAlertaAtencionPersonalizadaConBoton('¡Atención! Parece que has modificado el campo de cantidad. Por favor, asegúrate de realizar de nuevo el cálculo.');
+        noVerCalculo();
+        return;
+    }
+    if (precioCompraEnd != verificarPrecioCompra) {
+        mostrarAlertaAtencionPersonalizadaConBoton('¡Atención! Parece que has modificado el campo de precio de compra. Por favor, asegúrate de realizar de nuevo el cálculo.');
+        noVerCalculo();
+        return;
+    }
+    var porcentajeAGanar = document.getElementById('PorcentajeGanancia').value;
     // Obtener valores necesarios para realizar los calculos
     var numeroLote = document.getElementById('NumeroLote').value;
     var precioCompra = parseFloat(document.getElementById('PrecioDeCompra').value.replace(/[\.,]/g, ''));
@@ -228,11 +278,17 @@ function agregarDetalleCompra() {
 
     var cantidadPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
     var cantidadUnidad = document.getElementById('CantidadPorUnidad').value;
-    var cantidad = document.getElementById('Cantidad').value;
 
     var cantidadTotalPorPresentacion = cantidad * cantidadUnidad;
     var cantidadTotalPorUnidad = (cantidad * cantidadUnidad) * cantidadPresentacion;
+    
+    if(unidad == 2){
+        cantidadTotalPorUnidad = cantidadTotalPorPresentacion;
+        cantidadTotalPorPresentacion = 0;
+    }
+
     var fechaVencimiento = document.getElementById('FechaVencimiento').value;
+
 
     var todolleno = $('.Mensaje').filter(function () {
         return $(this).text() !== '';
@@ -242,35 +298,6 @@ function agregarDetalleCompra() {
     if (!fechaVencimiento || isNaN(new Date(fechaVencimiento))) {
         // Si la fecha no es de tipo date time o es nula, establecerla en '2000-01-01'
         fechaVencimiento = '2000-01-01';
-    }
-    // Validar los campos obligatorios y las condiciones necesarias antes de agregar el detalle de compra
-    if (productoId != verificarProducto) {
-        mostrarAlertaAtencionPersonalizadaConBoton('¡Atención! Parece que has modificado el campo de producto. Por favor, asegúrate de realizar de nuevo el cálculo.');
-        noVerCalculo();
-        return;
-    }
-    if (unidad != verificarUnidad) {
-        mostrarAlertaAtencionPersonalizadaConBoton('¡Atención! Parece que has modificado el campo de unidad. Por favor, asegúrate de realizar de nuevo el cálculo.');
-        noVerCalculo();
-        return;
-    }
-    // Validar los campos obligatorios y las condiciones necesarias antes de agregar el detalle de compra
-    if (productoId != verificarProducto) {
-        mostrarAlertaAtencionPersonalizadaConBoton('¡Atención! Parece que has modificado el campo de producto. Por favor, asegúrate de realizar de nuevo el cálculo.');
-        noVerCalculo();
-        return;
-    }
-    var diferencia = Math.abs(precioCompra - (precioCompraUnidad * cantidad));
-    if (diferencia > 10) {
-        mostrarAlertaAtencionPersonalizadaConBoton('Has modificado un campo, por favor has click de nuevo en el boton calcular');
-        noVerCalculo();
-        return;
-    }
-    var diferenciaTwo = Math.abs(precioCompraUnidad - (precioCompraPorProducto * cantidadUnidad));
-    if (diferenciaTwo > 10) {
-        mostrarAlertaAtencionPersonalizadaConBoton('¡Atención! Parece que has modificado el campo de unidad. Por favor, asegúrate de dar click de nuevo en  el boton de  cálcular.');
-        noVerCalculo();
-        return;
     }
 
     let mensajeAlerta = ``; // Inicializar la variable mensajeAlerta fuera del bloque if
@@ -504,40 +531,42 @@ function agregarDetalleCompra() {
     else if (todolleno) {
         // Mostrar la alerta con SweetAlert para confirmar la acción del usuario
         let mensajeAlerta = `<div id="divAlerta"><strong>Estás esperando ganancias por:</strong><ul>`;
-        if (precioVentaxUnidad >= precioCompraUnidad) {
-            let diferenciaUnidad = precioVentaxUnidad - precioCompraUnidad;
-            let gananciaUnidad = Math.abs(diferenciaUnidad);
-            let gananciaUnidadConPuntos = gananciaUnidad.toLocaleString('es-ES');
-            let porcentajeGanancia = Math.round((gananciaUnidad / precioCompraUnidad) * 100);
-            mensajeAlerta += `<li>x Unidad: <br/> ${gananciaUnidadConPuntos} o ${porcentajeGanancia}%</li>`;
-        }
-        if (cantidadPresentacion > 1) {
-            if (precioVentaxPresentacion > precioVentaxUnidadPresentacion) {
-
-                if (precioVentaxPresentacion > precioCompraPorProducto) {
-                    let diferenciaProducto = precioVentaxPresentacion - precioCompraPorProducto;
-                    let gananciaProducto = Math.abs(diferenciaProducto);
-                    let gananciaProductoConPuntos = gananciaProducto.toLocaleString('es-ES');
-                    let porcentajeGanancia = Math.round((gananciaProducto / precioCompraPorProducto) * 100);
-                    mensajeAlerta += `<li>x Producto: <br/> ${gananciaProductoConPuntos} o ${porcentajeGanancia}%</li>`;
-                }
-
-                if (precioVentaxUnidadPresentacion > PrecioDeCompraUnitario) {
+       
+        if (cantidadPresentacion > 1 && unidad == 2) {
+                if (precioVentaxUnidadPresentacion >= PrecioDeCompraUnitario) {
                     let diferenciaUnidadProducto = precioVentaxUnidadPresentacion - PrecioDeCompraUnitario;
                     let gananciaUnidadProducto = Math.abs(diferenciaUnidadProducto);
                     let gananciaUnidadProductoConPuntos = gananciaUnidadProducto.toLocaleString('es-ES');
                     let porcentajeGananciaProducto = Math.round((gananciaUnidadProducto / PrecioDeCompraUnitario) * 100);
                     mensajeAlerta += `<li>x Unidad de Producto: <br/> ${gananciaUnidadProductoConPuntos} o ${porcentajeGananciaProducto}%</li>`;
                 }
-            }
         }
         else {
-            let diferenciaProducto = precioVentaxPresentacion - precioCompraPorProducto;
-            let gananciaProducto = Math.abs(diferenciaProducto);
-            let gananciaProductoConPuntos = gananciaProducto.toLocaleString('es-ES');
-            let porcentajeGanancia = Math.round((gananciaProducto / precioCompraPorProducto) * 100);
-            mensajeAlerta += `<li>x Producto: <br/> ${gananciaProductoConPuntos} o ${porcentajeGanancia}%  </li>`;
-
+            if (precioVentaxUnidad != precioVentaxPresentacion) {
+                if (precioVentaxUnidad > precioCompraUnidad) {
+                    let diferenciaUnidad = precioVentaxUnidad - precioCompraUnidad;
+                    let gananciaUnidad = Math.abs(diferenciaUnidad);
+                    let gananciaUnidadConPuntos = gananciaUnidad.toLocaleString('es-ES');
+                    let porcentajeGanancia = Math.round((gananciaUnidad / precioCompraUnidad) * 100);
+                    mensajeAlerta += `<li>x Unidad: <br/> ${gananciaUnidadConPuntos} o ${porcentajeGanancia}%</li>`;
+                }
+                if (precioVentaxPresentacion >= precioCompraPorProducto) {
+                    let diferenciaProducto = precioVentaxPresentacion - precioCompraPorProducto;
+                    let gananciaProducto = Math.abs(diferenciaProducto);
+                    let gananciaProductoConPuntos = gananciaProducto.toLocaleString('es-ES');
+                    let porcentajeGanancia = Math.round((gananciaProducto / precioCompraPorProducto) * 100);
+                    mensajeAlerta += `<li>x Producto: <br/> ${gananciaProductoConPuntos} o ${porcentajeGanancia}%  </li>`;
+                }
+            } else {
+                if (precioVentaxPresentacion >= precioCompraPorProducto) {
+                    let diferenciaProducto = precioVentaxPresentacion - precioCompraPorProducto;
+                    let gananciaProducto = Math.abs(diferenciaProducto);
+                    let gananciaProductoConPuntos = gananciaProducto.toLocaleString('es-ES');
+                    let porcentajeGanancia = Math.round((gananciaProducto / precioCompraPorProducto) * 100);
+                    mensajeAlerta += `<li>x Producto: <br/> ${gananciaProductoConPuntos} o ${porcentajeGanancia}%  </li>`;
+                }
+            }
+            
         }
         mensajeAlerta += "</ul></div>";
         // Mostrar la alerta con SweetAlert
@@ -766,11 +795,13 @@ function agregarFilaDetalle(detalleCompra) {
     cellSubtotal.innerHTML = ultimoLote.precioCompra;
     cellAcciones.innerHTML = '<button onclick="eliminarFilaDetalle(this)">Eliminar</button>';
 
+
     // Verifica si es necesario que se vea o no el paginado
     verificarPaginado();
 
     // Actualizar el valor total
     actualizarValorTotal();
+    actualizarIndicesTabla();
 
     // Cambiar a la página 2 (o cualquier otra lógica de paginación que tengas)
     cambiarPagina(2);
@@ -780,9 +811,11 @@ function agregarFilaDetalle(detalleCompra) {
 function eliminarFilaDetalle(button) {
     var row = button.parentNode.parentNode; // Obtener la fila de la tabla
     var indice = row.getAttribute('data-indice'); // Obtener el índice de la fila
-
     // Obtener el detalle de compra a eliminar
     var detalleEliminado = compra.detallecompras[indice];
+    var lote = detalleEliminado.lotes;
+
+    eliminarNumeroLote(lote[0].numeroLote);
 
     // Eliminar el detalle de compra del objeto compra
     compra.detallecompras.splice(indice, 1);
@@ -797,6 +830,7 @@ function eliminarFilaDetalle(button) {
     // Eliminar la fila de la tabla
     row.remove();
 
+
     //verifica si es necesario que se vea u no el paginado
     verificarPaginado() 
     // Actualizar los índices de las filas restantes en la tabla
@@ -810,11 +844,11 @@ function eliminarFilaDetalle(button) {
 function actualizarIndicesTabla() {
     // Obtener todas las filas de la tabla
     var filas = document.querySelectorAll('#detalleTableBody tr');
-
     // Recorrer las filas y actualizar el atributo data-indice
     filas.forEach(function (fila, index) {
         fila.setAttribute('data-indice', index);
     });
+
 }
 
 // Función para actualizar una fila de detalle existente con los nuevos datos
@@ -831,7 +865,7 @@ function actualizarFilaDetalle(detalleCompra, indice) {
 }
 
 // Función para calcular y actualizar el valor total
-function actualizarValorTotal() {
+async function actualizarValorTotal() {
     var total = 0;
     // Obtener todas las filas de la tabla
     var filas = document.querySelectorAll('#detalleTableBody tr');
@@ -840,7 +874,7 @@ function actualizarValorTotal() {
         var subtotal = parseFloat(fila.cells[3].innerHTML);
         total += subtotal;
     });
-    // Asignar el total al elemento con el id 'ValorTotal'
+    total = await formatNumber(total);
     document.getElementById('ValorTotal').value = total;
 }
 
@@ -922,21 +956,6 @@ function verOpcionesAgregadas() {
     });
 }
 function noVerOpcionesAgregadas() {
-    // Asegúrate de que el elemento con el ID 'filtroPxC' existe antes de modificar su valor
-    if ($('#filtroPxC').length) {
-        $('#filtroPxC').val('');
-    }
-    // Llamar a la función filtrarxCategoria
-    filtrarxCategoria();
-    // Asegúrate de que el elemento con el ID 'checkboxUnidadesxProducto' existe antes de operar sobre él
-    if ($('#checkboxUnidadesxProducto').length) {
-        // Verifica si el checkbox está marcado y, si es así, simula un clic en él
-        if ($('#checkboxUnidadesxProducto').prop('checked')) {
-            $('#checkboxUnidadesxProducto').trigger('click');
-        } else {
-            filtrarxUnidadesxProducto();
-        }
-    }
     const button = document.getElementById('noOpcionesAgregadas');
     button.onclick = verOpcionesAgregadas;
     button.innerHTML = '<i class="fas fa-plus"></i>';
@@ -1071,21 +1090,23 @@ function detenerIntervalo() {
 /*-----------------------------------------Calculos--------------------------------------------------------------------------------------------*/
 
 function calcularPreciosCompra() {
-    const productoId = document.getElementById('ProductoIdHidden').value;
-    const porcentajeAGanarConPuntos = document.getElementById('PorcentajeGanancia').value;
-    ganancia = porcentajeAGanarConPuntos;
-    verificarProducto = productoId;
-    const cantidad = document.getElementById('Cantidad').value;
-    const precioCompraConPuntos = document.getElementById('PrecioDeCompra').value;
-    const unidad = document.getElementById('CantidadPorUnidad').value;
-    const cantidadPorPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
-
-    const producto = document.getElementById('NombreProducto').value;
-    const unidadId = document.getElementById('UnidadIdHidden').value;
-    const datalist = [
+    var productoId = document.getElementById('ProductoIdHidden').value;
+    var porcentajeAGanarConPuntos = document.getElementById('PorcentajeGanancia').value;
+    var cantidad = document.getElementById('Cantidad').value;
+    var precioCompraConPuntos = document.getElementById('PrecioDeCompra').value;
+    var unidad = document.getElementById('CantidadPorUnidad').value;
+    var nombreUnidad = document.getElementById('NombreUnidad').value;
+    var cantidadPorPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
+    var producto = document.getElementById('NombreProducto').value;
+    var unidadId = document.getElementById('UnidadIdHidden').value;
+    var datalist = [
         { id: 'UnidadIdHidden', nombre: 'Unidad' },
         { id: 'ProductoIdHidden', nombre: 'Producto' },
     ];
+    verificarProducto = productoId;
+    verificarUnidad = unidadId;
+    verificarPrecioCompra = precioCompraConPuntos;
+    verificarCantidad = cantidad;
     // Verificar si los campos requeridos están completos
     if (
         precioCompraConPuntos === '' ||
@@ -1114,10 +1135,15 @@ function calcularPreciosCompra() {
         preventDefault();
         return;
     }
+    if (unidadId == 2 && cantidadPorPresentacion < 2) {
+        mostrarAlertaAtencionPersonalizadaConBoton(`Este producto no se puede comprar por la unidad: ${nombreUnidad}.`);
+        noVerCalculo();
+        return;
+    }
 
-    const precioCompra = parseFloat(precioCompraConPuntos.replace(/\./g, ''));
-    const porcentajeAGanar = parseFloat(porcentajeAGanarConPuntos.replace(/\./g, ''));
-
+    var precioCompra = parseFloat(precioCompraConPuntos.replace(/\./g, ''));
+    var porcentajeAGanar = parseFloat(porcentajeAGanarConPuntos.replace(/\./g, ''));
+    ganancia = porcentajeAGanarConPuntos;
     if (isNaN(precioCompra) || isNaN(porcentajeAGanar)) {
         mostrarAlertaAtencionPersonalizadaConBoton('El precio de compra y el porcentaje a ganar deben ser números válidos.');
         noVerCalculo();
@@ -1125,35 +1151,50 @@ function calcularPreciosCompra() {
     }
 
     /* Precio por unidad*/
-    const precioPorUnidadIndividualSinPuntos = precioCompra / cantidad;
+    var precioPorUnidadIndividualSinPuntos = precioCompra / cantidad;
 
     /* Precio por producto*/
-    const cantidadUnitariaPorPresentacionSinPuntos = precioCompra / (unidad * cantidad);
+    var cantidadUnitariaPorPresentacionSinPuntos = precioCompra / (unidad * cantidad);
     // Precio por unidad de producto
-    const precioIndividualUnitarioSinPuntos = (precioCompra / unidad) / (cantidadPorPresentacion * cantidad);
+    var precioIndividualUnitarioSinPuntos = (precioCompra / unidad) / (cantidadPorPresentacion * cantidad);
 
     /* Precio venta por unidad*/
-    const precioVentaIndividualUnitarioSinPuntos = precioPorUnidadIndividualSinPuntos + (precioPorUnidadIndividualSinPuntos * porcentajeAGanar / 100);
+    var precioVentaIndividualUnitarioSinPuntos = precioPorUnidadIndividualSinPuntos + (precioPorUnidadIndividualSinPuntos * porcentajeAGanar / 100);
     /* Precio venta por producto*/
-    const precioVentaPorPresentacionSinPuntos = cantidadUnitariaPorPresentacionSinPuntos + (cantidadUnitariaPorPresentacionSinPuntos * porcentajeAGanar / 100);
+    var precioVentaPorPresentacionSinPuntos = cantidadUnitariaPorPresentacionSinPuntos + (cantidadUnitariaPorPresentacionSinPuntos * porcentajeAGanar / 100);
     // Precio venta por unidad de producto
-    const precioVentaPorUnidadDeProducto = precioIndividualUnitarioSinPuntos + (precioIndividualUnitarioSinPuntos * porcentajeAGanar / 100);
+    var precioVentaPorUnidadDeProducto = precioIndividualUnitarioSinPuntos + (precioIndividualUnitarioSinPuntos * porcentajeAGanar / 100);
 
-    const precioIndividualUnitario = formatNumber(Math.round(precioIndividualUnitarioSinPuntos));
-    const cantidadUnitariaPorPresentacion = formatNumber(Math.round(cantidadUnitariaPorPresentacionSinPuntos));
-    const precioPorUnidad = formatNumber(Math.round(precioPorUnidadIndividualSinPuntos));
+    var precioIndividualUnitario = formatNumber(Math.round(precioIndividualUnitarioSinPuntos));
+    var cantidadUnitariaPorPresentacion = formatNumber(Math.round(cantidadUnitariaPorPresentacionSinPuntos));
+    var precioPorUnidad = formatNumber(Math.round(precioPorUnidadIndividualSinPuntos));
 
-    const precioVentaPorUnidad = formatNumber(Math.round(precioVentaIndividualUnitarioSinPuntos));
-    const precioVentaPorProducto = formatNumber(Math.round(precioVentaPorPresentacionSinPuntos));
-    const precioVentaIndividualUnitario = formatNumber(Math.round(precioVentaPorUnidadDeProducto));
+    var precioVentaPorUnidad = formatNumber(Math.round(precioVentaIndividualUnitarioSinPuntos));
+    var precioVentaPorProducto = formatNumber(Math.round(precioVentaPorPresentacionSinPuntos));
+    var precioVentaIndividualUnitario = formatNumber(Math.round(precioVentaPorUnidadDeProducto));
 
     // Mostrar los resultados en los campos correspondientes
-    if (precioPorUnidadIndividualSinPuntos < 100) {
+    if (precioPorUnidadIndividualSinPuntos < 50) {
         mostrarAlertaAtencionPersonalizadaConBoton('El precio de compra es demasiado bajo');
         noVerCalculo();
         return;
     }
+    var PrecioDeVentaUnitario = document.getElementById("PrecioDeVentaUnitario");
 
+    if (unidadId == 2) {
+
+        // Deshabilitar el campo
+        PrecioDeVentaUnitario.disabled = true;
+        // Otros ajustes según la condición
+        var precioIndividualUnitario = precioPorUnidad;
+        var cantidadUnitariaPorPresentacion = "No aplica";
+        var precioVentaIndividualUnitario = precioVentaPorUnidad;
+        var precioVentaPorProducto = "No aplica";
+    } else {
+        // Habilitar el campo
+        PrecioDeVentaUnitario.disabled = false;
+
+    }
     document.getElementById('PrecioDeCompraPorPresentacion').value = cantidadUnitariaPorPresentacion;
     document.getElementById('PrecioDeCompraUnitario').value = precioIndividualUnitario;
     document.getElementById('PrecioDeCompraPorUnidad').value = precioPorUnidad;
@@ -1169,30 +1210,74 @@ function calcularPreciosCompra() {
         var mensaje = mensajes[i];
         mensaje.textContent = ''; // Restaurar mensajes de error
     }
+
     verCalculo();
 
 
     // Aquí puedes realizar cualquier operación adicional con los valores calculados
 
 }
-function calcularPrecioPorUnidad(){
-    // Obtener los valores de los campos
-    const precioVentaxProductoConPuntos = document.getElementById('PrecioDeVentaUnitario').value;
+async function calcularPrecioPorUnidad(input) {
+    var cantidadUnidad = document.getElementById('CantidadPorUnidad').value;
+    var cantidadPorPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
 
-    const precioVentaxProducto = precioVentaxProductoConPuntos.replace(/\./g, '');
+    var precioUnitarioPorPresentacion = 0;
+    var precioPorUnidad = 0;
+    
+    const precioVentaxProducto = input.value.replace(/\./g, '');
 
     // Verificar si los campos requeridos están completos
     if (precioVentaxProducto === '') {
         mostrarAlertaAtencionPersonalizadaConBoton('Ingresa un valor antes para poder hacer el calculo');
         return;
     }
-    const cantidadPorPresentacion = document.getElementById('CantidadPorPresentacionHidden').value;
-    const precioUnitarioPorPresentacion = formatNumber(Math.ceil(precioVentaxProducto / cantidadPorPresentacion));
 
+    if (cantidadUnidad == 1 && cantidadPorPresentacion == 1) {
+        var precioUnitarioPorPresentacion = await formatNumber(Math.ceil(precioVentaxProducto / cantidadPorPresentacion));
+        var precioPorUnidad = precioUnitarioPorPresentacion;
+    }
 
-    document.getElementById('PrecioDeVentaxUnidadPresentacion').value = precioUnitarioPorPresentacion;
+    if (cantidadUnidad > 1 && cantidadPorPresentacion > 1) {
+        var precioUnitarioPorPresentacion = await formatNumber(Math.ceil(precioVentaxProducto / cantidadPorPresentacion));
+        var precioPorUnidad = await formatNumber(Math.ceil(precioVentaxProducto * cantidadUnidad));
+    }
+
+    if (cantidadUnidad > 1 && cantidadPorPresentacion == 1) {
+        var precioUnitarioPorPresentacion = await formatNumber(Math.ceil(precioVentaxProducto / cantidadPorPresentacion));
+        var precioPorUnidad = await formatNumber(Math.ceil(precioVentaxProducto * cantidadUnidad));
+    }
+
+    if(cantidadUnidad == 1 && cantidadPorPresentacion > 1) {
+        var precioUnitarioPorPresentacion = await formatNumber(Math.ceil(precioVentaxProducto / cantidadPorPresentacion));
+        var precioPorUnidad = await formatNumber(Math.ceil(precioVentaxProducto * cantidadUnidad));
+    }
+    simularEscritura('PrecioDeVentaxUnidadPresentacion', precioUnitarioPorPresentacion);
+    simularEscritura('PrecioDeVentaPorUnidad', precioPorUnidad);
 }
 
+function precioUnidadToo(input) {
+    if (input.id === "PrecioDeVentaxUnidadPresentacion") {
+        var precioVentaUnitario = document.getElementById("PrecioDeVentaUnitario");
+        var precioVentaPorUnidad = document.getElementById("PrecioDeVentaPorUnidad");
+
+        if (precioVentaUnitario && precioVentaPorUnidad && precioVentaUnitario.disabled) {
+            precioVentaPorUnidad.value = input.value;
+        }
+    }
+}
+function simularEscritura(elementId, value) {
+    const element = document.getElementById(elementId);
+
+    // Clear any existing value
+    element.value = '';
+
+    // Set the value all at once
+    element.value = value;
+
+    // Create and dispatch the 'input' event
+    const event = new Event('input', { bubbles: true });
+    element.dispatchEvent(event);
+}
 /*-----------------------------------------LIMPIADORES--------------------------------------------------------------------------------------------*/
 
 // Se usa para eliminar todos los detalles de la tabla en la venta modal
@@ -1319,9 +1404,6 @@ function limpiarFormularioTotalmente() {
 
 
 /*-----------------------------------------Validaciones--------------------------------------------------------------------------------------------*/
-
-
-/*Validaciones */
 function validarCampoCompras(input, campo) {
     var valor = input.val().trim();
     var spanError = input.next('.text-danger');
@@ -1546,7 +1628,6 @@ async function procesarSeleccion(inputElement, iconoequis) {
         console.error('Error en procesarSeleccion:', error);
     }
 }
-
 async function limpiarFiltroCategoriaCompra() {
     try {
         // Obtiene el elemento input por su ID
@@ -1600,7 +1681,6 @@ async function limpiarDatalist() {
         console.error('Error en limpiarDatalist:', error);
     }
 }
-
 async function filtrarxUnidadesxProducto() {
     try {
         var productoId = $('#ProductoIdHidden').val();
@@ -1623,13 +1703,40 @@ async function filtrarxUnidadesxProducto() {
         console.error('Error en filtrarxUnidadesxProducto:', error);
     }
 }
-async function filtrarDatalistxUnidadesxProducto() {    
+async function filtrarDatalistxUnidadesxProducto() {
     let miVariableRecuperada = localStorage.getItem('filtrocompraUnidadesxProducto');
     var productoId = $('#ProductoIdHidden').val();
+    var cantidad = $('#CantidadPorPresentacionHidden').val();
 
-    // Compara la variable recuperada con la cadena 'true'
+    // Verifica si `cantidad` es un número antes de usarla
+    if (cantidad !== null && cantidad !== undefined && cantidad.length > 0) {
+        cantidad = parseInt(cantidad);
+    } else {
+        cantidad = null;
+    }
+
     if (miVariableRecuperada === 'true' && productoId.length >= 1) {
-        let url = `/Compras/filtrarUnidadesxProductoDatalist/${productoId}`;
+        let url = `/Compras/filtrarUnidadesxProductoDatalist/${productoId}/${cantidad !== null ? cantidad : ''}`;
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al cargar los productos');
+            }
+
+            const data = await response.json();
+            fillList('#unidades', data.Unidad, { ID: 'unidadId', Nombre: 'nombreCompletoUnidad', Cantidad: 'cantidadPorUnidad' }, 'No hay unidades disponibles', 'unidadesCompra');
+
+        } catch (error) {
+            console.error('Error en filtrarDatalistxUnidadesxProducto:', error);
+        }
+    } else {
+        let url = `/Compras/filtrarUnidadesxProductoDatalist/0/${cantidad !== null ? cantidad : ''}`;
         try {
             const response = await fetch(url, {
                 method: 'GET',
@@ -1649,27 +1756,55 @@ async function filtrarDatalistxUnidadesxProducto() {
             console.error('Error en filtrarDatalistxUnidadesxProducto:', error);
         }
     }
-    else {
-        let url = `/Compras/filtrarUnidadesxProductoDatalist/0`;
-        try {
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Error al cargar los productos');
-            }
-
-            const data = await response.json();
-            fillList('#unidades', data.unidad, { ID: 'unidadId', Nombre: 'nombreCompletoUnidad', Cantidad: 'cantidadPorUnidad' }, 'No hay unidades disponibles', 'unidadesCompra');
-
-        } catch (error) {
-            console.error('Error en filtrarDatalistxUnidadesxProducto:', error);
-        }
-    }
-    
-
 }
+
+
+/*----------------------------------------- LocalStorage --------------------------------------------------------------------------------------------*/
+
+
+
+// Función para agregar un número de lote al array y guardarlo en localStorage
+async function agregarNumeroLote(numeroLote) {
+    // Verificar si ya hay datos en localStorage
+    let numerosLote = JSON.parse(localStorage.getItem('numerosLote')) || [];
+    let loteExistente = await verificarNumeroLote(numeroLote);
+    // Agregar el nuevo número de lote al array si no está presente y loteExistente es "ok"
+    if (!numerosLote.includes(numeroLote) && loteExistente == "ok") {
+        numerosLote.push(numeroLote);
+        localStorage.setItem('numerosLote', JSON.stringify(numerosLote));
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// Función para eliminar un número de lote del array en localStorage
+function eliminarNumeroLote(numeroLote) {
+    let numerosLote = JSON.parse(localStorage.getItem('numerosLote')) || [];
+
+    // Filtrar el array para eliminar el número de lote específico
+    numerosLote = numerosLote.filter(lote => lote !== numeroLote);
+
+    // Actualizar localStorage con el nuevo array filtrado
+    localStorage.setItem('numerosLote', JSON.stringify(numerosLote));
+}
+
+// Función para eliminar el array de números de lote del localStorage
+function eliminarArrayNumerosLote() {
+    localStorage.removeItem('numerosLote');
+}
+
+window.onload = function () {
+    // Verificar si estamos en la vista de compras
+    if (window.location.href.includes('/Compras')) {
+        // Verificar y eliminar filtrocompraUnidadesxProducto si existe en localStorage
+        if (localStorage.getItem('filtrocompraUnidadesxProducto')) {
+            localStorage.removeItem('filtrocompraUnidadesxProducto');
+        }
+
+        // Verificar y eliminar numerosLote si existe en localStorage
+        if (localStorage.getItem('numerosLote')) {
+            localStorage.removeItem('numerosLote');
+        }
+    }
+};

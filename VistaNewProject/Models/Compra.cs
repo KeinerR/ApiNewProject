@@ -15,6 +15,16 @@ namespace VistaNewProject.Models
         public virtual Lote? Lotes { get; set; } = null;
 
     }
+    public class CompraVista
+    {
+        public int CompraId { get; set; }
+        public int? ProveedorId { get; set; }
+        public string? NumeroFactura { get; set; }
+        public string ? FechaCompra { get; set; }
+        public string ? ValorTotalCompra { get; set; }
+        public ulong? EstadoCompra { get; set; }
+
+    }
     public partial class Detallecompra
     {
         public Detallecompra()

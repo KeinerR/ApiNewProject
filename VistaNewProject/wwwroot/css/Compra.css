@@ -78,41 +78,30 @@
     }
 }
 
-
 /*Estilos valor total*/
 #modal-header-ValorTotal-contenedor {
     display: flex; /* Utiliza flexbox para el diseño */
-    align-items: center; /* Alinea verticalmente los elementos */
+    vertical-align:central;
 }
 
-    #modal-header-ValorTotal-contenedor h5, #modal-header-ValorTotal-contenedor input {
-        max-width: 200px;
-        pointer-events: none;
-        user-select: none; /* Evita la selección de texto */
-        font-size: 20px;
-        border-radius: 20px;
-        background: transparent;
-    }
-
-
-    #modal-header-ValorTotal-contenedor h5 {
-        padding-top: 10px;
-        padding-left: 10px;
-    }
-
-    #modal-header-ValorTotal-contenedor input:hover,
-    #modal-header-ValorTotal-contenedor input:focus,
-    #modal-header-ValorTotal-contenedor input:active {
-        /* Estilos para :hover, :focus, :active */
-        /* Aquí puedes dejar los estilos vacíos o como prefieras */
-        /* Ejemplo: */
-        outline: none; /* Quitar el contorno al hacer hover, focus o active */
-    }
-
-#verCompra {
-    display: inline-flex;
-    align-items: center;
+.ValorTotalCompra {
+    outline: none; /* Quitar el contorno al hacer hover, focus o active */
+    pointer-events: none;
+    user-select: none; /* Evita la selección de texto */
+    font-size: 20px;
+    border-radius: 20px;
+    background: transparent;
 }
+
+    .ValorTotalCompraTexto {
+        max-width:50px;
+
+    }
+
+    #verCompra {
+        display: inline-flex;
+        align-items: center;
+    }
 
 .modal-footer-botones {
     width: 100%; /* Establecer el ancho al 100% */

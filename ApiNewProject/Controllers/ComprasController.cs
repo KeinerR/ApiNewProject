@@ -76,7 +76,7 @@ namespace ApiNewProject.Controllers
                 .ToListAsync();
 
             // Verificar si hay más de un lote encontrado
-            bool duplicados = lotes.Count > 1;
+            bool duplicados = lotes.Count >= 1;
 
             // Retornar "error" si hay duplicados, de lo contrario "ok"
             return duplicados ? "error" : "ok";
@@ -92,7 +92,7 @@ namespace ApiNewProject.Controllers
 
             // Verificar si hay duplicados basados en el número de lote
             var duplicados = lotes.GroupBy(l => l.NumeroLote)
-                                   .Any(g => g.Count() > 1);
+                                   .Any(g => g.Count() >= 1);
 
             // Retornar "error" si hay duplicados, de lo contrario "ok"
             return duplicados ? "error" : "ok";
@@ -186,11 +186,24 @@ namespace ApiNewProject.Controllers
                         var producto = await _context.Productos.FindAsync(lote.ProductoId);
                         if (producto != null)
                         {
-                            var result = await _disparador.AddCantidadTotal(lote.ProductoId, lote.Cantidad);
-                            if (result == null)
+                            if (lote.Cantidad == 0)
                             {
-                                return BadRequest($"Error al actualizar la cantidad del producto en stock para el producto ID: {lote.ProductoId}");
+
+                                var result = await _disparador.AddCantidadTotalPorUnidadUnicamente(lote.ProductoId, lote.CantidadPorUnidad);
+                                if (result == null)
+                                {
+                                    return BadRequest($"Error al actualizar la cantidad del producto en stock para el producto ID: {lote.ProductoId}");
+                                }
+
                             }
+                            else {
+                                var result = await _disparador.AddCantidadTotal(lote.ProductoId, lote.Cantidad);
+                                if (result == null)
+                                {
+                                    return BadRequest($"Error al actualizar la cantidad del producto en stock para el producto ID: {lote.ProductoId}");
+                                }
+                            }
+                            
                         }
                         else
                         {
@@ -220,6 +233,7 @@ namespace ApiNewProject.Controllers
         [HttpPut("UpdateCompras")]
         public async Task<ActionResult> UpdateCompras(Compra compra)
         {
+
             var compras = await _context.Compras.FirstOrDefaultAsync(s => s.CompraId == compra.CompraId);
 
             if (compras == null)

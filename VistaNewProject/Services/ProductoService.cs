@@ -1,6 +1,7 @@
 ﻿using VistaNewProject.Services;
 using VistaNewProject.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 public class ProductoService
 {
@@ -111,4 +112,79 @@ public class ProductoService
         return $"{nombreUnidad} x {cantidadPorUnidad}";
     }
 
+    public string FormatearFechaVencimiento(DateTime? fechaVencimiento)
+    {
+        if (fechaVencimiento.HasValue)
+        {
+            DateTime fechaSinHora = fechaVencimiento.Value.Date; // Obtiene solo la fecha sin la hora
+
+            // Formatea la fecha sin la hora en el formato "yyyy/MM/dd"
+            string fechaFormateada = $"{fechaSinHora:yyyy/MM/dd}";
+
+            return fechaFormateada;
+        }
+        else
+        {
+            return string.Empty; // Si la fecha es nula, retorna una cadena vacía o puedes manejarlo de otra manera
+        }
+    }
+
+    public string FormatearPrecio(decimal? precio)
+    {
+        if (precio.HasValue)
+        {
+            string precioFormateado = precio.Value.ToString("#,##0"); // Formatea el precio con puntos de mil
+            return precioFormateado;
+        }
+        else
+        {
+            return string.Empty;
+        }
+    }
+
+
+    public async Task<List<CompraVista>> FormatearComprasAsync(IEnumerable<Compra> compras)
+    {
+        var comprasVista = new List<CompraVista>();
+
+        foreach (var compra in compras)
+        {
+            // Convertir a CompraVista
+            var compraVista = new CompraVista
+            {
+                CompraId = compra.CompraId,
+                ProveedorId = compra.ProveedorId,
+                NumeroFactura = compra.NumeroFactura,
+                FechaCompra = FormatearFechaCompra(compra.FechaCompra), // Asegúrate de definir este método
+                ValorTotalCompra = FormatearPrecio(compra.ValorTotalCompra), // Formato de dos decimales
+                EstadoCompra = compra.EstadoCompra
+            };
+
+            comprasVista.Add(compraVista);
+        }
+        // Simular una operación asíncrona al final del método
+        await Task.Delay(100); // Ejemplo de una operación asíncrona ficticia
+        return comprasVista;
+    }
+
+
+    private string FormatearFechaCompra(DateTime? fechaVencimiento)
+        {
+            if (fechaVencimiento.HasValue)
+            {
+                DateTime fechaSinHora = fechaVencimiento.Value.Date; // Obtiene solo la fecha sin la hora
+
+                // Formatea la fecha sin la hora en el formato "yyyy/MM/dd"
+                string fechaFormateada = $"{fechaSinHora:yyyy/MM/dd}";
+
+                return fechaFormateada;
+            }
+            else
+            {
+                return string.Empty; // Si la fecha es nula, retorna una cadena vacía o puedes manejarlo de otra manera
+            }
+        }
+
+   
 }
+

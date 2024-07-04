@@ -315,13 +315,16 @@ function formatoNumeroINT(input) {
     cleanedValue = cleanedValue.replace(/[^\d]/g, '');
     // Verificar si el valor es cero y reemplazarlo por uno si es necesario
     if (parseInt(cleanedValue, 10) === 0) {
-        cleanedValue = '1';
+        cleanedValue = 1;
     }
     // Formatear el valor con puntos para separar los miles
     const formattedValue = cleanedValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     // Asignar el valor formateado al campo
     input.value = formattedValue;
+
 }
+
+
 
 /*------------------------------------------------------------------------------------------------------------------------------ */
 function buscarCategoria(categoriaId) {
@@ -449,6 +452,17 @@ function mostrarAlertaCampoVacio(campo) {
         timer: 6000
     });
 }
+function mostrarAlertaAllGood(campo) {
+    Swal.fire({
+        position: "center",
+        icon: 'success',
+        title: '\u00A1Atención!',
+        html: `<p>${campo}.</p>`,
+        showConfirmButton: false,
+        timer: 5000 // Cambiado a 3000 para que la alerta desaparezca después de 3 segundos
+    });
+}
+
 function mostrarAlertaCampoVacioPersonalizada(mensaje) {
     Swal.fire({
         position: "center",
@@ -571,7 +585,6 @@ function fillList(selector, data, campos, emptyMessage, Peticion) {
     const $list = $(selector).empty(); // Limpiar la lista antes de rellenarla
     if (data && data.length > 0) {
         if (Peticion == "normal") {
-            alert('here');
             data.forEach(item => {
                 const option = `<option value="${item[campos.Nombre]}" data-id="${item[campos.ID]}"></option>`;
                 $list.append(option);
@@ -580,7 +593,6 @@ function fillList(selector, data, campos, emptyMessage, Peticion) {
         }
         if (Peticion == "productosCompra") {
             data.forEach(item => {
-                alert('here');
                 const option = `<option value="${item[campos.Nombre]}" data-id="${item[campos.ID]}" data-cantidad="${item[campos.Cantidad]}"></option>`;
                 $list.append(option);
             });

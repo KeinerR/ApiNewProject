@@ -387,8 +387,8 @@ namespace ApiNewProject.Controllers
             }
         }
 
-        [HttpPut("SustraerCantidadTotalPorUnidad/{id}")]
-        public async Task<ActionResult> SustraerCantidadTotalPorUnidad(int id, int? cantidad)
+        [HttpPut("SustraerCantidadTotalPorUnidadUnicamente/{id}")]
+        public async Task<ActionResult> SustraerCantidadTotalPorUnidadUnicamente(int id, int? cantidad)
         {
             try
             {
@@ -408,30 +408,9 @@ namespace ApiNewProject.Controllers
                     return NotFound();
                 }
 
-                var presentacion = producto.Presentacion;
-                if (presentacion == null)
-                {
-                    return NotFound("Presentación no encontrada para el producto.");
-                }
+                
+                producto.CantidadTotalPorUnidad += cantidad;
 
-                // Calcular la cantidad por presentación y el resto
-                var cantidadPorPresentacion = presentacion.CantidadPorPresentacion;
-                var nuevaCantidadTotalPorUnidad = producto.CantidadTotalPorUnidad - cantidad;
-                int? productoCantidadTotal = 0;
-                var numeroPar = nuevaCantidadTotalPorUnidad % 2;
-                var restar = nuevaCantidadTotalPorUnidad % cantidadPorPresentacion;
-                if (numeroPar == 0)
-                {
-                    var cantidadLotes = nuevaCantidadTotalPorUnidad / cantidadPorPresentacion;
-                    producto.CantidadTotal = cantidadLotes;
-                }
-                else
-                {
-                    productoCantidadTotal = (nuevaCantidadTotalPorUnidad - restar) / cantidadPorPresentacion;
-                    producto.CantidadTotal = productoCantidadTotal;
-                }
-
-                producto.CantidadTotalPorUnidad = nuevaCantidadTotalPorUnidad;
 
                 // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
@@ -443,6 +422,7 @@ namespace ApiNewProject.Controllers
                 return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
         }
+       
 
         [HttpPut("AddCantidadReservada/{id}")]
         public async Task<ActionResult> AddCantidadReservada(int id, int? cantidad)
@@ -471,6 +451,7 @@ namespace ApiNewProject.Controllers
 
             return Ok();
         }
+
         [HttpPut("SustraerCantidadReservada/{id}")]
         public async Task<ActionResult> SustraerCantidadReservada(int id, int? cantidad)
         {
@@ -571,6 +552,98 @@ namespace ApiNewProject.Controllers
 
             return Ok();
         }
+
+        [HttpPut("SustraerCantidadTotalPorUnidad/{id}")]
+        public async Task<ActionResult> SustraerCantidadTotalPorUnidad(int id, int? cantidad)
+        {
+            try
+            {
+                // Validar la entrada
+                if (cantidad == null || cantidad <= 0)
+                {
+                    return BadRequest("Cantidad no válida.");
+                }
+
+                // Obtener el producto y la presentación
+                var producto = await _context.Productos
+                    .Include(p => p.Presentacion)
+                    .FirstOrDefaultAsync(p => p.ProductoId == id);
+
+                if (producto == null)
+                {
+                    return NotFound();
+                }
+
+                var presentacion = producto.Presentacion;
+                if (presentacion == null)
+                {
+                    return NotFound("Presentación no encontrada para el producto.");
+                }
+
+                // Calcular la cantidad por presentación y el resto
+                var cantidadPorPresentacion = presentacion.CantidadPorPresentacion;
+                var nuevaCantidadTotalPorUnidad = producto.CantidadTotalPorUnidad - cantidad;
+                int? productoCantidadTotal = 0;
+                var numeroPar = nuevaCantidadTotalPorUnidad % 2;
+                var restar = nuevaCantidadTotalPorUnidad % cantidadPorPresentacion;
+                if (numeroPar == 0)
+                {
+                    var cantidadLotes = nuevaCantidadTotalPorUnidad / cantidadPorPresentacion;
+                    producto.CantidadTotal = cantidadLotes;
+                }
+                else
+                {
+                    productoCantidadTotal = (nuevaCantidadTotalPorUnidad - restar) / cantidadPorPresentacion;
+                    producto.CantidadTotal = productoCantidadTotal;
+                }
+
+                producto.CantidadTotalPorUnidad = nuevaCantidadTotalPorUnidad;
+
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Manejar errores inesperados
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
+        [HttpPut("AddCantidadTotalPorUnidadUnicamente/{id}")]
+        public async Task<ActionResult> AddCantidadTotalPorUnidadUnicamente(int id, int? cantidad)
+        {
+            try
+            {
+                // Validar la entrada
+                if (cantidad == null || cantidad <= 0)
+                {
+                    return BadRequest("Cantidad no válida.");
+                }
+
+                // Obtener el producto y la presentación
+                var producto = await _context.Productos
+                    .Include(p => p.Presentacion)
+                    .FirstOrDefaultAsync(p => p.ProductoId == id);
+
+                if (producto == null)
+                {
+                    return NotFound();
+                }
+
+                producto.CantidadTotalPorUnidad += cantidad;
+
+
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Manejar errores inesperados
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
+
 
         [HttpDelete("DeleteProducto/{Id}")]
         public async Task<HttpStatusCode> DeleteProducto(int Id)

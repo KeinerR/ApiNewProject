@@ -9,9 +9,12 @@ namespace VistaNewProject.Controllers
     public class ComprasController : Controller
     {
         private readonly IApiClient _client;
-        public ComprasController(IApiClient client)
+        private readonly ProductoService _productoService;
+
+        public ComprasController(IApiClient client, ProductoService productoService) // Añade ProductoService al constructor
         {
             _client = client;
+            _productoService = productoService; // Inicializa ProductoService
         }
         public async Task<IActionResult> Index(int? page, string order = "default")
         {
@@ -50,11 +53,14 @@ namespace VistaNewProject.Controllers
             {
                 return NotFound("error");
             }
+            
+            // Llamar al método FormatearComprasAsync y esperar su resultado usando await
+            List<CompraVista> comprasFormateadas = await _productoService.FormatearComprasAsync(compras);
 
-            var pageCompra = await compras.ToPagedListAsync(pageNumber, pageSize);
+            var pageCompra = await comprasFormateadas.ToPagedListAsync(pageNumber, pageSize);
             if (!pageCompra.Any() && pageCompra.PageNumber > 1)
             {
-                pageCompra = await compras.ToPagedListAsync(pageCompra.PageCount, pageSize);
+                pageCompra = await comprasFormateadas.ToPagedListAsync(pageCompra.PageCount, pageSize);
             }
 
             int contador = (pageNumber - 1) * pageSize + 1;
@@ -115,6 +121,7 @@ namespace VistaNewProject.Controllers
             {
                 return BadRequest("La compra no puede ser null");
             }
+
             var nuevaCompra = new CrearCompra
             {
                 CompraId = compra.CompraId,
@@ -141,40 +148,6 @@ namespace VistaNewProject.Controllers
 
                 foreach (var lote in detalle.Lotes)
                 {
-                    var producto = await _client.FindProductoAsync(lote.ProductoId.Value);
-                    var presentacion = await _client.FindPresentacionAsync(producto.PresentacionId.Value);
-                    var unidad = await _client.FindUnidadAsync(detalle.UnidadId.Value);
-                    if (unidad.UnidadId == 2)
-                    {
-                        // Calcular la cantidad por presentación y el resto
-                        var cantidadPorPresentacion = presentacion.CantidadPorPresentacion;
-                        var nuevaCantidadPorUnidad = lote.Cantidad;
-                        int? productoCantidadTotal = 0;
-                        var numeroPar = nuevaCantidadPorUnidad % 2;
-                        var restar = nuevaCantidadPorUnidad % cantidadPorPresentacion;
-                        if (numeroPar == 0)
-                        {
-                            var cantidadLotes = nuevaCantidadPorUnidad / cantidadPorPresentacion;
-                            lote.Cantidad = cantidadLotes;
-                            lote.CantidadCompra = cantidadLotes;
-                        }
-                        else
-                        {
-                            productoCantidadTotal = (nuevaCantidadPorUnidad - restar) / cantidadPorPresentacion;
-                            lote.Cantidad = productoCantidadTotal;
-                            lote.CantidadCompra = productoCantidadTotal;
-                        }
-
-                        lote.CantidadPorUnidad = nuevaCantidadPorUnidad;
-                        lote.CantidadPorUnidadCompra = nuevaCantidadPorUnidad;
-                    }
-                    else {
-                        if (presentacion.CantidadPorPresentacion > 2)
-                        {
-                            lote.CantidadPorUnidad = lote.Cantidad * presentacion.CantidadPorPresentacion;
-                            lote.CantidadPorUnidadCompra = lote.Cantidad * presentacion.CantidadPorPresentacion;
-                        }
-                    }
                     var nuevoLote = new LoteCrear
                     {
                         LoteId = 0,
@@ -190,12 +163,12 @@ namespace VistaNewProject.Controllers
                         PrecioPorUnidadCompra = lote.PrecioPorUnidadCompra,
                         FechaVencimiento = lote.FechaVencimiento,
                         Cantidad = lote.Cantidad,
-                        CantidadCompra = lote.Cantidad,
+                        CantidadCompra = lote.CantidadCompra,
                         CantidadPorUnidadCompra = lote.CantidadPorUnidadCompra,
                         CantidadPorUnidad = lote.CantidadPorUnidad,
                         EstadoLote = lote.EstadoLote
                     };
-                  
+
                     nuevoDetalleCompra.Lotes.Add(nuevoLote); // Agrega el lote al detalle
                 }
 
@@ -208,13 +181,14 @@ namespace VistaNewProject.Controllers
             {
                 Console.WriteLine("Nueva Compra:");
                 Console.WriteLine(JsonConvert.SerializeObject(nuevaCompra, Formatting.Indented)); // Imprime la nuevaCompra por consola con formato indentado
-                return Ok(nuevaCompra); // Si la compra se creó correctamente, devuelve una respuesta OK
+                return RedirectToAction("Index");
             }
             else
             {
                 return StatusCode(500, "Error al procesar la solicitud"); // Si hubo un error en el servidor, devuelve un código de error 500
             }
         }
+
 
         [HttpGet]
         public async Task<ActionResult> CompararNumerosDeFactura(string NumeroFactura)
@@ -259,11 +233,11 @@ namespace VistaNewProject.Controllers
             return Json(new { Producto = productos, Unidad = unidades });
         }
 
-        [HttpGet("/Compras/filtrarUnidadesxProductoDatalist/{filtro}")]
-        public async Task<ActionResult> filtrarUnidadesxProductoDatalist(int filtro)
+        [HttpGet("/Compras/filtrarUnidadesxProductoDatalist/{filtro}/{cantidad?}")]
+        public async Task<ActionResult> filtrarUnidadesxProductoDatalist(int filtro, int? cantidad)
         {
             var unidades = await _client.GetUnidadAsync();
-            // Filtrar unidades asociadas si el filtro no es 0
+
             if (filtro != 0)
             {
                 var unidadesxProducto = await _client.GetUnidadesxProductosByIdProductoAsync(filtro);
@@ -271,15 +245,25 @@ namespace VistaNewProject.Controllers
                     .Select(cu => cu.UnidadId)
                     .ToList();
                 unidades = unidades.Where(c => unidadesAsociadasIds.Contains(c.UnidadId)).ToList();
+
+                if (cantidad.HasValue && cantidad.Value < 2)
+                {
+                    unidades = unidades.Where(c => c.UnidadId != 2).ToList();
+                }
             }
             else
             {
                 unidades = unidades.Where(c => c.EstadoUnidad == 1).ToList();
+
+                if (cantidad.HasValue && cantidad.Value < 2)
+                {
+                    unidades = unidades.Where(c => c.UnidadId != 2).ToList();
+                }
             }
 
-            // Retornar las unidades filtradas o todas según corresponda
             return Json(new { Unidad = unidades });
         }
+
 
     }
 }

@@ -1,5 +1,5 @@
 ﻿ @using X.PagedList
-@model X.PagedList.IPagedList<VistaNewProject.Models.Compra>
+@model X.PagedList.IPagedList<VistaNewProject.Models.CompraVista>
 @{
     ViewData["Title"] = "Compras";
 }
@@ -70,7 +70,7 @@
                         <div class="col-6">
                             <div class="form-group">
                                 <label for="NumeroFactura" class="control-label"># de Factura<span class="Mensaje">*</span></label>
-                                <input type="text" id="NumeroFactura" name="numeroFactura" class="form-control inputs" />
+                                <input type="text" id="NumeroFactura" name="numeroFactura" class="form-control inputs" autocomplete="off" />
                                 <span class="text-danger"></span>
                             </div>
                         </div>
@@ -112,21 +112,21 @@
                 </div>
             </div>
             <div id="DetallesCompra" class="modal-body">
-                <div id="detallecontainer" class="form-group">
-                    <div class="contenedor-filtro opcionesAgregadas">
-                        <input list="categorias" name="order" class="input-sm empSelect" id="filtroPxC" oninput="filtrarxCategoria(this);" placeholder="Filtrar por categoría">
-                        <datalist id="categorias">
-                            @foreach (var categoria in ViewBag.Categorias)
-                            {
-                                if (categoria.EstadoCategoria == 1)
-                                {
-                                    <option data-id="@categoria.CategoriaId" value="@categoria.NombreCategoria"></option>
-                                }
-                            }
-                        </datalist>
-                        <i class="fas fa-times noBe" id="compraFiltrarPorCategoria" onclick="limpiarFiltroCategoriaCompra();"></i>
-                    </div>
+                <div id="detallecontainer" class="form-group"> 
                     <div class="row" id="DatosProducto">
+                        <div class="contenedor-filtro-compra opcionesAgregadas">
+                            <input list="categorias" name="order" class="input-sm empSelect" id="filtroPxC" oninput="filtrarxCategoria(this); " placeholder="Filtrar por categoría" autocomplete="off">
+                            <datalist id="categorias">
+                                @foreach (var categoria in ViewBag.Categorias)
+                                {
+                                    if (categoria.EstadoCategoria == 1)
+                                    {
+                                        <option data-id="@categoria.CategoriaId" value="@categoria.NombreCategoria"></option>
+                                    }
+                                }
+                            </datalist>
+                            <i class="fas fa-times noBe" id="compraFiltrarPorCategoria" onclick="limpiarFiltroCategoriaCompra();"></i>
+                        </div>
                         <div class="col-6">
                             <div class="form-group">
                                 <div class="icono-input">
@@ -166,7 +166,7 @@
                         <div class="col-3">
                             <div class="form-group">
                                 <label for="NumeroLote" class="control-label">Numero Lote<span class="Mensaje">*</span></label>
-                                <input type="text" id="NumeroLote" name="numeroLote" class="form-control" />
+                                <input type="text" id="NumeroLote" name="numeroLote" class="form-control" autocomplete="off" />
                                 <span class="text-danger"></span>
                             </div>
                         </div>
@@ -198,7 +198,7 @@
                             <div class="form-group">
                                 <label for="Cantidad" class="control-label">Cantidad</label>
                                 <div class="input-group" id="CampoCantidad">
-                                    <input type="number" id="Cantidad" oninput="formatoNumeroINT(this);" onclick="formatoNumeroINT(this);" name="cantidad" class="form-control" value="1" min="1">
+                                    <input type="number" id="Cantidad" oninput="formatoNumeroINT(this);" onclick="formatoNumeroINT(this);" name="cantidad" class="form-control" value="1" min="1" autocomplete="off">
                                     <span class="text-danger"></span>
                                     <!-- Botones con eventos de mousedown, mouseup y mouseleave definidos en HTML -->
                                     <button type="button" class="btn btn-default btn-number input-group-prepend"
@@ -225,7 +225,7 @@
                         <div class="col-3">
                             <div class="form-group">
                                 <label for="PrecioDeCompra" class="control-label" id="PC">Precio de Compra<span class="Mensaje">*</span></label>
-                                <input type="text" id="PrecioDeCompra" oninput="formatoNumeroINT(this);" name="precioDeCompra" class="form-control" />
+                                <input type="text" id="PrecioDeCompra" maxlength="18" oninput="formatoNumeroINT(this);" name="precioDeCompra" class="form-control" autocomplete="off"/>
                                 <span class="text-danger"></span>
                             </div>
 
@@ -235,7 +235,7 @@
 
                                 <label for="PorcentajeGanancia" class="control-label">% A Ganar<span class="Mensaje">*</span></label>
                                 <div class="contenedorCalculo">
-                                    <input type="text" id="PorcentajeGanancia" oninput="formatoNumeroINT(this);" name="porcentajeGanancia" class="form-control" />
+                                    <input type="text" id="PorcentajeGanancia" maxlength="6" oninput="formatoNumeroINT(this);" name="porcentajeGanancia" class="form-control" />
                                     <button class="btn-calculo" id="btnCalcular" onclick="calcularPreciosCompra();" title="Calcular"><i class="fas fa-calculator"></i></button>
                                 </div>
                             </div>
@@ -274,23 +274,20 @@
                             <div class="form-group">
                             </div>
                             <label for="PrecioDeVentaPorUnidad" class="control-label">x Unidad<span class="Mensaje">*</span></label>
-                            <input type="text" id="PrecioDeVentaPorUnidad" oninput="formatoNumeroINT(this);" name="precioDeVentaPorUnidad" class="form-control" />
+                            <input type="text" id="PrecioDeVentaPorUnidad" oninput="formatoNumeroINT(this);" name="precioDeVentaPorUnidad" class="form-control" readonly/>
                             <span class="text-danger"></span>
                         </div>
                         <div class="col-4">
                             <div class="form-group">
                                 <label for="PrecioDeVentaUnitario" class="control-label">x Producto<span class="Mensaje">*</span></label>
-                                <div class="contenedorCalculo">
-                                    <input type="text" id="PrecioDeVentaUnitario" oninput="formatoNumeroINT(this);" name="precioDeVentaUnitario" class="form-control" />
-                                    <button class="btn-calculo" id="btnCalcularVenta" onclick="calcularPrecioPorUnidad();" title="Calcular precio por unidad"><i class="fas fa-calculator"></i></button>
-                                </div>
-                                <span id="spanErmitanio" class="text-danger"></span>
+                                <input type="text" id="PrecioDeVentaUnitario" maxlength="18" oninput="formatoNumeroINT(this); calcularPrecioPorUnidad(this);" name="precioDeVentaUnitario" class="form-control" />
+                                <span class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="form-group">
-                                <label for="PrecioDeVentaxUnidadPresentacion" oninput="formatoNumeroINT(this);" class="control-label">x Unidad de producto<span class="Mensaje">*</span></label>
-                                <input type="text" id="PrecioDeVentaxUnidadPresentacion" name="precioDeVentaxUnidadPresentacion" class="form-control" />
+                                <label for="PrecioDeVentaxUnidadPresentacion" class="control-label">x Unidad de producto<span class="Mensaje">*</span></label>
+                                <input type="text" id="PrecioDeVentaxUnidadPresentacion" maxlength="18" oninput="formatoNumeroINT(this);  precioUnidadToo(this);" name="precioDeVentaxUnidadPresentacion" class="form-control" />
                                 <span class="text-danger"></span>
                             </div>
                         </div>
@@ -301,14 +298,12 @@
                         <button class="btn btn-secondary" onclick="verProductos();" title="Ver tabla de productos"><i class="fas fa-expand-alt"></i></button>
                         <button class="btn btn-secondary" id="expandir" onclick="verCompra()" title="Actualizar compra"><i class="fas fa-expand-alt"></i></button>
                         <button class="btn btn-secondary" id="noOpcionesAgregadas" onclick="noVerOpcionesAgregadas()" title="Ver menos elementos"><i class="fas fa-minus"></i></button>
-                        @*                         <button id="volverRegistrarCompra" class="btn btn-secondary" onclick="limpiarFormularioTotalmente()" title="Limpiar Compra"><i class="fas fa-broom"></i></button>
-                        *@                        <div class="modal-header-view noVer" id="modal-header-ValorTotal">
-                            <div id="modal-header-ValorTotal-contenedor">
-                                <h5 class="ValorTotal">Valor Total:</h5>
-                                <input type="text" id="ValorTotal" readonly />
-                            </div>
-                        </div>
+                        @*                         <button id="volverRegistrarCompra" class="btn btn-secondary" onclick="limpiarFormularioTotalmente()" title="Limpiar Compra"><i class="fas fa-broom"></i></button>*@ 
+                         <div class="modal-header-view noVer" id="modal-header-ValorTotal">
+                            <input class="ValorTotalCompra ValorTotalCompraTexto" type="text" value="Total: " readonly /><input class="ValorTotalCompra ValorTotalCompraValor" type="text" id="ValorTotal" readonly />
+                         </div>
                     </div>
+                 
                     <button type="button" id="btnModal" class="btn btn-primary" onclick="RegistrarBuy(compra)" title="Enviar">Registrar Compra</button>
                 </div>
             </div>

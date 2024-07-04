@@ -161,7 +161,7 @@ namespace VistaNewProject.Controllers
             return View(pagedUnidades);
         }
 
-        [HttpPost("/Productos/filtrarDataList/{filtrar}/{asociar}/{asociarcategoria?}")]
+        [HttpGet("/Productos/filtrarDataList/{filtrar}/{asociar}/{asociarcategoria?}")]
         public async Task<ActionResult> filtrarDataList(int filtrar, int asociar, int? asociarcategoria)
         {
             var categorias = await _client.GetCategoriaAsync();
@@ -330,15 +330,15 @@ namespace VistaNewProject.Controllers
                 DetalleCompraId = loteInfo.DetalleCompraId,
                 ProductoId = loteInfo.ProductoId,
                 NumeroLote = loteInfo.NumeroLote,
-                PrecioCompra = FormatearPrecio(loteInfo.PrecioCompra),
-                PrecioPorPresentacion = FormatearPrecio(loteInfo.PrecioPorPresentacion),
-                PrecioPorUnidadProducto = FormatearPrecio(loteInfo.PrecioPorUnidadProducto),
+                PrecioCompra = _productoService.FormatearPrecio(loteInfo.PrecioCompra),
+                PrecioPorPresentacion = _productoService.FormatearPrecio(loteInfo.PrecioPorPresentacion),
+                PrecioPorUnidadProducto = _productoService.FormatearPrecio(loteInfo.PrecioPorUnidadProducto),
                 FechaVencimiento = loteInfo.FechaVencimiento,
                 Cantidad = loteInfo.Cantidad,
                 EstadoLote = loteInfo.EstadoLote,
                 DetalleCompra = loteInfo.DetalleCompra,
                 Producto = loteInfo.Producto,
-                FechaCaducidad = FormatearFechaVencimiento(loteInfo.FechaVencimiento)
+                FechaCaducidad =  _productoService.FormatearFechaVencimiento(loteInfo.FechaVencimiento)
             }).ToList();
 
             var primerLote = listaLotesVista.FirstOrDefault();
@@ -580,8 +580,8 @@ namespace VistaNewProject.Controllers
                         precioPorUnidadDeProductoRedondeado = 0; // O el valor por defecto que desees
                     }
 
-                    var PrecioPorPresentacionRedondeado = FormatearPrecio(precioPorPresentacionRedondeado); // Convertir a string
-                    var PrecioPorUnidadDeProductoRedondeado = FormatearPrecio(precioPorUnidadDeProductoRedondeado);
+                    var PrecioPorPresentacionRedondeado = _productoService.FormatearPrecio(precioPorPresentacionRedondeado); // Convertir a string
+                    var PrecioPorUnidadDeProductoRedondeado = _productoService.FormatearPrecio(precioPorUnidadDeProductoRedondeado);
 
                     return Json(new { success = true, message = "Precios redondeados correctamente.", productoId = producto.ProductoId, precioProducto = PrecioPorPresentacionRedondeado , precioUnidad = PrecioPorUnidadDeProductoRedondeado});
                 }
@@ -732,40 +732,6 @@ namespace VistaNewProject.Controllers
             TempData["EstadoAlerta"] = !string.IsNullOrEmpty(estado) ? estado: "true";
             TempData["Tiempo"] = tiempo.HasValue ? tiempo.Value.ToString() : 0;
         }
-        private string FormatearFechaVencimiento(DateTime? fechaVencimiento)
-        {
-            if (fechaVencimiento.HasValue)
-            {
-                DateTime fechaSinHora = fechaVencimiento.Value.Date; // Obtiene solo la fecha sin la hora
-
-                // Verifica si el día es menor que 10 y agrega un cero al principio si es así
-                string diaFormateado = fechaSinHora.Day < 10 ? $"0{fechaSinHora.Day}" : fechaSinHora.Day.ToString();
-                
-                string mesFormateado = fechaSinHora.Month < 10 ? $"0{fechaSinHora.Month}" : fechaSinHora.Month.ToString();
-
-                // Formatea la fecha sin la hora en el formato "yyyyMMdd"
-                string fechaFormateada = $"{fechaSinHora.Year}/{mesFormateado}/{diaFormateado}";
-
-                return fechaFormateada;
-            }
-            else
-            {
-                return string.Empty; // Si la fecha es nula, retorna una cadena vacía o puedes manejarlo de otra manera
-            }
-        }
-        private string FormatearPrecio(decimal? precio)
-        {
-            if (precio.HasValue)
-            {
-                string precioFormateado = precio.Value.ToString("#,##0"); // Formatea el precio con puntos de mil
-                return precioFormateado;
-            }
-            else
-            {
-                return string.Empty;
-            }
-        }
-
         public async Task<IActionResult> GenerarPDF()
         {
             // Obtener la lista de productos desde el servicio de forma asíncrona
