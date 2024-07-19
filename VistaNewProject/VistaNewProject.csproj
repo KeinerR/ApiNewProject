@@ -1,0 +1,123 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\js\1Login\**" />
+    <Compile Remove="wwwroot\js\4Compras\**" />
+    <Compile Remove="wwwroot\js\Productos\**" />
+    <Compile Remove="wwwroot\wwwroot\**" />
+    <Content Remove="wwwroot\js\1Login\**" />
+    <Content Remove="wwwroot\js\4Compras\**" />
+    <Content Remove="wwwroot\js\Productos\**" />
+    <Content Remove="wwwroot\wwwroot\**" />
+    <EmbeddedResource Remove="wwwroot\wwwroot\**" />
+    <None Remove="wwwroot\js\1Login\**" />
+    <None Remove="wwwroot\js\4Compras\**" />
+    <None Remove="wwwroot\js\Productos\**" />
+    <None Remove="wwwroot\wwwroot\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\js\Categorias.js" />
+    <Content Remove="wwwroot\js\Clientes.js" />
+    <Content Remove="wwwroot\js\Compras.js" />
+    <Content Remove="wwwroot\js\Detalle.js" />
+    <Content Remove="wwwroot\js\DetalleCompras.js" />
+    <Content Remove="wwwroot\js\Detallespedidos\Detallespedidos.js" />
+    <Content Remove="wwwroot\js\Domicilios.js" />
+    <Content Remove="wwwroot\js\Lotes.js" />
+    <Content Remove="wwwroot\js\Marcas.js" />
+    <Content Remove="wwwroot\js\MiPerfil.js" />
+    <Content Remove="wwwroot\js\MiPerfilPassword.js" />
+    <Content Remove="wwwroot\js\Movimientos.js" />
+    <Content Remove="wwwroot\js\Pedidos.js" />
+    <Content Remove="wwwroot\js\Presentaciones.js" />
+    <Content Remove="wwwroot\js\Productos.js" />
+    <Content Remove="wwwroot\js\Proveedor.js" />
+    <Content Remove="wwwroot\js\Rols.js" />
+    <Content Remove="wwwroot\js\site.js" />
+    <Content Remove="wwwroot\js\Unidades.js" />
+    <Content Remove="wwwroot\js\Usuarios.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\js\Detalle.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\Domicilios.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\js\Categorias.js" />
+    <None Include="wwwroot\js\Clientes.js" />
+    <None Include="wwwroot\js\Compras.js" />
+    <None Include="wwwroot\js\Detalle.js" />
+    <None Include="wwwroot\js\DetalleCompras.js" />
+    <None Include="wwwroot\js\Detallespedidos\Detallespedidos.js" />
+    <None Include="wwwroot\js\Domicilios.js" />
+    <None Include="wwwroot\js\Lotes.js" />
+    <None Include="wwwroot\js\Marcas.js" />
+    <None Include="wwwroot\js\MiPerfil.js" />
+    <None Include="wwwroot\js\MiPerfilPassword.js" />
+    <None Include="wwwroot\js\Movimientos.js" />
+    <None Include="wwwroot\js\Pedidos.js" />
+    <None Include="wwwroot\js\Presentaciones.js" />
+    <None Include="wwwroot\js\Productos.js" />
+    <None Include="wwwroot\js\Proveedor.js" />
+    <None Include="wwwroot\js\Rols.js" />
+    <None Include="wwwroot\js\site.js" />
+    <None Include="wwwroot\js\Unidades.js" />
+    <None Include="wwwroot\js\Usuarios.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="iTextSharp" Version="5.5.13.4" />
+    <PackageReference Include="jQuery.Validation" Version="1.20.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.jQuery.Unobtrusive.Validation" Version="4.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
+    <PackageReference Include="QuestPDF" Version="2024.6.2" />
+    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    <PackageReference Include="X.PagedList" Version="9.1.2" />
+    <PackageReference Include="X.PagedList.Mvc.Core" Version="9.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\image\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\css\Compra.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\css\Detalle.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\css\Login.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\css\main.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\css\ModalesAgregar.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\css\site.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

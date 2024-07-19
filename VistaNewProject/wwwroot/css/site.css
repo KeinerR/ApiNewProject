@@ -1,0 +1,766 @@
+* {
+    padding:0px;
+    margin:0px;
+}
+body {
+    position: relative;
+    min-height: 90vh;
+}
+input, span, a,button{
+    border:none;
+}
+
+html {
+    font-size: 16px;
+}
+
+.circle {
+    width: 35px; /* Ancho del círculo tambien esta en la  vista el ancho.*/
+    height: 35px; /* Altura del círculo */
+}
+
+header .iconoHeaderMenu {
+    font-size: 2em;
+}
+
+.tituloHeader {
+    font-size: 2em;
+}
+.cabeceraSalir .Perfil span {
+    font-size: 1em;
+}
+/*----------------------------------------------------------------------------------------------------------------------*/
+/*Estilos del contenedor header*/
+header {
+    background-color: #213b68; /*Color del header*/
+    color: white; /*Color de la letra del encabezado*/
+    height: auto;
+}
+    header .iconoHeaderMenu {
+        color: white;
+    }
+/* Estilos del contenedor de la cabecera*/
+#Cabecera {
+    height:auto; /* Ajuste automático de altura */
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    position: relative; /* Añadir posición relativa al div #Cabecera */
+}
+
+/*Estilos header menu and logo*/
+#cabeceraMenu {
+    padding-left: 20px;
+    display: flex;
+    user-select: none;
+    min-width: 100px;
+    height: auto;
+    align-items: center; /* Centra verticalmente los elementos dentro de #primero */
+}
+
+    #cabeceraMenu button     {
+        user-select: none;
+        border: none; /* Quita el borde por defecto */
+        border-radius: 2px; /* Quita el borde por defecto */
+        background-color: transparent; /* Fondo transparente por defecto */
+        transition: background-color 0.3s ease; /* Transición suave */
+        margin-right:20px;
+    }
+
+        #cabeceraMenu button:active {
+            background-color: black; /* Cambia el color de fondo al hacer clic */
+            color: black; /* Cambia el color de texto al hacer clic */
+        }
+
+.circle {   
+    border-radius: 50%; /* Hace que sea un círculo */
+    overflow: hidden; /* Oculta el exceso de la imagen */
+    display: flex; /* Utiliza flexbox para centrar horizontalmente */
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+}
+
+.circle img {
+    width: 100%; /* Ajusta el ancho de la imagen al 100% del círculo */
+    height: 100%; /* Ajusta la altura de la imagen al 100% del círculo */
+    object-fit: cover; /* Ajusta la imagen para cubrir el círculo sin deformaciones */
+}
+
+/* Estilos del contenedor de la cabecera titulo*/
+#cabeceraTitulo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    width: 100%;
+    position: absolute; /* Añadir posición absoluta para centrar el div */
+    left: 48.5%; /* Centrar horizontalmente en la mitad */
+    top:0;
+    transform: translateX(-48.5%); /* Ajustar el centrado con transform */
+    pointer-events: none; /* Hace que el div sea "transparente" al clic */
+}
+
+#cabeceraCircle {
+    display: flex;
+    user-select: none;
+    min-width: 100px;
+    height: auto;
+    align-items: center; /* Centra verticalmente los elementos dentro de #primero */
+}
+
+#cabeceraCircle .circle {
+    visibility:hidden;    
+}
+
+#cabeceraCircle .tituloHeader {
+    visibility: hidden;
+    color: white;
+}
+.tituloHeader {
+    height: auto;
+    visibility: visible;
+    text-shadow: 1px 1px 1px white;
+}
+
+/*Estilos para el div de mi perfil u iniciar sesion*/
+.cabeceraSalir {
+    margin-right:10px;  
+}
+/*Estilos para mi perfil*/
+.cabeceraSalir .Perfil {
+    border-radius: 10px;
+    max-width: 200px;
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+
+/*Diseños de ventana emergente Perfil */
+#perfilVentanaEmergente {
+    position: absolute;
+    right: 10px;
+    background-color: #213b68;
+    color: white;
+    border-radius: 10px;
+    border: 1px solid black; /* Borde sólido de 1px color negro */
+}
+.Perfil:hover {
+    box-shadow: 0 0 3px white;
+}
+
+.opcionesVentanaEmergente {
+    text-decoration: none;
+    color: white;
+    display: block;
+    width: auto;
+    height: 100%;
+    box-sizing: border-box; /* para incluir el borde en el ancho y alto total */
+    padding-top: 2.5px;
+    padding-bottom: 2.5px;
+    text-align: center;
+}
+    /*Opciones cuando se posa sobre los elemntos de mi perfil*/
+    .opcionesVentanaEmergente:hover {
+        color: black;
+        font-weight:500;
+        background-color: #6bc7c8;
+    }
+    .opcionesVentanaEmergente:first-child {
+        border-radius: 10px 10px 0px 0px;
+        border-bottom:solid black 1px;
+    }
+    .opcionesVentanaEmergente:nth-child(2) {
+        border-radius: 0px 0px 10px 10px;
+    }  
+    .opcionesVentanaEmergente:nth-child(2):hover{
+        border-radius: 0px 0px 10px 10px;  
+    }
+
+
+
+/*----------------------------- Estilos del cuerpo -----------------------------------------------------------------------------------------*/
+
+
+#Cuerpo {
+    display: flex;
+    width: auto;
+    height: auto;
+    min-height:70vh; /* El 80% de la altura de la ventana (viewport height) */
+    margin-top:0px; /*Margen entre el header y el menu de navegacio*/
+}
+
+/*------------------------------ Estilo para el menu de navegacion----------------------------------------------------------------------------------------*/
+
+
+#Menu {
+    height: auto;
+    min-height: 80vh;
+    min-width: 190px; /* Ancho ajustado */
+    background-color: #213b68;
+    padding: 5px;
+}
+
+/*Estilo del texto*/
+.TextoMenu {
+    color: white;
+    font-family: 'Abel', sans-serif;
+    padding-left: 20px;
+    color: white;
+}
+
+
+/*Tamaño de los iconos del menu*/
+#Menu .iconosMenu {
+    justify-content: center;
+    font-size: 1.4em;
+    color: white;
+}
+/*Se usa con el JS para darle el efecto de aprecer y desaparecer al menu*/
+.sidebar.menu-hidden {
+    display: none;
+}
+
+#Menu .sidebar-label {
+    text-decoration: none;
+    background-color: transparent;
+    transition: background-color 0.3s ease-in-out;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    padding: 8px 10px;
+    width: auto; /* Ancho automático para que se ajuste al contenido */
+    text-align: initial; /* Alineación a la izquierda */
+    cursor: pointer;
+    display: block; /* Para que los elementos ocupen toda la anchura del contenedor */
+}
+
+    /* Efecto al pasar el ratón sobre las opciones del menú */
+    #Menu .sidebar-label:hover {
+        background-color: #6bc7c8;
+    }
+        /* Efecto al pasar el ratón sobre las opciones del menú */
+
+        #Menu .sidebar-label:hover > i {
+            color: black;
+        }
+
+        #Menu .sidebar-label:hover > span {
+            color: black;
+            font-weight: 550;
+        }
+
+
+/*Desaparece el diseño de los input para que estos puedan usar el del label*/
+#opcion1,
+#opcion2,
+#opcion3 {
+    display: none;
+}
+
+
+/* SUBMENU */
+/* Hace aparecer y desaparecer los sub-menus */
+.sub-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+    padding: 0;
+    margin: 0;
+}
+
+/* Al desplegar el sub-menú */
+input[type="checkbox"]:checked + .sub-menu {
+    max-height: 500px; /* Ajusta según necesites */
+}
+
+    input[type="checkbox"]:checked + .sub-menu a {
+        margin-left: 20px; /* Margen izquierdo al desplegar el sub-menú */
+    }
+
+
+/* Al seleccionar un checkbox y estar marcado, aumenta la altura máxima del siguiente elemento con la clase .sub-menu a 500px */
+input[type="checkbox"]:checked + .sub-menu {
+    max-height: 500px;
+}
+
+/*---------------------------------------EDITAR-----------------------------------------------------------------------*/
+
+.container {
+    overflow-x: auto; /* Habilita el scroll horizontal si es necesario */
+    overflow-y: hidden; /* Oculta el scroll vertical */
+}
+#ContenedorProducto {
+    overflow-x: auto; /* Habilita el scroll horizontal si es necesario */
+    overflow-y: hidden; /* Oculta el scroll vertical */
+}
+/*----------------------------------------FOOTER------------------------------------------------------------------------------*/
+.PIE {
+    height: auto;
+    min-height: 30px;
+    border: solid green 2px;
+}
+/*.PIE {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto;  
+    min-height: 20px;
+    background-color: #f0f0f0; 
+    border: solid green 2px;
+}*/
+
+
+/*------------------------------------------ Estilos para el buscador y el botón agregar ----------------------------------------------------------------------------*/
+
+
+
+/*div que contiene todos los elementos*/
+.input-group {
+    position: relative;
+    border-radius: 20px; /* Borde redondeado para el grupo de entrada */
+}
+/*Input del buscador*/
+#searchInput {
+    border-radius: 20px 0 0 20px; /* Borde redondeado solo en el lado izquierdo */
+    padding-right: 38px; /* Espacio para el botón */
+}
+
+#btnNavbarSearch {
+    border: none; /* Elimina cualquier borde */
+    padding: 8px 12px; /* Reducir el espaciado del botón */
+    margin-left: -1px; /* Ajuste para el borde del botón */
+    position: relative; /* Ajuste de la posición */
+    border-radius: 0; /* Sin bordes redondeados */
+}
+
+    #btnNavbarSearch:hover {
+        height: 41px;
+        width: 41px;
+    }
+
+/*----------------------------------------- Estilos base para la table -----------------------------------------------------------------------------*/
+
+
+.table-custom {
+    border-collapse: collapse;
+}
+    .table-custom td {
+        position: relative; /* Asegura que el td tenga posición relativa */
+        padding: 0; /* Elimina cualquier relleno interno del td */
+    }
+    .table-custom thead th {
+        background-color: #213b68; /* Color de fondo */
+        color: white; /* Color del texto */
+    }
+
+    .table-custom tbody tr:hover {
+        background-color: #f2f2f2; /* Color de fondo al pasar el cursor sobre la fila */
+    }
+
+    .table-custom tbody tr {
+        transition: all 0.3s ease; /* Transición suave */
+     
+    }
+
+        .table-custom tbody tr:hover {
+            transform: translateY(-1px); /* Levantar 3px al pasar el cursor */  
+        }
+
+  
+    .table-custom tbody td {
+        justify-content:center;
+        align-content:center;
+        padding:4px;
+    }
+    .table-custom .consecutivo {
+        width: 50px; /* Establece el ancho deseado */
+    }
+    .table-custom .contenedorCantidad {
+        width: 150px; /* Establece el ancho deseado */
+    }
+    .table-custom .contenedorEstado{
+        width: 50px; /* Establece el ancho deseado */
+    }
+    .table-custom .nombreLong{
+        width: 450px; /* Establece el ancho deseado */
+    }
+
+    .table-custom .botonesTablaContenedor {
+        display: flex;
+        gap:5px;
+        justify-content: center;
+    }
+
+ 
+/*Switch*/ /*Checkbox de estado en everyviews*/
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 25px;
+}
+
+    .switch input {
+        width: 0px;
+        height: 20px;
+    }
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0px;
+    right: 0;
+    bottom: 0;
+    background-color: #DB5461;
+    -webkit-transition: .4s;
+    transition: .2s;
+    border: solid 1px black;
+    border-radius: 30px;
+    width: 40px;
+    height: 100%;
+}
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 20px;
+        width: 20px;
+        left: 2px;
+        top: 5%;
+        background-color: white;
+        border: 1px solid black;
+        -webkit-transition: .4s;
+        transition: .2s;
+        border-radius: 30px;
+    }
+
+input:checked + .slider {
+    background-color: #878AB3;
+    width: 100%;
+    height: 25px;
+    border-radius: 30px;
+    border: solid 1px black;
+}
+
+input:focus + .slider {
+    border: solid 1px #878AB3;
+    border-radius: 30px;
+    border: solid 1px black;
+}
+
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(70%);
+    -ms-transform: translateX(70%);
+    transform: translateX(70%);
+    border: solid 1px black;
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------*/
+
+
+
+/*Si lo necesita agreguele un id en esecifico BY:Esteban*/
+/*.form-control {
+    border-radius: 20px 0 0 20px !important;*/ /* Borde redondeado solo en el lado izquierdo */
+    /*padding-right: 38px;*/ /* Espacio para el botón */
+/*}*/
+
+
+.botonesTabla i{
+    font-size:20px;
+}
+
+.btn-primary {
+    border-radius: 30px; /* Sin bordes redondeados */
+    padding: 8px 12px !important; /* Reducir el espaciado del botón */
+    transition: all 0.3s ease; /* Transición suave */
+    background-color: #213b68;
+}
+
+    .btn-primary:hover {
+        background-color: #6bc7c8; /* Cambio de color al pasar el ratón */
+        color: black;
+    }
+
+.botonEliminar {
+    height: 35px;
+    width: 35px;
+    background: #DB5461;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centra verticalmente el contenido */
+}
+
+.botonEditar {
+    height: 35px;
+    width: 35px;
+    background: #F8D545;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centra verticalmente el contenido */
+}
+    .btn-edit {
+    border: solid #D6B037 1px;
+}
+    .btn-edit:hover {
+        background: #D6B037;
+        color: white;
+    }
+
+.botonDetalle {
+    height: 35px;
+    width: 35px;
+    background: #7ACBC4;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centra verticalmente el contenido */
+}
+    .btn-detail {
+        border: solid #5FAFA1 1px;
+
+    }
+    .btn-detail:hover {
+        background:#5FAFA1;
+        color:white;
+
+    }
+
+
+/*--------------------------------------Estilos del paginador-----------------------------------------------------------*/
+
+.pagination-detail {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+    /* Estilos para los enlaces de paginación */
+    .pagination-detail a {
+        display: inline-block;
+        padding: 5px 10px;
+        margin-right: 5px;
+        border: 1px solid #ccc;
+        text-decoration: none;
+        color: #333;
+    }
+
+        /* Estilo del enlace activo */
+        .pagination-detail a.active {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+
+    /* Estilo para el botón de página anterior y siguiente */
+    .pagination-detail .prev-next {
+        font-weight: bold;
+    }
+
+    /* Estilos para la paginación de color cunado estoy sobre la pagina */
+.pagination-container .page-item.active .page-link {
+    background-color: #213b68; /* Cambia el color de fondo del enlace activo */
+    color: white; /* Cambia el color del texto del enlace activo */
+    border-color: #213b68; /* Cambia el color del borde del enlace activo */
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6); /* Sombra negra */
+
+}
+
+    /* Estilos para enlaces de paginación deshabilitados */
+    .pagination-detail a.disabled {
+        pointer-events: none;
+        opacity: 0.6;
+    }
+
+.pagination-container {
+    max-height: 40px; /* Altura máxima del paginado */
+}
+
+        .pagination-container .pagination {
+            font-size: 15px; /* Tamaño de fuente reducido */
+        }
+
+        .pagination-container .page-item {
+            margin-right: 2px; /* Reducción del espaciado entre elementos */
+        }
+
+        .pagination-container .fa-solid {
+            font-size: 17px; /* Tamaño reducido de los íconos */
+        }
+
+
+
+
+/*Maximo zoom de pantalla*/
+@media (min-width: 100px) and (max-width: 400px) {
+   
+    #cabeceraCircle .circle {
+        visibility: visible;
+    }
+    #cabeceraMenu .circle {
+       visibility:hidden;
+    }
+
+    #cabeceraTitulo .tituloHeader {
+        visibility:hidden;
+    }
+
+    .cabeceraSalir {
+       margin-left:-50px;
+    }
+    .cabeceraSalir span {
+       display:none;
+    }
+    /*---------------------------------------------------------------------*/
+
+}
+
+/*Medida para modales*/
+@media (min-width: 600px) and (max-width:3000px) {
+    /*ajustar tamaño para la modal de presentacion*/
+    #ContenedorPresentacion .modal-dialog {
+        min-width: 690px !important; 
+    }
+    /*ajustar tamaño para la modal de categoria*/
+    #ContenedorCategoria .modal-dialog {
+        width: 450px !important;
+
+    }
+
+    /*ajustar tamaño para la modal de marca*/
+    #ContenedorMarca .modal-dialog {
+        width: 450px !important;
+    }
+
+
+    /*ajustar tamaño para la modal de producto*/
+    #ContenedorProducto .modal-dialog {
+        min-width: 690px !important;
+    }
+
+ 
+
+    #ModalDetallesCompra .modal-dialog {
+        min-width: 960px !important;
+    }
+    #ModalProductosCompra .modal-dialog {
+        min-width: 960px !important;
+        margin-top:100px;
+    }
+    
+}
+
+
+/* Media queries para hacer la tabla responsive */
+@media screen and (max-width: 400px) {
+    .table-custom tbody tr {
+        display: block;
+        margin-bottom: 20px;
+    }
+
+    .table-custom td, .table-custom th {
+        display: block;
+        text-align: left;
+        height: 40px;
+    }
+
+    .table-custom tbody td, .table-custom tbody th {
+        padding: 10px;
+        border: none;
+    }
+
+        .table-custom tbody td:last-child {
+            padding-bottom: 20px; /* Ajuste de espacio inferior para el último elemento */
+        }
+    .table-custom .consecutivo {
+        width: auto; /* Establece el ancho deseado */
+    }
+
+    .table-custom .contenedorCantidad {
+        width: auto; /* Establece el ancho deseado */
+    }
+
+    .table-custom .contenedorEstado {
+        width: auto; /* Establece el ancho deseado */
+    }
+}
+
+/*Estilos para no ver elementos*/
+.noSee {
+    visibility:hidden;
+}
+
+.noBe{
+    visibility:hidden;
+    display:none;
+}
+.noIs {
+    display: none;
+}
+
+
+
+
+
+
+
+
+
+
+/*Texto alerta general*/
+#MensajeAlertaGeneral {
+    font-size:20px;
+    text-align:center;
+ 
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.1rem rgba(0, 0, 255, 0.25); /* Cambia el color de la sombra a azul */
+}
+
+/*----------------------------------------Estillos para el filtro---------------------------------------------------------------*/
+.contenedor-filtro {
+    padding:20px 0px 0px 10px;
+}
+
+.input-sm {
+    font-size: 16px;
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+    .input-sm:hover {
+        background-color: #f1f1f1;
+        border-color: #b3b3b3;
+    }
+
+    .input-sm:focus {
+        outline: none;
+        border-color: #007bff;
+        background-color: #fff;
+    }
+
+
+/* Estilo para el icono */
+.icono-input {
+    position: relative;
+}
+    .icono-input i {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(30%);
+    }
+
+/* Ocultar el ícono del datalist */
+input::-webkit-calendar-picker-indicator {
+    display: none !important;
+}

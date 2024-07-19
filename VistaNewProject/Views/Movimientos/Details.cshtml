@@ -1,0 +1,238 @@
+﻿@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<VistaNewProject.Models.Detallepedido>
+
+@{
+    ViewData["Title"] = "Detalles del Pedido";
+
+   
+}
+
+<table class="table table-bordered table-striped">
+    <div class="pedido-info">
+        <h2 style="text-align:center;">Información del Pedido</h2>
+        <table class="table" style="margin: 0 auto; width: 60%;">
+            <tbody style="text-align: center;">
+                <tr style="background-color: lightgray;">
+                    <th>Tipo de Servicio:</th>
+                    <th>Cliente:</th>
+                    <th>Valor Total:</th>
+                    <th>Estado:</th>
+                </tr>
+                <tr style="background-color: white;">
+                    <td>@(ViewBag.Pedidos != null ? ViewBag.Pedidos.TipoServicio : "No disponible")</td>
+                    <td>@(ViewBag.Cliente)</td>
+                    <td>@(ViewBag.Pedidos.ValorTotalPedido)</td>
+                    <td>@(ViewBag.Pedidos.EstadoPedido)</td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+        <br />
+        <div style="margin:auto; text-align:center;">
+            <h2>Detalles del Pedido</h2>
+        </div>
+
+        <div>
+            @if (Model.Any())
+            {
+                <table class="table" style="margin: 0 auto; width: 60%;">
+                    <thead style="background-color: lightgray;">
+                        <tr style="text-align: center;">
+                            <th>Producto</th>
+                            <th>Unidad</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Subtotal</th>
+                            <th>Acciones</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var detallepedido in Model)
+                        {
+                            <tr style="text-align: center; background-color: white;">
+                                <td>@detallepedido.Productos?.NombreProducto </td>
+                                <td>@detallepedido.Unidades?.NombreUnidad </td>
+                                <td>@String.Format("{0:N0}", detallepedido.Cantidad)</td>
+                                <td>@String.Format("{0:N0}", detallepedido.PrecioUnitario)</td>
+                                <td>@String.Format("{0:N0}", detallepedido.Subtotal)</td>
+                                <td>
+                                    @if (ViewBag.TipoMovimineto == "Entrada")
+                                    {
+
+                                        <button class="btn botonEditar" onclick="actualizarproductoId(@detallepedido.DetallePedidoId,@detallepedido.ProductoId)"><i class="fas fa-edit"></i></button>
+
+                                    }
+                                    else
+                                    {
+                                        <button class="btn botonEditar" onclick="actualizarproductoId(@detallepedido.DetallePedidoId,@detallepedido.ProductoId)"><i class="fas fa-edit"></i></button>
+
+                                        
+                                    }
+                                </td>
+                             
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+
+               
+                <div class="pagination-detail">
+                    @Html.Raw("<a href='" + Url.Action("Details", new { pedidoId = ViewBag.Pedidos.PedidoId, page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 }) + "' class='prev-next " + (Model.HasPreviousPage ? "" : "disabled") + "'>Anterior</a>")
+
+                    @for (int i = 1; i <= Model.PageCount; i++)
+                    {
+                        <a href="@Url.Action("Details", new { pedidoId =  ViewBag.Pedidos.PedidoId, page = i })" class="@(i == Model.PageNumber ? "active" : "")">@i</a>
+                    }
+
+                    @Html.Raw("<a href='" + Url.Action("Details", new { pedidoId = ViewBag.Pedidos.PedidoId, page = Model.HasNextPage ? Model.PageNumber + 1 : Model.PageCount }) + "' class='prev-next " + (Model.HasNextPage ? "" : "disabled") + "'>Siguiente</a>")
+                </div>
+
+            }
+            else
+            {
+                <p style="text-align:center">No se encontraron pedidos asociados a este cliente.</p>
+            }
+        </div>
+    </div>
+
+
+    <div class="modal fade GeneralModal" id="ModalDomicilio" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content noBe" id="FormActualiZarDomicilio">
+                <div class="modal-cabecera">
+                    <div id="pibo"></div>
+                    <div class="modal-header-view TituloModal">
+                        <h2 class="modal-title"> Movimineto de  Pedido </h2>
+                    </div>
+                    <div class="moda-header-view" id="modal-cabecera-equis">
+                        <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="modal-cuerpo">
+
+                        <form asp-action="CreatePost" class="modal-formulario-actualizar-domicilio" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                     
+
+                        <div class="row">
+                            <!-- Campo de búsqueda único -->
+                            <div class="d-none">
+                                <label for="DetalleId" class="control-label"></label>
+                                <input type="hidden" id="DetallePedidoId" name="detallePedidoId" />
+                                <span id="detalleerror" class="text-danger"></span>
+                            </div>
+                            <div class="d-none">
+                                <label for="PedidoId" class="control-label"></label>
+                                <input type="hidden" id="PedidoId" name="pedidoId" />
+                                <span id="PedidoIderror" class="text-danger"></span>
+                            </div>
+                            <div class="col-4">
+                                <label for="ProductoIdtxt" class="control-label">Productos</label>
+                                <input id="ProductoIdtxt" class="form-control" list="ProductosList"  readonly />
+                                <input type="hidden" id="ProductoId" name="productoId" class="form-control" />
+                                <datalist id="ProductosList">
+                                    @foreach (var item in ViewBag.Producto)
+                                    {
+                                        if (item.Estado != 0)
+                                        {
+                                            <option value="@item.NombreProducto" data-id="@item.ProductoId">@item.NombreProducto</option>
+                                        }
+                                    }
+                                </datalist>
+                                <span id="ProductoIdError" class="text-danger"></span>
+                            </div>
+
+
+                                <div class="d-none">
+                                    <label for="LoteId" class="control-label"></label>
+                                    <input  name="loteId" id="LoteId" readonly class="form-control" list="LoteList" />
+                                    <datalist id="LoteList">
+                                    
+                                        <!-- Aquí se cargarán dinámicamente los lotes disponibles según el producto seleccionado -->
+                                    </datalist>
+                                    <span id="LoteIderror" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-4">
+                                    <label for="UnidadId" class="control-label">Unidad </label>
+                                    <input type="text" id="UnidadId" class="form-control" list="UnidadIdList"  readonly />
+                                    <datalist id="UnidadIdList">
+
+                                    @foreach (var item in ViewBag.Unidad)
+                                    {
+                                        if (item.EstadoUnidad != 0)
+                                        {
+                                            <option value="@item.NombreUnidad" data-id="@item.UnidadId">@item.NombreUnidad</option>
+                                        }
+                                    }
+                                    </datalist>
+                                    <input id="unidadHidden" name="unidadId" type="hidden"  />
+                                    <span id="UnidadError" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-4">
+                                    <label for="precioUnitariotxt" class="control-label">Precio Unitario</label>
+                                <input name="precioUnitario" class="form-control" id="PrecioUnitario" readonly>
+                                    <span id="PrecioUnitarioError" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-4">
+
+                                <label for="Cantidad" class="control-label">Cantidad</label>
+                                <input id="CantidadTxt" class="form-control" type="text" />
+                                <input id="CantidadHidden" class="form-control" type="text" />
+                                <label id="CantidadDisponibleLabel">Disponible:</label>
+
+                                <span id="CantidadError" class="text-danger"></span>
+
+                                </div>
+                            <div class="col-4">
+                                <label for="SubTotal" class="control-label"> Subtotal</label>
+                                <input name="subTotal" id="SubTotal" class="form-control" readonly />
+                                <span id="SubTotalError" class="text-danger"></span>
+                            </div>
+
+                            
+
+                            </div>
+
+                        @if (ViewBag.TipoMovimineto == "Entrada")
+                        {
+                            <button type="button" value="Entrada" onclick="ActualizarDetalle(this.value);" class="btn btn-primary">Entrada</button>
+
+                        }
+                        else if (ViewBag.TipoMovimineto == "Salida")
+                        {
+                            <button type="button" value="Salida" onclick="ActualizarDetalle(this.value);" class="btn btn-primary">Salidad</button>
+
+                        }
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script src="~/js/movimientos.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var successMessage = '@TempData["SuccessMessage"]';
+            if (successMessage) {
+                Swal.fire({
+                    title: '¡Error!',
+                    text: successMessage,
+                    icon: 'error',
+                    showConfirmButton: false, 
+                    timer: 3000
+                });
+            }
+        });
+    </script>

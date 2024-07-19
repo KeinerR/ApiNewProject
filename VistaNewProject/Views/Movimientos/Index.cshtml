@@ -1,0 +1,160 @@
+﻿@using X.PagedList
+@model X.PagedList.IPagedList<VistaNewProject.Models.Movimiento>
+@{
+    ViewData["Title"] = "Movimientos";
+}
+
+<br />
+
+<div class="d-flex justify-content-between">
+        <!-- Formulario de búsqueda a la izquierda -->
+        <div class="mr-auto">
+            <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
+                <div class="input-group">
+                    <input id="buscarMovimiento" type="text" class="form-control" oninput="searchMovimiento();" placeholder="Buscar movimiento" aria-label="Search" aria-describedby="button-addon2">
+                    <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputMovimiento();" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+        </div>
+
+
+        <p>
+            <a asp-action="Create"><i class="fas fa-plus-circle"></i>  Agregar Movimiento</a>
+        </p>
+</div>
+
+<br />
+
+<table class="table table-custom text-center">
+    <thead>
+        <tr>
+            <th class="contadorB consecutivo noIs">#</th>
+            <th class="contador consecutivo">#</th>
+            <th class="d-none">
+                Movimiento Id
+            </th>
+            <th>
+                Tipo accion
+            </th>
+            <th>
+                Tipo movimiento
+            </th>
+            <th>
+                Buscar id
+            </th>
+            <th>
+                Fecha movimiento
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody class="text-center">
+        @{
+            int contador = ViewBag.Contador ?? 1;
+        }
+        @foreach (var item in Model) 
+        {
+            <tr class="movimientosPaginado">
+                <td class="d-none">
+                    @Html.DisplayFor(modelItem => item.MovimientoId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TipoAccion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TipoMovimiento)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BuscarId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaMovimiento)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
+        } @{
+
+            var movimientos = ViewData["Movimientos"] as List<Movimiento>;
+            if (movimientos != null)
+            {
+                int contadorC = 1;
+                foreach (var movimiento in movimientos)
+                {
+
+                    <tr class="Movimientos noIs">
+                        <td class="contadorB noIs">
+                            @contadorC <!-- Muestra el valor del contador -->
+                        </td>
+                        <td>@movimiento.MovimientoId</td>
+                        <td>@movimiento.TipoAccion</td>
+                        <td>@movimiento.TipoMovimiento</td>
+                        <td>@movimiento.BuscarId</td>
+                        <td>@movimiento.FechaMovimiento</td>
+
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                        </td>
+
+          
+                    </tr>
+                    contadorC++;
+                }
+            }
+        }
+    </tbody>
+</table>
+
+<div class="pagination-container mt-2" id="paginationContainer">
+    @if (Model != null && Model.PageCount > 1)
+    {
+        <div class="d-flex justify-content-center mb-5">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <!-- Botón para ir a la primera página -->
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1&order=@ViewBag.Order" aria-label="First">
+                                <span aria-hidden="true">Primero</span>
+                            </a>
+                        </li>
+                    }
+                    <!-- Botón para la página anterior (oculto en la página 1) -->
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber - 1)&order=@ViewBag.Order" aria-label="Previous">
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                        </a>
+                    </li>
+                    <!-- Iterar sobre las páginas disponibles -->
+                    @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                            <a class="page-link" href="?page=@i&order=@ViewBag.Order">@i</a>
+                        </li>
+                    }
+                    <!-- Botón para la página siguiente (oculto en la última página) -->
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber + 1)&order=@ViewBag.Order" aria-label="Next">
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                        </a>
+                    </li>
+                    <!-- Botón para ir a la última página -->
+                    @if (Model.PageNumber < Model.PageCount)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@Model.PageCount&order=@ViewBag.Order" aria-label="Last">
+                                <span aria-hidden="true">Último</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    }
+</div>

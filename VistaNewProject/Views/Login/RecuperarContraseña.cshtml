@@ -1,0 +1,130 @@
+﻿@{
+    Layout = null; // Esto elimina el layout actual, incluyendo el navbar.
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recuperar Contraseña</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://kit.fontawesome.com/822fe3c749.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .container {
+            margin-top: 50px;
+            max-width: 500px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .volver {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .btn-primary {
+            background-color: #2574A8;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+            .btn-primary:hover {
+                background-color: #2574A8;
+            }
+
+        .form-control {
+            border-radius: 50px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .fa-arrow-left {
+            margin-right: 5px;
+        }
+
+        .alert {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h4 class="volver">Recuperar contraseña</h4>
+        <div>
+            <a href="@Url.Action("Index", "Login")" class="btn btn-primary btn-sm">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+        <hr />
+        <form asp-action="RecuperarContraseña" id="Recuperar" class="password-form" method="post">
+            <div class="form-group">
+                <label for="Correo">Ingresa tu Correo</label>
+                <input type="email" class="form-control" id="Correo" name="correo" required>
+            </div>
+            <div>
+                @if (TempData["Mensaje"] != null)
+                {
+                    <div class="alert alert-info" role="alert">
+                        @TempData["Mensaje"]
+                    </div>
+                }
+            </div>
+            <br />
+            <button type="submit" class="btn btn-primary btn-block">Comprobar correo</button>
+        </form>
+    </div>
+
+    @if (TempData["MensajeExito"] != null)
+    {
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: '@TempData["MensajeExito"]',
+                showConfirmButton: false,
+                timer: 2000
+            }).then(() => {
+                window.location.href = '@Url.Action("Index", "Login")';
+            });
+        </script>
+    }
+
+    <script>
+        document.getElementById('Recuperar').addEventListener('submit', function (event) {
+            var form = document.getElementById('Recuperar');
+            var formFields = form.querySelectorAll('input');
+
+            var isAnyFieldEmpty = false;
+
+            formFields.forEach(function (field) {
+                if (field.type !== 'hidden') {
+                    if (field.value.trim() === '') {
+                        isAnyFieldEmpty = true;
+                        return;
+                    }
+                }
+            });
+
+            if (isAnyFieldEmpty) {
+                event.preventDefault();
+                alert('No puedes dejar el campo en blanco.');
+            }
+        });
+    </script>
+</body>
+</html>

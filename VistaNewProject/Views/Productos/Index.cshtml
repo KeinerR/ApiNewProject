@@ -1,0 +1,507 @@
+﻿@using X.PagedList
+@model X.PagedList.IPagedList<VistaNewProject.Models.Producto>
+@{
+    ViewData["Title"] = "Productos";
+}
+<div class="ContenedorVista" id="ContenedorProducto">
+    <br />
+    <div class="d-flex justify-content-between align-items-center">
+        <!-- Formulario de búsqueda a la izquierda -->
+      
+            <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
+                <div class="input-group">
+                    <input id="buscarProducto" type="text" class="form-control" oninput="searchProducto();" placeholder="Buscar producto" aria-label="Search" aria-describedby="button-addon2">
+                    <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputProducto()" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+       
+
+        <button type="button" class="reporte-crear rounded-pill d-flex ov-btn-grow-ellipse justify-content-center align-items-around" data-toggle="modal" data-target="#dateModal">
+            <a asp-action="GenerarPDF" class="btn btn-primary">Generar PDF <i class="fa-solid fa-download"></i> </a>
+        </button>
+
+        <!-- Botón para abrir el modal -->
+        <button type="button" id="botonabrirModalProducto" class="btn btn-primary botonAbrirModal" data-bs-toggle="modal" data-bs-target="#ModalProducto">
+            <i class="fas fa-plus-circle"></i>  Agregar producto
+        </button>
+
+    </div>
+    <!-- Modal -->
+    <div class="modal fade GeneralModal" id="ModalProducto" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" id="FormPrincipalProducto">
+                <div class="modal-cabecera">
+                    <div id="pibo"></div>
+                    <div class="modal-header-view TituloModal">
+                        <h2 class="modal-title">Agregar producto</h2>
+                    </div>
+                    <div class="modal-header-view" id="modal-cabecera-equis">
+                        <button type="button" onclick="limpiarFormularioProducto();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="modal-cuerpo">
+                    <div class="row">
+                        <div class="form-check">
+                            <label class="switch">
+                                <input type="checkbox" class="form-check-input" id="filtrarActivos" onchange="checkboxFiltrar()" ;>
+                                <span class="slider"></span>
+                            </label>
+                            <label class="form-check-label" for="filtrarActivos">Mostrar opciones inactivas</label>
+                        </div>
+                        <div class="form-check">
+                            <label class="switch">
+                                <input type="checkbox" class="form-check-input" id="filtrarxCategoria" onchange="checkboxFiltrar()" ;>
+                                <span class="slider"></span>
+                            </label>
+                            <label class="form-check-label" for="filtrarxCategoria">Mostrar solo opciones asociadas a categoria</label>
+                        </div>
+                    </div>
+                    <form asp-controller="Productos" id="agregarProductoForm" asp-action="Create" class="modal-formulario-crear-producto" method="post">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="icono-input">
+                                        <i class="fas fa-times noBe" onclick="iconoLimpiarCampo(['NombreCategoria', 'CategoriaId'],'NombreCategoria');"></i>
+                                        <label for="NombreCategoria" class="control-label">Categoría<span class="Mensaje">*</span></label>
+                                        <input list="categorias" oninput="validarCampoProducto(this); agregarIconoParalimpiarElCampo(this);" id="NombreCategoria" name="nombreCategoria" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoCategoriasAlert(this);" autocomplete="off" />
+                                        <datalist id="categorias">
+                                            @foreach (var item in ViewBag.Categorias)
+                                                if (item.EstadoCategoria != 0)
+                                                {
+                                                    <option value="@item.NombreCategoria" data-id="@item.CategoriaId">@item.NombreCategoria</option>
+                                                }
+                                        </datalist>
+                                        <input id="CategoriaId" type="hidden" name="categoriaId">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="icono-input">
+                                        <i class="fas fa-times noBe" onclick="iconoLimpiarCampo(['NombreMarca','MarcaId'],'NombreMarca');"></i>
+                                        <label for="NombreMarca" class="control-label">Marca<span class="Mensaje">*</span></label>
+                                        <input list="marcas" oninput="validarCampoProducto(this); agregarIconoParalimpiarElCampo(this);" id="NombreMarca" name="nombreMarca" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoMarcasAlert(this)" autocomplete="off" />
+                                        <datalist id="marcas">
+                                            @foreach (var item in ViewBag.Marcas)
+                                            {
+                                                if (item.EstadoMarca != 0)
+                                                {
+                                                    <option value="@item.NombreMarca" data-id="@item.MarcaId">@item.NombreMarca</option>
+                                                }
+                                            }
+                                        </datalist>
+                                        <input id="MarcaId" type="hidden" name="marcaId">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="icono-input">
+                                        <i class="fas fa-times noBe" onclick="iconoLimpiarCampo(['NombrePresentacion','PresentacionId'],'NombrePresentacion');"></i>
+                                        <label for="NombrePresentacion" class="control-label">Presentación<span class="Mensaje">*</span></label>
+                                        <input list="presentaciones" oninput="validarCampoProducto(this); agregarIconoParalimpiarElCampo(this);" id="NombrePresentacion" name="nombrePresentacion" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoPresentacionesAlert(this)" autocomplete="off" />
+                                        <datalist id="presentaciones">
+                                            @foreach (var item in ViewBag.Presentaciones)
+                                            {
+                                                if (item.EstadoPresentacion != 0)
+                                                {
+                                                    <option value="@item.NombreCompletoPresentacion" data-id="@item.PresentacionId">@item.NombreCompletoPresentacion</option>
+                                                }
+                                            }
+                                        </datalist>
+                                        <input id="PresentacionId" type="hidden" name="presentacionId">
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="NombreProducto" class="control-label">Nombre producto<span class="Mensaje">*</span></label>
+                                    <input type="text" id="NombreProducto" oninput="validarCampoProducto(this)" name="nombreProducto" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="modal-contenedor-check">
+                                <div class="contenedorDatos">
+                                    <label class="form-check-label labelFechaDeVencimiento" for="fechaDeVencimiento">Aplicar fecha de vencimiento</label>
+                                    <input type="checkbox" class="form-check-input" id="fechaDeVencimiento" />
+                                </div>
+                                <div class="contenedorDatos">
+                                    <label class="form-check-label labelDescuentoPorMayor" for="checkboxDescuentoPorMayor">Aplicar Descuento por mayor</label>
+                                    <input type="checkbox" class="form-check-input" onchange="Llamar();" id="checkboxDescuentoPorMayor" />
+                                </div>
+                            </div>
+                            <div class="col-md-6 noBe PorMayor">
+                                <div class="form-group">
+                                    <label for="CantidadAplicarPorMayor" class="control-label">Cantidad de unidades a superar<span class="Mensaje"></span></label>
+                                    <input type="text" id="CantidadAplicarPorMayor" value="0" oninput="validarCampoProducto(this)" name="cantidadAplicarPorMayor" class="form-control" autocomplete="off"  />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 noBe PorMayor">
+                                <div class="form-group">
+                                    <label for="DescuentoAplicarPorMayor" class="control-label">Descuento por producto<span class="Mensaje"></span></label>
+                                    <input type="text" id="DescuentoAplicarPorMayor" maxlength="3" value="0" oninput="validarCampoProducto(this)" name="descuentoAplicarPorMayor" class="form-control" autocomplete="off"  />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-contenedor-footer">
+                            <button type="reset" class="btn btn-secondary" onclick="limpiarDatosFormularioProductoAgregar();">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade GeneralModal" id="ModalProductoAct" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-cabecera">
+                    <div id="pibo"></div>
+                    <div class="modal-header-view TituloModal">
+                        <h2 class="modal-title">Actualizar producto</h2>
+                    </div>
+                    <div class="modal-header-view" id="modal-cabecera-equis">
+                        <button type="button" onclick="limpiarFormularioProductoAct();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="modal-cuerpo">
+                    <form asp-controller="Productos" id="FormActualizarProducto" asp-action="Update" class="modal-formulario-actualizar-producto" method="post">
+                        <input name="productoId" type="hidden" id="ProductoIdAct" class="form-control" />
+                        <div class="row">
+                            <div class="form-check">
+                                <label class="switch">
+                                    <input type="checkbox" class="form-check-input" id="filtrarActivosAct" onchange="checkboxFiltrarAct()">
+                                    <span class="slider"></span>
+                                </label>
+                                <label class="form-check-label" for="filtrarActivosAct">Mostrar opciones inactivas</label>
+                            </div>
+                            <div class="form-check">
+                                <label class="switch">
+                                    <input type="checkbox" class="form-check-input" id="filtrarxCategoriaAct" onchange="checkboxFiltrarAct()">
+                                    <span class="slider"></span>
+                                </label>
+                                <label class="form-check-label" for="filtrarxCategoriaAct">Mostrar solo opciones asociadas a categoría</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="icono-input">
+                                        <i class="fas fa-times" onclick="iconoLimpiarCampo(['NombreCategoriaAct','CategoriaIdAct'],'NombreCategoriaAct');"></i>
+                                        <label for="NombreCategoriaAct" class="control-label">Categoría<span class="Mensaje"></span></label>
+                                        <input list="categoriasAct" oninput="validarCampoProducto(this); agregarIconoParalimpiarElCampo(this);" id="NombreCategoriaAct" name="nombreCategoria" class="form-control" placeholder="Selecciona una categoría..." onclick="showNoCategoriasAlert(this )" autocomplete="off">
+                                        <datalist id="categoriasAct">
+                                            @foreach (var item in ViewBag.Categorias)
+                                            {
+                                                if (item.EstadoCategoria != 0)
+                                                {
+                                                    <option value="@item.NombreCategoria" data-id="@item.CategoriaId">@item.NombreCategoria</option>
+                                                }
+                                            }
+                                        </datalist>
+                                        <input id="CategoriaIdAct" type="hidden" name="categoriaId">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="icono-input">
+                                        <i class="fas fa-times" onclick="iconoLimpiarCampo(['NombreMarcaAct','MarcaIdAct'],'NombreMarcaAct');"></i>
+                                        <label for="NombreMarcaAct" class="control-label">Marca<span class="Mensaje"></span></label>
+                                        <input list="marcasAct" oninput="validarCampoProducto(this); agregarIconoParalimpiarElCampo(this);" id="NombreMarcaAct" name="nombreMarca" class="form-control" placeholder="Escribe y/o selecciona una marca..." onclick="showNoMarcasAlert(this)" autocomplete="off">
+                                        <datalist id="marcasAct">
+                                            @foreach (var item in ViewBag.Marcas)
+                                            {
+                                                if (item.EstadoMarca != 0)
+                                                {
+                                                    <option value="@item.NombreMarca" data-id="@item.MarcaId">@item.NombreMarca</option>
+                                                }
+                                            }
+                                        </datalist>
+                                        <input id="MarcaIdAct" type="hidden" name="marcaId">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="icono-input">
+                                        <i class="fas fa-times" onclick="iconoLimpiarCampo(['NombrePresentacionAct','PresentacionIdAct'],'NombrePresentacionAct');"></i>
+                                        <label for="NombrePresentacionAct" class="control-label">Presentación<span class="Mensaje"></span></label>
+                                        <input list="presentacionesAct" oninput="validarCampoProducto(this); agregarIconoParalimpiarElCampo(this);" id="NombrePresentacionAct" name="nombrePresentacion" class="form-control" placeholder="Escribe y/o selecciona una presentación..." onclick="showNoPresentacionesAlert(this)" autocomplete="off">
+                                        <datalist id="presentacionesAct">
+                                            @foreach (var item in ViewBag.Presentaciones)
+                                            {
+                                                if (item.EstadoPresentacion != 0)
+                                                {
+                                                    <option value="@item.NombreCompletoPresentacion" data-id="@item.PresentacionId">@item.NombreCompletoPresentacion</option>
+                                                }
+                                            }
+                                        </datalist>
+                                        <input id="PresentacionIdAct" type="hidden" name="presentacionId">
+                               
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="NombreProductoAct" class="control-label">Nombre producto<span class="Mensaje"></span></label>
+                                    <input type="text" id="NombreProductoAct" oninput="validarCampoProducto(this)" name="nombreProducto" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="EstadoAct" class="control-label">Estado</label>
+                                    <select id="EstadoAct" name="estado" class="form-control">
+                                        <option value="1">Activo</option>
+                                        <option value="0">Inactivo</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 PorMayorAct noBe">
+                                <div class="form-group">
+                                    <label for="CantidadAplicarPorMayorAct" class="control-label">Cantidad de unidades a superar<span class="Mensaje"></span></label>
+                                    <input type="text" id="CantidadAplicarPorMayorAct" oninput="validarCampoProducto(this)" name="cantidadAplicarPorMayor" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 PorMayorAct noBe">
+                                <div class="form-group">
+                                    <label for="DescuentoAplicarPorMayorAct" class="control-label">Descuento por producto<span class="Mensaje"></span></label>
+                                    <input type="text" id="DescuentoAplicarPorMayorAct" oninput="validarCampoProducto(this)" name="descuentoAplicarPorMayor" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <div class="modal-contenedor-check check-mayor-no-aplica">
+                                    <div class="contenedorDatos">
+                                        <label class="control-label" for="checkboxDescuentoPorMayorAct">Aplicar Descuento por mayor</label>
+                                        <input type="checkbox" class="form-check-input" onclick="Llamar2();" id="checkboxDescuentoPorMayorAct">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="MensajeInicial"></div>
+                        <div class="MensajeErrores"></div>
+                        <div class="modal-contenedor-footer">
+                            <button type="reset" onclick="limpiarDatosFormularioProductoAct();" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="btnGuardar">Actualizar</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="contenedor-filtro">
+        <select name="order" class="input-sm empSelect" onchange="redirectToOrder(this)">
+            <option selected disabled>
+                Ordenar por
+            </option>
+            <option data-url="?order=alfabetico">Ordenar por nombre (A-Z)</option>
+            <option data-url="?order=name_desc">Ordenar por nombre (Z-A)</option>
+            <option data-url="?order=first">Ordenar por más antiguo</option>
+            <option data-url="?order=reverse">Ordenar por más reciente</option>
+        </select>
+    </div>
+    <hr>
+    <table class="table table-custom text-center">
+        <thead>
+            <tr>
+                <th class="contadorB consecutivo noIs">#</th>
+                <th class="contador consecutivo">
+                    #
+                </th>
+                <th class="d-none">
+                    producto Id
+                </th>
+                <th>
+                    Categoria
+                </th>
+                <th>
+                    Marca
+                </th>
+                <th class="nombreLong">
+                    Nombre producto
+                </th>
+                <th title="cantidad total por producto">
+                    Cantidad total
+                </th>
+                <th title="cantidad total por producto">
+                    Cantidad total por unidad
+                </th>
+                <th class="contenedorEstado">
+                    Estado
+                </th>
+                <th class="contenedorAcciones">
+                    Acciones
+                </th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            @{
+                int contador = ViewBag.Contador;
+            }
+
+            @foreach (var item in Model)
+            {
+                <tr class="productosPaginado">
+                    <td>
+                        @contador
+                        @{
+                            contador++;
+                        }
+                    </td>
+                    <td class="d-none">
+                        @Html.DisplayFor(modelItem => item.ProductoId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NombreCategoria)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NombreMarca)
+                    </td>
+                    <td class="NombreLong">
+                        @Html.DisplayFor(modelItem => item.NombreCompletoProducto)
+                    </td>
+                    <td class="contenedorCantidad">
+                        @Html.DisplayFor(modelItem => item.CantidadTotal)
+                    </td>   
+                    <td class="contenedorCantidad">
+                        @Html.DisplayFor(modelItem => item.CantidadTotalPorUnidad)
+                    </td>
+                    <td class="text-center align-middle">
+                        <label class="switch">
+                            <input type="checkbox" onchange="actualizarEstadoProducto('@item.ProductoId', this.checked)" @(item.Estado == 1 ? "checked" : "") />
+                            <span class="slider"></span>
+                            @item.Estado
+                        </label>
+                    </td>
+                    <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                    <td class="botonesTabla">
+                        <div class="botonesTablaContenedor">
+                            <button class="btn btn-edit botonEditar" onclick="actualizarProducto(@item.ProductoId);"><i class="fas fa-edit"></i></button>
+                            <a asp-action="Details" asp-controller="Productos" asp-route-id="@item.ProductoId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
+                            <form asp-controller="Productos" class="eliminarProducto" asp-action="Delete" method="post">
+                                <input  value="@item.ProductoId" type="hidden" name="productoId" />
+                                <button type="submit" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }@{
+                var productos = ViewBag.Productos as List<Producto>;
+                if (productos != null)
+                {
+                    int contadorB = 1;
+                    foreach (var producto in productos)
+                    {
+                        <tr class="Productos noIs">
+                            <td class="contadorB noIs">
+                                @contadorB <!-- Muestra el valor del contador -->
+                            </td>
+                            <td>@producto.ProductoId</td>
+                            <td>@producto.NombreCategoria</td>
+                            <td>@producto.NombreMarca</td>
+                            <td>@producto.NombreCompletoProducto</td>
+                            <td class="">@producto.CantidadTotal</td>
+                            <td class="">@producto.CantidadTotalPorUnidad</td>
+                            <td class="text-center align-middle">
+                                <label class="switch">
+                                    <input type="checkbox" onchange="actualizarEstadoProducto('@producto.ProductoId')" @(producto.Estado != 0 ? "checked" : "")>
+                                    <span class="slider"></span>
+                                    @producto.Estado
+                                </label>
+                            </td>
+
+                            <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                            <td class="botonesTabla">
+                                <div class="botonesTablaContenedor">
+                                    <button class="btn btn-edit botonEditar" onclick="actualizarProducto(@producto.ProductoId);"><i class="fas fa-edit"></i></button>
+                                    <a asp-action="Details" asp-controller="Productos" asp-route-id="@producto.ProductoId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
+                                    <form asp-controller="Productos" class="eliminarProducto" asp-action="Delete" method="post">
+                                        <input  value="@producto.ProductoId" type="hidden" name="productoId" />
+                                        <button type="submit" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                                </div>
+                             </td>
+                        </tr>
+                        contadorB++;
+                    }
+
+                }
+            }
+        </tbody>
+    </table>
+    <div class="pagination-container mt-2" id="paginationContainer">
+        @if (Model != null && Model.PageCount > 1)
+        {
+            <div class="d-flex justify-content-center mb-5">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <!-- Botón para ir a la primera página -->
+                        @if (Model.PageNumber > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1&order=@ViewBag.Order" aria-label="First">
+                                    <span aria-hidden="true">Primero</span>
+                                </a>
+                            </li>
+                        }
+                        <!-- Botón para la página anterior (oculto en la página 1) -->
+                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.PageNumber - 1)&order=@ViewBag.Order" aria-label="Previous">
+                                <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                            </a>
+                        </li>
+                        <!-- Iterar sobre las páginas disponibles -->
+                        @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                        {
+                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                <a class="page-link" href="?page=@i&order=@ViewBag.Order">@i</a>
+                            </li>
+                        }
+                        <!-- Botón para la página siguiente (oculto en la última página) -->
+                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.PageNumber + 1)&order=@ViewBag.Order" aria-label="Next">
+                                <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                            </a>
+                        </li>
+                        <!-- Botón para ir a la última página -->
+                        @if (Model.PageNumber < Model.PageCount)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?page=@Model.PageCount&order=@ViewBag.Order" aria-label="Last">
+                                    <span aria-hidden="true">Último</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    window.addEventListener('load', function (event) {
+        const formulario = document.getElementById('agregarProductoForm'); 
+        formulario.reset();
+    });
+</script>
+
+
+

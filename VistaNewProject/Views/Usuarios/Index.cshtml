@@ -1,0 +1,416 @@
+﻿@using X.PagedList
+@model X.PagedList.IPagedList<VistaNewProject.Models.Usuario>
+
+@{
+    ViewData["Title"] = "Usuarios";
+}
+<div class="ContenedorVista" id="ContenedorUsuario">
+    <br />
+    <div class="d-flex justify-content-between">
+        <!-- Formulario de búsqueda a la izquierda -->
+        <div class="mr-auto">
+            <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
+                <div class="input-group">
+                    <input id="buscarUsuario" type="text" class="form-control" oninput="searchUsuario();" placeholder="Buscar usuario" aria-label="Search" aria-describedby="button-addon2">
+                    <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputUsuario();" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+        </div>
+        <!-- Botón para abrir el modal -->
+        <button type="button" id="botonabrirModalUsuario" onclick="simularClickUsuario();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalUsuario">
+            <i class="fas fa-plus-circle"></i> Agregar Usuario
+        </button>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade GeneralModal" id="ModalUsuario" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" id="FormPrincipalUsuario">
+                <div class="modal-cabecera">
+                    <div id="pibo"></div>
+                    <div class="modal-header-view TituloModal">
+                        <h2 class="modal-title">Agregar Usuario</h2>
+                    </div>
+                    <div class="moda-header-view" id="modal-cabecera-equis">
+                        <button type="button" onclick="limpiarFormularioUsuario();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="modal-cuerpo">
+                    <form asp-controller="Usuarios" asp-action="Create" method="post" class="modal-formulario-crear-usuario">
+                        <div class="modal-body">
+                            <div class="d-none">
+                                <select id="EstadoUsuario" type="hidden" name="estadoUsuario" class="form-control">
+                                    <option selected value="1">Activo</option>
+                                    <option value="0">Inactivo</option>
+                                </select>
+                                <input type="hidden" value="0" name="usuarioId" class="form-control" />
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="NombreRol" class="control-label">Rol<span class="Mensaje">*</span></label>
+                                        <input list="roles" oninput="validarCampoUsuario(this)" id="NombreRol" name="nombreRol" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoRolesAlert()" autocomplete="off" />
+                                        <datalist id="roles">
+                                            @foreach (var item in ViewBag.Roles)
+                                            {
+                                                if (item.EstadoRol != 0)
+                                                {
+                                                    <option value="@item.NombreRol" data-id="@item.RolId">@item.NombreRol</option>
+                                                }
+                                            }
+                                        </datalist>
+                                        <input id="RolId" type="hidden" name="rolId">
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="Nombre" class="control-label">Nombre<span class="Mensaje">*</span></label>
+                                        <input type="text" id="Nombre" oninput="validarCampoUsuario(this);" name="nombre" class="form-control" autocomplete="off" />
+                                        <span id="MensajeNombre" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="Apellido" class="control-label">Apellido<span class="Mensaje">*</span></label>
+                                        <input type="text" id="Apellido" oninput="validarCampoUsuario(this)" name="apellido" class="form-control" autocomplete="off" />
+                                        <span id="MensajeApellido" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="Usuario" class="control-label">Usuario<span class="Mensaje">*</span></label>
+                                        <input type="text" id="Usuario" oninput="validarCampoUsuario(this);" name="usuario1" class="form-control" autocomplete="off" />
+                                        <span id="MensajeUsuario" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="Contraseña" class="control-label">Contraseña<span class="Mensaje">*</span></label>
+                                        <input type="password" id="Contraseña" oninput="validarCampoUsuario(this);" name="contraseña" class="form-control " autocomplete="off" />
+                                        <span id="MensajeContraseña" class="text-danger"></span>
+                                        <span id="MostrarOcultar1" class="icono-ojo" onclick="mostrarOcultarContrasena('Contraseña')">
+                                            <!-- Corregido el ID para evitar duplicidad -->
+                                            <!-- <img src="ruta/para/el/ícono-de-ojo.svg" alt="Mostrar/Ocultar Contraseña" width="20" height="20"> -->
+                                            Ojo
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="RepetirContraseña" class="control-label">Repetir Contraseña<span class="Mensaje">*</span></label>
+                                        <input type="password" id="RepetirContraseña" oninput="validarCampoUsuario(this);" name="repetirContraseña" class="form-control" autocomplete="off" />
+                                        <span id="MensajeRepetirContraseña" class="text-danger"></span>
+                                        <span id="MostrarOcultar2" class="icono-ojo" onclick="mostrarOcultarContrasena('RepetirContraseña')">
+                                            <!-- Corregido el ID para evitar duplicidad -->
+                                            <!-- <img src="ruta/para/el/ícono-de-ojo.svg" alt="Mostrar/Ocultar Contraseña" width="20" height="20"> -->
+                                            Ojo
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="TelefonoUsuario" class="control-label">Teléfono<span class="Mensaje">*</span></label>
+                                        <input type="text" id="TelefonoUsuario" oninput="validarCampoUsuario(this);" name="telefono" class="form-control" autocomplete="off" />
+                                        <span id="MensajeTelefono" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="CorreoUsuario" class="control-label">Correo<span class="Mensaje">*</span></label>
+                                        <input type="text" id="CorreoUsuario" oninput="validarCampoUsuario(this);" name="correo" class="form-control" autocomplete="off" />
+                                        <span id="MensajeCorreo" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-contenedor-footer">
+                            <button type="reset" onclick="limpiarFormularioUsuarioAgregar();" class="btn btn-secondary">Cancelar</button>
+                            <button type="submit" class="btn btn-primary btnGuardar">Agregar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>  
+    <div class="modal fade GeneralModal" onblur="AlPerderFocoUsuario();" id="ModalActualizarUsuario" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" id="FormActualizarUsuario">
+                <div class="modal-cabecera">
+                    <div id="pibo"></div>
+                    <div class="modal-header-view TituloModal">
+                        <h2 class="modal-title">Actualizar datos de Usuario</h2>
+                    </div>
+                    <div class="moda-header-view" id="modal-cabecera-equis">
+                        <button type="button" onclick="limpiarFormularioUsuarioAct();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="modal-cuerpo">
+                    <form asp-controller="Usuarios" asp-action="Update" method="post" class="modal-formulario-actualizar-usuario">
+                        <div class="modal-body">
+                            <input type="hidden" id="UsuarioIdAct" name="usuarioId" class="form-control" />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="NombreRolAct" class="control-label">Rol<span class="Mensaje"></span></label>
+                                        <input list="roles" oninput="validarCampoUsuario(this)" id="NombreRolAct" name="nombreRol" class="form-control" placeholder="Escribe y/o selecciona..." onclick="showNoRolesAlert()" autocomplete="off" />
+                                        <datalist id="roles">
+                                            @foreach (var item in ViewBag.Roles)
+                                            {
+                                                if (item.EstadoRol != 0)
+                                                {
+                                                    <option value="@item.NombreRol" data-id="@item.RolId">@item.NombreRol</option>
+                                                }
+                                            }
+                                        </datalist>
+                                        <input id="RolIdAct" type="hidden" name="rolId">
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="EstadoUsuarioAct" class="control-label">Estado usuario</label>
+                                        <select id="EstadoUsuarioAct" name="estadoUsuario" class="form-control">
+                                            <option value="1">Activo</option>
+                                            <option value="0">Inactivo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="NombreAct" class="control-label">Nombre<span class="Mensaje">*</span></label>
+                                        <input type="text" id="NombreAct" oninput="validarCampoUsuario(this);" name="nombre" class="form-control" autocomplete="off" />
+                                        <span id="MensajeNombre" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="ApellidoAct" class="control-label">Apellido<span class="Mensaje">*</span></label>
+                                        <input type="text" id="ApellidoAct" oninput="validarCampoUsuario(this)" name="apellido" class="form-control" autocomplete="off" />
+                                        <span id="MensajeApellido" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="UsuarioAct" class="control-label">Usuario<span class="Mensaje">*</span></label>
+                                        <input type="text" id="UsuarioAct" oninput="validarCampoUsuario(this)" name="usuario1" class="form-control" autocomplete="off" />
+                                        <span id="MensajeUsuario" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="ContraseñaAct" class="control-label">Contraseña<span class="Mensaje">*</span></label>
+                                        <input type="password" id="ContraseñaAct" oninput="validarCampoUsuario(this)" name="contraseña" class="form-control " autocomplete="off" />
+                                        <span id="MensajeContraseñaAct" class="text-danger"></span>
+                                        <span id="MostrarOcultarAct" class="icono-ojo" onclick="mostrarOcultarContrasena('ContraseñaAct')">
+                                            <!-- Corregido el ID para evitar duplicidad -->
+                                            <!-- <img src="ruta/para/el/ícono-de-ojo.svg" alt="Mostrar/Ocultar Contraseña" width="20" height="20"> -->
+                                            Ojo
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="TelefonoUsuarioAct" class="control-label">Teléfono<span class="Mensaje">*</span></label>
+                                        <input type="text" id="TelefonoUsuarioAct" oninput="validarCampoUsuario(this)" name="telefono" class="form-control" autocomplete="off" />
+                                        <span id="MensajeTelefono" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="CorreoUsuarioAct" class="control-label">Correo<span class="Mensaje">*</span></label>
+                                        <input type="text" id="CorreoUsuarioAct" oninput="validarCampoUsuario(this)" name="correo" class="form-control" autocomplete="off" />
+                                        <span id="MensajeCorreo" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-contenedor-footer">
+                            <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormularioUsuario();">Cancelar</button>
+                            <button type="submit" class="btn btn-primary btnGuardar">Actualizar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <hr>
+    <div class="mt-3">
+        <a href="?order=alfabetico">Ordenar por nombre (A-Z)</a> |
+        <a href="?order=name_desc">Ordenar por nombre (Z-A)</a> |
+        <a href="?order=first">Ordenar por más antiguo</a> |
+        <a href="?order=reverse">Ordenar por más reciente</a>
+    </div>
+    <table class="table table-custom text-center">
+        <thead>
+            <tr>
+                <th class="contadorB consecutivo noIs">#</th>
+                <th class="contador consecutivo">#</th>
+                <th class="d-none">usuario Id</th>
+                <th>Rol</th>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Correo</th>
+                <th class="contenedorEstado">Estado</th>
+                <th class="contenedorAcciones">Acciones</th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            @{
+                int contador = ViewBag.Contador; // Obtener el valor del contador desde la ViewBag
+            }
+            @foreach (var item in Model)
+            {
+                <tr class="usuariosPaginado">
+                    <td>
+                        @contador <!-- Muestra el valor del contador -->
+                        @{
+                            contador++; // Incrementa el contador para la próxima iteración
+                        }
+                    </td>
+                    <td class="rol-id">
+                        @foreach (var rol in ViewBag.Roles)
+                        {
+                            @if (rol.RolId == item.RolId) // Verifica si el ID del rol coincide con el ID del rol del usuario
+                            {
+                                <span>@rol.NombreRol</span> <!-- Muestra el nombre del rol si coincide -->
+                            }
+                        }
+                    </td>
+                    <td class="usuario-id" style="display: none;">@Html.DisplayFor(modelItem => item.UsuarioId)</td>
+                    <td class="Nombre">@Html.DisplayFor(modelItem => item.Nombre) @Html.DisplayFor(modelItem => item.Apellido)</td>
+                    <td class="telefono">@Html.DisplayFor(modelItem => item.Telefono)</td>
+                    <td class="correo">@Html.DisplayFor(modelItem => item.Correo)</td>
+                    <td class="text-center align-middle">
+                        <label class="switch">
+                            <input type="checkbox" @(item.EstadoUsuario != 0 ? "checked" : "") onchange="actualizarEstadoUsuario('@item.UsuarioId', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+                    <td class="botonesTabla">
+                        <div class="botonesTablaContenedor">
+                            <button class="btn btn-edit botonEditar" onclick="mostrarModalActualizarUsuario(@item.UsuarioId);"><i class="fas fa-edit"></i></button>
+                            <a asp-action="Details" asp-controller="Usuarios" asp-route-id="@item.UsuarioId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
+                            <form asp-controller="Usuarios" class="eliminarUsuario" asp-action="Delete" method="post">
+                                <input type="hidden" value="@item.UsuarioId" name="usuarioId" />
+                                <button type="submit" value="" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @{
+
+                var usuarios = ViewData["Usuarios"] as List<Usuario>;
+                if (usuarios != null)
+                {
+                    int contadorC = 1;
+                    foreach (var usuario in usuarios)
+                    {
+
+                        <tr class="Usuarios noIs">
+                            <td class="contadorB noIs">
+                                @contadorC <!-- Muestra el valor del contador -->
+                            </td>
+                            <td>@usuario.UsuarioId</td>
+                            <td class="rol-id">
+                                @foreach (var rol in ViewBag.Roles)
+                                {
+                                    @if (rol.RolId == usuario.RolId) // Verifica si el ID del rol coincide con el ID del rol del usuario
+                                    {
+                                        <span>@rol.NombreRol</span> <!-- Muestra el nombre del rol si coincide -->
+                                    }
+                                }
+                            </td>
+                            <td>@usuario.Nombre @usuario.Apellido</td>
+                            <td>@usuario.Telefono</td>
+                            <td>@usuario.Correo</td>
+                            <td class="text-center align-middle">
+                                <label class="switch">
+                                    <input type="checkbox" id="check_@usuario.UsuarioId" @(usuario.EstadoUsuario != 0 ? "checked" : "") onchange="actualizarEstadoUsuario('@usuario.UsuarioId')">
+                                    <span class="slider"></span>
+                                </label>
+                            </td>
+                            <td class="botonesTabla">
+                                <div class="botonesTablaContenedor">
+                                    <button class="btn btn-edit botonEditar" onclick="mostrarModalActualizarUsuario(@usuario.UsuarioId);"><i class="fas fa-edit"></i></button>
+                                    <a asp-action="Details" asp-controller="Usuarios" asp-route-id="@usuario.UsuarioId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
+                                    <form asp-controller="Usuarios" class="eliminarUsuario" asp-action="Delete" method="post">
+                                        <input type="hidden" value="@usuario.UsuarioId" name="usuarioId" />
+                                        <button type="submit" value="" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        contadorC++;
+                    }
+                }
+
+            }
+
+
+        </tbody>
+    </table>
+    <div class="pagination-container mt-2" id="paginationContainer">
+        @if (Model != null && Model.PageCount > 1)
+        {
+            <div class="d-flex justify-content-center mb-5">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <!-- Botón para ir a la primera página -->
+                        @if (Model.PageNumber > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1&order=@ViewBag.Order" aria-label="First">
+                                    <span aria-hidden="true">Primero</span>
+                                </a>
+                            </li>
+                        }
+                        <!-- Botón para la página anterior (oculto en la página 1) -->
+                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.PageNumber - 1)&order=@ViewBag.Order" aria-label="Previous">
+                                <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                            </a>
+                        </li>
+                        <!-- Iterar sobre las páginas disponibles -->
+                        @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                        {
+                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                <a class="page-link" href="?page=@i&order=@ViewBag.Order">@i</a>
+                            </li>
+                        }
+                        <!-- Botón para la página siguiente (oculto en la última página) -->
+                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.PageNumber + 1)&order=@ViewBag.Order" aria-label="Next">
+                                <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                            </a>
+                        </li>
+                        <!-- Botón para ir a la última página -->
+                        @if (Model.PageNumber < Model.PageCount)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?page=@Model.PageCount&order=@ViewBag.Order" aria-label="Last">
+                                    <span aria-hidden="true">Último</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
+
+</div>

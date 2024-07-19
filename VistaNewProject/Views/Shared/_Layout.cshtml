@@ -1,0 +1,215 @@
+﻿@using Microsoft.AspNetCore.Authentication
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>@ViewData["Title"] - OPTIMUS</title>
+    <link rel="icon" href="~/favicon.png" type="image/x-icon" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/main.css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/822fe3c749.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.7/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.7/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <header>
+        <div id="Cabecera">
+            <div id="cabeceraMenu">
+                <button id="menu-toggle">
+                    <i class="fas fa-bars iconoHeaderMenu"></i>
+                </button>
+                <div class="circle">
+                    <a asp-area="" asp-controller="Home" asp-action="Index">
+                        <img style="width:35px; height:35px; "src="~/favicon.png" />
+                    </a>
+                </div>
+            </div>
+            <div id="cabeceraCircle">
+                  <a class="circle" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img style="width:35px; height:35px;" src="~/image/OPTIMUS/3-removebg-preview.png" />
+                </a>
+                <span class="tituloHeader">T</span>
+            </div>
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <div class="cabeceraSalir">
+                    <a class="nav-link dropdown-toggle Perfil" style="text-decoration: none; color: inherit;" onclick="opcionesDePerfil();" title="Hola @User.Identity.Name">
+                        <i class="fas fa-user fa-fw iconosHeader"></i>
+                        <span style="user-select:none;">@User.Identity.Name </span>
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="cabeceraSalir">
+                    <a class="nav-link dropdown-toggle Perfil" style="text-decoration: none; color: inherit;" href="Login">
+                        <i class="fas fa-user fa-fw iconoHeaderUsuario"></i>
+                        <span>Inicia sesión</span>
+                    </a>
+                </div>
+            }
+        </div>
+        <div id="cabeceraTitulo">
+            <span class="tituloHeader">OPTIMUS</span>
+        </div>
+    </header>
+    <div id="perfilVentanaEmergente" style="display:none;">
+        <a id="MiPerfil" asp-controller="MiPerfil" asp-action="Index" class="opcionesVentanaEmergente">Mi perfil</a>
+        <a href="#" id="exit" onclick="confirmLogout();" class="opcionesVentanaEmergente">Cerrar sesión</a>
+    </div>
+    <div id="Cuerpo">
+        <div id="Menu" class="sidebar">
+            <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Usuarios" asp-action="Index">
+                <i class="fa-solid fa-users iconosMenu"></i><span class="TextoMenu ">Usuarios</span>
+            </a>
+            <label for="opcion1" class="sidebar-label TextoMenu">
+                <i class="fa-solid fa-gears iconosMenu"></i><span class="TextoMenu ">Configuración</span>
+            </label>
+            <input type="checkbox" id="opcion1" >
+            <div class="sub-menu">
+                <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Rols" asp-action="Index">
+                    <i class="fa-solid fa-users-gear iconosMenu"></i><span class="TextoMenu ">Roles</span>
+                </a>
+            </div>
+            <label for="opcion2" class="sidebar-label TextoMenu">
+                <i class="fa-solid fa-cart-shopping iconosMenu"></i><span class="TextoMenu ">Compras</span>
+            </label>
+            <input type="checkbox" id="opcion2" >
+            <div class="sub-menu">
+                <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Categorias" asp-action="Index">
+                    <i class="fa-solid fa-box-archive iconosMenu"></i>
+                    <span class="TextoMenu">Categorias</span>
+                </a>
+                <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Compras" asp-action="Index">
+                    <i class="fa-solid fa-cart-shopping iconosMenu"></i><span class="TextoMenu ">Compras</span>
+                </a>
+                <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-controller="Marcas" asp-action="Index">
+                    <i class="fa-solid fa-folder-open iconosMenu"></i>
+                    <span class="TextoMenu">Marcas</span>
+                </a>
+                <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Presentaciones" asp-action="Index">
+                    <i class="fa-solid fa-cubes-stacked iconosMenu"></i>
+                    <span class="TextoMenu">Presentaciones</span>
+                </a>
+                <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Productos" asp-action="Index">
+                    <i class="fa-solid fa-bag-shopping iconosMenu"></i><span class="TextoMenu ">Productos</span>
+                </a>
+                <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Proveedores" asp-action="Index">
+                    <i class="fa-solid fa-truck-field iconosMenu"></i><span class="TextoMenu">Proveedores</span>
+                </a>
+                <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Unidades" asp-action="Index">
+                    <i class="fa-solid fa-truck-ramp-box iconosMenu"></i><span class="TextoMenu">Unidades</span>
+                </a>
+            </div>
+            <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Movimientos" asp-action="Index">
+                <i class="fa-solid fa-arrows-turn-to-dots iconosMenu"></i><span class="TextoMenu ">Movimientos</span>
+            </a>
+            <label for="opcion3" class="sidebar-label TextoMenu">
+                <i class="fa-solid fa-sack-dollar iconosMenu"></i><span class="TextoMenu ">Pedidos</span>
+            </label>
+            <input type="checkbox" id="opcion3">
+            <div class="sub-menu d-flex flex-column">
+                <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Clientes" asp-action="Index">
+                    <i class="fa-solid fa-people-group iconosMenu d-flex align-items-center justify-content-center"></i>
+                    <span class="TextoMenu ">Clientes</span>
+                </a>
+                <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Domicilios" asp-action="Index">
+                    <i class="fa-solid fa-motorcycle iconosMenu"></i><span class="TextoMenu ">Domicilios</span>
+                </a>
+                <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Pedidos" asp-action="Index">
+                    <i class="fa-solid fa-sack-dollar iconosMenu"></i><span class="TextoMenu ">Pedidos</span>
+                </a>
+                @* <a class="sidebar-label TextoMenu submenu" asp-area="" asp-controller="DetallePedidos" asp-action="Index" style="display: none;">Detalle Pedidos</a> *@
+            </div>
+            <a class="sidebar-label TextoMenu submenu d-flex align-items-center" asp-area="" asp-controller="Lotes" asp-action="Index">
+                <i class="fas fa-cubes iconosMenu"></i><span class="TextoMenu">Lotes</span>
+            </a>
+        </div>
+        <div class="container">
+            <main role="main" class="iframe-optimus">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+    <footer class="PIE">
+        <div>
+            &copy; 2024 - Optimus - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/js/site.js"></script>
+    <script src="~/js/Compras.js"></script>
+    <script src="~/js/Productos.js"></script>
+    <script src="~/js/proveedor.js"></script>
+    <script src="~/js/Detalle.js"></script>
+    <script src="~/js/Usuarios.js"></script>
+    <script src="~/js/categorias.js"></script>
+    <script src="~/js/unidades.js"></script>
+    <script src="~/js/marcas.js"></script>
+    <script src="~/js/presentaciones.js"></script>
+    <script src="~/js/clientes.js"></script>
+    @if (TempData["ActualizadoConExito"] != null)
+    {
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: '@TempData["ActualizadoConExito"]',
+                timer: 3000,
+                onClose: () => recargarPagina()
+            });
+        </script>
+    }
+    @if (TempData["SweetAlertMessage"] != null)
+    {
+        <script>
+            Swal.fire({
+                position: "center",
+                icon: "@TempData["SweetAlertIcon"]",
+                title: "@Html.Raw(TempData["SweetAlertTitle"])",
+                html: `<div id="MensajeAlertaGeneral"'>@Html.Raw(TempData["SweetAlertMessage"])</div>`,
+                showConfirmButton: "@TempData["EstadoAlerta"]",
+                timer: @TempData["Tiempo"] != "false" && @TempData["Tiempo"] != "0" ? "@TempData["Tiempo"]" : null,
+                timerProgressBar: @TempData["Tiempo"] != "false" && @TempData["Tiempo"] != "0"
+
+            });
+
+        </script>
+    } 
+    @if (TempData["SweetAlertMessagePersonalizado"] != null)
+    {
+        <script>
+            Swal.fire({
+                position: "center",
+                icon: "@TempData["SweetAlertIcon"]",
+                title: "@Html.Raw(TempData["SweetAlertTitle"])",
+                html: `<div id="MensajeAlertaGeneral"'>@Html.Raw(TempData["SweetAlertMessage"])</div>`,
+                showConfirmButton: "@TempData["EstadoAlerta"]",
+                timer: @TempData["Tiempo"] != "false" && @TempData["Tiempo"] != "0" ? "@TempData["Tiempo"]" : null,
+                timerProgressBar: @TempData["Tiempo"] != "false" && @TempData["Tiempo"] != "0",
+                customClass: {
+                    popup: 'modal-redondeo-error',
+                    title: 'custom-title-class'
+                },
+            });
+
+        </script>
+
+    } 
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,147 @@
+﻿
+.tablaDetalle {
+    margin: 0 auto;
+    width: 60%;
+    border-collapse: collapse;
+}
+
+    .tablaDetalle th,
+    .tablaDetalle td {
+        text-align: center;
+        white-space: nowrap;
+        padding: 4px; /* Ajusté el padding para mayor espacio */
+        border: 1px solid #ddd;
+    }
+
+    .tablaDetalle thead tr {
+        background-color: lightgray;
+    }
+
+    .tablaDetalle tbody tr {
+        background-color: white;
+    }
+
+        .tablaDetalle tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+.pedido-info {
+    text-align: center;
+    padding: 10px; /* Ajuste de padding */  
+}
+
+/*-------------------------------------------------------------------------------------------------------*/
+
+
+.TituloSobreTabladetalle {
+    text-align: center;
+}
+
+.MensajeNoDetalles {
+    padding-top: 20px;
+    text-align: center;
+    font-size: 18px;
+}
+
+/*-------------------------------------------------------------------------------------------------------*/
+
+.contenedorDescripcion {
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+}
+    .contenedorDescripcion .tituloDescripcion {
+        margin: 0px;
+        font-size: 20px;
+        font-weight: bold;
+        padding: 0px;
+    }
+    .contenedorDescripcion .textoDescripcion {
+        margin: 0px;
+        font-size: 16px;
+        padding: 0px;
+    }
+
+/*-------------------------------------------------------------------------------------------------------*/
+.contenedorChecboxDeAsociacion {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.contenedorChecboxDeAsociacionUnico {
+    display: flex;
+    gap:10px;
+}
+
+/*------------------------------------Botones-------------------------------------------------------------------*/
+
+.contenedor-botones-detalle {
+    display:flex;
+    gap:10px;
+}
+.botonEnviarDetalle {
+    background: #F8D545;
+    border-radius: 50px;
+}
+
+    .botonEnviarDetalle:hover {
+        background: #F8D435;
+        border-radius: 50px;
+    }
+
+.botonVolver {
+    border-radius: 50px;
+    color: white;
+    background-color: #213b68;
+}
+
+    .botonVolver:hover {
+        color: white;
+    }
+
+.botonAsociar {
+    border-radius: 50px;
+    color: white;
+    background-color: #213b68;
+    justify-content:center;
+    vertical-align:central;
+    display:flex;
+}
+
+    .botonAsociar:hover {
+        background-color: #212b68;
+        border-radius: 50px;
+        color:white;
+    }
+
+.manoAsociasion {
+    font-size: 20px;
+    margin-left: 3px;
+    padding-top: 5px;
+} 
+
+/*-----------------------------------------------------------*/
+/*Estilo de Detalle de compra*/
+
+
+
+
+
+
+/*Modal de errores al cambiar el precio del lote*/
+
+.modal-redondeo-error  {
+    width:560px !important;
+}
+#MensajeAlertaGeneral{
+
+
+}
+.custom-title-class {
+    font-size: 1.4em !important;
+}
+
+

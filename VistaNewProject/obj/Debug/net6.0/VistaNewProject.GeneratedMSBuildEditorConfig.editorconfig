@@ -1,0 +1,275 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = VistaNewProject
+build_property.RootNamespace = VistaNewProject
+build_property.ProjectDir = C:\Users\CERBERO\source\repos\API_OPTIMUS\VistaNewProject\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\CERBERO\source\repos\API_OPTIMUS\VistaNewProject
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Categorias/CategoriaxMarcasAsociadas.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0ZWdvcmlhc1xDYXRlZ29yaWF4TWFyY2FzQXNvY2lhZGFzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Categorias/CategoriaxPresentacionesAsociadas.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0ZWdvcmlhc1xDYXRlZ29yaWF4UHJlc2VudGFjaW9uZXNBc29jaWFkYXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Categorias/CategoriaxUnidadesAsociadas.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0ZWdvcmlhc1xDYXRlZ29yaWF4VW5pZGFkZXNBc29jaWFkYXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Categorias/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0ZWdvcmlhc1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Categorias/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0ZWdvcmlhc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Categorias/MarcasAsociadasxCategoria.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0ZWdvcmlhc1xNYXJjYXNBc29jaWFkYXN4Q2F0ZWdvcmlhLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Categorias/PresentacionesAsociadasxCategoria.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0ZWdvcmlhc1xQcmVzZW50YWNpb25lc0Fzb2NpYWRhc3hDYXRlZ29yaWEuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Categorias/UnidadesAsociadasxCategoria.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0ZWdvcmlhc1xVbmlkYWRlc0Fzb2NpYWRhc3hDYXRlZ29yaWEuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Clientes/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50ZXNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Clientes/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50ZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Compras/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29tcHJhc1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Compras/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29tcHJhc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/DetalleCompras/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGV0YWxsZUNvbXByYXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/DetallePedidos/AgregarMaxDetalles.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGV0YWxsZVBlZGlkb3NcQWdyZWdhck1heERldGFsbGVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/DetallePedidos/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGV0YWxsZVBlZGlkb3NcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/DetallePedidos/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGV0YWxsZVBlZGlkb3NcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/DetallePedidos/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGV0YWxsZVBlZGlkb3NcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Domicilios/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRG9taWNpbGlvc1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Domicilios/Detail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRG9taWNpbGlvc1xEZXRhaWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Domicilios/DomiciliosRealizados.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRG9taWNpbGlvc1xEb21pY2lsaW9zUmVhbGl6YWRvcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Domicilios/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRG9taWNpbGlvc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Login/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9naW5cSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Login/RecuperarContraseña.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9naW5cUmVjdXBlcmFyQ29udHJhc2XDsWEuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Lotes/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG90ZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Marcas/CategoriasAsociadasxMarca.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFyY2FzXENhdGVnb3JpYXNBc29jaWFkYXN4TWFyY2EuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Marcas/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFyY2FzXERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Marcas/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFyY2FzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Marcas/MarcaxCategoriasAsociadas.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFyY2FzXE1hcmNheENhdGVnb3JpYXNBc29jaWFkYXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/MiPerfil/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWlQZXJmaWxcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/MiPerfil/EditC.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWlQZXJmaWxcRWRpdEMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/MiPerfil/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWlQZXJmaWxcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Movimientos/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTW92aW1pZW50b3NcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Movimientos/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTW92aW1pZW50b3NcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Movimientos/DetallesCompras.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTW92aW1pZW50b3NcRGV0YWxsZXNDb21wcmFzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Movimientos/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTW92aW1pZW50b3NcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Pedidos/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGVkaWRvc1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Pedidos/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGVkaWRvc1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Pedidos/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGVkaWRvc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Pedidos/PedidosCancelados.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGVkaWRvc1xQZWRpZG9zQ2FuY2VsYWRvcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Presentaciones/CategoriasAsociadasxPresentacion.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJlc2VudGFjaW9uZXNcQ2F0ZWdvcmlhc0Fzb2NpYWRhc3hQcmVzZW50YWNpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Presentaciones/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJlc2VudGFjaW9uZXNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Presentaciones/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJlc2VudGFjaW9uZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Presentaciones/PresentacionxCategoriasAsociadas.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJlc2VudGFjaW9uZXNcUHJlc2VudGFjaW9ueENhdGVnb3JpYXNBc29jaWFkYXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Productos/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdG9zXERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Productos/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdG9zXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Productos/ProductoxUnidadesAsociadas.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdG9zXFByb2R1Y3RveFVuaWRhZGVzQXNvY2lhZGFzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Productos/UnidadesAsociadasxProducto.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdG9zXFVuaWRhZGVzQXNvY2lhZGFzeFByb2R1Y3RvLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Proveedores/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvdmVlZG9yZXNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Proveedores/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvdmVlZG9yZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Rols/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9sc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Unidades/CategoriasAsociadasxUnidad.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVW5pZGFkZXNcQ2F0ZWdvcmlhc0Fzb2NpYWRhc3hVbmlkYWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Unidades/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVW5pZGFkZXNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Unidades/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVW5pZGFkZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Unidades/UnidadxCategoriasAsociadas.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVW5pZGFkZXNcVW5pZGFkeENhdGVnb3JpYXNBc29jaWFkYXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Unidades/UnidadxProductosAsociados.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVW5pZGFkZXNcVW5pZGFkeFByb2R1Y3Rvc0Fzb2NpYWRvcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Usuarios/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Usuarios/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/CERBERO/source/repos/API_OPTIMUS/VistaNewProject/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-4o7zqdv4ek

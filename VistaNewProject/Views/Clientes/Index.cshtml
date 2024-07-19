@@ -1,0 +1,517 @@
+﻿@using X.PagedList
+@model X.PagedList.IPagedList<VistaNewProject.Models.Cliente>
+@{
+    ViewData["Title"] = "Index";
+}
+<br />
+
+
+<div class="ContenedorVista" id="ContenedorUsuario">
+    <div class="d-flex justify-content-between">
+        <!-- Formulario de búsqueda a la izquierda -->
+        <div class="mr-auto">
+            <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
+                <div class="input-group">
+                    <input id="buscarCliente" type="text" class="form-control" oninput="searchCliente();" placeholder="Buscar cliente" aria-label="Search" aria-describedby="button-addon2">
+                    <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputCliente();" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+        </div>
+
+
+        <!-- Botón para abrir el modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" onclick="simularClickCliente();obtenerDatosclientes() ;" data-bs-target="#Modal">
+            <i class="fas fa-plus-circle"></i>  Agregar Cliente
+        </button>
+    </div>
+
+
+    <div class="modal fade GeneralModal" id="Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" id="FormPrincipalCliente">
+                <div class="modal-cabecera">
+                    <div id="pibo"></div>
+                    <div class="modal-header-view TituloModal">
+                        <h2 class="modal-title">Agregar Cliente</h2>
+                    </div>
+                    <div class="moda-header-view" id="modal-cabecera-equis">
+                        <button type="button" onclick="limpiarFormularioCliente();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="modal-cuerpo">
+
+                    <form asp-controller="Clientes" asp-action="Create" method="post" onsubmit="return validarFormulario()">
+                        <div class="modal-body">
+
+                            <div class="col-5 d-none ">
+                                <input type="hidden" id="ClienteId" name="clienteId" class="form-control" />
+                            </div>
+                            <div style=" form-group">
+                                <div class="row">
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="Identificacion" class="control-label">Identificación</label>
+                                            <input type="text" id="Identificacion" maxlength="26" name="identificacion" class="form-control" />
+                                            <span id="MensajeIdentificacion" class="error"></span>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-6">
+
+                                        <div class="form-group">
+                                            <label for="NombreCompleto" class="control-label">Nombre Completo</label>
+                                            <input type="text" id="NombreCompleto" name="nombreCompleto" class="form-control" />
+                                            <span id="MensajeNombreCompleto" class="text-danger"></span>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group col">
+                                            <label for="NombreEntidad" class="control-label">Nombre Entidad</label>
+                                            <input type="text" id="NombreEntidad" name="nombreEntidad" class="form-control" />
+                                            <span id="MensajeNombreEntidad" class="text-danger"></span>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="Telefono" class="control-label">Telefono</label>
+                                            <input type="text" id="Telefono" name="telefono" class="form-control" />
+                                            <span id="MensajeTelefono" class="text-danger"></span>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="Correo" class="control-label">Correo</label>
+                                            <input type="text" id="Correo" name="correo" class="form-control" />
+                                            <span id="MensajeCorreo" class="text-danger"></span>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="Direccion" class="control-label">Direccion</label>
+                                            <input type="text" id="Direccion" name="direccion" class="form-control" />
+                                            <span id="MensajeDireccion" class="text-danger"></span>
+
+                                        </div>
+                                    </div>
+
+
+
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="TipoCliente" class="control-label">Tipo Cliente </label>
+                                            <select id="TipoCliente" name="tipoCliente" class="form-control">
+                                                <option value="Natural">Natural</option>
+                                                <option value="Empresa">Empresa</option>
+                                            </select>
+                                            <span id="MensajeTipoCliente" class="text-danger"></span>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group" id="EstadoCliente" style="display:none">
+                                            <label for="EstadoCliente" class="control-label">Estado Cliente</label>
+                                            <select id="EstadoCliente" name="estadoCliente" class="form-control">
+                                                <option value="1">Activo</option>
+                                                <option value="0">Inactivo</option>
+                                            </select>
+                                            <span id="MensajeEstadoCliente" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+
+
+
+                                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            </div>
+
+
+
+
+
+                        </div>
+                        
+                        <div class="modal-contenedor-footer">
+                            <button type="reset" onclick="limpiarFormularioAgregarCliente();" class="btn btn-secondary">Cancelar</button>
+
+                            <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                        </div>
+
+
+
+                    </form>
+                </div>
+            </div>
+            <div class="modal-content noBe" id="FormActualizarCliente">
+                <div class="modal-cabecera">
+                    <div id="pibo"></div>
+                      <div class="modal-header-view TituloModal">
+                        <h2 class="modal-title">Actualizar datos del Cliente</h2>
+                      </div>
+                    <div class="moda-header-view" id="modal-cabecera-equis">
+                        <button type="button" onclick="limpiarFormularioCliente();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <form asp-controller="Clientes" asp-action="Update" method="post" onsubmit="return validarFormularioAct()">
+                    @Html.AntiForgeryToken()
+                    <div class="modal-body">
+
+                        <div class="col-5">
+                            <input type="hidden" id="ClienteIdAct" name="clienteId" class="form-control" />
+                        </div>
+                        <div style=" form-group">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="IdentificacionAct" class="control-label">Identificacion</label>
+                                        <input type="text" id="IdentificacionAct" name="identificacion" class="form-control" />
+                                        <span id="MensajeIdentificacionAct" class="text-danger"></span>
+                                        <!-- Use un ID más descriptivo como "MensajeIdentificacion" -->
+                                    </div>
+                                </div>
+
+
+                                <div class="col-6">
+
+                                    <div class="form-group">
+                                        <label for="NombreCompletoAct" class="control-label">Nombre Completo</label>
+                                        <input type="text" id="NombreCompletoAct" name="nombreCompleto" class="form-control" />
+                                        <span id="MensajeNombreCompletoAct" class="text-danger"></span>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-group col">
+                                        <label for="NombreEntidadAct" class="control-label">Nombre Entidad</label>
+                                        <input type="text" id="NombreEntidadAct" name="nombreEntidad" class="form-control" />
+                                        <span id="MensajeNombreEntidadAct" class="text-danger"></span>
+
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="TelefonoAct" class="control-label">Teléfono</label>
+                                        <input type="text" id="TelefonoAct" name="telefono" class="form-control" />
+                                        <span id="MensajeTelefonoAct" class="text-danger"></span>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="CorreoAct" class="control-label">Correo</label>
+                                        <input type="text" id="CorreoAct" name="correo" class="form-control" />
+                                        <span id="MensajeCorreoAct" class="text-danger"></span>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="DireccionAct" class="control-label">Direccion</label>
+                                        <input type="text" id="DireccionAct" name="direccion" class="form-control" />
+                                        <span id="MensajeDireccionAct" class="text-danger"></span>
+
+                                    </div>
+                                </div>
+
+
+
+
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="TipoClienteAct" class="control-label">Tipo Cliente </label>
+                                        <select id="TipoClienteAct" name="tipoCliente" class="form-control">
+                                            <option value="Natural">Natural</option>
+                                            <option value="Empresa">Empresa</option>
+                                        </select>
+                                        <span id="MensajeTipoClienteAct" class="text-danger"></span>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-group" id="EstadoCliente">
+                                        <label for="EstadoClienteAct" class="control-label">Estado Cliente</label>
+                                        <select id="EstadoClienteAct" name="estadoCliente" class="form-control">
+                                            <option value="1">Activo</option>
+                                            <option value="0">Inactivo</option>
+                                        </select>
+                                        <span id="MensajeEstadoClienteAct" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+
+
+
+
+
+
+                            </div>
+
+
+                           
+                        </div>
+
+
+                    </div>
+
+                    
+                    <div class="modal-contenedor-footer">
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormularioCliente();">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="btnGuardar">Actualizar</button>
+                    </div>
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+    <br />
+
+<div class="contenedor-filtro">
+    <select name="order" class="input-sm empSelect" onchange="redirectToOrder(this)">
+        <option selected disabled>
+            Ordenar por
+        </option>
+        <option data-url="?order=alfabetico">Ordenar por nombre (A-Z)</option>
+        <option data-url="?order=name_desc">Ordenar por nombre (Z-A)</option>
+        <option data-url="?order=first">Ordenar por más antiguo</option>
+        <option data-url="?order=reverse">Ordenar por más reciente</option>
+    </select>
+</div>
+<br />
+    <table class="table table-custom text-center">
+        <thead>
+            <tr>
+                <th class="contadorB consecutivo noIs">#</th>
+                <th class="contador consecutivo">#</th>
+                <th class="d-none">
+                    ClienteId
+                </th>
+                <th class="d-none">
+                    Identificacion
+                </th>
+                <th>
+                    Nombre entidad
+                </th>
+                <th>
+                    Nombre completo
+                </th>
+                <th class="d-none">
+                    Tipo cliente
+                </th>
+                <th>
+                    Teléfono
+                </th>
+                <th>
+                    Correo
+                </th>
+                <th>
+                    Dirección
+                </th>
+                <th>
+                    Estado cliente
+                </th>
+                <th>
+                    Acciones
+                </th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            @{
+                int contador = ViewBag.Contador ?? 1;
+            }
+
+            @foreach (var item in Model)
+            {
+                <tr class="clientesPaginado">
+                    <td>
+                        @contador
+                        @{
+                            contador++;
+                        }
+                    </td>
+                    <td class="d-none cliente-id">
+                        @Html.DisplayFor(modelItem => item.ClienteId)
+                    </td>
+                    <td class="d-none">
+                        @Html.DisplayFor(modelItem => item.Identificacion)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NombreEntidad)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NombreCompleto)
+                    </td>
+                    <td class="d-none">
+                        @Html.DisplayFor(modelItem => item.TipoCliente)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Telefono)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Correo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Direccion)
+                    </td>
+                    <td class="text-center align-middle contenedorEstadoTabla">
+                        <label class="switch">
+                            <input type="checkbox" @(item.EstadoCliente != 0 ? "checked" : "") onchange="actualizarEstadoCliente('@item.ClienteId', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+
+
+
+                    </td>
+
+                <td class="botonesTabla">
+                    <div class="botonesTablaContenedor">
+                        <button class="btn botonEditar" onclick="mostrarModalConRetrasoCliente(@item.ClienteId)"><i class="fas fa-edit"></i></button>
+
+                        <a asp-action="Details" asp-route-id="@item.ClienteId" class="btn botonDetalle"><i class="fas fa-file"></i></a>
+
+
+                        <form asp-controller="Clientes" asp-action="Delete" method="post" class="delete-form-cliente">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@item.ClienteId" />
+                            <button type="submit" class="btn botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                        </form>
+                    </div>
+                  
+
+
+                    </td>
+
+                </tr>
+            }
+        @{
+            var clientes = ViewData["Clientes"] as List<Cliente>;
+            if (clientes != null)
+            {
+                int contadorC = 1;
+                foreach (var cliente in clientes)
+                {
+
+                    <tr class="Clientes noIs">
+                        <td class="contadorB noIs">
+                            @contadorC <!-- Muestra el valor del contador -->
+                        </td>
+                        <td>@cliente.ClienteId</td>
+                        <td>@cliente.NombreEntidad</td>
+                        <td>@cliente.NombreCompleto</td>
+                        <td>@cliente.Telefono</td>
+                        <td>@cliente.Correo</td>
+                        <td>@cliente.Direccion</td>
+
+                        <td class="text-center align-middle contenedorEstadoTabla">
+                            <label class="switch">
+                                <input type="checkbox" @(cliente.EstadoCliente != 0 ? "checked" : "") onchange="actualizarEstadoCliente('@cliente.ClienteId', this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </td>
+                        <td class="botonesTabla">
+                            <div class="botonesTablaContenedor">
+                                <button class="btn botonEditar" onclick="mostrarModalConRetrasoCliente(@cliente.ClienteId)"><i class="fas fa-edit"></i></button>
+
+                                <a asp-action="Details" asp-route-id="@cliente.ClienteId" class="btn botonDetalle"><i class="fas fa-file"></i></a>
+
+
+                                <form asp-controller="Clientes" asp-action="Delete" method="post" class="delete-form-cliente">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@cliente.ClienteId" />
+                                    <button type="submit" class="btn botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    contadorC++;
+                }
+            }
+        }
+        </tbody>
+    </table>
+
+
+<div class="pagination-container mt-2" id="paginationContainer">
+    @if (Model != null && Model.PageCount > 1)
+    {
+        <div class="d-flex justify-content-center mb-5">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <!-- Botón para ir a la primera página -->
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1&order=@ViewBag.Order" aria-label="First">
+                                <span aria-hidden="true">Primero</span>
+                            </a>
+                        </li>
+                    }
+                    <!-- Botón para la página anterior (oculto en la página 1) -->
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber - 1)&order=@ViewBag.Order" aria-label="Previous">
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                        </a>
+                    </li>
+                    <!-- Iterar sobre las páginas disponibles -->
+                    @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                            <a class="page-link" href="?page=@i&order=@ViewBag.Order">@i</a>
+                        </li>
+                    }
+                    <!-- Botón para la página siguiente (oculto en la última página) -->
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber + 1)&order=@ViewBag.Order" aria-label="Next">
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                        </a>
+                    </li>
+                    <!-- Botón para ir a la última página -->
+                    @if (Model.PageNumber < Model.PageCount)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@Model.PageCount&order=@ViewBag.Order" aria-label="Last">
+                                <span aria-hidden="true">Último</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    }
+</div>
+
+</div>

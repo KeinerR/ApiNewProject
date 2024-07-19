@@ -1,0 +1,192 @@
+﻿@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<VistaNewProject.Models.Detallecompra>
+
+@{
+    ViewData["Title"] = "Detalles del Pedido";
+}
+
+<table class="table table-bordered table-striped">
+    <div class="pedido-info">
+        <h2 style="text-align:center;">Información del Pedido</h2>
+        <table class="table" style="margin: 0 auto; width: 60%;">
+            <tbody style="text-align: center;">
+                <tr style="background-color: lightgray;">
+                    <th>Codigo:</th>
+                    <th>Proveedor:</th>
+                    <th>#Factura:</th>
+                    <th>Valor Total:</th>
+                    <th>Fecha Compra:</th>
+                    <th>Estado:</th>
+
+                </tr>
+                <tr style="background-color: white;">
+                    <td>@(ViewBag.compras.CompraId)</td>
+                    <td>@(ViewBag.Proveedor.NombreEmpresa)</td>
+                    <td>@(ViewBag.compras.NumeroFactura)</td>
+                    <td>@(ViewBag.compras.ValorTotalCompra)</td>
+                    <td>@(ViewBag.compras.FechaCompra)</td>
+                    <td>@(ViewBag.compras.EstadoCompra)</td>
+
+
+                </tr>
+            </tbody>
+        </table>
+
+
+
+        <br />
+        <div style="margin:auto; text-align:center;">
+            <h2>Detalles del Pedido</h2>
+        </div>
+
+        <div>
+            @if (Model.Any())
+            {
+                <table class="table" style="margin: 0 auto; width: 60%;">
+                    <thead style="background-color: lightgray;">
+                        <tr style="text-align: center;">
+                            <th>Producto</th>
+                            <th>NumeroLote</th>
+                            <th>Unidad</th>
+                            <th>Cantidad</th>
+                            <th>loteid</th>
+                            <th>Precio PrecioPorPresentacion</th>
+                            <th>Precio PrecioPorUnidadProducto</th>
+                            <th>PrecioCompra</th>
+                            <th> Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var detalle in Model)
+                        {
+                            <tr style="text-align: center; background-color: white;">
+                                <td>@detalle.Producto?.NombreProducto </td>
+                                <td>@detalle.lote.NumeroLote</td>
+                                <td>@detalle.Unidad.NombreUnidad</td>
+                                <td>@detalle.Cantidad</td>
+                                <td>@detalle.lote.LoteId</td>
+
+                                <td>@detalle.lote.PrecioPorPresentacion</td>
+                                <td>@detalle.lote.PrecioPorUnidadProducto</td>
+                                <td>@detalle.lote.PrecioCompra</td>
+                                <td>
+                                    @if (ViewBag.TipoMovimineto == "Entrada")
+                                    {
+
+                                        <button class="btn botonEditar" onclick="actualizardetallelotes(@detalle.DetalleCompraId,@detalle.lote.LoteId)"><i class="fas fa-edit"></i></button>
+
+                                    }
+                                    else
+                                    {
+                                        <button class="btn botonEditar" onclick="actualizarproductoId(@detalle.DetalleCompraId,@detalle.lote.LoteId)"><i class="fas fa-edit"></i></button>
+
+
+                                    }
+                                </td>
+                               
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <div class="pagination-detail">
+                    @Html.Raw("<a href='" + Url.Action("DetallesCompras", new { CompraId = ViewBag.compras.CompraId, page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 }) + "' class='prev-next " + (Model.HasPreviousPage ? "" : "disabled") + "'>Anterior</a>")
+
+                    @for (int i = 1; i <= Model.PageCount; i++)
+                    {
+                        <a href="@Url.Action("DetallesCompras", new { CompraId = ViewBag.compras.CompraId, page = i })" class="@(i == Model.PageNumber ? "active" : "")">@i</a>
+                    }
+
+                    @Html.Raw("<a href='" + Url.Action("DetallesCompras", new { CompraId = ViewBag.compras.CompraId, page = Model.HasNextPage ? Model.PageNumber + 1 : Model.PageCount }) + "' class='prev-next " + (Model.HasNextPage ? "" : "disabled") + "'>Siguiente</a>")
+                </div>
+
+
+            }
+           
+        </div>
+    </div>
+
+
+
+    <div class="modal fade GeneralModal" id="ModalDomicilio" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content noBe" id="FormActualiZarDomicilio">
+                <div class="modal-cabecera">
+                    <div id="pibo"></div>
+                    <div class="modal-header-view TituloModal">
+                        <h2 class="modal-title">Movimiento Compras</h2>
+                    </div>
+                    <div class="moda-header-view" id="modal-cabecera-equis">
+                        <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="modal-cuerpo">
+                    <form asp-action="CreatePost" class="modal-formulario-actualizar-domicilio" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="row">
+                            <div class="d-none">
+                                <label for="DetalleCompraId" class="control-label"></label>
+                                <input type="text" id="DetalleCompraId" name="detalleCompraId" class="form-control" />
+                                <span id="detalleerror" class="text-danger"></span>
+                            </div>
+                            <div class="d-none">
+                                <label for="LoteId" class="control-label"></label>
+                                <input type="text" id="LoteId" name="loteId" class="form-control" />
+                                <span id="loteerror" class="text-danger"></span>
+                            </div>
+                            <div class="col-6">
+                                <label for="ProductoId" class="control-label">ProductoId</label>
+                                <input type="text" id="ProductoId" name="productoId" class="form-control" />
+                                <span id="productoerror" class="text-danger"></span>
+                            </div>
+                            <div class="col-6">
+                                <label for="Cantidad" class="control-label">Cantidad</label>
+                                <input type="text" id="Cantidad" name="cantidad" class="form-control" />
+                                <span id="cantidaderror" class="text-danger"></span>
+                            </div>
+                            <div class="col-6">
+                                <label for="FechaVencimiento" class="control-label">FechaVencimiento</label>
+                                <input type="datetime" id="FechaVencimiento" name="fechaVencimiento" class=" form-control" />
+                                <span id="fechaerror" class="text-danger"></span>
+                            </div>
+                            <div class="col-6">
+                                <label for="NumeroLote" class="control-label">NumeroLote</label>
+                                <input type="text" id="NumeroLote" name="numeroLote" class=" form-control" />
+                                <span id="numeroloteerrro" class="text-danger"></span>
+                            </div>
+                            <div class="col-6">
+                                <label for="PrecioCompra" class="control-label">PrecioCompra</label>
+                                <input type="text" id="PrecioCompra" name="precioCompra" class=" form-control" />
+                                <span id="preciocompraerror" class="text-danger"></span>
+                            </div>
+                            <div class="col-6">
+                                <label for="PrecioPorPresentacion" class="control-label">PrecioPorPresentacion</label>
+                                <input type="text" id="PrecioPorPresentacion" name="precioPorPresentacion" class=" form-control" />
+                                <span id="precioporerror" class="text-danger"></span>
+                            </div>
+                            <div class="col-6">
+                                <label for="PrecioPorUnidadProducto" class="control-label">PrecioPorUnidadProducto</label>
+                                <input type="text" id="PrecioPorUnidadProducto" name="precioPorUnidadProducto" class=" form-control" />
+                                <span id="precioPorproductoerror" class="text-danger"></span>
+                            </div>
+                            <div class="col-6 mt-4">
+                                @if (ViewBag.TipoMovimineto == "Entrada")
+                                {
+                                    <button type="button" value="Entrada" onclick="ActualizarDetalle(this.value);" class="btn btn-primary">Entrada</button>
+                                }
+                                else if (ViewBag.TipoMovimineto == "Salida")
+                                {
+                                    <button type="button" value="Salida" onclick="ActualizarDetalle(this.value);" class="btn btn-primary">Salida</button>
+                                }
+                            </div>
+                        </div>
+                     
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/js/movimientos.js"></script>
+
+    <script src="~/js/movimientos.js"></script>

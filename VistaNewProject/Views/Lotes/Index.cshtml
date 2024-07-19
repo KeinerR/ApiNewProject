@@ -1,0 +1,271 @@
+﻿@using X.PagedList
+@model X.PagedList.IPagedList<VistaNewProject.Models.Lote>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br />
+
+<div class="d-flex justify-content-between">
+    <!-- Formulario de búsqueda a la izquierda -->
+    <div class="mr-auto">
+        <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
+            <div class="input-group">
+                <input id="buscarLote" type="text" class="form-control" oninput="searchLote();" placeholder="Buscar lote" aria-label="Search" aria-describedby="button-addon2">
+                <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputLote();" type="button"><i class="fas fa-search"></i></button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="LoteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TituloModal">Agregar Lote</h5>
+                <button type="button" onclick="limpiarFormulario()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <form asp-controller="Lotes" asp-action="" method="post">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <input type="hidden" id="LoteId" name="loteId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="DetalleCompraId" class="control-label">Detalle Compra Id</label>
+                        <input type="text" id="DetalleCompraId" name="DetalleCompraId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="ProductoId" class="control-label">Producto Id</label>
+                        <input type="text" id="ProductoId" name="productoId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NumeroLote" class="control-label">Numero Lote</label>
+                        <input type="text" id="NumeroLote" name="numeroLote" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="PrecioCompra" class="control-label">Precio Compra</label>
+                        <input type="text" id="PrecioCompra" name="precioCompra" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="PrecioDetal" class="control-label">Precio Detal</label>
+                        <input type="text" id="PrecioDetal" name="precioDetal" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="PrecioxMayor" class="control-label">PrecioxMayor</label>
+                        <input type="text" id="PrecioxMayor" name="precioxMayor" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="FechaVencimiento" class="control-label">Fecha Vencimiento</label>
+                        <input type="datetime-local" id="FechaVencimiento" name="fechaVencimiento" class="form-control" />
+                    </div>
+                      <div class="form-group">
+                        <label for="Cantidad" class="control-label">Cantidad</label>
+                        <input type="text" id="Cantidad" name="cantidad" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="EstadoLote" class="control-label">Estado Lote</label>
+                        <input type="text" id="EstadoLote" name="estadoLote" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">Cancelar</button>
+                    <button type="button" onclick="agregarLote()" class="btn btn-primary" id="btnGuardar">Agregar</button>
+                    <button type="button" onclick="ActualizarLote()" class="btn btn-primary" id="botonEditarar" style="display: none;">Actualizar Lote</button>
+                </div>
+
+
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<br />
+<hr>
+
+<table class="table table-custom text-center">
+    <thead>
+        <tr>
+            <th class="contadorB consecutivo noIs">#</th>
+            <th class="contador consecutivo">#</th>
+            <th class="d-none">
+                Lote Id
+            </th>
+            <th>
+                Detalle compra Id
+            </th>
+            <th>
+                Producto Id
+            </th>
+
+            <th>
+                Numero lote
+            </th>
+            <th>
+                Precio Compra
+            </th>
+            <th>
+                Precio Detal
+            </th>
+            <th>
+                Precio x Mayor
+            </th>
+            <th>
+                Fecha vencimiento
+            </th>
+            <th>
+                Cantidad
+            </th>
+            <th>
+                Estado lote
+            </th>
+
+        </tr>
+    </thead>
+    <tbody class="text-center">
+        @{
+            int contador = ViewBag.Contador; // Obtener el valor del contador desde la ViewBag
+        }
+        @foreach (var item in Model)
+        {
+            <tr class="lotesPaginado">
+                <td>
+                    @contador <!-- Muestra el valor del contador -->
+                    @{
+                        contador++; // Incrementa el contador para la próxima iteración
+                    }
+                </td>
+                <td class="d-none lote-id">
+                    @Html.DisplayFor(modelItem => item.LoteId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DetalleCompraId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductoId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumeroLote)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PrecioCompra)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PrecioPorPresentacion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaVencimiento)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cantidad)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EstadoLote)
+                </td>
+                <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                <td class="d-none">
+                    <button class="btn btn-warning" onclick="obtenerDatosLote('@item.LoteId')" data-cliente-id="@item.LoteId" data-bs-toggle="modal" data-bs-target="#LoteModal">Editar</button>
+                    <button class="btn btn-danger" onclick="eliminarLote('@item.LoteId')">Eliminar</button>
+                </td>
+            </tr>
+        }
+        @{
+
+            var lotes = ViewData["Lotes"] as List<Lote>;
+            if (lotes != null)
+            {
+                int contadorC = 1;
+                foreach (var lote in lotes)
+                {
+
+                    <tr class="Lotes noIs">
+                        <td class="contadorB noIs">
+                            @contadorC <!-- Muestra el valor del contador -->
+                        </td>
+                        <td>@lote.LoteId</td>
+                        <td>@lote.DetalleCompraId</td>
+                        <td>@lote.ProductoId</td>
+                        <td>@lote.NumeroLote</td>
+                        <td>@lote.PrecioCompra</td>
+                        <td>@lote.PrecioPorPresentacion</td>
+                        <td>@lote.FechaVencimiento</td>
+                        <td>@lote.Cantidad</td>
+                        <td>
+                            @Html.DisplayFor(modelItem => lote.EstadoLote)
+                        </td>
+                        <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                        <td class="d-none">
+                            <button class="btn btn-warning" onclick="obtenerDatosLote('@lote.LoteId')" data-cliente-id="@lote.LoteId" data-bs-toggle="modal" data-bs-target="#LoteModal">Editar</button>
+                            <button class="btn btn-danger" onclick="eliminarLote('@lote.LoteId')">Eliminar</button>
+                        </td>
+
+                        
+                        
+
+
+
+                    </tr>
+                    contadorC++;
+                }
+            }
+        }
+    </tbody>
+</table>
+
+<div class="pagination-container mt-2">
+    @if (Model != null && Model.PageCount > 1)
+    {
+        <div class="d-flex justify-content-center mb-5">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <!-- Botón para ir a la primera página -->
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="First">
+                                <span aria-hidden="true">Primero</span>
+                            </a>
+                        </li>
+                    }
+                    <!-- Botón para la página anterior (oculto en la página 1) -->
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber - 1)" aria-label="Previous">
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                        </a>
+                    </li>
+                    <!-- Iterar sobre las páginas disponibles -->
+                    @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                            <a class="page-link" href="?page=@i">@i</a>
+                        </li>
+                    }
+                    <!-- Botón para la página siguiente (oculto en la última página) -->
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        <a class="page-link" href="?page=@(Model.PageNumber + 1)" aria-label="Next">
+                            <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                        </a>
+                    </li>
+                    <!-- Botón para ir a la última página -->
+                    @if (Model.PageNumber < Model.PageCount)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@Model.PageCount" aria-label="Last">
+                                <span aria-hidden="true">Último</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    }
+</div>
+
+
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="~/js/lotes.js"></script>

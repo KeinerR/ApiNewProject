@@ -1,0 +1,210 @@
+﻿@model VistaNewProject.Models.Detallepedido
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+@if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
+{
+    <script>
+
+        function mostrarSweetAlert(mensaje) {
+            Swal.fire({
+                title: 'Oops...',
+                text: mensaje,
+                icon: 'error',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+
+        mostrarSweetAlert('@TempData["ErrorMessage"]');
+    </script>
+}
+
+<style>
+    /* Estilos para el icono */
+    #busqueda::placeholder:before {
+        content: "\f002"; /* Código del icono de lupa de Font Awesome */
+        font-family: "Font Awesome 5 Free";
+        position: relative;
+        left: 10px; /* Espacio izquierdo */
+        color: #aaa; /* Color del icono */
+    }
+
+    .border-danger {
+        border-color: red;
+    }
+</style>
+<div id="createContainer">
+    <div class="modal-cabecera">
+
+        <div class="modal-header-view TituloModal">
+            <h2 class="modal-title">Agregar producto</h2>
+        </div>
+
+    </div>
+    <hr />
+    <br />
+
+
+
+    <br />
+
+
+    <form asp-action="CreatePost" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="d-none">
+            <label asp-for="PedidoId" class="control-label"></label>
+            <input type="text" id="PedidoId" name="pedidoId" value="@((int?)ViewBag.PedidoId ?? (int?)ViewBag.UltimoPedidoId)" />
+            <span asp-validation-for="PedidoId" class="text-danger"></span>
+        </div>
+
+
+
+
+
+        <div class="row">
+
+            <div class="col-6">
+                <label for="busqueda">Filtrar Productos:</label>
+                <input class="form-control" type="text" id="busqueda" name="busqueda" placeholder="Buscar Productos" oninput="filtrarProductos(this.value)" />
+            </div>
+
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="NombreCliente" class="control-label">Productos</label>
+                    <input list="clientes" id="Clientes" name="cliente" class="form-control" placeholder="Escribe y/o selecciona..." autocomplete="off" />
+                    <datalist id="clientes">
+                        @foreach (var item in ViewBag.Producto)
+                            if (item.Estado != 0)
+                            {
+                                <option value="@item.NombreCompletoProducto" data-id="@item.ProductoId">@item.NombreCompletoProducto</option>
+                            }
+                    </datalist>
+                    <input id="ClinteHiden" type="hidden" name="clienteId">
+                    <span id="clienteerror" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <!-- Campo de búsqueda único -->
+
+
+
+            <div class="d-none ">
+                <label asp-for="LoteId" class="control-label"></label>
+                <input asp-for="LoteId" name="LoteId" id="LoteId" readonly class="form-control" list="LoteList" />
+                <datalist id="LoteList">
+                    <!-- Aquí se cargarán dinámicamente los lotes disponibles según el producto seleccionado -->
+                </datalist>
+                <span asp-validation-for="LoteId" class="text-danger"></span>
+            </div>
+            <div class="col-4">
+                <label for="UnidadId" class="control-label">Unidades</label>
+                <input id="UnidadId" class="form-control" list="UnidadIdList" autocomplete="off" />
+
+                <datalist id="UnidadIdList">
+                    @foreach (var item in ViewBag.Unidades)
+                    {
+                        if (item.EstadoUnidad != 0 && (item.UnidadId == 1 || item.UnidadId == 2))
+                        {
+                            <option value="@item.NombreCompletoUnidad" data-id="@item.UnidadId">@item.NombreCompletoUnidad</option>
+                        }
+                    }
+                </datalist>
+                <input type="hidden" id="unidadHidden" class="form-control" name="unidadId" />
+                <span id="UnidadError" class="text-danger"></span>
+            </div>
+
+
+            <div class="col-4">
+                <label asp-for="PrecioUnitario" class="control-label"></label>
+                <input type="number" class="form-control" id="PrecioUnitario" readonly>
+                <input type="hidden" class="form-control" id="PrecioUnitariohiddenpormayor" readonly>
+                <input type="hidden" class="form-control" id="PrecioUnitariohiddenpormayordescuento" readonly>
+
+
+
+
+                <span id="PrecioUnitarioError" class="text-danger"></span>
+            </div>
+
+            <div class="col-4">
+                <label asp-for="Cantidad" class="control-label"></label>
+                <input asp-for="Cantidad" id="CantidadTxt" class="form-control" />
+                <input type="hidden" id="Descuento" class="form-control" />
+                <input type="hidden" id="CantidadAPlicada" class="form-control" />
+
+
+                <span id="CantidadError" class="text-danger"></span>
+                <p id="mensajeDescuento" class="text-success"></p>
+
+            </div>
+
+            <div class="col-4 mt-4">
+                <button type="button" id="btnEnviar" class="btn btn-primary p-2" onclick="agregarDetalle('@Url.Action("CrearDetalles", "DetallePedidos")')">
+                    <i class="fas fa-plus-circle"></i> Agregar
+                </button>
+            </div>
+
+            <div class="col-4 mt-4" style="margin-inline-end">
+                <button type="submit" id="guardarButton" class="btn btn-primary p-2" style="margin-left: 200px;">
+                    <i class="fa-solid fa-cart-arrow-down"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </form>
+
+
+    <div class="mt-4" id="listaDetallesPedido">
+        <!-- Aquí se mostrarán los detalles de pedido agregados en una tabla -->
+        <table class="table table-custom text-center">
+            <thead>
+                <tr>
+                    <th>ProductoId</th>
+                    <th>Cantidad</th>
+                    <th>PrecioUnitario</th>
+                    <th>Unidad</th>
+                    <th>Subtotal</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Los detalles del pedido se mostrarán aquí -->
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    // Función para mostrar SweetAlert de cancelación
+    function mostrarSweetAlert() {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Deseas cancelar el pedido?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, enviar el formulario de cancelación
+                document.getElementById('cancelForm').submit();
+            }
+        });
+    }
+
+
+
+
+</script>
+
+
+
+<script src="~/js/detallespedidos/detallespedidos.js"></script>

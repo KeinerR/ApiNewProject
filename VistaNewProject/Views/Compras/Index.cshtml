@@ -1,0 +1,543 @@
+﻿ @using X.PagedList
+@model X.PagedList.IPagedList<VistaNewProject.Models.CompraVista>
+@{
+    ViewData["Title"] = "Compras";
+}
+<div class="ContenedorVista" id="ContenedorCompra">
+    <br />
+    <div class="d-flex justify-content-between" id="ContenedorOpciones">
+        <!-- Formulario de búsqueda a la izquierda -->
+        <div class="mr-auto">
+            <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
+                <div class="input-group">
+                    <input id="buscarCompra" type="text" class="form-control" oninput="searchCompra();" placeholder="Buscar compra" aria-label="Search" aria-describedby="button-addon2">
+                    <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputCompra();" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+        </div>
+        <!-- Botón para abrir el modal -->
+
+        <button type="button" id="btnModal" class="btn btn-primary" onclick="setHoraActual('FechaCompra');" data-bs-toggle="modal" data-bs-target="#ModalCompra">
+            <i class="fas fa-plus-circle"></i> Agregar Compra
+        </button>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade GeneralModal" id="ModalCompra" tabindex="-1" aria-labelledby="titulomodal" aria-hidden="true">
+        <div class="modal-dialog modal-content" id="CompraVista">
+            <div class="modal-cabecera">
+                <div id="pibo">
+                    <span></span>
+                </div>
+                <div class="modal-header-view TituloModal" id="tituloCompra">
+                    <h3>Agregar Compra</h3>
+                </div>
+                <div class="moda-header-view" id="modal-cabecera-equis">
+                    <button type="button" onclick="reiniciarCompra()" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+            <div id="PrincipalCompra" class="modal-cuerpo">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <div class="icono-input">
+                                    <i class="fas fa-times noBe" onclick="iconoLimpiarCampo(['NombreProveedor', 'ProveedorIdHidden'],'NombreProveedor');"></i>
+                                    <label for="NombreProveedor" class="control-label">Proveedor<span class="Mensaje">*</span></label>
+                                    <input list="proveedores" id="NombreProveedor" oninput="agregarIconoParalimpiarElCampo(this); seleccionarOpcionesHidden(this,'Proveedor');" name="nombreProveedor" class="form-control inputs" placeholder="Escribe y/o Selecciona" autocomplete="off">
+                                    <span class="text-danger"></span>
+                                    <datalist id="proveedores">
+                                        @foreach (var proveedor in ViewBag.Proveedores)
+                                        {
+                                            if (proveedor.EstadoProveedor == 1)
+                                            {
+                                                <option value="@proveedor.NombreEmpresa" data-id="@proveedor.ProveedorId">@proveedor.NombreEmpresa</option>
+                                            }
+                                        }
+                                    </datalist>
+                                    <input type="hidden" id="ProveedorIdHidden" name="proveedorIdHidden">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="FechaCompra" class="control-label">Fecha Compra<span class="Mensaje"></span></label>
+                                <input type="date" id="FechaCompra" name="fechaCompra" class="form-control inputs" />
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="NumeroFactura" class="control-label"># de Factura<span class="Mensaje">*</span></label>
+                                <input type="text" id="NumeroFactura" name="numeroFactura" class="form-control inputs" autocomplete="off" />
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align:center;" class="noVisualizar" id="MensajeInicial">Completa los campos con *</div>
+                    <div class="text-center" id="agregarDetalle">
+                        <button class="btn btn-primary" id="btnAbrirDetalle" onclick="agregarProductos();">Agregar productos</button>
+                    </div>
+                    <div class="modal-contenedor-footer noSee" id="opcinesCambiarDatosCompra">
+                        <button class="btn btn-secondary" id="reducir" onclick="noVerDatosCompra()" title="Reducir">
+                            <span class="d-flex align-items-center">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                        </button>
+                        <button class="btn btn-primary" id="btnActualizarCompra" onclick="actualizarCompra()">
+                            <span class="d-flex align-items-center">
+                                Actualizar datos de compra
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade DealleProductoCModal" id="ModalDetallesCompra" tabindex="-1" aria-labelledby="titulomodal" aria-hidden="true">
+        <div class="modal-dialog modal-content" id="CompraVista">
+
+            <div class="modal-cabecera">
+                <div id="pibo">
+                    <span></span>
+                </div>
+                <div class="modal-header-view TituloModal" id="subtituloCompra">
+                    <h3>Agregar productos a la compra</h3>
+                </div>
+                <div class="moda-header-view" id="modal-cabecera-equis">
+                    <button type="button" onclick="reiniciarCompra()" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+            <div id="DetallesCompra" class="modal-body">
+                <div id="detallecontainer" class="form-group"> 
+                    <div class="row" id="DatosProducto">
+                        <div class="contenedor-filtro-compra opcionesAgregadas">
+                            <input list="categorias" name="order" class="input-sm empSelect" id="filtroPxC" oninput="filtrarxCategoria(this); " placeholder="Filtrar por categoría" autocomplete="off">
+                            <datalist id="categorias">
+                                @foreach (var categoria in ViewBag.Categorias)
+                                {
+                                    if (categoria.EstadoCategoria == 1)
+                                    {
+                                        <option data-id="@categoria.CategoriaId" value="@categoria.NombreCategoria"></option>
+                                    }
+                                }
+                            </datalist>
+                            <i class="fas fa-times noBe" id="compraFiltrarPorCategoria" onclick="limpiarFiltroCategoriaCompra();"></i>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <div class="icono-input">
+                                    <i class="fas fa-times noBe" onclick="iconoLimpiarCampo(['NombreProducto', 'ProductoIdHidden','CantidadPorPresentacionHidden'],'NombreProducto');"></i>
+                                    <label for="NombreProducto" class="control-label">Producto<span class="Mensaje">*</span></label>
+                                    <input list="productos" id="NombreProducto" name="NombreProducto" oninput="agregarIconoParalimpiarElCampo(this); seleccionarOpcionesHidden(this,'Producto')" class="form-control" placeholder="Escribe y/o selecciona el producto ..." autocomplete="off" />
+                                    <datalist id="productos">
+                                        @foreach (var producto in ViewBag.Productos)
+                                        {
+                                            if (producto.Estado == 1)
+                                            {
+                                                <option value="@producto.NombreCompletoProducto" data-id="@producto.ProductoId" data-cantidad="@producto.CantidadPorPresentacion"></option>
+                                            }
+
+                                        }
+                                    </datalist>
+                                    <input type="hidden" id="ProductoIdHidden" name="productoIdHidden" />
+                                    <input type="hidden" id="CantidadPorPresentacionHidden" name="cantidadPorPresentacionHidden" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label for="FechaVencimiento" class="control-label mb-0 me-2">Fecha Vencimiento<span class="Mensaje">*</span></label>
+                                <span class="text-danger" id="spanFechaVencimiento"></span>
+                                <input type="date" id="FechaVencimiento" name="fechaVencimiento" class="form-control" />
+                                <input type="text" class="noVisualizar form-control" id="FechaVencimientoNunca" name="fechaVencimientoNunca" value="No aplica" readonly />
+                                <div class="form-check">
+                                    <!-- Utilizamos una form-check para el checkbox y su label -->
+                                    <input type="checkbox" class="form-check-input" onclick="cambioFechaVencimiento();" id="checkboxNoVencimiento">
+                                    <label class="form-check-label labelFechaVencimiento" for="checkboxNoVencimiento" id="Vencimiento">No aplica clic</label>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label for="NumeroLote" class="control-label">Numero Lote<span class="Mensaje">*</span></label>
+                                <input type="text" id="NumeroLote" name="numeroLote" class="form-control" autocomplete="off" />
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="EspacioForm"></div>
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="form-group">
+                                <div class="icono-input">
+                                    <i class="fas fa-times noBe" onclick="iconoLimpiarCampo(['NombreUnidad', 'UnidadIdHidden','CantidadPorUnidad'],'NombreUnidad');"></i>
+                                    <label for="NombreUnidad" class="control-label"> Unidad<span class="Mensaje">*</span></label>
+                                    <input list="unidades" id="NombreUnidad" name="nombreUnidad" oninput="agregarIconoParalimpiarElCampo(this); seleccionarOpcionesHidden(this,'Unidad')" class="form-control" placeholder="Escribe y / o selecciona la unidad ..." autocomplete="off">
+                                    <span class="text-danger"></span>
+                                    <datalist id="unidades">
+                                        @foreach (var unidad in ViewBag.Unidades)
+                                        {
+                                            if (unidad.EstadoUnidad == 1)
+                                            {
+                                                <option value="@unidad.NombreCompletoUnidad" data-id="@unidad.UnidadId" data-cantidad="@unidad.CantidadPorUnidad"></option>
+                                            }
+                                        }
+                                    </datalist>
+                                    <input type="hidden" id="UnidadIdHidden" name="unidadIdHidden">
+                                    <input type="hidden" id="CantidadPorUnidad" name="cantidadPorUnidad">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label for="Cantidad" class="control-label">Cantidad</label>
+                                <div class="input-group" id="CampoCantidad">
+                                    <input type="number" id="Cantidad" oninput="formatoNumeroINT(this);" onclick="formatoNumeroINT(this);" name="cantidad" class="form-control" value="1" min="1" autocomplete="off">
+                                    <span class="text-danger"></span>
+                                    <!-- Botones con eventos de mousedown, mouseup y mouseleave definidos en HTML -->
+                                    <button type="button" class="btn btn-default btn-number input-group-prepend"
+                                            id="btnMenos"
+                                            onmousedown="iniciarIntervalo(decrementarCantidad)"
+                                            onclick="decrementarCantidad();"
+                                            onmouseup="detenerIntervalo()"
+                                            onmouseleave="detenerIntervalo()">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+
+                                    <button type="button" class="btn btn-default btn-number input-group-append"
+                                            id="btnMas"
+                                            onclick="incrementarCantidad();"
+                                            onmousedown="iniciarIntervalo(incrementarCantidad)"
+                                            onmouseup="detenerIntervalo()"
+                                            onmouseleave="detenerIntervalo()">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label for="PrecioDeCompra" class="control-label" id="PC">Precio de Compra<span class="Mensaje">*</span></label>
+                                <input type="text" id="PrecioDeCompra" maxlength="18" oninput="formatoNumeroINT(this);" name="precioDeCompra" class="form-control" autocomplete="off"/>
+                                <span class="text-danger"></span>
+                            </div>
+
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group">
+
+                                <label for="PorcentajeGanancia" class="control-label">% A Ganar<span class="Mensaje">*</span></label>
+                                <div class="contenedorCalculo">
+                                    <input type="text" id="PorcentajeGanancia" maxlength="6" oninput="formatoNumeroINT(this);" name="porcentajeGanancia" class="form-control" />
+                                    <button class="btn-calculo" id="btnCalcular" onclick="calcularPreciosCompra();" title="Calcular"><i class="fas fa-calculator"></i></button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row opcionesAgregadas">
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" onclick="filtrarxUnidadesxProducto();" id="checkboxUnidadesxProducto">
+                                <label class="form-check-label labelUnidadesxProducto" for="checkboxUnidadesxProducto" id="labelUxP">Solo unidades asociadas a producto</label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <button id="modal-header-botonAgregarDetalle" class="btn btn-primary" onclick="agregarDetalleCompra()"><i id="agregarDetalleIcono" class="fas fa-plus-circle"></i>Agregar Producto</button>
+                    <div class="EspacioForm"></div>
+                    <div class="row noVisualizar" id="PrecioBuy">
+                        <h5>Precio de compra</h5>
+                        <div class="col-4">
+                            <label for="PrecioDeCompraPorUnidad" class="labelForm control-label">x Unidad</label>
+                            <input type="text" id="PrecioDeCompraPorUnidad" name="precioDeCompraPorUnidad" class="form-control" readonly />
+                        </div>
+                        <div class="col-4">
+                            <label for="PrecioDeCompraPorPresentacion" class=" labelForm control-label">x Producto</label>
+                            <input type="text" id="PrecioDeCompraPorPresentacion" name="precioDeCompraPorPresentacion" class="form-control" readonly />
+                        </div>
+                        <div class="col-4">
+                            <label for="PrecioDeCompraUnitario" class="labelForm control-label"> x Unidad de producto</label>
+                            <input type="text" id="PrecioDeCompraUnitario" name="precioDeCompraUnitario" class="form-control" readonly />
+                        </div>
+                    </div>
+                    <div class="row noVisualizar" id="PrecioBougth">
+                        <h5>Precio de venta</h5>
+                        <div class="col-4">
+                            <div class="form-group">
+                            </div>
+                            <label for="PrecioDeVentaPorUnidad" class="control-label">x Unidad<span class="Mensaje">*</span></label>
+                            <input type="text" id="PrecioDeVentaPorUnidad" oninput="formatoNumeroINT(this);" name="precioDeVentaPorUnidad" class="form-control" readonly/>
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="PrecioDeVentaUnitario" class="control-label">x Producto<span class="Mensaje">*</span></label>
+                                <input type="text" id="PrecioDeVentaUnitario" maxlength="18" oninput="formatoNumeroINT(this); calcularPrecioPorUnidad(this);" name="precioDeVentaUnitario" class="form-control" />
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="PrecioDeVentaxUnidadPresentacion" class="control-label">x Unidad de producto<span class="Mensaje">*</span></label>
+                                <input type="text" id="PrecioDeVentaxUnidadPresentacion" maxlength="18" oninput="formatoNumeroINT(this);  precioUnidadToo(this);" name="precioDeVentaxUnidadPresentacion" class="form-control" />
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer-botones">
+                    <div class="modal-footer-inicial">
+                        <button class="btn btn-secondary" onclick="verProductos();" title="Ver tabla de productos"><i class="fas fa-expand-alt"></i></button>
+                        <button class="btn btn-secondary" id="expandir" onclick="verCompra()" title="Actualizar compra"><i class="fas fa-expand-alt"></i></button>
+                        <button class="btn btn-secondary" id="noOpcionesAgregadas" onclick="noVerOpcionesAgregadas()" title="Ver menos elementos"><i class="fas fa-minus"></i></button>
+                        @*                         <button id="volverRegistrarCompra" class="btn btn-secondary" onclick="limpiarFormularioTotalmente()" title="Limpiar Compra"><i class="fas fa-broom"></i></button>*@ 
+                         <div class="modal-header-view noVer" id="modal-header-ValorTotal">
+                            <input class="ValorTotalCompra ValorTotalCompraTexto" type="text" value="Total: " readonly /><input class="ValorTotalCompra ValorTotalCompraValor" type="text" id="ValorTotal" readonly />
+                         </div>
+                    </div>
+                 
+                    <button type="button" id="btnModal" class="btn btn-primary" onclick="RegistrarBuy(compra)" title="Enviar">Registrar Compra</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade GeneralModal" onblur="verFormularioDetalle" id="ModalProductosCompra" tabindex="-1" aria-labelledby="titulomodal" aria-hidden="true">
+        <div class="modal-dialog modal-content">
+            <div class="modal-cabecera">
+                <div id="pibo">
+                    <span></span>
+                </div>
+                <div class="modal-header-view TituloModal" id="subtituloCompra">
+                    <h3>Productos</h3>
+                </div>
+                <div class="moda-header-view" id="modal-cabecera-equis">
+                    <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+            <div id="TablaDetalles">
+                <div id="contenedorTablaDetalles">
+                    <div class="d-flex justify-content-center noVer" id="contenedorTablaDetallesBotones">
+                        <button class="paginacion-btn" id="btnAnterior" onclick="cambiarPagina(-1)">
+                            <span aria-hidden="true">&laquo;</span> Anterior
+                        </button>
+                        <button class="paginacion-btn" id="btnSiguiente" onclick="cambiarPagina(1)">
+                            Siguiente <span aria-hidden="true">&raquo;</span>
+                        </button>
+                    </div>
+                    <!-- Tabla de detalles -->
+                    <table id="detalleTable" class="table table-striped table-custom text-center">
+                        <thead>
+                            <tr>
+                                <th title="ProductoId">Nombre completo producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio por producto</th>
+                                <th>Subtotal</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detalleTableBody">
+                            <!-- Filas de la tabla se agregarán dinámicamente aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="contenedor-filtro">
+        <select name="order" class="input-sm empSelect" onchange="redirectToOrder(this)">
+            <option selected disabled>
+                Ordenar por
+            </option>
+            @*             <option data-url="?order=alfabetico">Ordenar por nombre (A-Z)</option>
+            <option data-url="?order=name_desc">Ordenar por nombre (Z-A)</option> *@
+            <option data-url="?order=first">Ordenar por más antiguo</option>
+            <option data-url="?order=reverse">Ordenar por más reciente</option>
+        </select>
+    </div>
+    <hr>
+    <table class="table table-custom text-center">
+        <thead>
+            <tr>
+                <th class="contadorB consecutivo noIs">#</th>
+                <th class="consecutivo contador">
+                    #
+                </th>
+                <th class="d-none">
+                    Compra Id
+                </th>
+                <th>
+                    Proveedor
+                </th>
+                <th>
+                    # Factura
+                </th>
+                <th>
+                    Fecha compra
+                </th>
+                <th>Valor Total</th>
+                <th class="contenedorEstado">
+                    Inhabilitar
+                </th>
+                <th class="contenedorAcciones">
+                    Acciones
+                </th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            @{
+                int contador = ViewBag.contador ?? 1;
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @contador
+                        @{
+                            contador++;
+                        }
+                    </td>
+                    <td class="d-none compra-id">
+                        @Html.DisplayFor(modelItem => item.CompraId)
+                    </td>
+                    <td>
+                        @foreach (var proveedor in ViewBag.Proveedores)
+                        {
+                            @if (proveedor.ProveedorId == item.ProveedorId)
+                            {
+                                <span>@proveedor.NombreEmpresa</span>
+                            }
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NumeroFactura)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FechaCompra)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ValorTotalCompra)
+                    </td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" @(item.EstadoCompra != 0 ? "checked" : "") onchange="mostraralerta('@item.CompraId')">
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+                    <td class="botonesTabla">
+                        <div class="botonesTablaContenedor">
+                            <a asp-action="Details" asp-controller="Compras" asp-route-id="@item.CompraId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
+                            <form asp-controller="Categorias" class="eliminarCategoria" asp-action="Delete" method="post">
+                                <input name="compraId" id="campoId" value="@item.CompraId" />
+                                <button type="submit" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-ban"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }@{
+                var compras = ViewData["Compras"] as List<Compra>;
+                if (compras != null)
+                {
+                    int contadorB = 1;
+                    foreach (var compra in compras)
+                    {
+                        <tr class="Compras noIs">
+                            <td class="contadorB noIs">
+                                @contadorB <!-- Muestra el valor del contador -->
+                            </td>
+                            <td>@compra.CompraId</td>
+                            <td>
+                                @foreach (var proveedor in ViewBag.Proveedores)
+                                {
+                                    @if (proveedor.ProveedorId == compra.ProveedorId)
+                                    {
+                                        <span>@proveedor.NombreEmpresa</span>
+                                    }
+                                }
+                            </td>
+                            <td>@compra.NumeroFactura</td>
+                            <td>@compra.FechaCompra</td>
+                            <td>@compra.ValorTotalCompra</td>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" @(compra.EstadoCompra != 0 ? "checked" : "") onchange="mostraralerta('@compra.CompraId')">
+                                    <span class="slider"></span>
+                                </label>
+                            </td>
+                            <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                            <td class="botonesTabla">
+                                <div class="botonesTablaContenedor">
+                                    <a asp-action="Details" asp-controller="Compras" asp-route-id="@compra.CompraId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
+                                    <form asp-controller="Categorias" class="eliminarCategoria" asp-action="Delete" method="post">
+                                        <input name="compraId" id="campoId" value="@compra.CompraId" />
+                                        <button type="submit" value="" class="btn btn-danger delete-button botonEliminar"><i class="fas fa-ban"></i></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        contadorB++;
+                    }
+                }
+            }
+        </tbody>
+    </table>
+    <div class="pagination-container mt-2" id="paginationContainer">
+        @if (Model != null && Model.PageCount > 1)
+        {
+            <div class="d-flex justify-content-center mb-5">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <!-- Botón para ir a la primera página -->
+                        @if (Model.PageNumber > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1&order=@ViewBag.Order" aria-label="First">
+                                    <span aria-hidden="true">Primero</span>
+                                </a>
+                            </li>
+                        }
+                        <!-- Botón para la página anterior (oculto en la página 1) -->
+                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.PageNumber - 1)&order=@ViewBag.Order" aria-label="Previous">
+                                <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                            </a>
+                        </li>
+                        <!-- Iterar sobre las páginas disponibles -->
+                        @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                        {
+                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                <a class="page-link" href="?page=@i&order=@ViewBag.Order">@i</a>
+                            </li>
+                        }
+                        <!-- Botón para la página siguiente (oculto en la última página) -->
+                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.PageNumber + 1)&order=@ViewBag.Order" aria-label="Next">
+                                <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                            </a>
+                        </li>
+                        <!-- Botón para ir a la última página -->
+                        @if (Model.PageNumber < Model.PageCount)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?page=@Model.PageCount&order=@ViewBag.Order" aria-label="Last">
+                                    <span aria-hidden="true">Último</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
+</div>
+

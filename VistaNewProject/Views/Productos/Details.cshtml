@@ -1,0 +1,271 @@
+﻿@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<VistaNewProject.Models.LoteVista>
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Detalle de producto";
+    var cantidadPorPresentacionMasDeuno = (bool)ViewData["CantidadPorPresentacionMasDeuno"];
+    var precioPorUnidadProductoIgual = (bool)ViewData["PrecioPorUnidadProductoIgual"];
+    var precioPorProductoIgual = (bool)ViewData["PrecioPorProductoIgual"];
+}
+
+<div class="ContenedorVista" id="ContenedorDetalleProducto">
+    <br />
+    <div class="contenedor-botones-detalle">
+        <a asp-action="Index" class="btn botonVolver">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+        <!-- Agrega esto en tu enlace de "Editar" en Details.cshtml -->
+        <a href="#" onclick="redireccionarYEditar('@ViewBag.Producto.ProductoId ', 'Productos','producto')" class="btn botonEnviarDetalle"><i class="fa-solid fa-pen"></i> Editar</a>
+        <a asp-action="UnidadesAsociadasxProducto" asp-controller="Productos" asp-route-id="@ViewBag.Producto.ProductoId" class="btn botonAsociar">
+            Unidades asociadas<i class="fa-solid fa-handshake-simple manoAsociasion"></i>
+        </a>
+    </div>
+    <br />
+    @if (((int?)ViewData["Pagina"] ?? 1) < 2)
+    {
+        <div class="pedido-info">
+            <table class="table tablaDetalle">
+            <thead>
+                <tr>
+                    <th>Producto ID</th>
+                    <th>Nombre</th>
+                    <th>Categoria</th>
+                    <th>Marca</th>
+                    <th>Presentacion</th>
+                    <th>Cantidad por presentación</th>
+                    <th>Cantidad total por productos</th>
+                    @if (cantidadPorPresentacionMasDeuno)
+                    {
+                    <th>Cantidad total por unidad</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@(ViewBag.Producto.ProductoId)</td>
+                    <td>@(ViewBag.Producto.NombreProducto)</td>
+                    <td>@(ViewBag.Producto.NombreCategoria)</td>
+                    <td>@(ViewBag.Producto.NombreMarca)</td> 
+                    <td>@(ViewBag.Producto.NombrePresentacion)</td>
+                    <td>@(ViewBag.Producto.CantidadTotal)</td>
+                    @if (cantidadPorPresentacionMasDeuno)
+                    {
+                        <td>@(ViewBag.Producto.CantidadTotalPorUnidad)</td>
+                    }
+                        
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    }
+
+
+    @if (Model.Any())
+    {
+        <div id="contenedor-datos-lote" class="text-center">
+            <!-- Agregamos la clase text-center para centrar la tabla -->
+            <div class="pedido-info">
+                <h4 class="TituloSobreTabladetalle">Lotes asociados</h4>
+                @if (((int?)ViewData["Pagina"] ?? 1) < 2)
+                {
+                    @if (!precioPorUnidadProductoIgual || !precioPorProductoIgual)
+                    {
+                        <div id="contenedor-redondear" class="text-center d-flex justify-content-center align-items-center">
+                            <button data-bs-toggle="modal" data-bs-target="#ModalLote" onclick="actualizarLotes('@ViewBag.Producto.ProductoId');">Redondear precios</button>
+                        </div>
+                    }
+ 
+                }
+
+                <table class="table tablaDetalle">
+                    <thead>
+                        <tr>
+                            <th scope="col">Lote ID</th>
+                            <th scope="col"># de Lote</th>
+                            <th scope="col">Cantidad en lote</th>
+                            <th scope="col">Precio por producto</th>
+                            @if (cantidadPorPresentacionMasDeuno)
+                            {
+                                <th scope="col">Precio por unidad de producto</th>
+                            }
+                           
+                            <th scope="col" class="fechaVencimientoTabla">Fecha de vencimiento</th>
+                            <th>Accion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var lote in Model)
+                        {
+                            <tr>
+                                <td>@lote.LoteId</td>
+                                <td>@lote.NumeroLote</td>
+                                <td>@lote.Cantidad</td>
+                                <td>@(lote.PrecioPorPresentacion)</td>
+                                @if (cantidadPorPresentacionMasDeuno)
+                                {
+                                <td>@(lote.PrecioPorUnidadProducto)</td>
+                                }
+                                <td>@(lote.FechaCaducidad)</td>
+                                <td><button data-bs-toggle="modal" data-bs-target="#ModalLoteAct">Editar</button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="pagination-container mt-2">
+            @if (Model != null && Model.PageCount > 1)
+            {
+                <div class="d-flex justify-content-center mb-5">
+                    <nav aria-label="Page navig ation">
+                        <ul class="pagination justify-content-center">
+                            <!-- Botón para ir a la primera página -->
+                            @if (Model.PageNumber > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Producto.ProductoId, page = 1, order = ViewBag.CurrentOrder })" aria-label="First">
+                                        <span aria-hidden="true">Primero</span>
+                                    </a>
+                                </li>
+                            }
+                            <!-- Botón para la página anterior (oculto en la página 1) -->
+                            <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                                <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Producto.ProductoId, page = Model.PageNumber - 1, order = ViewBag.CurrentOrder })" aria-label="Previous">
+                                    <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                                </a>
+                            </li>
+                            <!-- Iterar sobre las páginas disponibles -->
+                            @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                            {
+                                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                    <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Producto.ProductoId, page = i, order = ViewBag.CurrentOrder })">@i</a>
+                                </li>
+                            }
+                            <!-- Botón para la página siguiente (oculto en la última página) -->
+                            <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                                <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Producto.ProductoId, page = Model.PageNumber + 1, order = ViewBag.CurrentOrder })" aria-label="Next">
+                                    <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                                </a>
+                            </li>
+                            <!-- Botón para ir a la última página -->
+                            @if (Model.PageNumber < Model.PageCount)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@Url.Action("Details", new { id = ViewBag.Producto.ProductoId, page = Model.PageCount, order = ViewBag.CurrentOrder })" aria-label="Last">
+                                        <span aria-hidden="true">Último</span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="MensajeNoDetalles">
+            <p>Aun no hay lotes asociados al producto. Agrégalos desde compras o en su defecto movimientos.</p>
+        </div>
+    }
+</div>
+
+<div class="modal fade GeneralModal" id="ModalLote" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="FormActualizarLotes">
+            <div class="modal-cabecera">
+                <div id="pibo"></div>
+                <div class="modal-header-view TituloModal">
+                    <h2 class="modal-title">Redondear precio a todos</h2>
+                </div>
+                <div class="modal-header-view" id="modal-cabecera-equis">
+                    <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="modal-cuerpo">
+                <form id="formCambiarPrecios" asp-action="CambiarPrecios" asp-controller="Productos" method="post">
+                    <input type="hidden" name="productoId" value="@ViewBag.Producto.ProductoId" />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <div class="icono-input">
+                                    <i class="fas fa-times" onclick="iconoLimpiarCampo(['precioProducto'],'precioProducto');"></i>
+                                    <label class="control-label" for="precioProducto">Por producto</label>
+                                    <input oninput="agregarIconoParalimpiarElCampo(this); formatoNumeroINT(this);" type="text" value="@TempData["PrecioPorPresentacionRedondeado"]" id="precioProducto" name="precioProducto" class="detalle-input form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="icono-input">
+                                        <i class="fas fa-times" onclick="iconoLimpiarCampo(['precioUnidad'],'precioUnidad');"></i>
+                                        <label class="control-label" for="precioUnidad">Por unidad de producto</label>
+                                        <input oninput="agregarIconoParalimpiarElCampo(this); formatoNumeroINT(this);" type="text" value="@TempData["PrecioPorUnidadDeProductoRedondeado"]" id="precioUnidad" name="precioUnidad" class="detalle-input form-control">
+                                    </div>
+                                </div>
+                            </div>                   
+                    </div>
+                    <div class="modal-contenedor-footer">
+                        <button type="reset" data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn btn-primary btnGuardar">Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade GeneralModal" id="ModalLoteAct" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="@(precioPorUnidadProductoIgual ? "width:350px;" : "")">
+        <div class="modal-content formActualizarLote">
+            <div class="modal-cabecera">
+                <div id="pibo"></div>
+                <div class="modal-header-view TituloModal">
+                    <h2 class="modal-title">Actualizar lote</h2>
+                </div>
+                <div class="modal-header-view" id="modal-cabecera-equis">
+                    <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="modal-cuerpo">
+                    <form id="formCambiarPrecio" asp-action="CambiarPrecio" asp-controller="Productos" method="post">
+                        <div class="row">
+                        <div class="col-md-6 @(precioPorUnidadProductoIgual ? "noBe" : "")">
+                            <div class="form-group">
+                                <div class="icono-input">
+                                    <label class="control-label" for="fechaCaducidad">Fecha Vencimiento</label>
+                                    <input type="text" class="form-control" value="No aplica" readonly />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="@(precioPorUnidadProductoIgual ? "col" : "col-md-6")">
+                                <div class="form-group">
+                                    <div class="icono-input">
+                                        <i class="fas fa-times" onclick="limpiarCampo('precioProductoAct');"></i>
+                                        <label class="control-label" for="precioProductoAct">Por producto</label>
+                                        <input type="text" oninput="agregarIconoParalimpiarElCampo(this);" id="precioProductoAct" name="precioProducto" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 @(precioPorUnidadProductoIgual ? "noBe" : "")">
+                                <div class="form-group">
+                                    <div class="icono-input">
+                                        <i class="fas fa-times" onclick="limpiarCampo('precioUnidadAct');"></i>
+                                        <label class="control-label" for="precioUnidadAct">Por unidad de producto</label>
+                                        <input type="text" oninput="agregarIconoParalimpiarElCampo(this);" id="precioUnidadAct" name="precioUnidad" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input name="productoId" type="hidden">
+                        <input name="numeroLote" type="hidden">
+                        <div class="modal-contenedor-footer">
+                            <button type="reset" class="btn btn-secondary">Cancelar</button>
+                            <button type="submit" class="btn btn-primary btnGuardar">Actualizar</button>
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+</div>

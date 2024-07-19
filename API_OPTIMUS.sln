@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34916.146
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API_OPTIMUS", "API_OPTIMUS\API_OPTIMUS.csproj", "{ACD30E30-4798-4631-AC4F-9855199F2F18}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VistaNewProject", "VistaNewProject\VistaNewProject.csproj", "{DDB6EB6A-D999-43A1-A042-E4C104614066}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ACD30E30-4798-4631-AC4F-9855199F2F18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACD30E30-4798-4631-AC4F-9855199F2F18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACD30E30-4798-4631-AC4F-9855199F2F18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACD30E30-4798-4631-AC4F-9855199F2F18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDB6EB6A-D999-43A1-A042-E4C104614066}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDB6EB6A-D999-43A1-A042-E4C104614066}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDB6EB6A-D999-43A1-A042-E4C104614066}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDB6EB6A-D999-43A1-A042-E4C104614066}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7EA4EC10-D1AC-4644-952B-2B355178E2C3}
+	EndGlobalSection
+EndGlobal

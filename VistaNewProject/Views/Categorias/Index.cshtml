@@ -1,0 +1,264 @@
+﻿@using X.PagedList
+@model X.PagedList.IPagedList<VistaNewProject.Models.Categoria>
+@{
+    ViewData["Title"] = "Categorías";
+}
+<div class="ContenedorVista" id="ContenedorCategoria">
+    <br />
+    <div class="d-flex justify-content-between">
+        <!-- Formulario de búsqueda a la izquierda -->
+        <div class="mr-auto">
+            <form class="d-none d-md-inline-block form-inline my-2 my-md-0" id="searchForm">
+                <div class="input-group">
+                    <input id="buscarCategoria" type="text" class="form-control" oninput="searchCategoria();" placeholder="Buscar categoría" aria-label="Search" aria-describedby="button-addon2">
+                    <button class="btn btn-primary" id="btnNavbarSearch" onclick="vaciarInputCategoria();" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Botón para abrir el modal -->
+        <button type="button" id="botonabrirModalCategoria" onclick="simularClickCategoria();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalCategoria">
+            <i class="fas fa-plus-circle"></i> Agregar categoría
+        </button>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade GeneralModal" id="ModalCategoria" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" id="FormPrincipalCategoria">
+                <div class="modal-cabecera">
+                    <div id="pibo"></div>
+                    <div class="modal-header-view TituloModal">
+                        <h2 class="modal-title">Agregar categoría</h2>
+                    </div>
+                    <div class="modal-header-view" id="modal-cabecera-equis">
+                        <button type="button" onclick="limpiarFormularioCategoria();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="modal-cuerpo">
+                    <form asp-controller="Categorias" asp-action="Create" method="post" class="modal-formulario-crear-categoria">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="form-group">
+                                    <label for="NombreCategoriaVista" class="control-label">Nombre categoría<span class="Mensaje">*</span></label>
+                                    <input type="text" id="NombreCategoriaVista" oninput="validarCampoCategoria(this,'NombreCategoriaVista');" name="nombreCategoria" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="modal-contenedor-footer">
+                            <button type="reset" onclick="limpiarFormularioCategoriaAgregar();" class="btn btn-secondary">Cancelar</button>
+                            <button type="submit" class="btn btn-primary btnGuardar">Agregar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+     <div class="modal fade GeneralModal" id="ModalActualizarCategoria" tabindex="-1" aria-labelledby="exampleModalLabel" onblur="AlPerderFocoCategoria();" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content" id="FormActualizarCategoria">
+                       <div class="modal-cabecera">
+                            <div id="pibo"></div>
+                            <div class="modal-header-view TituloModal">
+                                <h2 class="modal-title">Actualizar categoría</h2>
+                            </div>
+                            <div class="moda-header-view" id="modal-cabecera-equis">
+                                <button type="button" onclick="limpiarFormularioCategoria();" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                        </div>
+                        <div class="modal-cuerpo">
+                            <form asp-controller="Categorias" asp-action="Update" method="post" class="modal-formulario-actualizar-categoria">
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal-body">
+                                        <div class="noBe">
+                                            <input id="CategoriaIdAct" name="categoriaId" class="form-control" type="hidden" />
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <label for="NombreCategoriaVistaAct" class="control-label">Nombre categoría<span class="Mensaje"></span></label>
+                                                <input type="text" id="NombreCategoriaVistaAct" oninput="validarCampoCategoria(this);" name="nombreCategoria" class="form-control" autocomplete="off" />
+                                                <span class="text-danger"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="EstadoCategoriaAct" class="control-label">Estado</label>
+                                                <select id="EstadoCategoriaAct" name="estadoCategoria" class="form-control">
+                                                    <option value="1">Activo</option>
+                                                    <option value="0">Inactivo</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-contenedor-footer">
+                                        <button type="reset" onclick="limpiarFormularioCategoriaAct();" data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
+                                        <button type="submit" class="btn btn-primary btnGuardar">Actualizar</button>
+                                    </div>
+                                </form>
+
+                        </div>
+                </div>
+            </div>
+
+    </div>
+    <div class="contenedor-filtro">
+        <select name="order" class="input-sm empSelect" onchange="redirectToOrder(this)">
+            <option selected disabled>
+                Ordenar por
+            </option>
+            <option data-url="?order=alfabetico">Ordenar por nombre (A-Z)</option>
+            <option data-url="?order=name_desc">Ordenar por nombre (Z-A)</option>
+            <option data-url="?order=first">Ordenar por más antiguo</option>
+            <option data-url="?order=reverse">Ordenar por más reciente</option>
+        </select>
+    </div>
+    <hr>
+    <table class="table table-custom text-center">
+        <thead>
+            <tr>
+                <th class="contadorB consecutivo noIs">#</th>
+                <th class="consecutivo contador">
+                    #
+                </th>
+                <th class="d-none">
+                    Categoria Id
+                </th>
+                <th>
+                    Nombre categoría
+                </th>
+                <th class="contenedorEstado">
+                    Estado
+                </th>
+                <th class="contenedorAcciones">
+                    Acciones
+                </th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            @{
+                int contador = ViewBag.Contador; // Obtener el valor del contador desde la ViewBag
+            }
+            @foreach (var item in Model)
+            {
+                <tr class="categoriasPaginado">
+                    <td>
+                        @contador <!-- Muestra el valor del contador -->
+                        @{
+                            contador++; // Incrementa el contador para la próxima iteración
+                        }
+                    </td>
+                    <td class="d-none categoria-id">
+                        @Html.DisplayFor(modelItem => item.CategoriaId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NombreCategoria)
+                    </td>
+                    <td class="text-center align-middle">
+                        <label class="switch">
+                            <input type="checkbox" @(item.EstadoCategoria != 0 ? "checked" : "") onchange="actualizarEstadoCategoria('@item.CategoriaId',this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+                      <td>
+                            <div class="botonesTablaContenedor">
+                                <button class="btn btn-edit botonEditar" onclick="mostrarModalCategoria(@item.CategoriaId);"><i class="fas fa-edit"></i></button>
+                                <a asp-action="Details" asp-controller="Categorias" asp-route-id="@item.CategoriaId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
+                                <form asp-controller="Categorias" class="eliminarCategoria" asp-action="Delete" method="post">
+                                    <input type="hidden" value="@item.CategoriaId" name="categoriaId" />
+                                    <button type="submit" value="" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                </form>
+                            </div>
+                    </td>
+                </tr>
+            }
+            @{
+                var categorias = ViewData["Categorias"] as List<Categoria>;
+                if (categorias != null)
+                {
+                     int contadorB = 1;
+                    foreach (var categoria in categorias)
+                    {
+                        <tr class="Categorias noIs" >
+                             <td class="contadorB noIs">
+                                @contadorB <!-- Muestra el valor del contador -->
+                            </td>
+                            <td>@categoria.CategoriaId</td>
+                            <td>@categoria.NombreCategoria</td>
+                            <td class="text-center align-middle">
+                                <label class="switch">
+                                    <input type="checkbox" @(categoria.EstadoCategoria != 0 ? "checked" : ""); onchange="actualizarEstadoCategoria('@categoria.CategoriaId',this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </td>
+                            <!-- Agrega esto a tu tabla dentro de la sección tbody -->
+                             <td class="botonesTabla">
+                                <div class="botonesTablaContenedor">
+                                    <button class="btn btn-edit botonEditar" onclick="mostrarModalCategoria(@categoria.CategoriaId);"><i class="fas fa-edit"></i></button>
+                                    <a asp-action="Details" asp-controller="Categorias" asp-route-id="@categoria.CategoriaId" class="btn btn-detail botonDetalle"><i class="fas fa-file"></i></a>
+                                    <form asp-controller="Categorias" class="eliminarCategoria" asp-action="Delete" method="post">
+                                        <input type="hidden" value="@categoria.CategoriaId" name="categoriaId" />
+                                        <button type="submit" value="" class="btn btn-danger botonEliminar"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                                </div>
+                             </td>
+                        </tr>
+                        contadorB++;
+                    }
+                }
+            }
+        </tbody>
+    </table>
+    <div class="pagination-container mt-2" id="paginationContainer">
+        @if (Model != null && Model.PageCount > 1)
+        {
+            <div class="d-flex justify-content-center mb-5">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <!-- Botón para ir a la primera página -->
+                        @if (Model.PageNumber > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1&order=@ViewBag.Order" aria-label="First">
+                                    <span aria-hidden="true">Primero</span>
+                                </a>
+                            </li>
+                        }
+                        <!-- Botón para la página anterior (oculto en la página 1) -->
+                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.PageNumber - 1)&order=@ViewBag.Order" aria-label="Previous">
+                                <span aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                            </a>
+                        </li>
+                        <!-- Iterar sobre las páginas disponibles -->
+                        @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                        {
+                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                <a class="page-link" href="?page=@i&order=@ViewBag.Order">@i</a>
+                            </li>
+                        }
+                        <!-- Botón para la página siguiente (oculto en la última página) -->
+                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.PageNumber + 1)&order=@ViewBag.Order" aria-label="Next">
+                                <span aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                            </a>
+                        </li>
+                        <!-- Botón para ir a la última página -->
+                        @if (Model.PageNumber < Model.PageCount)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?page=@Model.PageCount&order=@ViewBag.Order" aria-label="Last">
+                                    <span aria-hidden="true">Último</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
+
+</div>
+
+
+
+
+

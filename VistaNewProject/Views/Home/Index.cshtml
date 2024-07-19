@@ -1,0 +1,302 @@
+@model VistaNewProject.Models.Home
+@{
+    ViewData["Title"] = "Página de Inicio";
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="container-fluid p-5">
+        <!-- Fila 1: Total de Productos y Total de Compras -->
+        <div class="row mb-2">
+            <div class="col-md-6 mb-2">
+                @{
+                    var totalProductos = TempData["TotalProductos"] as string;
+                    if (!string.IsNullOrEmpty(totalProductos))
+                    {
+                        <div class="card" style="background-color: #2574A8;">
+                            <div class="card-body text-white">
+                                <h5 class="card-title text-white">Total de productos</h5>
+                                <p class="card-text text-white">@totalProductos</p>
+                                <i class="fa-solid fa-bottle-water fa-2xl"></i>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="col-md-6 mb-2">
+                @{
+                    var totalCompras = TempData["TotalCompras"] as string;
+                    if (!string.IsNullOrEmpty(totalCompras))
+                    {
+                        <div class="card" style="background-color: #2574A8;">
+                            <div class="card-body text-white">
+                                <h5 class="card-title text-white">Total de las compras</h5>
+                                <p class="card-text text-white">@totalCompras</p>
+                                <i class="fa-solid fa-cart-shopping fa-2xl"></i>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Fila 2: Total de Pedidos y Total de Clientes -->
+        <div class="row mb-2">
+            <div class="col-md-6 mb-2">
+                @{
+                    var totalPedidos = TempData["TotalPedidos"] as string;
+                    if (!string.IsNullOrEmpty(totalPedidos))
+                    {
+                        <div class="card" style="background-color: #2574A8;">
+                            <div class="card-body text-white">
+                                <h5 class="card-title text-white">Total de los pedidos</h5>
+                                <p class="card-text text-white">@totalPedidos</p>
+                                <i class="fa-solid fa-sack-dollar fa-2xl"></i>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="col-md-6 mb-2">
+                @{
+                    var totalClientes = TempData["TotalClientes"] as string;
+                    if (!string.IsNullOrEmpty(totalClientes))
+                    {
+                        <div class="card" style="background-color: #2574A8;">
+                            <div class="card-body text-white">
+                                <h5 class="card-title text-white">Total de clientes</h5>
+                                <p class="card-text text-white">@totalClientes</p>
+                                <i class="fa-solid fa-people-group fa-2xl"></i>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Fila 3: Total de Proveedores -->
+        <div class="row mb-2">
+            <div class="col-md-6 mb-2">
+                @{
+                    var totalProveedores = TempData["TotalProveedores"] as string;
+                    if (!string.IsNullOrEmpty(totalProveedores))
+                    {
+                        <div class="card" style="background-color: #2574A8;">
+                            <div class="card-body text-white">
+                                <h5 class="card-title text-white">Total de proveedores</h5>
+                                <p class="card-text text-white">@totalProveedores</p>
+                                <i class="fa-solid fa-truck fa-2xl"></i>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <!-- Carta Ganancias o Pérdidas -->
+            <div class="col-md-6 mb-2">
+                @{
+                    var diferencia = TempData["Diferencia"] as decimal?;
+                    if (diferencia.HasValue)
+                    {
+                        var esGanancia = diferencia.Value >= 0;
+                        var color = esGanancia ? "bg-success" : "bg-danger";
+                        var simbolo = esGanancia ? "" : "-";
+                        var texto = esGanancia ? "Ganancias" : "Pérdidas";
+                        <div class="card @color">
+                            <div class="card-body text-white">
+                                <h5 class="card-title text-white">@texto</h5>
+                                <p class="card-text text-white">@simbolo$ @diferencia.Value.ToString("#,##0")</p>
+                                <i class="fa-solid fa-chart-line fa-2xl"></i>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="row text-center">
+            <div class="col">
+                <canvas style="max-width: 100%;" id="comprasChart"></canvas>
+            </div>
+            <div class="col">
+                <canvas style="max-width: 100%;" id="pedidosChart"></canvas>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col">
+                <canvas style="max-width: 100%;" id="productosChart"></canvas>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script>
+            // Productos Chart
+            const ctxProducto = document.getElementById('productosChart').getContext('2d');
+
+            var datos = [];
+
+            @{
+                var productos = Model.Productos;
+                var marcas = Model.NombreMarcas;
+                var cantidadElementos = Math.Min(productos.Count, marcas.Count);
+            }
+
+            @for (int i = 0; i < cantidadElementos; i++)
+            {
+                var nombreProducto = productos[i].NombreProducto;
+                var nombreMarca = marcas[i].Nombre;
+                var cantidadProducto = productos[i].CantidadTotal;
+
+                @:datos.push({ nombreMarca: '@nombreMarca', nombreProducto: '@nombreProducto', cantidadTotal: @cantidadProducto});
+            }
+
+                        var labels = datos.map(function (item) {
+                return item.nombreMarca + ' - ' + item.nombreProducto;
+            });
+
+            var cantidades = datos.map(function (item) {
+                return item.cantidadTotal;
+            });
+
+            new Chart(ctxProducto, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Cantidad Total de Productos',
+                        data: cantidades,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                }
+            });
+
+            // Compras Chart
+            const ctxCompras = document.getElementById('comprasChart').getContext('2d');
+
+            var compras = [];
+            var fechasCompras = [];
+            var totalCompras = [];
+
+            @{
+                var comprasModel = Model.CompraIDs;
+                var proveedoresModel = Model.NombreProveedores;
+                var totalLotesCompras = Model.ValorTotalCompras;
+                var fechasComprasModel = Model.Compras.Select(c => c.FechaCompra).ToList();
+                var cantidadDatosCompras = Math.Min(comprasModel.Count, proveedoresModel.Count);
+            }
+
+            @for (int i = 0; i < cantidadDatosCompras; i++)
+            {
+                var compraId = comprasModel[i].IdCompra;
+                var nombreProveedor = proveedoresModel[i].NombrePro;
+                var fechaCompra = fechasComprasModel[i]?.ToString("dd/MM/yyyy") ?? "Fecha Desconocida";
+
+                @:compras.push({ idCompra: '@compraId', nombreProveedor: '@nombreProveedor', fechaCompra: '@fechaCompra' });
+            }
+
+                        var comprasLabels = compras.map(function (item) {
+                return item.fechaCompra + ' - ' + item.nombreProveedor + ' (' + item.idCompra + ')';
+            });
+
+            var valoresTotalesCompras = [
+            @foreach (var lote in Model.ValorTotalCompras)
+            {
+                @:parseFloat('@lote.TotalCompra'),
+            }
+                        ];
+
+            new Chart(ctxCompras, {
+                type: 'line',
+                data: {
+                    labels: comprasLabels,
+                    datasets: [{
+                        label: 'Valor Total de las Compras',
+                        data: valoresTotalesCompras,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Pedidos Chart
+            const ctxPedido = document.getElementById('pedidosChart').getContext('2d');
+
+            var pedidosClientes = [];
+            var fechasPedidos = [];
+            var preciosPedido = [];
+
+            @{
+                var pedidosModel = Model.Pedidos;
+                var clientesModel = Model.Clientes;
+                var fechasPedidosModel = Model.Pedidos.Select(p => p.FechaPedido).ToList();
+            }
+
+            @for (int i = 0; i < pedidosModel.Count; i++)
+            {
+                var pedido = pedidosModel[i];
+                var cliente = clientesModel.FirstOrDefault(c => c.ClienteId == pedido.ClienteId);
+                var nombreCliente = cliente != null ? cliente.NombreCompleto : "Cliente Desconocido";
+                var fechaPedido = fechasPedidosModel[i]?.ToString("dd/MM/yyyy") ?? "Fecha Desconocida";
+
+                @:pedidosClientes.push('@fechaPedido - @nombreCliente (@pedido.PedidoId)');
+            }
+
+                        var preciosTotalesPedidos = [
+            @foreach (var pedido in Model.Pedidos)
+            {
+                @:parseFloat('@pedido.ValorTotalPedido'),
+            }
+                        ];
+
+            new Chart(ctxPedido, {
+                type: 'line',
+                data: {
+                    labels: pedidosClientes,
+                    datasets: [{
+                        label: 'Total del Pedido',
+                        data: preciosTotalesPedidos,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        </script>
+    </div>
+}

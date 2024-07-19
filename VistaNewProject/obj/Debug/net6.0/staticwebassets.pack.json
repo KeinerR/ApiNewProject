@@ -1,0 +1,321 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\obj\\Debug\\net6.0\\scopedcss\\projectbundle\\VistaNewProject.bundle.scp.css",
+      "PackagePath": "staticwebassets\\VistaNewProject.bundle.scp.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\css\\Compra.css",
+      "PackagePath": "staticwebassets\\css\\Compra.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\css\\Detalle.css",
+      "PackagePath": "staticwebassets\\css\\Detalle.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\css\\Login.css",
+      "PackagePath": "staticwebassets\\css\\Login.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\css\\ModalesAgregar.css",
+      "PackagePath": "staticwebassets\\css\\ModalesAgregar.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\css\\main.css",
+      "PackagePath": "staticwebassets\\css\\main.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\css\\site.css",
+      "PackagePath": "staticwebassets\\css\\site.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\favicon-default.ico",
+      "PackagePath": "staticwebassets\\favicon-default.ico"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\image\\1ek9Q6NrTLWujThASS48GA.png",
+      "PackagePath": "staticwebassets\\image\\1ek9Q6NrTLWujThASS48GA.png"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\image\\FAVICON2 (2).png",
+      "PackagePath": "staticwebassets\\image\\FAVICON2 (2).png"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\image\\LOGO.png",
+      "PackagePath": "staticwebassets\\image\\LOGO.png"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\image\\Lec7Hr6LReORF-s90iWjvQ.png",
+      "PackagePath": "staticwebassets\\image\\Lec7Hr6LReORF-s90iWjvQ.png"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\image\\OPTIMUS\\1-removebg-preview.png",
+      "PackagePath": "staticwebassets\\image\\OPTIMUS\\1-removebg-preview.png"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\image\\OPTIMUS\\2-removebg-preview.png",
+      "PackagePath": "staticwebassets\\image\\OPTIMUS\\2-removebg-preview.png"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\image\\OPTIMUS\\3-removebg-preview.png",
+      "PackagePath": "staticwebassets\\image\\OPTIMUS\\3-removebg-preview.png"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\image\\favicon.png",
+      "PackagePath": "staticwebassets\\image\\favicon.png"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\image\\m675QpHzQE2XkjHk6utvyg.png",
+      "PackagePath": "staticwebassets\\image\\m675QpHzQE2XkjHk6utvyg.png"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\LICENSE",
+      "PackagePath": "staticwebassets\\lib\\bootstrap"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.css.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.js"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.js.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\jquery-validation\\LICENSE.md",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\LICENSE.md"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\additional-methods.js"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\additional-methods.min.js"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\jquery.validate.js"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\jquery.validate.min.js"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\jquery\\LICENSE.txt",
+      "PackagePath": "staticwebassets\\lib\\jquery\\LICENSE.txt"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\jquery\\dist\\jquery.js",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.js"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\jquery\\dist\\jquery.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.js"
+    },
+    {
+      "Id": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.VistaNewProject.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.build.VistaNewProject.props",
+      "PackagePath": "build\\VistaNewProject.props"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.buildMultiTargeting.VistaNewProject.props",
+      "PackagePath": "buildMultiTargeting\\VistaNewProject.props"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.buildTransitive.VistaNewProject.props",
+      "PackagePath": "buildTransitive\\VistaNewProject.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

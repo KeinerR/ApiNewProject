@@ -1,0 +1,141 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{DDB6EB6A-D999-43A1-A042-E4C104614066}|VistaNewProject\\VistaNewProject.csproj|c:\\users\\cerbero\\source\\repos\\api_optimus\\vistanewproject\\wwwroot\\js\\compras.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{DDB6EB6A-D999-43A1-A042-E4C104614066}|VistaNewProject\\VistaNewProject.csproj|solutionrelative:vistanewproject\\wwwroot\\js\\compras.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DDB6EB6A-D999-43A1-A042-E4C104614066}|VistaNewProject\\VistaNewProject.csproj|c:\\users\\cerbero\\source\\repos\\api_optimus\\vistanewproject\\views\\compras\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{DDB6EB6A-D999-43A1-A042-E4C104614066}|VistaNewProject\\VistaNewProject.csproj|solutionrelative:vistanewproject\\views\\compras\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DDB6EB6A-D999-43A1-A042-E4C104614066}|VistaNewProject\\VistaNewProject.csproj|c:\\users\\cerbero\\source\\repos\\api_optimus\\vistanewproject\\wwwroot\\js\\clientes.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{DDB6EB6A-D999-43A1-A042-E4C104614066}|VistaNewProject\\VistaNewProject.csproj|solutionrelative:vistanewproject\\wwwroot\\js\\clientes.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DDB6EB6A-D999-43A1-A042-E4C104614066}|VistaNewProject\\VistaNewProject.csproj|c:\\users\\cerbero\\source\\repos\\api_optimus\\vistanewproject\\wwwroot\\js\\productos.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{DDB6EB6A-D999-43A1-A042-E4C104614066}|VistaNewProject\\VistaNewProject.csproj|solutionrelative:vistanewproject\\wwwroot\\js\\productos.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DDB6EB6A-D999-43A1-A042-E4C104614066}|VistaNewProject\\VistaNewProject.csproj|c:\\users\\cerbero\\source\\repos\\api_optimus\\vistanewproject\\views\\productos\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{DDB6EB6A-D999-43A1-A042-E4C104614066}|VistaNewProject\\VistaNewProject.csproj|solutionrelative:vistanewproject\\views\\productos\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DDB6EB6A-D999-43A1-A042-E4C104614066}|VistaNewProject\\VistaNewProject.csproj|c:\\users\\cerbero\\source\\repos\\api_optimus\\vistanewproject\\views\\pedidos\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{DDB6EB6A-D999-43A1-A042-E4C104614066}|VistaNewProject\\VistaNewProject.csproj|solutionrelative:vistanewproject\\views\\pedidos\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ACD30E30-4798-4631-AC4F-9855199F2F18}|API_OPTIMUS\\API_OPTIMUS.csproj|c:\\users\\cerbero\\source\\repos\\api_optimus\\api_optimus\\entities\\cliente.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ACD30E30-4798-4631-AC4F-9855199F2F18}|API_OPTIMUS\\API_OPTIMUS.csproj|solutionrelative:api_optimus\\entities\\cliente.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\Views\\Compras\\Index.cshtml",
+              "RelativeDocumentMoniker": "VistaNewProject\\Views\\Compras\\Index.cshtml",
+              "ToolTip": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\Views\\Compras\\Index.cshtml",
+              "RelativeToolTip": "VistaNewProject\\Views\\Compras\\Index.cshtml",
+              "ViewState": "AQIAAEAAAAAAAAAAAAAmwE0AAABIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-07-18T16:39:13.717Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Compras.js",
+              "DocumentMoniker": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\js\\Compras.js",
+              "RelativeDocumentMoniker": "VistaNewProject\\wwwroot\\js\\Compras.js",
+              "ToolTip": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\js\\Compras.js",
+              "RelativeToolTip": "VistaNewProject\\wwwroot\\js\\Compras.js",
+              "ViewState": "AQIAAGkAAAAAAAAAAAAAAHUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2024-07-18T16:38:24.872Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Clientes.js",
+              "DocumentMoniker": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\js\\Clientes.js",
+              "RelativeDocumentMoniker": "VistaNewProject\\wwwroot\\js\\Clientes.js",
+              "ToolTip": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\js\\Clientes.js",
+              "RelativeToolTip": "VistaNewProject\\wwwroot\\js\\Clientes.js",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2024-07-18T16:38:23.434Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\Views\\Pedidos\\Create.cshtml",
+              "RelativeDocumentMoniker": "VistaNewProject\\Views\\Pedidos\\Create.cshtml",
+              "ToolTip": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\Views\\Pedidos\\Create.cshtml",
+              "RelativeToolTip": "VistaNewProject\\Views\\Pedidos\\Create.cshtml",
+              "ViewState": "AQIAABMAAAAAAAAAAAAAABgAAAAoAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-07-18T16:27:39.587Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Cliente.cs",
+              "DocumentMoniker": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\API_OPTIMUS\\Entities\\Cliente.cs",
+              "RelativeDocumentMoniker": "API_OPTIMUS\\Entities\\Cliente.cs",
+              "ToolTip": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\API_OPTIMUS\\Entities\\Cliente.cs",
+              "RelativeToolTip": "API_OPTIMUS\\Entities\\Cliente.cs",
+              "ViewState": "AQIAAAoAAAAAAAAAAAA5wBoAAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-18T16:24:25.645Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\Views\\Productos\\Index.cshtml",
+              "RelativeDocumentMoniker": "VistaNewProject\\Views\\Productos\\Index.cshtml",
+              "ToolTip": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\Views\\Productos\\Index.cshtml",
+              "RelativeToolTip": "VistaNewProject\\Views\\Productos\\Index.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAKAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-07-18T16:15:28.164Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Productos.js",
+              "DocumentMoniker": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\js\\Productos.js",
+              "RelativeDocumentMoniker": "VistaNewProject\\wwwroot\\js\\Productos.js",
+              "ToolTip": "C:\\Users\\CERBERO\\source\\repos\\API_OPTIMUS\\VistaNewProject\\wwwroot\\js\\Productos.js",
+              "RelativeToolTip": "VistaNewProject\\wwwroot\\js\\Productos.js",
+              "ViewState": "AQIAAOAAAAAAAAAAAAAQwNYAAAAZAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2024-07-18T16:12:56.073Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,152 @@
+﻿
+@model VistaNewProject.Models.Pedido
+
+@{
+    ViewData["Title"] = "Create";
+    var successMessage = TempData["successMessage"] as string;
+}
+<div id="containepedido">
+
+<h4 style="text-align:center">Agregar Pedidos</h4>
+<hr />
+
+
+<div>
+    <a asp-action="Index" class="btn btn-primary">
+
+        <i class="fas fa-arrow-left"></i> Cancelar
+
+    </a>
+</div>
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="NombreCliente" class="control-label">Cliente</label>
+                    <input list="clientes" id="Clientes" name="cliente" class="form-control" placeholder="Escribe y/o selecciona..." autocomplete="off" />
+                    <datalist id="clientes">
+                        @foreach (var item in ViewBag.Clientes)
+                            if (item.EstadoCliente != 0)
+                            {
+                                <option value="@item.NombreEntidad" data-id="@item.ClienteId">@item.NombreEntidad</option>
+                            }
+                    </datalist>
+                    <input id="ClinteHiden" type="hidden" name="clienteId">
+                    <span id="clienteerror" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-6">
+                <label asp-for="TipoServicio" class="control-label"></label>
+                <select asp-for="TipoServicio" id="TipoServicio" name="TipoServicio" class="form-control" onchange="updateEstadoPedido()">
+                    <option value="Caja">Caja</option>
+                    <option value="Domicilio">Domicilio</option>
+                </select>
+                <span asp-validation-for="TipoServicio" class="text-danger"></span>
+            </div>
+            <div class="col-6">
+                <label asp-for="FechaPedido" class="control-label"></label>
+                <input type="datetime-local" id="FechaPedido" name="FechaPedido" class="form-control" readonly />
+                <span id="FechaPedidoerror" class="text-danger"></span>
+            </div>
+            <div class="col-6">
+                <label asp-for="EstadoPedido" class="control-label"></label>
+                <select asp-for="EstadoPedido" id="EstadoPedido" name="EstadoPedido" class="form-control">
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Realizado">Realizado</option>
+                    <option value="Cancelado">Cancelado</option>
+                </select>
+                <span asp-validation-for="EstadoPedido" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div class="d-flex justify-content-center align-items-center mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus-circle"></i> Agregar
+                </button>
+            </div>
+        </div>
+    </form>
+
+
+
+
+</div>
+
+<script>
+   
+
+    // Escuchar cambios en el campo oculto ClienteIdHidden para actualizar el nombre de entidad
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Obtener el elemento de fecha del pedido
+        var fechaPedido = document.getElementById("FechaPedido");
+
+        // Crear una nueva fecha ajustada a la zona horaria de Colombia (GMT-5)
+        var fechaActual = new Date();
+        fechaActual.setMinutes(fechaActual.getMinutes() - fechaActual.getTimezoneOffset()); // Ajuste de la zona horaria local
+
+        // Formatear la fecha como se requiere (yyyy-mm-ddTHH:MM)
+        var formateada = fechaActual.toISOString().slice(0, 16);
+
+        // Establecer el valor formateado en el campo de fecha del pedido
+        fechaPedido.value = formateada;
+    });
+
+
+
+    function updateEstadoPedido() {
+        var tipo = document.getElementById("TipoServicio").value;
+        var estado = document.getElementById("EstadoPedido");
+
+        if (tipo === "Caja") {
+            estado.value = "Realizado";
+            for (var i = 0; i < estado.options.length; i++) {
+                if (estado.options[i].value !== "Realizado") {
+                    estado.options[i].style.display = 'none';
+                } else {
+                    estado.options[i].style.display = 'block';
+                }
+            }
+        } else if (tipo === "Domicilio") {
+            estado.value = "Pendiente";
+            for (var i = 0; i < estado.options.length; i++) {
+                if (estado.options[i].value !== "Pendiente") {
+                    estado.options[i].style.display = 'none';
+                } else {
+                    estado.options[i].style.display = 'block';
+                }
+            }
+        } else {
+            for (var i = 0; i < estado.options.length; i++) {
+                estado.options[i].style.display = 'block';
+            }
+            estado.value = ""; // Reset to default or desired value if needed
+        }
+    }
+
+    // Run the function on page load to ensure the correct state if the form is pre-filled
+    document.addEventListener("DOMContentLoaded", function () {
+        updateEstadoPedido();
+    });
+
+</script>
+ 
+
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <script>
+        Swal.fire({
+            title: '¡Pedido guardado!',
+            text: '@successMessage',
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+        });
+    </script>
+}
+
+
+
+<script src="~/js/pedidos.js"></script>

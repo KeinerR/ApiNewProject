@@ -1,0 +1,286 @@
+﻿@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<VistaNewProject.Models.Detallepedido>
+
+@{
+    ViewData["Title"] = "Detalles de Pedido";
+}
+
+<style>
+
+    .is-invalid {
+        border-color: #dc3545 !important; /* Cambiar el color del borde a rojo */
+    }
+
+</style>
+<style>
+    .pagination {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+        .pagination a {
+            display: inline-block;
+            padding: 8px 16px;
+            text-decoration: none;
+            color: #007bff;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            margin-right: 5px;
+        }
+
+            .pagination a:hover {
+                background-color: #007bff;
+                color: white;
+            }
+
+        .pagination .disabled {
+            color: #aaa;
+            pointer-events: none;
+            cursor: default;
+        }
+</style>
+
+<div class="container">
+    <br />
+    <div class="d-flex justify-content-between align-items-center">
+        <a asp-action="Index" class="btn btn-primary">
+            <i class="fas fa-arrow-left"></i> Regresar
+        </a>
+
+      
+
+        <div class="d-flex">
+            <button type="button" class="reporte-crear rounded-pill d-flex ov-btn-grow-ellipse justify-content-center align-items-center ml-auto">
+                <a asp-action="GenerarPDF" asp-route-pedidoId="@(ViewBag.Pedidos.PedidoId)" class="btn btn-primary">Generar PDF <i class="fa-solid fa-download"></i> </a>
+            </button>
+        </div>
+    </div>
+
+
+    <br />
+
+
+
+    <div class="pedido-info">
+        <h2 style="text-align:center;">Información del Pedido</h2>
+        <table class="table" style="margin: 0 auto; width: 60%;">
+            <tbody style="text-align: center;">
+                <tr style="background-color: lightgray;">
+                    <th>Codigo:</th>
+                    <th>Tipo de Servicio:</th>
+                    <th>Cliente:</th>
+                    <th>Valor Total:</th>
+                    <th>Estado:</th>
+                </tr>
+                <tr style="background-color: white;">
+                    <td>@(ViewBag.Pedidos.PedidoId)</td>
+                    <td>@(ViewBag.Pedidos != null ? ViewBag.Pedidos.TipoServicio : "No disponible")</td>
+                    <td>@(ViewBag.NombreCliente )</td>
+                    <td>@( ViewBag.Pedidos.ValorTotalPedido )</td>
+                    <td>@( ViewBag.Pedidos.EstadoPedido  )</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br />
+        @if (ViewBag.Pedidos.TipoServicio == "Domicilio")
+        {
+            <h2 style="text-align:center;">Información del Domicilio</h2>
+            <table class="table" style="margin: 0 auto; width: 60%;">
+                <tbody style="text-align: center;">
+                    <tr style="background-color: lightgray;">
+                        <th>Dirección:</th>
+                        <th>Observacion:</th>
+                        <th> FechaEntrega:</th>
+                        <th>Domiciliario</th>
+                        <th> Acciones:</th>
+                    </tr>
+                    <tr style="background-color: white;">
+                        <td>@ViewBag.Domicilio?.DireccionDomiciliario</td>
+                        <td>@ViewBag.Domicilio?.Observacion </td>
+                        <td>@ViewBag.Domicilio?.FechaEntrega </td>
+                        <td>@ViewBag.NombreDomiciliario</td>
+
+                      
+
+                        <td>
+                            @if (ViewBag.Domicilio.EstadoDomicilio=="Pendiente")
+                            {
+                                <button class="btn botonEditar" onclick="mostrarModalConRetrasoDomicilio(@ViewBag.Domicilio.DomicilioId)"><i class="fas fa-edit"></i> </button>
+
+                            }
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+
+            <div class="modal fade GeneralModal" id="ModalDomicilio" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content noBe" id="FormActualiZarDomicilio">
+                        <div class="modal-cabecera">
+                            <div id="pibo"></div>
+                            <div class="modal-header-view TituloModal">
+                                <h2 class="modal-title">Actualizar datos de Domicilio</h2>
+                            </div>
+                            <div class="moda-header-view" id="modal-cabecera-equis">
+                                <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                        </div>
+                        <div class="modal-cuerpo">
+                            <form method="post" class="modal-formulario-actualizar-domicilio" onsubmit="return validarcamposAct();">
+                                <div class="modal-body">
+                                    <input type="hidden" id="DomicilioIdAct" name="domicilioId" class="form-control" value="@ViewBag.Domicilio.DomicilioId" />
+                                    <div class="row">
+                                        <input type="hidden" id="PedidoIdAct" name="pedidoId" class="form-control" />
+
+
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="NombreCliente" class="control-label">Domiciliario</label>
+                                                <input list="clientesAct" id="ClientesAct" class="form-control" placeholder="Escribe y/o selecciona..." autocomplete="off" />
+                                                <datalist id="clientesAct">
+                                                    @foreach (var item in ViewBag.Usuarios)
+                                                        if (item.EstadoUsuario != 0)
+                                                        {
+                                                            <option value="@item.Nombre" data-id="@item.UsuarioId">@item.Nombre</option>
+                                                        }
+                                                </datalist>
+                                                <input id="ClinteHidenAct" type="hidden" name="usuarioId">
+                                                <span id="clienteerrorAct" class="text-danger"></span>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-6">
+                                            <label class="control-label"></label>
+                                            <select id="EstadoDomicilioAct" class="form-control" disabled>
+                                                @{
+                                                    var opciones = new List<SelectListItem>
+                                            {
+                                            new SelectListItem { Text = "Pendiente", Value = "Pendiente", Selected = false },
+                                            new SelectListItem { Text = "Realizado", Value = "Realizado", Selected = false },
+                                            new SelectListItem { Text = "Cancelado", Value = "Cancelado", Selected = false }
+                                            };
+                                                }
+                                                @foreach (var opcion in opciones)
+                                                {
+                                                    <option value="@opcion.Value">@opcion.Text</option>
+                                                }
+                                            </select>
+                                            <input id="EstadoDomicilioHidden" name="estadoDomicilio" type="hidden" />
+                                        </div>
+
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="ObservacionAct" class="control-label">Observacion</label>
+                                                
+                                                <input type="text" id="ObservacionAct" name="observacion" class="form-control" autocomplete="off" />
+                                                <span id="MensajeObservacion" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="DireccionDomiciliarioAct" class="control-label">Direccion</label>
+                                                
+                                                <input type="text" id="DireccionDomiciliarioAct" name="DireccionDomiciliario" class="form-control" autocomplete="off" />
+                                                <span id="MensajeDireccionDomiciliario" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="FechaEntregaAct" class="control-label">Usuario</label>
+                                                
+                                                <input type="datetime-local" id="FechaEntregaAct" name="fechaEntrega" class="form-control" />
+                                                <span id="Mensajefechaerror" class="text-danger"></span> <!-- Corregido el ID para evitar duplicidad -->
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                
+                                <div class="modal-contenedor-footer">
+                                    <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpiarFormularioUsuario();">Cancelar</button>
+                                    <button type="button" onclick="actualizarDomi();" class="btn btn-primary ">Actualizar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+         }
+    </div>
+
+    <br />
+    <div style="margin:auto; text-align:center;">
+        <h2>Detalles del Pedido</h2>
+    </div>
+
+    <div>
+        @if (Model.Any())
+        {
+            <table class="table" style="margin: 0 auto; width: 60%;">
+                <thead style="background-color: lightgray;">
+                    <tr style="text-align: center;">
+                        <th>Producto</th>
+                        <th>Unidad</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Subtotal</th>
+                        <td>
+                            @if (ViewBag.Pedidos.EstadoPedido == "Pendiente")
+                            {
+
+                                <a class="btn botonEditar" asp-action="AgregarMaxDetalles" asp-controller="DetallePedidos" asp-route-pedidoId="@ViewBag.Pedidos.PedidoId">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
+
+
+                            }
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    @foreach (var detallepedido in Model)
+                    {
+                        <tr style="text-align: center; background-color: white;">
+                            <td>@detallepedido.Productos?.NombreCompletoProducto </td>
+                            <td>@detallepedido.Unidades?.NombreCompletoUnidad </td>
+                            <td>@String.Format("{0:N0}", detallepedido.Cantidad)</td>
+                            <td>@String.Format("{0:N0}", detallepedido.PrecioUnitario)</td>
+                            <td>@String.Format("{0:N0}", detallepedido.Subtotal)</td>
+                          
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+
+            <div class="pagination-detail">
+                @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Pedidos.PedidoId, page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 }) + "' class='prev-next " + (Model.HasPreviousPage ? "" : "disabled") + "'>Anterior</a>")
+
+                @for (int i = 1; i <= Model.PageCount; i++)
+                {
+                    <a href="@Url.Action("Details", new { id =  ViewBag.Pedidos.PedidoId, page = i })" class="@(i == Model.PageNumber ? "active" : "")">@i</a>
+                }
+
+                @Html.Raw("<a href='" + Url.Action("Details", new { id = ViewBag.Pedidos.PedidoId, page = Model.HasNextPage ? Model.PageNumber + 1 : Model.PageCount }) + "' class='prev-next " + (Model.HasNextPage ? "" : "disabled") + "'>Siguiente</a>")
+            </div>
+        }
+        else
+        {
+            <p style="text-align:center">No se encontraron pedidos asociados a este cliente.</p>
+        }
+    </div>
+</div>
+
+
+<script src="~/js/domicilios.js"></script>
